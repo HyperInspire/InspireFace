@@ -19,6 +19,8 @@ public:
 
     int LoadDataFromFolder(const std::string &folder_path);
 
+    int Configuration();
+
     void UpdateStream(CameraStream &image, bool is_detect);
 
 private:
@@ -46,6 +48,7 @@ private:
     int tracking_idx_;
     double det_use_time_;
     double track_total_use_time_;
+    int max_detected_faces_ = 2;
 
 private:
 
