@@ -244,6 +244,15 @@ void TrackContext::detectFace(const cv::Mat &input, float scale) {
         tracking_idx_ = tracking_idx_ + 1;
         FaceObject faceinfo(tracking_idx_, bbox[i], m_landmark_predictor_->LandmarkNum());
         faceinfo.detect_bbox_ = bbox[i];
-        candidate_faces_.push_back(faceinfo);
+
+        // 控制检测到的人脸数量不超过最大限制
+        if (candidate_faces_.size() < max_detected_faces_) {
+            candidate_faces_.push_back(faceinfo);
+        } else {
+            // 如果超过了最大限制，您可以选择丢弃当前检测到的人脸或根据策略来选择要丢弃的人脸
+            // 例如，可以比较人脸置信度，丢弃置信度较低的人脸
+            // 这里以直接丢弃最后一个人脸为例
+            candidate_faces_.pop_back();
+        }
     }
 }
