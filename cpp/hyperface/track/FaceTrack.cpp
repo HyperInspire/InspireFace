@@ -2,15 +2,15 @@
 // Created by tunm on 2023/8/29.
 //
 
-#include "TrackContext.h"
+#include "FaceTrack.h"
 #include "config.h"
 #include "log.h"
 
-TrackContext::TrackContext() {
+FaceTrack::FaceTrack() {
 
 }
 
-int TrackContext::LoadDataFromFolder(const std::string &folder_path) {
+int FaceTrack::LoadDataFromFolder(const std::string &folder_path) {
     std::string scrfd_path = folder_path + "/" + hyper::SCRFD;
     std::string lmk_path = folder_path + "/" + hyper::LMK;
     std::string rnet_path = folder_path + "/" + hyper::RNET;
@@ -27,7 +27,7 @@ int TrackContext::LoadDataFromFolder(const std::string &folder_path) {
     return 0;
 }
 
-void TrackContext::SparseLandmarkPredict(const cv::Mat &raw_face_crop, std::vector<cv::Point2f> &landmarks_output,
+void FaceTrack::SparseLandmarkPredict(const cv::Mat &raw_face_crop, std::vector<cv::Point2f> &landmarks_output,
                                          float &score, float size) {
     LOGD("ready to landmark predict");
     landmarks_output.resize(m_landmark_predictor_->LandmarkNum());
@@ -43,7 +43,7 @@ void TrackContext::SparseLandmarkPredict(const cv::Mat &raw_face_crop, std::vect
 
 }
 
-bool TrackContext::trackFace(CameraStream &image, FaceObject &face) {
+bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     if (face.GetConfidence() < 0.1) {
         face.DisableTracking();
         LOGD("flag disable TrackFace");
@@ -151,7 +151,7 @@ bool TrackContext::trackFace(CameraStream &image, FaceObject &face) {
     return true;
 }
 
-void TrackContext::UpdateStream(CameraStream &image, bool is_detect) {
+void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
     auto timeStart = (double) cv::getTickCount();
     detection_index_ += 1;
     if (is_detect)
@@ -174,7 +174,7 @@ void TrackContext::UpdateStream(CameraStream &image, bool is_detect) {
         LOGD("detect scaled rows: %d cols: %d", image_detect.rows,
              image_detect.cols);
         auto timeStart = (double) cv::getTickCount();
-        detectFace(image_detect, image.GetPreviewScale());
+        DetectFace(image_detect, image.GetPreviewScale());
         det_use_time_ = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
         LOGD("detect track");
     }
@@ -189,7 +189,7 @@ void TrackContext::UpdateStream(CameraStream &image, bool is_detect) {
 
     for (vector<FaceObject>::iterator iter = trackingFace.begin();
          iter != trackingFace.end();) {
-        if (!trackFace(image, *iter)) {
+        if (!TrackFace(image, *iter)) {
             iter = trackingFace.erase(iter);
         } else {
             iter++;
@@ -199,7 +199,7 @@ void TrackContext::UpdateStream(CameraStream &image, bool is_detect) {
 
 }
 
-void TrackContext::nms(float th) {
+void FaceTrack::nms(float th) {
     std::sort(trackingFace.begin(), trackingFace.end(), [](FaceObject a, FaceObject b) { return a.confidence_ > b.confidence_; });
     std::vector<float> area(trackingFace.size());
     for (int i = 0; i < int(trackingFace.size()); ++i) {
@@ -225,7 +225,7 @@ void TrackContext::nms(float th) {
     }
 }
 
-void TrackContext::BlackingTrackingRegion(cv::Mat &image, cv::Rect &rect_mask) {
+void FaceTrack::BlackingTrackingRegion(cv::Mat &image, cv::Rect &rect_mask) {
     int height = image.rows;
     int width = image.cols;
     cv::Rect safe_rect = ComputeSafeRect(rect_mask, height, width);
@@ -233,7 +233,7 @@ void TrackContext::BlackingTrackingRegion(cv::Mat &image, cv::Rect &rect_mask) {
     subImage.setTo(0);
 }
 
-void TrackContext::detectFace(const cv::Mat &input, float scale) {
+void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
     std::vector<FaceLoc> boxes;
     m_face_detector_->Detect(input, boxes);
     std::vector<cv::Rect> bbox;
@@ -255,4 +255,8 @@ void TrackContext::detectFace(const cv::Mat &input, float scale) {
             candidate_faces_.pop_back();
         }
     }
+}
+
+int FaceTrack::Configuration() {
+    return 0;
 }

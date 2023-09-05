@@ -2,8 +2,8 @@
 // Created by tunm on 2023/8/29.
 //
 #pragma once
-#ifndef HYPERFACEREPO_TRACKCONTEXT_H
-#define HYPERFACEREPO_TRACKCONTEXT_H
+#ifndef HYPERFACEREPO_FACETRACK_H
+#define HYPERFACEREPO_FACETRACK_H
 #include <iostream>
 #include "face_detect/all.h"
 #include "landmark/all.h"
@@ -12,10 +12,10 @@
 
 using namespace std;
 
-class TrackContext {
+class FaceTrack {
 public:
 
-    TrackContext();
+    FaceTrack();
 
     int LoadDataFromFolder(const std::string &folder_path);
 
@@ -29,13 +29,13 @@ private:
                                std::vector<cv::Point2f> &landmarks_output,
                                float &score, float size);
 
-    bool trackFace(CameraStream &image, FaceObject &face);
+    bool TrackFace(CameraStream &image, FaceObject &face);
 
     static void BlackingTrackingRegion(cv::Mat &image, cv::Rect &rect_mask);
 
     void nms(float th = 0.5);
 
-    void detectFace(const cv::Mat &input, float scale);
+    void DetectFace(const cv::Mat &input, float scale);
 
 public:
 
@@ -61,4 +61,4 @@ private:
 };
 
 
-#endif //HYPERFACEREPO_TRACKCONTEXT_H
+#endif //HYPERFACEREPO_FACETRACK_H
