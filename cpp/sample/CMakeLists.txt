@@ -13,3 +13,5 @@ target_link_libraries(ContextSample HyperFace)
 set_target_properties(ContextSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
+
+
