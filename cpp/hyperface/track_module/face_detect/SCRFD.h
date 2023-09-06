@@ -16,15 +16,10 @@
 #include <memory>
 #include <chrono>
 //#include "model_loader.h"
+#include "DataType.h"
 
-typedef struct FaceLoc {
-    float x1;
-    float y1;
-    float x2;
-    float y2;
-    float score;
-    float lmk[10];
-} FaceLoc;
+
+namespace hyper {
 
 typedef struct DetHeadInfo {
     std::string cls_layer;
@@ -37,7 +32,8 @@ class SCRFD {
 public:
     SCRFD();
 
-    void Reload(const std::string &path, bool use_kps, int input_seize = 160, int num_anchors = 2, int thread_num = 1);
+    void
+    Reload(const std::string &path, bool use_kps, int input_seize = 160, int num_anchors = 2, int thread_num = 1);
 
 //    void Reload(ml::Model *model, bool use_kps, int input_seize = 160, int num_anchors = 2, int thread_num = 1);
 
@@ -46,7 +42,7 @@ public:
     ~SCRFD();
 
 
-    static void Draw(cv::Mat& img, bool use_kps, const std::vector<FaceLoc>& results);
+    static void Draw(cv::Mat &img, bool use_kps, const std::vector<FaceLoc> &results);
 
 private:
 
@@ -57,7 +53,7 @@ private:
 
     void nms(std::vector<FaceLoc> &input_faces, float nms_threshold);
 
-    void load_heads(const std::vector<DetHeadInfo>& heads_info);
+    void load_heads(const std::vector<DetHeadInfo> &heads_info);
 
 
 private:
@@ -81,5 +77,6 @@ private:
     };
 };
 
+}
 
 #endif //MNN_SCRFD_SCRFD_H

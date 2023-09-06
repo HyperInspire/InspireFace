@@ -6,12 +6,14 @@
 #include "config.h"
 #include "log.h"
 
+namespace hyper {
+
 FaceTrack::FaceTrack() {
 
 }
 
 int FaceTrack::LoadDataFromFolder(const std::string &folder_path) {
-    std::string scrfd_path = folder_path + "/" + hyper::SCRFD;
+    std::string scrfd_path = folder_path + "/" + hyper::SCRFDD;
     std::string lmk_path = folder_path + "/" + hyper::LMK;
     std::string rnet_path = folder_path + "/" + hyper::RNET;
 
@@ -260,3 +262,6 @@ void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
 int FaceTrack::Configuration() {
     return 0;
 }
+
+
+}   // namespace hyper

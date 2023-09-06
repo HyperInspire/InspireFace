@@ -8,9 +8,11 @@
 #include "face_detect/all.h"
 #include "landmark/all.h"
 #include "face_info/all.h"
-#include "camera_stream/camera_stream.h"
+#include "middleware/camera_stream/camera_stream.h"
 
 using namespace std;
+
+namespace hyper {
 
 class FaceTrack {
 public:
@@ -60,5 +62,6 @@ private:
 
 };
 
+}   // namespace hyper
 
 #endif //HYPERFACEREPO_FACETRACK_H

@@ -6,6 +6,8 @@
 
 using namespace std;
 
+namespace hyper {
+
 void SCRFD::Detect(const cv::Mat &bgr, std::vector<FaceLoc> &results) {
     int ori_w = bgr.cols;
     int ori_h = bgr.rows;
@@ -48,7 +50,7 @@ void SCRFD::Detect(const cv::Mat &bgr, std::vector<FaceLoc> &results) {
         MNN::Tensor tensor_boxes_host(tensor_boxes, tensor_boxes->getDimensionType());
         tensor_boxes->copyToHostTensor(&tensor_boxes_host);
 
-        if(use_kps_) {
+        if (use_kps_) {
             MNN::Tensor *tensor_lmk = interpreter_->getSessionOutput(session_, head_info.lmk_layer.c_str());
             MNN::Tensor tensor_lmk_host(tensor_lmk, tensor_lmk->getDimensionType());
             tensor_lmk->copyToHostTensor(&tensor_lmk_host);
@@ -60,14 +62,15 @@ void SCRFD::Detect(const cv::Mat &bgr, std::vector<FaceLoc> &results) {
 
     nms(results, nms_threshold_);
 
-    std::sort(results.begin(), results.end(), [](FaceLoc a, FaceLoc b) { return (a.y2 -  a.y1) * (a.x2 - a.x1) > (b.y2 -  b.y1) * (b.x2 - b.x1); });
+    std::sort(results.begin(), results.end(),
+              [](FaceLoc a, FaceLoc b) { return (a.y2 - a.y1) * (a.x2 - a.x1) > (b.y2 - b.y1) * (b.x2 - b.x1); });
 
-    for (auto &face:results) {
+    for (auto &face: results) {
         face.x1 = face.x1 / scale;
         face.y1 = face.y1 / scale;
         face.x2 = face.x2 / scale;
         face.y2 = face.y2 / scale;
-        if(use_kps_) {
+        if (use_kps_) {
             for (int i = 0; i < 5; ++i) {
                 face.lmk[i * 2 + 0] = face.lmk[i * 2 + 0] / scale;
                 face.lmk[i * 2 + 1] = face.lmk[i * 2 + 1] / scale;
@@ -133,7 +136,7 @@ void SCRFD::decode(MNN::Tensor *cls_pred, MNN::Tensor *box_pred, MNN::Tensor *lm
     const float *scores = cls_pred->host<float>();
     const float *boxes = box_pred->host<float>();
     float *lmk;
-    if(use_kps_)
+    if (use_kps_)
         lmk = lmk_pred->host<float>();
 
     for (int i = 0; i < anchors_center.size() / 2; ++i) {
@@ -171,7 +174,8 @@ void SCRFD::nms(vector<FaceLoc> &input_faces, float nms_threshold) {
     std::vector<float> area(input_faces.size());
     for (int i = 0; i < int(input_faces.size()); ++i) {
         area[i] =
-                (input_faces.at(i).x2 - input_faces.at(i).x1 + 1) * (input_faces.at(i).y2 - input_faces.at(i).y1 + 1);
+                (input_faces.at(i).x2 - input_faces.at(i).x1 + 1) *
+                (input_faces.at(i).y2 - input_faces.at(i).y1 + 1);
     }
     for (int i = 0; i < int(input_faces.size()); ++i) {
         for (int j = i + 1; j < int(input_faces.size());) {
@@ -198,12 +202,12 @@ SCRFD::~SCRFD() {
     interpreter_->releaseSession(session_);
 }
 
-void SCRFD::load_heads(const std::vector<DetHeadInfo>& heads_info) {
+void SCRFD::load_heads(const std::vector<DetHeadInfo> &heads_info) {
     heads_info_ = heads_info;
 }
 
 void SCRFD::Draw(cv::Mat &img, bool use_kps, const vector<FaceLoc> &results) {
-    for (auto &item : results) {
+    for (auto &item: results) {
         char text[256];
         sprintf(text, "%.1f%%", item.score * 100);
 
@@ -215,10 +219,12 @@ void SCRFD::Draw(cv::Mat &img, bool use_kps, const vector<FaceLoc> &results) {
             y = 0;
         if (x + label_size.width > img.cols)
             x = img.cols - label_size.width;
-        cv::rectangle(img, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)), cv::Scalar(255, 255, 255), -1);
+        cv::rectangle(img, cv::Rect(cv::Point(x, y), cv::Size(label_size.width, label_size.height + baseLine)),
+                      cv::Scalar(255, 255, 255), -1);
         cv::rectangle(img, cv::Point(item.x1, item.y1), cv::Point(item.x2, item.y2), cv::Scalar(255, 255, 255), 2);
-        cv::putText(img, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0), 1);
-        if (use_kps){
+        cv::putText(img, text, cv::Point(x, y + label_size.height), cv::FONT_HERSHEY_SIMPLEX, 0.5,
+                    cv::Scalar(0, 0, 0), 1);
+        if (use_kps) {
             for (int i = 0; i < 5; ++i) {
                 float x = item.lmk[i * 2 + 0];
                 float y = item.lmk[i * 2 + 1];
@@ -228,4 +234,4 @@ void SCRFD::Draw(cv::Mat &img, bool use_kps, const vector<FaceLoc> &results) {
     }
 }
 
-
+}
