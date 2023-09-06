@@ -5,6 +5,8 @@
 #include "FaceTrack.h"
 #include "config.h"
 #include "log.h"
+#include "model_index.h"
+#include "landmark/mean_shape.h"
 
 namespace hyper {
 
@@ -12,34 +14,19 @@ FaceTrack::FaceTrack() {
 
 }
 
-int FaceTrack::LoadDataFromFolder(const std::string &folder_path) {
-    std::string scrfd_path = folder_path + "/" + hyper::SCRFDD;
-    std::string lmk_path = folder_path + "/" + hyper::LMK;
-    std::string rnet_path = folder_path + "/" + hyper::RNET;
 
-    m_face_detector_ = std::make_shared<SCRFD>();
-    m_face_detector_->Reload(scrfd_path, true, 160, 2, 1);
-
-    m_landmark_predictor_ = std::make_shared<Landmark>();
-    m_landmark_predictor_->Reset(lmk_path);
-
-    m_refine_net_ = std::make_shared<RefineNet>();
-    m_refine_net_->Reset(rnet_path);
-
-    return 0;
-}
 
 void FaceTrack::SparseLandmarkPredict(const cv::Mat &raw_face_crop, std::vector<cv::Point2f> &landmarks_output,
                                          float &score, float size) {
     LOGD("ready to landmark predict");
-    landmarks_output.resize(m_landmark_predictor_->LandmarkNum());
-    std::vector<float> lmk_out = m_landmark_predictor_->infer(raw_face_crop);
-    for (int i = 0; i < m_landmark_predictor_->LandmarkNum(); ++i) {
+    landmarks_output.resize(FaceLandmark::NUM_OF_LANDMARK);
+    std::vector<float> lmk_out = (*m_landmark_predictor_)(raw_face_crop);
+    for (int i = 0; i < FaceLandmark::NUM_OF_LANDMARK; ++i) {
         float x = lmk_out[i * 2 + 0] * 112;
         float y = lmk_out[i * 2 + 1] * 112;
         landmarks_output[i] = cv::Point2f(x, y);
     }
-    score = m_refine_net_->Infer(raw_face_crop);
+    score = (*m_refine_net_)(raw_face_crop);
 
     LOGD("predict ok ,score: %f", score);
 
@@ -94,9 +81,11 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     std::vector<float> bbox;
     double timeStart = (double) cv::getTickCount();
     SparseLandmarkPredict(crop, landmark_rawout, score, 112);
-    vector<cv::Point2f> lmk_5 = {landmark_rawout[left_eye_center_], landmark_rawout[right_eye_center_],
-                                 landmark_rawout[nose_corner_], landmark_rawout[mouth_left_corner_],
-                                 landmark_rawout[mouth_right_corner_]};
+    vector<cv::Point2f> lmk_5 = {landmark_rawout[FaceLandmark::LEFT_EYE_CENTER],
+                                 landmark_rawout[FaceLandmark::RIGHT_EYE_CENTER],
+                                 landmark_rawout[FaceLandmark::NOSE_CORNER],
+                                 landmark_rawout[FaceLandmark::MOUTH_LEFT_CORNER],
+                                 landmark_rawout[FaceLandmark::MOUTH_RIGHT_CORNER]};
     face.setAlignMeanSquareError(lmk_5);
     double nTime =
             (((double) cv::getTickCount() - timeStart) / cv::getTickFrequency()) *
@@ -119,8 +108,8 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
             //      std::vector<cv::Point2f> inside_points =
             //      ApplyTransformToPoints(face.GetLanmdark(), tmp);
             cv::Mat _affine(2, 3, CV_64F);
-            std::vector<cv::Point2f> mean_shape_(m_landmark_predictor_->LandmarkNum());
-            for (int k = 0; k < m_landmark_predictor_->LandmarkNum(); k++) {
+            std::vector<cv::Point2f> mean_shape_(FaceLandmark::NUM_OF_LANDMARK);
+            for (int k = 0; k < FaceLandmark::NUM_OF_LANDMARK; k++) {
                 mean_shape_[k].x = mean_shape[k * 2];
                 mean_shape_[k].y = mean_shape[k * 2 + 1];
             }
@@ -158,10 +147,11 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
     detection_index_ += 1;
     if (is_detect)
         trackingFace.clear();
+    LOGD("%d, %d", detection_index_, detection_interval_);
     if (detection_index_ % detection_interval_ == 0 || is_detect) {
         cv::Mat image_detect = image.GetPreviewImage(true);
         nms();
-        for (auto &face: trackingFace) {
+        for (auto const &face: trackingFace) {
             cv::Rect m_mask_rect = face.GetRectSquare();
             std::vector<cv::Point2f> pts = Rect2Points(m_mask_rect);
             cv::Mat rotation_mode_affine = image.GetAffineMatrix();
@@ -236,15 +226,14 @@ void FaceTrack::BlackingTrackingRegion(cv::Mat &image, cv::Rect &rect_mask) {
 }
 
 void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
-    std::vector<FaceLoc> boxes;
-    m_face_detector_->Detect(input, boxes);
+    std::vector<FaceLoc> boxes = (*m_face_detector_)(input);
     std::vector<cv::Rect> bbox;
     bbox.resize(boxes.size());
     for (int i = 0; i < boxes.size(); i++) {
         bbox[i] = cv::Rect(cv::Point(static_cast<int>(boxes[i].x1), static_cast<int>(boxes[i].y1)),
                            cv::Point(static_cast<int>(boxes[i].x2), static_cast<int>(boxes[i].y2)));
         tracking_idx_ = tracking_idx_ + 1;
-        FaceObject faceinfo(tracking_idx_, bbox[i], m_landmark_predictor_->LandmarkNum());
+        FaceObject faceinfo(tracking_idx_, bbox[i], FaceLandmark::NUM_OF_LANDMARK);
         faceinfo.detect_bbox_ = bbox[i];
 
         // 控制检测到的人脸数量不超过最大限制
@@ -259,7 +248,56 @@ void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
     }
 }
 
-int FaceTrack::Configuration() {
+int FaceTrack::Configuration(ModelLoader &loader) {
+    InitDetectModel(loader.ReadModel(ModelIndex::_0_fdet_160));
+    InitLandmarkModel(loader.ReadModel(ModelIndex::_1_lmk));
+    InitRNetModel(loader.ReadModel(ModelIndex::_4_refine_net));
+    return 0;
+}
+
+int FaceTrack::InitLandmarkModel(Model *model) {
+    Parameter param;
+    param.set<int>("model_index", ModelIndex::_1_lmk);
+    param.set<string>("input_layer", "input_1");
+    param.set<vector<string>>("outputs_layers", {"prelu1/add", });
+    param.set<vector<int>>("input_size", {112, 112});
+    param.set<vector<float>>("mean", {127.5f, 127.5f, 127.5f});
+    param.set<vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
+
+    m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
+    m_landmark_predictor_->LoadParam(param, model);
+
+    return 0;
+}
+
+int FaceTrack::InitDetectModel(Model *model) {
+    Parameter param;
+    param.set<int>("model_index", ModelIndex::_0_fdet_160);
+    param.set<string>("input_layer", "input.1");
+    param.set<vector<string>>("outputs_layers", {"443", "468", "493", "446", "471", "496", "449", "474", "499"});
+    param.set<vector<int>>("input_size", {160, 160});
+    param.set<vector<float>>("mean", {127.5f, 127.5f, 127.5f});
+    param.set<vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
+
+    m_face_detector_ = std::make_shared<FaceDetect>(160);
+    m_face_detector_->LoadParam(param, model);
+
+    return 0;
+}
+
+int FaceTrack::InitRNetModel(Model *model) {
+    Parameter param;
+    param.set<int>("model_index", ModelIndex::_4_refine_net);
+    param.set<string>("input_layer", "data");
+    param.set<vector<string>>("outputs_layers", {"prob1", "conv5-2"});
+    param.set<vector<int>>("input_size", {24, 24});
+    param.set<vector<float>>("mean", {127.5f, 127.5f, 127.5f});
+    param.set<vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
+    param.set<bool>("swap_color", true);        // RGB mode
+
+    m_refine_net_ = std::make_shared<RNet>();
+    m_refine_net_->LoadParam(param, model);
+
     return 0;
 }
 

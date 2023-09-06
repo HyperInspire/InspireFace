@@ -21,5 +21,7 @@ float RNet::operator()(const Matrix &bgr_affine) {
     return outputs[0].second[1];
 }
 
+RNet::RNet() : AnyNet("RNet") {}
+
 
 }   //  namespace hyper

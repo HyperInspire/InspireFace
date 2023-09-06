@@ -21,6 +21,8 @@ class HYPER_API AnyNet {
 
 public:
 
+    explicit AnyNet(const std::string &name):m_name_(name) {}
+
     int32_t LoadParam(const Parameter &param, Model *model) {
         // must
         _initSingleParam<int>(param, "model_index", 0);
@@ -121,6 +123,9 @@ public:
     cv::Size &getMInputImageSize() {
         return m_input_image_size_;
     }
+
+protected:
+    std::string m_name_;
 
 private:
 

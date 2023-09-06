@@ -13,6 +13,8 @@ namespace hyper {
 class HYPER_API RNet: public AnyNet {
 public:
 
+    RNet();
+
     float operator()(const Matrix& bgr_affine);
 
 };

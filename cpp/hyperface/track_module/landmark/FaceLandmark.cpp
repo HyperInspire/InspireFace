@@ -7,16 +7,19 @@
 namespace hyper {
 
 
-std::vector<cv::Point2f> FaceLandmark::operator()(const Matrix &bgr_affine) {
-    return std::vector<cv::Point2f>();
+std::vector<float> FaceLandmark::operator()(const Matrix& bgr_affine) {
+    AnyTensorOutputs outputs;
+    Forward(bgr_affine, outputs);
+    const auto &out = outputs[0].second;
+
+    return out;
 }
 
 FaceLandmark::FaceLandmark(int input_size):
-    m_input_size(input_size){
+    AnyNet("FaceLandmark"),
+    m_input_size(input_size) {}
 
-}
-
-const int FaceLandmark::getInputSize() const {
+ int FaceLandmark::getInputSize() const {
     return m_input_size;
 }
 

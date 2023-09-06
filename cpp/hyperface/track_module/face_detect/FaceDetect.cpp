@@ -7,6 +7,7 @@
 namespace hyper {
 
 FaceDetect::FaceDetect(int input_size, float nms_threshold, float cls_threshold):
+    AnyNet("FaceDetect"),
     m_nms_threshold_(nms_threshold),
     m_cls_threshold_(cls_threshold),
     m_input_size_(input_size){
