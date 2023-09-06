@@ -8,7 +8,7 @@
 
 namespace hyper {
 
-const std::string SCRFD = "fdet_160.mnn";
+const std::string SCRFDD = "fdet_160.mnn";
 const std::string LMK = "lmk.mnn";
 const std::string RNET = "refine_net.mnn";
 

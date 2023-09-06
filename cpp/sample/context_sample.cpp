@@ -2,9 +2,10 @@
 // Created by tunm on 2023/8/29.
 //
 #include <iostream>
-#include "hyperface/track/FaceTrack.h"
+#include "hyperface/track_module/FaceTrack.h"
 #include "opencv2/opencv.hpp"
 
+using namespace hyper;
 
 int video_test(FaceTrack &ctx, int cam_id) {
     cv::VideoCapture cap(cam_id);
@@ -104,9 +105,12 @@ int main(int argc, char** argv) {
     const std::string source = argv[1];
     const std::string input = argv[2];
 
-    const std::string folder = "resource/models";
+    const std::string folder = "resource/model_zip/T1";
+    ModelLoader loader;
+    loader.Reset(folder);
+
     FaceTrack ctx;
-    ctx.LoadDataFromFolder(folder);
+    ctx.Configuration(loader);
 
     if (source == "webcam") {
         int cam_id = std::stoi(input);
