@@ -2,7 +2,7 @@
 // Created by tunm on 2023/8/29.
 //
 #include <iostream>
-#include "hyperface/track/FaceTrack.h"
+#include "hyperface/track_module/FaceTrack.h"
 #include "opencv2/opencv.hpp"
 
 
