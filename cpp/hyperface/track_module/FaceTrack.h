@@ -43,6 +43,7 @@ private:
     int InitDetectModel(Model* model);
     int InitRNetModel(Model* model);
 
+
 public:
 
     std::vector<FaceObject> trackingFace;
