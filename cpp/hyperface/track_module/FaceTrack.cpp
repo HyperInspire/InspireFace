@@ -42,6 +42,8 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     cv::Mat affine;
     std::vector<cv::Point2f> landmark_back;
 
+
+
     float score;
     if (face.TrackingState() == DETECT) {
         cv::Rect rect_square = face.GetRectSquare(0.0);
