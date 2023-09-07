@@ -8,7 +8,7 @@
 #include "face_detect/FaceDetect.h"
 #include "face_detect/RNet.h"
 #include "landmark/FaceLandmark.h"
-#include "face_info/all.h"
+#include "common/face_info/all.h"
 #include "middleware/camera_stream/camera_stream.h"
 
 using namespace std;
@@ -18,7 +18,7 @@ namespace hyper {
 class HYPER_API FaceTrack {
 public:
 
-    FaceTrack();
+    FaceTrack(int max_detected_faces = 1);
 
     int Configuration(ModelLoader &loader);
 
@@ -55,7 +55,7 @@ private:
     int tracking_idx_;
     double det_use_time_;
     double track_total_use_time_;
-    int max_detected_faces_ = 2;
+    const int max_detected_faces_;
 
 private:
 

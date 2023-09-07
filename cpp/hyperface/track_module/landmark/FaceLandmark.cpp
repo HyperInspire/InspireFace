@@ -16,11 +16,11 @@ std::vector<float> FaceLandmark::operator()(const Matrix& bgr_affine) {
 }
 
 FaceLandmark::FaceLandmark(int input_size):
-    AnyNet("FaceLandmark"),
-    m_input_size(input_size) {}
+        AnyNet("FaceLandmark"),
+        m_input_size_(input_size) {}
 
  int FaceLandmark::getInputSize() const {
-    return m_input_size;
+    return m_input_size_;
 }
 
 
