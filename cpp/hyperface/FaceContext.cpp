@@ -13,7 +13,7 @@ FaceContext::FaceContext() {
 }
 
 int32_t FaceContext::Configuration(const String &model_file_path, DetectMode detect_mode, int32_t max_detect_face,
-                                   ContextCustomParameter param) {
+                                   CustomPipelineParameter param) {
     m_detect_mode_ = detect_mode;
     m_max_detect_face_ = max_detect_face;
     m_parameter_ = param;
@@ -32,8 +32,17 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
     return 0;
 }
 
-    int32_t FaceContext::InputUpdateStream(CameraStream &image) {
-        return 0;
+int32_t FaceContext::InputUpdateStream(CameraStream &image) {
+    m_face_track_->UpdateStream(image, m_always_detect_);
+    auto &trackingFace = m_face_track_->trackingFace;
+    for (auto &face: trackingFace) {
+        auto const& affine = face.getTransMatrix();
+        auto crop = image.GetAffineRGBImage(affine, 112, 112);
+        cv::imshow("w", crop);
+        cv::waitKey(0);
     }
+
+    return 0;
+}
 
 }   // namespace hyper

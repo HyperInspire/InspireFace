@@ -15,3 +15,12 @@ set_target_properties(ContextSample PROPERTIES
 )
 
 
+# 主体测试
+add_executable(TestSample ${CMAKE_CURRENT_SOURCE_DIR}/test_sample.cpp)
+target_link_libraries(TestSample HyperFace)
+
+set_target_properties(TestSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+
