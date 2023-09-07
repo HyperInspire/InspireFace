@@ -10,7 +10,7 @@
 
 namespace hyper {
 
-FaceTrack::FaceTrack() {
+FaceTrack::FaceTrack(int max_detected_faces):max_detected_faces_(max_detected_faces) {
 
 }
 
@@ -41,7 +41,6 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     LOGD("start track one");
     cv::Mat affine;
     std::vector<cv::Point2f> landmark_back;
-
 
 
     float score;
