@@ -18,7 +18,7 @@ namespace hyper {
 class HYPER_API FaceTrack {
 public:
 
-    FaceTrack(int max_detected_faces = 1);
+    explicit FaceTrack(int max_detected_faces = 1);
 
     int Configuration(ModelLoader &loader);
 

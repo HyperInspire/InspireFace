@@ -6,6 +6,7 @@
 #define HYPERFACEREPO_FACECONTEXT_H
 #include "track_module/FaceTrack.h"
 #include "DataType.h"
+#include "pipeline_module/FacePipeline.h"
 
 using namespace std;
 
@@ -17,17 +18,7 @@ enum DetectMode {
 
 };
 
-typedef struct ContextCustomParameter {
-    bool enable_recognition = true;               ///< 人脸识别功能
-    bool enable_liveness = false;                 ///< RBG活体检测功能
-    bool enable_ir_liveness = false;              ///< IR活体检测功能
-    bool enable_mask_detect = false;              ///< 口罩检测功能
-    bool enable_age = false;                      ///< 年龄预测功能
-    bool enable_gender = false;                   ///< 性别预测功能
-    bool enable_face_quality = false;             ///< 人脸质量检测功能
-    bool enable_interaction_liveness = false;     ///< 配合活体检测功能
 
-} ContextCustomParameter;
 
 class HYPER_API FaceContext {
 public:
@@ -35,13 +26,13 @@ public:
     explicit FaceContext();
 
     /** 初始化 临时方案 */
-    int32_t Configuration(const String& model_file_path, DetectMode detect_mode, int32_t max_detect_face, ContextCustomParameter param);
+    int32_t Configuration(const String& model_file_path, DetectMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param);
 
     int32_t InputUpdateStream(CameraStream &image);
 
 private:
 
-    ContextCustomParameter m_parameter_;
+    CustomPipelineParameter m_parameter_;
 
     int32_t m_max_detect_face_{};        ///< 可检测最大人脸数量
 

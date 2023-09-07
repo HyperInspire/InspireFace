@@ -80,7 +80,7 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
 
     std::vector<cv::Point2f> landmark_rawout;
     std::vector<float> bbox;
-    double timeStart = (double) cv::getTickCount();
+    auto timeStart = (double) cv::getTickCount();
     SparseLandmarkPredict(crop, landmark_rawout, score, 112);
     vector<cv::Point2f> lmk_5 = {landmark_rawout[FaceLandmark::LEFT_EYE_CENTER],
                                  landmark_rawout[FaceLandmark::RIGHT_EYE_CENTER],
