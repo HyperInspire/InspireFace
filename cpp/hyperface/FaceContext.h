@@ -18,9 +18,19 @@ enum DetectMode {
 
 };
 
+typedef struct CustomPipelineParameter {
+    bool enable_recognition = true;               ///< 人脸识别功能
+    bool enable_liveness = false;                 ///< RGB活体检测功能
+    bool enable_ir_liveness = false;              ///< IR活体检测功能
+    bool enable_mask_detect = false;              ///< 口罩检测功能
+    bool enable_age = false;                      ///< 年龄预测功能
+    bool enable_gender = false;                   ///< 性别预测功能
+    bool enable_face_quality = false;             ///< 人脸质量检测功能
+    bool enable_interaction_liveness = false;     ///< 配合活体检测功能
 
+} ContextCustomParameter;
 
-class HYPER_API FaceContext {
+    class HYPER_API FaceContext {
 public:
 
     explicit FaceContext();
@@ -28,7 +38,11 @@ public:
     /** 初始化 临时方案 */
     int32_t Configuration(const String& model_file_path, DetectMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param);
 
-    int32_t InputUpdateStream(CameraStream &image);
+    int32_t FaceDetectAndTrack(CameraStream &image);
+
+    FaceObjectList& GetTrackingFaceList();
+
+
 
 private:
 

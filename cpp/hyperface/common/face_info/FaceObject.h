@@ -23,6 +23,8 @@ public:
         bbox_ = std::move(bbox);
         tracking_state_ = DETECT;
         confidence_ = 1.0;
+        tracking_count_ = 0;
+        pose_euler_angle_.resize(3);
 //    face_action_ = std::make_shared<FaceAction>(10);
     }
 
@@ -86,6 +88,16 @@ public:
         }
 
         align_mse_ = sum / 5.0f;
+    }
+
+    // 增加跟踪次数
+    void IncrementTrackingCount() {
+        tracking_count_++;
+    }
+
+    // 获取跟踪次数
+    int GetTrackingCount() const {
+        return tracking_count_;
     }
 
     float GetAlignMSE() const { return align_mse_; }
@@ -220,10 +232,19 @@ public:
     std::vector<std::vector<cv::Point2f>> landmark_smooth_aux_;
     cv::Rect bbox_;
     cv::Vec3f euler_angle_;
+    std::vector<float> pose_euler_angle_;
 
     float align_mse_{};
 
     const cv::Vec3f &getEulerAngle() const { return euler_angle_; }
+
+    const std::vector<float> &getPoseEulerAngle() const { return pose_euler_angle_; }
+
+    void setPoseEulerAngle(const vector<float> &poseEulerAngle) {
+        pose_euler_angle_[0] = poseEulerAngle[0];
+        pose_euler_angle_[1] = poseEulerAngle[1];
+        pose_euler_angle_[2] = poseEulerAngle[2];
+    }
 
     const cv::Rect &getBbox() const { return bbox_; }
 
@@ -255,12 +276,15 @@ public:
     cv::Mat trans_matrix_;
     float confidence_;
     cv::Rect detect_bbox_;
+    int tracking_count_; // 跟踪次数
 
 private:
     TRACK_STATE tracking_state_;
 //  std::shared_ptr<FaceAction> face_action_;
     int face_id_;
 };
+
+typedef std::vector<FaceObject> FaceObjectList;
 
 }   // namespace hyper
 

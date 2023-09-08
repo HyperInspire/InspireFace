@@ -5,7 +5,8 @@
 #ifndef HYPERFACEREPO_FD_ALL_H
 #define HYPERFACEREPO_FD_ALL_H
 
-#include "RefineNet.h"
-#include "SCRFD.h"
+#include "RNet.h"
+#include "FaceDetect.h"
+#include "FacePose.h"
 
 #endif //HYPERFACEREPO_FD_ALL_H

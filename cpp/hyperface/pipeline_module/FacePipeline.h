@@ -5,36 +5,49 @@
 #ifndef HYPERFACEREPO_FACEPIPELINE_H
 #define HYPERFACEREPO_FACEPIPELINE_H
 
-#include "recognition/Recognition.h"
+#include "middleware/camera_stream/camera_stream.h"
+#include "common/face_info/FaceObject.h"
+#include "attribute/all.h"
+#include "liveness/all.h"
+#include "middleware/model_loader/ModelLoader.h"
 
 namespace hyper {
-
-typedef struct CustomPipelineParameter {
-    bool enable_recognition = true;               ///< 人脸识别功能
-    bool enable_liveness = false;                 ///< RBG活体检测功能
-    bool enable_ir_liveness = false;              ///< IR活体检测功能
-    bool enable_mask_detect = false;              ///< 口罩检测功能
-    bool enable_age = false;                      ///< 年龄预测功能
-    bool enable_gender = false;                   ///< 性别预测功能
-    bool enable_face_quality = false;             ///< 人脸质量检测功能
-    bool enable_interaction_liveness = false;     ///< 配合活体检测功能
-    int recognition_interval_frame = 10;          ///< 人脸识别特征抽取间隔帧
-
-} ContextCustomParameter;
-
 class FacePipeline {
 public:
-    explicit FacePipeline(ModelLoader &loader, CustomPipelineParameter param);
+    explicit FacePipeline(ModelLoader &loader, bool enableLiveness, bool enableMaskDetect, bool enableAge,
+                          bool enableGender, bool enableInteractionLiveness);
+
+    int32_t operator()(CameraStream &image, FaceObject &face);
 
 private:
 
-    int32_t InitRecognition(Model *model);
+    int32_t InitAgePredict(Model *model);
+
+    int32_t InitGenderPredict(Model *model);
+
+    int32_t InitMaskPredict(Model *model);
+
+    int32_t InitRBGAntiSpoofing(Model *model);
+
+    int32_t InitLivenessInteraction(Model *model);
 
 private:
 
-    ContextCustomParameter m_param_;
+    const bool m_enable_liveness_ = false;                 ///< RGB活体检测功能
+    const bool m_enable_mask_detect_ = false;              ///< 口罩检测功能
+    const bool m_enable_age_ = false;                      ///< 年龄预测功能
+    const bool m_enable_gender_ = false;                   ///< 性别预测功能
+    const bool m_enable_interaction_liveness_ = false;     ///< 配合活体检测功能
 
-    shared_ptr<Recognition> m_recognition_;
+    shared_ptr<AgePredict> m_age_predict_;
+
+    shared_ptr<GenderPredict> m_gender_predict_;
+
+    shared_ptr<MaskPredict> m_mask_predict_;
+
+    shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_;
+
+    shared_ptr<LivenessInteraction> m_liveness_interaction_spoofing_;
 
 };
 
