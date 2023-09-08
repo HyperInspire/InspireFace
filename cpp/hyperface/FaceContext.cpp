@@ -32,17 +32,15 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
     return 0;
 }
 
-int32_t FaceContext::InputUpdateStream(CameraStream &image) {
+int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     m_face_track_->UpdateStream(image, m_always_detect_);
-    auto &trackingFace = m_face_track_->trackingFace;
-    for (auto &face: trackingFace) {
-        auto const& affine = face.getTransMatrix();
-        auto crop = image.GetAffineRGBImage(affine, 112, 112);
-        cv::imshow("w", crop);
-        cv::waitKey(0);
-    }
+
 
     return 0;
+}
+
+FaceObjectList& FaceContext::GetTrackingFaceList() {
+    return m_face_track_->trackingFace;
 }
 
 }   // namespace hyper

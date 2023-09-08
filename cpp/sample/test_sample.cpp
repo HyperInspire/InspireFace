@@ -21,8 +21,15 @@ int main(int argc, char** argv) {
     stream.SetDataFormat(BGR);
     stream.SetRotationMode(ROTATION_0);
     stream.SetDataBuffer(image.data, image.rows, image.cols);
-    ctx.InputUpdateStream(stream);
+    ctx.FaceDetectAndTrack(stream);
 
+    auto &faces = ctx.GetTrackingFaceList();
+    for (int i = 0; i < faces.size(); ++i) {
+        auto &face = faces[i];
+        for (int j = 0; j < 3; ++j) {
+            LOGD("%f", face.getPoseEulerAngle()[j]);
+        }
+    }
 
     return 0;
 }

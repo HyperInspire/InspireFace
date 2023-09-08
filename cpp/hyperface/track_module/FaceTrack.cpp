@@ -42,6 +42,7 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     cv::Mat affine;
     std::vector<cv::Point2f> landmark_back;
 
+    face.IncrementTrackingCount();
 
     float score;
     if (face.TrackingState() == DETECT) {
@@ -71,6 +72,10 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     LOGD("get affine crop ok");
     double time1 = (double) cv::getTickCount();
     crop = image.GetAffineRGBImage(affine, 112, 112);
+
+    // pose
+    auto pose = (*m_pose_net_)(crop);
+    face.setPoseEulerAngle(pose);
 
     cv::Mat affine_inv;
     cv::invertAffineTransform(affine, affine_inv);
@@ -250,15 +255,16 @@ void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
 }
 
 int FaceTrack::Configuration(ModelLoader &loader) {
-    InitDetectModel(loader.ReadModel(ModelIndex::_0_fdet_160));
-    InitLandmarkModel(loader.ReadModel(ModelIndex::_1_lmk));
-    InitRNetModel(loader.ReadModel(ModelIndex::_4_refine_net));
+    InitDetectModel(loader.ReadModel(ModelIndex::_00_fdet_160));
+    InitLandmarkModel(loader.ReadModel(ModelIndex::_01_lmk));
+    InitRNetModel(loader.ReadModel(ModelIndex::_04_refine_net));
+    InitFacePoseModel(loader.ReadModel(ModelIndex::_02_pose_fp16));
     return 0;
 }
 
 int FaceTrack::InitLandmarkModel(Model *model) {
     Parameter param;
-    param.set<int>("model_index", ModelIndex::_1_lmk);
+    param.set<int>("model_index", ModelIndex::_01_lmk);
     param.set<string>("input_layer", "input_1");
     param.set<vector<string>>("outputs_layers", {"prelu1/add", });
     param.set<vector<int>>("input_size", {112, 112});
@@ -273,7 +279,7 @@ int FaceTrack::InitLandmarkModel(Model *model) {
 
 int FaceTrack::InitDetectModel(Model *model) {
     Parameter param;
-    param.set<int>("model_index", ModelIndex::_0_fdet_160);
+    param.set<int>("model_index", ModelIndex::_00_fdet_160);
     param.set<string>("input_layer", "input.1");
     param.set<vector<string>>("outputs_layers", {"443", "468", "493", "446", "471", "496", "449", "474", "499"});
     param.set<vector<int>>("input_size", {160, 160});
@@ -288,7 +294,7 @@ int FaceTrack::InitDetectModel(Model *model) {
 
 int FaceTrack::InitRNetModel(Model *model) {
     Parameter param;
-    param.set<int>("model_index", ModelIndex::_4_refine_net);
+    param.set<int>("model_index", ModelIndex::_04_refine_net);
     param.set<string>("input_layer", "data");
     param.set<vector<string>>("outputs_layers", {"prob1", "conv5-2"});
     param.set<vector<int>>("input_size", {24, 24});
@@ -298,6 +304,23 @@ int FaceTrack::InitRNetModel(Model *model) {
 
     m_refine_net_ = std::make_shared<RNet>();
     m_refine_net_->LoadParam(param, model);
+
+    return 0;
+}
+
+int FaceTrack::InitFacePoseModel(Model *model) {
+    Parameter param;
+    param.set<int>("model_index", ModelIndex::_02_pose_fp16);
+    param.set<string>("input_layer", "data");
+    param.set<vector<string>>("outputs_layers", {"ip3_pose", });
+    param.set<vector<int>>("input_size", {112, 112});
+    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<int>("input_channel", 1);        // Input Gray
+    param.set<int>("input_image_channel", 1);        // BGR 2 Gray
+
+    m_pose_net_ = std::make_shared<FacePose>();
+    m_pose_net_->LoadParam(param, model);
 
     return 0;
 }
