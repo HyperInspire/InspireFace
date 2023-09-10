@@ -83,6 +83,7 @@ int search(FaceContext &ctx) {
 
     ctx.FaceRecognitionModule()->PrintMatrix();
 
+
     // 准备一个图像进行搜索
     {
         Embedded feature;
