@@ -14,10 +14,6 @@ float RNet::operator()(const Matrix &bgr_affine) {
     AnyTensorOutputs outputs;
     Forward(out, outputs);
 
-    for (int i = 0; i < outputs[0].second.size(); ++i) {
-        LOGD("%f", outputs[0].second[i]);
-    }
-
     return outputs[0].second[1];
 }
 

@@ -43,6 +43,8 @@ private:
     int InitRNetModel(Model* model);
     int InitFacePoseModel(Model* model);
 
+public:
+    double GetTrackTotalUseTime() const;
 
 public:
 

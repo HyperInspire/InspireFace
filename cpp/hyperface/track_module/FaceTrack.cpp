@@ -18,7 +18,7 @@ FaceTrack::FaceTrack(int max_detected_faces):max_detected_faces_(max_detected_fa
 
 void FaceTrack::SparseLandmarkPredict(const cv::Mat &raw_face_crop, std::vector<cv::Point2f> &landmarks_output,
                                          float &score, float size) {
-    LOGD("ready to landmark predict");
+//    LOGD("ready to landmark predict");
     landmarks_output.resize(FaceLandmark::NUM_OF_LANDMARK);
     std::vector<float> lmk_out = (*m_landmark_predictor_)(raw_face_crop);
     for (int i = 0; i < FaceLandmark::NUM_OF_LANDMARK; ++i) {
@@ -28,17 +28,17 @@ void FaceTrack::SparseLandmarkPredict(const cv::Mat &raw_face_crop, std::vector<
     }
     score = (*m_refine_net_)(raw_face_crop);
 
-    LOGD("predict ok ,score: %f", score);
+//    LOGD("predict ok ,score: %f", score);
 
 }
 
 bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     if (face.GetConfidence() < 0.1) {
         face.DisableTracking();
-        LOGD("flag disable TrackFace");
+//        LOGD("flag disable TrackFace");
         return false;
     }
-    LOGD("start track one");
+//    LOGD("start track one");
     cv::Mat affine;
     std::vector<cv::Point2f> landmark_back;
 
@@ -67,9 +67,9 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     }
 
     affine = face.getTransMatrix();
-    cout << affine << endl;
+//    cout << affine << endl;
     cv::Mat crop;
-    LOGD("get affine crop ok");
+//    LOGD("get affine crop ok");
     double time1 = (double) cv::getTickCount();
     crop = image.GetAffineRGBImage(affine, 112, 112);
 
@@ -81,7 +81,7 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     cv::invertAffineTransform(affine, affine_inv);
     double _diff =
             (((double) cv::getTickCount() - time1) / cv::getTickFrequency()) * 1000;
-    LOGD("affine cost %f", _diff);
+//    LOGD("affine cost %f", _diff);
 
     std::vector<cv::Point2f> landmark_rawout;
     std::vector<float> bbox;
@@ -96,7 +96,7 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     double nTime =
             (((double) cv::getTickCount() - timeStart) / cv::getTickFrequency()) *
             1000;
-    LOGD("sparse cost %f", nTime);
+//    LOGD("sparse cost %f", nTime);
 
     landmark_back.resize(landmark_rawout.size());
     landmark_back = ApplyTransformToPoints(landmark_rawout, affine_inv);
@@ -137,7 +137,8 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
             SimilarityTransformEstimate(landmark_back, inside_points, trans_m);
             face.setTransMatrix(trans_m);
             face.EnableTracking();
-            LOGD("ready face TrackFace state %d  ", face.TrackingState());
+//            LOGD("ready face TrackFace state %d  ", face.TrackingState());
+
         }
     }
 
@@ -153,7 +154,7 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
     detection_index_ += 1;
     if (is_detect)
         trackingFace.clear();
-    LOGD("%d, %d", detection_index_, detection_interval_);
+//    LOGD("%d, %d", detection_index_, detection_interval_);
     if (detection_index_ % detection_interval_ == 0 || is_detect) {
         cv::Mat image_detect = image.GetPreviewImage(true);
         nms();
@@ -169,16 +170,16 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
             BlackingTrackingRegion(image_detect, mask_rect);
         }
         // do detection in thread
-        LOGD("detect scaled rows: %d cols: %d", image_detect.rows,
-             image_detect.cols);
+//        LOGD("detect scaled rows: %d cols: %d", image_detect.rows,
+//             image_detect.cols);
         auto timeStart = (double) cv::getTickCount();
         DetectFace(image_detect, image.GetPreviewScale());
         det_use_time_ = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
-        LOGD("detect track");
+//        LOGD("detect track");
     }
 
     if (!candidate_faces_.empty()) {
-        LOGD("push track face");
+//        LOGD("push track face");
         for (int i = 0; i < candidate_faces_.size(); i++) {
             trackingFace.push_back(candidate_faces_[i]);
         }
@@ -323,6 +324,10 @@ int FaceTrack::InitFacePoseModel(Model *model) {
     m_pose_net_->LoadParam(param, model);
 
     return 0;
+}
+
+double FaceTrack::GetTrackTotalUseTime() const {
+    return track_total_use_time_;
 }
 
 

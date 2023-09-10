@@ -28,6 +28,8 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
         m_always_detect_ = true;
     }
 
+    m_face_recognition_ = std::make_shared<FaceRecognition>(loader, m_parameter_.enable_recognition);
+
 
     return 0;
 }
@@ -41,6 +43,10 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
 
 FaceObjectList& FaceContext::GetTrackingFaceList() {
     return m_face_track_->trackingFace;
+}
+
+const shared_ptr<FaceRecognition>& FaceContext::FaceRecognitionModule() {
+    return m_face_recognition_;
 }
 
 }   // namespace hyper

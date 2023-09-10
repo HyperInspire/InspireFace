@@ -144,7 +144,7 @@ int32_t InferenceHelperMnn::ParameterInitialization(std::vector<InputTensorInfo>
 }
 
 int32_t InferenceHelperMnn::Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list, std::vector<OutputTensorInfo>& output_tensor_info_list) {
-    PRINT("-Initialize\n");
+//    PRINT("-Initialize\n");
 //    LOGD("-Initialize");
     /*** Create network ***/
 //    LOG_INFO("init MNN");

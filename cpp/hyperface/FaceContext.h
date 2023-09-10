@@ -7,6 +7,7 @@
 #include "track_module/FaceTrack.h"
 #include "DataType.h"
 #include "pipeline_module/FacePipeline.h"
+#include "recognition_module/FaceRecognition.h"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ typedef struct CustomPipelineParameter {
 
 } ContextCustomParameter;
 
-    class HYPER_API FaceContext {
+class HYPER_API FaceContext {
 public:
 
     explicit FaceContext();
@@ -42,7 +43,8 @@ public:
 
     FaceObjectList& GetTrackingFaceList();
 
-
+    // 人脸识别相关
+    const shared_ptr<FaceRecognition>& FaceRecognitionModule();
 
 private:
 
@@ -55,6 +57,10 @@ private:
     bool m_always_detect_;
 
     std::shared_ptr<FaceTrack> m_face_track_;
+
+
+    // 方便调试 临时公开
+    std::shared_ptr<FaceRecognition> m_face_recognition_;
 
 
 };
