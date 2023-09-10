@@ -23,4 +23,21 @@ set_target_properties(TestSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
+# 调试测试
+add_executable(NetSample ${CMAKE_CURRENT_SOURCE_DIR}/net_sample.cpp)
+target_link_libraries(NetSample HyperFace)
+
+set_target_properties(NetSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+
+# 调试测试
+add_executable(RecSample ${CMAKE_CURRENT_SOURCE_DIR}/rec_sample.cpp)
+target_link_libraries(RecSample HyperFace)
+
+set_target_properties(RecSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
 

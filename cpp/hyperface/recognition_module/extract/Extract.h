@@ -2,16 +2,17 @@
 // Created by tunm on 2023/9/7.
 //
 #pragma once
-#ifndef HYPERFACEREPO_RECOGNITION_H
-#define HYPERFACEREPO_RECOGNITION_H
+#ifndef HYPERFACEREPO_EXTRACT_H
+#define HYPERFACEREPO_EXTRACT_H
 #include "DataType.h"
 #include "middleware/AnyNet.h"
 
+
 namespace hyper {
 
-class HYPER_API Recognition: public AnyNet {
+class HYPER_API Extract: public AnyNet {
 public:
-    Recognition();
+    Extract();
 
     Embedded operator()(const Matrix& bgr_affine);
 
@@ -19,4 +20,4 @@ public:
 
 }   // namespace hyper
 
-#endif //HYPERFACEREPO_RECOGNITION_H
+#endif //HYPERFACEREPO_EXTRACT_H

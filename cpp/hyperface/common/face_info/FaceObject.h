@@ -244,6 +244,15 @@ public:
         pose_euler_angle_[0] = poseEulerAngle[0];
         pose_euler_angle_[1] = poseEulerAngle[1];
         pose_euler_angle_[2] = poseEulerAngle[2];
+
+        if (abs(pose_euler_angle_[0]) < 0.5 && abs(pose_euler_angle_[1]) < 0.48) {
+            is_standard_ = true;
+        }
+
+    }
+
+    bool isStandard() const {
+        return is_standard_;
     }
 
     const cv::Rect &getBbox() const { return bbox_; }
@@ -277,6 +286,8 @@ public:
     float confidence_;
     cv::Rect detect_bbox_;
     int tracking_count_; // 跟踪次数
+
+    bool is_standard_;
 
 private:
     TRACK_STATE tracking_state_;

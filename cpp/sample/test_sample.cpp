@@ -25,9 +25,12 @@ int main(int argc, char** argv) {
 
     auto &faces = ctx.GetTrackingFaceList();
     for (int i = 0; i < faces.size(); ++i) {
-        auto &face = faces[i];
+        auto const &face = faces[i];
         for (int j = 0; j < 3; ++j) {
             LOGD("%f", face.getPoseEulerAngle()[j]);
+        }
+        if (face.isStandard()) {
+            LOGD("OK");
         }
     }
 

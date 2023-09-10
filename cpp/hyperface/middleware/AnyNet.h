@@ -63,11 +63,9 @@ public:
         m_input_image_size_ = {width, height};
         int channel = getParam<int>("input_channel");
         input_tensor_info.tensor_dims =  { 1, channel, m_input_image_size_.height, m_input_image_size_.width };
-        input_tensor_info.data_type = InputTensorInfo::kDataTypeImage;
+        input_tensor_info.data_type = getParam<int>("data_type");
         int image_channel = getParam<int>("input_image_channel");
         input_tensor_info.image_info.channel = image_channel;
-
-        LOGD("SE image_info.channel :%d", input_tensor_info.image_info.channel);
 
         std::vector<float> mean = getParam<std::vector<float>>("mean");
         std::vector<float> norm = getParam<std::vector<float>>("norm");
