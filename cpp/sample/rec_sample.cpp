@@ -5,7 +5,8 @@
 #include <iostream>
 #include "FaceContext.h"
 #include "utils/test_helper.h"
-#include "recognition_module/Alignment.h"
+#include "hyperface/recognition_module/extract/Alignment.h"
+#include "recognition_module/features_block/FeatureBlock.h"
 
 using namespace hyper;
 
@@ -48,7 +49,8 @@ int comparison1v1(FaceContext &ctx) {
 
     }
 
-    auto rec = ctx.FaceRecognitionModule()->CosineSimilarity(feature_1, feature_2);
+    float rec;
+    auto ret = FaceRecognition::CosineSimilarity(feature_1, feature_2, rec);
     LOGD("rec: %f", rec);
 
     return 0;
@@ -56,12 +58,16 @@ int comparison1v1(FaceContext &ctx) {
 
 
 int search(FaceContext &ctx) {
+
+    std::shared_ptr<FeatureBlock> block;
+    block.reset(FeatureBlock::Create(hyper::MC_OPENCV));
+
     std::vector<String> files_list = {
             "/Users/tunm/Downloads/face_rec/胡歌/胡歌1.jpg",
             "/Users/tunm/Downloads/face_rec/刘浩存/刘浩存1.jpg",
-            "/Users/tunm/Downloads/face_rec/刘亦菲/刘亦菲1.jpg",
+//            "/Users/tunm/Downloads/face_rec/刘亦菲/刘亦菲1.jpg",
             "/Users/tunm/Downloads/face_rec/刘奕君/刘奕君1.jpg",
-            "/Users/tunm/Downloads/face_rec/伍佰/伍佰1.jpg",
+//            "/Users/tunm/Downloads/face_rec/伍佰/伍佰1.jpg",
     };
     for (int i = 0; i < files_list.size(); ++i) {
         auto image = cv::imread(files_list[i]);
@@ -78,16 +84,20 @@ int search(FaceContext &ctx) {
         Embedded feature;
         ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
 
-        ctx.FaceRecognitionModule()->AddFeature(feature);
+        block->AddFeature(feature);
     }
 
-    ctx.FaceRecognitionModule()->PrintMatrix();
+//    ctx.FaceRecognitionModule()->PrintMatrix();
 
+//    auto ret = block->DeleteFeature(0);
+//    LOGD("DEL: %d", ret);
+    block->PrintMatrix();
+    block->PrintMatrixSize();
 
     // 准备一个图像进行搜索
     {
         Embedded feature;
-        auto image = cv::imread("/Users/tunm/Downloads/face_rec/伍佰/伍佰2.jpg");
+        auto image = cv::imread("/Users/tunm/Downloads/face_rec/刘奕君/刘奕君2.jpg");
         CameraStream stream;
         stream.SetDataFormat(BGR);
         stream.SetRotationMode(ROTATION_0);
@@ -102,7 +112,7 @@ int search(FaceContext &ctx) {
 
         float topOneScore;
         int topOneIndex;
-        ctx.FaceRecognitionModule()->SearchNearest(feature, topOneIndex, topOneScore);
+        block->SearchNearest(feature, topOneIndex, topOneScore);
         LOGD("Top1: %d, %f", topOneIndex, topOneScore);
     }
 

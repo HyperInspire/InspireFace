@@ -54,7 +54,7 @@ private:
 
     DetectMode m_detect_mode_;
 
-    bool m_always_detect_;
+    bool m_always_detect_{};
 
     std::shared_ptr<FaceTrack> m_face_track_;
 
