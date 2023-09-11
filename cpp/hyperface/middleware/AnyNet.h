@@ -33,6 +33,7 @@ public:
         _initSingleParam<std::vector<float>>(param, "norm", {0.0078125f, 0.0078125f, 0.0078125f});
         // rarely
         _initSingleParam<int>(param, "input_channel", 3);
+        _initSingleParam<int>(param, "input_image_channel", 3);
         _initSingleParam<bool>(param, "nchw", true);
         _initSingleParam<bool>(param, "swap_color", false);
         _initSingleParam<int>(param, "data_type", InputTensorInfo::kDataTypeImage);
@@ -62,7 +63,9 @@ public:
         m_input_image_size_ = {width, height};
         int channel = getParam<int>("input_channel");
         input_tensor_info.tensor_dims =  { 1, channel, m_input_image_size_.height, m_input_image_size_.width };
-        input_tensor_info.data_type = InputTensorInfo::kDataTypeImage;
+        input_tensor_info.data_type = getParam<int>("data_type");
+        int image_channel = getParam<int>("input_image_channel");
+        input_tensor_info.image_info.channel = image_channel;
 
         std::vector<float> mean = getParam<std::vector<float>>("mean");
         std::vector<float> norm = getParam<std::vector<float>>("norm");

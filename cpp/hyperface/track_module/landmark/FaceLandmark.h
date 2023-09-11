@@ -29,7 +29,7 @@ public:
     const static int NUM_OF_LANDMARK = 106;
 
 private:
-    const int m_input_size;
+    const int m_input_size_;
 };
 
 }   //  namespace hyper

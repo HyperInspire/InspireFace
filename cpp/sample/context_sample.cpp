@@ -32,13 +32,42 @@ int video_test(FaceTrack &ctx, int cam_id) {
         stream.SetDataFormat(BGR);
         stream.SetRotationMode(ROTATION_0);
 
-        ctx.UpdateStream(stream, true);
+        ctx.UpdateStream(stream, false);
+
+        LOGD("Track Cost: %f", ctx.GetTrackTotalUseTime());
 
         auto const &faces = ctx.trackingFace;
         for (auto const &face: faces) {
             auto rect = face.GetRect();
+            int track_id = face.GetTrackingId();
+            int track_count = face.GetTrackingCount();
+
             cv::rectangle(frame, rect, cv::Scalar(0, 0, 255), 2, 1);
+
+            // 创建要显示的文本
+            std::string text = "ID: " + std::to_string(track_id) + " Count: " + std::to_string(track_count);
+
+            // 设置文本显示位置，通常在框的上方
+            cv::Point text_position(rect.x, rect.y - 10);
+
+            const auto& euler = face.getPoseEulerAngle();
+            std::string pose_text = "P: " + std::to_string(euler[0]) + ",Yaw: " + std::to_string(euler[1]) + ",roll:" +std::to_string(euler[2]);
+
+            // 设置文本显示位置，通常在框的下方
+            cv::Point pose_position(rect.x, rect.y + rect.height + 20);
+
+
+            // 设置文本字体和大小
+            int font_face = cv::FONT_HERSHEY_SIMPLEX;
+            double font_scale = 0.5;
+            int font_thickness = 1;
+            cv::Scalar font_color(255, 255, 255); // 文本颜色，白色
+
+            // 在图像上绘制文本
+            cv::putText(frame, text, text_position, font_face, font_scale, font_color, font_thickness);
+            cv::putText(frame, pose_text, pose_position, font_face, font_scale, font_color, font_thickness);
         }
+
 
         cv::imshow("Webcam", frame);
 
@@ -77,12 +106,38 @@ void video_file_test(FaceTrack& ctx, const std::string& video_filename) {
         stream.SetDataFormat(BGR);
         stream.SetRotationMode(ROTATION_0);
 
-        ctx.UpdateStream(stream, true);
+        ctx.UpdateStream(stream, false);
+        LOGD("Track Cost: %f", ctx.GetTrackTotalUseTime());
 
         auto const &faces = ctx.trackingFace;
-        for (auto const &face : faces) {
+        for (auto const &face: faces) {
             auto rect = face.GetRect();
+            int track_id = face.GetTrackingId();
+            int track_count = face.GetTrackingCount();
+
             cv::rectangle(frame, rect, cv::Scalar(0, 0, 255), 2, 1);
+
+            // 创建要显示的文本
+            std::string text = "ID: " + std::to_string(track_id) + " Count: " + std::to_string(track_count);
+
+            // 设置文本显示位置，通常在框的上方
+            cv::Point text_position(rect.x, rect.y - 10);
+
+            const auto& euler = face.getPoseEulerAngle();
+            std::string pose_text = "P: " + std::to_string(euler[0]) + ",Yaw: " + std::to_string(euler[1]) + ",roll:" +std::to_string(euler[2]);
+
+            // 设置文本显示位置，通常在框的下方
+            cv::Point pose_position(rect.x, rect.y + rect.height + 20);
+
+            // 设置文本字体和大小
+            int font_face = cv::FONT_HERSHEY_SIMPLEX;
+            double font_scale = 0.5;
+            int font_thickness = 1;
+            cv::Scalar font_color(255, 255, 255); // 文本颜色，白色
+
+            // 在图像上绘制文本
+            cv::putText(frame, text, text_position, font_face, font_scale, font_color, font_thickness);
+            cv::putText(frame, pose_text, pose_position, font_face, font_scale, font_color, font_thickness);
         }
 
         cv::imshow("Video", frame);
