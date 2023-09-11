@@ -6,11 +6,11 @@
 #include "opencv2/opencv.hpp"
 #include "log.h"
 #include "recognition_module/simd.h"
-#include <Eigen/Dense>
+//#include <Eigen/Dense>
 
 int main() {
 
-    int N = 5000;
+    int N = 512;
     int vectorSize = 512; // 向量的长度
     {
         // 创建一个 Nx512 的 CV_32F 类型的矩阵，并填充随机数
@@ -62,24 +62,24 @@ int main() {
         LOGD("Vector COST: %f", cost);
     }
 
-    {
-        Eigen::initParallel();
-        // 创建一个 Nx512 的矩阵，并填充随机数
-        Eigen::MatrixXf mat(N, vectorSize);
-        mat = Eigen::MatrixXf::Random(N, vectorSize);
-
-        std::cout << mat.rows() << " x " << mat.cols() << std::endl;
-
-
-        Eigen::VectorXf one(vectorSize);
-        one = Eigen::VectorXf::Random(vectorSize);
-
-        auto timeStart = (double) cv::getTickCount();
-        Eigen::VectorXf result = mat * one;
-
-        double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
-        LOGD("Eigen COST: %f", cost);
-    }
+//    {
+//        Eigen::initParallel();
+//        // 创建一个 Nx512 的矩阵，并填充随机数
+//        Eigen::MatrixXf mat(N, vectorSize);
+//        mat = Eigen::MatrixXf::Random(N, vectorSize);
+//
+//        std::cout << mat.rows() << " x " << mat.cols() << std::endl;
+//
+//
+//        Eigen::VectorXf one(vectorSize);
+//        one = Eigen::VectorXf::Random(vectorSize);
+//
+//        auto timeStart = (double) cv::getTickCount();
+//        Eigen::VectorXf result = mat * one;
+//
+//        double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
+//        LOGD("Eigen COST: %f", cost);
+//    }
 
     return 0;
 }

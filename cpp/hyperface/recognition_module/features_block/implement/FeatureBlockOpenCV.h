@@ -12,7 +12,7 @@ class HYPER_API FeatureBlockOpenCV : public FeatureBlock{
 public:
     FeatureBlockOpenCV(int32_t features_max = 512, int32_t feature_length = 512);
 
-    bool SearchNearest(const vector<float> &queryFeature, int &bestIndex, float &top1Score) override;
+    int32_t SearchNearest(const std::vector<float>& queryFeature, SearchResult &searchResult) override;
 
 protected:
     int32_t UnsafeAddFeature(const vector<float> &feature) override;
@@ -20,6 +20,8 @@ protected:
     int32_t UnsafeDeleteFeature(int rowToDelete) override;
 
     int32_t UnsafeUpdateFeature(int rowToUpdate, const vector<float> &newFeature) override;
+
+    int32_t UnsafeRegisterFeature(int rowToUpdate, const vector<float> &feature) override;
 
 public:
     void PrintMatrixSize() override;

@@ -7,8 +7,8 @@ find_package(OpenCV REQUIRED)
 
 include_directories(${SRC_DIR})
 
-find_package(Eigen3 REQUIRED)
-include_directories("/usr/local/include/eigen3")
+#find_package(Eigen3 REQUIRED)
+#include_directories("/usr/local/include/eigen3")
 
 # =======================HyperFace测试===========================
 # 主体测试

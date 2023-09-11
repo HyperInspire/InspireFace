@@ -21,9 +21,14 @@ typedef enum {
     USED,           // 使用的
 } FEATURE_STATE;
 
+typedef struct {
+    float score = -1.0f;
+    int32_t index = -1;
+} SearchResult;
+
 class HYPER_API FeatureBlock {
 public:
-    static FeatureBlock* Create(const MatrixCore crop_type, int32_t features_max = 5, int32_t feature_length = 512);
+    static FeatureBlock* Create(const MatrixCore crop_type, int32_t features_max = 512, int32_t feature_length = 512);
 
 public:
     virtual ~FeatureBlock() {}
@@ -43,13 +48,18 @@ public:
         return UnsafeUpdateFeature(rowToUpdate, newFeature);
     }
 
-    virtual bool SearchNearest(const std::vector<float>& queryFeature, int &bestIndex, float& top1Score) = 0;
+    virtual int32_t RegisterFeature(int rowToUpdate, const std::vector<float>& feature) {
+        std::lock_guard<std::mutex> lock(m_mtx_);
+        return UnsafeRegisterFeature(rowToUpdate, feature);
+    }
+
+    virtual int32_t SearchNearest(const std::vector<float>& queryFeature, SearchResult &searchResult) = 0;
 
     virtual void PrintMatrixSize() = 0;
 
     virtual void PrintMatrix() = 0;
 
-protected:
+public:
 
     int FindFirstIdleIndex() const {
         for (int i = 0; i < m_feature_state_.size(); ++i) {
@@ -85,8 +95,11 @@ protected:
     }
 
 
+
+
 protected:
     virtual int32_t UnsafeAddFeature(const std::vector<float>& feature) = 0;
+    virtual int32_t UnsafeRegisterFeature(int rowToUpdate, const std::vector<float>& feature) = 0;
     virtual int32_t UnsafeDeleteFeature(int rowToDelete) = 0;
     virtual int32_t UnsafeUpdateFeature(int rowToUpdate, const std::vector<float>& newFeature) = 0;
 
