@@ -18,7 +18,7 @@ int32_t FeatureBlockOpenCV::UnsafeAddFeature(const vector<float> &feature) {
         return HERR_CTX_REC_ADD_FEAT_EMPTY; // 如果特征为空，不进行添加
     }
     if (feature.size() != m_feature_length_) {
-        return HERR_CTX_REC_ADD_FEAT_SIZE_ERR;
+        return HERR_CTX_REC_FEAT_SIZE_ERR;
     }
 
     if (IsUsedFull()) {
@@ -51,67 +51,105 @@ int32_t FeatureBlockOpenCV::UnsafeDeleteFeature(int rowToDelete) {
         return HERR_CTX_REC_BLOCK_DEL_FAILURE; // 行处于空闲状态，不进行删除
     }
 
-    cv::Mat idle_feat(1, m_feature_length_, CV_32FC1, cv::Scalar(-1.0f));
-    idle_feat.copyTo(rowToUpdate);
     m_feature_state_[rowToDelete] = FEATURE_STATE::IDLE;
-
-    std::cout << m_feature_matrix_.row(rowToDelete) << std::endl;
 
     return HSUCCEED;
 }
 
 
+int32_t FeatureBlockOpenCV::UnsafeRegisterFeature(int rowToUpdate, const vector<float> &feature) {
+    if (rowToUpdate < 0 || rowToUpdate >= m_feature_matrix_.rows) {
+        return HERR_CTX_REC_FEAT_SIZE_ERR; // 无效的行号，不进行更新
+    }
+
+    if (feature.size() != m_feature_length_) {
+        return HERR_CTX_REC_FEAT_SIZE_ERR; // 新特征大小与预期不符，不进行更新
+    }
+    cv::Mat rowToUpdateMat = m_feature_matrix_.row(rowToUpdate);
+    // 将新特征拷贝到指定行
+    for (int i = 0; i < feature.size(); ++i) {
+        rowToUpdateMat.at<float>(0, i) = feature[i];
+    }
+    m_feature_state_[rowToUpdate] = USED;
+
+    return 0;
+}
+
 int32_t FeatureBlockOpenCV::UnsafeUpdateFeature(int rowToUpdate, const vector<float> &newFeature) {
-    if (rowToUpdate < 0 || rowToUpdate >= m_feature_matrix_.rows || newFeature.empty()) {
-        return HERR_CTX_REC_UPDATE_FAILURE; // 无效的行号或新特征为空，不进行更新
+    if (rowToUpdate < 0 || rowToUpdate >= m_feature_matrix_.rows) {
+        return HERR_CTX_REC_FEAT_SIZE_ERR; // 无效的行号，不进行更新
     }
 
     if (newFeature.size() != m_feature_length_) {
-        return HERR_CTX_REC_ADD_FEAT_SIZE_ERR;
+        return HERR_CTX_REC_FEAT_SIZE_ERR; // 新特征大小与预期不符，不进行更新
     }
 
-    // 创建一个新的行向量矩阵并将新特征向量添加为行
-    cv::Mat updatedFeatureMat(1, newFeature.size(), CV_32FC1);
+    cv::Mat rowToUpdateMat = m_feature_matrix_.row(rowToUpdate);
+    if (m_feature_state_[rowToUpdate] == FEATURE_STATE::IDLE) {
+        return HERR_CTX_REC_BLOCK_UPDATE_FAILURE; // 行处于空闲状态，不进行更新
+    }
+
+    // 将新特征拷贝到指定行
     for (int i = 0; i < newFeature.size(); ++i) {
-        updatedFeatureMat.at<float>(0, i) = newFeature[i];
+        rowToUpdateMat.at<float>(0, i) = newFeature[i];
     }
-
-    // 将新特征向量覆盖到指定行
-    updatedFeatureMat.copyTo(m_feature_matrix_.row(rowToUpdate));
 
     return HSUCCEED;
 }
 
-bool FeatureBlockOpenCV::SearchNearest(const vector<float> &queryFeature, int &bestIndex, float &top1Score) {
+int32_t FeatureBlockOpenCV::SearchNearest(const std::vector<float>& queryFeature, SearchResult &searchResult) {
     std::lock_guard<std::mutex> lock(m_mtx_);
 
-    if (m_feature_matrix_.rows == 0) {
-        return false; // 如果特征矩阵为空，无法进行搜索
+    if (queryFeature.size() != m_feature_length_) {
+        return HERR_CTX_REC_FEAT_SIZE_ERR;
     }
 
-    if (queryFeature.size() != m_feature_length_) {
-        return HERR_CTX_REC_ADD_FEAT_SIZE_ERR;
+    if (GetUsedCount() == 0) {
+        return HSUCCEED;
     }
 
     cv::Mat queryMat(queryFeature.size(), 1, CV_32FC1, (void*)queryFeature.data());
-//    cout << queryMat.size << endl;
-//    cout << featureMatrix.size << endl;
 
     // 计算余弦相似性矩阵
     cv::Mat cosineSimilarities;
     cv::gemm(m_feature_matrix_, queryMat, 1, cv::Mat(), 0, cosineSimilarities);
+    // 断言cosineSimilarities是m_features_max_ x 1的向量
+    assert(cosineSimilarities.rows == m_features_max_ && cosineSimilarities.cols == 1);
 
-    // 寻找最大相似性值的索引
-    double top1ScoreDouble; // 使用 double 来接收结果
-    cv::minMaxIdx(cosineSimilarities, nullptr, &top1ScoreDouble, nullptr, &bestIndex);
+    // 用于存储相似性分数和它们的索引
+    std::vector<std::pair<float, int>> similarityScores;
 
-    top1Score = static_cast<float>(top1ScoreDouble); // 将 double 转换为 float
+    for (int i = 0; i < m_features_max_; ++i) {
+        // 检查状态是否为IDLE
+        if (m_feature_state_[i] == FEATURE_STATE::IDLE) {
+            continue; // 跳过IDLE状态的特征向量
+        }
 
-    if (bestIndex != -1) {
-        return true;
+        // 获取第i行的相似性分数
+        float similarityScore = cosineSimilarities.at<float>(i, 0);
+
+        // 将相似性分数和索引作为一对添加到向量中
+        similarityScores.push_back(std::make_pair(similarityScore, i));
     }
 
-    return false;
+    // 在similarityScores中找到最大分数的索引
+    if (!similarityScores.empty()) {
+        auto maxScoreIter = std::max_element(similarityScores.begin(), similarityScores.end());
+        float maxScore = maxScoreIter->first;
+        int maxScoreIndex = maxScoreIter->second;
+
+        // 设置searchResult中的值
+        searchResult.score = maxScore;
+        searchResult.index = maxScoreIndex;
+
+        return HSUCCEED; // 表示找到了最大分数
+    }
+
+
+    searchResult.score = -1.0f;
+    searchResult.index = -1;
+
+    return HSUCCEED;
 }
 
 void FeatureBlockOpenCV::PrintMatrixSize() {
@@ -121,6 +159,7 @@ void FeatureBlockOpenCV::PrintMatrixSize() {
 void FeatureBlockOpenCV::PrintMatrix() {
     std::cout << m_feature_matrix_ << std::endl;
 }
+
 
 
 }   // namespace hyper

@@ -59,15 +59,15 @@ int comparison1v1(FaceContext &ctx) {
 
 int search(FaceContext &ctx) {
 
-    std::shared_ptr<FeatureBlock> block;
-    block.reset(FeatureBlock::Create(hyper::MC_OPENCV));
+//    std::shared_ptr<FeatureBlock> block;
+//    block.reset(FeatureBlock::Create(hyper::MC_OPENCV));
 
     std::vector<String> files_list = {
             "/Users/tunm/Downloads/face_rec/胡歌/胡歌1.jpg",
             "/Users/tunm/Downloads/face_rec/刘浩存/刘浩存1.jpg",
-//            "/Users/tunm/Downloads/face_rec/刘亦菲/刘亦菲1.jpg",
+            "/Users/tunm/Downloads/face_rec/刘亦菲/刘亦菲1.jpg",
             "/Users/tunm/Downloads/face_rec/刘奕君/刘奕君1.jpg",
-//            "/Users/tunm/Downloads/face_rec/伍佰/伍佰1.jpg",
+            "/Users/tunm/Downloads/face_rec/伍佰/伍佰1.jpg",
     };
     for (int i = 0; i < files_list.size(); ++i) {
         auto image = cv::imread(files_list[i]);
@@ -84,15 +84,39 @@ int search(FaceContext &ctx) {
         Embedded feature;
         ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
 
-        block->AddFeature(feature);
+        ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, i);
     }
 
 //    ctx.FaceRecognitionModule()->PrintMatrix();
 
-//    auto ret = block->DeleteFeature(0);
+//    auto ret = block->DeleteFeature(3);
 //    LOGD("DEL: %d", ret);
-    block->PrintMatrix();
-    block->PrintMatrixSize();
+//    block->PrintMatrix();
+//    block->PrintMatrixSize();
+
+    ctx.FaceRecognitionModule()->DeleteFaceFeature(2);
+
+    LOGD("库内人脸数量: %d", ctx.FaceRecognitionModule()->GetFaceFeatureCount());
+
+    // 修改或插入一个人脸
+    {
+        Embedded feature;
+        auto image = cv::imread("/Users/tunm/Downloads/face_rec/刘奕君/刘奕君3.jpg");
+        CameraStream stream;
+        stream.SetDataFormat(BGR);
+        stream.SetRotationMode(ROTATION_0);
+        stream.SetDataBuffer(image.data, image.rows, image.cols);
+        ctx.FaceDetectAndTrack(stream);
+        const auto &faces = ctx.GetTrackingFaceList();
+        if (faces.empty()) {
+            LOGD("image1 not face");
+            return -1;
+        }
+        ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
+
+//        block->UpdateFeature(4, feature);
+//        block->AddFeature(feature);
+    }
 
     // 准备一个图像进行搜索
     {
@@ -110,10 +134,12 @@ int search(FaceContext &ctx) {
         }
         ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
 
-        float topOneScore;
-        int topOneIndex;
-        block->SearchNearest(feature, topOneIndex, topOneScore);
-        LOGD("Top1: %d, %f", topOneIndex, topOneScore);
+        SearchResult result;
+        auto timeStart = (double) cv::getTickCount();
+        ctx.FaceRecognitionModule()->SearchFaceFeature(feature, result);
+        double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
+        LOGD("搜索耗时: %f", cost);
+        LOGD("Top1: %d, %f", result.index, result.score);
     }
 
 

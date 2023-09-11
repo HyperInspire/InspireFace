@@ -11,7 +11,7 @@
 
 namespace hyper {
 
-FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition) {
+FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core, int feature_block_num) {
     if (enable_recognition) {
         auto ret = InitExtractInteraction(loader.ReadModel(ModelIndex::_03_extract));
         if (ret != 0) {
@@ -19,6 +19,11 @@ FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition) {
         }
     }
 
+    for (int i = 0; i < feature_block_num; ++i) {
+        shared_ptr<FeatureBlock> block;
+        block.reset(FeatureBlock::Create(core, 512, 512));
+        m_feature_matrix_list_.push_back(block);
+    }
 }
 
 int32_t FaceRecognition::InitExtractInteraction(Model *model) {
@@ -62,5 +67,94 @@ int32_t FaceRecognition::FaceExtract(CameraStream &image, const FaceObject &face
 
     return 0;
 }
+
+int32_t FaceRecognition::RegisterFaceFeature(const std::vector<float>& feature, int featureIndex) {
+    if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
+        return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
+    }
+
+    // 计算特征向量应该存储在哪个FeatureBlock和哪一行
+    int blockIndex = featureIndex / NUM_OF_FEATURES_IN_BLOCK; // 计算所在的FeatureBlock
+    int rowIndex = featureIndex % NUM_OF_FEATURES_IN_BLOCK;   // 计算在FeatureBlock中的行号
+
+    // 调用适当的FeatureBlock的注册函数
+    int32_t result = m_feature_matrix_list_[blockIndex]->RegisterFeature(rowIndex, feature);
+
+    return result;
+}
+
+int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold) {
+    if (queryFeature.size() != NUM_OF_FEATURES_IN_BLOCK) {
+        return HERR_CTX_REC_FEAT_SIZE_ERR; // 查询特征大小与预期不符
+    }
+
+    bool found = false; // 是否找到匹配的特征
+    float maxScore = -1.0f; // 最大分数初始化为一个负数
+    int maxIndex = -1; // 最大分数对应的索引
+
+    for (int blockIndex = 0; blockIndex < m_feature_matrix_list_.size(); ++blockIndex) {
+        if (m_feature_matrix_list_[blockIndex]->GetUsedCount() == 0) {
+            // 如果该 FeatureBlock 没有已使用的特征，跳到下一个块
+            continue;
+        }
+
+        int startIndex = blockIndex * NUM_OF_FEATURES_IN_BLOCK;
+        SearchResult tempResult;
+
+        // 调用适当的 FeatureBlock 的搜索函数
+        int32_t result = m_feature_matrix_list_[blockIndex]->SearchNearest(queryFeature, tempResult);
+
+        if (result != 0) {
+            // 处理错误
+            return result;
+        }
+
+        // 如果找到更高分数的特征
+        if (tempResult.score > maxScore) {
+            maxScore = tempResult.score;
+            maxIndex = startIndex + tempResult.index;
+
+            if (maxScore >= threshold) {
+                found = true;
+                break; // 当分数大于等于阈值时，停止搜索下一个 FeatureBlock
+            }
+        }
+    }
+
+    if (found) {
+        searchResult.score = maxScore;
+        searchResult.index = maxIndex;
+        return 0; // 返回成功
+    }
+
+    return HSUCCEED; // 没有找到匹配的特征 但是不算错误
+}
+
+int32_t FaceRecognition::DeleteFaceFeature(int featureIndex) {
+    if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
+        return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
+    }
+
+    // 计算特征向量应该删除在哪个 FeatureBlock 和哪一行
+    int blockIndex = featureIndex / NUM_OF_FEATURES_IN_BLOCK; // 计算所在的 FeatureBlock
+    int rowIndex = featureIndex % NUM_OF_FEATURES_IN_BLOCK;   // 计算在 FeatureBlock 中的行号
+
+    // 调用适当的 FeatureBlock 的删除函数
+    int32_t result = m_feature_matrix_list_[blockIndex]->DeleteFeature(rowIndex);
+
+    return result;
+}
+
+int32_t FaceRecognition::GetFaceFeatureCount() {
+    int totalFeatureCount = 0;
+
+    // 遍历所有 FeatureBlock，累加已使用的特征向量数量
+    for (const auto& block : m_feature_matrix_list_) {
+        totalFeatureCount += block->GetUsedCount();
+    }
+
+    return totalFeatureCount;
+}
+
 
 } // namespace hyper
