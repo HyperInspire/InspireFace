@@ -5,10 +5,9 @@
 #ifndef HYPERFACEREPO_FACETRACK_H
 #define HYPERFACEREPO_FACETRACK_H
 #include <iostream>
-#include "face_detect/FaceDetect.h"
-#include "face_detect/RNet.h"
+#include "face_detect/all.h"
 #include "landmark/FaceLandmark.h"
-#include "face_info/all.h"
+#include "common/face_info/all.h"
 #include "middleware/camera_stream/camera_stream.h"
 
 using namespace std;
@@ -18,7 +17,7 @@ namespace hyper {
 class HYPER_API FaceTrack {
 public:
 
-    FaceTrack();
+    explicit FaceTrack(int max_detected_faces = 1);
 
     int Configuration(ModelLoader &loader);
 
@@ -42,6 +41,10 @@ private:
     int InitLandmarkModel(Model* model);
     int InitDetectModel(Model* model);
     int InitRNetModel(Model* model);
+    int InitFacePoseModel(Model* model);
+
+public:
+    double GetTrackTotalUseTime() const;
 
 public:
 
@@ -51,10 +54,10 @@ private:
     std::vector<FaceObject> candidate_faces_;
     int detection_index_;
     int detection_interval_ = 1;
-    int tracking_idx_;
+    int tracking_idx_ = 0;
     double det_use_time_;
     double track_total_use_time_;
-    int max_detected_faces_ = 2;
+    const int max_detected_faces_;
 
 private:
 
@@ -63,6 +66,8 @@ private:
     std::shared_ptr<FaceLandmark> m_landmark_predictor_;
 
     std::shared_ptr<RNet> m_refine_net_;
+
+    std::shared_ptr<FacePose> m_pose_net_;
 
 };
 

@@ -2,23 +2,29 @@
 #define FACE_INFO_H
 
 #include <memory>
+#include <utility>
 
 //#include "face_action.h"
 #include "opencv2/opencv.hpp"
 #include "utils.h"
+#include "DataType.h"
+
+namespace hyper {
 
 enum TRACK_STATE {
     UNTRACKING = -1, DETECT = 0, READY = 1, TRACKING = 2
 };
 
-class FaceObject {
+class HYPER_API FaceObject {
 public:
     FaceObject(int instance_id, cv::Rect bbox, int num_landmark = 106) {
         face_id_ = instance_id;
         landmark_.resize(num_landmark);
-        bbox_ = bbox;
+        bbox_ = std::move(bbox);
         tracking_state_ = DETECT;
         confidence_ = 1.0;
+        tracking_count_ = 0;
+        pose_euler_angle_.resize(3);
 //    face_action_ = std::make_shared<FaceAction>(10);
     }
 
@@ -82,6 +88,16 @@ public:
         }
 
         align_mse_ = sum / 5.0f;
+    }
+
+    // 增加跟踪次数
+    void IncrementTrackingCount() {
+        tracking_count_++;
+    }
+
+    // 获取跟踪次数
+    int GetTrackingCount() const {
+        return tracking_count_;
     }
 
     float GetAlignMSE() const { return align_mse_; }
@@ -216,17 +232,36 @@ public:
     std::vector<std::vector<cv::Point2f>> landmark_smooth_aux_;
     cv::Rect bbox_;
     cv::Vec3f euler_angle_;
-    float align_mse_;
+    std::vector<float> pose_euler_angle_;
+
+    float align_mse_{};
 
     const cv::Vec3f &getEulerAngle() const { return euler_angle_; }
 
+    const std::vector<float> &getPoseEulerAngle() const { return pose_euler_angle_; }
+
+    void setPoseEulerAngle(const vector<float> &poseEulerAngle) {
+        pose_euler_angle_[0] = poseEulerAngle[0];
+        pose_euler_angle_[1] = poseEulerAngle[1];
+        pose_euler_angle_[2] = poseEulerAngle[2];
+
+        if (abs(pose_euler_angle_[0]) < 0.5 && abs(pose_euler_angle_[1]) < 0.48) {
+            is_standard_ = true;
+        }
+
+    }
+
+    bool isStandard() const {
+        return is_standard_;
+    }
+
     const cv::Rect &getBbox() const { return bbox_; }
 
-    std::vector<cv::Point2f> getRotateLandmark(int height, int width, int rotate = 0){
+    std::vector<cv::Point2f> getRotateLandmark(int height, int width, int rotate = 0) {
         if (rotate != 0) {
             std::vector<cv::Point2f> result = RotatePoints(landmark_, rotate, cv::Size(height, width));
             return result;
-        }else {
+        } else {
             return GetLanmdark();
         }
     }
@@ -237,7 +272,7 @@ public:
             std::vector<cv::Point2f> points;
             cv::Rect trans_rect;
             RotateRect(src_bbox, points, trans_rect, rotate, cv::Size(height, width));
-            if(use_flip)
+            if (use_flip)
                 trans_rect = flipRectWidth(trans_rect, cv::Size(width, height));
             return trans_rect;
         } else {
@@ -250,11 +285,18 @@ public:
     cv::Mat trans_matrix_;
     float confidence_;
     cv::Rect detect_bbox_;
+    int tracking_count_; // 跟踪次数
+
+    bool is_standard_;
 
 private:
     TRACK_STATE tracking_state_;
 //  std::shared_ptr<FaceAction> face_action_;
     int face_id_;
 };
+
+typedef std::vector<FaceObject> FaceObjectList;
+
+}   // namespace hyper
 
 #endif // FACE_INFO_H

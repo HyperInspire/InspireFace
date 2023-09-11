@@ -91,7 +91,7 @@ public:
     std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
         std::vector<int>{1, height_out, width_out, 3}, img_out.data));
     process->convert(buffer_, sw, sh, 0, tensor.get());
-    std::cout << std::to_string(1) << std::endl;
+//    std::cout << std::to_string(1) << std::endl;
     return img_out;
   }
 
