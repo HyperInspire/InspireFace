@@ -34,6 +34,7 @@ else()
 endif()
 
 target_compile_definitions(HyperFace PUBLIC INFERENCE_HELPER_ENABLE_MNN)
+target_compile_definitions(HyperFace PUBLIC FEATURE_BLOCK_ENABLE_OPENCV)
 target_include_directories(HyperFace PUBLIC
     .
     ${MNN_INCLUDE_DIRS}
