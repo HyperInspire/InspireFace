@@ -144,7 +144,7 @@ int32_t InferenceHelperMnn::ParameterInitialization(std::vector<InputTensorInfo>
 }
 
 int32_t InferenceHelperMnn::Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list, std::vector<OutputTensorInfo>& output_tensor_info_list) {
-    PRINT("-Initialize\n");
+//    PRINT("-Initialize\n");
 //    LOGD("-Initialize");
     /*** Create network ***/
 //    LOG_INFO("init MNN");
@@ -236,6 +236,8 @@ int32_t InferenceHelperMnn::PreProcess(const std::vector<InputTensorInfo>& input
 
             MNN::CV::ImageProcess::Config image_processconfig;
             /* Convert color type */
+//            LOGD("input_tensor_info.image_info.channel: %d", input_tensor_info.image_info.channel);
+//            LOGD("input_tensor_info.GetChannel(): %d", input_tensor_info.GetChannel());
             if ((input_tensor_info.image_info.channel == 3) && (input_tensor_info.GetChannel() == 3)) {
                 image_processconfig.sourceFormat = (input_tensor_info.image_info.is_bgr) ? MNN::CV::BGR : MNN::CV::RGB;
                 if (input_tensor_info.image_info.swap_color) {
@@ -249,6 +251,7 @@ int32_t InferenceHelperMnn::PreProcess(const std::vector<InputTensorInfo>& input
             } else if ((input_tensor_info.image_info.channel == 3) && (input_tensor_info.GetChannel() == 1)) {
                 image_processconfig.sourceFormat = (input_tensor_info.image_info.is_bgr) ? MNN::CV::BGR : MNN::CV::RGB;
                 image_processconfig.destFormat = MNN::CV::GRAY;
+//                LOGD("2gray");
             } else if ((input_tensor_info.image_info.channel == 1) && (input_tensor_info.GetChannel() == 3)) {
                 image_processconfig.sourceFormat = MNN::CV::GRAY;
                 image_processconfig.destFormat = MNN::CV::BGR;
@@ -269,6 +272,7 @@ int32_t InferenceHelperMnn::PreProcess(const std::vector<InputTensorInfo>& input
             /* Do pre-process */
             std::shared_ptr<MNN::CV::ImageProcess> pretreat(MNN::CV::ImageProcess::create(image_processconfig));
             pretreat->setMatrix(trans);
+//            LOGD("k1");
             pretreat->convert(static_cast<uint8_t*>(input_tensor_info.data), input_tensor_info.image_info.crop_width, input_tensor_info.image_info.crop_height, 0, input_tensor);
 
         } else if ( (input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNhwc) || (input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNchw) ) {
