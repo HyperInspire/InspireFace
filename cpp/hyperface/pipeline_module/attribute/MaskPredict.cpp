@@ -20,7 +20,4 @@ float MaskPredict::operator()(const Matrix &bgr_affine) {
 }
 
 
-}
-
-
 }   // namespace hyper

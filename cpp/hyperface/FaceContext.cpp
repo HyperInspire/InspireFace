@@ -28,7 +28,14 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
     }
 
     m_face_recognition_ = std::make_shared<FaceRecognition>(loader, m_parameter_.enable_recognition);
-
+    m_face_pipeline_ = std::make_shared<FacePipeline>(
+            loader,
+            param.enable_liveness,
+            param.enable_mask_detect,
+            param.enable_age,
+            param.enable_gender,
+            param.enable_interaction_liveness
+    );
 
     return HSUCCEED;
 }
@@ -49,6 +56,10 @@ FaceObjectList& FaceContext::GetTrackingFaceList() {
 
 const shared_ptr<FaceRecognition>& FaceContext::FaceRecognitionModule() {
     return m_face_recognition_;
+}
+
+const shared_ptr<FacePipeline>& FaceContext::FacePipelineModule() {
+    return m_face_pipeline_;
 }
 
 }   // namespace hyper

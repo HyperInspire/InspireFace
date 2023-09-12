@@ -46,6 +46,9 @@ public:
     // 人脸识别相关
     const shared_ptr<FaceRecognition>& FaceRecognitionModule();
 
+    // 人脸属性识别相关
+    const shared_ptr<FacePipeline>& FacePipelineModule();
+
 private:
 
     CustomPipelineParameter m_parameter_;
@@ -60,6 +63,7 @@ private:
 
     std::shared_ptr<FaceRecognition> m_face_recognition_;
 
+    std::shared_ptr<FacePipeline> m_face_pipeline_;
 
 };
 
