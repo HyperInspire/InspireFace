@@ -10,7 +10,7 @@ using namespace hyper;
 
 TEST_CASE("test_FaceRecognition", "[face_rec]") {
     DRAW_SPLIT_LINE
-    TEST_MSG_OUTPUT(true);
+    TEST_PRINT_OUTPUT(true);
 
 
     SECTION("FaceContextInit") {
