@@ -14,14 +14,17 @@ public:
 
     int32_t SearchNearest(const std::vector<float>& queryFeature, SearchResult &searchResult) override;
 
+    int32_t GetFeature(int row, vector<float> &feature) override;
+
 protected:
-    int32_t UnsafeAddFeature(const vector<float> &feature) override;
+    int32_t UnsafeAddFeature(const vector<float> &feature, const std::string &tag) override;
 
     int32_t UnsafeDeleteFeature(int rowToDelete) override;
 
-    int32_t UnsafeUpdateFeature(int rowToUpdate, const vector<float> &newFeature) override;
+    int32_t UnsafeUpdateFeature(int rowToUpdate, const vector<float> &newFeature, const std::string &tag) override;
 
-    int32_t UnsafeRegisterFeature(int rowToUpdate, const vector<float> &feature) override;
+    int32_t UnsafeRegisterFeature(int rowToUpdate, const vector<float> &feature, const std::string &tag) override;
+
 
 public:
     void PrintMatrixSize() override;

@@ -58,8 +58,6 @@ private:
 
     std::shared_ptr<FaceTrack> m_face_track_;
 
-
-    // 方便调试 临时公开
     std::shared_ptr<FaceRecognition> m_face_recognition_;
 
 
