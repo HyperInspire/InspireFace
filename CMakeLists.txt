@@ -14,3 +14,5 @@ add_subdirectory(cpp/hyperface)  # 添加子项目
 get_property(HyperFace TARGET HyperFace PROPERTY HyperFace)
 
 add_subdirectory(cpp/sample)  # 添加子项目
+
+add_subdirectory(cpp/test)  # 添加子项目

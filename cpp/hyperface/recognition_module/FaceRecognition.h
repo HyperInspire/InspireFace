@@ -14,18 +14,22 @@ namespace hyper {
 
 class HYPER_API FaceRecognition {
 public:
-    FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 5);
+    FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 8);
 
     // 计算余弦相似性
     static int32_t CosineSimilarity(const std::vector<float>& v1, const std::vector<float>& v2, float &res);
 
     int32_t FaceExtract(CameraStream &image, const FaceObject& face, Embedded &embedded);
 
-    int32_t RegisterFaceFeature(const std::vector<float>& feature, int featureIndex);
+    int32_t RegisterFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag);
+
+    int32_t UpdateFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag);
 
     int32_t SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold = 0.5f);
 
     int32_t DeleteFaceFeature(int featureIndex);
+
+    int32_t GetFaceFeature(int featureIndex, Embedded &feature);
 
     int32_t GetFaceFeatureCount();
 
