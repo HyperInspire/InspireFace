@@ -16,6 +16,7 @@ float MaskPredict::operator()(const Matrix &bgr_affine) {
     Forward(input, outputs);
 
     return outputs[0].second[0];
+
 }
 
 
