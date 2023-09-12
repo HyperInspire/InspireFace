@@ -3,3 +3,5 @@ _01_lmk
 _02_pose_fp16
 _03_extract
 _04_refine_net
+_05_mask
+_06_msafa27
