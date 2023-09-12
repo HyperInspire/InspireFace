@@ -10,8 +10,8 @@ namespace hyper {
 
 typedef enum MaskInfo {
     UNKNOWN = -1,
-    NO_MASK = 0,
-    MASK = 1,
+    UNMASKED = 0,
+    MASKED = 1,
 } MaskInfo;
 
 class HYPER_API FaceProcess {

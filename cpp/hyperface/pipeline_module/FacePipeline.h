@@ -17,7 +17,7 @@ public:
     explicit FacePipeline(ModelLoader &loader, bool enableLiveness, bool enableMaskDetect, bool enableAge,
                           bool enableGender, bool enableInteractionLiveness);
 
-    int32_t operator()(CameraStream &image, FaceObject &face);
+    int32_t Process(CameraStream &image, FaceObject &face);
 
 private:
 
