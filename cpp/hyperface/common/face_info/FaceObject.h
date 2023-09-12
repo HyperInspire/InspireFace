@@ -8,6 +8,7 @@
 #include "opencv2/opencv.hpp"
 #include "utils.h"
 #include "DataType.h"
+#include "FaceProcess.h"
 
 namespace hyper {
 
@@ -288,6 +289,8 @@ public:
     int tracking_count_; // 跟踪次数
 
     bool is_standard_;
+
+    FaceProcess faceProcess;
 
 private:
     TRACK_STATE tracking_state_;
