@@ -10,6 +10,35 @@
 
 using namespace hyper;
 
+std::string GetFileNameWithoutExtension(const std::string& filePath) {
+    // 查找最后一个斜杠或反斜杠的位置
+    size_t slashPos = filePath.find_last_of("/\\");
+    if (slashPos != std::string::npos) {
+        // 从斜杠后面的位置获取文件名
+        std::string fileName = filePath.substr(slashPos + 1);
+
+        // 查找最后一个点的位置，即文件后缀的起始位置
+        size_t dotPos = fileName.find_last_of('.');
+        if (dotPos != std::string::npos) {
+            // 返回去掉后缀的文件名部分
+            return fileName.substr(0, dotPos);
+        } else {
+            // 没有后缀的情况下返回整个文件名
+            return fileName;
+        }
+    }
+
+    // 如果没有斜杠，直接查找后缀
+    size_t dotPos = filePath.find_last_of('.');
+    if (dotPos != std::string::npos) {
+        // 返回去掉后缀的文件名部分
+        return filePath.substr(0, dotPos);
+    }
+
+    // 如果没有斜杠和后缀，返回原始文件路径
+    return filePath;
+}
+
 int comparison1v1(FaceContext &ctx) {
     Embedded feature_1;
     Embedded feature_2;
@@ -83,8 +112,7 @@ int search(FaceContext &ctx) {
         }
         Embedded feature;
         ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
-
-        ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, i);
+        ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, i, GetFileNameWithoutExtension(files_list[i]));
     }
 
 //    ctx.FaceRecognitionModule()->PrintMatrix();
@@ -92,7 +120,6 @@ int search(FaceContext &ctx) {
 //    auto ret = block->DeleteFeature(3);
 //    LOGD("DEL: %d", ret);
 //    block->PrintMatrix();
-//    block->PrintMatrixSize();
 
     ctx.FaceRecognitionModule()->DeleteFaceFeature(2);
 
@@ -139,7 +166,7 @@ int search(FaceContext &ctx) {
         ctx.FaceRecognitionModule()->SearchFaceFeature(feature, result);
         double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
         LOGD("搜索耗时: %f", cost);
-        LOGD("Top1: %d, %f", result.index, result.score);
+        LOGD("Top1: %d, %f, %s", result.index, result.score, result.tag.c_str());
     }
 
 
