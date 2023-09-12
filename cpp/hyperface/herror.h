@@ -10,7 +10,7 @@
 #define HERR_UNKNOWN					    MERR_BASIC_BASE					// 错误原因不明
 #define HERR_INVALID_PARAM				(MERR_BASIC_BASE+1)				// 无效的参数
 
-#define HERR_CTX_BASE				    0X7000					        // Context 错误类型
+#define HERR_CTX_BASE				        0X500					        // Context 错误类型
 #define HERR_CTX_INVALID_RESOURCE            (HERR_CTX_BASE+1)               // 无效的静态资源
 #define HERR_CTX_TRACKER_FAILURE             (HERR_CTX_BASE+2)               // Tracker模块未初始化
 #define HERR_CTX_REC_EXTRACT_FAILURE         (HERR_CTX_BASE+5)               // 人脸特征提取未进行注册
