@@ -11,16 +11,21 @@ using namespace hyper;
 
 TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
     DRAW_SPLIT_LINE
-    TEST_MSG_OUTPUT(true);
+    TEST_PRINT_OUTPUT(true);
 
-    FaceContext ctx;
-    CustomPipelineParameter param;
-    param.enable_recognition = true;
-    auto ret = ctx.Configuration(GET_DATA("model_zip/T1"), DetectMode::DETECT_MODE_IMAGE, 1, param);
-    REQUIRE(ret == HSUCCEED);
 
 
     SECTION("FeatureCURD") {
+        DRAW_SPLIT_LINE
+        // 初始化
+        FaceContext ctx;
+        CustomPipelineParameter param;
+        param.enable_recognition = true;
+        auto ret = ctx.Configuration(GET_DATA("model_zip/T1"), DetectMode::DETECT_MODE_IMAGE, 1, param);
+        REQUIRE(ret == HSUCCEED);
+
+        ctx.FaceRecognitionModule()->PrintFeatureMatrixInfo();
+
         // 提前知道Kunkun的位置
         int32_t KunkunIndex = 795;
         // 提前准备一个人脸 并提取特征
@@ -100,6 +105,82 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         CHECK(thirdlySearchResult.tag == "Chicken");
         spdlog::info("再次找到Kunkun -> 新位置ID: {}, 置信度: {}, Tag: {}", thirdlySearchResult.index, thirdlySearchResult.score, thirdlySearchResult.tag.c_str());
 
-
     }
+
+#ifdef ENABLE_BENCHMARK
+    SECTION("FeatureSearchBenchmark") {
+        DRAW_SPLIT_LINE
+
+        // 初始化
+        FaceContext ctx;
+        CustomPipelineParameter param;
+        param.enable_recognition = true;
+        auto ret = ctx.Configuration(GET_DATA("model_zip/T1"), DetectMode::DETECT_MODE_IMAGE, 1, param);
+        REQUIRE(ret == HSUCCEED);
+
+        ctx.FaceRecognitionModule()->PrintFeatureMatrixInfo();
+
+        // 批量导入人脸特征向量
+        String mat_path = GET_DATA("test_faceset/test_faces_A1.npy");
+        String tags_path = GET_DATA("test_faceset/test_faces_A1.txt");
+        auto result = LoadMatrixAndTags(mat_path, tags_path);
+        // 获取特征矩阵和标签名称
+        EmbeddedList featureMatrix = result.first;
+        std::vector<std::string> tagNames = result.second;
+        REQUIRE(featureMatrix.size() == 3000);
+        REQUIRE(tagNames.size() == 3000);
+        REQUIRE(featureMatrix[0].size() == 512);
+
+        for (int i = 0; i < featureMatrix.size(); ++i) {
+            auto &feat = featureMatrix[i];
+            auto ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feat, i, tagNames[i]);
+            CHECK(ret == HSUCCEED);
+        }
+
+        std::cout << std::endl;
+        REQUIRE(ctx.FaceRecognitionModule()->GetFaceFeatureCount() == 3000);
+        spdlog::trace("3000个特征向量全部载入");
+
+        // 准备一张人脸
+        auto image = cv::imread(GET_DATA("images/face_sample.png"));
+        CameraStream stream;
+        stream.SetDataFormat(BGR);
+        stream.SetRotationMode(ROTATION_0);
+        stream.SetDataBuffer(image.data, image.rows, image.cols);
+        ret = ctx.FaceDetectAndTrack(stream);
+        REQUIRE(ret == HSUCCEED);
+        // 检测人脸
+        ctx.FaceDetectAndTrack(stream);
+        const auto &faces = ctx.GetTrackingFaceList();
+        REQUIRE(faces.size() > 0);
+        // 对Kunkun进行特征抽取
+        Embedded feature;
+        ret = ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
+        CHECK(ret == HSUCCEED);
+
+        // 将该人脸插入较为靠后的位置
+        auto regIndex = 4000;
+        ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, regIndex, "test");
+        REQUIRE(ret == HSUCCEED);
+
+        const auto loop = 1000;
+        double total = 0.0f;
+        spdlog::info("开始执行{}次搜索: ", loop);
+        auto out = (double) cv::getTickCount();
+        for (int i = 0; i < loop; ++i) {
+
+            // 准备一张人脸从库中进行查找
+            SearchResult searchResult;
+            auto timeStart = (double) cv::getTickCount();
+            ret = ctx.FaceRecognitionModule()->SearchFaceFeature(feature, searchResult, 0.5f);
+            double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
+            REQUIRE(ret == HSUCCEED);
+            CHECK(searchResult.index == regIndex);
+            total += cost;
+        }
+        auto end = ((double) cv::getTickCount() - out) / cv::getTickFrequency() * 1000;
+
+        spdlog::info("{}次总耗时: {}ms, 平均耗时: {}ms", loop, end, total / loop);
+    }
+#endif
 }

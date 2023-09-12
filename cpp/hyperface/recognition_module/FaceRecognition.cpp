@@ -83,7 +83,7 @@ int32_t FaceRecognition::RegisterFaceFeature(const std::vector<float>& feature, 
     return result;
 }
 
-int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold) {
+int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold, bool mostSimilar) {
     if (queryFeature.size() != NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_FEAT_SIZE_ERR; // 查询特征大小与预期不符
     }
@@ -117,7 +117,9 @@ int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeatur
             tag = tempResult.tag;
             if (maxScore >= threshold) {
                 found = true;
-                break; // 当分数大于等于阈值时，停止搜索下一个 FeatureBlock
+                if (!mostSimilar) {
+                    break; // 当分数大于等于阈值时，停止搜索下一个 FeatureBlock
+                }
             }
         }
     }
@@ -127,6 +129,10 @@ int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeatur
         searchResult.index = maxIndex;
         searchResult.tag = tag;
         return 0; // 返回成功
+    } else {
+        searchResult.score = -1.0f;
+        searchResult.index = -1;
+        searchResult.tag = "None";
     }
 
     return HSUCCEED; // 没有找到匹配的特征 但是不算错误
@@ -187,5 +193,8 @@ int32_t FaceRecognition::UpdateFaceFeature(const vector<float> &feature, int fea
     return result;
 }
 
+void FaceRecognition::PrintFeatureMatrixInfo() {
+    m_feature_matrix_list_[0]->PrintMatrix();
+}
 
 } // namespace hyper

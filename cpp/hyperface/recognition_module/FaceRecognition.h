@@ -25,7 +25,7 @@ public:
 
     int32_t UpdateFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag);
 
-    int32_t SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold = 0.5f);
+    int32_t SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold = 0.5f, bool mostSimilar=true);
 
     int32_t DeleteFaceFeature(int featureIndex);
 
@@ -33,7 +33,7 @@ public:
 
     int32_t GetFaceFeatureCount();
 
-
+    void PrintFeatureMatrixInfo();
 
 private:
     int32_t InitExtractInteraction(Model *model);
