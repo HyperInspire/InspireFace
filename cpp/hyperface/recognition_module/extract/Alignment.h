@@ -210,10 +210,35 @@ inline cv::Mat HYPER_API getTransformMatrix256specific(PointsList2f &pts) {
     cv::Mat input_mat(5, 2, CV_32F, pts.data());
     cv::Mat src(5, 2, CV_32F);
     src.data = (uchar *) dst_pts.data;
-//    std::cout << src << std::endl;
-//    std::cout << input_mat << std::endl;
     cv::Mat M_temp = similarTransform(input_mat, src);
-//    std::cout << M_temp << std::endl;
+    cv::Mat M = M_temp.rowRange(0, 2);
+
+    return M;
+}
+
+inline cv::Mat HYPER_API getTransformMatrix256s27(PointsList2f &pts) {
+    int input_size = 112;
+    int new_size = 230;
+    cv::Mat dst_pts = (cv::Mat_<float>(5,2) << 38.2946, 51.6963,
+            73.5318, 51.5014,
+            56.0252, 71.7366,
+            41.5493, 92.3655,
+            70.7299, 92.2041);
+
+    for (int i = 0; i < dst_pts.rows; i++) {
+        dst_pts.at<float>(i, 0) += ((new_size - 112) / 2);
+        dst_pts.at<float>(i, 1) += 8;
+    }
+
+    float scale = input_size / static_cast<float>(new_size);
+    for (int i = 0; i < dst_pts.rows; i++) {
+        dst_pts.at<float>(i, 0) *= scale;
+        dst_pts.at<float>(i, 1) *= scale;
+    }
+    cv::Mat input_mat(5, 2, CV_32F, pts.data());
+    cv::Mat src(5, 2, CV_32F);
+    src.data = (uchar *) dst_pts.data;
+    cv::Mat M_temp = similarTransform(input_mat, src);
     cv::Mat M = M_temp.rowRange(0, 2);
 
     return M;

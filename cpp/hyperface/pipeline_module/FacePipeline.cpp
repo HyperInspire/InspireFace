@@ -43,7 +43,7 @@ FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enable
 
     // 初始化RGB活体检测模型（假设Index为0）
     if (m_enable_liveness_) {
-        auto ret = InitRBGAntiSpoofing(loader.ReadModel(0));
+        auto ret = InitRBGAntiSpoofing(loader.ReadModel(ModelIndex::_06_msafa27));
         if (ret != 0) {
             LOGE("InitRBGAntiSpoofing error.");
         }
@@ -80,6 +80,16 @@ int32_t FacePipeline::Process(CameraStream &image, FaceObject &face) {
         }
     }
 
+    if (m_rgb_anti_spoofing_ != nullptr) {
+        auto trans27 = getTransformMatrix256s27(lmk_5);
+        trans27.convertTo(trans27, CV_64F);
+        auto align112x27 = image.GetAffineRGBImage(trans27, 112, 112);
+        auto score = (*m_rgb_anti_spoofing_)(align112x27);
+        LOGD("score: %f", score);
+        cv::imshow("w", align112x27);
+        cv::waitKey(0);
+    }
+
     return 0;
 }
 
@@ -108,6 +118,16 @@ int32_t FacePipeline::InitMaskPredict(Model *model) {
 }
 
 int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
+    Parameter param;
+    param.set<int>("model_index", ModelIndex::_06_msafa27);
+    param.set<string>("input_layer", "data");
+    param.set<vector<string>>("outputs_layers", {"softmax", });
+    param.set<vector<int>>("input_size", {112, 112});
+    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<bool>("swap_color", true);        // RGB mode
+    m_rgb_anti_spoofing_ = make_shared<RBGAntiSpoofing>();
+    m_rgb_anti_spoofing_->LoadParam(param, model);
     return 0;
 }
 
