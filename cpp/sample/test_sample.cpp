@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
         LOGE("初始化错误");
         return -1;
     }
-    auto image = cv::imread("resource/images/rgb_fake.jpg");
+    auto image = cv::imread("/Users/tunm/Downloads/fake.jpg");
     CameraStream stream;
     stream.SetDataFormat(BGR);
     stream.SetRotationMode(ROTATION_0);

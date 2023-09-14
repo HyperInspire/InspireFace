@@ -85,9 +85,11 @@ int32_t FacePipeline::Process(CameraStream &image, FaceObject &face) {
         trans27.convertTo(trans27, CV_64F);
         auto align112x27 = image.GetAffineRGBImage(trans27, 112, 112);
         auto score = (*m_rgb_anti_spoofing_)(align112x27);
-        LOGD("score: %f", score);
-        cv::imshow("w", align112x27);
-        cv::waitKey(0);
+        if (score > 0.88) {
+            face.faceProcess.rgbLivenessInfo = RGBLivenessInfo::LIVENESS_REAL;
+        } else {
+            face.faceProcess.rgbLivenessInfo = RGBLivenessInfo::LIVENESS_FAKE;
+        }
     }
 
     return 0;
