@@ -9,14 +9,21 @@
 namespace hyper {
 
 typedef enum MaskInfo {
-    UNKNOWN = -1,
+    UNKNOWN_MASK = -1,
     UNMASKED = 0,
     MASKED = 1,
 } MaskInfo;
 
+typedef enum RGBLivenessInfo {
+    UNKNOWN_RGB_LIVENESS = -1,
+    LIVENESS_FAKE = 0,
+    LIVENESS_REAL = 1,
+} RGBLivenessInfo;
+
 class HYPER_API FaceProcess {
 public:
-    MaskInfo maskInfo = UNKNOWN;
+    MaskInfo maskInfo = UNKNOWN_MASK;
+    RGBLivenessInfo rgbLivenessInfo = UNKNOWN_RGB_LIVENESS;
 
 };
 
