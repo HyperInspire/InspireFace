@@ -11,12 +11,13 @@
 namespace hyper {
 
 FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enableMaskDetect, bool enableAge,
-                           bool enableGender, bool enableInteractionLiveness)
+                           bool enableGender, bool enableInteractionLiveness, bool enable_face_quality)
         : m_enable_liveness_(enableLiveness),
           m_enable_mask_detect_(enableMaskDetect),
           m_enable_age_(enableAge),
           m_enable_gender_(enableGender),
-          m_enable_interaction_liveness_(enableInteractionLiveness){
+          m_enable_interaction_liveness_(enableInteractionLiveness),
+          m_enable_face_quality_(enable_face_quality) {
 
     if (m_enable_age_) {
         auto ret = InitAgePredict(loader.ReadModel(0));
@@ -56,6 +57,16 @@ FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enable
             LOGE("InitLivenessInteraction error.");
         }
     }
+
+    // 初始化人脸质量检测的模型（假设Index为0）
+    if (m_enable_face_quality_) {
+        auto ret = InitFaceQuality(loader.ReadModel(0));
+        if (ret != 0) {
+            LOGE("InitFaceQuality error.");
+        }
+    }
+
+
 
 }
 
@@ -102,6 +113,10 @@ int32_t FacePipeline::InitAgePredict(Model *model) {
 }
 
 int32_t FacePipeline::InitGenderPredict(Model *model) {
+    return 0;
+}
+
+int32_t FacePipeline::InitFaceQuality(Model *model) {
     return 0;
 }
 
