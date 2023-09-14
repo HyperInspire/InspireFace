@@ -10,12 +10,13 @@
 #include "attribute/all.h"
 #include "liveness/all.h"
 #include "middleware/model_loader/ModelLoader.h"
+#include "quality/FaceQuality.h"
 
 namespace hyper {
 class FacePipeline {
 public:
     explicit FacePipeline(ModelLoader &loader, bool enableLiveness, bool enableMaskDetect, bool enableAge,
-                          bool enableGender, bool enableInteractionLiveness);
+                          bool enableGender, bool enableInteractionLiveness, bool enable_face_quality);
 
     int32_t Process(CameraStream &image, FaceObject &face);
 
@@ -31,6 +32,8 @@ private:
 
     int32_t InitLivenessInteraction(Model *model);
 
+    int32_t InitFaceQuality(Model *model);
+
 private:
 
     const bool m_enable_liveness_ = false;                 ///< RGB活体检测功能
@@ -38,6 +41,7 @@ private:
     const bool m_enable_age_ = false;                      ///< 年龄预测功能
     const bool m_enable_gender_ = false;                   ///< 性别预测功能
     const bool m_enable_interaction_liveness_ = false;     ///< 配合活体检测功能
+    const bool m_enable_face_quality_ = false;             ///< 人脸质量检测功能
 
     shared_ptr<AgePredict> m_age_predict_;
 
@@ -48,6 +52,8 @@ private:
     shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_;
 
     shared_ptr<LivenessInteraction> m_liveness_interaction_spoofing_;
+
+    shared_ptr<FaceQuality> m_face_quality_;
 
 };
 
