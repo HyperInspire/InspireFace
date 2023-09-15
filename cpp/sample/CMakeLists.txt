@@ -11,7 +11,16 @@ include_directories(${SRC_DIR})
 #include_directories("/usr/local/include/eigen3")
 
 # =======================HyperFace测试===========================
-# 主体测试
+# 跟踪测试
+add_executable(TrackerSample ${CMAKE_CURRENT_SOURCE_DIR}/tracker_sample.cpp)
+target_link_libraries(TrackerSample HyperFace)
+
+set_target_properties(TrackerSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+
+# Context测试
 add_executable(ContextSample ${CMAKE_CURRENT_SOURCE_DIR}/context_sample.cpp)
 target_link_libraries(ContextSample HyperFace)
 
@@ -20,7 +29,7 @@ set_target_properties(ContextSample PROPERTIES
 )
 
 
-# 主体测试
+# 测试
 add_executable(TestSample ${CMAKE_CURRENT_SOURCE_DIR}/test_sample.cpp)
 target_link_libraries(TestSample HyperFace)
 

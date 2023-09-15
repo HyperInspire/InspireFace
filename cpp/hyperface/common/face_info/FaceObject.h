@@ -9,6 +9,7 @@
 #include "utils.h"
 #include "DataType.h"
 #include "FaceProcess.h"
+#include "pipeline_module/quality/FacePoseQuality.h"
 
 namespace hyper {
 
@@ -291,6 +292,7 @@ public:
     bool is_standard_;
 
     FaceProcess faceProcess;
+    FacePoseQualityResult facePoseQuality;
 
 private:
     TRACK_STATE tracking_state_;

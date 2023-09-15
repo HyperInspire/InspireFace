@@ -5,6 +5,7 @@
 #include <iostream>
 #include "FaceContext.h"
 #include "opencv2/opencv.hpp"
+#include "utils/test_helper.h"
 
 using namespace hyper;
 
@@ -12,12 +13,16 @@ int main(int argc, char** argv) {
     FaceContext ctx;
     CustomPipelineParameter param;
     param.enable_liveness = true;
+    param.enable_face_quality = true;
     int32_t ret = ctx.Configuration("resource/model_zip/T1", DetectMode::DETECT_MODE_IMAGE, 1, param);
     if (ret != 0) {
         LOGE("初始化错误");
         return -1;
     }
-    auto image = cv::imread("/Users/tunm/Downloads/fake.jpg");
+    auto image = cv::imread("resource/images/rgb_fake.jpg");
+    cv::Mat rot90;
+    TestUtils::rotate(image, rot90, ROTATION_0);
+
     CameraStream stream;
     stream.SetDataFormat(BGR);
     stream.SetRotationMode(ROTATION_0);
@@ -34,6 +39,7 @@ int main(int argc, char** argv) {
             LOGD("OK");
         }
         ctx.FacePipelineModule()->Process(stream, face);
+        ctx.FacePipelineModule()->QualityAndPoseDetect(stream, face);
     }
 
     return 0;

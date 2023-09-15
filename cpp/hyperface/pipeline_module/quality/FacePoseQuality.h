@@ -21,6 +21,8 @@ struct FacePoseQualityResult {
 class HYPER_API FacePoseQuality : public AnyNet {
 public:
 
+    FacePoseQuality();
+
     FacePoseQualityResult operator()(const Matrix& bgr_affine);
 
     static cv::Mat ComputeCropMatrix(const cv::Rect2f &rect);

@@ -10,7 +10,7 @@
 #include "attribute/all.h"
 #include "liveness/all.h"
 #include "middleware/model_loader/ModelLoader.h"
-#include "quality/FaceQuality.h"
+#include "quality/FacePoseQuality.h"
 
 namespace hyper {
 class FacePipeline {
@@ -19,6 +19,8 @@ public:
                           bool enableGender, bool enableInteractionLiveness, bool enable_face_quality);
 
     int32_t Process(CameraStream &image, FaceObject &face);
+
+    int32_t QualityAndPoseDetect(CameraStream &image, FaceObject &face);
 
 private:
 
@@ -53,7 +55,7 @@ private:
 
     shared_ptr<LivenessInteraction> m_liveness_interaction_spoofing_;
 
-    shared_ptr<FaceQuality> m_face_quality_;
+    shared_ptr<FacePoseQuality> m_face_quality_;
 
 };
 

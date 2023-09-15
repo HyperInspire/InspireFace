@@ -7,6 +7,7 @@
 #include "log.h"
 #include "track_module/landmark/FaceLandmark.h"
 #include "recognition_module/extract/Alignment.h"
+#include "herror.h"
 
 namespace hyper {
 
@@ -60,14 +61,31 @@ FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enable
 
     // 初始化人脸质量检测的模型（假设Index为0）
     if (m_enable_face_quality_) {
-        auto ret = InitFaceQuality(loader.ReadModel(0));
+        auto ret = InitFaceQuality(loader.ReadModel(ModelIndex::_07_pose_q_fp16));
         if (ret != 0) {
             LOGE("InitFaceQuality error.");
         }
     }
 
+}
 
 
+int32_t FacePipeline::QualityAndPoseDetect(CameraStream &image, FaceObject &face) {
+    if (m_face_quality_ == nullptr) {
+        return HERR_CTX_FUNCTION_UNUSABLE;
+    }
+    auto rect = face.bbox_;
+    auto affine = FacePoseQuality::ComputeCropMatrix(rect);
+    affine.convertTo(affine, CV_64F);
+    auto crop = image.GetAffineRGBImage(affine, FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT);
+//    cv::imshow("crop", crop);
+//    cv::waitKey(0);
+
+    auto res = (*m_face_quality_)(crop);
+    face.facePoseQuality = res;
+
+
+    return HSUCCEED;
 }
 
 
@@ -103,7 +121,7 @@ int32_t FacePipeline::Process(CameraStream &image, FaceObject &face) {
         }
     }
 
-    return 0;
+    return HSUCCEED;
 }
 
 
@@ -117,6 +135,16 @@ int32_t FacePipeline::InitGenderPredict(Model *model) {
 }
 
 int32_t FacePipeline::InitFaceQuality(Model *model) {
+    Parameter param;
+    param.set<int>("model_index", ModelIndex::_05_mask);
+    param.set<string>("input_layer", "data");
+    param.set<vector<string>>("outputs_layers", {"fc1", });
+    param.set<vector<int>>("input_size", {96, 96});
+    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<bool>("swap_color", true);        // RGB mode
+    m_face_quality_ = make_shared<FacePoseQuality>();
+    m_face_quality_->LoadParam(param, model);
     return 0;
 }
 
@@ -151,7 +179,6 @@ int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
 int32_t FacePipeline::InitLivenessInteraction(Model *model) {
     return 0;
 }
-
 
 
 }
