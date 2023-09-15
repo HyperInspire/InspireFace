@@ -34,7 +34,8 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
             param.enable_mask_detect,
             param.enable_age,
             param.enable_gender,
-            param.enable_interaction_liveness
+            param.enable_interaction_liveness,
+            param.enable_face_quality
     );
 
     return HSUCCEED;

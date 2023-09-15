@@ -10,6 +10,7 @@ const static int _03_extract = 3;
 const static int _04_refine_net = 4;
 const static int _05_mask = 5;
 const static int _06_msafa27 = 6;
+const static int _07_pose_q_fp16 = 7;
 
 }
 #endif //MODEL_LOADER_CONST_H_
