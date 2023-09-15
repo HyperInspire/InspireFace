@@ -8,8 +8,9 @@
 namespace hyper {
 
 
-std::vector<float> FacePoseQuality::operator()(const Matrix &bgr_affine) {
-    return std::vector<float>();
+FacePoseQualityResult FacePoseQuality::operator()(const Matrix &bgr_affine) {
+    FacePoseQualityResult res;
+    return res;
 }
 
 cv::Mat FacePoseQuality::ComputeCropMatrix(const cv::Rect2f &rect) {

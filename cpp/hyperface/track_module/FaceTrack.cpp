@@ -73,9 +73,11 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     double time1 = (double) cv::getTickCount();
     crop = image.GetAffineRGBImage(affine, 112, 112);
 
-    // pose
-    auto pose = (*m_pose_net_)(crop);
-    face.setPoseEulerAngle(pose);
+    if (m_pose_net_ != nullptr) {
+        // pose
+        auto pose = (*m_pose_net_)(crop);
+        face.setPoseEulerAngle(pose);
+    }
 
     cv::Mat affine_inv;
     cv::invertAffineTransform(affine, affine_inv);
@@ -259,7 +261,7 @@ int FaceTrack::Configuration(ModelLoader &loader) {
     InitDetectModel(loader.ReadModel(ModelIndex::_00_fdet_160));
     InitLandmarkModel(loader.ReadModel(ModelIndex::_01_lmk));
     InitRNetModel(loader.ReadModel(ModelIndex::_04_refine_net));
-    InitFacePoseModel(loader.ReadModel(ModelIndex::_02_pose_fp16));
+//    InitFacePoseModel(loader.ReadModel(ModelIndex::_02_pose_fp16));
     return 0;
 }
 

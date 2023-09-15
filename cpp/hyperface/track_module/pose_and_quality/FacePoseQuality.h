@@ -14,14 +14,14 @@ struct FacePoseQualityResult {
     float pitch;
     float yaw;
     float roll;
-    Point2f lmk[5];
-    float lmk_quality[5];
+    std::vector<Point2f> lmk;
+    std::vector<float> lmk_quality;
 };
 
 class HYPER_API FacePoseQuality : public AnyNet {
 public:
 
-    std::vector<float> operator()(const Matrix& bgr_affine);
+    FacePoseQualityResult operator()(const Matrix& bgr_affine);
 
     static cv::Mat ComputeCropMatrix(const cv::Rect2f &rect);
 
