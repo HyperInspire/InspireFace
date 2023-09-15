@@ -216,7 +216,7 @@ inline cv::Mat HYPER_API getTransformMatrix256specific(PointsList2f &pts) {
     return M;
 }
 
-inline cv::Mat HYPER_API getTransformMatrix256s27(PointsList2f &pts) {
+inline cv::Mat HYPER_API getTransformMatrixSafas(PointsList2f &pts) {
     int input_size = 112;
     int new_size = 230;
     cv::Mat dst_pts = (cv::Mat_<float>(5,2) << 38.2946, 51.6963,
