@@ -92,7 +92,7 @@ int32_t FacePipeline::Process(CameraStream &image, FaceObject &face) {
     }
 
     if (m_rgb_anti_spoofing_ != nullptr) {
-        auto trans27 = getTransformMatrix256s27(lmk_5);
+        auto trans27 = getTransformMatrixSafas(lmk_5);
         trans27.convertTo(trans27, CV_64F);
         auto align112x27 = image.GetAffineRGBImage(trans27, 112, 112);
         auto score = (*m_rgb_anti_spoofing_)(align112x27);
