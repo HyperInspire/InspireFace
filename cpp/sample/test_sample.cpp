@@ -21,12 +21,12 @@ int main(int argc, char** argv) {
     }
     auto image = cv::imread("resource/images/rgb_fake.jpg");
     cv::Mat rot90;
-    TestUtils::rotate(image, rot90, ROTATION_0);
+    TestUtils::rotate(image, rot90, ROTATION_90);
 
     CameraStream stream;
     stream.SetDataFormat(BGR);
-    stream.SetRotationMode(ROTATION_0);
-    stream.SetDataBuffer(image.data, image.rows, image.cols);
+    stream.SetRotationMode(ROTATION_90);
+    stream.SetDataBuffer(rot90.data, rot90.rows, rot90.cols);
     ctx.FaceDetectAndTrack(stream);
 
     auto &faces = ctx.GetTrackingFaceList();
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
             LOGD("OK");
         }
         ctx.FacePipelineModule()->Process(stream, face);
-        ctx.FacePipelineModule()->QualityAndPoseDetect(stream, face);
+//        ctx.FacePipelineModule()->QualityAndPoseDetect(stream, face);
     }
 
     return 0;

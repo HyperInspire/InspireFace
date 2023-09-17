@@ -73,10 +73,19 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     double time1 = (double) cv::getTickCount();
     crop = image.GetAffineRGBImage(affine, 112, 112);
 
-    if (m_pose_net_ != nullptr) {
-        // pose
-        auto pose = (*m_pose_net_)(crop);
-        face.setPoseEulerAngle(pose);
+    if (m_face_quality_ != nullptr) {
+        // pose and quality
+        auto rect = face.bbox_;
+        auto affine_scale = FacePoseQuality::ComputeCropMatrix(rect);
+        affine.convertTo(affine, CV_64F);
+        auto pre_crop = image.GetAffineRGBImage(affine_scale, FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT);
+        if (image.getRotationMode() != ROTATION_0) {
+            cv::Point2f center(crop.cols / 2.0, crop.rows / 2.0);
+            cv::Mat rotationMatrix = cv::getRotationMatrix2D(center, image.getRotationMode() * 90, 1.0);
+            cv::warpAffine(crop, crop, rotationMatrix, cv::Size(FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT));
+        }
+        auto res = (*m_face_quality_)(pre_crop);
+        face.high_result = res;
     }
 
     cv::Mat affine_inv;
@@ -261,7 +270,7 @@ int FaceTrack::Configuration(ModelLoader &loader) {
     InitDetectModel(loader.ReadModel(ModelIndex::_00_fdet_160));
     InitLandmarkModel(loader.ReadModel(ModelIndex::_01_lmk));
     InitRNetModel(loader.ReadModel(ModelIndex::_04_refine_net));
-//    InitFacePoseModel(loader.ReadModel(ModelIndex::_02_pose_fp16));
+    InitFacePoseModel(loader.ReadModel(ModelIndex::_07_pose_q_fp16));
     return 0;
 }
 
@@ -313,17 +322,15 @@ int FaceTrack::InitRNetModel(Model *model) {
 
 int FaceTrack::InitFacePoseModel(Model *model) {
     Parameter param;
-    param.set<int>("model_index", ModelIndex::_02_pose_fp16);
+    param.set<int>("model_index", ModelIndex::_05_mask);
     param.set<string>("input_layer", "data");
-    param.set<vector<string>>("outputs_layers", {"ip3_pose", });
-    param.set<vector<int>>("input_size", {112, 112});
+    param.set<vector<string>>("outputs_layers", {"fc1", });
+    param.set<vector<int>>("input_size", {96, 96});
     param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
-    param.set<int>("input_channel", 1);        // Input Gray
-    param.set<int>("input_image_channel", 1);        // BGR 2 Gray
-
-    m_pose_net_ = std::make_shared<FacePose>();
-    m_pose_net_->LoadParam(param, model);
+    param.set<bool>("swap_color", true);        // RGB mode
+    m_face_quality_ = make_shared<FacePoseQuality>();
+    m_face_quality_->LoadParam(param, model);
 
     return 0;
 }

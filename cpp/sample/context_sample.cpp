@@ -49,7 +49,6 @@ int main() {
 
         auto &faces = ctx.GetTrackingFaceList();
         for (auto &face: faces) {
-            ctx.FacePipelineModule()->QualityAndPoseDetect(stream, face);
             auto rect = face.GetRect();
             int track_id = face.GetTrackingId();
             int track_count = face.GetTrackingCount();
@@ -62,12 +61,13 @@ int main() {
             // 设置文本显示位置，通常在框的上方
             cv::Point text_position(rect.x, rect.y - 10);
 
-            const auto pose_and_quality = face.facePoseQuality;
+            const auto& pose_and_quality = face.high_result;
             float mean_quality = 0.0f;
             for (int i = 0; i < pose_and_quality.lmk_quality.size(); ++i) {
                 mean_quality += pose_and_quality.lmk_quality[i];
             }
             mean_quality /= pose_and_quality.lmk_quality.size();
+            mean_quality = 1 - mean_quality;
             std::string pose_text = "pitch: " + std::to_string(pose_and_quality.pitch) + ",Yaw: " + std::to_string(pose_and_quality.yaw) + ",roll:" +std::to_string(pose_and_quality.roll) + ", q: " +
                     to_string(mean_quality);
 

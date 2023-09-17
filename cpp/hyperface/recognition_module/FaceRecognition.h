@@ -6,6 +6,7 @@
 #define HYPERFACEREPO_FACERECOGNITION_H
 #include "extract/Extract.h"
 #include "common/face_info/FaceObject.h"
+#include "common/face_data/DataTools.h"
 #include "middleware/camera_stream/camera_stream.h"
 #include "features_block/FeatureBlock.h"
 
@@ -20,6 +21,8 @@ public:
     static int32_t CosineSimilarity(const std::vector<float>& v1, const std::vector<float>& v2, float &res);
 
     int32_t FaceExtract(CameraStream &image, const FaceObject& face, Embedded &embedded);
+
+    int32_t FaceExtract(CameraStream &image, const HyperFaceData& face, Embedded &embedded);
 
     int32_t RegisterFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag);
 

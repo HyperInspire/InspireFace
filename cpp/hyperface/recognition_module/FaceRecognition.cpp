@@ -49,6 +49,24 @@ int32_t FaceRecognition::CosineSimilarity(const std::vector<float>& v1, const st
     return HSUCCEED;
 }
 
+
+int32_t FaceRecognition::FaceExtract(CameraStream &image, const HyperFaceData &face, Embedded &embedded) {
+    if (m_extract_ == nullptr) {
+        return HERR_CTX_REC_EXTRACT_FAILURE;
+    }
+
+    std::vector<cv::Point2f> pointsFive;
+    for (const auto &p: face.keyPoints) {
+        pointsFive.push_back(HPointToPoint2f(p));
+    }
+    auto trans = getTransformMatrix112(pointsFive);
+    trans.convertTo(trans, CV_64F);
+    auto crop = image.GetAffineRGBImage(trans, 112, 112);
+    embedded = (*m_extract_)(crop);
+
+    return 0;
+}
+
 int32_t FaceRecognition::FaceExtract(CameraStream &image, const FaceObject &face, Embedded &embedded) {
     if (m_extract_ == nullptr) {
         return HERR_CTX_REC_EXTRACT_FAILURE;
@@ -60,6 +78,7 @@ int32_t FaceRecognition::FaceExtract(CameraStream &image, const FaceObject &face
                                  lmk[FaceLandmark::NOSE_CORNER],
                                  lmk[FaceLandmark::MOUTH_LEFT_CORNER],
                                  lmk[FaceLandmark::MOUTH_RIGHT_CORNER]};
+
     auto trans = getTransformMatrix112(lmk_5);
     trans.convertTo(trans, CV_64F);
     auto crop = image.GetAffineRGBImage(trans, 112, 112);

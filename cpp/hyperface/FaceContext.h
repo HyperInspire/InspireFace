@@ -49,6 +49,8 @@ public:
     // 人脸属性识别相关
     const shared_ptr<FacePipeline>& FacePipelineModule();
 
+//    int32_t FaceProcess();
+
 private:
 
     CustomPipelineParameter m_parameter_;

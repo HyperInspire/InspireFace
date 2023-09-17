@@ -13,8 +13,6 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
 
-
-
     SECTION("FeatureCURD") {
         DRAW_SPLIT_LINE
         // 初始化
