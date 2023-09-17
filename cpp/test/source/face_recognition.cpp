@@ -5,6 +5,7 @@
 #include "common/test_settings.h"
 #include "hyperface/FaceContext.h"
 #include "herror.h"
+#include "common/face_data/DataTools.h"
 
 using namespace hyper;
 
@@ -69,7 +70,8 @@ TEST_CASE("test_FaceRecognition", "[face_rec]") {
             const auto &faces = ctx.GetTrackingFaceList();
             REQUIRE(faces.size() > 0);
             Embedded feature;
-            ret = ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
+            HyperFaceData data = FaceObjectToHyperFaceData(faces[0]);
+            ret = ctx.FaceRecognitionModule()->FaceExtract(stream, data, feature);
             REQUIRE(ret == HSUCCEED);
             vectors.push_back(feature);
         }

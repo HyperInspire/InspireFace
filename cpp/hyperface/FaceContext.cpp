@@ -34,8 +34,7 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
             param.enable_mask_detect,
             param.enable_age,
             param.enable_gender,
-            param.enable_interaction_liveness,
-            param.enable_face_quality
+            param.enable_interaction_liveness
     );
 
     return HSUCCEED;
@@ -46,7 +45,6 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
         return HERR_CTX_TRACKER_FAILURE;
     }
     m_face_track_->UpdateStream(image, m_always_detect_);
-
 
     return HSUCCEED;
 }
