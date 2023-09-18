@@ -61,6 +61,53 @@ FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enable
 }
 
 
+int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, FaceProcessFunction proc) {
+    switch (proc) {
+        case PROCESS_MASK: {
+            if (m_mask_predict_ == nullptr) {
+                return HERR_CTX_PIPELINE_FAILURE;       // 未初始化
+            }
+            std::vector<cv::Point2f> pointsFive;
+            for (const auto &p: face.keyPoints) {
+                pointsFive.push_back(HPointToPoint2f(p));
+            }
+            auto trans = getTransformMatrix112(pointsFive);
+            trans.convertTo(trans, CV_64F);
+            auto crop = image.GetAffineRGBImage(trans, 112, 112);
+            auto mask_score = (*m_mask_predict_)(crop);
+            faceMaskCache = mask_score;
+            break;
+        }
+        case PROCESS_RGB_LIVENESS: {
+            if (m_rgb_anti_spoofing_ == nullptr) {
+                return HERR_CTX_PIPELINE_FAILURE;       // 未初始化
+            }
+            std::vector<cv::Point2f> pointsFive;
+            for (const auto &p: face.keyPoints) {
+                pointsFive.push_back(HPointToPoint2f(p));
+            }
+            auto trans27 = getTransformMatrixSafas(pointsFive);
+            trans27.convertTo(trans27, CV_64F);
+            auto align112x27 = image.GetAffineRGBImage(trans27, 112, 112);
+            auto score = (*m_rgb_anti_spoofing_)(align112x27);
+            faceLivenessCache = score;
+            break;
+        }
+        case PROCESS_AGE: {
+            if (m_age_predict_ == nullptr) {
+                return HERR_CTX_PIPELINE_FAILURE;       // 未初始化
+            }
+            break;
+        }
+        case PROCESS_GENDER: {
+            if (m_gender_predict_ == nullptr) {
+                return HERR_CTX_PIPELINE_FAILURE;       // 未初始化
+            }
+            break;
+        }
+    }
+    return HSUCCEED;
+}
 
 int32_t FacePipeline::Process(CameraStream &image, FaceObject &face) {
     // 跟踪状态下计次达到要求 或 处于检测状态 执行pipeline
@@ -111,7 +158,7 @@ int32_t FacePipeline::InitMaskPredict(Model *model) {
     Parameter param;
     param.set<int>("model_index", ModelIndex::_05_mask);
     param.set<string>("input_layer", "input_1");
-    param.set<vector<string>>("outputs_layers", {"activation_1/Softmax", });
+    param.set<vector<string>>("outputs_layers", {"activation_1/Softmax",});
     param.set<vector<int>>("input_size", {96, 96});
     param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<vector<float>>("norm", {0.003921568627f, 0.003921568627f, 0.003921568627f});
@@ -125,7 +172,7 @@ int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
     Parameter param;
     param.set<int>("model_index", ModelIndex::_06_msafa27);
     param.set<string>("input_layer", "data");
-    param.set<vector<string>>("outputs_layers", {"softmax", });
+    param.set<vector<string>>("outputs_layers", {"softmax",});
     param.set<vector<int>>("input_size", {112, 112});
     param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});

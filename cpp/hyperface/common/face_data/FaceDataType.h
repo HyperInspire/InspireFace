@@ -10,6 +10,13 @@
 
 namespace hyper {
 
+
+typedef struct Face3DAngle {
+    float roll;
+    float yaw;
+    float pitch;
+} Face3DAngle;
+
 typedef struct FaceRect {
     int x;
     int y;
@@ -39,7 +46,9 @@ typedef struct HyperFaceData {
     FaceRect rect;
     TransMatrix trans;
     HPoint keyPoints[5];
+    Face3DAngle face3DAngle;
 } HyperFaceData;
+
 
 }
 
