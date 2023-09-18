@@ -28,5 +28,7 @@
 #define HERR_CTX_REC_BLOCK_DEL_FAILURE       (HERR_CTX_BASE+25)              // 删除失败
 #define HERR_CTX_REC_BLOCK_UPDATE_FAILURE    (HERR_CTX_BASE+26)              // 删除失败
 
+#define HERR_CTX_FACE_DATA_ERROR             (HERR_CTX_BASE+30)               // 人脸数据解析错误
+
 
 #endif //HYPERFACEREPO_HERROR_H

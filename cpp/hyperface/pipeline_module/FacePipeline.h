@@ -10,14 +10,27 @@
 #include "attribute/all.h"
 #include "liveness/all.h"
 #include "middleware/model_loader/ModelLoader.h"
+#include "common/face_data/DataTools.h"
 
 namespace hyper {
+
+typedef enum FaceProcessFunction {
+    PROCESS_MASK = 0,               // 口罩检测
+    PROCESS_RGB_LIVENESS,           // RGB活体检测
+    PROCESS_AGE,                    // 年龄检测
+    PROCESS_GENDER,                 // 性别检测
+} FaceProcessFunction;
+
 class FacePipeline {
 public:
     explicit FacePipeline(ModelLoader &loader, bool enableLiveness, bool enableMaskDetect, bool enableAge,
                           bool enableGender, bool enableInteractionLiveness);
 
     int32_t Process(CameraStream &image, FaceObject &face);
+
+    int32_t Process(CameraStream &image, const HyperFaceData &face, FaceProcessFunction proc);
+
+
 
 private:
 
@@ -48,6 +61,12 @@ private:
     shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_;
 
     shared_ptr<LivenessInteraction> m_liveness_interaction_spoofing_;
+
+public:
+
+    float faceMaskCache;
+
+    float faceLivenessCache;
 
 
 };

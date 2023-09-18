@@ -29,18 +29,25 @@ int main(int argc, char** argv) {
     stream.SetDataBuffer(rot90.data, rot90.rows, rot90.cols);
     ctx.FaceDetectAndTrack(stream);
 
-    auto &faces = ctx.GetTrackingFaceList();
-    for (int i = 0; i < faces.size(); ++i) {
-        auto &face = faces[i];
-        for (int j = 0; j < 3; ++j) {
-            LOGD("%f", face.getPoseEulerAngle()[j]);
+    std::vector<HyperFaceData> faces;
+    for (int i = 0; i < ctx.GetNumberOfFacesCurrentlyDetected(); ++i) {
+        ByteArray &byteArray = ctx.detectCache[i];
+        HyperFaceData face = {0};
+        ret = DeserializeHyperFaceData(byteArray, face);
+        if (ret != HSUCCEED) {
+            return -1;
         }
-        if (face.isStandard()) {
-            LOGD("OK");
-        }
-        ctx.FacePipelineModule()->Process(stream, face);
-//        ctx.FacePipelineModule()->QualityAndPoseDetect(stream, face);
+        faces.push_back(face);
     }
+
+    ret = ctx.FacesProcess(stream, faces, param);
+    if (ret != HSUCCEED) {
+        return -1;
+    }
+
+    // view
+    int32_t index = 0;
+    LOGD("liveness: %f", ctx.rbgLivenessResultsCache[index]);
 
     return 0;
 }

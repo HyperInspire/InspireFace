@@ -7,6 +7,8 @@
 #include "opencv2/opencv.hpp"
 #include "FaceDataType.h"
 #include "../face_info/FaceObject.h"
+#include "herror.h"
+#include "DataType.h"
 
 namespace hyper {
 
@@ -61,6 +63,10 @@ inline HyperFaceData HYPER_API FaceObjectToHyperFaceData(const FaceObject& obj, 
     data.trackCount = obj.tracking_count_;
     data.trackId = obj.GetTrackingId();
     data.trackState = obj.TrackingState();
+    // Face 3D Angle
+    data.face3DAngle.pitch = obj.high_result.pitch;
+    data.face3DAngle.roll = obj.high_result.roll;
+    data.face3DAngle.yaw = obj.high_result.yaw;
 
     return data;
 }
@@ -85,30 +91,41 @@ inline cv::Point2f HYPER_API HPointToPoint2f(const HPoint& point) {
 }
 
 // 序列化 HyperFaceData 到字节流
-std::vector<char> HYPER_API SerializeHyperFaceData(const hyper::HyperFaceData& data) {
-    std::vector<char> byteArray;
+inline int32_t HYPER_API SerializeHyperFaceData(const HyperFaceData& data, ByteArray& byteArray) {
     byteArray.reserve(sizeof(data));
 
     // 首先将 HyperFaceData 结构体本身序列化
     const char* dataBytes = reinterpret_cast<const char*>(&data);
     byteArray.insert(byteArray.end(), dataBytes, dataBytes + sizeof(data));
 
-    return byteArray;
+    return HSUCCEED;
 }
 
 // 反序列化字节流为 HyperFaceData
-hyper::HyperFaceData HYPER_API DeserializeHyperFaceData(const std::vector<char>& byteArray) {
-    hyper::HyperFaceData data;
-
+inline int32_t HYPER_API DeserializeHyperFaceData(const ByteArray& byteArray, HyperFaceData &data) {
     // 检查字节流大小是否足够
     if (byteArray.size() >= sizeof(data)) {
         // 从字节流中复制数据到 HyperFaceData 结构体
         std::memcpy(&data, byteArray.data(), sizeof(data));
     } else {
-        std::cerr << "字节流大小不足以还原 HyperFaceData" << std::endl;
+        LOGE("字节流大小不足以还原 HyperFaceData");
+        return HERR_CTX_FACE_DATA_ERROR;
     }
 
-    return data;
+    return HSUCCEED;
+}
+
+inline int32_t HYPER_API DeserializeHyperFaceData(const char* byteArray, size_t byteCount, HyperFaceData& data) {
+    // 检查字节流大小是否足够
+    if (byteCount >= sizeof(data)) {
+        // 从字节流中复制数据到 HyperFaceData 结构体
+        std::memcpy(&data, byteArray, sizeof(data));
+    } else {
+        LOGE("字节流大小不足以还原 HyperFaceData");
+        return HERR_CTX_FACE_DATA_ERROR;
+    }
+
+    return HSUCCEED;
 }
 
 }   // namespace hyper

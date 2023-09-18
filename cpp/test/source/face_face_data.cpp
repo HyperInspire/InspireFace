@@ -39,5 +39,17 @@ TEST_CASE("test_FaceData", "[face_data]") {
 
         PrintHyperFaceData(faceData);
 
+        ByteArray byteArray;
+        LOGD("sizeof: %lu", sizeof(byteArray));
+        ret = SerializeHyperFaceData(faceData, byteArray);
+        CHECK(ret == HSUCCEED);
+        LOGD("sizeof: %lu", sizeof(byteArray));
+
+
+        HyperFaceData decode;
+        ret = DeserializeHyperFaceData(byteArray, decode);
+        CHECK(ret == HSUCCEED);
+        PrintHyperFaceData(decode);
+
     }
 }
