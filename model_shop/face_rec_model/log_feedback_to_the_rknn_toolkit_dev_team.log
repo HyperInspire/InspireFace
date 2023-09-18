@@ -1,0 +1,1034 @@
+D Using CPPUTILS: True
+I Start importing caffe...
+I Set caffe proto to caffe
+I Load caffe model /tunm/work/HyperFace/resource/models_raw/_03_mfngg.prototxt
+I Parsing net parameters ... 
+D import clients finished
+I Parsing layer parameters ... 
+D Convert layer data
+D Convert layer conv_1_conv2d
+D Convert layer conv_1_batchnorm
+D Convert layer conv_1_batchnorm_scale
+D Convert layer conv_1_relu
+D Convert layer conv_2_dw_conv2d
+D Convert layer conv_2_dw_batchnorm
+D Convert layer conv_2_dw_batchnorm_scale
+D Convert layer conv_2_dw_relu
+D Convert layer dconv_23_conv_sep_conv2d
+D Convert layer dconv_23_conv_sep_batchnorm
+D Convert layer dconv_23_conv_sep_batchnorm_scale
+D Convert layer dconv_23_conv_sep_relu
+D Convert layer dconv_23_conv_dw_conv2d
+D Convert layer dconv_23_conv_dw_batchnorm
+D Convert layer dconv_23_conv_dw_batchnorm_scale
+D Convert layer dconv_23_conv_dw_relu
+D Convert layer dconv_23_conv_proj_conv2d
+D Convert layer dconv_23_conv_proj_batchnorm
+D Convert layer dconv_23_conv_proj_batchnorm_scale
+D Convert layer res_3_block0_conv_sep_conv2d
+D Convert layer res_3_block0_conv_sep_batchnorm
+D Convert layer res_3_block0_conv_sep_batchnorm_scale
+D Convert layer res_3_block0_conv_sep_relu
+D Convert layer res_3_block0_conv_dw_conv2d
+D Convert layer res_3_block0_conv_dw_batchnorm
+D Convert layer res_3_block0_conv_dw_batchnorm_scale
+D Convert layer res_3_block0_conv_dw_relu
+D Convert layer res_3_block0_conv_proj_conv2d
+D Convert layer res_3_block0_conv_proj_batchnorm
+D Convert layer res_3_block0_conv_proj_batchnorm_scale
+D Convert layer _plus0
+W Rename _plus0 to rknn__plus0
+D Convert layer res_3_block1_conv_sep_conv2d
+D Convert layer res_3_block1_conv_sep_batchnorm
+D Convert layer res_3_block1_conv_sep_batchnorm_scale
+D Convert layer res_3_block1_conv_sep_relu
+D Convert layer res_3_block1_conv_dw_conv2d
+D Convert layer res_3_block1_conv_dw_batchnorm
+D Convert layer res_3_block1_conv_dw_batchnorm_scale
+D Convert layer res_3_block1_conv_dw_relu
+D Convert layer res_3_block1_conv_proj_conv2d
+D Convert layer res_3_block1_conv_proj_batchnorm
+D Convert layer res_3_block1_conv_proj_batchnorm_scale
+D Convert layer _plus1
+W Rename _plus1 to rknn__plus1
+D Convert layer res_3_block2_conv_sep_conv2d
+D Convert layer res_3_block2_conv_sep_batchnorm
+D Convert layer res_3_block2_conv_sep_batchnorm_scale
+D Convert layer res_3_block2_conv_sep_relu
+D Convert layer res_3_block2_conv_dw_conv2d
+D Convert layer res_3_block2_conv_dw_batchnorm
+D Convert layer res_3_block2_conv_dw_batchnorm_scale
+D Convert layer res_3_block2_conv_dw_relu
+D Convert layer res_3_block2_conv_proj_conv2d
+D Convert layer res_3_block2_conv_proj_batchnorm
+D Convert layer res_3_block2_conv_proj_batchnorm_scale
+D Convert layer _plus2
+W Rename _plus2 to rknn__plus2
+D Convert layer res_3_block3_conv_sep_conv2d
+D Convert layer res_3_block3_conv_sep_batchnorm
+D Convert layer res_3_block3_conv_sep_batchnorm_scale
+D Convert layer res_3_block3_conv_sep_relu
+D Convert layer res_3_block3_conv_dw_conv2d
+D Convert layer res_3_block3_conv_dw_batchnorm
+D Convert layer res_3_block3_conv_dw_batchnorm_scale
+D Convert layer res_3_block3_conv_dw_relu
+D Convert layer res_3_block3_conv_proj_conv2d
+D Convert layer res_3_block3_conv_proj_batchnorm
+D Convert layer res_3_block3_conv_proj_batchnorm_scale
+D Convert layer _plus3
+W Rename _plus3 to rknn__plus3
+D Convert layer dconv_34_conv_sep_conv2d
+D Convert layer dconv_34_conv_sep_batchnorm
+D Convert layer dconv_34_conv_sep_batchnorm_scale
+D Convert layer dconv_34_conv_sep_relu
+D Convert layer dconv_34_conv_dw_conv2d
+D Convert layer dconv_34_conv_dw_batchnorm
+D Convert layer dconv_34_conv_dw_batchnorm_scale
+D Convert layer dconv_34_conv_dw_relu
+D Convert layer dconv_34_conv_proj_conv2d
+D Convert layer dconv_34_conv_proj_batchnorm
+D Convert layer dconv_34_conv_proj_batchnorm_scale
+D Convert layer res_4_block0_conv_sep_conv2d
+D Convert layer res_4_block0_conv_sep_batchnorm
+D Convert layer res_4_block0_conv_sep_batchnorm_scale
+D Convert layer res_4_block0_conv_sep_relu
+D Convert layer res_4_block0_conv_dw_conv2d
+D Convert layer res_4_block0_conv_dw_batchnorm
+D Convert layer res_4_block0_conv_dw_batchnorm_scale
+D Convert layer res_4_block0_conv_dw_relu
+D Convert layer res_4_block0_conv_proj_conv2d
+D Convert layer res_4_block0_conv_proj_batchnorm
+D Convert layer res_4_block0_conv_proj_batchnorm_scale
+D Convert layer _plus4
+W Rename _plus4 to rknn__plus4
+D Convert layer res_4_block1_conv_sep_conv2d
+D Convert layer res_4_block1_conv_sep_batchnorm
+D Convert layer res_4_block1_conv_sep_batchnorm_scale
+D Convert layer res_4_block1_conv_sep_relu
+D Convert layer res_4_block1_conv_dw_conv2d
+D Convert layer res_4_block1_conv_dw_batchnorm
+D Convert layer res_4_block1_conv_dw_batchnorm_scale
+D Convert layer res_4_block1_conv_dw_relu
+D Convert layer res_4_block1_conv_proj_conv2d
+D Convert layer res_4_block1_conv_proj_batchnorm
+D Convert layer res_4_block1_conv_proj_batchnorm_scale
+D Convert layer _plus5
+W Rename _plus5 to rknn__plus5
+D Convert layer res_4_block2_conv_sep_conv2d
+D Convert layer res_4_block2_conv_sep_batchnorm
+D Convert layer res_4_block2_conv_sep_batchnorm_scale
+D Convert layer res_4_block2_conv_sep_relu
+D Convert layer res_4_block2_conv_dw_conv2d
+D Convert layer res_4_block2_conv_dw_batchnorm
+D Convert layer res_4_block2_conv_dw_batchnorm_scale
+D Convert layer res_4_block2_conv_dw_relu
+D Convert layer res_4_block2_conv_proj_conv2d
+D Convert layer res_4_block2_conv_proj_batchnorm
+D Convert layer res_4_block2_conv_proj_batchnorm_scale
+D Convert layer _plus6
+W Rename _plus6 to rknn__plus6
+D Convert layer res_4_block3_conv_sep_conv2d
+D Convert layer res_4_block3_conv_sep_batchnorm
+D Convert layer res_4_block3_conv_sep_batchnorm_scale
+D Convert layer res_4_block3_conv_sep_relu
+D Convert layer res_4_block3_conv_dw_conv2d
+D Convert layer res_4_block3_conv_dw_batchnorm
+D Convert layer res_4_block3_conv_dw_batchnorm_scale
+D Convert layer res_4_block3_conv_dw_relu
+D Convert layer res_4_block3_conv_proj_conv2d
+D Convert layer res_4_block3_conv_proj_batchnorm
+D Convert layer res_4_block3_conv_proj_batchnorm_scale
+D Convert layer _plus7
+W Rename _plus7 to rknn__plus7
+D Convert layer res_4_block4_conv_sep_conv2d
+D Convert layer res_4_block4_conv_sep_batchnorm
+D Convert layer res_4_block4_conv_sep_batchnorm_scale
+D Convert layer res_4_block4_conv_sep_relu
+D Convert layer res_4_block4_conv_dw_conv2d
+D Convert layer res_4_block4_conv_dw_batchnorm
+D Convert layer res_4_block4_conv_dw_batchnorm_scale
+D Convert layer res_4_block4_conv_dw_relu
+D Convert layer res_4_block4_conv_proj_conv2d
+D Convert layer res_4_block4_conv_proj_batchnorm
+D Convert layer res_4_block4_conv_proj_batchnorm_scale
+D Convert layer _plus8
+W Rename _plus8 to rknn__plus8
+D Convert layer res_4_block5_conv_sep_conv2d
+D Convert layer res_4_block5_conv_sep_batchnorm
+D Convert layer res_4_block5_conv_sep_batchnorm_scale
+D Convert layer res_4_block5_conv_sep_relu
+D Convert layer res_4_block5_conv_dw_conv2d
+D Convert layer res_4_block5_conv_dw_batchnorm
+D Convert layer res_4_block5_conv_dw_batchnorm_scale
+D Convert layer res_4_block5_conv_dw_relu
+D Convert layer res_4_block5_conv_proj_conv2d
+D Convert layer res_4_block5_conv_proj_batchnorm
+D Convert layer res_4_block5_conv_proj_batchnorm_scale
+D Convert layer _plus9
+W Rename _plus9 to rknn__plus9
+D Convert layer dconv_45_conv_sep_conv2d
+D Convert layer dconv_45_conv_sep_batchnorm
+D Convert layer dconv_45_conv_sep_batchnorm_scale
+D Convert layer dconv_45_conv_sep_relu
+D Convert layer dconv_45_conv_dw_conv2d
+D Convert layer dconv_45_conv_dw_batchnorm
+D Convert layer dconv_45_conv_dw_batchnorm_scale
+D Convert layer dconv_45_conv_dw_relu
+D Convert layer dconv_45_conv_proj_conv2d
+D Convert layer dconv_45_conv_proj_batchnorm
+D Convert layer dconv_45_conv_proj_batchnorm_scale
+D Convert layer res_5_block0_conv_sep_conv2d
+D Convert layer res_5_block0_conv_sep_batchnorm
+D Convert layer res_5_block0_conv_sep_batchnorm_scale
+D Convert layer res_5_block0_conv_sep_relu
+D Convert layer res_5_block0_conv_dw_conv2d
+D Convert layer res_5_block0_conv_dw_batchnorm
+D Convert layer res_5_block0_conv_dw_batchnorm_scale
+D Convert layer res_5_block0_conv_dw_relu
+D Convert layer res_5_block0_conv_proj_conv2d
+D Convert layer res_5_block0_conv_proj_batchnorm
+D Convert layer res_5_block0_conv_proj_batchnorm_scale
+D Convert layer _plus10
+W Rename _plus10 to rknn__plus10
+D Convert layer res_5_block1_conv_sep_conv2d
+D Convert layer res_5_block1_conv_sep_batchnorm
+D Convert layer res_5_block1_conv_sep_batchnorm_scale
+D Convert layer res_5_block1_conv_sep_relu
+D Convert layer res_5_block1_conv_dw_conv2d
+D Convert layer res_5_block1_conv_dw_batchnorm
+D Convert layer res_5_block1_conv_dw_batchnorm_scale
+D Convert layer res_5_block1_conv_dw_relu
+D Convert layer res_5_block1_conv_proj_conv2d
+D Convert layer res_5_block1_conv_proj_batchnorm
+D Convert layer res_5_block1_conv_proj_batchnorm_scale
+D Convert layer _plus11
+W Rename _plus11 to rknn__plus11
+D Convert layer conv_6sep_conv2d
+D Convert layer conv_6sep_batchnorm
+D Convert layer conv_6sep_batchnorm_scale
+D Convert layer conv_6sep_relu
+D Convert layer conv_6dw7_7_conv2d
+D Convert layer conv_6dw7_7_batchnorm
+D Convert layer conv_6dw7_7_batchnorm_scale
+D Convert layer pre_fc1
+D Convert layer fc1
+D Convert layer fc1_scale
+I Parsing connections ... 
+D Connect: data_0,0 to conv_1_conv2d_1,0
+D Connect: conv_1_conv2d_1,0 to conv_1_batchnorm_2,0
+D Connect: conv_1_batchnorm_2,0 to conv_1_batchnorm_scale_3,0
+D Connect: conv_1_batchnorm_scale_3,0 to conv_1_relu_4,0
+D Connect: conv_1_relu_4,0 to conv_2_dw_conv2d_5,0
+D Connect: conv_2_dw_conv2d_5,0 to conv_2_dw_batchnorm_6,0
+D Connect: conv_2_dw_batchnorm_6,0 to conv_2_dw_batchnorm_scale_7,0
+D Connect: conv_2_dw_batchnorm_scale_7,0 to conv_2_dw_relu_8,0
+D Connect: conv_2_dw_relu_8,0 to dconv_23_conv_sep_conv2d_9,0
+D Connect: dconv_23_conv_sep_conv2d_9,0 to dconv_23_conv_sep_batchnorm_10,0
+D Connect: dconv_23_conv_sep_batchnorm_10,0 to dconv_23_conv_sep_batchnorm_scale_11,0
+D Connect: dconv_23_conv_sep_batchnorm_scale_11,0 to dconv_23_conv_sep_relu_12,0
+D Connect: dconv_23_conv_sep_relu_12,0 to dconv_23_conv_dw_conv2d_13,0
+D Connect: dconv_23_conv_dw_conv2d_13,0 to dconv_23_conv_dw_batchnorm_14,0
+D Connect: dconv_23_conv_dw_batchnorm_14,0 to dconv_23_conv_dw_batchnorm_scale_15,0
+D Connect: dconv_23_conv_dw_batchnorm_scale_15,0 to dconv_23_conv_dw_relu_16,0
+D Connect: dconv_23_conv_dw_relu_16,0 to dconv_23_conv_proj_conv2d_17,0
+D Connect: dconv_23_conv_proj_conv2d_17,0 to dconv_23_conv_proj_batchnorm_18,0
+D Connect: dconv_23_conv_proj_batchnorm_18,0 to dconv_23_conv_proj_batchnorm_scale_19,0
+D Connect: dconv_23_conv_proj_batchnorm_scale_19,0 to res_3_block0_conv_sep_conv2d_20,0
+D Connect: dconv_23_conv_proj_batchnorm_scale_19,0 to rknn__plus0_31,1
+D Connect: res_3_block0_conv_sep_conv2d_20,0 to res_3_block0_conv_sep_batchnorm_21,0
+D Connect: res_3_block0_conv_sep_batchnorm_21,0 to res_3_block0_conv_sep_batchnorm_scale_22,0
+D Connect: res_3_block0_conv_sep_batchnorm_scale_22,0 to res_3_block0_conv_sep_relu_23,0
+D Connect: res_3_block0_conv_sep_relu_23,0 to res_3_block0_conv_dw_conv2d_24,0
+D Connect: res_3_block0_conv_dw_conv2d_24,0 to res_3_block0_conv_dw_batchnorm_25,0
+D Connect: res_3_block0_conv_dw_batchnorm_25,0 to res_3_block0_conv_dw_batchnorm_scale_26,0
+D Connect: res_3_block0_conv_dw_batchnorm_scale_26,0 to res_3_block0_conv_dw_relu_27,0
+D Connect: res_3_block0_conv_dw_relu_27,0 to res_3_block0_conv_proj_conv2d_28,0
+D Connect: res_3_block0_conv_proj_conv2d_28,0 to res_3_block0_conv_proj_batchnorm_29,0
+D Connect: res_3_block0_conv_proj_batchnorm_29,0 to res_3_block0_conv_proj_batchnorm_scale_30,0
+D Connect: res_3_block0_conv_proj_batchnorm_scale_30,0 to rknn__plus0_31,0
+D Connect: rknn__plus0_31,0 to res_3_block1_conv_sep_conv2d_32,0
+D Connect: rknn__plus0_31,0 to rknn__plus1_43,1
+D Connect: res_3_block1_conv_sep_conv2d_32,0 to res_3_block1_conv_sep_batchnorm_33,0
+D Connect: res_3_block1_conv_sep_batchnorm_33,0 to res_3_block1_conv_sep_batchnorm_scale_34,0
+D Connect: res_3_block1_conv_sep_batchnorm_scale_34,0 to res_3_block1_conv_sep_relu_35,0
+D Connect: res_3_block1_conv_sep_relu_35,0 to res_3_block1_conv_dw_conv2d_36,0
+D Connect: res_3_block1_conv_dw_conv2d_36,0 to res_3_block1_conv_dw_batchnorm_37,0
+D Connect: res_3_block1_conv_dw_batchnorm_37,0 to res_3_block1_conv_dw_batchnorm_scale_38,0
+D Connect: res_3_block1_conv_dw_batchnorm_scale_38,0 to res_3_block1_conv_dw_relu_39,0
+D Connect: res_3_block1_conv_dw_relu_39,0 to res_3_block1_conv_proj_conv2d_40,0
+D Connect: res_3_block1_conv_proj_conv2d_40,0 to res_3_block1_conv_proj_batchnorm_41,0
+D Connect: res_3_block1_conv_proj_batchnorm_41,0 to res_3_block1_conv_proj_batchnorm_scale_42,0
+D Connect: res_3_block1_conv_proj_batchnorm_scale_42,0 to rknn__plus1_43,0
+D Connect: rknn__plus1_43,0 to res_3_block2_conv_sep_conv2d_44,0
+D Connect: rknn__plus1_43,0 to rknn__plus2_55,1
+D Connect: res_3_block2_conv_sep_conv2d_44,0 to res_3_block2_conv_sep_batchnorm_45,0
+D Connect: res_3_block2_conv_sep_batchnorm_45,0 to res_3_block2_conv_sep_batchnorm_scale_46,0
+D Connect: res_3_block2_conv_sep_batchnorm_scale_46,0 to res_3_block2_conv_sep_relu_47,0
+D Connect: res_3_block2_conv_sep_relu_47,0 to res_3_block2_conv_dw_conv2d_48,0
+D Connect: res_3_block2_conv_dw_conv2d_48,0 to res_3_block2_conv_dw_batchnorm_49,0
+D Connect: res_3_block2_conv_dw_batchnorm_49,0 to res_3_block2_conv_dw_batchnorm_scale_50,0
+D Connect: res_3_block2_conv_dw_batchnorm_scale_50,0 to res_3_block2_conv_dw_relu_51,0
+D Connect: res_3_block2_conv_dw_relu_51,0 to res_3_block2_conv_proj_conv2d_52,0
+D Connect: res_3_block2_conv_proj_conv2d_52,0 to res_3_block2_conv_proj_batchnorm_53,0
+D Connect: res_3_block2_conv_proj_batchnorm_53,0 to res_3_block2_conv_proj_batchnorm_scale_54,0
+D Connect: res_3_block2_conv_proj_batchnorm_scale_54,0 to rknn__plus2_55,0
+D Connect: rknn__plus2_55,0 to res_3_block3_conv_sep_conv2d_56,0
+D Connect: rknn__plus2_55,0 to rknn__plus3_67,1
+D Connect: res_3_block3_conv_sep_conv2d_56,0 to res_3_block3_conv_sep_batchnorm_57,0
+D Connect: res_3_block3_conv_sep_batchnorm_57,0 to res_3_block3_conv_sep_batchnorm_scale_58,0
+D Connect: res_3_block3_conv_sep_batchnorm_scale_58,0 to res_3_block3_conv_sep_relu_59,0
+D Connect: res_3_block3_conv_sep_relu_59,0 to res_3_block3_conv_dw_conv2d_60,0
+D Connect: res_3_block3_conv_dw_conv2d_60,0 to res_3_block3_conv_dw_batchnorm_61,0
+D Connect: res_3_block3_conv_dw_batchnorm_61,0 to res_3_block3_conv_dw_batchnorm_scale_62,0
+D Connect: res_3_block3_conv_dw_batchnorm_scale_62,0 to res_3_block3_conv_dw_relu_63,0
+D Connect: res_3_block3_conv_dw_relu_63,0 to res_3_block3_conv_proj_conv2d_64,0
+D Connect: res_3_block3_conv_proj_conv2d_64,0 to res_3_block3_conv_proj_batchnorm_65,0
+D Connect: res_3_block3_conv_proj_batchnorm_65,0 to res_3_block3_conv_proj_batchnorm_scale_66,0
+D Connect: res_3_block3_conv_proj_batchnorm_scale_66,0 to rknn__plus3_67,0
+D Connect: rknn__plus3_67,0 to dconv_34_conv_sep_conv2d_68,0
+D Connect: dconv_34_conv_sep_conv2d_68,0 to dconv_34_conv_sep_batchnorm_69,0
+D Connect: dconv_34_conv_sep_batchnorm_69,0 to dconv_34_conv_sep_batchnorm_scale_70,0
+D Connect: dconv_34_conv_sep_batchnorm_scale_70,0 to dconv_34_conv_sep_relu_71,0
+D Connect: dconv_34_conv_sep_relu_71,0 to dconv_34_conv_dw_conv2d_72,0
+D Connect: dconv_34_conv_dw_conv2d_72,0 to dconv_34_conv_dw_batchnorm_73,0
+D Connect: dconv_34_conv_dw_batchnorm_73,0 to dconv_34_conv_dw_batchnorm_scale_74,0
+D Connect: dconv_34_conv_dw_batchnorm_scale_74,0 to dconv_34_conv_dw_relu_75,0
+D Connect: dconv_34_conv_dw_relu_75,0 to dconv_34_conv_proj_conv2d_76,0
+D Connect: dconv_34_conv_proj_conv2d_76,0 to dconv_34_conv_proj_batchnorm_77,0
+D Connect: dconv_34_conv_proj_batchnorm_77,0 to dconv_34_conv_proj_batchnorm_scale_78,0
+D Connect: dconv_34_conv_proj_batchnorm_scale_78,0 to res_4_block0_conv_sep_conv2d_79,0
+D Connect: dconv_34_conv_proj_batchnorm_scale_78,0 to rknn__plus4_90,1
+D Connect: res_4_block0_conv_sep_conv2d_79,0 to res_4_block0_conv_sep_batchnorm_80,0
+D Connect: res_4_block0_conv_sep_batchnorm_80,0 to res_4_block0_conv_sep_batchnorm_scale_81,0
+D Connect: res_4_block0_conv_sep_batchnorm_scale_81,0 to res_4_block0_conv_sep_relu_82,0
+D Connect: res_4_block0_conv_sep_relu_82,0 to res_4_block0_conv_dw_conv2d_83,0
+D Connect: res_4_block0_conv_dw_conv2d_83,0 to res_4_block0_conv_dw_batchnorm_84,0
+D Connect: res_4_block0_conv_dw_batchnorm_84,0 to res_4_block0_conv_dw_batchnorm_scale_85,0
+D Connect: res_4_block0_conv_dw_batchnorm_scale_85,0 to res_4_block0_conv_dw_relu_86,0
+D Connect: res_4_block0_conv_dw_relu_86,0 to res_4_block0_conv_proj_conv2d_87,0
+D Connect: res_4_block0_conv_proj_conv2d_87,0 to res_4_block0_conv_proj_batchnorm_88,0
+D Connect: res_4_block0_conv_proj_batchnorm_88,0 to res_4_block0_conv_proj_batchnorm_scale_89,0
+D Connect: res_4_block0_conv_proj_batchnorm_scale_89,0 to rknn__plus4_90,0
+D Connect: rknn__plus4_90,0 to res_4_block1_conv_sep_conv2d_91,0
+D Connect: rknn__plus4_90,0 to rknn__plus5_102,1
+D Connect: res_4_block1_conv_sep_conv2d_91,0 to res_4_block1_conv_sep_batchnorm_92,0
+D Connect: res_4_block1_conv_sep_batchnorm_92,0 to res_4_block1_conv_sep_batchnorm_scale_93,0
+D Connect: res_4_block1_conv_sep_batchnorm_scale_93,0 to res_4_block1_conv_sep_relu_94,0
+D Connect: res_4_block1_conv_sep_relu_94,0 to res_4_block1_conv_dw_conv2d_95,0
+D Connect: res_4_block1_conv_dw_conv2d_95,0 to res_4_block1_conv_dw_batchnorm_96,0
+D Connect: res_4_block1_conv_dw_batchnorm_96,0 to res_4_block1_conv_dw_batchnorm_scale_97,0
+D Connect: res_4_block1_conv_dw_batchnorm_scale_97,0 to res_4_block1_conv_dw_relu_98,0
+D Connect: res_4_block1_conv_dw_relu_98,0 to res_4_block1_conv_proj_conv2d_99,0
+D Connect: res_4_block1_conv_proj_conv2d_99,0 to res_4_block1_conv_proj_batchnorm_100,0
+D Connect: res_4_block1_conv_proj_batchnorm_100,0 to res_4_block1_conv_proj_batchnorm_scale_101,0
+D Connect: res_4_block1_conv_proj_batchnorm_scale_101,0 to rknn__plus5_102,0
+D Connect: rknn__plus5_102,0 to res_4_block2_conv_sep_conv2d_103,0
+D Connect: rknn__plus5_102,0 to rknn__plus6_114,1
+D Connect: res_4_block2_conv_sep_conv2d_103,0 to res_4_block2_conv_sep_batchnorm_104,0
+D Connect: res_4_block2_conv_sep_batchnorm_104,0 to res_4_block2_conv_sep_batchnorm_scale_105,0
+D Connect: res_4_block2_conv_sep_batchnorm_scale_105,0 to res_4_block2_conv_sep_relu_106,0
+D Connect: res_4_block2_conv_sep_relu_106,0 to res_4_block2_conv_dw_conv2d_107,0
+D Connect: res_4_block2_conv_dw_conv2d_107,0 to res_4_block2_conv_dw_batchnorm_108,0
+D Connect: res_4_block2_conv_dw_batchnorm_108,0 to res_4_block2_conv_dw_batchnorm_scale_109,0
+D Connect: res_4_block2_conv_dw_batchnorm_scale_109,0 to res_4_block2_conv_dw_relu_110,0
+D Connect: res_4_block2_conv_dw_relu_110,0 to res_4_block2_conv_proj_conv2d_111,0
+D Connect: res_4_block2_conv_proj_conv2d_111,0 to res_4_block2_conv_proj_batchnorm_112,0
+D Connect: res_4_block2_conv_proj_batchnorm_112,0 to res_4_block2_conv_proj_batchnorm_scale_113,0
+D Connect: res_4_block2_conv_proj_batchnorm_scale_113,0 to rknn__plus6_114,0
+D Connect: rknn__plus6_114,0 to res_4_block3_conv_sep_conv2d_115,0
+D Connect: rknn__plus6_114,0 to rknn__plus7_126,1
+D Connect: res_4_block3_conv_sep_conv2d_115,0 to res_4_block3_conv_sep_batchnorm_116,0
+D Connect: res_4_block3_conv_sep_batchnorm_116,0 to res_4_block3_conv_sep_batchnorm_scale_117,0
+D Connect: res_4_block3_conv_sep_batchnorm_scale_117,0 to res_4_block3_conv_sep_relu_118,0
+D Connect: res_4_block3_conv_sep_relu_118,0 to res_4_block3_conv_dw_conv2d_119,0
+D Connect: res_4_block3_conv_dw_conv2d_119,0 to res_4_block3_conv_dw_batchnorm_120,0
+D Connect: res_4_block3_conv_dw_batchnorm_120,0 to res_4_block3_conv_dw_batchnorm_scale_121,0
+D Connect: res_4_block3_conv_dw_batchnorm_scale_121,0 to res_4_block3_conv_dw_relu_122,0
+D Connect: res_4_block3_conv_dw_relu_122,0 to res_4_block3_conv_proj_conv2d_123,0
+D Connect: res_4_block3_conv_proj_conv2d_123,0 to res_4_block3_conv_proj_batchnorm_124,0
+D Connect: res_4_block3_conv_proj_batchnorm_124,0 to res_4_block3_conv_proj_batchnorm_scale_125,0
+D Connect: res_4_block3_conv_proj_batchnorm_scale_125,0 to rknn__plus7_126,0
+D Connect: rknn__plus7_126,0 to res_4_block4_conv_sep_conv2d_127,0
+D Connect: rknn__plus7_126,0 to rknn__plus8_138,1
+D Connect: res_4_block4_conv_sep_conv2d_127,0 to res_4_block4_conv_sep_batchnorm_128,0
+D Connect: res_4_block4_conv_sep_batchnorm_128,0 to res_4_block4_conv_sep_batchnorm_scale_129,0
+D Connect: res_4_block4_conv_sep_batchnorm_scale_129,0 to res_4_block4_conv_sep_relu_130,0
+D Connect: res_4_block4_conv_sep_relu_130,0 to res_4_block4_conv_dw_conv2d_131,0
+D Connect: res_4_block4_conv_dw_conv2d_131,0 to res_4_block4_conv_dw_batchnorm_132,0
+D Connect: res_4_block4_conv_dw_batchnorm_132,0 to res_4_block4_conv_dw_batchnorm_scale_133,0
+D Connect: res_4_block4_conv_dw_batchnorm_scale_133,0 to res_4_block4_conv_dw_relu_134,0
+D Connect: res_4_block4_conv_dw_relu_134,0 to res_4_block4_conv_proj_conv2d_135,0
+D Connect: res_4_block4_conv_proj_conv2d_135,0 to res_4_block4_conv_proj_batchnorm_136,0
+D Connect: res_4_block4_conv_proj_batchnorm_136,0 to res_4_block4_conv_proj_batchnorm_scale_137,0
+D Connect: res_4_block4_conv_proj_batchnorm_scale_137,0 to rknn__plus8_138,0
+D Connect: rknn__plus8_138,0 to res_4_block5_conv_sep_conv2d_139,0
+D Connect: rknn__plus8_138,0 to rknn__plus9_150,1
+D Connect: res_4_block5_conv_sep_conv2d_139,0 to res_4_block5_conv_sep_batchnorm_140,0
+D Connect: res_4_block5_conv_sep_batchnorm_140,0 to res_4_block5_conv_sep_batchnorm_scale_141,0
+D Connect: res_4_block5_conv_sep_batchnorm_scale_141,0 to res_4_block5_conv_sep_relu_142,0
+D Connect: res_4_block5_conv_sep_relu_142,0 to res_4_block5_conv_dw_conv2d_143,0
+D Connect: res_4_block5_conv_dw_conv2d_143,0 to res_4_block5_conv_dw_batchnorm_144,0
+D Connect: res_4_block5_conv_dw_batchnorm_144,0 to res_4_block5_conv_dw_batchnorm_scale_145,0
+D Connect: res_4_block5_conv_dw_batchnorm_scale_145,0 to res_4_block5_conv_dw_relu_146,0
+D Connect: res_4_block5_conv_dw_relu_146,0 to res_4_block5_conv_proj_conv2d_147,0
+D Connect: res_4_block5_conv_proj_conv2d_147,0 to res_4_block5_conv_proj_batchnorm_148,0
+D Connect: res_4_block5_conv_proj_batchnorm_148,0 to res_4_block5_conv_proj_batchnorm_scale_149,0
+D Connect: res_4_block5_conv_proj_batchnorm_scale_149,0 to rknn__plus9_150,0
+D Connect: rknn__plus9_150,0 to dconv_45_conv_sep_conv2d_151,0
+D Connect: dconv_45_conv_sep_conv2d_151,0 to dconv_45_conv_sep_batchnorm_152,0
+D Connect: dconv_45_conv_sep_batchnorm_152,0 to dconv_45_conv_sep_batchnorm_scale_153,0
+D Connect: dconv_45_conv_sep_batchnorm_scale_153,0 to dconv_45_conv_sep_relu_154,0
+D Connect: dconv_45_conv_sep_relu_154,0 to dconv_45_conv_dw_conv2d_155,0
+D Connect: dconv_45_conv_dw_conv2d_155,0 to dconv_45_conv_dw_batchnorm_156,0
+D Connect: dconv_45_conv_dw_batchnorm_156,0 to dconv_45_conv_dw_batchnorm_scale_157,0
+D Connect: dconv_45_conv_dw_batchnorm_scale_157,0 to dconv_45_conv_dw_relu_158,0
+D Connect: dconv_45_conv_dw_relu_158,0 to dconv_45_conv_proj_conv2d_159,0
+D Connect: dconv_45_conv_proj_conv2d_159,0 to dconv_45_conv_proj_batchnorm_160,0
+D Connect: dconv_45_conv_proj_batchnorm_160,0 to dconv_45_conv_proj_batchnorm_scale_161,0
+D Connect: dconv_45_conv_proj_batchnorm_scale_161,0 to res_5_block0_conv_sep_conv2d_162,0
+D Connect: dconv_45_conv_proj_batchnorm_scale_161,0 to rknn__plus10_173,1
+D Connect: res_5_block0_conv_sep_conv2d_162,0 to res_5_block0_conv_sep_batchnorm_163,0
+D Connect: res_5_block0_conv_sep_batchnorm_163,0 to res_5_block0_conv_sep_batchnorm_scale_164,0
+D Connect: res_5_block0_conv_sep_batchnorm_scale_164,0 to res_5_block0_conv_sep_relu_165,0
+D Connect: res_5_block0_conv_sep_relu_165,0 to res_5_block0_conv_dw_conv2d_166,0
+D Connect: res_5_block0_conv_dw_conv2d_166,0 to res_5_block0_conv_dw_batchnorm_167,0
+D Connect: res_5_block0_conv_dw_batchnorm_167,0 to res_5_block0_conv_dw_batchnorm_scale_168,0
+D Connect: res_5_block0_conv_dw_batchnorm_scale_168,0 to res_5_block0_conv_dw_relu_169,0
+D Connect: res_5_block0_conv_dw_relu_169,0 to res_5_block0_conv_proj_conv2d_170,0
+D Connect: res_5_block0_conv_proj_conv2d_170,0 to res_5_block0_conv_proj_batchnorm_171,0
+D Connect: res_5_block0_conv_proj_batchnorm_171,0 to res_5_block0_conv_proj_batchnorm_scale_172,0
+D Connect: res_5_block0_conv_proj_batchnorm_scale_172,0 to rknn__plus10_173,0
+D Connect: rknn__plus10_173,0 to res_5_block1_conv_sep_conv2d_174,0
+D Connect: rknn__plus10_173,0 to rknn__plus11_185,1
+D Connect: res_5_block1_conv_sep_conv2d_174,0 to res_5_block1_conv_sep_batchnorm_175,0
+D Connect: res_5_block1_conv_sep_batchnorm_175,0 to res_5_block1_conv_sep_batchnorm_scale_176,0
+D Connect: res_5_block1_conv_sep_batchnorm_scale_176,0 to res_5_block1_conv_sep_relu_177,0
+D Connect: res_5_block1_conv_sep_relu_177,0 to res_5_block1_conv_dw_conv2d_178,0
+D Connect: res_5_block1_conv_dw_conv2d_178,0 to res_5_block1_conv_dw_batchnorm_179,0
+D Connect: res_5_block1_conv_dw_batchnorm_179,0 to res_5_block1_conv_dw_batchnorm_scale_180,0
+D Connect: res_5_block1_conv_dw_batchnorm_scale_180,0 to res_5_block1_conv_dw_relu_181,0
+D Connect: res_5_block1_conv_dw_relu_181,0 to res_5_block1_conv_proj_conv2d_182,0
+D Connect: res_5_block1_conv_proj_conv2d_182,0 to res_5_block1_conv_proj_batchnorm_183,0
+D Connect: res_5_block1_conv_proj_batchnorm_183,0 to res_5_block1_conv_proj_batchnorm_scale_184,0
+D Connect: res_5_block1_conv_proj_batchnorm_scale_184,0 to rknn__plus11_185,0
+D Connect: rknn__plus11_185,0 to conv_6sep_conv2d_186,0
+D Connect: conv_6sep_conv2d_186,0 to conv_6sep_batchnorm_187,0
+D Connect: conv_6sep_batchnorm_187,0 to conv_6sep_batchnorm_scale_188,0
+D Connect: conv_6sep_batchnorm_scale_188,0 to conv_6sep_relu_189,0
+D Connect: conv_6sep_relu_189,0 to conv_6dw7_7_conv2d_190,0
+D Connect: conv_6dw7_7_conv2d_190,0 to conv_6dw7_7_batchnorm_191,0
+D Connect: conv_6dw7_7_batchnorm_191,0 to conv_6dw7_7_batchnorm_scale_192,0
+D Connect: conv_6dw7_7_batchnorm_scale_192,0 to pre_fc1_193,0
+D Connect: pre_fc1_193,0 to fc1_194,0
+D Connect: fc1_194,0 to fc1_scale_195,0
+D Connect: fc1_scale_195,0 to attach_fc1_scale_195_196,0,
+I Load net complete.
+D Process data_0 ...
+D RKNN output shape(input): (0 112 112 3)
+D Tensor @data_0:out0 type: float32
+D Process conv_1_conv2d_1 ...
+D RKNN output shape(convolution): (0 56 56 64)
+D Tensor @conv_1_conv2d_1:out0 type: float32
+D Process conv_1_batchnorm_2 ...
+D RKNN output shape(batchnormalize): (0 56 56 64)
+D Tensor @conv_1_batchnorm_2:out0 type: float32
+D Process conv_1_batchnorm_scale_3 ...
+D RKNN output shape(multiply): (0 56 56 64)
+D Tensor @conv_1_batchnorm_scale_3:out0 type: float32
+D Process conv_1_relu_4 ...
+D RKNN output shape(prelu): (0 56 56 64)
+D Tensor @conv_1_relu_4:out0 type: float32
+D Process conv_2_dw_conv2d_5 ...
+D RKNN output shape(convolution): (0 56 56 64)
+D Tensor @conv_2_dw_conv2d_5:out0 type: float32
+D Process conv_2_dw_batchnorm_6 ...
+D RKNN output shape(batchnormalize): (0 56 56 64)
+D Tensor @conv_2_dw_batchnorm_6:out0 type: float32
+D Process conv_2_dw_batchnorm_scale_7 ...
+D RKNN output shape(multiply): (0 56 56 64)
+D Tensor @conv_2_dw_batchnorm_scale_7:out0 type: float32
+D Process conv_2_dw_relu_8 ...
+D RKNN output shape(prelu): (0 56 56 64)
+D Tensor @conv_2_dw_relu_8:out0 type: float32
+D Process dconv_23_conv_sep_conv2d_9 ...
+D RKNN output shape(convolution): (0 56 56 128)
+D Tensor @dconv_23_conv_sep_conv2d_9:out0 type: float32
+D Process dconv_23_conv_sep_batchnorm_10 ...
+D RKNN output shape(batchnormalize): (0 56 56 128)
+D Tensor @dconv_23_conv_sep_batchnorm_10:out0 type: float32
+D Process dconv_23_conv_sep_batchnorm_scale_11 ...
+D RKNN output shape(multiply): (0 56 56 128)
+D Tensor @dconv_23_conv_sep_batchnorm_scale_11:out0 type: float32
+D Process dconv_23_conv_sep_relu_12 ...
+D RKNN output shape(prelu): (0 56 56 128)
+D Tensor @dconv_23_conv_sep_relu_12:out0 type: float32
+D Process dconv_23_conv_dw_conv2d_13 ...
+D RKNN output shape(convolution): (0 28 28 128)
+D Tensor @dconv_23_conv_dw_conv2d_13:out0 type: float32
+D Process dconv_23_conv_dw_batchnorm_14 ...
+D RKNN output shape(batchnormalize): (0 28 28 128)
+D Tensor @dconv_23_conv_dw_batchnorm_14:out0 type: float32
+D Process dconv_23_conv_dw_batchnorm_scale_15 ...
+D RKNN output shape(multiply): (0 28 28 128)
+D Tensor @dconv_23_conv_dw_batchnorm_scale_15:out0 type: float32
+D Process dconv_23_conv_dw_relu_16 ...
+D RKNN output shape(prelu): (0 28 28 128)
+D Tensor @dconv_23_conv_dw_relu_16:out0 type: float32
+D Process dconv_23_conv_proj_conv2d_17 ...
+D RKNN output shape(convolution): (0 28 28 64)
+D Tensor @dconv_23_conv_proj_conv2d_17:out0 type: float32
+D Process dconv_23_conv_proj_batchnorm_18 ...
+D RKNN output shape(batchnormalize): (0 28 28 64)
+D Tensor @dconv_23_conv_proj_batchnorm_18:out0 type: float32
+D Process dconv_23_conv_proj_batchnorm_scale_19 ...
+D RKNN output shape(multiply): (0 28 28 64)
+D Tensor @dconv_23_conv_proj_batchnorm_scale_19:out0 type: float32
+D Process res_3_block0_conv_sep_conv2d_20 ...
+D RKNN output shape(convolution): (0 28 28 128)
+D Tensor @res_3_block0_conv_sep_conv2d_20:out0 type: float32
+D Process res_3_block0_conv_sep_batchnorm_21 ...
+D RKNN output shape(batchnormalize): (0 28 28 128)
+D Tensor @res_3_block0_conv_sep_batchnorm_21:out0 type: float32
+D Process res_3_block0_conv_sep_batchnorm_scale_22 ...
+D RKNN output shape(multiply): (0 28 28 128)
+D Tensor @res_3_block0_conv_sep_batchnorm_scale_22:out0 type: float32
+D Process res_3_block0_conv_sep_relu_23 ...
+D RKNN output shape(prelu): (0 28 28 128)
+D Tensor @res_3_block0_conv_sep_relu_23:out0 type: float32
+D Process res_3_block0_conv_dw_conv2d_24 ...
+D RKNN output shape(convolution): (0 28 28 128)
+D Tensor @res_3_block0_conv_dw_conv2d_24:out0 type: float32
+D Process res_3_block0_conv_dw_batchnorm_25 ...
+D RKNN output shape(batchnormalize): (0 28 28 128)
+D Tensor @res_3_block0_conv_dw_batchnorm_25:out0 type: float32
+D Process res_3_block0_conv_dw_batchnorm_scale_26 ...
+D RKNN output shape(multiply): (0 28 28 128)
+D Tensor @res_3_block0_conv_dw_batchnorm_scale_26:out0 type: float32
+D Process res_3_block0_conv_dw_relu_27 ...
+D RKNN output shape(prelu): (0 28 28 128)
+D Tensor @res_3_block0_conv_dw_relu_27:out0 type: float32
+D Process res_3_block0_conv_proj_conv2d_28 ...
+D RKNN output shape(convolution): (0 28 28 64)
+D Tensor @res_3_block0_conv_proj_conv2d_28:out0 type: float32
+D Process res_3_block0_conv_proj_batchnorm_29 ...
+D RKNN output shape(batchnormalize): (0 28 28 64)
+D Tensor @res_3_block0_conv_proj_batchnorm_29:out0 type: float32
+D Process res_3_block0_conv_proj_batchnorm_scale_30 ...
+D RKNN output shape(multiply): (0 28 28 64)
+D Tensor @res_3_block0_conv_proj_batchnorm_scale_30:out0 type: float32
+D Process rknn__plus0_31 ...
+D RKNN output shape(eltwise): (0 28 28 64)
+D Tensor @rknn__plus0_31:out0 type: float32
+D Process res_3_block1_conv_sep_conv2d_32 ...
+D RKNN output shape(convolution): (0 28 28 128)
+D Tensor @res_3_block1_conv_sep_conv2d_32:out0 type: float32
+D Process res_3_block1_conv_sep_batchnorm_33 ...
+D RKNN output shape(batchnormalize): (0 28 28 128)
+D Tensor @res_3_block1_conv_sep_batchnorm_33:out0 type: float32
+D Process res_3_block1_conv_sep_batchnorm_scale_34 ...
+D RKNN output shape(multiply): (0 28 28 128)
+D Tensor @res_3_block1_conv_sep_batchnorm_scale_34:out0 type: float32
+D Process res_3_block1_conv_sep_relu_35 ...
+D RKNN output shape(prelu): (0 28 28 128)
+D Tensor @res_3_block1_conv_sep_relu_35:out0 type: float32
+D Process res_3_block1_conv_dw_conv2d_36 ...
+D RKNN output shape(convolution): (0 28 28 128)
+D Tensor @res_3_block1_conv_dw_conv2d_36:out0 type: float32
+D Process res_3_block1_conv_dw_batchnorm_37 ...
+D RKNN output shape(batchnormalize): (0 28 28 128)
+D Tensor @res_3_block1_conv_dw_batchnorm_37:out0 type: float32
+D Process res_3_block1_conv_dw_batchnorm_scale_38 ...
+D RKNN output shape(multiply): (0 28 28 128)
+D Tensor @res_3_block1_conv_dw_batchnorm_scale_38:out0 type: float32
+D Process res_3_block1_conv_dw_relu_39 ...
+D RKNN output shape(prelu): (0 28 28 128)
+D Tensor @res_3_block1_conv_dw_relu_39:out0 type: float32
+D Process res_3_block1_conv_proj_conv2d_40 ...
+D RKNN output shape(convolution): (0 28 28 64)
+D Tensor @res_3_block1_conv_proj_conv2d_40:out0 type: float32
+D Process res_3_block1_conv_proj_batchnorm_41 ...
+D RKNN output shape(batchnormalize): (0 28 28 64)
+D Tensor @res_3_block1_conv_proj_batchnorm_41:out0 type: float32
+D Process res_3_block1_conv_proj_batchnorm_scale_42 ...
+D RKNN output shape(multiply): (0 28 28 64)
+D Tensor @res_3_block1_conv_proj_batchnorm_scale_42:out0 type: float32
+D Process rknn__plus1_43 ...
+D RKNN output shape(eltwise): (0 28 28 64)
+D Tensor @rknn__plus1_43:out0 type: float32
+D Process res_3_block2_conv_sep_conv2d_44 ...
+D RKNN output shape(convolution): (0 28 28 128)
+D Tensor @res_3_block2_conv_sep_conv2d_44:out0 type: float32
+D Process res_3_block2_conv_sep_batchnorm_45 ...
+D RKNN output shape(batchnormalize): (0 28 28 128)
+D Tensor @res_3_block2_conv_sep_batchnorm_45:out0 type: float32
+D Process res_3_block2_conv_sep_batchnorm_scale_46 ...
+D RKNN output shape(multiply): (0 28 28 128)
+D Tensor @res_3_block2_conv_sep_batchnorm_scale_46:out0 type: float32
+D Process res_3_block2_conv_sep_relu_47 ...
+D RKNN output shape(prelu): (0 28 28 128)
+D Tensor @res_3_block2_conv_sep_relu_47:out0 type: float32
+D Process res_3_block2_conv_dw_conv2d_48 ...
+D RKNN output shape(convolution): (0 28 28 128)
+D Tensor @res_3_block2_conv_dw_conv2d_48:out0 type: float32
+D Process res_3_block2_conv_dw_batchnorm_49 ...
+D RKNN output shape(batchnormalize): (0 28 28 128)
+D Tensor @res_3_block2_conv_dw_batchnorm_49:out0 type: float32
+D Process res_3_block2_conv_dw_batchnorm_scale_50 ...
+D RKNN output shape(multiply): (0 28 28 128)
+D Tensor @res_3_block2_conv_dw_batchnorm_scale_50:out0 type: float32
+D Process res_3_block2_conv_dw_relu_51 ...
+D RKNN output shape(prelu): (0 28 28 128)
+D Tensor @res_3_block2_conv_dw_relu_51:out0 type: float32
+D Process res_3_block2_conv_proj_conv2d_52 ...
+D RKNN output shape(convolution): (0 28 28 64)
+D Tensor @res_3_block2_conv_proj_conv2d_52:out0 type: float32
+D Process res_3_block2_conv_proj_batchnorm_53 ...
+D RKNN output shape(batchnormalize): (0 28 28 64)
+D Tensor @res_3_block2_conv_proj_batchnorm_53:out0 type: float32
+D Process res_3_block2_conv_proj_batchnorm_scale_54 ...
+D RKNN output shape(multiply): (0 28 28 64)
+D Tensor @res_3_block2_conv_proj_batchnorm_scale_54:out0 type: float32
+D Process rknn__plus2_55 ...
+D RKNN output shape(eltwise): (0 28 28 64)
+D Tensor @rknn__plus2_55:out0 type: float32
+D Process res_3_block3_conv_sep_conv2d_56 ...
+D RKNN output shape(convolution): (0 28 28 128)
+D Tensor @res_3_block3_conv_sep_conv2d_56:out0 type: float32
+D Process res_3_block3_conv_sep_batchnorm_57 ...
+D RKNN output shape(batchnormalize): (0 28 28 128)
+D Tensor @res_3_block3_conv_sep_batchnorm_57:out0 type: float32
+D Process res_3_block3_conv_sep_batchnorm_scale_58 ...
+D RKNN output shape(multiply): (0 28 28 128)
+D Tensor @res_3_block3_conv_sep_batchnorm_scale_58:out0 type: float32
+D Process res_3_block3_conv_sep_relu_59 ...
+D RKNN output shape(prelu): (0 28 28 128)
+D Tensor @res_3_block3_conv_sep_relu_59:out0 type: float32
+D Process res_3_block3_conv_dw_conv2d_60 ...
+D RKNN output shape(convolution): (0 28 28 128)
+D Tensor @res_3_block3_conv_dw_conv2d_60:out0 type: float32
+D Process res_3_block3_conv_dw_batchnorm_61 ...
+D RKNN output shape(batchnormalize): (0 28 28 128)
+D Tensor @res_3_block3_conv_dw_batchnorm_61:out0 type: float32
+D Process res_3_block3_conv_dw_batchnorm_scale_62 ...
+D RKNN output shape(multiply): (0 28 28 128)
+D Tensor @res_3_block3_conv_dw_batchnorm_scale_62:out0 type: float32
+D Process res_3_block3_conv_dw_relu_63 ...
+D RKNN output shape(prelu): (0 28 28 128)
+D Tensor @res_3_block3_conv_dw_relu_63:out0 type: float32
+D Process res_3_block3_conv_proj_conv2d_64 ...
+D RKNN output shape(convolution): (0 28 28 64)
+D Tensor @res_3_block3_conv_proj_conv2d_64:out0 type: float32
+D Process res_3_block3_conv_proj_batchnorm_65 ...
+D RKNN output shape(batchnormalize): (0 28 28 64)
+D Tensor @res_3_block3_conv_proj_batchnorm_65:out0 type: float32
+D Process res_3_block3_conv_proj_batchnorm_scale_66 ...
+D RKNN output shape(multiply): (0 28 28 64)
+D Tensor @res_3_block3_conv_proj_batchnorm_scale_66:out0 type: float32
+D Process rknn__plus3_67 ...
+D RKNN output shape(eltwise): (0 28 28 64)
+D Tensor @rknn__plus3_67:out0 type: float32
+D Process dconv_34_conv_sep_conv2d_68 ...
+D RKNN output shape(convolution): (0 28 28 256)
+D Tensor @dconv_34_conv_sep_conv2d_68:out0 type: float32
+D Process dconv_34_conv_sep_batchnorm_69 ...
+D RKNN output shape(batchnormalize): (0 28 28 256)
+D Tensor @dconv_34_conv_sep_batchnorm_69:out0 type: float32
+D Process dconv_34_conv_sep_batchnorm_scale_70 ...
+D RKNN output shape(multiply): (0 28 28 256)
+D Tensor @dconv_34_conv_sep_batchnorm_scale_70:out0 type: float32
+D Process dconv_34_conv_sep_relu_71 ...
+D RKNN output shape(prelu): (0 28 28 256)
+D Tensor @dconv_34_conv_sep_relu_71:out0 type: float32
+D Process dconv_34_conv_dw_conv2d_72 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @dconv_34_conv_dw_conv2d_72:out0 type: float32
+D Process dconv_34_conv_dw_batchnorm_73 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @dconv_34_conv_dw_batchnorm_73:out0 type: float32
+D Process dconv_34_conv_dw_batchnorm_scale_74 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @dconv_34_conv_dw_batchnorm_scale_74:out0 type: float32
+D Process dconv_34_conv_dw_relu_75 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @dconv_34_conv_dw_relu_75:out0 type: float32
+D Process dconv_34_conv_proj_conv2d_76 ...
+D RKNN output shape(convolution): (0 14 14 128)
+D Tensor @dconv_34_conv_proj_conv2d_76:out0 type: float32
+D Process dconv_34_conv_proj_batchnorm_77 ...
+D RKNN output shape(batchnormalize): (0 14 14 128)
+D Tensor @dconv_34_conv_proj_batchnorm_77:out0 type: float32
+D Process dconv_34_conv_proj_batchnorm_scale_78 ...
+D RKNN output shape(multiply): (0 14 14 128)
+D Tensor @dconv_34_conv_proj_batchnorm_scale_78:out0 type: float32
+D Process res_4_block0_conv_sep_conv2d_79 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block0_conv_sep_conv2d_79:out0 type: float32
+D Process res_4_block0_conv_sep_batchnorm_80 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block0_conv_sep_batchnorm_80:out0 type: float32
+D Process res_4_block0_conv_sep_batchnorm_scale_81 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block0_conv_sep_batchnorm_scale_81:out0 type: float32
+D Process res_4_block0_conv_sep_relu_82 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block0_conv_sep_relu_82:out0 type: float32
+D Process res_4_block0_conv_dw_conv2d_83 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block0_conv_dw_conv2d_83:out0 type: float32
+D Process res_4_block0_conv_dw_batchnorm_84 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block0_conv_dw_batchnorm_84:out0 type: float32
+D Process res_4_block0_conv_dw_batchnorm_scale_85 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block0_conv_dw_batchnorm_scale_85:out0 type: float32
+D Process res_4_block0_conv_dw_relu_86 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block0_conv_dw_relu_86:out0 type: float32
+D Process res_4_block0_conv_proj_conv2d_87 ...
+D RKNN output shape(convolution): (0 14 14 128)
+D Tensor @res_4_block0_conv_proj_conv2d_87:out0 type: float32
+D Process res_4_block0_conv_proj_batchnorm_88 ...
+D RKNN output shape(batchnormalize): (0 14 14 128)
+D Tensor @res_4_block0_conv_proj_batchnorm_88:out0 type: float32
+D Process res_4_block0_conv_proj_batchnorm_scale_89 ...
+D RKNN output shape(multiply): (0 14 14 128)
+D Tensor @res_4_block0_conv_proj_batchnorm_scale_89:out0 type: float32
+D Process rknn__plus4_90 ...
+D RKNN output shape(eltwise): (0 14 14 128)
+D Tensor @rknn__plus4_90:out0 type: float32
+D Process res_4_block1_conv_sep_conv2d_91 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block1_conv_sep_conv2d_91:out0 type: float32
+D Process res_4_block1_conv_sep_batchnorm_92 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block1_conv_sep_batchnorm_92:out0 type: float32
+D Process res_4_block1_conv_sep_batchnorm_scale_93 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block1_conv_sep_batchnorm_scale_93:out0 type: float32
+D Process res_4_block1_conv_sep_relu_94 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block1_conv_sep_relu_94:out0 type: float32
+D Process res_4_block1_conv_dw_conv2d_95 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block1_conv_dw_conv2d_95:out0 type: float32
+D Process res_4_block1_conv_dw_batchnorm_96 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block1_conv_dw_batchnorm_96:out0 type: float32
+D Process res_4_block1_conv_dw_batchnorm_scale_97 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block1_conv_dw_batchnorm_scale_97:out0 type: float32
+D Process res_4_block1_conv_dw_relu_98 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block1_conv_dw_relu_98:out0 type: float32
+D Process res_4_block1_conv_proj_conv2d_99 ...
+D RKNN output shape(convolution): (0 14 14 128)
+D Tensor @res_4_block1_conv_proj_conv2d_99:out0 type: float32
+D Process res_4_block1_conv_proj_batchnorm_100 ...
+D RKNN output shape(batchnormalize): (0 14 14 128)
+D Tensor @res_4_block1_conv_proj_batchnorm_100:out0 type: float32
+D Process res_4_block1_conv_proj_batchnorm_scale_101 ...
+D RKNN output shape(multiply): (0 14 14 128)
+D Tensor @res_4_block1_conv_proj_batchnorm_scale_101:out0 type: float32
+D Process rknn__plus5_102 ...
+D RKNN output shape(eltwise): (0 14 14 128)
+D Tensor @rknn__plus5_102:out0 type: float32
+D Process res_4_block2_conv_sep_conv2d_103 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block2_conv_sep_conv2d_103:out0 type: float32
+D Process res_4_block2_conv_sep_batchnorm_104 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block2_conv_sep_batchnorm_104:out0 type: float32
+D Process res_4_block2_conv_sep_batchnorm_scale_105 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block2_conv_sep_batchnorm_scale_105:out0 type: float32
+D Process res_4_block2_conv_sep_relu_106 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block2_conv_sep_relu_106:out0 type: float32
+D Process res_4_block2_conv_dw_conv2d_107 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block2_conv_dw_conv2d_107:out0 type: float32
+D Process res_4_block2_conv_dw_batchnorm_108 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block2_conv_dw_batchnorm_108:out0 type: float32
+D Process res_4_block2_conv_dw_batchnorm_scale_109 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block2_conv_dw_batchnorm_scale_109:out0 type: float32
+D Process res_4_block2_conv_dw_relu_110 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block2_conv_dw_relu_110:out0 type: float32
+D Process res_4_block2_conv_proj_conv2d_111 ...
+D RKNN output shape(convolution): (0 14 14 128)
+D Tensor @res_4_block2_conv_proj_conv2d_111:out0 type: float32
+D Process res_4_block2_conv_proj_batchnorm_112 ...
+D RKNN output shape(batchnormalize): (0 14 14 128)
+D Tensor @res_4_block2_conv_proj_batchnorm_112:out0 type: float32
+D Process res_4_block2_conv_proj_batchnorm_scale_113 ...
+D RKNN output shape(multiply): (0 14 14 128)
+D Tensor @res_4_block2_conv_proj_batchnorm_scale_113:out0 type: float32
+D Process rknn__plus6_114 ...
+D RKNN output shape(eltwise): (0 14 14 128)
+D Tensor @rknn__plus6_114:out0 type: float32
+D Process res_4_block3_conv_sep_conv2d_115 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block3_conv_sep_conv2d_115:out0 type: float32
+D Process res_4_block3_conv_sep_batchnorm_116 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block3_conv_sep_batchnorm_116:out0 type: float32
+D Process res_4_block3_conv_sep_batchnorm_scale_117 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block3_conv_sep_batchnorm_scale_117:out0 type: float32
+D Process res_4_block3_conv_sep_relu_118 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block3_conv_sep_relu_118:out0 type: float32
+D Process res_4_block3_conv_dw_conv2d_119 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block3_conv_dw_conv2d_119:out0 type: float32
+D Process res_4_block3_conv_dw_batchnorm_120 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block3_conv_dw_batchnorm_120:out0 type: float32
+D Process res_4_block3_conv_dw_batchnorm_scale_121 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block3_conv_dw_batchnorm_scale_121:out0 type: float32
+D Process res_4_block3_conv_dw_relu_122 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block3_conv_dw_relu_122:out0 type: float32
+D Process res_4_block3_conv_proj_conv2d_123 ...
+D RKNN output shape(convolution): (0 14 14 128)
+D Tensor @res_4_block3_conv_proj_conv2d_123:out0 type: float32
+D Process res_4_block3_conv_proj_batchnorm_124 ...
+D RKNN output shape(batchnormalize): (0 14 14 128)
+D Tensor @res_4_block3_conv_proj_batchnorm_124:out0 type: float32
+D Process res_4_block3_conv_proj_batchnorm_scale_125 ...
+D RKNN output shape(multiply): (0 14 14 128)
+D Tensor @res_4_block3_conv_proj_batchnorm_scale_125:out0 type: float32
+D Process rknn__plus7_126 ...
+D RKNN output shape(eltwise): (0 14 14 128)
+D Tensor @rknn__plus7_126:out0 type: float32
+D Process res_4_block4_conv_sep_conv2d_127 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block4_conv_sep_conv2d_127:out0 type: float32
+D Process res_4_block4_conv_sep_batchnorm_128 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block4_conv_sep_batchnorm_128:out0 type: float32
+D Process res_4_block4_conv_sep_batchnorm_scale_129 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block4_conv_sep_batchnorm_scale_129:out0 type: float32
+D Process res_4_block4_conv_sep_relu_130 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block4_conv_sep_relu_130:out0 type: float32
+D Process res_4_block4_conv_dw_conv2d_131 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block4_conv_dw_conv2d_131:out0 type: float32
+D Process res_4_block4_conv_dw_batchnorm_132 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block4_conv_dw_batchnorm_132:out0 type: float32
+D Process res_4_block4_conv_dw_batchnorm_scale_133 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block4_conv_dw_batchnorm_scale_133:out0 type: float32
+D Process res_4_block4_conv_dw_relu_134 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block4_conv_dw_relu_134:out0 type: float32
+D Process res_4_block4_conv_proj_conv2d_135 ...
+D RKNN output shape(convolution): (0 14 14 128)
+D Tensor @res_4_block4_conv_proj_conv2d_135:out0 type: float32
+D Process res_4_block4_conv_proj_batchnorm_136 ...
+D RKNN output shape(batchnormalize): (0 14 14 128)
+D Tensor @res_4_block4_conv_proj_batchnorm_136:out0 type: float32
+D Process res_4_block4_conv_proj_batchnorm_scale_137 ...
+D RKNN output shape(multiply): (0 14 14 128)
+D Tensor @res_4_block4_conv_proj_batchnorm_scale_137:out0 type: float32
+D Process rknn__plus8_138 ...
+D RKNN output shape(eltwise): (0 14 14 128)
+D Tensor @rknn__plus8_138:out0 type: float32
+D Process res_4_block5_conv_sep_conv2d_139 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block5_conv_sep_conv2d_139:out0 type: float32
+D Process res_4_block5_conv_sep_batchnorm_140 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block5_conv_sep_batchnorm_140:out0 type: float32
+D Process res_4_block5_conv_sep_batchnorm_scale_141 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block5_conv_sep_batchnorm_scale_141:out0 type: float32
+D Process res_4_block5_conv_sep_relu_142 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block5_conv_sep_relu_142:out0 type: float32
+D Process res_4_block5_conv_dw_conv2d_143 ...
+D RKNN output shape(convolution): (0 14 14 256)
+D Tensor @res_4_block5_conv_dw_conv2d_143:out0 type: float32
+D Process res_4_block5_conv_dw_batchnorm_144 ...
+D RKNN output shape(batchnormalize): (0 14 14 256)
+D Tensor @res_4_block5_conv_dw_batchnorm_144:out0 type: float32
+D Process res_4_block5_conv_dw_batchnorm_scale_145 ...
+D RKNN output shape(multiply): (0 14 14 256)
+D Tensor @res_4_block5_conv_dw_batchnorm_scale_145:out0 type: float32
+D Process res_4_block5_conv_dw_relu_146 ...
+D RKNN output shape(prelu): (0 14 14 256)
+D Tensor @res_4_block5_conv_dw_relu_146:out0 type: float32
+D Process res_4_block5_conv_proj_conv2d_147 ...
+D RKNN output shape(convolution): (0 14 14 128)
+D Tensor @res_4_block5_conv_proj_conv2d_147:out0 type: float32
+D Process res_4_block5_conv_proj_batchnorm_148 ...
+D RKNN output shape(batchnormalize): (0 14 14 128)
+D Tensor @res_4_block5_conv_proj_batchnorm_148:out0 type: float32
+D Process res_4_block5_conv_proj_batchnorm_scale_149 ...
+D RKNN output shape(multiply): (0 14 14 128)
+D Tensor @res_4_block5_conv_proj_batchnorm_scale_149:out0 type: float32
+D Process rknn__plus9_150 ...
+D RKNN output shape(eltwise): (0 14 14 128)
+D Tensor @rknn__plus9_150:out0 type: float32
+D Process dconv_45_conv_sep_conv2d_151 ...
+D RKNN output shape(convolution): (0 14 14 512)
+D Tensor @dconv_45_conv_sep_conv2d_151:out0 type: float32
+D Process dconv_45_conv_sep_batchnorm_152 ...
+D RKNN output shape(batchnormalize): (0 14 14 512)
+D Tensor @dconv_45_conv_sep_batchnorm_152:out0 type: float32
+D Process dconv_45_conv_sep_batchnorm_scale_153 ...
+D RKNN output shape(multiply): (0 14 14 512)
+D Tensor @dconv_45_conv_sep_batchnorm_scale_153:out0 type: float32
+D Process dconv_45_conv_sep_relu_154 ...
+D RKNN output shape(prelu): (0 14 14 512)
+D Tensor @dconv_45_conv_sep_relu_154:out0 type: float32
+D Process dconv_45_conv_dw_conv2d_155 ...
+D RKNN output shape(convolution): (0 7 7 512)
+D Tensor @dconv_45_conv_dw_conv2d_155:out0 type: float32
+D Process dconv_45_conv_dw_batchnorm_156 ...
+D RKNN output shape(batchnormalize): (0 7 7 512)
+D Tensor @dconv_45_conv_dw_batchnorm_156:out0 type: float32
+D Process dconv_45_conv_dw_batchnorm_scale_157 ...
+D RKNN output shape(multiply): (0 7 7 512)
+D Tensor @dconv_45_conv_dw_batchnorm_scale_157:out0 type: float32
+D Process dconv_45_conv_dw_relu_158 ...
+D RKNN output shape(prelu): (0 7 7 512)
+D Tensor @dconv_45_conv_dw_relu_158:out0 type: float32
+D Process dconv_45_conv_proj_conv2d_159 ...
+D RKNN output shape(convolution): (0 7 7 128)
+D Tensor @dconv_45_conv_proj_conv2d_159:out0 type: float32
+D Process dconv_45_conv_proj_batchnorm_160 ...
+D RKNN output shape(batchnormalize): (0 7 7 128)
+D Tensor @dconv_45_conv_proj_batchnorm_160:out0 type: float32
+D Process dconv_45_conv_proj_batchnorm_scale_161 ...
+D RKNN output shape(multiply): (0 7 7 128)
+D Tensor @dconv_45_conv_proj_batchnorm_scale_161:out0 type: float32
+D Process res_5_block0_conv_sep_conv2d_162 ...
+D RKNN output shape(convolution): (0 7 7 256)
+D Tensor @res_5_block0_conv_sep_conv2d_162:out0 type: float32
+D Process res_5_block0_conv_sep_batchnorm_163 ...
+D RKNN output shape(batchnormalize): (0 7 7 256)
+D Tensor @res_5_block0_conv_sep_batchnorm_163:out0 type: float32
+D Process res_5_block0_conv_sep_batchnorm_scale_164 ...
+D RKNN output shape(multiply): (0 7 7 256)
+D Tensor @res_5_block0_conv_sep_batchnorm_scale_164:out0 type: float32
+D Process res_5_block0_conv_sep_relu_165 ...
+D RKNN output shape(prelu): (0 7 7 256)
+D Tensor @res_5_block0_conv_sep_relu_165:out0 type: float32
+D Process res_5_block0_conv_dw_conv2d_166 ...
+D RKNN output shape(convolution): (0 7 7 256)
+D Tensor @res_5_block0_conv_dw_conv2d_166:out0 type: float32
+D Process res_5_block0_conv_dw_batchnorm_167 ...
+D RKNN output shape(batchnormalize): (0 7 7 256)
+D Tensor @res_5_block0_conv_dw_batchnorm_167:out0 type: float32
+D Process res_5_block0_conv_dw_batchnorm_scale_168 ...
+D RKNN output shape(multiply): (0 7 7 256)
+D Tensor @res_5_block0_conv_dw_batchnorm_scale_168:out0 type: float32
+D Process res_5_block0_conv_dw_relu_169 ...
+D RKNN output shape(prelu): (0 7 7 256)
+D Tensor @res_5_block0_conv_dw_relu_169:out0 type: float32
+D Process res_5_block0_conv_proj_conv2d_170 ...
+D RKNN output shape(convolution): (0 7 7 128)
+D Tensor @res_5_block0_conv_proj_conv2d_170:out0 type: float32
+D Process res_5_block0_conv_proj_batchnorm_171 ...
+D RKNN output shape(batchnormalize): (0 7 7 128)
+D Tensor @res_5_block0_conv_proj_batchnorm_171:out0 type: float32
+D Process res_5_block0_conv_proj_batchnorm_scale_172 ...
+D RKNN output shape(multiply): (0 7 7 128)
+D Tensor @res_5_block0_conv_proj_batchnorm_scale_172:out0 type: float32
+D Process rknn__plus10_173 ...
+D RKNN output shape(eltwise): (0 7 7 128)
+D Tensor @rknn__plus10_173:out0 type: float32
+D Process res_5_block1_conv_sep_conv2d_174 ...
+D RKNN output shape(convolution): (0 7 7 256)
+D Tensor @res_5_block1_conv_sep_conv2d_174:out0 type: float32
+D Process res_5_block1_conv_sep_batchnorm_175 ...
+D RKNN output shape(batchnormalize): (0 7 7 256)
+D Tensor @res_5_block1_conv_sep_batchnorm_175:out0 type: float32
+D Process res_5_block1_conv_sep_batchnorm_scale_176 ...
+D RKNN output shape(multiply): (0 7 7 256)
+D Tensor @res_5_block1_conv_sep_batchnorm_scale_176:out0 type: float32
+D Process res_5_block1_conv_sep_relu_177 ...
+D RKNN output shape(prelu): (0 7 7 256)
+D Tensor @res_5_block1_conv_sep_relu_177:out0 type: float32
+D Process res_5_block1_conv_dw_conv2d_178 ...
+D RKNN output shape(convolution): (0 7 7 256)
+D Tensor @res_5_block1_conv_dw_conv2d_178:out0 type: float32
+D Process res_5_block1_conv_dw_batchnorm_179 ...
+D RKNN output shape(batchnormalize): (0 7 7 256)
+D Tensor @res_5_block1_conv_dw_batchnorm_179:out0 type: float32
+D Process res_5_block1_conv_dw_batchnorm_scale_180 ...
+D RKNN output shape(multiply): (0 7 7 256)
+D Tensor @res_5_block1_conv_dw_batchnorm_scale_180:out0 type: float32
+D Process res_5_block1_conv_dw_relu_181 ...
+D RKNN output shape(prelu): (0 7 7 256)
+D Tensor @res_5_block1_conv_dw_relu_181:out0 type: float32
+D Process res_5_block1_conv_proj_conv2d_182 ...
+D RKNN output shape(convolution): (0 7 7 128)
+D Tensor @res_5_block1_conv_proj_conv2d_182:out0 type: float32
+D Process res_5_block1_conv_proj_batchnorm_183 ...
+D RKNN output shape(batchnormalize): (0 7 7 128)
+D Tensor @res_5_block1_conv_proj_batchnorm_183:out0 type: float32
+D Process res_5_block1_conv_proj_batchnorm_scale_184 ...
+D RKNN output shape(multiply): (0 7 7 128)
+D Tensor @res_5_block1_conv_proj_batchnorm_scale_184:out0 type: float32
+D Process rknn__plus11_185 ...
+D RKNN output shape(eltwise): (0 7 7 128)
+D Tensor @rknn__plus11_185:out0 type: float32
+D Process conv_6sep_conv2d_186 ...
+D RKNN output shape(convolution): (0 7 7 512)
+D Tensor @conv_6sep_conv2d_186:out0 type: float32
+D Process conv_6sep_batchnorm_187 ...
+D RKNN output shape(batchnormalize): (0 7 7 512)
+D Tensor @conv_6sep_batchnorm_187:out0 type: float32
+D Process conv_6sep_batchnorm_scale_188 ...
+D RKNN output shape(multiply): (0 7 7 512)
+D Tensor @conv_6sep_batchnorm_scale_188:out0 type: float32
+D Process conv_6sep_relu_189 ...
+D RKNN output shape(prelu): (0 7 7 512)
+D Tensor @conv_6sep_relu_189:out0 type: float32
+D Process conv_6dw7_7_conv2d_190 ...
+D RKNN output shape(convolution): (0 1 1 512)
+D Tensor @conv_6dw7_7_conv2d_190:out0 type: float32
+D Process conv_6dw7_7_batchnorm_191 ...
+D RKNN output shape(batchnormalize): (0 1 1 512)
+D Tensor @conv_6dw7_7_batchnorm_191:out0 type: float32
+D Process conv_6dw7_7_batchnorm_scale_192 ...
+D RKNN output shape(multiply): (0 1 1 512)
+D Tensor @conv_6dw7_7_batchnorm_scale_192:out0 type: float32
+D Process pre_fc1_193 ...
+D RKNN output shape(fullconnect): (0 512)
+D Tensor @pre_fc1_193:out0 type: float32
+D Process fc1_194 ...
+D RKNN output shape(batchnormalize): (0 512)
+D Tensor @fc1_194:out0 type: float32
+D Process fc1_scale_195 ...
+D RKNN output shape(multiply): (0 512)
+D Tensor @fc1_scale_195:out0 type: float32
+D Process attach_fc1_scale_195_196 ...
+D RKNN output shape(output): (0 512)
+D Tensor @attach_fc1_scale_195_196:out0 type: float32
+I Build mxnet-mdoel complete.
+I Load blobs from caffe model /tunm/work/HyperFace/resource/models_raw/_03_mfngg.caffemodel
+I Check if /tunm/work/HyperFace/resource/models_raw/_03_mfngg.caffemodel contains 'type' value
+I Parsing net blobs ... 
+D data in caffemodel have blobs, we could skip this blobs.
+D Load blobs of conv_1_conv2d
+E Catch exception when loading caffe model: /tunm/work/HyperFace/resource/models_raw/_03_mfngg.prototxt!
+E Traceback (most recent call last):
+E   File "rknn/base/RKNNlib/converter/caffeloader.py", line 1032, in rknn.base.RKNNlib.converter.caffeloader.CaffeLoader.parse_blobs
+E   File "rknn/base/RKNNlib/converter/caffeloader.py", line 402, in rknn.base.RKNNlib.converter.caffeloader.proc_blobs_convolution
+E   File "<__array_function__ internals>", line 6, in reshape
+E   File "/usr/local/lib/python3.6/dist-packages/numpy/core/fromnumeric.py", line 299, in reshape
+E     return _wrapfunc(a, 'reshape', newshape, order=order)
+E   File "/usr/local/lib/python3.6/dist-packages/numpy/core/fromnumeric.py", line 58, in _wrapfunc
+E     return bound(*args, **kwds)
+E ValueError: cannot reshape array of size 0 into shape (64,3,3,3)
+E Please feedback the detailed log file <log_feedback_to_the_rknn_toolkit_dev_team.log> to the RKNN Toolkit development team.
+E You can also check github issues: https://github.com/rockchip-linux/rknn-toolkit/issues
