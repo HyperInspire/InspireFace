@@ -1,0 +1,2668 @@
+D Using CPPUTILS: True
+I Start importing onnx...
+I Current ONNX Model use ir_version 6 opset_version 11
+I Call RKNN onnx optimize fail, skip optimize
+D Calc tensor Initializer_fc2_W (3, 128)
+D Calc tensor Initializer_batch_norm50_var (128,)
+D Calc tensor Initializer_batch_norm50_mean (128,)
+D Calc tensor Initializer_bn_scale50_b (128,)
+D Calc tensor Initializer_bn_scale50_scale (128,)
+D Calc tensor Initializer_fc1_W (128, 512)
+D Calc tensor Initializer_view1_shape (2,)
+D Calc tensor Initializer_batch_norm49_var (512,)
+D Calc tensor Initializer_batch_norm49_mean (512,)
+D Calc tensor Initializer_bn_scale49_b (512,)
+D Calc tensor Initializer_bn_scale49_scale (512,)
+D Calc tensor Initializer_conv49_W (512, 1, 5, 5)
+D Calc tensor Initializer_prelu33_slope (512,)
+D Calc tensor Initializer_batch_norm48_var (512,)
+D Calc tensor Initializer_batch_norm48_mean (512,)
+D Calc tensor Initializer_bn_scale48_b (512,)
+D Calc tensor Initializer_bn_scale48_scale (512,)
+D Calc tensor Initializer_conv48_W (512, 128, 1, 1)
+D Calc tensor Initializer_batch_norm47_var (128,)
+D Calc tensor Initializer_batch_norm47_mean (128,)
+D Calc tensor Initializer_bn_scale47_b (128,)
+D Calc tensor Initializer_bn_scale47_scale (128,)
+D Calc tensor Initializer_conv47_W (128, 26, 1, 1)
+D Calc tensor Initializer_prelu32_slope (26,)
+D Calc tensor Initializer_batch_norm46_var (26,)
+D Calc tensor Initializer_batch_norm46_mean (26,)
+D Calc tensor Initializer_bn_scale46_b (26,)
+D Calc tensor Initializer_bn_scale46_scale (26,)
+D Calc tensor Initializer_conv46_W (26, 1, 3, 3)
+D Calc tensor Initializer_prelu31_slope (26,)
+D Calc tensor Initializer_batch_norm45_var (26,)
+D Calc tensor Initializer_batch_norm45_mean (26,)
+D Calc tensor Initializer_bn_scale45_b (26,)
+D Calc tensor Initializer_bn_scale45_scale (26,)
+D Calc tensor Initializer_conv45_W (26, 128, 1, 1)
+D Calc tensor Initializer_batch_norm44_var (128,)
+D Calc tensor Initializer_batch_norm44_mean (128,)
+D Calc tensor Initializer_bn_scale44_b (128,)
+D Calc tensor Initializer_bn_scale44_scale (128,)
+D Calc tensor Initializer_conv44_W (128, 26, 1, 1)
+D Calc tensor Initializer_prelu30_slope (26,)
+D Calc tensor Initializer_batch_norm43_var (26,)
+D Calc tensor Initializer_batch_norm43_mean (26,)
+D Calc tensor Initializer_bn_scale43_b (26,)
+D Calc tensor Initializer_bn_scale43_scale (26,)
+D Calc tensor Initializer_conv43_W (26, 1, 3, 3)
+D Calc tensor Initializer_prelu29_slope (26,)
+D Calc tensor Initializer_batch_norm42_var (26,)
+D Calc tensor Initializer_batch_norm42_mean (26,)
+D Calc tensor Initializer_bn_scale42_b (26,)
+D Calc tensor Initializer_bn_scale42_scale (26,)
+D Calc tensor Initializer_conv42_W (26, 128, 1, 1)
+D Calc tensor Initializer_batch_norm41_var (128,)
+D Calc tensor Initializer_batch_norm41_mean (128,)
+D Calc tensor Initializer_bn_scale41_b (128,)
+D Calc tensor Initializer_bn_scale41_scale (128,)
+D Calc tensor Initializer_conv41_W (128, 308, 1, 1)
+D Calc tensor Initializer_prelu28_slope (308,)
+D Calc tensor Initializer_batch_norm40_var (308,)
+D Calc tensor Initializer_batch_norm40_mean (308,)
+D Calc tensor Initializer_bn_scale40_b (308,)
+D Calc tensor Initializer_bn_scale40_scale (308,)
+D Calc tensor Initializer_conv40_W (308, 1, 3, 3)
+D Calc tensor Initializer_prelu27_slope (308,)
+D Calc tensor Initializer_batch_norm39_var (308,)
+D Calc tensor Initializer_batch_norm39_mean (308,)
+D Calc tensor Initializer_bn_scale39_b (308,)
+D Calc tensor Initializer_bn_scale39_scale (308,)
+D Calc tensor Initializer_conv39_W (308, 128, 1, 1)
+D Calc tensor Initializer_batch_norm38_var (128,)
+D Calc tensor Initializer_batch_norm38_mean (128,)
+D Calc tensor Initializer_bn_scale38_b (128,)
+D Calc tensor Initializer_bn_scale38_scale (128,)
+D Calc tensor Initializer_conv38_W (128, 26, 1, 1)
+D Calc tensor Initializer_prelu26_slope (26,)
+D Calc tensor Initializer_batch_norm37_var (26,)
+D Calc tensor Initializer_batch_norm37_mean (26,)
+D Calc tensor Initializer_bn_scale37_b (26,)
+D Calc tensor Initializer_bn_scale37_scale (26,)
+D Calc tensor Initializer_conv37_W (26, 1, 3, 3)
+D Calc tensor Initializer_prelu25_slope (26,)
+D Calc tensor Initializer_batch_norm36_var (26,)
+D Calc tensor Initializer_batch_norm36_mean (26,)
+D Calc tensor Initializer_bn_scale36_b (26,)
+D Calc tensor Initializer_bn_scale36_scale (26,)
+D Calc tensor Initializer_conv36_W (26, 128, 1, 1)
+D Calc tensor Initializer_batch_norm35_var (128,)
+D Calc tensor Initializer_batch_norm35_mean (128,)
+D Calc tensor Initializer_bn_scale35_b (128,)
+D Calc tensor Initializer_bn_scale35_scale (128,)
+D Calc tensor Initializer_conv35_W (128, 26, 1, 1)
+D Calc tensor Initializer_prelu24_slope (26,)
+D Calc tensor Initializer_batch_norm34_var (26,)
+D Calc tensor Initializer_batch_norm34_mean (26,)
+D Calc tensor Initializer_bn_scale34_b (26,)
+D Calc tensor Initializer_bn_scale34_scale (26,)
+D Calc tensor Initializer_conv34_W (26, 1, 3, 3)
+D Calc tensor Initializer_prelu23_slope (26,)
+D Calc tensor Initializer_batch_norm33_var (26,)
+D Calc tensor Initializer_batch_norm33_mean (26,)
+D Calc tensor Initializer_bn_scale33_b (26,)
+D Calc tensor Initializer_bn_scale33_scale (26,)
+D Calc tensor Initializer_conv33_W (26, 128, 1, 1)
+D Calc tensor Initializer_batch_norm32_var (128,)
+D Calc tensor Initializer_batch_norm32_mean (128,)
+D Calc tensor Initializer_bn_scale32_b (128,)
+D Calc tensor Initializer_bn_scale32_scale (128,)
+D Calc tensor Initializer_conv32_W (128, 77, 1, 1)
+D Calc tensor Initializer_prelu22_slope (77,)
+D Calc tensor Initializer_batch_norm31_var (77,)
+D Calc tensor Initializer_batch_norm31_mean (77,)
+D Calc tensor Initializer_bn_scale31_b (77,)
+D Calc tensor Initializer_bn_scale31_scale (77,)
+D Calc tensor Initializer_conv31_W (77, 1, 3, 3)
+D Calc tensor Initializer_prelu21_slope (77,)
+D Calc tensor Initializer_batch_norm30_var (77,)
+D Calc tensor Initializer_batch_norm30_mean (77,)
+D Calc tensor Initializer_bn_scale30_b (77,)
+D Calc tensor Initializer_bn_scale30_scale (77,)
+D Calc tensor Initializer_conv30_W (77, 128, 1, 1)
+D Calc tensor Initializer_batch_norm29_var (128,)
+D Calc tensor Initializer_batch_norm29_mean (128,)
+D Calc tensor Initializer_bn_scale29_b (128,)
+D Calc tensor Initializer_bn_scale29_scale (128,)
+D Calc tensor Initializer_conv29_W (128, 26, 1, 1)
+D Calc tensor Initializer_prelu20_slope (26,)
+D Calc tensor Initializer_batch_norm28_var (26,)
+D Calc tensor Initializer_batch_norm28_mean (26,)
+D Calc tensor Initializer_bn_scale28_b (26,)
+D Calc tensor Initializer_bn_scale28_scale (26,)
+D Calc tensor Initializer_conv28_W (26, 1, 3, 3)
+D Calc tensor Initializer_prelu19_slope (26,)
+D Calc tensor Initializer_batch_norm27_var (26,)
+D Calc tensor Initializer_batch_norm27_mean (26,)
+D Calc tensor Initializer_bn_scale27_b (26,)
+D Calc tensor Initializer_bn_scale27_scale (26,)
+D Calc tensor Initializer_conv27_W (26, 128, 1, 1)
+D Calc tensor Initializer_batch_norm26_var (128,)
+D Calc tensor Initializer_batch_norm26_mean (128,)
+D Calc tensor Initializer_bn_scale26_b (128,)
+D Calc tensor Initializer_bn_scale26_scale (128,)
+D Calc tensor Initializer_conv26_W (128, 52, 1, 1)
+D Calc tensor Initializer_prelu18_slope (52,)
+D Calc tensor Initializer_batch_norm25_var (52,)
+D Calc tensor Initializer_batch_norm25_mean (52,)
+D Calc tensor Initializer_bn_scale25_b (52,)
+D Calc tensor Initializer_bn_scale25_scale (52,)
+D Calc tensor Initializer_conv25_W (52, 1, 3, 3)
+D Calc tensor Initializer_prelu17_slope (52,)
+D Calc tensor Initializer_batch_norm24_var (52,)
+D Calc tensor Initializer_batch_norm24_mean (52,)
+D Calc tensor Initializer_bn_scale24_b (52,)
+D Calc tensor Initializer_bn_scale24_scale (52,)
+D Calc tensor Initializer_conv24_W (52, 128, 1, 1)
+D Calc tensor Initializer_batch_norm23_var (128,)
+D Calc tensor Initializer_batch_norm23_mean (128,)
+D Calc tensor Initializer_bn_scale23_b (128,)
+D Calc tensor Initializer_bn_scale23_scale (128,)
+D Calc tensor Initializer_conv23_W (128, 231, 1, 1)
+D Calc tensor Initializer_prelu16_slope (231,)
+D Calc tensor Initializer_batch_norm22_var (231,)
+D Calc tensor Initializer_batch_norm22_mean (231,)
+D Calc tensor Initializer_bn_scale22_b (231,)
+D Calc tensor Initializer_bn_scale22_scale (231,)
+D Calc tensor Initializer_conv22_W (231, 1, 3, 3)
+D Calc tensor Initializer_prelu15_slope (231,)
+D Calc tensor Initializer_batch_norm21_var (231,)
+D Calc tensor Initializer_batch_norm21_mean (231,)
+D Calc tensor Initializer_bn_scale21_b (231,)
+D Calc tensor Initializer_bn_scale21_scale (231,)
+D Calc tensor Initializer_conv21_W (231, 128, 1, 1)
+D Calc tensor Initializer_batch_norm20_var (128,)
+D Calc tensor Initializer_batch_norm20_mean (128,)
+D Calc tensor Initializer_bn_scale20_b (128,)
+D Calc tensor Initializer_bn_scale20_scale (128,)
+D Calc tensor Initializer_conv20_W (128, 231, 1, 1)
+D Calc tensor Initializer_prelu14_slope (231,)
+D Calc tensor Initializer_batch_norm19_var (231,)
+D Calc tensor Initializer_batch_norm19_mean (231,)
+D Calc tensor Initializer_bn_scale19_b (231,)
+D Calc tensor Initializer_bn_scale19_scale (231,)
+D Calc tensor Initializer_conv19_W (231, 1, 3, 3)
+D Calc tensor Initializer_prelu13_slope (231,)
+D Calc tensor Initializer_batch_norm18_var (231,)
+D Calc tensor Initializer_batch_norm18_mean (231,)
+D Calc tensor Initializer_bn_scale18_b (231,)
+D Calc tensor Initializer_bn_scale18_scale (231,)
+D Calc tensor Initializer_conv18_W (231, 64, 1, 1)
+D Calc tensor Initializer_batch_norm17_var (64,)
+D Calc tensor Initializer_batch_norm17_mean (64,)
+D Calc tensor Initializer_bn_scale17_b (64,)
+D Calc tensor Initializer_bn_scale17_scale (64,)
+D Calc tensor Initializer_conv17_W (64, 13, 1, 1)
+D Calc tensor Initializer_prelu12_slope (13,)
+D Calc tensor Initializer_batch_norm16_var (13,)
+D Calc tensor Initializer_batch_norm16_mean (13,)
+D Calc tensor Initializer_bn_scale16_b (13,)
+D Calc tensor Initializer_bn_scale16_scale (13,)
+D Calc tensor Initializer_conv16_W (13, 1, 3, 3)
+D Calc tensor Initializer_prelu11_slope (13,)
+D Calc tensor Initializer_batch_norm15_var (13,)
+D Calc tensor Initializer_batch_norm15_mean (13,)
+D Calc tensor Initializer_bn_scale15_b (13,)
+D Calc tensor Initializer_bn_scale15_scale (13,)
+D Calc tensor Initializer_conv15_W (13, 64, 1, 1)
+D Calc tensor Initializer_batch_norm14_var (64,)
+D Calc tensor Initializer_batch_norm14_mean (64,)
+D Calc tensor Initializer_bn_scale14_b (64,)
+D Calc tensor Initializer_bn_scale14_scale (64,)
+D Calc tensor Initializer_conv14_W (64, 13, 1, 1)
+D Calc tensor Initializer_prelu10_slope (13,)
+D Calc tensor Initializer_batch_norm13_var (13,)
+D Calc tensor Initializer_batch_norm13_mean (13,)
+D Calc tensor Initializer_bn_scale13_b (13,)
+D Calc tensor Initializer_bn_scale13_scale (13,)
+D Calc tensor Initializer_conv13_W (13, 1, 3, 3)
+D Calc tensor Initializer_prelu9_slope (13,)
+D Calc tensor Initializer_batch_norm12_var (13,)
+D Calc tensor Initializer_batch_norm12_mean (13,)
+D Calc tensor Initializer_bn_scale12_b (13,)
+D Calc tensor Initializer_bn_scale12_scale (13,)
+D Calc tensor Initializer_conv12_W (13, 64, 1, 1)
+D Calc tensor Initializer_batch_norm11_var (64,)
+D Calc tensor Initializer_batch_norm11_mean (64,)
+D Calc tensor Initializer_bn_scale11_b (64,)
+D Calc tensor Initializer_bn_scale11_scale (64,)
+D Calc tensor Initializer_conv11_W (64, 13, 1, 1)
+D Calc tensor Initializer_prelu8_slope (13,)
+D Calc tensor Initializer_batch_norm10_var (13,)
+D Calc tensor Initializer_batch_norm10_mean (13,)
+D Calc tensor Initializer_bn_scale10_b (13,)
+D Calc tensor Initializer_bn_scale10_scale (13,)
+D Calc tensor Initializer_conv10_W (13, 1, 3, 3)
+D Calc tensor Initializer_prelu7_slope (13,)
+D Calc tensor Initializer_batch_norm9_var (13,)
+D Calc tensor Initializer_batch_norm9_mean (13,)
+D Calc tensor Initializer_bn_scale9_b (13,)
+D Calc tensor Initializer_bn_scale9_scale (13,)
+D Calc tensor Initializer_conv9_W (13, 64, 1, 1)
+D Calc tensor Initializer_batch_norm8_var (64,)
+D Calc tensor Initializer_batch_norm8_mean (64,)
+D Calc tensor Initializer_bn_scale8_b (64,)
+D Calc tensor Initializer_bn_scale8_scale (64,)
+D Calc tensor Initializer_conv8_W (64, 13, 1, 1)
+D Calc tensor Initializer_prelu6_slope (13,)
+D Calc tensor Initializer_batch_norm7_var (13,)
+D Calc tensor Initializer_batch_norm7_mean (13,)
+D Calc tensor Initializer_bn_scale7_b (13,)
+D Calc tensor Initializer_bn_scale7_scale (13,)
+D Calc tensor Initializer_conv7_W (13, 1, 3, 3)
+D Calc tensor Initializer_prelu5_slope (13,)
+D Calc tensor Initializer_batch_norm6_var (13,)
+D Calc tensor Initializer_batch_norm6_mean (13,)
+D Calc tensor Initializer_bn_scale6_b (13,)
+D Calc tensor Initializer_bn_scale6_scale (13,)
+D Calc tensor Initializer_conv6_W (13, 64, 1, 1)
+D Calc tensor Initializer_batch_norm5_var (64,)
+D Calc tensor Initializer_batch_norm5_mean (64,)
+D Calc tensor Initializer_bn_scale5_b (64,)
+D Calc tensor Initializer_bn_scale5_scale (64,)
+D Calc tensor Initializer_conv5_W (64, 103, 1, 1)
+D Calc tensor Initializer_prelu4_slope (103,)
+D Calc tensor Initializer_batch_norm4_var (103,)
+D Calc tensor Initializer_batch_norm4_mean (103,)
+D Calc tensor Initializer_bn_scale4_b (103,)
+D Calc tensor Initializer_bn_scale4_scale (103,)
+D Calc tensor Initializer_conv4_W (103, 1, 3, 3)
+D Calc tensor Initializer_prelu3_slope (103,)
+D Calc tensor Initializer_batch_norm3_var (103,)
+D Calc tensor Initializer_batch_norm3_mean (103,)
+D Calc tensor Initializer_bn_scale3_b (103,)
+D Calc tensor Initializer_bn_scale3_scale (103,)
+D Calc tensor Initializer_conv3_W (103, 32, 1, 1)
+D Calc tensor Initializer_prelu2_slope (32,)
+D Calc tensor Initializer_batch_norm2_var (32,)
+D Calc tensor Initializer_batch_norm2_mean (32,)
+D Calc tensor Initializer_bn_scale2_b (32,)
+D Calc tensor Initializer_bn_scale2_scale (32,)
+D Calc tensor Initializer_conv2_W (32, 1, 3, 3)
+D Calc tensor Initializer_prelu1_slope (32,)
+D Calc tensor Initializer_batch_norm1_var (32,)
+D Calc tensor Initializer_batch_norm1_mean (32,)
+D Calc tensor Initializer_bn_scale1_b (32,)
+D Calc tensor Initializer_bn_scale1_scale (32,)
+D Calc tensor Initializer_conv1_W (32, 3, 3, 3)
+D Calc tensor Conv_conv_blob1 (1, 32, 40, 40)
+D Calc tensor BatchNormalization_batch_norm_blob1 (1, 32, 40, 40)
+D Calc tensor PRelu_prelu_blob1 (1, 32, 40, 40)
+D Calc tensor Conv_conv_blob2 (1, 32, 40, 40)
+D Calc tensor BatchNormalization_batch_norm_blob2 (1, 32, 40, 40)
+D Calc tensor PRelu_prelu_blob2 (1, 32, 40, 40)
+D Calc tensor Conv_conv_blob3 (1, 103, 40, 40)
+D Calc tensor BatchNormalization_batch_norm_blob3 (1, 103, 40, 40)
+D Calc tensor PRelu_prelu_blob3 (1, 103, 40, 40)
+D Calc tensor Conv_conv_blob4 (1, 103, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob4 (1, 103, 20, 20)
+D Calc tensor PRelu_prelu_blob4 (1, 103, 20, 20)
+D Calc tensor Conv_conv_blob5 (1, 64, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob5 (1, 64, 20, 20)
+D Calc tensor Conv_conv_blob6 (1, 13, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob6 (1, 13, 20, 20)
+D Calc tensor PRelu_prelu_blob5 (1, 13, 20, 20)
+D Calc tensor Conv_conv_blob7 (1, 13, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob7 (1, 13, 20, 20)
+D Calc tensor PRelu_prelu_blob6 (1, 13, 20, 20)
+D Calc tensor Conv_conv_blob8 (1, 64, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob8 (1, 64, 20, 20)
+D Calc tensor Add_add_blob1 (1, 64, 20, 20)
+D Calc tensor Conv_conv_blob9 (1, 13, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob9 (1, 13, 20, 20)
+D Calc tensor PRelu_prelu_blob7 (1, 13, 20, 20)
+D Calc tensor Conv_conv_blob10 (1, 13, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob10 (1, 13, 20, 20)
+D Calc tensor PRelu_prelu_blob8 (1, 13, 20, 20)
+D Calc tensor Conv_conv_blob11 (1, 64, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob11 (1, 64, 20, 20)
+D Calc tensor Add_add_blob2 (1, 64, 20, 20)
+D Calc tensor Conv_conv_blob12 (1, 13, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob12 (1, 13, 20, 20)
+D Calc tensor PRelu_prelu_blob9 (1, 13, 20, 20)
+D Calc tensor Conv_conv_blob13 (1, 13, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob13 (1, 13, 20, 20)
+D Calc tensor PRelu_prelu_blob10 (1, 13, 20, 20)
+D Calc tensor Conv_conv_blob14 (1, 64, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob14 (1, 64, 20, 20)
+D Calc tensor Add_add_blob3 (1, 64, 20, 20)
+D Calc tensor Conv_conv_blob15 (1, 13, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob15 (1, 13, 20, 20)
+D Calc tensor PRelu_prelu_blob11 (1, 13, 20, 20)
+D Calc tensor Conv_conv_blob16 (1, 13, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob16 (1, 13, 20, 20)
+D Calc tensor PRelu_prelu_blob12 (1, 13, 20, 20)
+D Calc tensor Conv_conv_blob17 (1, 64, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob17 (1, 64, 20, 20)
+D Calc tensor Add_add_blob4 (1, 64, 20, 20)
+D Calc tensor Conv_conv_blob18 (1, 231, 20, 20)
+D Calc tensor BatchNormalization_batch_norm_blob18 (1, 231, 20, 20)
+D Calc tensor PRelu_prelu_blob13 (1, 231, 20, 20)
+D Calc tensor Conv_conv_blob19 (1, 231, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob19 (1, 231, 10, 10)
+D Calc tensor PRelu_prelu_blob14 (1, 231, 10, 10)
+D Calc tensor Conv_conv_blob20 (1, 128, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob20 (1, 128, 10, 10)
+D Calc tensor Conv_conv_blob21 (1, 231, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob21 (1, 231, 10, 10)
+D Calc tensor PRelu_prelu_blob15 (1, 231, 10, 10)
+D Calc tensor Conv_conv_blob22 (1, 231, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob22 (1, 231, 10, 10)
+D Calc tensor PRelu_prelu_blob16 (1, 231, 10, 10)
+D Calc tensor Conv_conv_blob23 (1, 128, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob23 (1, 128, 10, 10)
+D Calc tensor Add_add_blob5 (1, 128, 10, 10)
+D Calc tensor Conv_conv_blob24 (1, 52, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob24 (1, 52, 10, 10)
+D Calc tensor PRelu_prelu_blob17 (1, 52, 10, 10)
+D Calc tensor Conv_conv_blob25 (1, 52, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob25 (1, 52, 10, 10)
+D Calc tensor PRelu_prelu_blob18 (1, 52, 10, 10)
+D Calc tensor Conv_conv_blob26 (1, 128, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob26 (1, 128, 10, 10)
+D Calc tensor Add_add_blob6 (1, 128, 10, 10)
+D Calc tensor Conv_conv_blob27 (1, 26, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob27 (1, 26, 10, 10)
+D Calc tensor PRelu_prelu_blob19 (1, 26, 10, 10)
+D Calc tensor Conv_conv_blob28 (1, 26, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob28 (1, 26, 10, 10)
+D Calc tensor PRelu_prelu_blob20 (1, 26, 10, 10)
+D Calc tensor Conv_conv_blob29 (1, 128, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob29 (1, 128, 10, 10)
+D Calc tensor Add_add_blob7 (1, 128, 10, 10)
+D Calc tensor Conv_conv_blob30 (1, 77, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob30 (1, 77, 10, 10)
+D Calc tensor PRelu_prelu_blob21 (1, 77, 10, 10)
+D Calc tensor Conv_conv_blob31 (1, 77, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob31 (1, 77, 10, 10)
+D Calc tensor PRelu_prelu_blob22 (1, 77, 10, 10)
+D Calc tensor Conv_conv_blob32 (1, 128, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob32 (1, 128, 10, 10)
+D Calc tensor Add_add_blob8 (1, 128, 10, 10)
+D Calc tensor Conv_conv_blob33 (1, 26, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob33 (1, 26, 10, 10)
+D Calc tensor PRelu_prelu_blob23 (1, 26, 10, 10)
+D Calc tensor Conv_conv_blob34 (1, 26, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob34 (1, 26, 10, 10)
+D Calc tensor PRelu_prelu_blob24 (1, 26, 10, 10)
+D Calc tensor Conv_conv_blob35 (1, 128, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob35 (1, 128, 10, 10)
+D Calc tensor Add_add_blob9 (1, 128, 10, 10)
+D Calc tensor Conv_conv_blob36 (1, 26, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob36 (1, 26, 10, 10)
+D Calc tensor PRelu_prelu_blob25 (1, 26, 10, 10)
+D Calc tensor Conv_conv_blob37 (1, 26, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob37 (1, 26, 10, 10)
+D Calc tensor PRelu_prelu_blob26 (1, 26, 10, 10)
+D Calc tensor Conv_conv_blob38 (1, 128, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob38 (1, 128, 10, 10)
+D Calc tensor Add_add_blob10 (1, 128, 10, 10)
+D Calc tensor Conv_conv_blob39 (1, 308, 10, 10)
+D Calc tensor BatchNormalization_batch_norm_blob39 (1, 308, 10, 10)
+D Calc tensor PRelu_prelu_blob27 (1, 308, 10, 10)
+D Calc tensor Conv_conv_blob40 (1, 308, 5, 5)
+D Calc tensor BatchNormalization_batch_norm_blob40 (1, 308, 5, 5)
+D Calc tensor PRelu_prelu_blob28 (1, 308, 5, 5)
+D Calc tensor Conv_conv_blob41 (1, 128, 5, 5)
+D Calc tensor BatchNormalization_batch_norm_blob41 (1, 128, 5, 5)
+D Calc tensor Conv_conv_blob42 (1, 26, 5, 5)
+D Calc tensor BatchNormalization_batch_norm_blob42 (1, 26, 5, 5)
+D Calc tensor PRelu_prelu_blob29 (1, 26, 5, 5)
+D Calc tensor Conv_conv_blob43 (1, 26, 5, 5)
+D Calc tensor BatchNormalization_batch_norm_blob43 (1, 26, 5, 5)
+D Calc tensor PRelu_prelu_blob30 (1, 26, 5, 5)
+D Calc tensor Conv_conv_blob44 (1, 128, 5, 5)
+D Calc tensor BatchNormalization_batch_norm_blob44 (1, 128, 5, 5)
+D Calc tensor Add_add_blob11 (1, 128, 5, 5)
+D Calc tensor Conv_conv_blob45 (1, 26, 5, 5)
+D Calc tensor BatchNormalization_batch_norm_blob45 (1, 26, 5, 5)
+D Calc tensor PRelu_prelu_blob31 (1, 26, 5, 5)
+D Calc tensor Conv_conv_blob46 (1, 26, 5, 5)
+D Calc tensor BatchNormalization_batch_norm_blob46 (1, 26, 5, 5)
+D Calc tensor PRelu_prelu_blob32 (1, 26, 5, 5)
+D Calc tensor Conv_conv_blob47 (1, 128, 5, 5)
+D Calc tensor BatchNormalization_batch_norm_blob47 (1, 128, 5, 5)
+D Calc tensor Add_add_blob12 (1, 128, 5, 5)
+D Calc tensor Conv_conv_blob48 (1, 512, 5, 5)
+D Calc tensor BatchNormalization_batch_norm_blob48 (1, 512, 5, 5)
+D Calc tensor PRelu_prelu_blob33 (1, 512, 5, 5)
+D Calc tensor Conv_conv_blob49 (1, 512, 1, 1)
+D Calc tensor BatchNormalization_batch_norm_blob49 (1, 512, 1, 1)
+D Calc tensor Reshape_view_blob1 (1, 512)
+D Calc tensor Gemm_fc1 (1, 128)
+D Calc tensor BatchNormalization_batch_norm_blob50 (1, 128)
+D Calc tensor Dropout_dropout1 (1, 128)
+D Calc tensor Gemm_fc2 (1, 3)
+D Calc tensor Softmax_softmax (1, 3)
+D import clients finished
+I build output layer attach_Softmax_softmax:out0
+I Try match layer: Softmax_softmax:out0
+I Match r_softmax, convert ONNX layer: ['Softmax_softmax'](OPs: ['Softmax']) to ['softmax']
+I Try match layer: Gemm_fc2:out0
+I Match r_gemm_2_fc, convert ONNX layer: ['Gemm_fc2', 'Initializer_fc2_W'](OPs: ['Gemm', 'Constant_0']) to ['fullconnect']
+I Try match layer: Dropout_dropout1:out0
+I Match r_dropout_out1_as_noop_7, convert ONNX layer: ['Dropout_dropout1'](OPs: ['Dropout']) to ['noop']
+I Try match layer: BatchNormalization_batch_norm50:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm50', 'Initializer_bn_scale50_scale', 'Initializer_bn_scale50_b', 'Initializer_batch_norm50_mean', 'Initializer_batch_norm50_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Gemm_fc1:out0
+I Match r_gemm_2_fc, convert ONNX layer: ['Gemm_fc1', 'Initializer_fc1_W'](OPs: ['Gemm', 'Constant_0']) to ['fullconnect']
+I Try match layer: Reshape_view1:out0
+I Match r_rsp_v5, convert ONNX layer: ['Reshape_view1', 'Initializer_view1_shape'](OPs: ['Reshape', 'Constant_0']) to ['reshape']
+I Try match layer: BatchNormalization_batch_norm49:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm49', 'Initializer_bn_scale49_scale', 'Initializer_bn_scale49_b', 'Initializer_batch_norm49_mean', 'Initializer_batch_norm49_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv49:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv49', 'Initializer_conv49_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu33:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu33', 'Initializer_prelu33_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm48:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm48', 'Initializer_bn_scale48_scale', 'Initializer_bn_scale48_b', 'Initializer_batch_norm48_mean', 'Initializer_batch_norm48_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv48:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv48', 'Initializer_conv48_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Add_add12:out0
+I Match r_add, convert ONNX layer: ['Add_add12'](OPs: ['Add']) to ['add']
+I Try match layer: Add_add11:out0
+I Match r_add, convert ONNX layer: ['Add_add11'](OPs: ['Add']) to ['add']
+I Try match layer: BatchNormalization_batch_norm47:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm47', 'Initializer_bn_scale47_scale', 'Initializer_bn_scale47_b', 'Initializer_batch_norm47_mean', 'Initializer_batch_norm47_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm41:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm41', 'Initializer_bn_scale41_scale', 'Initializer_bn_scale41_b', 'Initializer_batch_norm41_mean', 'Initializer_batch_norm41_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm44:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm44', 'Initializer_bn_scale44_scale', 'Initializer_bn_scale44_b', 'Initializer_batch_norm44_mean', 'Initializer_batch_norm44_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv47:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv47', 'Initializer_conv47_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv41:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv41', 'Initializer_conv41_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv44:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv44', 'Initializer_conv44_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu32:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu32', 'Initializer_prelu32_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: PRelu_prelu28:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu28', 'Initializer_prelu28_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: PRelu_prelu30:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu30', 'Initializer_prelu30_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm46:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm46', 'Initializer_bn_scale46_scale', 'Initializer_bn_scale46_b', 'Initializer_batch_norm46_mean', 'Initializer_batch_norm46_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm40:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm40', 'Initializer_bn_scale40_scale', 'Initializer_bn_scale40_b', 'Initializer_batch_norm40_mean', 'Initializer_batch_norm40_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm43:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm43', 'Initializer_bn_scale43_scale', 'Initializer_bn_scale43_b', 'Initializer_batch_norm43_mean', 'Initializer_batch_norm43_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv46:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv46', 'Initializer_conv46_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv40:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv40', 'Initializer_conv40_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv43:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv43', 'Initializer_conv43_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu31:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu31', 'Initializer_prelu31_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: PRelu_prelu27:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu27', 'Initializer_prelu27_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: PRelu_prelu29:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu29', 'Initializer_prelu29_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm45:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm45', 'Initializer_bn_scale45_scale', 'Initializer_bn_scale45_b', 'Initializer_batch_norm45_mean', 'Initializer_batch_norm45_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm39:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm39', 'Initializer_bn_scale39_scale', 'Initializer_bn_scale39_b', 'Initializer_batch_norm39_mean', 'Initializer_batch_norm39_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm42:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm42', 'Initializer_bn_scale42_scale', 'Initializer_bn_scale42_b', 'Initializer_batch_norm42_mean', 'Initializer_batch_norm42_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv45:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv45', 'Initializer_conv45_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv39:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv39', 'Initializer_conv39_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv42:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv42', 'Initializer_conv42_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Add_add10:out0
+I Match r_add, convert ONNX layer: ['Add_add10'](OPs: ['Add']) to ['add']
+I Try match layer: Add_add9:out0
+I Match r_add, convert ONNX layer: ['Add_add9'](OPs: ['Add']) to ['add']
+I Try match layer: BatchNormalization_batch_norm38:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm38', 'Initializer_bn_scale38_scale', 'Initializer_bn_scale38_b', 'Initializer_batch_norm38_mean', 'Initializer_batch_norm38_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Add_add8:out0
+I Match r_add, convert ONNX layer: ['Add_add8'](OPs: ['Add']) to ['add']
+I Try match layer: BatchNormalization_batch_norm35:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm35', 'Initializer_bn_scale35_scale', 'Initializer_bn_scale35_b', 'Initializer_batch_norm35_mean', 'Initializer_batch_norm35_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv38:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv38', 'Initializer_conv38_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Add_add7:out0
+I Match r_add, convert ONNX layer: ['Add_add7'](OPs: ['Add']) to ['add']
+I Try match layer: BatchNormalization_batch_norm32:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm32', 'Initializer_bn_scale32_scale', 'Initializer_bn_scale32_b', 'Initializer_batch_norm32_mean', 'Initializer_batch_norm32_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv35:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv35', 'Initializer_conv35_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu26:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu26', 'Initializer_prelu26_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: Add_add6:out0
+I Match r_add, convert ONNX layer: ['Add_add6'](OPs: ['Add']) to ['add']
+I Try match layer: BatchNormalization_batch_norm29:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm29', 'Initializer_bn_scale29_scale', 'Initializer_bn_scale29_b', 'Initializer_batch_norm29_mean', 'Initializer_batch_norm29_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv32:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv32', 'Initializer_conv32_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu24:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu24', 'Initializer_prelu24_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm37:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm37', 'Initializer_bn_scale37_scale', 'Initializer_bn_scale37_b', 'Initializer_batch_norm37_mean', 'Initializer_batch_norm37_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Add_add5:out0
+I Match r_add, convert ONNX layer: ['Add_add5'](OPs: ['Add']) to ['add']
+I Try match layer: BatchNormalization_batch_norm26:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm26', 'Initializer_bn_scale26_scale', 'Initializer_bn_scale26_b', 'Initializer_batch_norm26_mean', 'Initializer_batch_norm26_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv29:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv29', 'Initializer_conv29_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu22:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu22', 'Initializer_prelu22_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm34:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm34', 'Initializer_bn_scale34_scale', 'Initializer_bn_scale34_b', 'Initializer_batch_norm34_mean', 'Initializer_batch_norm34_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv37:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv37', 'Initializer_conv37_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: BatchNormalization_batch_norm20:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm20', 'Initializer_bn_scale20_scale', 'Initializer_bn_scale20_b', 'Initializer_batch_norm20_mean', 'Initializer_batch_norm20_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm23:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm23', 'Initializer_bn_scale23_scale', 'Initializer_bn_scale23_b', 'Initializer_batch_norm23_mean', 'Initializer_batch_norm23_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv26:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv26', 'Initializer_conv26_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu20:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu20', 'Initializer_prelu20_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm31:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm31', 'Initializer_bn_scale31_scale', 'Initializer_bn_scale31_b', 'Initializer_batch_norm31_mean', 'Initializer_batch_norm31_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv34:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv34', 'Initializer_conv34_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu25:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu25', 'Initializer_prelu25_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: Conv_conv20:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv20', 'Initializer_conv20_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv23:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv23', 'Initializer_conv23_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu18:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu18', 'Initializer_prelu18_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm28:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm28', 'Initializer_bn_scale28_scale', 'Initializer_bn_scale28_b', 'Initializer_batch_norm28_mean', 'Initializer_batch_norm28_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv31:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv31', 'Initializer_conv31_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu23:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu23', 'Initializer_prelu23_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm36:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm36', 'Initializer_bn_scale36_scale', 'Initializer_bn_scale36_b', 'Initializer_batch_norm36_mean', 'Initializer_batch_norm36_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: PRelu_prelu14:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu14', 'Initializer_prelu14_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: PRelu_prelu16:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu16', 'Initializer_prelu16_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm25:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm25', 'Initializer_bn_scale25_scale', 'Initializer_bn_scale25_b', 'Initializer_batch_norm25_mean', 'Initializer_batch_norm25_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv28:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv28', 'Initializer_conv28_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu21:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu21', 'Initializer_prelu21_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm33:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm33', 'Initializer_bn_scale33_scale', 'Initializer_bn_scale33_b', 'Initializer_batch_norm33_mean', 'Initializer_batch_norm33_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv36:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv36', 'Initializer_conv36_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: BatchNormalization_batch_norm19:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm19', 'Initializer_bn_scale19_scale', 'Initializer_bn_scale19_b', 'Initializer_batch_norm19_mean', 'Initializer_batch_norm19_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm22:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm22', 'Initializer_bn_scale22_scale', 'Initializer_bn_scale22_b', 'Initializer_batch_norm22_mean', 'Initializer_batch_norm22_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv25:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv25', 'Initializer_conv25_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu19:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu19', 'Initializer_prelu19_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm30:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm30', 'Initializer_bn_scale30_scale', 'Initializer_bn_scale30_b', 'Initializer_batch_norm30_mean', 'Initializer_batch_norm30_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv33:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv33', 'Initializer_conv33_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv30:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv30', 'Initializer_conv30_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv19:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv19', 'Initializer_conv19_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv22:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv22', 'Initializer_conv22_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu17:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu17', 'Initializer_prelu17_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm27:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm27', 'Initializer_bn_scale27_scale', 'Initializer_bn_scale27_b', 'Initializer_batch_norm27_mean', 'Initializer_batch_norm27_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv27:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv27', 'Initializer_conv27_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu13:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu13', 'Initializer_prelu13_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: PRelu_prelu15:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu15', 'Initializer_prelu15_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm24:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm24', 'Initializer_bn_scale24_scale', 'Initializer_bn_scale24_b', 'Initializer_batch_norm24_mean', 'Initializer_batch_norm24_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv24:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv24', 'Initializer_conv24_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: BatchNormalization_batch_norm18:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm18', 'Initializer_bn_scale18_scale', 'Initializer_bn_scale18_b', 'Initializer_batch_norm18_mean', 'Initializer_batch_norm18_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm21:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm21', 'Initializer_bn_scale21_scale', 'Initializer_bn_scale21_b', 'Initializer_batch_norm21_mean', 'Initializer_batch_norm21_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv21:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv21', 'Initializer_conv21_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv18:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv18', 'Initializer_conv18_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Add_add4:out0
+I Match r_add, convert ONNX layer: ['Add_add4'](OPs: ['Add']) to ['add']
+I Try match layer: Add_add3:out0
+I Match r_add, convert ONNX layer: ['Add_add3'](OPs: ['Add']) to ['add']
+I Try match layer: BatchNormalization_batch_norm17:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm17', 'Initializer_bn_scale17_scale', 'Initializer_bn_scale17_b', 'Initializer_batch_norm17_mean', 'Initializer_batch_norm17_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Add_add2:out0
+I Match r_add, convert ONNX layer: ['Add_add2'](OPs: ['Add']) to ['add']
+I Try match layer: BatchNormalization_batch_norm14:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm14', 'Initializer_bn_scale14_scale', 'Initializer_bn_scale14_b', 'Initializer_batch_norm14_mean', 'Initializer_batch_norm14_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv17:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv17', 'Initializer_conv17_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Add_add1:out0
+I Match r_add, convert ONNX layer: ['Add_add1'](OPs: ['Add']) to ['add']
+I Try match layer: BatchNormalization_batch_norm11:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm11', 'Initializer_bn_scale11_scale', 'Initializer_bn_scale11_b', 'Initializer_batch_norm11_mean', 'Initializer_batch_norm11_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv14:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv14', 'Initializer_conv14_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu12:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu12', 'Initializer_prelu12_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm5:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm5', 'Initializer_bn_scale5_scale', 'Initializer_bn_scale5_b', 'Initializer_batch_norm5_mean', 'Initializer_batch_norm5_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm8:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm8', 'Initializer_bn_scale8_scale', 'Initializer_bn_scale8_b', 'Initializer_batch_norm8_mean', 'Initializer_batch_norm8_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv11:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv11', 'Initializer_conv11_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu10:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu10', 'Initializer_prelu10_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm16:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm16', 'Initializer_bn_scale16_scale', 'Initializer_bn_scale16_b', 'Initializer_batch_norm16_mean', 'Initializer_batch_norm16_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv5:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv5', 'Initializer_conv5_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv8:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv8', 'Initializer_conv8_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu8:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu8', 'Initializer_prelu8_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm13:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm13', 'Initializer_bn_scale13_scale', 'Initializer_bn_scale13_b', 'Initializer_batch_norm13_mean', 'Initializer_batch_norm13_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv16:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv16', 'Initializer_conv16_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu4:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu4', 'Initializer_prelu4_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: PRelu_prelu6:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu6', 'Initializer_prelu6_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm10:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm10', 'Initializer_bn_scale10_scale', 'Initializer_bn_scale10_b', 'Initializer_batch_norm10_mean', 'Initializer_batch_norm10_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv13:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv13', 'Initializer_conv13_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu11:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu11', 'Initializer_prelu11_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm4:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm4', 'Initializer_bn_scale4_scale', 'Initializer_bn_scale4_b', 'Initializer_batch_norm4_mean', 'Initializer_batch_norm4_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm7:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm7', 'Initializer_bn_scale7_scale', 'Initializer_bn_scale7_b', 'Initializer_batch_norm7_mean', 'Initializer_batch_norm7_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv10:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv10', 'Initializer_conv10_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu9:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu9', 'Initializer_prelu9_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm15:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm15', 'Initializer_bn_scale15_scale', 'Initializer_bn_scale15_b', 'Initializer_batch_norm15_mean', 'Initializer_batch_norm15_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv4:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv4', 'Initializer_conv4_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv7:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv7', 'Initializer_conv7_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu7:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu7', 'Initializer_prelu7_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm12:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm12', 'Initializer_bn_scale12_scale', 'Initializer_bn_scale12_b', 'Initializer_batch_norm12_mean', 'Initializer_batch_norm12_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv15:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv15', 'Initializer_conv15_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu3:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu3', 'Initializer_prelu3_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: PRelu_prelu5:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu5', 'Initializer_prelu5_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm9:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm9', 'Initializer_bn_scale9_scale', 'Initializer_bn_scale9_b', 'Initializer_batch_norm9_mean', 'Initializer_batch_norm9_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv12:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv12', 'Initializer_conv12_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv9:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv9', 'Initializer_conv9_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: BatchNormalization_batch_norm3:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm3', 'Initializer_bn_scale3_scale', 'Initializer_bn_scale3_b', 'Initializer_batch_norm3_mean', 'Initializer_batch_norm3_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batch_norm6:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm6', 'Initializer_bn_scale6_scale', 'Initializer_bn_scale6_b', 'Initializer_batch_norm6_mean', 'Initializer_batch_norm6_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv6:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv6', 'Initializer_conv6_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_conv3:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv3', 'Initializer_conv3_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu2:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu2', 'Initializer_prelu2_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm2:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm2', 'Initializer_bn_scale2_scale', 'Initializer_bn_scale2_b', 'Initializer_batch_norm2_mean', 'Initializer_batch_norm2_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv2:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv2', 'Initializer_conv2_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: PRelu_prelu1:out0
+I Match r_prelu, convert ONNX layer: ['PRelu_prelu1', 'Initializer_prelu1_slope'](OPs: ['PRelu', 'Constant_0']) to ['prelu']
+I Try match layer: BatchNormalization_batch_norm1:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batch_norm1', 'Initializer_bn_scale1_scale', 'Initializer_bn_scale1_b', 'Initializer_batch_norm1_mean', 'Initializer_batch_norm1_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv1:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv1', 'Initializer_conv1_W'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I build input layer input:out0
+D connect Gemm_fc2_2 0  ~ Softmax_softmax_1 0
+D connect Dropout_dropout1_3 0  ~ Gemm_fc2_2 0
+D connect BatchNormalization_batch_norm50_4 0  ~ Dropout_dropout1_3 0
+D connect Gemm_fc1_5 0  ~ BatchNormalization_batch_norm50_4 0
+D connect Reshape_view1_6 0  ~ Gemm_fc1_5 0
+D connect BatchNormalization_batch_norm49_7 0  ~ Reshape_view1_6 0
+D connect Conv_conv49_8 0  ~ BatchNormalization_batch_norm49_7 0
+D connect PRelu_prelu33_9 0  ~ Conv_conv49_8 0
+D connect BatchNormalization_batch_norm48_10 0  ~ PRelu_prelu33_9 0
+D connect Conv_conv48_11 0  ~ BatchNormalization_batch_norm48_10 0
+D connect Add_add12_12 0  ~ Conv_conv48_11 0
+D connect Add_add11_13 0  ~ Add_add12_12 0
+D connect BatchNormalization_batch_norm47_14 0  ~ Add_add12_12 1
+D connect BatchNormalization_batch_norm41_15 0  ~ Add_add11_13 0
+D connect BatchNormalization_batch_norm44_16 0  ~ Add_add11_13 1
+D connect Conv_conv47_17 0  ~ BatchNormalization_batch_norm47_14 0
+D connect Conv_conv41_18 0  ~ BatchNormalization_batch_norm41_15 0
+D connect Conv_conv44_19 0  ~ BatchNormalization_batch_norm44_16 0
+D connect PRelu_prelu32_20 0  ~ Conv_conv47_17 0
+D connect PRelu_prelu28_21 0  ~ Conv_conv41_18 0
+D connect PRelu_prelu30_22 0  ~ Conv_conv44_19 0
+D connect BatchNormalization_batch_norm46_23 0  ~ PRelu_prelu32_20 0
+D connect BatchNormalization_batch_norm40_24 0  ~ PRelu_prelu28_21 0
+D connect BatchNormalization_batch_norm43_25 0  ~ PRelu_prelu30_22 0
+D connect Conv_conv46_26 0  ~ BatchNormalization_batch_norm46_23 0
+D connect Conv_conv40_27 0  ~ BatchNormalization_batch_norm40_24 0
+D connect Conv_conv43_28 0  ~ BatchNormalization_batch_norm43_25 0
+D connect PRelu_prelu31_29 0  ~ Conv_conv46_26 0
+D connect PRelu_prelu27_30 0  ~ Conv_conv40_27 0
+D connect PRelu_prelu29_31 0  ~ Conv_conv43_28 0
+D connect BatchNormalization_batch_norm45_32 0  ~ PRelu_prelu31_29 0
+D connect BatchNormalization_batch_norm39_33 0  ~ PRelu_prelu27_30 0
+D connect BatchNormalization_batch_norm42_34 0  ~ PRelu_prelu29_31 0
+D connect Conv_conv45_35 0  ~ BatchNormalization_batch_norm45_32 0
+D connect Conv_conv39_36 0  ~ BatchNormalization_batch_norm39_33 0
+D connect Conv_conv42_37 0  ~ BatchNormalization_batch_norm42_34 0
+D connect Add_add11_13 0  ~ Conv_conv45_35 0
+D connect Add_add10_38 0  ~ Conv_conv39_36 0
+D connect BatchNormalization_batch_norm41_15 0  ~ Conv_conv42_37 0
+D connect Add_add9_39 0  ~ Add_add10_38 0
+D connect BatchNormalization_batch_norm38_40 0  ~ Add_add10_38 1
+D connect Add_add8_41 0  ~ Add_add9_39 0
+D connect BatchNormalization_batch_norm35_42 0  ~ Add_add9_39 1
+D connect Conv_conv38_43 0  ~ BatchNormalization_batch_norm38_40 0
+D connect Add_add7_44 0  ~ Add_add8_41 0
+D connect BatchNormalization_batch_norm32_45 0  ~ Add_add8_41 1
+D connect Conv_conv35_46 0  ~ BatchNormalization_batch_norm35_42 0
+D connect PRelu_prelu26_47 0  ~ Conv_conv38_43 0
+D connect Add_add6_48 0  ~ Add_add7_44 0
+D connect BatchNormalization_batch_norm29_49 0  ~ Add_add7_44 1
+D connect Conv_conv32_50 0  ~ BatchNormalization_batch_norm32_45 0
+D connect PRelu_prelu24_51 0  ~ Conv_conv35_46 0
+D connect BatchNormalization_batch_norm37_52 0  ~ PRelu_prelu26_47 0
+D connect Add_add5_53 0  ~ Add_add6_48 0
+D connect BatchNormalization_batch_norm26_54 0  ~ Add_add6_48 1
+D connect Conv_conv29_55 0  ~ BatchNormalization_batch_norm29_49 0
+D connect PRelu_prelu22_56 0  ~ Conv_conv32_50 0
+D connect BatchNormalization_batch_norm34_57 0  ~ PRelu_prelu24_51 0
+D connect Conv_conv37_58 0  ~ BatchNormalization_batch_norm37_52 0
+D connect BatchNormalization_batch_norm20_59 0  ~ Add_add5_53 0
+D connect BatchNormalization_batch_norm23_60 0  ~ Add_add5_53 1
+D connect Conv_conv26_61 0  ~ BatchNormalization_batch_norm26_54 0
+D connect PRelu_prelu20_62 0  ~ Conv_conv29_55 0
+D connect BatchNormalization_batch_norm31_63 0  ~ PRelu_prelu22_56 0
+D connect Conv_conv34_64 0  ~ BatchNormalization_batch_norm34_57 0
+D connect PRelu_prelu25_65 0  ~ Conv_conv37_58 0
+D connect Conv_conv20_66 0  ~ BatchNormalization_batch_norm20_59 0
+D connect Conv_conv23_67 0  ~ BatchNormalization_batch_norm23_60 0
+D connect PRelu_prelu18_68 0  ~ Conv_conv26_61 0
+D connect BatchNormalization_batch_norm28_69 0  ~ PRelu_prelu20_62 0
+D connect Conv_conv31_70 0  ~ BatchNormalization_batch_norm31_63 0
+D connect PRelu_prelu23_71 0  ~ Conv_conv34_64 0
+D connect BatchNormalization_batch_norm36_72 0  ~ PRelu_prelu25_65 0
+D connect PRelu_prelu14_73 0  ~ Conv_conv20_66 0
+D connect PRelu_prelu16_74 0  ~ Conv_conv23_67 0
+D connect BatchNormalization_batch_norm25_75 0  ~ PRelu_prelu18_68 0
+D connect Conv_conv28_76 0  ~ BatchNormalization_batch_norm28_69 0
+D connect PRelu_prelu21_77 0  ~ Conv_conv31_70 0
+D connect BatchNormalization_batch_norm33_78 0  ~ PRelu_prelu23_71 0
+D connect Conv_conv36_79 0  ~ BatchNormalization_batch_norm36_72 0
+D connect BatchNormalization_batch_norm19_80 0  ~ PRelu_prelu14_73 0
+D connect BatchNormalization_batch_norm22_81 0  ~ PRelu_prelu16_74 0
+D connect Conv_conv25_82 0  ~ BatchNormalization_batch_norm25_75 0
+D connect PRelu_prelu19_83 0  ~ Conv_conv28_76 0
+D connect BatchNormalization_batch_norm30_84 0  ~ PRelu_prelu21_77 0
+D connect Conv_conv33_85 0  ~ BatchNormalization_batch_norm33_78 0
+D connect Add_add9_39 0  ~ Conv_conv36_79 0
+D connect Conv_conv19_87 0  ~ BatchNormalization_batch_norm19_80 0
+D connect Conv_conv22_88 0  ~ BatchNormalization_batch_norm22_81 0
+D connect PRelu_prelu17_89 0  ~ Conv_conv25_82 0
+D connect BatchNormalization_batch_norm27_90 0  ~ PRelu_prelu19_83 0
+D connect Conv_conv30_86 0  ~ BatchNormalization_batch_norm30_84 0
+D connect Add_add8_41 0  ~ Conv_conv33_85 0
+D connect Add_add7_44 0  ~ Conv_conv30_86 0
+D connect PRelu_prelu13_92 0  ~ Conv_conv19_87 0
+D connect PRelu_prelu15_93 0  ~ Conv_conv22_88 0
+D connect BatchNormalization_batch_norm24_94 0  ~ PRelu_prelu17_89 0
+D connect Conv_conv27_91 0  ~ BatchNormalization_batch_norm27_90 0
+D connect Add_add6_48 0  ~ Conv_conv27_91 0
+D connect BatchNormalization_batch_norm18_96 0  ~ PRelu_prelu13_92 0
+D connect BatchNormalization_batch_norm21_97 0  ~ PRelu_prelu15_93 0
+D connect Conv_conv24_95 0  ~ BatchNormalization_batch_norm24_94 0
+D connect Add_add5_53 0  ~ Conv_conv24_95 0
+D connect Conv_conv18_99 0  ~ BatchNormalization_batch_norm18_96 0
+D connect Conv_conv21_98 0  ~ BatchNormalization_batch_norm21_97 0
+D connect BatchNormalization_batch_norm20_59 0  ~ Conv_conv21_98 0
+D connect Add_add4_100 0  ~ Conv_conv18_99 0
+D connect Add_add3_101 0  ~ Add_add4_100 0
+D connect BatchNormalization_batch_norm17_102 0  ~ Add_add4_100 1
+D connect Add_add2_103 0  ~ Add_add3_101 0
+D connect BatchNormalization_batch_norm14_104 0  ~ Add_add3_101 1
+D connect Conv_conv17_105 0  ~ BatchNormalization_batch_norm17_102 0
+D connect Add_add1_106 0  ~ Add_add2_103 0
+D connect BatchNormalization_batch_norm11_107 0  ~ Add_add2_103 1
+D connect Conv_conv14_108 0  ~ BatchNormalization_batch_norm14_104 0
+D connect PRelu_prelu12_109 0  ~ Conv_conv17_105 0
+D connect BatchNormalization_batch_norm5_110 0  ~ Add_add1_106 0
+D connect BatchNormalization_batch_norm8_111 0  ~ Add_add1_106 1
+D connect Conv_conv11_112 0  ~ BatchNormalization_batch_norm11_107 0
+D connect PRelu_prelu10_113 0  ~ Conv_conv14_108 0
+D connect BatchNormalization_batch_norm16_114 0  ~ PRelu_prelu12_109 0
+D connect Conv_conv5_115 0  ~ BatchNormalization_batch_norm5_110 0
+D connect Conv_conv8_116 0  ~ BatchNormalization_batch_norm8_111 0
+D connect PRelu_prelu8_117 0  ~ Conv_conv11_112 0
+D connect BatchNormalization_batch_norm13_118 0  ~ PRelu_prelu10_113 0
+D connect Conv_conv16_119 0  ~ BatchNormalization_batch_norm16_114 0
+D connect PRelu_prelu4_120 0  ~ Conv_conv5_115 0
+D connect PRelu_prelu6_121 0  ~ Conv_conv8_116 0
+D connect BatchNormalization_batch_norm10_122 0  ~ PRelu_prelu8_117 0
+D connect Conv_conv13_123 0  ~ BatchNormalization_batch_norm13_118 0
+D connect PRelu_prelu11_124 0  ~ Conv_conv16_119 0
+D connect BatchNormalization_batch_norm4_125 0  ~ PRelu_prelu4_120 0
+D connect BatchNormalization_batch_norm7_126 0  ~ PRelu_prelu6_121 0
+D connect Conv_conv10_127 0  ~ BatchNormalization_batch_norm10_122 0
+D connect PRelu_prelu9_128 0  ~ Conv_conv13_123 0
+D connect BatchNormalization_batch_norm15_129 0  ~ PRelu_prelu11_124 0
+D connect Conv_conv4_130 0  ~ BatchNormalization_batch_norm4_125 0
+D connect Conv_conv7_131 0  ~ BatchNormalization_batch_norm7_126 0
+D connect PRelu_prelu7_132 0  ~ Conv_conv10_127 0
+D connect BatchNormalization_batch_norm12_133 0  ~ PRelu_prelu9_128 0
+D connect Conv_conv15_134 0  ~ BatchNormalization_batch_norm15_129 0
+D connect PRelu_prelu3_135 0  ~ Conv_conv4_130 0
+D connect PRelu_prelu5_136 0  ~ Conv_conv7_131 0
+D connect BatchNormalization_batch_norm9_137 0  ~ PRelu_prelu7_132 0
+D connect Conv_conv12_138 0  ~ BatchNormalization_batch_norm12_133 0
+D connect Add_add3_101 0  ~ Conv_conv15_134 0
+D connect BatchNormalization_batch_norm3_140 0  ~ PRelu_prelu3_135 0
+D connect BatchNormalization_batch_norm6_141 0  ~ PRelu_prelu5_136 0
+D connect Conv_conv9_139 0  ~ BatchNormalization_batch_norm9_137 0
+D connect Add_add2_103 0  ~ Conv_conv12_138 0
+D connect Add_add1_106 0  ~ Conv_conv9_139 0
+D connect Conv_conv3_143 0  ~ BatchNormalization_batch_norm3_140 0
+D connect Conv_conv6_142 0  ~ BatchNormalization_batch_norm6_141 0
+D connect BatchNormalization_batch_norm5_110 0  ~ Conv_conv6_142 0
+D connect PRelu_prelu2_144 0  ~ Conv_conv3_143 0
+D connect BatchNormalization_batch_norm2_145 0  ~ PRelu_prelu2_144 0
+D connect Conv_conv2_146 0  ~ BatchNormalization_batch_norm2_145 0
+D connect PRelu_prelu1_147 0  ~ Conv_conv2_146 0
+D connect BatchNormalization_batch_norm1_148 0  ~ PRelu_prelu1_147 0
+D connect Conv_conv1_149 0  ~ BatchNormalization_batch_norm1_148 0
+D connect input_150 0  ~ Conv_conv1_149 0
+D connect Softmax_softmax_1 0  ~ attach_Softmax_softmax/out0_0 0
+D Process input_150 ...
+D RKNN output shape(input): (1 80 80 3)
+D Tensor @input_150:out0 type: float32
+D Process Conv_conv1_149 ...
+D RKNN output shape(convolution): (1 40 40 32)
+D Tensor @Conv_conv1_149:out0 type: float32
+D Process BatchNormalization_batch_norm1_148 ...
+D RKNN output shape(batchnormalize): (1 40 40 32)
+D Tensor @BatchNormalization_batch_norm1_148:out0 type: float32
+D Process PRelu_prelu1_147 ...
+D RKNN output shape(prelu): (1 40 40 32)
+D Tensor @PRelu_prelu1_147:out0 type: float32
+D Process Conv_conv2_146 ...
+D RKNN output shape(convolution): (1 40 40 32)
+D Tensor @Conv_conv2_146:out0 type: float32
+D Process BatchNormalization_batch_norm2_145 ...
+D RKNN output shape(batchnormalize): (1 40 40 32)
+D Tensor @BatchNormalization_batch_norm2_145:out0 type: float32
+D Process PRelu_prelu2_144 ...
+D RKNN output shape(prelu): (1 40 40 32)
+D Tensor @PRelu_prelu2_144:out0 type: float32
+D Process Conv_conv3_143 ...
+D RKNN output shape(convolution): (1 40 40 103)
+D Tensor @Conv_conv3_143:out0 type: float32
+D Process BatchNormalization_batch_norm3_140 ...
+D RKNN output shape(batchnormalize): (1 40 40 103)
+D Tensor @BatchNormalization_batch_norm3_140:out0 type: float32
+D Process PRelu_prelu3_135 ...
+D RKNN output shape(prelu): (1 40 40 103)
+D Tensor @PRelu_prelu3_135:out0 type: float32
+D Process Conv_conv4_130 ...
+D RKNN output shape(convolution): (1 20 20 103)
+D Tensor @Conv_conv4_130:out0 type: float32
+D Process BatchNormalization_batch_norm4_125 ...
+D RKNN output shape(batchnormalize): (1 20 20 103)
+D Tensor @BatchNormalization_batch_norm4_125:out0 type: float32
+D Process PRelu_prelu4_120 ...
+D RKNN output shape(prelu): (1 20 20 103)
+D Tensor @PRelu_prelu4_120:out0 type: float32
+D Process Conv_conv5_115 ...
+D RKNN output shape(convolution): (1 20 20 64)
+D Tensor @Conv_conv5_115:out0 type: float32
+D Process BatchNormalization_batch_norm5_110 ...
+D RKNN output shape(batchnormalize): (1 20 20 64)
+D Tensor @BatchNormalization_batch_norm5_110:out0 type: float32
+D Process Conv_conv6_142 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv6_142:out0 type: float32
+D Process BatchNormalization_batch_norm6_141 ...
+D RKNN output shape(batchnormalize): (1 20 20 13)
+D Tensor @BatchNormalization_batch_norm6_141:out0 type: float32
+D Process PRelu_prelu5_136 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu5_136:out0 type: float32
+D Process Conv_conv7_131 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv7_131:out0 type: float32
+D Process BatchNormalization_batch_norm7_126 ...
+D RKNN output shape(batchnormalize): (1 20 20 13)
+D Tensor @BatchNormalization_batch_norm7_126:out0 type: float32
+D Process PRelu_prelu6_121 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu6_121:out0 type: float32
+D Process Conv_conv8_116 ...
+D RKNN output shape(convolution): (1 20 20 64)
+D Tensor @Conv_conv8_116:out0 type: float32
+D Process BatchNormalization_batch_norm8_111 ...
+D RKNN output shape(batchnormalize): (1 20 20 64)
+D Tensor @BatchNormalization_batch_norm8_111:out0 type: float32
+D Process Add_add1_106 ...
+D RKNN output shape(add): (1 20 20 64)
+D Tensor @Add_add1_106:out0 type: float32
+D Process Conv_conv9_139 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv9_139:out0 type: float32
+D Process BatchNormalization_batch_norm9_137 ...
+D RKNN output shape(batchnormalize): (1 20 20 13)
+D Tensor @BatchNormalization_batch_norm9_137:out0 type: float32
+D Process PRelu_prelu7_132 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu7_132:out0 type: float32
+D Process Conv_conv10_127 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv10_127:out0 type: float32
+D Process BatchNormalization_batch_norm10_122 ...
+D RKNN output shape(batchnormalize): (1 20 20 13)
+D Tensor @BatchNormalization_batch_norm10_122:out0 type: float32
+D Process PRelu_prelu8_117 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu8_117:out0 type: float32
+D Process Conv_conv11_112 ...
+D RKNN output shape(convolution): (1 20 20 64)
+D Tensor @Conv_conv11_112:out0 type: float32
+D Process BatchNormalization_batch_norm11_107 ...
+D RKNN output shape(batchnormalize): (1 20 20 64)
+D Tensor @BatchNormalization_batch_norm11_107:out0 type: float32
+D Process Add_add2_103 ...
+D RKNN output shape(add): (1 20 20 64)
+D Tensor @Add_add2_103:out0 type: float32
+D Process Conv_conv12_138 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv12_138:out0 type: float32
+D Process BatchNormalization_batch_norm12_133 ...
+D RKNN output shape(batchnormalize): (1 20 20 13)
+D Tensor @BatchNormalization_batch_norm12_133:out0 type: float32
+D Process PRelu_prelu9_128 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu9_128:out0 type: float32
+D Process Conv_conv13_123 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv13_123:out0 type: float32
+D Process BatchNormalization_batch_norm13_118 ...
+D RKNN output shape(batchnormalize): (1 20 20 13)
+D Tensor @BatchNormalization_batch_norm13_118:out0 type: float32
+D Process PRelu_prelu10_113 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu10_113:out0 type: float32
+D Process Conv_conv14_108 ...
+D RKNN output shape(convolution): (1 20 20 64)
+D Tensor @Conv_conv14_108:out0 type: float32
+D Process BatchNormalization_batch_norm14_104 ...
+D RKNN output shape(batchnormalize): (1 20 20 64)
+D Tensor @BatchNormalization_batch_norm14_104:out0 type: float32
+D Process Add_add3_101 ...
+D RKNN output shape(add): (1 20 20 64)
+D Tensor @Add_add3_101:out0 type: float32
+D Process Conv_conv15_134 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv15_134:out0 type: float32
+D Process BatchNormalization_batch_norm15_129 ...
+D RKNN output shape(batchnormalize): (1 20 20 13)
+D Tensor @BatchNormalization_batch_norm15_129:out0 type: float32
+D Process PRelu_prelu11_124 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu11_124:out0 type: float32
+D Process Conv_conv16_119 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv16_119:out0 type: float32
+D Process BatchNormalization_batch_norm16_114 ...
+D RKNN output shape(batchnormalize): (1 20 20 13)
+D Tensor @BatchNormalization_batch_norm16_114:out0 type: float32
+D Process PRelu_prelu12_109 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu12_109:out0 type: float32
+D Process Conv_conv17_105 ...
+D RKNN output shape(convolution): (1 20 20 64)
+D Tensor @Conv_conv17_105:out0 type: float32
+D Process BatchNormalization_batch_norm17_102 ...
+D RKNN output shape(batchnormalize): (1 20 20 64)
+D Tensor @BatchNormalization_batch_norm17_102:out0 type: float32
+D Process Add_add4_100 ...
+D RKNN output shape(add): (1 20 20 64)
+D Tensor @Add_add4_100:out0 type: float32
+D Process Conv_conv18_99 ...
+D RKNN output shape(convolution): (1 20 20 231)
+D Tensor @Conv_conv18_99:out0 type: float32
+D Process BatchNormalization_batch_norm18_96 ...
+D RKNN output shape(batchnormalize): (1 20 20 231)
+D Tensor @BatchNormalization_batch_norm18_96:out0 type: float32
+D Process PRelu_prelu13_92 ...
+D RKNN output shape(prelu): (1 20 20 231)
+D Tensor @PRelu_prelu13_92:out0 type: float32
+D Process Conv_conv19_87 ...
+D RKNN output shape(convolution): (1 10 10 231)
+D Tensor @Conv_conv19_87:out0 type: float32
+D Process BatchNormalization_batch_norm19_80 ...
+D RKNN output shape(batchnormalize): (1 10 10 231)
+D Tensor @BatchNormalization_batch_norm19_80:out0 type: float32
+D Process PRelu_prelu14_73 ...
+D RKNN output shape(prelu): (1 10 10 231)
+D Tensor @PRelu_prelu14_73:out0 type: float32
+D Process Conv_conv20_66 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv20_66:out0 type: float32
+D Process BatchNormalization_batch_norm20_59 ...
+D RKNN output shape(batchnormalize): (1 10 10 128)
+D Tensor @BatchNormalization_batch_norm20_59:out0 type: float32
+D Process Conv_conv21_98 ...
+D RKNN output shape(convolution): (1 10 10 231)
+D Tensor @Conv_conv21_98:out0 type: float32
+D Process BatchNormalization_batch_norm21_97 ...
+D RKNN output shape(batchnormalize): (1 10 10 231)
+D Tensor @BatchNormalization_batch_norm21_97:out0 type: float32
+D Process PRelu_prelu15_93 ...
+D RKNN output shape(prelu): (1 10 10 231)
+D Tensor @PRelu_prelu15_93:out0 type: float32
+D Process Conv_conv22_88 ...
+D RKNN output shape(convolution): (1 10 10 231)
+D Tensor @Conv_conv22_88:out0 type: float32
+D Process BatchNormalization_batch_norm22_81 ...
+D RKNN output shape(batchnormalize): (1 10 10 231)
+D Tensor @BatchNormalization_batch_norm22_81:out0 type: float32
+D Process PRelu_prelu16_74 ...
+D RKNN output shape(prelu): (1 10 10 231)
+D Tensor @PRelu_prelu16_74:out0 type: float32
+D Process Conv_conv23_67 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv23_67:out0 type: float32
+D Process BatchNormalization_batch_norm23_60 ...
+D RKNN output shape(batchnormalize): (1 10 10 128)
+D Tensor @BatchNormalization_batch_norm23_60:out0 type: float32
+D Process Add_add5_53 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add5_53:out0 type: float32
+D Process Conv_conv24_95 ...
+D RKNN output shape(convolution): (1 10 10 52)
+D Tensor @Conv_conv24_95:out0 type: float32
+D Process BatchNormalization_batch_norm24_94 ...
+D RKNN output shape(batchnormalize): (1 10 10 52)
+D Tensor @BatchNormalization_batch_norm24_94:out0 type: float32
+D Process PRelu_prelu17_89 ...
+D RKNN output shape(prelu): (1 10 10 52)
+D Tensor @PRelu_prelu17_89:out0 type: float32
+D Process Conv_conv25_82 ...
+D RKNN output shape(convolution): (1 10 10 52)
+D Tensor @Conv_conv25_82:out0 type: float32
+D Process BatchNormalization_batch_norm25_75 ...
+D RKNN output shape(batchnormalize): (1 10 10 52)
+D Tensor @BatchNormalization_batch_norm25_75:out0 type: float32
+D Process PRelu_prelu18_68 ...
+D RKNN output shape(prelu): (1 10 10 52)
+D Tensor @PRelu_prelu18_68:out0 type: float32
+D Process Conv_conv26_61 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv26_61:out0 type: float32
+D Process BatchNormalization_batch_norm26_54 ...
+D RKNN output shape(batchnormalize): (1 10 10 128)
+D Tensor @BatchNormalization_batch_norm26_54:out0 type: float32
+D Process Add_add6_48 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add6_48:out0 type: float32
+D Process Conv_conv27_91 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv27_91:out0 type: float32
+D Process BatchNormalization_batch_norm27_90 ...
+D RKNN output shape(batchnormalize): (1 10 10 26)
+D Tensor @BatchNormalization_batch_norm27_90:out0 type: float32
+D Process PRelu_prelu19_83 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu19_83:out0 type: float32
+D Process Conv_conv28_76 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv28_76:out0 type: float32
+D Process BatchNormalization_batch_norm28_69 ...
+D RKNN output shape(batchnormalize): (1 10 10 26)
+D Tensor @BatchNormalization_batch_norm28_69:out0 type: float32
+D Process PRelu_prelu20_62 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu20_62:out0 type: float32
+D Process Conv_conv29_55 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv29_55:out0 type: float32
+D Process BatchNormalization_batch_norm29_49 ...
+D RKNN output shape(batchnormalize): (1 10 10 128)
+D Tensor @BatchNormalization_batch_norm29_49:out0 type: float32
+D Process Add_add7_44 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add7_44:out0 type: float32
+D Process Conv_conv30_86 ...
+D RKNN output shape(convolution): (1 10 10 77)
+D Tensor @Conv_conv30_86:out0 type: float32
+D Process BatchNormalization_batch_norm30_84 ...
+D RKNN output shape(batchnormalize): (1 10 10 77)
+D Tensor @BatchNormalization_batch_norm30_84:out0 type: float32
+D Process PRelu_prelu21_77 ...
+D RKNN output shape(prelu): (1 10 10 77)
+D Tensor @PRelu_prelu21_77:out0 type: float32
+D Process Conv_conv31_70 ...
+D RKNN output shape(convolution): (1 10 10 77)
+D Tensor @Conv_conv31_70:out0 type: float32
+D Process BatchNormalization_batch_norm31_63 ...
+D RKNN output shape(batchnormalize): (1 10 10 77)
+D Tensor @BatchNormalization_batch_norm31_63:out0 type: float32
+D Process PRelu_prelu22_56 ...
+D RKNN output shape(prelu): (1 10 10 77)
+D Tensor @PRelu_prelu22_56:out0 type: float32
+D Process Conv_conv32_50 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv32_50:out0 type: float32
+D Process BatchNormalization_batch_norm32_45 ...
+D RKNN output shape(batchnormalize): (1 10 10 128)
+D Tensor @BatchNormalization_batch_norm32_45:out0 type: float32
+D Process Add_add8_41 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add8_41:out0 type: float32
+D Process Conv_conv33_85 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv33_85:out0 type: float32
+D Process BatchNormalization_batch_norm33_78 ...
+D RKNN output shape(batchnormalize): (1 10 10 26)
+D Tensor @BatchNormalization_batch_norm33_78:out0 type: float32
+D Process PRelu_prelu23_71 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu23_71:out0 type: float32
+D Process Conv_conv34_64 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv34_64:out0 type: float32
+D Process BatchNormalization_batch_norm34_57 ...
+D RKNN output shape(batchnormalize): (1 10 10 26)
+D Tensor @BatchNormalization_batch_norm34_57:out0 type: float32
+D Process PRelu_prelu24_51 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu24_51:out0 type: float32
+D Process Conv_conv35_46 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv35_46:out0 type: float32
+D Process BatchNormalization_batch_norm35_42 ...
+D RKNN output shape(batchnormalize): (1 10 10 128)
+D Tensor @BatchNormalization_batch_norm35_42:out0 type: float32
+D Process Add_add9_39 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add9_39:out0 type: float32
+D Process Conv_conv36_79 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv36_79:out0 type: float32
+D Process BatchNormalization_batch_norm36_72 ...
+D RKNN output shape(batchnormalize): (1 10 10 26)
+D Tensor @BatchNormalization_batch_norm36_72:out0 type: float32
+D Process PRelu_prelu25_65 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu25_65:out0 type: float32
+D Process Conv_conv37_58 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv37_58:out0 type: float32
+D Process BatchNormalization_batch_norm37_52 ...
+D RKNN output shape(batchnormalize): (1 10 10 26)
+D Tensor @BatchNormalization_batch_norm37_52:out0 type: float32
+D Process PRelu_prelu26_47 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu26_47:out0 type: float32
+D Process Conv_conv38_43 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv38_43:out0 type: float32
+D Process BatchNormalization_batch_norm38_40 ...
+D RKNN output shape(batchnormalize): (1 10 10 128)
+D Tensor @BatchNormalization_batch_norm38_40:out0 type: float32
+D Process Add_add10_38 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add10_38:out0 type: float32
+D Process Conv_conv39_36 ...
+D RKNN output shape(convolution): (1 10 10 308)
+D Tensor @Conv_conv39_36:out0 type: float32
+D Process BatchNormalization_batch_norm39_33 ...
+D RKNN output shape(batchnormalize): (1 10 10 308)
+D Tensor @BatchNormalization_batch_norm39_33:out0 type: float32
+D Process PRelu_prelu27_30 ...
+D RKNN output shape(prelu): (1 10 10 308)
+D Tensor @PRelu_prelu27_30:out0 type: float32
+D Process Conv_conv40_27 ...
+D RKNN output shape(convolution): (1 5 5 308)
+D Tensor @Conv_conv40_27:out0 type: float32
+D Process BatchNormalization_batch_norm40_24 ...
+D RKNN output shape(batchnormalize): (1 5 5 308)
+D Tensor @BatchNormalization_batch_norm40_24:out0 type: float32
+D Process PRelu_prelu28_21 ...
+D RKNN output shape(prelu): (1 5 5 308)
+D Tensor @PRelu_prelu28_21:out0 type: float32
+D Process Conv_conv41_18 ...
+D RKNN output shape(convolution): (1 5 5 128)
+D Tensor @Conv_conv41_18:out0 type: float32
+D Process BatchNormalization_batch_norm41_15 ...
+D RKNN output shape(batchnormalize): (1 5 5 128)
+D Tensor @BatchNormalization_batch_norm41_15:out0 type: float32
+D Process Conv_conv42_37 ...
+D RKNN output shape(convolution): (1 5 5 26)
+D Tensor @Conv_conv42_37:out0 type: float32
+D Process BatchNormalization_batch_norm42_34 ...
+D RKNN output shape(batchnormalize): (1 5 5 26)
+D Tensor @BatchNormalization_batch_norm42_34:out0 type: float32
+D Process PRelu_prelu29_31 ...
+D RKNN output shape(prelu): (1 5 5 26)
+D Tensor @PRelu_prelu29_31:out0 type: float32
+D Process Conv_conv43_28 ...
+D RKNN output shape(convolution): (1 5 5 26)
+D Tensor @Conv_conv43_28:out0 type: float32
+D Process BatchNormalization_batch_norm43_25 ...
+D RKNN output shape(batchnormalize): (1 5 5 26)
+D Tensor @BatchNormalization_batch_norm43_25:out0 type: float32
+D Process PRelu_prelu30_22 ...
+D RKNN output shape(prelu): (1 5 5 26)
+D Tensor @PRelu_prelu30_22:out0 type: float32
+D Process Conv_conv44_19 ...
+D RKNN output shape(convolution): (1 5 5 128)
+D Tensor @Conv_conv44_19:out0 type: float32
+D Process BatchNormalization_batch_norm44_16 ...
+D RKNN output shape(batchnormalize): (1 5 5 128)
+D Tensor @BatchNormalization_batch_norm44_16:out0 type: float32
+D Process Add_add11_13 ...
+D RKNN output shape(add): (1 5 5 128)
+D Tensor @Add_add11_13:out0 type: float32
+D Process Conv_conv45_35 ...
+D RKNN output shape(convolution): (1 5 5 26)
+D Tensor @Conv_conv45_35:out0 type: float32
+D Process BatchNormalization_batch_norm45_32 ...
+D RKNN output shape(batchnormalize): (1 5 5 26)
+D Tensor @BatchNormalization_batch_norm45_32:out0 type: float32
+D Process PRelu_prelu31_29 ...
+D RKNN output shape(prelu): (1 5 5 26)
+D Tensor @PRelu_prelu31_29:out0 type: float32
+D Process Conv_conv46_26 ...
+D RKNN output shape(convolution): (1 5 5 26)
+D Tensor @Conv_conv46_26:out0 type: float32
+D Process BatchNormalization_batch_norm46_23 ...
+D RKNN output shape(batchnormalize): (1 5 5 26)
+D Tensor @BatchNormalization_batch_norm46_23:out0 type: float32
+D Process PRelu_prelu32_20 ...
+D RKNN output shape(prelu): (1 5 5 26)
+D Tensor @PRelu_prelu32_20:out0 type: float32
+D Process Conv_conv47_17 ...
+D RKNN output shape(convolution): (1 5 5 128)
+D Tensor @Conv_conv47_17:out0 type: float32
+D Process BatchNormalization_batch_norm47_14 ...
+D RKNN output shape(batchnormalize): (1 5 5 128)
+D Tensor @BatchNormalization_batch_norm47_14:out0 type: float32
+D Process Add_add12_12 ...
+D RKNN output shape(add): (1 5 5 128)
+D Tensor @Add_add12_12:out0 type: float32
+D Process Conv_conv48_11 ...
+D RKNN output shape(convolution): (1 5 5 512)
+D Tensor @Conv_conv48_11:out0 type: float32
+D Process BatchNormalization_batch_norm48_10 ...
+D RKNN output shape(batchnormalize): (1 5 5 512)
+D Tensor @BatchNormalization_batch_norm48_10:out0 type: float32
+D Process PRelu_prelu33_9 ...
+D RKNN output shape(prelu): (1 5 5 512)
+D Tensor @PRelu_prelu33_9:out0 type: float32
+D Process Conv_conv49_8 ...
+D RKNN output shape(convolution): (1 1 1 512)
+D Tensor @Conv_conv49_8:out0 type: float32
+D Process BatchNormalization_batch_norm49_7 ...
+D RKNN output shape(batchnormalize): (1 1 1 512)
+D Tensor @BatchNormalization_batch_norm49_7:out0 type: float32
+D Process Reshape_view1_6 ...
+D RKNN output shape(reshape): (1 512)
+D Tensor @Reshape_view1_6:out0 type: float32
+D Process Gemm_fc1_5 ...
+D RKNN output shape(fullconnect): (1 128)
+D Tensor @Gemm_fc1_5:out0 type: float32
+D Process BatchNormalization_batch_norm50_4 ...
+D RKNN output shape(batchnormalize): (1 128)
+D Tensor @BatchNormalization_batch_norm50_4:out0 type: float32
+D Process Dropout_dropout1_3 ...
+D RKNN output shape(noop): (1 128)
+D Tensor @Dropout_dropout1_3:out0 type: float32
+D Process Gemm_fc2_2 ...
+D RKNN output shape(fullconnect): (1 3)
+D Tensor @Gemm_fc2_2:out0 type: float32
+D Process Softmax_softmax_1 ...
+D RKNN output shape(softmax): (1 3)
+D Tensor @Softmax_softmax_1:out0 type: float32
+D Process attach_Softmax_softmax/out0_0 ...
+D RKNN output shape(output): (1 3)
+D Tensor @attach_Softmax_softmax/out0_0:out0 type: float32
+I Build _06_27_80x80_MiniFASNetV2 complete.
+I Start C2T Switcher...
+D Optimizing network with broadcast_op
+D insert permute Reshape_view1_6_RKNN_mark_perm_151 before Reshape_view1_6
+I End C2T Switcher...
+D Remove Dropout_dropout1_3.
+D Optimizing network with force_1d_tensor, swapper, merge_duplicate_quantize_dequantize, merge_layer, auto_fill_bn, auto_fill_l2normalizescale, auto_fill_instancenormalize, resize_nearest_transformer, eltwise_transform, auto_fill_multiply, auto_fill_zero_bias, proposal_opt_import, special_add_to_conv2d
+D Merge ['Gemm_fc1_5', 'BatchNormalization_batch_norm50_4'] (fullconnect)
+D Merge ['Conv_conv49_8', 'BatchNormalization_batch_norm49_7'] (convolution)
+D Merge ['Conv_conv48_11', 'BatchNormalization_batch_norm48_10'] (convolution)
+D Merge ['Conv_conv47_17', 'BatchNormalization_batch_norm47_14'] (convolution)
+D Merge ['Conv_conv41_18', 'BatchNormalization_batch_norm41_15'] (convolution)
+D Merge ['Conv_conv44_19', 'BatchNormalization_batch_norm44_16'] (convolution)
+D Merge ['Conv_conv46_26', 'BatchNormalization_batch_norm46_23'] (convolution)
+D Merge ['Conv_conv40_27', 'BatchNormalization_batch_norm40_24'] (convolution)
+D Merge ['Conv_conv43_28', 'BatchNormalization_batch_norm43_25'] (convolution)
+D Merge ['Conv_conv45_35', 'BatchNormalization_batch_norm45_32'] (convolution)
+D Merge ['Conv_conv39_36', 'BatchNormalization_batch_norm39_33'] (convolution)
+D Merge ['Conv_conv42_37', 'BatchNormalization_batch_norm42_34'] (convolution)
+D Merge ['Conv_conv38_43', 'BatchNormalization_batch_norm38_40'] (convolution)
+D Merge ['Conv_conv35_46', 'BatchNormalization_batch_norm35_42'] (convolution)
+D Merge ['Conv_conv32_50', 'BatchNormalization_batch_norm32_45'] (convolution)
+D Merge ['Conv_conv29_55', 'BatchNormalization_batch_norm29_49'] (convolution)
+D Merge ['Conv_conv37_58', 'BatchNormalization_batch_norm37_52'] (convolution)
+D Merge ['Conv_conv26_61', 'BatchNormalization_batch_norm26_54'] (convolution)
+D Merge ['Conv_conv34_64', 'BatchNormalization_batch_norm34_57'] (convolution)
+D Merge ['Conv_conv20_66', 'BatchNormalization_batch_norm20_59'] (convolution)
+D Merge ['Conv_conv23_67', 'BatchNormalization_batch_norm23_60'] (convolution)
+D Merge ['Conv_conv31_70', 'BatchNormalization_batch_norm31_63'] (convolution)
+D Merge ['Conv_conv28_76', 'BatchNormalization_batch_norm28_69'] (convolution)
+D Merge ['Conv_conv36_79', 'BatchNormalization_batch_norm36_72'] (convolution)
+D Merge ['Conv_conv25_82', 'BatchNormalization_batch_norm25_75'] (convolution)
+D Merge ['Conv_conv33_85', 'BatchNormalization_batch_norm33_78'] (convolution)
+D Merge ['Conv_conv30_86', 'BatchNormalization_batch_norm30_84'] (convolution)
+D Merge ['Conv_conv19_87', 'BatchNormalization_batch_norm19_80'] (convolution)
+D Merge ['Conv_conv22_88', 'BatchNormalization_batch_norm22_81'] (convolution)
+D Merge ['Conv_conv27_91', 'BatchNormalization_batch_norm27_90'] (convolution)
+D Merge ['Conv_conv24_95', 'BatchNormalization_batch_norm24_94'] (convolution)
+D Merge ['Conv_conv21_98', 'BatchNormalization_batch_norm21_97'] (convolution)
+D Merge ['Conv_conv18_99', 'BatchNormalization_batch_norm18_96'] (convolution)
+D Merge ['Conv_conv17_105', 'BatchNormalization_batch_norm17_102'] (convolution)
+D Merge ['Conv_conv14_108', 'BatchNormalization_batch_norm14_104'] (convolution)
+D Merge ['Conv_conv11_112', 'BatchNormalization_batch_norm11_107'] (convolution)
+D Merge ['Conv_conv5_115', 'BatchNormalization_batch_norm5_110'] (convolution)
+D Merge ['Conv_conv8_116', 'BatchNormalization_batch_norm8_111'] (convolution)
+D Merge ['Conv_conv16_119', 'BatchNormalization_batch_norm16_114'] (convolution)
+D Merge ['Conv_conv13_123', 'BatchNormalization_batch_norm13_118'] (convolution)
+D Merge ['Conv_conv10_127', 'BatchNormalization_batch_norm10_122'] (convolution)
+D Merge ['Conv_conv4_130', 'BatchNormalization_batch_norm4_125'] (convolution)
+D Merge ['Conv_conv7_131', 'BatchNormalization_batch_norm7_126'] (convolution)
+D Merge ['Conv_conv15_134', 'BatchNormalization_batch_norm15_129'] (convolution)
+D Merge ['Conv_conv12_138', 'BatchNormalization_batch_norm12_133'] (convolution)
+D Merge ['Conv_conv9_139', 'BatchNormalization_batch_norm9_137'] (convolution)
+D Merge ['Conv_conv6_142', 'BatchNormalization_batch_norm6_141'] (convolution)
+D Merge ['Conv_conv3_143', 'BatchNormalization_batch_norm3_140'] (convolution)
+D Merge ['Conv_conv2_146', 'BatchNormalization_batch_norm2_145'] (convolution)
+D Merge ['Conv_conv1_149', 'BatchNormalization_batch_norm1_148'] (convolution)
+I End importing onnx...
+I Generate input meta ...
+I Load input meta
+I Generate input meta ...
+D import clients finished
+I Load net...
+I Load data...
+I Load input meta
+I Start quantization...
+D import clients finished
+D iterations: 2, batch_size: 100
+I Quantization start...
+D set up a quantize net
+D *********** Setup input meta ***********
+D import clients finished
+D *********** Setup database (1) ***********
+D Setup provider layer "text_input_layer":
+D Lids: ['input_150']
+D Shapes: [[100, 80, 80, 3]]
+D Data types: ['float32']
+D Sparse tensors: []
+D Tensor names(H5FS only): []
+D Add preprocess "[('reverse_channel', False), ('mean', [0, 0, 0]), ('scale', [0.00392156862745098, 0.00392156862745098, 0.00392156862745098]), ('preproc_node_params', ordereddict([('add_preproc_node', False), ('preproc_type', 'IMAGE_RGB'), ('preproc_perm', [0, 1, 2, 3])]))]" for "input_150"
+D *********** Setup input meta complete ***********
+D Process input_150 ...
+D RKNN output shape(input): (100 80 80 3)
+D Tensor @input_150:out0 type: asymmetric_affine
+D Real output shape: (100, 80, 80, 3)
+D Process Conv_conv1_149 ...
+D RKNN output shape(convolution): (100 40 40 32)
+D Tensor @Conv_conv1_149:out0 type: asymmetric_affine
+D Real output shape: (100, 40, 40, 32)
+D Process PRelu_prelu1_147 ...
+D RKNN output shape(prelu): (100 40 40 32)
+D Tensor @PRelu_prelu1_147:out0 type: asymmetric_affine
+D Real output shape: (100, 40, 40, 32)
+D Process Conv_conv2_146 ...
+D RKNN output shape(convolution): (100 40 40 32)
+D Tensor @Conv_conv2_146:out0 type: asymmetric_affine
+D Real output shape: (100, 40, 40, 32)
+D Process PRelu_prelu2_144 ...
+D RKNN output shape(prelu): (100 40 40 32)
+D Tensor @PRelu_prelu2_144:out0 type: asymmetric_affine
+D Real output shape: (100, 40, 40, 32)
+D Process Conv_conv3_143 ...
+D RKNN output shape(convolution): (100 40 40 103)
+D Tensor @Conv_conv3_143:out0 type: asymmetric_affine
+D Real output shape: (100, 40, 40, 103)
+D Process PRelu_prelu3_135 ...
+D RKNN output shape(prelu): (100 40 40 103)
+D Tensor @PRelu_prelu3_135:out0 type: asymmetric_affine
+D Real output shape: (100, 40, 40, 103)
+D Process Conv_conv4_130 ...
+D RKNN output shape(convolution): (100 20 20 103)
+D Tensor @Conv_conv4_130:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 103)
+D Process PRelu_prelu4_120 ...
+D RKNN output shape(prelu): (100 20 20 103)
+D Tensor @PRelu_prelu4_120:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 103)
+D Process Conv_conv5_115 ...
+D RKNN output shape(convolution): (100 20 20 64)
+D Tensor @Conv_conv5_115:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 64)
+D Process Conv_conv6_142 ...
+D RKNN output shape(convolution): (100 20 20 13)
+D Tensor @Conv_conv6_142:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process PRelu_prelu5_136 ...
+D RKNN output shape(prelu): (100 20 20 13)
+D Tensor @PRelu_prelu5_136:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process Conv_conv7_131 ...
+D RKNN output shape(convolution): (100 20 20 13)
+D Tensor @Conv_conv7_131:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process PRelu_prelu6_121 ...
+D RKNN output shape(prelu): (100 20 20 13)
+D Tensor @PRelu_prelu6_121:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process Conv_conv8_116 ...
+D RKNN output shape(convolution): (100 20 20 64)
+D Tensor @Conv_conv8_116:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 64)
+D Process Add_add1_106 ...
+D RKNN output shape(add): (100 20 20 64)
+D Tensor @Add_add1_106:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 64)
+D Process Conv_conv9_139 ...
+D RKNN output shape(convolution): (100 20 20 13)
+D Tensor @Conv_conv9_139:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process PRelu_prelu7_132 ...
+D RKNN output shape(prelu): (100 20 20 13)
+D Tensor @PRelu_prelu7_132:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process Conv_conv10_127 ...
+D RKNN output shape(convolution): (100 20 20 13)
+D Tensor @Conv_conv10_127:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process PRelu_prelu8_117 ...
+D RKNN output shape(prelu): (100 20 20 13)
+D Tensor @PRelu_prelu8_117:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process Conv_conv11_112 ...
+D RKNN output shape(convolution): (100 20 20 64)
+D Tensor @Conv_conv11_112:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 64)
+D Process Add_add2_103 ...
+D RKNN output shape(add): (100 20 20 64)
+D Tensor @Add_add2_103:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 64)
+D Process Conv_conv12_138 ...
+D RKNN output shape(convolution): (100 20 20 13)
+D Tensor @Conv_conv12_138:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process PRelu_prelu9_128 ...
+D RKNN output shape(prelu): (100 20 20 13)
+D Tensor @PRelu_prelu9_128:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process Conv_conv13_123 ...
+D RKNN output shape(convolution): (100 20 20 13)
+D Tensor @Conv_conv13_123:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process PRelu_prelu10_113 ...
+D RKNN output shape(prelu): (100 20 20 13)
+D Tensor @PRelu_prelu10_113:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process Conv_conv14_108 ...
+D RKNN output shape(convolution): (100 20 20 64)
+D Tensor @Conv_conv14_108:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 64)
+D Process Add_add3_101 ...
+D RKNN output shape(add): (100 20 20 64)
+D Tensor @Add_add3_101:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 64)
+D Process Conv_conv15_134 ...
+D RKNN output shape(convolution): (100 20 20 13)
+D Tensor @Conv_conv15_134:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process PRelu_prelu11_124 ...
+D RKNN output shape(prelu): (100 20 20 13)
+D Tensor @PRelu_prelu11_124:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process Conv_conv16_119 ...
+D RKNN output shape(convolution): (100 20 20 13)
+D Tensor @Conv_conv16_119:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process PRelu_prelu12_109 ...
+D RKNN output shape(prelu): (100 20 20 13)
+D Tensor @PRelu_prelu12_109:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 13)
+D Process Conv_conv17_105 ...
+D RKNN output shape(convolution): (100 20 20 64)
+D Tensor @Conv_conv17_105:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 64)
+D Process Add_add4_100 ...
+D RKNN output shape(add): (100 20 20 64)
+D Tensor @Add_add4_100:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 64)
+D Process Conv_conv18_99 ...
+D RKNN output shape(convolution): (100 20 20 231)
+D Tensor @Conv_conv18_99:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 231)
+D Process PRelu_prelu13_92 ...
+D RKNN output shape(prelu): (100 20 20 231)
+D Tensor @PRelu_prelu13_92:out0 type: asymmetric_affine
+D Real output shape: (100, 20, 20, 231)
+D Process Conv_conv19_87 ...
+D RKNN output shape(convolution): (100 10 10 231)
+D Tensor @Conv_conv19_87:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 231)
+D Process PRelu_prelu14_73 ...
+D RKNN output shape(prelu): (100 10 10 231)
+D Tensor @PRelu_prelu14_73:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 231)
+D Process Conv_conv20_66 ...
+D RKNN output shape(convolution): (100 10 10 128)
+D Tensor @Conv_conv20_66:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Conv_conv21_98 ...
+D RKNN output shape(convolution): (100 10 10 231)
+D Tensor @Conv_conv21_98:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 231)
+D Process PRelu_prelu15_93 ...
+D RKNN output shape(prelu): (100 10 10 231)
+D Tensor @PRelu_prelu15_93:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 231)
+D Process Conv_conv22_88 ...
+D RKNN output shape(convolution): (100 10 10 231)
+D Tensor @Conv_conv22_88:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 231)
+D Process PRelu_prelu16_74 ...
+D RKNN output shape(prelu): (100 10 10 231)
+D Tensor @PRelu_prelu16_74:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 231)
+D Process Conv_conv23_67 ...
+D RKNN output shape(convolution): (100 10 10 128)
+D Tensor @Conv_conv23_67:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Add_add5_53 ...
+D RKNN output shape(add): (100 10 10 128)
+D Tensor @Add_add5_53:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Conv_conv24_95 ...
+D RKNN output shape(convolution): (100 10 10 52)
+D Tensor @Conv_conv24_95:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 52)
+D Process PRelu_prelu17_89 ...
+D RKNN output shape(prelu): (100 10 10 52)
+D Tensor @PRelu_prelu17_89:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 52)
+D Process Conv_conv25_82 ...
+D RKNN output shape(convolution): (100 10 10 52)
+D Tensor @Conv_conv25_82:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 52)
+D Process PRelu_prelu18_68 ...
+D RKNN output shape(prelu): (100 10 10 52)
+D Tensor @PRelu_prelu18_68:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 52)
+D Process Conv_conv26_61 ...
+D RKNN output shape(convolution): (100 10 10 128)
+D Tensor @Conv_conv26_61:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Add_add6_48 ...
+D RKNN output shape(add): (100 10 10 128)
+D Tensor @Add_add6_48:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Conv_conv27_91 ...
+D RKNN output shape(convolution): (100 10 10 26)
+D Tensor @Conv_conv27_91:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process PRelu_prelu19_83 ...
+D RKNN output shape(prelu): (100 10 10 26)
+D Tensor @PRelu_prelu19_83:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process Conv_conv28_76 ...
+D RKNN output shape(convolution): (100 10 10 26)
+D Tensor @Conv_conv28_76:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process PRelu_prelu20_62 ...
+D RKNN output shape(prelu): (100 10 10 26)
+D Tensor @PRelu_prelu20_62:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process Conv_conv29_55 ...
+D RKNN output shape(convolution): (100 10 10 128)
+D Tensor @Conv_conv29_55:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Add_add7_44 ...
+D RKNN output shape(add): (100 10 10 128)
+D Tensor @Add_add7_44:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Conv_conv30_86 ...
+D RKNN output shape(convolution): (100 10 10 77)
+D Tensor @Conv_conv30_86:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 77)
+D Process PRelu_prelu21_77 ...
+D RKNN output shape(prelu): (100 10 10 77)
+D Tensor @PRelu_prelu21_77:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 77)
+D Process Conv_conv31_70 ...
+D RKNN output shape(convolution): (100 10 10 77)
+D Tensor @Conv_conv31_70:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 77)
+D Process PRelu_prelu22_56 ...
+D RKNN output shape(prelu): (100 10 10 77)
+D Tensor @PRelu_prelu22_56:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 77)
+D Process Conv_conv32_50 ...
+D RKNN output shape(convolution): (100 10 10 128)
+D Tensor @Conv_conv32_50:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Add_add8_41 ...
+D RKNN output shape(add): (100 10 10 128)
+D Tensor @Add_add8_41:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Conv_conv33_85 ...
+D RKNN output shape(convolution): (100 10 10 26)
+D Tensor @Conv_conv33_85:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process PRelu_prelu23_71 ...
+D RKNN output shape(prelu): (100 10 10 26)
+D Tensor @PRelu_prelu23_71:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process Conv_conv34_64 ...
+D RKNN output shape(convolution): (100 10 10 26)
+D Tensor @Conv_conv34_64:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process PRelu_prelu24_51 ...
+D RKNN output shape(prelu): (100 10 10 26)
+D Tensor @PRelu_prelu24_51:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process Conv_conv35_46 ...
+D RKNN output shape(convolution): (100 10 10 128)
+D Tensor @Conv_conv35_46:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Add_add9_39 ...
+D RKNN output shape(add): (100 10 10 128)
+D Tensor @Add_add9_39:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Conv_conv36_79 ...
+D RKNN output shape(convolution): (100 10 10 26)
+D Tensor @Conv_conv36_79:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process PRelu_prelu25_65 ...
+D RKNN output shape(prelu): (100 10 10 26)
+D Tensor @PRelu_prelu25_65:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process Conv_conv37_58 ...
+D RKNN output shape(convolution): (100 10 10 26)
+D Tensor @Conv_conv37_58:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process PRelu_prelu26_47 ...
+D RKNN output shape(prelu): (100 10 10 26)
+D Tensor @PRelu_prelu26_47:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 26)
+D Process Conv_conv38_43 ...
+D RKNN output shape(convolution): (100 10 10 128)
+D Tensor @Conv_conv38_43:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Add_add10_38 ...
+D RKNN output shape(add): (100 10 10 128)
+D Tensor @Add_add10_38:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 128)
+D Process Conv_conv39_36 ...
+D RKNN output shape(convolution): (100 10 10 308)
+D Tensor @Conv_conv39_36:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 308)
+D Process PRelu_prelu27_30 ...
+D RKNN output shape(prelu): (100 10 10 308)
+D Tensor @PRelu_prelu27_30:out0 type: asymmetric_affine
+D Real output shape: (100, 10, 10, 308)
+D Process Conv_conv40_27 ...
+D RKNN output shape(convolution): (100 5 5 308)
+D Tensor @Conv_conv40_27:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 308)
+D Process PRelu_prelu28_21 ...
+D RKNN output shape(prelu): (100 5 5 308)
+D Tensor @PRelu_prelu28_21:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 308)
+D Process Conv_conv41_18 ...
+D RKNN output shape(convolution): (100 5 5 128)
+D Tensor @Conv_conv41_18:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 128)
+D Process Conv_conv42_37 ...
+D RKNN output shape(convolution): (100 5 5 26)
+D Tensor @Conv_conv42_37:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 26)
+D Process PRelu_prelu29_31 ...
+D RKNN output shape(prelu): (100 5 5 26)
+D Tensor @PRelu_prelu29_31:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 26)
+D Process Conv_conv43_28 ...
+D RKNN output shape(convolution): (100 5 5 26)
+D Tensor @Conv_conv43_28:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 26)
+D Process PRelu_prelu30_22 ...
+D RKNN output shape(prelu): (100 5 5 26)
+D Tensor @PRelu_prelu30_22:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 26)
+D Process Conv_conv44_19 ...
+D RKNN output shape(convolution): (100 5 5 128)
+D Tensor @Conv_conv44_19:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 128)
+D Process Add_add11_13 ...
+D RKNN output shape(add): (100 5 5 128)
+D Tensor @Add_add11_13:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 128)
+D Process Conv_conv45_35 ...
+D RKNN output shape(convolution): (100 5 5 26)
+D Tensor @Conv_conv45_35:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 26)
+D Process PRelu_prelu31_29 ...
+D RKNN output shape(prelu): (100 5 5 26)
+D Tensor @PRelu_prelu31_29:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 26)
+D Process Conv_conv46_26 ...
+D RKNN output shape(convolution): (100 5 5 26)
+D Tensor @Conv_conv46_26:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 26)
+D Process PRelu_prelu32_20 ...
+D RKNN output shape(prelu): (100 5 5 26)
+D Tensor @PRelu_prelu32_20:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 26)
+D Process Conv_conv47_17 ...
+D RKNN output shape(convolution): (100 5 5 128)
+D Tensor @Conv_conv47_17:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 128)
+D Process Add_add12_12 ...
+D RKNN output shape(add): (100 5 5 128)
+D Tensor @Add_add12_12:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 128)
+D Process Conv_conv48_11 ...
+D RKNN output shape(convolution): (100 5 5 512)
+D Tensor @Conv_conv48_11:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 512)
+D Process PRelu_prelu33_9 ...
+D RKNN output shape(prelu): (100 5 5 512)
+D Tensor @PRelu_prelu33_9:out0 type: asymmetric_affine
+D Real output shape: (100, 5, 5, 512)
+D Process Conv_conv49_8 ...
+D RKNN output shape(convolution): (100 1 1 512)
+D Tensor @Conv_conv49_8:out0 type: asymmetric_affine
+D Real output shape: (100, 1, 1, 512)
+D Process Reshape_view1_6_RKNN_mark_perm_151 ...
+D RKNN output shape(permute): (100 512 1 1)
+D Tensor @Reshape_view1_6_RKNN_mark_perm_151:out0 type: float32
+D Real output shape: (100, 512, 1, 1)
+D Process Reshape_view1_6 ...
+D RKNN output shape(reshape): (100 512)
+D Tensor @Reshape_view1_6:out0 type: asymmetric_affine
+D Real output shape: (100, 512)
+D Process Gemm_fc1_5 ...
+D RKNN output shape(fullconnect): (100 128)
+D Tensor @Gemm_fc1_5:out0 type: asymmetric_affine
+D Real output shape: (100, 128)
+D Process Gemm_fc2_2 ...
+D RKNN output shape(fullconnect): (100 3)
+D Tensor @Gemm_fc2_2:out0 type: asymmetric_affine
+D New variable bias of Gemm_fc2_2 ...
+D @Gemm_fc2_2:bias not in const pool
+D Real output shape: (100, 3)
+D Process Softmax_softmax_1 ...
+D RKNN output shape(softmax): (100 3)
+D Tensor @Softmax_softmax_1:out0 type: float32
+D Real output shape: (100, 3)
+D Process attach_Softmax_softmax/out0_0 ...
+D RKNN output shape(output): (100 3)
+D Tensor @attach_Softmax_softmax/out0_0:out0 type: float32
+D Real output shape: (100, 3)
+I Build _06_27_80x80_MiniFASNetV2 complete.
+I Analyze activation range of layer: Conv_conv1_149
+I Analyze activation range of layer: PRelu_prelu1_147
+I Analyze activation range of layer: Conv_conv2_146
+I Analyze activation range of layer: PRelu_prelu2_144
+I Analyze activation range of layer: Conv_conv3_143
+I Analyze activation range of layer: PRelu_prelu3_135
+I Analyze activation range of layer: Conv_conv4_130
+I Analyze activation range of layer: PRelu_prelu4_120
+I Analyze activation range of layer: Conv_conv5_115
+I Analyze activation range of layer: Conv_conv6_142
+I Analyze activation range of layer: PRelu_prelu5_136
+I Analyze activation range of layer: Conv_conv7_131
+I Analyze activation range of layer: PRelu_prelu6_121
+I Analyze activation range of layer: Conv_conv8_116
+I Analyze activation range of layer: Add_add1_106
+I Analyze activation range of layer: Conv_conv9_139
+I Analyze activation range of layer: PRelu_prelu7_132
+I Analyze activation range of layer: Conv_conv10_127
+I Analyze activation range of layer: PRelu_prelu8_117
+I Analyze activation range of layer: Conv_conv11_112
+I Analyze activation range of layer: Add_add2_103
+I Analyze activation range of layer: Conv_conv12_138
+I Analyze activation range of layer: PRelu_prelu9_128
+I Analyze activation range of layer: Conv_conv13_123
+I Analyze activation range of layer: PRelu_prelu10_113
+I Analyze activation range of layer: Conv_conv14_108
+I Analyze activation range of layer: Add_add3_101
+I Analyze activation range of layer: Conv_conv15_134
+I Analyze activation range of layer: PRelu_prelu11_124
+I Analyze activation range of layer: Conv_conv16_119
+I Analyze activation range of layer: PRelu_prelu12_109
+I Analyze activation range of layer: Conv_conv17_105
+I Analyze activation range of layer: Add_add4_100
+I Analyze activation range of layer: Conv_conv18_99
+I Analyze activation range of layer: PRelu_prelu13_92
+I Analyze activation range of layer: Conv_conv19_87
+I Analyze activation range of layer: PRelu_prelu14_73
+I Analyze activation range of layer: Conv_conv20_66
+I Analyze activation range of layer: Conv_conv21_98
+I Analyze activation range of layer: PRelu_prelu15_93
+I Analyze activation range of layer: Conv_conv22_88
+I Analyze activation range of layer: PRelu_prelu16_74
+I Analyze activation range of layer: Conv_conv23_67
+I Analyze activation range of layer: Add_add5_53
+I Analyze activation range of layer: Conv_conv24_95
+I Analyze activation range of layer: PRelu_prelu17_89
+I Analyze activation range of layer: Conv_conv25_82
+I Analyze activation range of layer: PRelu_prelu18_68
+I Analyze activation range of layer: Conv_conv26_61
+I Analyze activation range of layer: Add_add6_48
+I Analyze activation range of layer: Conv_conv27_91
+I Analyze activation range of layer: PRelu_prelu19_83
+I Analyze activation range of layer: Conv_conv28_76
+I Analyze activation range of layer: PRelu_prelu20_62
+I Analyze activation range of layer: Conv_conv29_55
+I Analyze activation range of layer: Add_add7_44
+I Analyze activation range of layer: Conv_conv30_86
+I Analyze activation range of layer: PRelu_prelu21_77
+I Analyze activation range of layer: Conv_conv31_70
+I Analyze activation range of layer: PRelu_prelu22_56
+I Analyze activation range of layer: Conv_conv32_50
+I Analyze activation range of layer: Add_add8_41
+I Analyze activation range of layer: Conv_conv33_85
+I Analyze activation range of layer: PRelu_prelu23_71
+I Analyze activation range of layer: Conv_conv34_64
+I Analyze activation range of layer: PRelu_prelu24_51
+I Analyze activation range of layer: Conv_conv35_46
+I Analyze activation range of layer: Add_add9_39
+I Analyze activation range of layer: Conv_conv36_79
+I Analyze activation range of layer: PRelu_prelu25_65
+I Analyze activation range of layer: Conv_conv37_58
+I Analyze activation range of layer: PRelu_prelu26_47
+I Analyze activation range of layer: Conv_conv38_43
+I Analyze activation range of layer: Add_add10_38
+I Analyze activation range of layer: Conv_conv39_36
+I Analyze activation range of layer: PRelu_prelu27_30
+I Analyze activation range of layer: Conv_conv40_27
+I Analyze activation range of layer: PRelu_prelu28_21
+I Analyze activation range of layer: Conv_conv41_18
+I Analyze activation range of layer: Conv_conv42_37
+I Analyze activation range of layer: PRelu_prelu29_31
+I Analyze activation range of layer: Conv_conv43_28
+I Analyze activation range of layer: PRelu_prelu30_22
+I Analyze activation range of layer: Conv_conv44_19
+I Analyze activation range of layer: Add_add11_13
+I Analyze activation range of layer: Conv_conv45_35
+I Analyze activation range of layer: PRelu_prelu31_29
+I Analyze activation range of layer: Conv_conv46_26
+I Analyze activation range of layer: PRelu_prelu32_20
+I Analyze activation range of layer: Conv_conv47_17
+I Analyze activation range of layer: Add_add12_12
+I Analyze activation range of layer: Conv_conv48_11
+I Analyze activation range of layer: PRelu_prelu33_9
+I Analyze activation range of layer: Conv_conv49_8
+I Analyze activation range of layer: Reshape_view1_6_RKNN_mark_perm_151
+I Analyze activation range of layer: Reshape_view1_6
+I Analyze activation range of layer: Gemm_fc1_5
+I Analyze activation range of layer: Gemm_fc2_2
+I Analyze activation range of layer: Softmax_softmax_1
+I Analyze activation range of layer: attach_Softmax_softmax/out0_0
+I Running 2 iterations
+D 0(50.00%), Queue size 100
+D 1(100.00%), Queue size 100
+I Queue finished.
+D Quantize tensor @Gemm_fc2_2:out0.
+D Quantize tensor @Gemm_fc1_5:out0.
+D Quantize tensor @Reshape_view1_6:out0.
+D Quantize tensor @Conv_conv49_8:out0.
+D Quantize tensor @PRelu_prelu33_9:out0.
+D Quantize tensor @Conv_conv48_11:out0.
+D Quantize tensor @Add_add12_12:out0.
+D Quantize tensor @Add_add11_13:out0.
+D Quantize tensor @Conv_conv47_17:out0.
+D Quantize tensor @Conv_conv41_18:out0.
+D Quantize tensor @Conv_conv44_19:out0.
+D Quantize tensor @PRelu_prelu32_20:out0.
+D Quantize tensor @PRelu_prelu28_21:out0.
+D Quantize tensor @PRelu_prelu30_22:out0.
+D Quantize tensor @Conv_conv46_26:out0.
+D Quantize tensor @Conv_conv40_27:out0.
+D Quantize tensor @Conv_conv43_28:out0.
+D Quantize tensor @PRelu_prelu31_29:out0.
+D Quantize tensor @PRelu_prelu27_30:out0.
+D Quantize tensor @PRelu_prelu29_31:out0.
+D Quantize tensor @Conv_conv45_35:out0.
+D Quantize tensor @Conv_conv39_36:out0.
+D Quantize tensor @Conv_conv42_37:out0.
+D Quantize tensor @Add_add10_38:out0.
+D Quantize tensor @Add_add9_39:out0.
+D Quantize tensor @Add_add8_41:out0.
+D Quantize tensor @Conv_conv38_43:out0.
+D Quantize tensor @Add_add7_44:out0.
+D Quantize tensor @Conv_conv35_46:out0.
+D Quantize tensor @PRelu_prelu26_47:out0.
+D Quantize tensor @Add_add6_48:out0.
+D Quantize tensor @Conv_conv32_50:out0.
+D Quantize tensor @PRelu_prelu24_51:out0.
+D Quantize tensor @Add_add5_53:out0.
+D Quantize tensor @Conv_conv29_55:out0.
+D Quantize tensor @PRelu_prelu22_56:out0.
+D Quantize tensor @Conv_conv37_58:out0.
+D Quantize tensor @Conv_conv26_61:out0.
+D Quantize tensor @PRelu_prelu20_62:out0.
+D Quantize tensor @Conv_conv34_64:out0.
+D Quantize tensor @PRelu_prelu25_65:out0.
+D Quantize tensor @Conv_conv20_66:out0.
+D Quantize tensor @Conv_conv23_67:out0.
+D Quantize tensor @PRelu_prelu18_68:out0.
+D Quantize tensor @Conv_conv31_70:out0.
+D Quantize tensor @PRelu_prelu23_71:out0.
+D Quantize tensor @PRelu_prelu14_73:out0.
+D Quantize tensor @PRelu_prelu16_74:out0.
+D Quantize tensor @Conv_conv28_76:out0.
+D Quantize tensor @PRelu_prelu21_77:out0.
+D Quantize tensor @Conv_conv36_79:out0.
+D Quantize tensor @Conv_conv25_82:out0.
+D Quantize tensor @PRelu_prelu19_83:out0.
+D Quantize tensor @Conv_conv33_85:out0.
+D Quantize tensor @Conv_conv30_86:out0.
+D Quantize tensor @Conv_conv19_87:out0.
+D Quantize tensor @Conv_conv22_88:out0.
+D Quantize tensor @PRelu_prelu17_89:out0.
+D Quantize tensor @Conv_conv27_91:out0.
+D Quantize tensor @PRelu_prelu13_92:out0.
+D Quantize tensor @PRelu_prelu15_93:out0.
+D Quantize tensor @Conv_conv24_95:out0.
+D Quantize tensor @Conv_conv21_98:out0.
+D Quantize tensor @Conv_conv18_99:out0.
+D Quantize tensor @Add_add4_100:out0.
+D Quantize tensor @Add_add3_101:out0.
+D Quantize tensor @Add_add2_103:out0.
+D Quantize tensor @Conv_conv17_105:out0.
+D Quantize tensor @Add_add1_106:out0.
+D Quantize tensor @Conv_conv14_108:out0.
+D Quantize tensor @PRelu_prelu12_109:out0.
+D Quantize tensor @Conv_conv11_112:out0.
+D Quantize tensor @PRelu_prelu10_113:out0.
+D Quantize tensor @Conv_conv5_115:out0.
+D Quantize tensor @Conv_conv8_116:out0.
+D Quantize tensor @PRelu_prelu8_117:out0.
+D Quantize tensor @Conv_conv16_119:out0.
+D Quantize tensor @PRelu_prelu4_120:out0.
+D Quantize tensor @PRelu_prelu6_121:out0.
+D Quantize tensor @Conv_conv13_123:out0.
+D Quantize tensor @PRelu_prelu11_124:out0.
+D Quantize tensor @Conv_conv10_127:out0.
+D Quantize tensor @PRelu_prelu9_128:out0.
+D Quantize tensor @Conv_conv4_130:out0.
+D Quantize tensor @Conv_conv7_131:out0.
+D Quantize tensor @PRelu_prelu7_132:out0.
+D Quantize tensor @Conv_conv15_134:out0.
+D Quantize tensor @PRelu_prelu3_135:out0.
+D Quantize tensor @PRelu_prelu5_136:out0.
+D Quantize tensor @Conv_conv12_138:out0.
+D Quantize tensor @Conv_conv9_139:out0.
+D Quantize tensor @Conv_conv6_142:out0.
+D Quantize tensor @Conv_conv3_143:out0.
+D Quantize tensor @PRelu_prelu2_144:out0.
+D Quantize tensor @Conv_conv2_146:out0.
+D Quantize tensor @PRelu_prelu1_147:out0.
+D Quantize tensor @Conv_conv1_149:out0.
+D Quantize tensor @input_150:out0.
+D Quantize tensor @Gemm_fc2_2:weight.
+D Quantize tensor @Gemm_fc1_5:weight.
+D Quantize tensor @Conv_conv49_8:weight.
+D Quantize tensor @Conv_conv48_11:weight.
+D Quantize tensor @Conv_conv47_17:weight.
+D Quantize tensor @Conv_conv41_18:weight.
+D Quantize tensor @Conv_conv44_19:weight.
+D Quantize tensor @Conv_conv46_26:weight.
+D Quantize tensor @Conv_conv40_27:weight.
+D Quantize tensor @Conv_conv43_28:weight.
+D Quantize tensor @Conv_conv45_35:weight.
+D Quantize tensor @Conv_conv39_36:weight.
+D Quantize tensor @Conv_conv42_37:weight.
+D Quantize tensor @Conv_conv38_43:weight.
+D Quantize tensor @Conv_conv35_46:weight.
+D Quantize tensor @Conv_conv32_50:weight.
+D Quantize tensor @Conv_conv29_55:weight.
+D Quantize tensor @Conv_conv37_58:weight.
+D Quantize tensor @Conv_conv26_61:weight.
+D Quantize tensor @Conv_conv34_64:weight.
+D Quantize tensor @Conv_conv20_66:weight.
+D Quantize tensor @Conv_conv23_67:weight.
+D Quantize tensor @Conv_conv31_70:weight.
+D Quantize tensor @Conv_conv28_76:weight.
+D Quantize tensor @Conv_conv36_79:weight.
+D Quantize tensor @Conv_conv25_82:weight.
+D Quantize tensor @Conv_conv33_85:weight.
+D Quantize tensor @Conv_conv30_86:weight.
+D Quantize tensor @Conv_conv19_87:weight.
+D Quantize tensor @Conv_conv22_88:weight.
+D Quantize tensor @Conv_conv27_91:weight.
+D Quantize tensor @Conv_conv24_95:weight.
+D Quantize tensor @Conv_conv21_98:weight.
+D Quantize tensor @Conv_conv18_99:weight.
+D Quantize tensor @Conv_conv17_105:weight.
+D Quantize tensor @Conv_conv14_108:weight.
+D Quantize tensor @Conv_conv11_112:weight.
+D Quantize tensor @Conv_conv5_115:weight.
+D Quantize tensor @Conv_conv8_116:weight.
+D Quantize tensor @Conv_conv16_119:weight.
+D Quantize tensor @Conv_conv13_123:weight.
+D Quantize tensor @Conv_conv10_127:weight.
+D Quantize tensor @Conv_conv4_130:weight.
+D Quantize tensor @Conv_conv7_131:weight.
+D Quantize tensor @Conv_conv15_134:weight.
+D Quantize tensor @Conv_conv12_138:weight.
+D Quantize tensor @Conv_conv9_139:weight.
+D Quantize tensor @Conv_conv6_142:weight.
+D Quantize tensor @Conv_conv3_143:weight.
+D Quantize tensor @Conv_conv2_146:weight.
+D Quantize tensor @Conv_conv1_149:weight.
+D Quantize tensor @Gemm_fc1_5:bias.
+D Quantize tensor @Conv_conv49_8:bias.
+D Quantize tensor @Conv_conv48_11:bias.
+D Quantize tensor @Conv_conv47_17:bias.
+D Quantize tensor @Conv_conv41_18:bias.
+D Quantize tensor @Conv_conv44_19:bias.
+D Quantize tensor @Conv_conv46_26:bias.
+D Quantize tensor @Conv_conv40_27:bias.
+D Quantize tensor @Conv_conv43_28:bias.
+D Quantize tensor @Conv_conv45_35:bias.
+D Quantize tensor @Conv_conv39_36:bias.
+D Quantize tensor @Conv_conv42_37:bias.
+D Quantize tensor @Conv_conv38_43:bias.
+D Quantize tensor @Conv_conv35_46:bias.
+D Quantize tensor @Conv_conv32_50:bias.
+D Quantize tensor @Conv_conv29_55:bias.
+D Quantize tensor @Conv_conv37_58:bias.
+D Quantize tensor @Conv_conv26_61:bias.
+D Quantize tensor @Conv_conv34_64:bias.
+D Quantize tensor @Conv_conv20_66:bias.
+D Quantize tensor @Conv_conv23_67:bias.
+D Quantize tensor @Conv_conv31_70:bias.
+D Quantize tensor @Conv_conv28_76:bias.
+D Quantize tensor @Conv_conv36_79:bias.
+D Quantize tensor @Conv_conv25_82:bias.
+D Quantize tensor @Conv_conv33_85:bias.
+D Quantize tensor @Conv_conv30_86:bias.
+D Quantize tensor @Conv_conv19_87:bias.
+D Quantize tensor @Conv_conv22_88:bias.
+D Quantize tensor @Conv_conv27_91:bias.
+D Quantize tensor @Conv_conv24_95:bias.
+D Quantize tensor @Conv_conv21_98:bias.
+D Quantize tensor @Conv_conv18_99:bias.
+D Quantize tensor @Conv_conv17_105:bias.
+D Quantize tensor @Conv_conv14_108:bias.
+D Quantize tensor @Conv_conv11_112:bias.
+D Quantize tensor @Conv_conv5_115:bias.
+D Quantize tensor @Conv_conv8_116:bias.
+D Quantize tensor @Conv_conv16_119:bias.
+D Quantize tensor @Conv_conv13_123:bias.
+D Quantize tensor @Conv_conv10_127:bias.
+D Quantize tensor @Conv_conv4_130:bias.
+D Quantize tensor @Conv_conv7_131:bias.
+D Quantize tensor @Conv_conv15_134:bias.
+D Quantize tensor @Conv_conv12_138:bias.
+D Quantize tensor @Conv_conv9_139:bias.
+D Quantize tensor @Conv_conv6_142:bias.
+D Quantize tensor @Conv_conv3_143:bias.
+D Quantize tensor @Conv_conv2_146:bias.
+D Quantize tensor @Conv_conv1_149:bias.
+I Clean.
+D Optimizing network with align_quantize, broadcast_quantize, qnt_adjust_coef, qnt_adjust_param
+D Quantize tensor(@Reshape_view1_6_RKNN_mark_perm_151:out0) with tensor(@Conv_conv49_8:out0)
+I Quantization complete.
+I End quantization...
+D import clients finished
+I Load net...
+I Load data...
+I Load quantization tensor table
+I Load input meta
+D Process input_150 ...
+D RKNN output shape(input): (1 80 80 3)
+D Tensor @input_150:out0 type: asymmetric_affine
+D Process Conv_conv1_149 ...
+D RKNN output shape(convolution): (1 40 40 32)
+D Tensor @Conv_conv1_149:out0 type: asymmetric_affine
+D Process PRelu_prelu1_147 ...
+D RKNN output shape(prelu): (1 40 40 32)
+D Tensor @PRelu_prelu1_147:out0 type: asymmetric_affine
+D Process Conv_conv2_146 ...
+D RKNN output shape(convolution): (1 40 40 32)
+D Tensor @Conv_conv2_146:out0 type: asymmetric_affine
+D Process PRelu_prelu2_144 ...
+D RKNN output shape(prelu): (1 40 40 32)
+D Tensor @PRelu_prelu2_144:out0 type: asymmetric_affine
+D Process Conv_conv3_143 ...
+D RKNN output shape(convolution): (1 40 40 103)
+D Tensor @Conv_conv3_143:out0 type: asymmetric_affine
+D Process PRelu_prelu3_135 ...
+D RKNN output shape(prelu): (1 40 40 103)
+D Tensor @PRelu_prelu3_135:out0 type: asymmetric_affine
+D Process Conv_conv4_130 ...
+D RKNN output shape(convolution): (1 20 20 103)
+D Tensor @Conv_conv4_130:out0 type: asymmetric_affine
+D Process PRelu_prelu4_120 ...
+D RKNN output shape(prelu): (1 20 20 103)
+D Tensor @PRelu_prelu4_120:out0 type: asymmetric_affine
+D Process Conv_conv5_115 ...
+D RKNN output shape(convolution): (1 20 20 64)
+D Tensor @Conv_conv5_115:out0 type: asymmetric_affine
+D Process Conv_conv6_142 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv6_142:out0 type: asymmetric_affine
+D Process PRelu_prelu5_136 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu5_136:out0 type: asymmetric_affine
+D Process Conv_conv7_131 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv7_131:out0 type: asymmetric_affine
+D Process PRelu_prelu6_121 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu6_121:out0 type: asymmetric_affine
+D Process Conv_conv8_116 ...
+D RKNN output shape(convolution): (1 20 20 64)
+D Tensor @Conv_conv8_116:out0 type: asymmetric_affine
+D Process Add_add1_106 ...
+D RKNN output shape(add): (1 20 20 64)
+D Tensor @Add_add1_106:out0 type: asymmetric_affine
+D Process Conv_conv9_139 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv9_139:out0 type: asymmetric_affine
+D Process PRelu_prelu7_132 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu7_132:out0 type: asymmetric_affine
+D Process Conv_conv10_127 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv10_127:out0 type: asymmetric_affine
+D Process PRelu_prelu8_117 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu8_117:out0 type: asymmetric_affine
+D Process Conv_conv11_112 ...
+D RKNN output shape(convolution): (1 20 20 64)
+D Tensor @Conv_conv11_112:out0 type: asymmetric_affine
+D Process Add_add2_103 ...
+D RKNN output shape(add): (1 20 20 64)
+D Tensor @Add_add2_103:out0 type: asymmetric_affine
+D Process Conv_conv12_138 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv12_138:out0 type: asymmetric_affine
+D Process PRelu_prelu9_128 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu9_128:out0 type: asymmetric_affine
+D Process Conv_conv13_123 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv13_123:out0 type: asymmetric_affine
+D Process PRelu_prelu10_113 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu10_113:out0 type: asymmetric_affine
+D Process Conv_conv14_108 ...
+D RKNN output shape(convolution): (1 20 20 64)
+D Tensor @Conv_conv14_108:out0 type: asymmetric_affine
+D Process Add_add3_101 ...
+D RKNN output shape(add): (1 20 20 64)
+D Tensor @Add_add3_101:out0 type: asymmetric_affine
+D Process Conv_conv15_134 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv15_134:out0 type: asymmetric_affine
+D Process PRelu_prelu11_124 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu11_124:out0 type: asymmetric_affine
+D Process Conv_conv16_119 ...
+D RKNN output shape(convolution): (1 20 20 13)
+D Tensor @Conv_conv16_119:out0 type: asymmetric_affine
+D Process PRelu_prelu12_109 ...
+D RKNN output shape(prelu): (1 20 20 13)
+D Tensor @PRelu_prelu12_109:out0 type: asymmetric_affine
+D Process Conv_conv17_105 ...
+D RKNN output shape(convolution): (1 20 20 64)
+D Tensor @Conv_conv17_105:out0 type: asymmetric_affine
+D Process Add_add4_100 ...
+D RKNN output shape(add): (1 20 20 64)
+D Tensor @Add_add4_100:out0 type: asymmetric_affine
+D Process Conv_conv18_99 ...
+D RKNN output shape(convolution): (1 20 20 231)
+D Tensor @Conv_conv18_99:out0 type: asymmetric_affine
+D Process PRelu_prelu13_92 ...
+D RKNN output shape(prelu): (1 20 20 231)
+D Tensor @PRelu_prelu13_92:out0 type: asymmetric_affine
+D Process Conv_conv19_87 ...
+D RKNN output shape(convolution): (1 10 10 231)
+D Tensor @Conv_conv19_87:out0 type: asymmetric_affine
+D Process PRelu_prelu14_73 ...
+D RKNN output shape(prelu): (1 10 10 231)
+D Tensor @PRelu_prelu14_73:out0 type: asymmetric_affine
+D Process Conv_conv20_66 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv20_66:out0 type: asymmetric_affine
+D Process Conv_conv21_98 ...
+D RKNN output shape(convolution): (1 10 10 231)
+D Tensor @Conv_conv21_98:out0 type: asymmetric_affine
+D Process PRelu_prelu15_93 ...
+D RKNN output shape(prelu): (1 10 10 231)
+D Tensor @PRelu_prelu15_93:out0 type: asymmetric_affine
+D Process Conv_conv22_88 ...
+D RKNN output shape(convolution): (1 10 10 231)
+D Tensor @Conv_conv22_88:out0 type: asymmetric_affine
+D Process PRelu_prelu16_74 ...
+D RKNN output shape(prelu): (1 10 10 231)
+D Tensor @PRelu_prelu16_74:out0 type: asymmetric_affine
+D Process Conv_conv23_67 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv23_67:out0 type: asymmetric_affine
+D Process Add_add5_53 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add5_53:out0 type: asymmetric_affine
+D Process Conv_conv24_95 ...
+D RKNN output shape(convolution): (1 10 10 52)
+D Tensor @Conv_conv24_95:out0 type: asymmetric_affine
+D Process PRelu_prelu17_89 ...
+D RKNN output shape(prelu): (1 10 10 52)
+D Tensor @PRelu_prelu17_89:out0 type: asymmetric_affine
+D Process Conv_conv25_82 ...
+D RKNN output shape(convolution): (1 10 10 52)
+D Tensor @Conv_conv25_82:out0 type: asymmetric_affine
+D Process PRelu_prelu18_68 ...
+D RKNN output shape(prelu): (1 10 10 52)
+D Tensor @PRelu_prelu18_68:out0 type: asymmetric_affine
+D Process Conv_conv26_61 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv26_61:out0 type: asymmetric_affine
+D Process Add_add6_48 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add6_48:out0 type: asymmetric_affine
+D Process Conv_conv27_91 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv27_91:out0 type: asymmetric_affine
+D Process PRelu_prelu19_83 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu19_83:out0 type: asymmetric_affine
+D Process Conv_conv28_76 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv28_76:out0 type: asymmetric_affine
+D Process PRelu_prelu20_62 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu20_62:out0 type: asymmetric_affine
+D Process Conv_conv29_55 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv29_55:out0 type: asymmetric_affine
+D Process Add_add7_44 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add7_44:out0 type: asymmetric_affine
+D Process Conv_conv30_86 ...
+D RKNN output shape(convolution): (1 10 10 77)
+D Tensor @Conv_conv30_86:out0 type: asymmetric_affine
+D Process PRelu_prelu21_77 ...
+D RKNN output shape(prelu): (1 10 10 77)
+D Tensor @PRelu_prelu21_77:out0 type: asymmetric_affine
+D Process Conv_conv31_70 ...
+D RKNN output shape(convolution): (1 10 10 77)
+D Tensor @Conv_conv31_70:out0 type: asymmetric_affine
+D Process PRelu_prelu22_56 ...
+D RKNN output shape(prelu): (1 10 10 77)
+D Tensor @PRelu_prelu22_56:out0 type: asymmetric_affine
+D Process Conv_conv32_50 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv32_50:out0 type: asymmetric_affine
+D Process Add_add8_41 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add8_41:out0 type: asymmetric_affine
+D Process Conv_conv33_85 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv33_85:out0 type: asymmetric_affine
+D Process PRelu_prelu23_71 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu23_71:out0 type: asymmetric_affine
+D Process Conv_conv34_64 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv34_64:out0 type: asymmetric_affine
+D Process PRelu_prelu24_51 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu24_51:out0 type: asymmetric_affine
+D Process Conv_conv35_46 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv35_46:out0 type: asymmetric_affine
+D Process Add_add9_39 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add9_39:out0 type: asymmetric_affine
+D Process Conv_conv36_79 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv36_79:out0 type: asymmetric_affine
+D Process PRelu_prelu25_65 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu25_65:out0 type: asymmetric_affine
+D Process Conv_conv37_58 ...
+D RKNN output shape(convolution): (1 10 10 26)
+D Tensor @Conv_conv37_58:out0 type: asymmetric_affine
+D Process PRelu_prelu26_47 ...
+D RKNN output shape(prelu): (1 10 10 26)
+D Tensor @PRelu_prelu26_47:out0 type: asymmetric_affine
+D Process Conv_conv38_43 ...
+D RKNN output shape(convolution): (1 10 10 128)
+D Tensor @Conv_conv38_43:out0 type: asymmetric_affine
+D Process Add_add10_38 ...
+D RKNN output shape(add): (1 10 10 128)
+D Tensor @Add_add10_38:out0 type: asymmetric_affine
+D Process Conv_conv39_36 ...
+D RKNN output shape(convolution): (1 10 10 308)
+D Tensor @Conv_conv39_36:out0 type: asymmetric_affine
+D Process PRelu_prelu27_30 ...
+D RKNN output shape(prelu): (1 10 10 308)
+D Tensor @PRelu_prelu27_30:out0 type: asymmetric_affine
+D Process Conv_conv40_27 ...
+D RKNN output shape(convolution): (1 5 5 308)
+D Tensor @Conv_conv40_27:out0 type: asymmetric_affine
+D Process PRelu_prelu28_21 ...
+D RKNN output shape(prelu): (1 5 5 308)
+D Tensor @PRelu_prelu28_21:out0 type: asymmetric_affine
+D Process Conv_conv41_18 ...
+D RKNN output shape(convolution): (1 5 5 128)
+D Tensor @Conv_conv41_18:out0 type: asymmetric_affine
+D Process Conv_conv42_37 ...
+D RKNN output shape(convolution): (1 5 5 26)
+D Tensor @Conv_conv42_37:out0 type: asymmetric_affine
+D Process PRelu_prelu29_31 ...
+D RKNN output shape(prelu): (1 5 5 26)
+D Tensor @PRelu_prelu29_31:out0 type: asymmetric_affine
+D Process Conv_conv43_28 ...
+D RKNN output shape(convolution): (1 5 5 26)
+D Tensor @Conv_conv43_28:out0 type: asymmetric_affine
+D Process PRelu_prelu30_22 ...
+D RKNN output shape(prelu): (1 5 5 26)
+D Tensor @PRelu_prelu30_22:out0 type: asymmetric_affine
+D Process Conv_conv44_19 ...
+D RKNN output shape(convolution): (1 5 5 128)
+D Tensor @Conv_conv44_19:out0 type: asymmetric_affine
+D Process Add_add11_13 ...
+D RKNN output shape(add): (1 5 5 128)
+D Tensor @Add_add11_13:out0 type: asymmetric_affine
+D Process Conv_conv45_35 ...
+D RKNN output shape(convolution): (1 5 5 26)
+D Tensor @Conv_conv45_35:out0 type: asymmetric_affine
+D Process PRelu_prelu31_29 ...
+D RKNN output shape(prelu): (1 5 5 26)
+D Tensor @PRelu_prelu31_29:out0 type: asymmetric_affine
+D Process Conv_conv46_26 ...
+D RKNN output shape(convolution): (1 5 5 26)
+D Tensor @Conv_conv46_26:out0 type: asymmetric_affine
+D Process PRelu_prelu32_20 ...
+D RKNN output shape(prelu): (1 5 5 26)
+D Tensor @PRelu_prelu32_20:out0 type: asymmetric_affine
+D Process Conv_conv47_17 ...
+D RKNN output shape(convolution): (1 5 5 128)
+D Tensor @Conv_conv47_17:out0 type: asymmetric_affine
+D Process Add_add12_12 ...
+D RKNN output shape(add): (1 5 5 128)
+D Tensor @Add_add12_12:out0 type: asymmetric_affine
+D Process Conv_conv48_11 ...
+D RKNN output shape(convolution): (1 5 5 512)
+D Tensor @Conv_conv48_11:out0 type: asymmetric_affine
+D Process PRelu_prelu33_9 ...
+D RKNN output shape(prelu): (1 5 5 512)
+D Tensor @PRelu_prelu33_9:out0 type: asymmetric_affine
+D Process Conv_conv49_8 ...
+D RKNN output shape(convolution): (1 1 1 512)
+D Tensor @Conv_conv49_8:out0 type: asymmetric_affine
+D Process Reshape_view1_6_RKNN_mark_perm_151 ...
+D RKNN output shape(permute): (1 512 1 1)
+D Tensor @Reshape_view1_6_RKNN_mark_perm_151:out0 type: asymmetric_affine
+D Process Reshape_view1_6 ...
+D RKNN output shape(reshape): (1 512)
+D Tensor @Reshape_view1_6:out0 type: asymmetric_affine
+D Process Gemm_fc1_5 ...
+D RKNN output shape(fullconnect): (1 128)
+D Tensor @Gemm_fc1_5:out0 type: asymmetric_affine
+D Process Gemm_fc2_2 ...
+D RKNN output shape(fullconnect): (1 3)
+D Tensor @Gemm_fc2_2:out0 type: asymmetric_affine
+D Process Softmax_softmax_1 ...
+D RKNN output shape(softmax): (1 3)
+D Tensor @Softmax_softmax_1:out0 type: float32
+D Process attach_Softmax_softmax/out0_0 ...
+D RKNN output shape(output): (1 3)
+D Tensor @attach_Softmax_softmax/out0_0:out0 type: float32
+I Build _06_27_80x80_MiniFASNetV2 complete.
+I Initialzing network optimizer by /usr/local/lib/python3.6/dist-packages/rknn/config/npu_config/PUMA ...
+D Optimizing network with merge_ximum, qnt_adjust_coef, multiply_transform, add_extra_io, format_input_ops, auto_fill_zero_bias, conv_kernel_transform, twod_op_transform, strip_op, extend_unstack_split, merge_layer, transform_layer, broadcast_op, strip_op, auto_fill_reshape_zero, adjust_output_attrs, insert_dtype_converter
+I Start T2C Switcher...
+D Optimizing network with broadcast_op, t2c_fc
+D insert permute Reshape_view1_6_RKNN_mark_perm_151_RKNN_mark_perm_3 before Reshape_view1_6_RKNN_mark_perm_151
+D remove permute Reshape_view1_6_RKNN_mark_perm_151_RKNN_mark_perm_3
+D remove permute Reshape_view1_6_RKNN_mark_perm_151
+I End T2C Switcher...
+D Optimizing network with merge_ximum, qnt_adjust_coef, multiply_transform, add_extra_io, format_input_ops, auto_fill_zero_bias, conv_kernel_transform, twod_op_transform, strip_op, extend_unstack_split, merge_layer, transform_layer, broadcast_op, strip_op, auto_fill_reshape_zero, adjust_output_attrs, insert_dtype_converter
+D Optimizing network with conv_1xn_transform, proposal_opt, c2drv_convert_axis, c2drv_convert_shape, c2drv_convert_array, c2drv_cast_dtype, c2drv_trans_data
+I Building data ...
+I Packing data ...
+D Packing Conv_conv10_127 ...
+D Quantize @Conv_conv10_127:bias to asymmetric_affine.
+D Quantize @Conv_conv10_127:weight to asymmetric_affine.
+D Packing Conv_conv11_112 ...
+D Quantize @Conv_conv11_112:bias to asymmetric_affine.
+D Quantize @Conv_conv11_112:weight to asymmetric_affine.
+D Packing Conv_conv12_138 ...
+D Quantize @Conv_conv12_138:bias to asymmetric_affine.
+D Quantize @Conv_conv12_138:weight to asymmetric_affine.
+D Packing Conv_conv13_123 ...
+D Quantize @Conv_conv13_123:bias to asymmetric_affine.
+D Quantize @Conv_conv13_123:weight to asymmetric_affine.
+D Packing Conv_conv14_108 ...
+D Quantize @Conv_conv14_108:bias to asymmetric_affine.
+D Quantize @Conv_conv14_108:weight to asymmetric_affine.
+D Packing Conv_conv15_134 ...
+D Quantize @Conv_conv15_134:bias to asymmetric_affine.
+D Quantize @Conv_conv15_134:weight to asymmetric_affine.
+D Packing Conv_conv16_119 ...
+D Quantize @Conv_conv16_119:bias to asymmetric_affine.
+D Quantize @Conv_conv16_119:weight to asymmetric_affine.
+D Packing Conv_conv17_105 ...
+D Quantize @Conv_conv17_105:bias to asymmetric_affine.
+D Quantize @Conv_conv17_105:weight to asymmetric_affine.
+D Packing Conv_conv18_99 ...
+D Quantize @Conv_conv18_99:bias to asymmetric_affine.
+D Quantize @Conv_conv18_99:weight to asymmetric_affine.
+D Packing Conv_conv19_87 ...
+D Quantize @Conv_conv19_87:bias to asymmetric_affine.
+D Quantize @Conv_conv19_87:weight to asymmetric_affine.
+D Packing Conv_conv1_149 ...
+D Quantize @Conv_conv1_149:bias to asymmetric_affine.
+D Quantize @Conv_conv1_149:weight to asymmetric_affine.
+D Packing Conv_conv20_66 ...
+D Quantize @Conv_conv20_66:bias to asymmetric_affine.
+D Quantize @Conv_conv20_66:weight to asymmetric_affine.
+D Packing Conv_conv21_98 ...
+D Quantize @Conv_conv21_98:bias to asymmetric_affine.
+D Quantize @Conv_conv21_98:weight to asymmetric_affine.
+D Packing Conv_conv22_88 ...
+D Quantize @Conv_conv22_88:bias to asymmetric_affine.
+D Quantize @Conv_conv22_88:weight to asymmetric_affine.
+D Packing Conv_conv23_67 ...
+D Quantize @Conv_conv23_67:bias to asymmetric_affine.
+D Quantize @Conv_conv23_67:weight to asymmetric_affine.
+D Packing Conv_conv24_95 ...
+D Quantize @Conv_conv24_95:bias to asymmetric_affine.
+D Quantize @Conv_conv24_95:weight to asymmetric_affine.
+D Packing Conv_conv25_82 ...
+D Quantize @Conv_conv25_82:bias to asymmetric_affine.
+D Quantize @Conv_conv25_82:weight to asymmetric_affine.
+D Packing Conv_conv26_61 ...
+D Quantize @Conv_conv26_61:bias to asymmetric_affine.
+D Quantize @Conv_conv26_61:weight to asymmetric_affine.
+D Packing Conv_conv27_91 ...
+D Quantize @Conv_conv27_91:bias to asymmetric_affine.
+D Quantize @Conv_conv27_91:weight to asymmetric_affine.
+D Packing Conv_conv28_76 ...
+D Quantize @Conv_conv28_76:bias to asymmetric_affine.
+D Quantize @Conv_conv28_76:weight to asymmetric_affine.
+D Packing Conv_conv29_55 ...
+D Quantize @Conv_conv29_55:bias to asymmetric_affine.
+D Quantize @Conv_conv29_55:weight to asymmetric_affine.
+D Packing Conv_conv2_146 ...
+D Quantize @Conv_conv2_146:bias to asymmetric_affine.
+D Quantize @Conv_conv2_146:weight to asymmetric_affine.
+D Packing Conv_conv30_86 ...
+D Quantize @Conv_conv30_86:bias to asymmetric_affine.
+D Quantize @Conv_conv30_86:weight to asymmetric_affine.
+D Packing Conv_conv31_70 ...
+D Quantize @Conv_conv31_70:bias to asymmetric_affine.
+D Quantize @Conv_conv31_70:weight to asymmetric_affine.
+D Packing Conv_conv32_50 ...
+D Quantize @Conv_conv32_50:bias to asymmetric_affine.
+D Quantize @Conv_conv32_50:weight to asymmetric_affine.
+D Packing Conv_conv33_85 ...
+D Quantize @Conv_conv33_85:bias to asymmetric_affine.
+D Quantize @Conv_conv33_85:weight to asymmetric_affine.
+D Packing Conv_conv34_64 ...
+D Quantize @Conv_conv34_64:bias to asymmetric_affine.
+D Quantize @Conv_conv34_64:weight to asymmetric_affine.
+D Packing Conv_conv35_46 ...
+D Quantize @Conv_conv35_46:bias to asymmetric_affine.
+D Quantize @Conv_conv35_46:weight to asymmetric_affine.
+D Packing Conv_conv36_79 ...
+D Quantize @Conv_conv36_79:bias to asymmetric_affine.
+D Quantize @Conv_conv36_79:weight to asymmetric_affine.
+D Packing Conv_conv37_58 ...
+D Quantize @Conv_conv37_58:bias to asymmetric_affine.
+D Quantize @Conv_conv37_58:weight to asymmetric_affine.
+D Packing Conv_conv38_43 ...
+D Quantize @Conv_conv38_43:bias to asymmetric_affine.
+D Quantize @Conv_conv38_43:weight to asymmetric_affine.
+D Packing Conv_conv39_36 ...
+D Quantize @Conv_conv39_36:bias to asymmetric_affine.
+D Quantize @Conv_conv39_36:weight to asymmetric_affine.
+D Packing Conv_conv3_143 ...
+D Quantize @Conv_conv3_143:bias to asymmetric_affine.
+D Quantize @Conv_conv3_143:weight to asymmetric_affine.
+D Packing Conv_conv40_27 ...
+D Quantize @Conv_conv40_27:bias to asymmetric_affine.
+D Quantize @Conv_conv40_27:weight to asymmetric_affine.
+D Packing Conv_conv41_18 ...
+D Quantize @Conv_conv41_18:bias to asymmetric_affine.
+D Quantize @Conv_conv41_18:weight to asymmetric_affine.
+D Packing Conv_conv42_37 ...
+D Quantize @Conv_conv42_37:bias to asymmetric_affine.
+D Quantize @Conv_conv42_37:weight to asymmetric_affine.
+D Packing Conv_conv43_28 ...
+D Quantize @Conv_conv43_28:bias to asymmetric_affine.
+D Quantize @Conv_conv43_28:weight to asymmetric_affine.
+D Packing Conv_conv44_19 ...
+D Quantize @Conv_conv44_19:bias to asymmetric_affine.
+D Quantize @Conv_conv44_19:weight to asymmetric_affine.
+D Packing Conv_conv45_35 ...
+D Quantize @Conv_conv45_35:bias to asymmetric_affine.
+D Quantize @Conv_conv45_35:weight to asymmetric_affine.
+D Packing Conv_conv46_26 ...
+D Quantize @Conv_conv46_26:bias to asymmetric_affine.
+D Quantize @Conv_conv46_26:weight to asymmetric_affine.
+D Packing Conv_conv47_17 ...
+D Quantize @Conv_conv47_17:bias to asymmetric_affine.
+D Quantize @Conv_conv47_17:weight to asymmetric_affine.
+D Packing Conv_conv48_11 ...
+D Quantize @Conv_conv48_11:bias to asymmetric_affine.
+D Quantize @Conv_conv48_11:weight to asymmetric_affine.
+D Packing Conv_conv49_8 ...
+D Quantize @Conv_conv49_8:bias to asymmetric_affine.
+D Quantize @Conv_conv49_8:weight to asymmetric_affine.
+D Packing Conv_conv4_130 ...
+D Quantize @Conv_conv4_130:bias to asymmetric_affine.
+D Quantize @Conv_conv4_130:weight to asymmetric_affine.
+D Packing Conv_conv5_115 ...
+D Quantize @Conv_conv5_115:bias to asymmetric_affine.
+D Quantize @Conv_conv5_115:weight to asymmetric_affine.
+D Packing Conv_conv6_142 ...
+D Quantize @Conv_conv6_142:bias to asymmetric_affine.
+D Quantize @Conv_conv6_142:weight to asymmetric_affine.
+D Packing Conv_conv7_131 ...
+D Quantize @Conv_conv7_131:bias to asymmetric_affine.
+D Quantize @Conv_conv7_131:weight to asymmetric_affine.
+D Packing Conv_conv8_116 ...
+D Quantize @Conv_conv8_116:bias to asymmetric_affine.
+D Quantize @Conv_conv8_116:weight to asymmetric_affine.
+D Packing Conv_conv9_139 ...
+D Quantize @Conv_conv9_139:bias to asymmetric_affine.
+D Quantize @Conv_conv9_139:weight to asymmetric_affine.
+D Packing Gemm_fc1_5 ...
+D Quantize @Gemm_fc1_5:bias to asymmetric_affine.
+D Quantize @Gemm_fc1_5:weight to asymmetric_affine.
+D Packing Gemm_fc2_2 ...
+D Quantize @Gemm_fc2_2:weight to asymmetric_affine.
+D Packing PRelu_prelu10_113 ...
+D Packing PRelu_prelu11_124 ...
+D Packing PRelu_prelu12_109 ...
+D Packing PRelu_prelu13_92 ...
+D Packing PRelu_prelu14_73 ...
+D Packing PRelu_prelu15_93 ...
+D Packing PRelu_prelu16_74 ...
+D Packing PRelu_prelu17_89 ...
+D Packing PRelu_prelu18_68 ...
+D Packing PRelu_prelu19_83 ...
+D Packing PRelu_prelu1_147 ...
+D Packing PRelu_prelu20_62 ...
+D Packing PRelu_prelu21_77 ...
+D Packing PRelu_prelu22_56 ...
+D Packing PRelu_prelu23_71 ...
+D Packing PRelu_prelu24_51 ...
+D Packing PRelu_prelu25_65 ...
+D Packing PRelu_prelu26_47 ...
+D Packing PRelu_prelu27_30 ...
+D Packing PRelu_prelu28_21 ...
+D Packing PRelu_prelu29_31 ...
+D Packing PRelu_prelu2_144 ...
+D Packing PRelu_prelu30_22 ...
+D Packing PRelu_prelu31_29 ...
+D Packing PRelu_prelu32_20 ...
+D Packing PRelu_prelu33_9 ...
+D Packing PRelu_prelu3_135 ...
+D Packing PRelu_prelu4_120 ...
+D Packing PRelu_prelu5_136 ...
+D Packing PRelu_prelu6_121 ...
+D Packing PRelu_prelu7_132 ...
+D Packing PRelu_prelu8_117 ...
+D Packing PRelu_prelu9_128 ...
+D output tensor id = 0, name = Softmax_softmax/out0_0
+D input tensor id = 1, name = input_150
+I Build config finished.
+D target set by user is: None
+D Starting ntp or adb, target is None, host is None
+E Catch exception when init runtime!
+E Traceback (most recent call last):
+E   File "rknn/api/rknn_base.py", line 897, in rknn.api.rknn_base.RKNNBase.init_runtime
+E   File "rknn/api/rknn_runtime.py", line 341, in rknn.api.rknn_runtime.RKNNRuntime.build_graph
+E Exception: RKNN init failed. error code: RKNN_ERR_MODEL_INVALID
+E Please feedback the detailed log file <log_feedback_to_the_rknn_toolkit_dev_team.log> to the RKNN Toolkit development team.
+E You can also check github issues: https://github.com/rockchip-linux/rknn-toolkit/issues
