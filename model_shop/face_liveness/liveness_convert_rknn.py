@@ -8,8 +8,8 @@ import cv2
 from rknn.api import RKNN
 
 
-ONNX_MODEL = '/tunm/work/HyperFace/resource/models_raw/_03_r18_Glint360K_fixed.onnx'
-RKNN_MODEL = '/tunm/work/HyperFace/resource/models_rv1109rv1126/_03_r18_Glint360K_fixed.rknn'
+ONNX_MODEL = '/tunm/work/HyperFace/resource/models_raw/_06_27_80x80_MiniFASNetV2.onnx'
+RKNN_MODEL = '/tunm/work/HyperFace/resource/models_rv1109rv1126/_06_27_80x80_MiniFASNetV2.rknn'
 
 DATASET = './data.txt'
 QUANTIZE_ON = True
@@ -27,16 +27,16 @@ if __name__ == '__main__':
                 # std_values=[[127.5, 127.5, 127.5]],
                 mean_values=[[0, 0, 0]],
                 std_values=[[255, 255, 255]],
-                optimization_level=3,
+                # optimization_level=3,
                 target_platform='rv1126',
                 output_optimize=1,
-                quantize_input_node=QUANTIZE_ON)
+                quantized_dtype='dynamic_fixed_point-i16')
     print('done')
 
 
     # Load ONNX model
     print('--> Loading model')
-    ret = rknn.load_onnx(model=ONNX_MODEL, outputs=["267", ], )
+    ret = rknn.load_onnx(model=ONNX_MODEL, outputs=["softmax", ], )
     if ret != 0:
         print('Load failed!')
         exit(ret)
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     print('--> Building model')
     ret = rknn.build(do_quantization=QUANTIZE_ON, dataset=DATASET)
     if ret != 0:
-        print('Build SCRFD failed!')
+        print('Build failed!')
         exit(ret)
     print('done')
 
@@ -67,11 +67,11 @@ if __name__ == '__main__':
         exit(ret)
     print('done')
 
-    list_ = ["0.jpg", "1.jpg", "2.jpg"]
+    list_ = ["fake.jpg", "real.jpg",]
     outputs = list()
     for name in list_:
         img = cv2.imread(name)
         output = rknn.inference(inputs=[img])
         outputs.append(output)
-    np.save("f.npy", np.asarray(outputs))
+        print(f"{name} {output}")
 
