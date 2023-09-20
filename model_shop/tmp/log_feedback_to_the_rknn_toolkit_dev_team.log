@@ -1,0 +1,17 @@
+D Using CPPUTILS: True
+I Start importing caffe...
+I Set caffe proto to caffe
+I Load caffe model /tunm/work/HyperFace/resource/models_raw/_06_27_80x80_MiniFASNetV2.prototxt
+I Parsing net parameters ... 
+D import clients finished
+E Deprecated caffe input usage, please change it to input layer.
+E Catch exception when loading caffe model: /tunm/work/HyperFace/resource/models_raw/_06_27_80x80_MiniFASNetV2.prototxt!
+E Traceback (most recent call last):
+E   File "rknn/api/rknn_base.py", line 273, in rknn.api.rknn_base.RKNNBase.load_caffe
+E   File "rknn/base/RKNNlib/RK_nn.py", line 76, in rknn.base.RKNNlib.RK_nn.RKnn.load_caffe
+E   File "rknn/base/RKNNlib/converter/caffeloader.py", line 1107, in rknn.base.RKNNlib.converter.caffeloader.CaffeLoader.load
+E   File "rknn/base/RKNNlib/converter/caffeloader.py", line 860, in rknn.base.RKNNlib.converter.caffeloader.CaffeLoader.parse_net_param
+E   File "rknn/api/rknn_log.py", line 323, in rknn.api.rknn_log.RKNNLog.e
+E ValueError: Deprecated caffe input usage, please change it to input layer.
+E Please feedback the detailed log file <log_feedback_to_the_rknn_toolkit_dev_team.log> to the RKNN Toolkit development team.
+E You can also check github issues: https://github.com/rockchip-linux/rknn-toolkit/issues

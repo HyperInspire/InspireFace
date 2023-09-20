@@ -5,10 +5,6 @@ project(HyperFaceSDK)
 set(CMAKE_CXX_STANDARD 14)
 
 option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
-option(INFERENCE_HELPER_ENABLE_RKNN "Use RKNPU." OFF)
-option(BUILD_LINUX_ARM7 "Platform Arm7." OFF)
-
-
 
 file(GLOB_RECURSE CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
@@ -33,7 +29,7 @@ if (NOT ANDROID)
 endif()
 
 
-if (INFERENCE_HELPER_ENABLE_RKNN)
+if (ENABLE_RKNN)
     set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/rknn_api/include)
     set(RKNN_API_LIB ${THIRD_PARTY_DIR}/rknn_api/lib)
     message("Enable RKNN Inference")
@@ -42,8 +38,11 @@ endif()
 
 set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
 
-if (INFERENCE_HELPER_ENABLE_RKNN)
+if (ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknn_api dl)
+    # InferenceHelp use RkNN
+    add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN")
+
 endif()
 
 # mnn
@@ -62,7 +61,7 @@ target_compile_definitions(HyperFace PUBLIC FEATURE_BLOCK_ENABLE_OPENCV)
 
 # Include files
 set(NEED_INCLUDE . ${MNN_INCLUDE_DIRS})
-if (INFERENCE_HELPER_ENABLE_RKNN)
+if (ENABLE_RKNN)
     set(NEED_INCLUDE ${NEED_INCLUDE} ${RKNN_API_INCLUDE_DIRS})
 endif ()
 if (BUILD_LINUX_ARM7)

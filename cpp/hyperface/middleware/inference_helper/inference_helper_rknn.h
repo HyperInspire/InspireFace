@@ -31,12 +31,13 @@ public:
     int32_t PreProcess(const std::vector<InputTensorInfo>& input_tensor_info_list) override;
     int32_t Process(std::vector<OutputTensorInfo>& output_tensor_info_list) override;
     int32_t ParameterInitialization(std::vector<InputTensorInfo>& input_tensor_info_list, std::vector<OutputTensorInfo>& output_tensor_info_list) override;
-
+    std::vector<std::string> GetInputNames() override;
 private:
     rknn_context net_;
     int32_t num_threads_;
     std::vector<rknn_output> output_tensors_;
     rknn_input_output_num rk_io_num_;
+    std::vector<std::string> input_names_;
 
 private:
 

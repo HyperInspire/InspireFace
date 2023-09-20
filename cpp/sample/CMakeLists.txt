@@ -75,8 +75,7 @@ else()
 
 # =======================RK临时测试类目===========================
 
-    if (INFERENCE_HELPER_ENABLE_RKNN)
-        set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/rknn_api/include)
+    if (ENABLE_RKNN)
         set(RKNN_API_LIB ${THIRD_PARTY_DIR}/rknn_api/lib)
         message("Enable RKNN Inference")
         link_directories(${RKNN_API_LIB})
@@ -87,7 +86,8 @@ else()
 
         set_target_properties(RKFaceDetSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
-        )
-
+                )
     endif()
 endif()
+
+

@@ -19,6 +19,7 @@
 
 #include "inference_helper_rknn.h"
 #include "inference_helper_log.h"
+#include "log.h"
 
 static unsigned char* load_data(FILE* fp, size_t ofst, size_t sz)
 {
@@ -248,5 +249,10 @@ int32_t InferenceHelperRKNN::Process(std::vector<OutputTensorInfo> &output_tenso
 
     return kRetOk;
 }
+
+std::vector<std::string> InferenceHelperRKNN::GetInputNames() {
+    return input_names_;
+}
+
 
 #endif // INFERENCE_HELPER_ENABLE_RKNN
