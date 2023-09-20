@@ -88,6 +88,8 @@ public:
         input_tensor_info.image_info.swap_color = getParam<bool>("swap_color");
 
         m_input_tensor_info_list_.push_back(input_tensor_info);
+
+        return 0;
     }
 
     void Forward(const Matrix &data, AnyTensorOutputs& outputs) {
