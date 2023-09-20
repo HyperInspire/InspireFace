@@ -4,6 +4,7 @@
 
 #ifndef HYPERFACEREPO_FACERECOGNITION_H
 #define HYPERFACEREPO_FACERECOGNITION_H
+#include <mutex>
 #include "extract/Extract.h"
 #include "common/face_info/FaceObject.h"
 #include "common/face_data/DataTools.h"

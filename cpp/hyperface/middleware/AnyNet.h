@@ -23,7 +23,7 @@ public:
 
     explicit AnyNet(const std::string &name):m_name_(name) {}
 
-    int32_t LoadParam(const Parameter &param, Model *model) {
+    int32_t LoadParam(const Parameter &param, Model *model, InferenceHelper::HelperType type = InferenceHelper::kMnn) {
         // must
         _initSingleParam<int>(param, "model_index", 0);
         _initSingleParam<std::string>(param, "input_layer", "");
@@ -41,7 +41,7 @@ public:
         _initSingleParam<int>(param, "threads", 1);
 
         int model_index = getParam<int>("model_index");
-        m_nn_inference_.reset(InferenceHelper::Create(InferenceHelper::kMnn));
+        m_nn_inference_.reset(InferenceHelper::Create(type));
         m_nn_inference_->SetNumThreads(getParam<int>("threads"));
 
         m_output_tensor_info_list_.clear();

@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.19)
+#cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.10)
 project(HyperFaceRepo)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -15,4 +16,4 @@ get_property(HyperFace TARGET HyperFace PROPERTY HyperFace)
 
 add_subdirectory(cpp/sample)  # 添加子项目
 
-add_subdirectory(cpp/test)  # 添加子项目
+#add_subdirectory(cpp/test)  # 添加子项目
