@@ -16,6 +16,8 @@ include_directories(${SRC_DIR})
 #find_package(Eigen3 REQUIRED)
 #include_directories("/usr/local/include/eigen3")
 
+if (NOT BUILD_LINUX_ARM7)
+
 # =======================HyperFace测试===========================
 # 跟踪测试
 add_executable(TrackerSample ${CMAKE_CURRENT_SOURCE_DIR}/tracker_sample.cpp)
@@ -69,7 +71,7 @@ set_target_properties(BMSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
-
+else()
 
 # =======================RK临时测试类目===========================
 
@@ -80,3 +82,5 @@ target_link_libraries(RKFaceDetSample HyperFace)
 set_target_properties(RKFaceDetSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
         )
+
+endif()
