@@ -1,5 +1,6 @@
 #ifndef CAMERA_STREAM_H
 #define CAMERA_STREAM_H
+#include <memory>
 #include "MNN/ImageProcess.hpp"
 //#include "basic_types.h"
 #include "opencv2/opencv.hpp"

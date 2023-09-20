@@ -8,23 +8,11 @@ import cv2
 from rknn.api import RKNN
 
 
-ONNX_MODEL = '/tunm/work/HyperFace/resource/models_raw/_06_2_7_80x80_MiniFASNetV2.onnx'
-RKNN_MODEL = '/tunm/work/HyperFace/resource/models_rv1109rv1126/_06_2_7_80x80_MiniFASNetV2.rknn'
+ONNX_MODEL = '/tunm/work/HyperFace/resource/models_raw/_07_pose-quality.onnx'
+RKNN_MODEL = '/tunm/work/HyperFace/resource/models_rv1109rv1126/_07_pose-quality.rknn'
 
 DATASET = './data.txt'
 QUANTIZE_ON = True
-
-def softmax(x):
-    # 计算指数值
-    exp_x = np.exp(x)
-
-    # 计算每个元素的指数值之和
-    sum_exp_x = np.sum(exp_x)
-
-    # 计算Softmax值
-    softmax_values = exp_x / sum_exp_x
-
-    return softmax_values
 
 if __name__ == '__main__':
     rknn = RKNN()
@@ -39,18 +27,19 @@ if __name__ == '__main__':
                 # std_values=[[127.5, 127.5, 127.5]],
                 # mean_values=[[0, 0, 0]],
                 # std_values=[[255, 255, 255]],
-                optimization_level=1,
+                optimization_level=3,
                 target_platform='rv1126',
                 output_optimize=1,
                 quantize_input_node=QUANTIZE_ON,
-                quantized_dtype='dynamic_fixed_point-i16'
+                # quantized_dtype='dynamic_fixed_point-i16',
+
                 )
     print('done')
 
 
     # Load ONNX model
     print('--> Loading model')
-    ret = rknn.load_onnx(model=ONNX_MODEL, outputs=["556", ], )
+    ret = rknn.load_onnx(model=ONNX_MODEL, outputs=["fc1", ], )
     if ret != 0:
         print('Load failed!')
         exit(ret)
@@ -81,22 +70,25 @@ if __name__ == '__main__':
         exit(ret)
     print('done')
 
-    list_ = ["fake.jpg", "real.jpg", ]
-    outputs = list()
-    for name in list_:
-        img = cv2.imread(name)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        output = rknn.inference(inputs=[img])
-        output = output[0][0]
-        output = softmax(output)
-        print(f"{name} {output}")
+    name = "p1.jpg"
+    img = cv2.imread(name)
+    data = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    output = rknn.inference(inputs=[data])
+    print(output)
+    output = output[0][0]
+    pitch, yaw, roll, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, quality_eye_left, quality_eye_right, quality_eye_nose, quality_mouth_left, right = output
+    lmk = (np.asarray([[x1, y1], [x2, y2], [x3, y3], [x4, y4], [x5, y5]]) + 1) * (96 / 2)
+    for x, y in lmk.astype(int):
+        cv2.circle(img, (x, y), 0, (0, 255, 255), 1)
+    print(pitch * 90, yaw * 90, roll * 90)
 
-'''
---> Init runtime environment
-librknn_runtime version 1.7.1 (bd41dbc build: 2021-10-28 16:15:23 base: 1131)
-done
---> Export RKNN model
-done
-fake.jpg [0.3475143  0.6419917  0.01049402]
-real.jpg [0.00201952 0.9899775  0.00800296]
-'''
+    cv2.imwrite("p1r.jpg", img)
+
+
+"""
+[array([[ 0.00629412, -0.2769411 , -0.1573529 , -0.3524705 , -0.1195882 ,
+         0.05664704, -0.23917641, -0.20141171,  0.09441174, -0.20770583,
+         0.35876462,  0.13847055,  0.270647  ,  0.        ,  0.05664704,
+         0.08182351,  0.06923527,  0.10699997]], dtype=float32)]
+0.5664704320952296 -24.924698173999786 -14.16176050901413
+"""
