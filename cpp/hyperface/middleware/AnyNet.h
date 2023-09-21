@@ -36,8 +36,9 @@ public:
         _initSingleParam<int>(param, "input_image_channel", 3);
         _initSingleParam<bool>(param, "nchw", true);
         _initSingleParam<bool>(param, "swap_color", false);
-        _initSingleParam<int>(param, "data_type", InputTensorInfo::kDataTypeImage);
-        _initSingleParam<int>(param, "tensor_type", InputTensorInfo::kTensorTypeFp32);
+        _initSingleParam<int>(param, "data_type", InputTensorInfo::InputTensorInfo::kDataTypeImage);
+        _initSingleParam<int>(param, "input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
+        _initSingleParam<int>(param, "output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
         _initSingleParam<int>(param, "threads", 1);
 
         int model_index = getParam<int>("model_index");
@@ -46,9 +47,10 @@ public:
 
         m_output_tensor_info_list_.clear();
         std::vector<std::string> outputs_layers = getParam<std::vector<std::string>>("outputs_layers");
-        int tensor_type = getParam<int>("tensor_type");
+        int tensor_type = getParam<int>("input_tensor_type");
+        int out_tensor_type = getParam<int>("output_tensor_type");
         for (auto &name: outputs_layers) {
-            m_output_tensor_info_list_.push_back(OutputTensorInfo(name, tensor_type));
+            m_output_tensor_info_list_.push_back(OutputTensorInfo(name, out_tensor_type));
         }
         auto ret = m_nn_inference_->Initialize(model->caffemodelBuffer, model->modelsize.caffemodel_size, m_input_tensor_info_list_, m_output_tensor_info_list_);
         if (ret != InferenceHelper::kRetOk) {
@@ -76,7 +78,6 @@ public:
         input_tensor_info.normalize.norm[1] = norm[1];
         input_tensor_info.normalize.norm[2] = norm[2];
 
-        input_tensor_info.data_type = getParam<int>("data_type");
         input_tensor_info.image_info.width = width;
         input_tensor_info.image_info.height = height;
         input_tensor_info.image_info.channel = channel;
@@ -94,18 +95,32 @@ public:
 
     void Forward(const Matrix &data, AnyTensorOutputs& outputs) {
         InputTensorInfo& input_tensor_info = getMInputTensorInfoList()[0];
+#ifdef INFERENCE_HELPER_ENABLE_RKNN
+        // 先在外部简单实现一个临时的色彩转换
+        if (getParam<bool>("swap_color")) {
+            cv::Mat trans;
+            cv::cvtColor(data, trans, cv::COLOR_BGR2RGB);
+            input_tensor_info.data = trans.data;
+        } else {
+            input_tensor_info.data = data.data;
+        }
+#else
         input_tensor_info.data = data.data;
+#endif
         Forward(outputs);
     }
 
     void Forward(AnyTensorOutputs& outputs) {
 
+//        LOGD("ppPreProcess");
         if (m_nn_inference_->PreProcess(m_input_tensor_info_list_) != InferenceHelper::kRetOk) {
             LOGD("PreProcess error");
         }
+//        LOGD("PreProcess");
         if (m_nn_inference_->Process(m_output_tensor_info_list_) != InferenceHelper::kRetOk) {
             LOGD("Process error");
         }
+//        LOGD("Process");
         for (int i = 0; i < m_output_tensor_info_list_.size(); ++i) {
             std::vector<float> output_score_raw_list(m_output_tensor_info_list_[i].GetDataAsFloat(),
                                                      m_output_tensor_info_list_[i].GetDataAsFloat() +

@@ -322,7 +322,7 @@ int FaceTrack::InitRNetModel(Model *model) {
 
 int FaceTrack::InitFacePoseModel(Model *model) {
     Parameter param;
-    param.set<int>("model_index", ModelIndex::_05_mask);
+    param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
     param.set<string>("input_layer", "data");
     param.set<vector<string>>("outputs_layers", {"fc1", });
     param.set<vector<int>>("input_size", {96, 96});

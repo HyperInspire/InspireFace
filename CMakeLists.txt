@@ -9,6 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 option(ENABLE_RKNN "Use RKNPU." ON)
 option(BUILD_LINUX_ARM7 "Platform Arm7." ON)
+option(BUILD_HYPERFACE_TEST "Platform Arm7." ON)
 
 
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
@@ -20,4 +21,6 @@ get_property(HyperFace TARGET HyperFace PROPERTY HyperFace)
 
 add_subdirectory(cpp/sample)  # 添加子项目
 
-#add_subdirectory(cpp/test)  # 添加子项目
+if (BUILD_HYPERFACE_TEST)
+    add_subdirectory(cpp/test)  # 添加子项目
+endif ()

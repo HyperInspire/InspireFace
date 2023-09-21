@@ -13,7 +13,7 @@ namespace hyper {
 class HYPER_API FaceDetect: public AnyNet {
 public:
 
-    explicit FaceDetect(int m_input_size_ = 160, float nms_threshold = 0.5f, float = 0.5f);
+    explicit FaceDetect(int input_size = 160, float nms_threshold = 0.5f, float = 0.5f);
 
     /**
      * Detect faces for one image
