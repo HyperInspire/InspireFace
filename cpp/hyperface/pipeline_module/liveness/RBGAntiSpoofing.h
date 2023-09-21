@@ -9,15 +9,19 @@
 
 namespace hyper {
 
+std::vector<float> softmax(const std::vector<float>& input);
+
 class HYPER_API RBGAntiSpoofing: public AnyNet {
 public:
 
-    RBGAntiSpoofing();
+    RBGAntiSpoofing(int input_size = 112, bool use_softmax = false);
 
     float operator()(const Matrix& bgr_affine27);
 
 private:
-    const int m_input_size_ = 112;
+    int m_input_size_;
+
+    bool m_softmax_ = false;
 
 };
 

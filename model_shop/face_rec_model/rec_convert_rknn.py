@@ -71,6 +71,7 @@ if __name__ == '__main__':
     outputs = list()
     for name in list_:
         img = cv2.imread(name)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         output = rknn.inference(inputs=[img])
         outputs.append(output)
     np.save("f.npy", np.asarray(outputs))
