@@ -8,8 +8,8 @@ import cv2
 from rknn.api import RKNN
 
 
-ONNX_MODEL = '/tunm/work/HyperFace/resource/models_raw/_03_r18_Glint360K_fixed.onnx'
-RKNN_MODEL = '/tunm/work/HyperFace/resource/models_rv1109rv1126/_03_r18_Glint360K_fixed.rknn'
+PB_MODEL = '/tunm/work/HyperFace/resource/models_raw/_01_face_landmark_106.pb'
+RKNN_MODEL = '/tunm/work/HyperFace/resource/models_rv1109rv1126/_09_face_landmark_106.rknn'
 
 DATASET = './data.txt'
 QUANTIZE_ON = True
@@ -17,14 +17,12 @@ QUANTIZE_ON = True
 if __name__ == '__main__':
     rknn = RKNN()
 
-    if not os.path.exists(ONNX_MODEL):
+    if not os.path.exists(PB_MODEL):
         print('model not exist')
         exit(-1)
 
     print('--> Config model')
     rknn.config(reorder_channel='0 1 2',
-                # mean_values=[[127.5, 127.5, 127.5]],
-                # std_values=[[127.5, 127.5, 127.5]],
                 mean_values=[[0, 0, 0]],
                 std_values=[[255, 255, 255]],
                 optimization_level=3,
@@ -34,9 +32,10 @@ if __name__ == '__main__':
     print('done')
 
 
-    # Load ONNX model
+    # Load PB model
     print('--> Loading model')
-    ret = rknn.load_onnx(model=ONNX_MODEL, outputs=["267", ], )
+    ret = rknn.load_tensorflow(tf_pb=PB_MODEL, inputs=['input_1'],
+                               outputs=['prelu1/add', ], input_size_list=[[112, 112, 3]])
     if ret != 0:
         print('Load failed!')
         exit(ret)
@@ -46,7 +45,7 @@ if __name__ == '__main__':
     print('--> Building model')
     ret = rknn.build(do_quantization=QUANTIZE_ON, dataset=DATASET)
     if ret != 0:
-        print('Build SCRFD failed!')
+        print('Build failed!')
         exit(ret)
     print('done')
 
@@ -67,12 +66,20 @@ if __name__ == '__main__':
         exit(ret)
     print('done')
 
-    list_ = ["0.jpg", "1.jpg", "2.jpg"]
-    outputs = list()
-    for name in list_:
-        img = cv2.imread(name)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        output = rknn.inference(inputs=[img])
-        outputs.append(output)
-    np.save("f.npy", np.asarray(outputs))
+    img = cv2.imread("crop.png")
+    img = cv2.resize(img, (112, 112))
+    outputs = rknn.inference(inputs=[img])
 
+    lmk = np.asarray(outputs[0][0]).reshape(-1, 2) * 112
+    for x, y in lmk.astype(int):
+        cv2.circle(img, (x, y), 0, (0, 0, 255), 1)
+
+    cv2.imwrite("res.jpg", img)
+
+
+
+"""
+
+
+
+"""

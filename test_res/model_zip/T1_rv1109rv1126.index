@@ -1,5 +1,5 @@
 _00_scrfd_500m_bnkps_shape320x320_u8
-_01_lmk
+_01_lmk_u8
 _02_pose_fp16
 _03_r18_Glint360K_fixed
 _04_rnet

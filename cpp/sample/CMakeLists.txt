@@ -96,9 +96,17 @@ else()
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
         )
 
+        # 人脸识别
+        add_executable(RKFaceRecSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_face_recognize_sample.cpp)
+        target_link_libraries(RKFaceRecSample HyperFace rknn_api dl)
+
+        set_target_properties(RKFaceRecSample PROPERTIES
+                RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+        )
 
     endif()
 endif()
+
 
 
 
