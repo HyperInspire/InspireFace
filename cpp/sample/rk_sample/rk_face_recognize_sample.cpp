@@ -12,7 +12,7 @@
 
 using namespace hyper;
 
-ModelLoader loader;
+shared_ptr<ModelLoader> loader;
 
 void rec_function() {
 
@@ -31,9 +31,10 @@ void rec_function() {
     param.set<bool>("swap_color", true);        // RK模型需要rgb输入
 
     m_extract_ = make_shared<Extract>();
-    auto model = loader.ReadModel(ModelIndex::_03_extract);
+    auto model = loader->ReadModel(ModelIndex::_03_extract);
     m_extract_->LoadParam(param, model, InferenceHelper::kRknn);
 
+    loader.reset();
 
     std::vector<string> files = {
             "test_res/images/test_data/0.jpg",
@@ -41,7 +42,7 @@ void rec_function() {
             "test_res/images/test_data/2.jpg",
     };
     EmbeddedList embedded_list;
-    for (int i = 0; i < files[i].size(); ++i) {
+    for (int i = 0; i < files.size(); ++i) {
         auto warped = cv::imread(files[i]);
         Timer timer;
         auto emb = (*m_extract_)(warped);
@@ -50,15 +51,15 @@ void rec_function() {
         LOGD("%lu", emb.size());
     }
 
-//    float _0v1;
-//    float _0v2;
-//    float _1v2;
-//    FaceRecognition::CosineSimilarity(embedded_list[0], embedded_list[1], _0v1);
-//    FaceRecognition::CosineSimilarity(embedded_list[0], embedded_list[2], _0v2);
-//    FaceRecognition::CosineSimilarity(embedded_list[1], embedded_list[2], _1v2);
-//    LOGD("0 vs 1 : %f", _0v1);
-//    LOGD("0 vs 2 : %f", _0v2);
-//    LOGD("1 vs 2 : %f", _1v2);
+    float _0v1;
+    float _0v2;
+    float _1v2;
+    FaceRecognition::CosineSimilarity(embedded_list[0], embedded_list[1], _0v1);
+    FaceRecognition::CosineSimilarity(embedded_list[0], embedded_list[2], _0v2);
+    FaceRecognition::CosineSimilarity(embedded_list[1], embedded_list[2], _1v2);
+    LOGD("0 vs 1 : %f", _0v1);
+    LOGD("0 vs 2 : %f", _0v2);
+    LOGD("1 vs 2 : %f", _1v2);
 
 //    LOGD("size: %lu", embedded_list.size());
 //    LOGD("num of vector: %lu", embedded_list[2].size());
@@ -75,7 +76,8 @@ void rec_function() {
 
 
 int main() {
-    loader.Reset("test_res/model_zip/T1_rv1109rv1126");
+    loader = make_shared<ModelLoader>();
+    loader->Reset("test_res/model_zip/T1_rv1109rv1126");
 
 
 
