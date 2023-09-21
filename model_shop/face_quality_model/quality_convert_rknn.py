@@ -27,11 +27,11 @@ if __name__ == '__main__':
                 # std_values=[[127.5, 127.5, 127.5]],
                 # mean_values=[[0, 0, 0]],
                 # std_values=[[255, 255, 255]],
-                optimization_level=3,
+                # optimization_level=1,
                 target_platform='rv1126',
-                output_optimize=1,
+                # output_optimize=1,
                 quantize_input_node=QUANTIZE_ON,
-                # quantized_dtype='dynamic_fixed_point-i16',
+                quantized_dtype='dynamic_fixed_point-i16',
 
                 )
     print('done')
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         exit(ret)
     print('done')
 
-    name = "p1.jpg"
+    name = "p3.jpg"
     img = cv2.imread(name)
     data = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     output = rknn.inference(inputs=[data])

@@ -203,7 +203,9 @@ int32_t InferenceHelperRKNN::PreProcess(const std::vector<InputTensorInfo> &inpu
             input_tensors_.push_back(input);
         }
     }
+//    LOGD("Prepare data!");
     int ret = rknn_inputs_set(net_, input_tensor_info_list.size(), input_tensors_.data());
+//    LOGD("Set data!");
     if (ret < 0){
         PRINT_E("rknn_run fail! ret=%d", ret)
         return kRetErr;
@@ -231,6 +233,7 @@ int32_t InferenceHelperRKNN::Process(std::vector<OutputTensorInfo> &output_tenso
         }
         output.is_prealloc = 0;
         output_tensors_.push_back(output);
+//        output.want_float = 1;  // float
     }
 
     ret = rknn_outputs_get(net_, output_tensor_info_list.size(), output_tensors_.data(), NULL);

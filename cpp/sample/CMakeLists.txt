@@ -86,8 +86,19 @@ else()
 
         set_target_properties(RKFaceDetSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
-                )
+        )
+
+        # 简单的网络测试
+        add_executable(RKSimpleNetSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_simple_net_sample.cpp)
+        target_link_libraries(RKSimpleNetSample HyperFace rknn_api dl)
+
+        set_target_properties(RKSimpleNetSample PROPERTIES
+                RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+        )
+
+
     endif()
 endif()
+
 
 
