@@ -195,6 +195,7 @@ int32_t InferenceHelperRKNN::PreProcess(const std::vector<InputTensorInfo> &inpu
                 input.fmt = RKNN_TENSOR_NCHW;
             } else {
                 input.fmt = RKNN_TENSOR_NHWC;
+                std::cout << "NHWC" << std::endl;
             }
             input.index = index;
             input.size = input_tensor_info.GetWidth() * input_tensor_info.GetHeight() * input_tensor_info.GetChannel();
