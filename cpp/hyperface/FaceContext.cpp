@@ -37,6 +37,7 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
             param.enable_interaction_liveness
     );
 
+
     return HSUCCEED;
 }
 
@@ -65,6 +66,7 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
         pitchResultsCache.push_back(face.high_result.pitch);
     }
 
+//    LOGD("跟踪COST: %f", m_face_track_->GetTrackTotalUseTime());
     return HSUCCEED;
 }
 

@@ -30,7 +30,9 @@ if __name__ == '__main__':
                 optimization_level=3,
                 target_platform='rv1126',
                 output_optimize=1,
-                quantize_input_node=QUANTIZE_ON)
+                quantize_input_node=QUANTIZE_ON,
+                # quantized_dtype='dynamic_fixed_point-i16',  # i16在 1.7.1砖汉后1.7.3下跑可以使用
+    )
     print('done')
 
 
@@ -46,7 +48,7 @@ if __name__ == '__main__':
     print('--> Building model')
     ret = rknn.build(do_quantization=QUANTIZE_ON, dataset=DATASET)
     if ret != 0:
-        print('Build SCRFD failed!')
+        print('Build failed!')
         exit(ret)
     print('done')
 
@@ -76,3 +78,9 @@ if __name__ == '__main__':
         outputs.append(output)
     np.save("f.npy", np.asarray(outputs))
 
+"""
+0v1: 0.56994116
+2v1: 0.04088772
+0v2: -0.03256973
+
+"""

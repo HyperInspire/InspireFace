@@ -20,7 +20,7 @@ enum DetectMode {
 };
 
 typedef struct CustomPipelineParameter {
-    bool enable_recognition = true;               ///< 人脸识别功能
+    bool enable_recognition = false;              ///< 人脸识别功能
     bool enable_liveness = false;                 ///< RGB活体检测功能
     bool enable_ir_liveness = false;              ///< IR活体检测功能
     bool enable_mask_detect = false;              ///< 口罩检测功能
