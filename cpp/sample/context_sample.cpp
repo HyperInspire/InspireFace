@@ -15,7 +15,7 @@ int main() {
     CustomPipelineParameter param;
     param.enable_liveness = true;
     param.enable_face_quality = true;
-    int32_t ret = ctx.Configuration("resource/model_zip/T1", DetectMode::DETECT_MODE_VIDEO, 1, param);
+    int32_t ret = ctx.Configuration("test_res/model_zip/T1", DetectMode::DETECT_MODE_VIDEO, 1, param);
     if (ret != 0) {
         LOGE("初始化错误");
         return -1;

@@ -160,7 +160,8 @@ int main(int argc, char** argv) {
     const std::string source = argv[1];
     const std::string input = argv[2];
 
-    const std::string folder = "resource/model_zip/T1";
+    const std::string folder = "test_res/model_zip/T1";
+    LOGD("%s", folder.c_str());
     ModelLoader loader;
     loader.Reset(folder);
 

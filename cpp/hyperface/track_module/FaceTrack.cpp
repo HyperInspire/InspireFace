@@ -276,36 +276,84 @@ int FaceTrack::Configuration(ModelLoader &loader) {
 
 int FaceTrack::InitLandmarkModel(Model *model) {
     Parameter param;
+    InferenceHelper::HelperType type;
+#ifdef INFERENCE_HELPER_ENABLE_RKNN
+    param.set<int>("model_index", ModelIndex::_01_lmk);
+    param.set<string>("input_layer", "input_1");
+    param.set<vector<string>>("outputs_layers", {"prelu1/add", });
+    param.set<vector<int>>("input_size", {112, 112});
+    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
+    param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
+    param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+    param.set<bool>("nchw", false);
+    type = InferenceHelper::kRknn;
+#else
     param.set<int>("model_index", ModelIndex::_01_lmk);
     param.set<string>("input_layer", "input_1");
     param.set<vector<string>>("outputs_layers", {"prelu1/add", });
     param.set<vector<int>>("input_size", {112, 112});
     param.set<vector<float>>("mean", {127.5f, 127.5f, 127.5f});
     param.set<vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
-
+    type = InferenceHelper::kMnn;
+#endif
     m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
-    m_landmark_predictor_->LoadParam(param, model);
+    m_landmark_predictor_->LoadParam(param, model, type);
 
     return 0;
 }
 
 int FaceTrack::InitDetectModel(Model *model) {
     Parameter param;
+    InferenceHelper::HelperType type;
+    int detect_size;
+#ifdef INFERENCE_HELPER_ENABLE_RKNN
+    detect_size = 320;
+    param.set<int>("model_index", ModelIndex::_00_fdet_160);
+    param.set<string>("input_layer", "input.1");
+    param.set<vector<string>>("outputs_layers", {"output", "output1", "output2", "output3", "output4", "output5", "output6", "output7", "output8"});
+    param.set<vector<int>>("input_size", {detect_size, detect_size});
+    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
+    param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
+    param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+    param.set<bool>("nchw", false);
+    type = InferenceHelper::kRknn;
+#else
+    detect_size = 160;
     param.set<int>("model_index", ModelIndex::_00_fdet_160);
     param.set<string>("input_layer", "input.1");
     param.set<vector<string>>("outputs_layers", {"443", "468", "493", "446", "471", "496", "449", "474", "499"});
-    param.set<vector<int>>("input_size", {160, 160});
+    param.set<vector<int>>("input_size", {detect_size, detect_size});
     param.set<vector<float>>("mean", {127.5f, 127.5f, 127.5f});
     param.set<vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
-
-    m_face_detector_ = std::make_shared<FaceDetect>(160);
-    m_face_detector_->LoadParam(param, model);
+    type = InferenceHelper::kMnn;
+#endif
+    m_face_detector_ = std::make_shared<FaceDetect>(detect_size);
+    m_face_detector_->LoadParam(param, model, type);
 
     return 0;
 }
 
 int FaceTrack::InitRNetModel(Model *model) {
     Parameter param;
+    InferenceHelper::HelperType type;
+#ifdef INFERENCE_HELPER_ENABLE_RKNN
+    param.set<int>("model_index", ModelIndex::_04_refine_net);
+    param.set<string>("input_layer", "input_1");
+    param.set<vector<string>>("outputs_layers", {"conv5-1/Softmax", "conv5-2/BiasAdd"});
+    param.set<vector<int>>("input_size", {24, 24});
+    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<bool>("swap_color", true);        // RGB mode
+    param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
+    param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
+    param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+    param.set<bool>("nchw", false);
+    type = InferenceHelper::kRknn;
+#else
     param.set<int>("model_index", ModelIndex::_04_refine_net);
     param.set<string>("input_layer", "data");
     param.set<vector<string>>("outputs_layers", {"prob1", "conv5-2"});
@@ -313,15 +361,18 @@ int FaceTrack::InitRNetModel(Model *model) {
     param.set<vector<float>>("mean", {127.5f, 127.5f, 127.5f});
     param.set<vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
     param.set<bool>("swap_color", true);        // RGB mode
-
+    type = InferenceHelper::kMnn;
+#endif
     m_refine_net_ = std::make_shared<RNet>();
-    m_refine_net_->LoadParam(param, model);
+    m_refine_net_->LoadParam(param, model, type);
 
     return 0;
 }
 
 int FaceTrack::InitFacePoseModel(Model *model) {
     Parameter param;
+    InferenceHelper::HelperType type;
+#ifdef INFERENCE_HELPER_ENABLE_RKNN
     param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
     param.set<string>("input_layer", "data");
     param.set<vector<string>>("outputs_layers", {"fc1", });
@@ -329,8 +380,23 @@ int FaceTrack::InitFacePoseModel(Model *model) {
     param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);        // RGB mode
+    param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
+    param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
+    param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+    param.set<bool>("nchw", false);
+    type = InferenceHelper::kRknn;
+#else
+    param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
+    param.set<string>("input_layer", "data");
+    param.set<vector<string>>("outputs_layers", {"fc1", });
+    param.set<vector<int>>("input_size", {96, 96});
+    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<bool>("swap_color", true);        // RGB mode
+    type = InferenceHelper::kMnn;
+#endif
     m_face_quality_ = make_shared<FacePoseQuality>();
-    m_face_quality_->LoadParam(param, model);
+    m_face_quality_->LoadParam(param, model, type);
 
     return 0;
 }

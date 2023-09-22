@@ -42,7 +42,7 @@ void test_rnet() {
 
         Timer timer;
         auto score = (*m_rnet_)(image);
-        LOGD("耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("RNET耗时: %f", timer.GetCostTimeUpdate());
         LOGD("has face: %f", score);
     }
 
@@ -128,7 +128,7 @@ void test_quality() {
 
             Timer timer;
             auto pose_res = (*m_face_quality_)(image);
-            LOGD("耗时: %f", timer.GetCostTimeUpdate());
+            LOGD("质量耗时: %f", timer.GetCostTimeUpdate());
 
             for (auto &p: pose_res.lmk) {
                 cv::circle(image, p, 0, cv::Scalar(0, 0, 255), 2);
@@ -211,7 +211,7 @@ void test_landmark() {
     Timer timer;
     for (int i = 0; i < 50; ++i) {
         lmk = (*m_landmark_predictor_)(image);
-        LOGD("耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("LMK耗时: %f", timer.GetCostTimeUpdate());
     }
 
     for (int i = 0; i < FaceLandmark::NUM_OF_LANDMARK; ++i) {
@@ -265,17 +265,17 @@ void test_liveness() {
 int main() {
     loader.Reset("test_res/model_zip/T1_rv1109rv1126");
 
-//    test_rnet();
+    test_rnet();
 
 //    test_mask();
 
-//    test_quality();
+    test_quality();
 
 //    test_landmark_mnn();
 
-//    test_landmark();
+    test_landmark();
 
-    test_liveness();
+//    test_liveness();
 
     return 0;
 }

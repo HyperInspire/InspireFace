@@ -2,8 +2,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(HyperFaceSample)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-
 if (BUILD_LINUX_ARM7)
     set(OpenCV_DIR ${THIRD_PARTY_DIR}/opencv/opencv-linux-armhf/share/OpenCV)
     set(OpenCV_STATIC_INCLUDE_DIR ${PATH_3RDPARTY}/opencv/opencv-linux-armhf/include/)
@@ -101,6 +99,14 @@ else()
         target_link_libraries(RKFaceRecSample HyperFace rknn_api dl)
 
         set_target_properties(RKFaceRecSample PROPERTIES
+                RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+        )
+
+        # 跟踪模块识别
+        add_executable(RKTrackerSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_tracker_sample.cpp)
+        target_link_libraries(RKTrackerSample HyperFace rknn_api dl)
+
+        set_target_properties(RKTrackerSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
         )
 
