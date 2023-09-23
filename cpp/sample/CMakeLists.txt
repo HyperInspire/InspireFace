@@ -110,8 +110,17 @@ else()
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
         )
 
+        # 跟踪模块识别
+        add_executable(DebugRKRec ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/debug_rk_rec.cpp)
+        target_link_libraries(DebugRKRec HyperFace rknn_api dl)
+
+        set_target_properties(DebugRKRec PROPERTIES
+                RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+        )
+
     endif()
 endif()
+
 
 
 

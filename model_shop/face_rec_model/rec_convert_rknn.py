@@ -9,7 +9,8 @@ from rknn.api import RKNN
 
 
 ONNX_MODEL = '/tunm/work/HyperFace/resource/models_raw/_03_r18_Glint360K_fixed.onnx'
-RKNN_MODEL = '/tunm/work/HyperFace/resource/models_rv1109rv1126/_03_r18_Glint360K_fixed.rknn'
+# RKNN_MODEL = '/tunm/work/HyperFace/resource/models_rv1109rv1126/_03_r18_Glint360K_fixed.rknn'
+RKNN_MODEL = 'rec_r18_u8.rknn'
 
 DATASET = './data.txt'
 QUANTIZE_ON = True
