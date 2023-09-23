@@ -4,11 +4,27 @@
 #pragma once
 #ifndef HYPERFACEREPO_RBGANTISPOOFING_H
 #define HYPERFACEREPO_RBGANTISPOOFING_H
+#include "DataType.h"
+#include "middleware/AnyNet.h"
 
+namespace hyper {
 
-class RBGAntiSpoofing {
+std::vector<float> softmax(const std::vector<float>& input);
+
+class HYPER_API RBGAntiSpoofing: public AnyNet {
+public:
+
+    RBGAntiSpoofing(int input_size = 112, bool use_softmax = false);
+
+    float operator()(const Matrix& bgr_affine27);
+
+private:
+    int m_input_size_;
+
+    bool m_softmax_ = false;
 
 };
 
+}   // namespace hyper
 
 #endif //HYPERFACEREPO_RBGANTISPOOFING_H

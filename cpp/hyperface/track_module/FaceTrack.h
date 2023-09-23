@@ -9,6 +9,7 @@
 #include "landmark/FaceLandmark.h"
 #include "common/face_info/all.h"
 #include "middleware/camera_stream/camera_stream.h"
+#include "quality/FacePoseQuality.h"
 
 using namespace std;
 
@@ -67,7 +68,7 @@ private:
 
     std::shared_ptr<RNet> m_refine_net_;
 
-    std::shared_ptr<FacePose> m_pose_net_;
+    std::shared_ptr<FacePoseQuality> m_face_quality_;
 
 };
 

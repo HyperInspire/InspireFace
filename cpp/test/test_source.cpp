@@ -10,9 +10,8 @@
 #include "spdlog/spdlog.h"
 
 
-#define ENABLE_DRAW_SPLIT_LINE 1               // 控制测试中是否打印分割线
-#define ENABLE_TEST_MSG 1                      // 控制测试消息(TEST_MSG)输出
-#define ENABLE_SPEND_TIME 1                    // 控制测试中是否打印 spend_time 信息
+#define ENABLE_DRAW_SPLIT_LINE 1               // 测试中是否打印分割线
+#define ENABLE_TEST_MSG 1                      // 测试消息(TEST_PRINT)输出
 
 int init_test_logger() {
     std::string name("TEST");

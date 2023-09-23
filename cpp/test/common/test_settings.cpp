@@ -6,7 +6,7 @@
 
 
 std::string getTestDataDir() {
-    return "./resource";
+    return "./test_res";
 }
 
 std::string getTestData(const std::string& name) {
@@ -14,7 +14,7 @@ std::string getTestData(const std::string& name) {
 }
 
 std::string getTestSaveDir() {
-    return "./resource/save";
+    return "./test_res/save";
 }
 
 std::string getTestSaveData(const std::string& name) {
