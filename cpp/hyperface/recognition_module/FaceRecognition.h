@@ -4,8 +4,10 @@
 
 #ifndef HYPERFACEREPO_FACERECOGNITION_H
 #define HYPERFACEREPO_FACERECOGNITION_H
+#include <mutex>
 #include "extract/Extract.h"
 #include "common/face_info/FaceObject.h"
+#include "common/face_data/DataTools.h"
 #include "middleware/camera_stream/camera_stream.h"
 #include "features_block/FeatureBlock.h"
 
@@ -21,11 +23,13 @@ public:
 
     int32_t FaceExtract(CameraStream &image, const FaceObject& face, Embedded &embedded);
 
+    int32_t FaceExtract(CameraStream &image, const HyperFaceData& face, Embedded &embedded);
+
     int32_t RegisterFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag);
 
     int32_t UpdateFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag);
 
-    int32_t SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold = 0.5f);
+    int32_t SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold = 0.5f, bool mostSimilar=true);
 
     int32_t DeleteFaceFeature(int featureIndex);
 
@@ -33,7 +37,9 @@ public:
 
     int32_t GetFaceFeatureCount();
 
+    void PrintFeatureMatrixInfo();
 
+    const shared_ptr<Extract> &getMExtract() const;
 
 private:
     int32_t InitExtractInteraction(Model *model);

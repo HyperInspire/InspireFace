@@ -8,6 +8,8 @@
 #include "opencv2/opencv.hpp"
 #include "utils.h"
 #include "DataType.h"
+#include "FaceProcess.h"
+#include "track_module/quality/FacePoseQuality.h"
 
 namespace hyper {
 
@@ -25,6 +27,7 @@ public:
         confidence_ = 1.0;
         tracking_count_ = 0;
         pose_euler_angle_.resize(3);
+        keyPointFive.resize(5);
 //    face_action_ = std::make_shared<FaceAction>(10);
     }
 
@@ -73,6 +76,13 @@ public:
         if (update_matrix && tracking_state_ == TRACKING) {
             // pass
         }
+
+        keyPointFive[0] = landmark_[55];
+        keyPointFive[1] = landmark_[105];
+        keyPointFive[2] = landmark_[69];
+        keyPointFive[3] = landmark_[45];
+        keyPointFive[4] = landmark_[50];
+
     }
 
     void setAlignMeanSquareError(const std::vector<cv::Point2f> &lmk_5) {
@@ -288,6 +298,12 @@ public:
     int tracking_count_; // 跟踪次数
 
     bool is_standard_;
+
+    FacePoseQualityResult high_result;
+
+    FaceProcess faceProcess;
+
+    vector<Point2f> keyPointFive;
 
 private:
     TRACK_STATE tracking_state_;

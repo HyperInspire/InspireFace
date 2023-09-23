@@ -37,9 +37,10 @@ FaceLocList FaceDetect::operator()(const Matrix &bgr) {
     cv::Mat pad;
     cv::copyMakeBorder(resized_img, pad, 0, hpad, 0, wpad, cv::BORDER_CONSTANT,0.0f);
 
-//    LOGD("SetInput");
+//    LOGD("Prepare");
     AnyTensorOutputs outputs;
     Forward(pad, outputs);
+//    LOGD("Forward");
 
     std::vector<FaceLoc> results;
     vector<int> strides = {8, 16, 32};
