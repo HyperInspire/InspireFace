@@ -4,7 +4,8 @@
 
 #ifndef HYPERFACEREPO_FEATUREBLOCK_H
 #define HYPERFACEREPO_FEATUREBLOCK_H
-
+#include <mutex>
+#include <iostream>
 #include "DataType.h"
 
 namespace hyper {

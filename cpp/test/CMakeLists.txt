@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.19)
+#cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.10)
 project(HyperFaceTest)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -o3")
 find_package(OpenCV REQUIRED)
 
 include_directories(${SRC_DIR})

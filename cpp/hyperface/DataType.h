@@ -60,6 +60,7 @@ typedef int8_t int8;
 typedef uint8_t uint8;
 #endif
 
+typedef std::vector<char> ByteArray;
 typedef cv::Point Point2i;                          ///< int类型的2d坐标点
 typedef cv::Point2f Point2f;                        ///< float类型的2d坐标点
 typedef std::vector<Point2i> PointsList2i;          ///< int类型的2d坐标点列表

@@ -10,7 +10,7 @@ namespace hyper {
 
 class HYPER_API FeatureBlockOpenCV : public FeatureBlock{
 public:
-    FeatureBlockOpenCV(int32_t features_max = 512, int32_t feature_length = 512);
+    explicit FeatureBlockOpenCV(int32_t features_max = 512, int32_t feature_length = 512);
 
     int32_t SearchNearest(const std::vector<float>& queryFeature, SearchResult &searchResult) override;
 

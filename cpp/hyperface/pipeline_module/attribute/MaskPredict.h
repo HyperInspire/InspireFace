@@ -4,11 +4,22 @@
 #pragma once
 #ifndef HYPERFACEREPO_MASKPREDICT_H
 #define HYPERFACEREPO_MASKPREDICT_H
+#include "DataType.h"
+#include "middleware/AnyNet.h"
 
+namespace hyper {
 
-class MaskPredict {
+class HYPER_API MaskPredict: public AnyNet {
+public:
+    MaskPredict();
 
+    float operator()(const Matrix& bgr_affine);
+
+private:
+    const int m_input_size_ = 96;
 };
+
+}   // namespace hyper
 
 
 #endif //HYPERFACEREPO_MASKPREDICT_H
