@@ -39,6 +39,8 @@ public:
 
     void PrintFeatureMatrixInfo();
 
+    const shared_ptr<Extract> &getMExtract() const;
+
 private:
     int32_t InitExtractInteraction(Model *model);
 

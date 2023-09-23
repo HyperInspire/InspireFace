@@ -12,3 +12,5 @@ n3 = postprocess(mat[2, 0, 0, ])
 print(np.dot(n1, n2.T))
 print(np.dot(n3, n2.T))
 print(np.dot(n1, n3.T))
+
+print(mat[0, 0, 0])

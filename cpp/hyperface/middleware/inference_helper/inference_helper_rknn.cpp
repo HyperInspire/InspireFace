@@ -97,7 +97,7 @@ int32_t InferenceHelperRKNN::ParameterInitialization(std::vector<InputTensorInfo
                      sizeof(rk_io_num_));
 
     if (ret != RKNN_SUCC) {
-        PRINT_E("rknn_query ctx fail! ret={}\n", ret)
+        PRINT_E("rknn_query ctx fail! ret=%d\n", ret)
         return kRetErr;
     }
 
@@ -138,7 +138,7 @@ InferenceHelperRKNN::Initialize(const std::string &model_filename, std::vector<I
     rknn_sdk_version version;
     ret = rknn_query(net_, RKNN_QUERY_SDK_VERSION, &version, sizeof(rknn_sdk_version));
     if (ret < 0) {
-        PRINT_E("rknn_init error ret={}\n", ret)
+        PRINT_E("rknn_init error ret=%d\n", ret)
         return kRetErr;
     }
 
@@ -222,7 +222,7 @@ int32_t InferenceHelperRKNN::Process(std::vector<OutputTensorInfo> &output_tenso
     }
     auto ret = rknn_run(net_, NULL);
     if (ret < 0){
-        PRINT_E("rknn_run fail! ret={}", ret)
+        PRINT_E("rknn_run fail! ret=%d", ret)
         return kRetErr;
     }
 
@@ -231,6 +231,7 @@ int32_t InferenceHelperRKNN::Process(std::vector<OutputTensorInfo> &output_tenso
         rknn_output output;
         if (output_tensor.tensor_type == TensorInfo::kTensorTypeFp32) {
             output.want_float = 1;
+            LOGD("want_float=1");
         }
         output.is_prealloc = 0;
         output_tensors_.push_back(output);

@@ -216,4 +216,8 @@ void FaceRecognition::PrintFeatureMatrixInfo() {
     m_feature_matrix_list_[0]->PrintMatrix();
 }
 
+const shared_ptr<Extract> &FaceRecognition::getMExtract() const {
+    return m_extract_;
+}
+
 } // namespace hyper
