@@ -11,7 +11,7 @@ namespace hyper {
 
 FeatureBlockOpenCV::FeatureBlockOpenCV(int32_t features_max, int32_t feature_length)
     :m_feature_matrix_(features_max, feature_length, CV_32F, cv::Scalar(0.0f)){
-    cout << m_feature_matrix_.size << endl;
+
 }
 
 int32_t FeatureBlockOpenCV::UnsafeAddFeature(const vector<float> &feature, const std::string &tag) {
@@ -162,7 +162,8 @@ void FeatureBlockOpenCV::PrintMatrixSize() {
 }
 
 void FeatureBlockOpenCV::PrintMatrix() {
-    std::cout << m_feature_matrix_ << std::endl;
+    LOGD("Num of Features: %d", m_feature_matrix_.cols);
+    LOGD("Feature length: %d", m_feature_matrix_.rows);
 }
 
 int32_t FeatureBlockOpenCV::GetFeature(int row, vector<float> &feature) {

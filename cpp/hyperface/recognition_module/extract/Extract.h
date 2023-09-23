@@ -16,6 +16,8 @@ public:
 
     Embedded operator()(const Matrix& bgr_affine);
 
+    Embedded GetFaceFeature(const Matrix& bgr_affine);
+
 };
 
 }   // namespace hyper

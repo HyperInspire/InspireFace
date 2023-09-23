@@ -1,0 +1,61 @@
+D Using CPPUTILS: True
+I Start importing onnx...
+D ONNX model check failed, Exception: ValidationError("Your model ir_version is higher than the checker's.",)
+W Call onnx.optimizer.optimize fail, skip optimize
+I Current ONNX Model use ir_version 7 opset_version 13
+W Please confirm that your onnx opset_version <= 11 (current opset_verison = 13)!!!
+I Call RKNN onnx optimize fail, skip optimize
+D Calc tensor Initializer_fullyconnected2_num_hidden (1,)
+D Calc tensor Initializer_fullyconnected2_1 (1,)
+D Calc tensor Initializer_fullyconnected2_0 (1,)
+D Calc tensor Initializer_fullyconnected1_num_hidden (1,)
+D Calc tensor Initializer_fullyconnected1_1 (1,)
+D Calc tensor Initializer_fullyconnected1_0 (1,)
+D Calc tensor Initializer_fullyconnected0_num_hidden (1,)
+D Calc tensor Initializer_fullyconnected0_1 (1,)
+D Calc tensor Initializer_fullyconnected0_0 (1,)
+D Calc tensor Initializer_fullyconnected2_bias (5,)
+D Calc tensor Initializer_fullyconnected2_weight (5, 128)
+D Calc tensor Initializer_batchnorm2_moving_var (128,)
+D Calc tensor Initializer_batchnorm2_moving_mean (128,)
+D Calc tensor Initializer_batchnorm2_beta (128,)
+D Calc tensor Initializer_batchnorm2_gamma (128,)
+D Calc tensor Initializer_convolution2_weight (128, 128, 3, 3)
+D Calc tensor Initializer_fullyconnected1_bias (10,)
+D Calc tensor Initializer_fullyconnected1_weight (10, 128)
+D Calc tensor Initializer_batchnorm1_moving_var (128,)
+D Calc tensor Initializer_batchnorm1_moving_mean (128,)
+D Calc tensor Initializer_batchnorm1_beta (128,)
+D Calc tensor Initializer_batchnorm1_gamma (128,)
+D Calc tensor Initializer_convolution1_weight (128, 128, 3, 3)
+D Calc tensor Initializer_fullyconnected0_bias (3,)
+D Calc tensor Initializer_fullyconnected0_weight (3, 128)
+D Calc tensor Initializer_batchnorm0_moving_var (128,)
+D Calc tensor Initializer_batchnorm0_moving_mean (128,)
+D Calc tensor Initializer_batchnorm0_beta (128,)
+D Calc tensor Initializer_batchnorm0_gamma (128,)
+D Calc tensor Initializer_convolution0_weight (128, 256, 3, 3)
+D Calc tensor Initializer_conv_13_batchnorm_moving_var (256,)
+D Calc tensor Initializer_conv_13_batchnorm_moving_mean (256,)
+D Calc tensor Initializer_conv_13_batchnorm_beta (256,)
+D Calc tensor Initializer_conv_13_batchnorm_gamma (256,)
+E Calc node Initializer : Init_122 output shape fail
+E Catch exception when loading onnx model: /tunm/work/HyperFace/resource/models_raw/_07_pose-quality.onnx!
+E Traceback (most recent call last):
+E   File "rknn/base/RKNNlib/onnx_ir/onnx_numpy_backend/shape_inference.py", line 65, in rknn.base.RKNNlib.onnx_ir.onnx_numpy_backend.shape_inference.infer_shape
+E   File "rknn/base/RKNNlib/onnx_ir/onnx_numpy_backend/ops/initializer.py", line 10, in rknn.base.RKNNlib.onnx_ir.onnx_numpy_backend.ops.initializer.Initializer
+E   File "/usr/local/lib/python3.6/dist-packages/onnx/numpy_helper.py", line 64, in to_array
+E     dtype=storage_np_dtype)
+E   File "/usr/local/lib/python3.6/dist-packages/numpy/core/numeric.py", line 538, in asarray
+E     return array(a, dtype, copy=False, order=order)
+E KeyboardInterrupt
+E During handling of the above exception, another exception occurred:
+E Traceback (most recent call last):
+E   File "rknn/base/RKNNlib/app/importer/import_onnx.py", line 118, in rknn.base.RKNNlib.app.importer.import_onnx.Importonnx.run
+E   File "rknn/base/RKNNlib/converter/convert_onnx.py", line 112, in rknn.base.RKNNlib.converter.convert_onnx.convert_onnx.__init__
+E   File "rknn/base/RKNNlib/converter/convert_onnx.py", line 1062, in rknn.base.RKNNlib.converter.convert_onnx.convert_onnx._shape_inference
+E   File "rknn/base/RKNNlib/onnx_ir/onnx_numpy_backend/shape_inference.py", line 70, in rknn.base.RKNNlib.onnx_ir.onnx_numpy_backend.shape_inference.infer_shape
+E   File "rknn/api/rknn_log.py", line 323, in rknn.api.rknn_log.RKNNLog.e
+E ValueError: Calc node Initializer : Init_122 output shape fail
+E Please feedback the detailed log file <log_feedback_to_the_rknn_toolkit_dev_team.log> to the RKNN Toolkit development team.
+E You can also check github issues: https://github.com/rockchip-linux/rknn-toolkit/issues

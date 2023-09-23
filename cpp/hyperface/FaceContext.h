@@ -20,7 +20,7 @@ enum DetectMode {
 };
 
 typedef struct CustomPipelineParameter {
-    bool enable_recognition = true;               ///< 人脸识别功能
+    bool enable_recognition = false;              ///< 人脸识别功能
     bool enable_liveness = false;                 ///< RGB活体检测功能
     bool enable_ir_liveness = false;              ///< IR活体检测功能
     bool enable_mask_detect = false;              ///< 口罩检测功能
@@ -43,8 +43,17 @@ public:
 
     FaceObjectList& GetTrackingFaceList();
 
+    int32_t FacesProcess(CameraStream &image, const vector<HyperFaceData> &faces, const CustomPipelineParameter& param);
+
     // 人脸识别相关
     const shared_ptr<FaceRecognition>& FaceRecognitionModule();
+
+    // 人脸属性识别相关
+    const shared_ptr<FacePipeline>& FacePipelineModule();
+
+    vector<ByteArray> &getDetectCache();
+
+    const int32_t GetNumberOfFacesCurrentlyDetected() const;
 
 private:
 
@@ -60,6 +69,19 @@ private:
 
     std::shared_ptr<FaceRecognition> m_face_recognition_;
 
+    std::shared_ptr<FacePipeline> m_face_pipeline_;
+
+public:
+    // 缓存数据
+    std::vector<ByteArray> detectCache;
+    std::vector<FaceRect> faceRectsCache;
+    std::vector<float> rollResultsCache;
+    std::vector<float> yamResultsCache;
+    std::vector<float> pitchResultsCache;
+    std::vector<FacePoseQualityResult> qualityResults;
+
+    std::vector<float> maskResultsCache;
+    std::vector<float> rbgLivenessResultsCache;
 
 };
 

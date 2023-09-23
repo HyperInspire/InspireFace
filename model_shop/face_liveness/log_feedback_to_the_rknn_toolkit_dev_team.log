@@ -1,0 +1,16 @@
+D Using CPPUTILS: True
+I Start importing onnx...
+D ONNX model check failed, Exception: ValidationError("Your model ir_version is higher than the checker's.",)
+I Current ONNX Model use ir_version 7 opset_version 14
+W Please confirm that your onnx opset_version <= 11 (current opset_verison = 14)!!!
+I Call RKNN onnx optimize fail, skip optimize
+E Catch exception when loading onnx model: /tunm/work/HyperFace/resource/models_raw/_06_2_7_80x80_MiniFASNetV2.onnx!
+E Traceback (most recent call last):
+E   File "rknn/base/RKNNlib/RK_nn.py", line 141, in rknn.base.RKNNlib.RK_nn.RKnn.load_onnx
+E   File "rknn/base/RKNNlib/app/importer/import_onnx.py", line 118, in rknn.base.RKNNlib.app.importer.import_onnx.Importonnx.run
+E   File "rknn/base/RKNNlib/converter/convert_onnx.py", line 111, in rknn.base.RKNNlib.converter.convert_onnx.convert_onnx.__init__
+E   File "rknn/base/RKNNlib/converter/convert_onnx.py", line 1059, in rknn.base.RKNNlib.converter.convert_onnx.convert_onnx._build_subgraph
+E   File "rknn/base/RKNNlib/converter/onnx_util.py", line 366, in rknn.base.RKNNlib.converter.onnx_util.onnx_subgraph.build_subgraph
+E KeyError: 'softmax'
+E Please feedback the detailed log file <log_feedback_to_the_rknn_toolkit_dev_team.log> to the RKNN Toolkit development team.
+E You can also check github issues: https://github.com/rockchip-linux/rknn-toolkit/issues

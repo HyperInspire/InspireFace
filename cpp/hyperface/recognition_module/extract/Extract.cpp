@@ -6,6 +6,12 @@
 
 namespace hyper {
 
+Embedded Extract::GetFaceFeature(const Matrix& bgr_affine) {
+    AnyTensorOutputs outputs;
+    Forward(bgr_affine, outputs);
+
+    return outputs[0].second;
+}
 
 Embedded Extract::operator()(const Matrix &bgr_affine) {
 

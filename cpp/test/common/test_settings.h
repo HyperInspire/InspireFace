@@ -8,10 +8,13 @@
 #include <spdlog/spdlog.h>
 #include <iostream>
 
+
+#define ENABLE_BENCHMARK 1                     // 是否运行benchmark的片段
+
 using namespace Catch::Detail;
 
-#define TEST_MSG(...) SPDLOG_LOGGER_CALL(spdlog::get("TEST"), spdlog::level::trace, __VA_ARGS__)
-#define TEST_MSG_OUTPUT(open) TestMsgGuard test_msg_guard_##open(open)
+#define TEST_PRINT(...) SPDLOG_LOGGER_CALL(spdlog::get("TEST"), spdlog::level::trace, __VA_ARGS__)
+#define TEST_PRINT_OUTPUT(open) TestMsgGuard test_msg_guard_##open(open)
 #define LOG_OUTPUT_LEVEL(level) LogLevelGuard log_level_guard_##level(level);
 
 #define GET_DIR getTestDataDir()
