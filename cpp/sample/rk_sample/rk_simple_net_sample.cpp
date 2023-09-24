@@ -119,7 +119,7 @@ void test_quality() {
 
     {
         std::vector<std::string> names = {
-                "test_res/images/test_data/p3.jpg",
+                "test_res/images/test_data/p1.jpg",
 //                "test_res/images/test_data/p1.jpg",
         };
         for (int i = 0; i < names.size(); ++i) {
@@ -265,17 +265,17 @@ void test_liveness() {
 int main() {
     loader.Reset("test_res/model_zip/T1_rv1109rv1126");
 
-    test_rnet();
+//    test_rnet();
 
 //    test_mask();
 
-    test_quality();
+//    test_quality();
 
 //    test_landmark_mnn();
 
-    test_landmark();
+//    test_landmark();
 
-//    test_liveness();
+    test_liveness();
 
     return 0;
 }

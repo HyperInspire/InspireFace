@@ -65,7 +65,8 @@ limitations under the License.
 #include "inference_helper_sample.h"
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
-#include "inference_helper_rknn.h"
+//#include "inference_helper_rknn.h"
+#include "inference_helper_rknn_adapter.h"
 #endif
 
 /*** Macro ***/
@@ -203,16 +204,17 @@ InferenceHelper* InferenceHelper::Create(const InferenceHelper::HelperType helpe
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
     case kRknn:
         PRINT("Use Rknn\n")
-        p = new InferenceHelperRKNN();
+//        p = new InferenceHelperRKNN();
+        p = new InferenceHelperRknnAdapter();
         break;
 
 #endif
     default:
-        PRINT_E("Unsupported inference helper type (%d)\n", helper_type);
+        PRINT_E("Unsupported inference helper type (%d)\n", helper_type)
         break;
     }
     if (p == nullptr) {
-        PRINT_E("Failed to create inference helper\n");
+        PRINT_E("Failed to create inference helper\n")
     } else {
         p->helper_type_ = helper_type;
     }

@@ -39,23 +39,1139 @@ D Calc tensor Initializer_conv_13_batchnorm_moving_var (256,)
 D Calc tensor Initializer_conv_13_batchnorm_moving_mean (256,)
 D Calc tensor Initializer_conv_13_batchnorm_beta (256,)
 D Calc tensor Initializer_conv_13_batchnorm_gamma (256,)
-E Calc node Initializer : Init_122 output shape fail
-E Catch exception when loading onnx model: /tunm/work/HyperFace/resource/models_raw/_07_pose-quality.onnx!
+D Calc tensor Initializer_conv_13_conv2d_weight (256, 128, 1, 1)
+D Calc tensor Initializer_conv_13_dw_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_13_dw_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_13_dw_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_13_dw_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_13_dw_conv2d_weight (128, 1, 3, 3)
+D Calc tensor Initializer_conv_12_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_12_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_12_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_12_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_12_conv2d_weight (128, 128, 1, 1)
+D Calc tensor Initializer_conv_12_dw_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_12_dw_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_12_dw_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_12_dw_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_12_dw_conv2d_weight (128, 1, 3, 3)
+D Calc tensor Initializer_conv_11_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_11_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_11_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_11_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_11_conv2d_weight (128, 128, 1, 1)
+D Calc tensor Initializer_conv_11_dw_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_11_dw_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_11_dw_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_11_dw_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_11_dw_conv2d_weight (128, 1, 3, 3)
+D Calc tensor Initializer_conv_10_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_10_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_10_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_10_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_10_conv2d_weight (128, 128, 1, 1)
+D Calc tensor Initializer_conv_10_dw_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_10_dw_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_10_dw_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_10_dw_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_10_dw_conv2d_weight (128, 1, 3, 3)
+D Calc tensor Initializer_conv_9_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_9_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_9_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_9_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_9_conv2d_weight (128, 128, 1, 1)
+D Calc tensor Initializer_conv_9_dw_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_9_dw_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_9_dw_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_9_dw_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_9_dw_conv2d_weight (128, 1, 3, 3)
+D Calc tensor Initializer_conv_8_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_8_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_8_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_8_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_8_conv2d_weight (128, 128, 1, 1)
+D Calc tensor Initializer_conv_8_dw_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_8_dw_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_8_dw_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_8_dw_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_8_dw_conv2d_weight (128, 1, 3, 3)
+D Calc tensor Initializer_conv_7_batchnorm_moving_var (128,)
+D Calc tensor Initializer_conv_7_batchnorm_moving_mean (128,)
+D Calc tensor Initializer_conv_7_batchnorm_beta (128,)
+D Calc tensor Initializer_conv_7_batchnorm_gamma (128,)
+D Calc tensor Initializer_conv_7_conv2d_weight (128, 64, 1, 1)
+D Calc tensor Initializer_conv_7_dw_batchnorm_moving_var (64,)
+D Calc tensor Initializer_conv_7_dw_batchnorm_moving_mean (64,)
+D Calc tensor Initializer_conv_7_dw_batchnorm_beta (64,)
+D Calc tensor Initializer_conv_7_dw_batchnorm_gamma (64,)
+D Calc tensor Initializer_conv_7_dw_conv2d_weight (64, 1, 3, 3)
+D Calc tensor Initializer_conv_6_batchnorm_moving_var (64,)
+D Calc tensor Initializer_conv_6_batchnorm_moving_mean (64,)
+D Calc tensor Initializer_conv_6_batchnorm_beta (64,)
+D Calc tensor Initializer_conv_6_batchnorm_gamma (64,)
+D Calc tensor Initializer_conv_6_conv2d_weight (64, 64, 1, 1)
+D Calc tensor Initializer_conv_6_dw_batchnorm_moving_var (64,)
+D Calc tensor Initializer_conv_6_dw_batchnorm_moving_mean (64,)
+D Calc tensor Initializer_conv_6_dw_batchnorm_beta (64,)
+D Calc tensor Initializer_conv_6_dw_batchnorm_gamma (64,)
+D Calc tensor Initializer_conv_6_dw_conv2d_weight (64, 1, 3, 3)
+D Calc tensor Initializer_conv_5_batchnorm_moving_var (64,)
+D Calc tensor Initializer_conv_5_batchnorm_moving_mean (64,)
+D Calc tensor Initializer_conv_5_batchnorm_beta (64,)
+D Calc tensor Initializer_conv_5_batchnorm_gamma (64,)
+D Calc tensor Initializer_conv_5_conv2d_weight (64, 32, 1, 1)
+D Calc tensor Initializer_conv_5_dw_batchnorm_moving_var (32,)
+D Calc tensor Initializer_conv_5_dw_batchnorm_moving_mean (32,)
+D Calc tensor Initializer_conv_5_dw_batchnorm_beta (32,)
+D Calc tensor Initializer_conv_5_dw_batchnorm_gamma (32,)
+D Calc tensor Initializer_conv_5_dw_conv2d_weight (32, 1, 3, 3)
+D Calc tensor Initializer_conv_4_batchnorm_moving_var (32,)
+D Calc tensor Initializer_conv_4_batchnorm_moving_mean (32,)
+D Calc tensor Initializer_conv_4_batchnorm_beta (32,)
+D Calc tensor Initializer_conv_4_batchnorm_gamma (32,)
+D Calc tensor Initializer_conv_4_conv2d_weight (32, 32, 1, 1)
+D Calc tensor Initializer_conv_4_dw_batchnorm_moving_var (32,)
+D Calc tensor Initializer_conv_4_dw_batchnorm_moving_mean (32,)
+D Calc tensor Initializer_conv_4_dw_batchnorm_beta (32,)
+D Calc tensor Initializer_conv_4_dw_batchnorm_gamma (32,)
+D Calc tensor Initializer_conv_4_dw_conv2d_weight (32, 1, 3, 3)
+D Calc tensor Initializer_conv_3_batchnorm_moving_var (32,)
+D Calc tensor Initializer_conv_3_batchnorm_moving_mean (32,)
+D Calc tensor Initializer_conv_3_batchnorm_beta (32,)
+D Calc tensor Initializer_conv_3_batchnorm_gamma (32,)
+D Calc tensor Initializer_conv_3_conv2d_weight (32, 16, 1, 1)
+D Calc tensor Initializer_conv_3_dw_batchnorm_moving_var (16,)
+D Calc tensor Initializer_conv_3_dw_batchnorm_moving_mean (16,)
+D Calc tensor Initializer_conv_3_dw_batchnorm_beta (16,)
+D Calc tensor Initializer_conv_3_dw_batchnorm_gamma (16,)
+D Calc tensor Initializer_conv_3_dw_conv2d_weight (16, 1, 3, 3)
+D Calc tensor Initializer_conv_2_batchnorm_moving_var (16,)
+D Calc tensor Initializer_conv_2_batchnorm_moving_mean (16,)
+D Calc tensor Initializer_conv_2_batchnorm_beta (16,)
+D Calc tensor Initializer_conv_2_batchnorm_gamma (16,)
+D Calc tensor Initializer_conv_2_conv2d_weight (16, 16, 1, 1)
+D Calc tensor Initializer_conv_2_dw_batchnorm_moving_var (16,)
+D Calc tensor Initializer_conv_2_dw_batchnorm_moving_mean (16,)
+D Calc tensor Initializer_conv_2_dw_batchnorm_beta (16,)
+D Calc tensor Initializer_conv_2_dw_batchnorm_gamma (16,)
+D Calc tensor Initializer_conv_2_dw_conv2d_weight (16, 1, 3, 3)
+D Calc tensor Initializer_conv_1_batchnorm_moving_var (16,)
+D Calc tensor Initializer_conv_1_batchnorm_moving_mean (16,)
+D Calc tensor Initializer_conv_1_batchnorm_beta (16,)
+D Calc tensor Initializer_conv_1_batchnorm_gamma (16,)
+D Calc tensor Initializer_conv_1_conv2d_weight (16, 3, 3, 3)
+D Calc tensor Initializer_scalar_op2 (1,)
+D Calc tensor Initializer_scalar_op1 (1,)
+D Calc tensor Sub__minusscalar0 (1, 3, 96, 96)
+D Calc tensor Mul__mulscalar0 (1, 3, 96, 96)
+D Calc tensor Conv_conv_1_conv2d (1, 16, 48, 48)
+D Calc tensor BatchNormalization_conv_1_batchnorm (1, 16, 48, 48)
+D Calc tensor Relu_conv_1_relu (1, 16, 48, 48)
+D Calc tensor Conv_conv_2_dw_conv2d (1, 16, 48, 48)
+D Calc tensor BatchNormalization_conv_2_dw_batchnorm (1, 16, 48, 48)
+D Calc tensor Relu_conv_2_dw_relu (1, 16, 48, 48)
+D Calc tensor Conv_conv_2_conv2d (1, 16, 48, 48)
+D Calc tensor BatchNormalization_conv_2_batchnorm (1, 16, 48, 48)
+D Calc tensor Relu_conv_2_relu (1, 16, 48, 48)
+D Calc tensor Conv_conv_3_dw_conv2d (1, 16, 24, 24)
+D Calc tensor BatchNormalization_conv_3_dw_batchnorm (1, 16, 24, 24)
+D Calc tensor Relu_conv_3_dw_relu (1, 16, 24, 24)
+D Calc tensor Conv_conv_3_conv2d (1, 32, 24, 24)
+D Calc tensor BatchNormalization_conv_3_batchnorm (1, 32, 24, 24)
+D Calc tensor Relu_conv_3_relu (1, 32, 24, 24)
+D Calc tensor Conv_conv_4_dw_conv2d (1, 32, 24, 24)
+D Calc tensor BatchNormalization_conv_4_dw_batchnorm (1, 32, 24, 24)
+D Calc tensor Relu_conv_4_dw_relu (1, 32, 24, 24)
+D Calc tensor Conv_conv_4_conv2d (1, 32, 24, 24)
+D Calc tensor BatchNormalization_conv_4_batchnorm (1, 32, 24, 24)
+D Calc tensor Relu_conv_4_relu (1, 32, 24, 24)
+D Calc tensor Conv_conv_5_dw_conv2d (1, 32, 12, 12)
+D Calc tensor BatchNormalization_conv_5_dw_batchnorm (1, 32, 12, 12)
+D Calc tensor Relu_conv_5_dw_relu (1, 32, 12, 12)
+D Calc tensor Conv_conv_5_conv2d (1, 64, 12, 12)
+D Calc tensor BatchNormalization_conv_5_batchnorm (1, 64, 12, 12)
+D Calc tensor Relu_conv_5_relu (1, 64, 12, 12)
+D Calc tensor Conv_conv_6_dw_conv2d (1, 64, 12, 12)
+D Calc tensor BatchNormalization_conv_6_dw_batchnorm (1, 64, 12, 12)
+D Calc tensor Relu_conv_6_dw_relu (1, 64, 12, 12)
+D Calc tensor Conv_conv_6_conv2d (1, 64, 12, 12)
+D Calc tensor BatchNormalization_conv_6_batchnorm (1, 64, 12, 12)
+D Calc tensor Relu_conv_6_relu (1, 64, 12, 12)
+D Calc tensor Conv_conv_7_dw_conv2d (1, 64, 6, 6)
+D Calc tensor BatchNormalization_conv_7_dw_batchnorm (1, 64, 6, 6)
+D Calc tensor Relu_conv_7_dw_relu (1, 64, 6, 6)
+D Calc tensor Conv_conv_7_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_7_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_7_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_8_dw_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_8_dw_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_8_dw_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_8_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_8_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_8_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_9_dw_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_9_dw_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_9_dw_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_9_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_9_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_9_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_10_dw_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_10_dw_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_10_dw_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_10_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_10_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_10_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_11_dw_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_11_dw_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_11_dw_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_11_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_11_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_11_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_12_dw_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_12_dw_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_12_dw_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_12_conv2d (1, 128, 6, 6)
+D Calc tensor BatchNormalization_conv_12_batchnorm (1, 128, 6, 6)
+D Calc tensor Relu_conv_12_relu (1, 128, 6, 6)
+D Calc tensor Conv_conv_13_dw_conv2d (1, 128, 3, 3)
+D Calc tensor BatchNormalization_conv_13_dw_batchnorm (1, 128, 3, 3)
+D Calc tensor Relu_conv_13_dw_relu (1, 128, 3, 3)
+D Calc tensor Conv_conv_13_conv2d (1, 256, 3, 3)
+D Calc tensor BatchNormalization_conv_13_batchnorm (1, 256, 3, 3)
+D Calc tensor Relu_conv_13_relu (1, 256, 3, 3)
+D Calc tensor Conv_convolution0 (1, 128, 3, 3)
+D Calc tensor BatchNormalization_batchnorm0 (1, 128, 3, 3)
+D Calc tensor Relu_activation0 (1, 128, 3, 3)
+D Calc tensor GlobalAveragePool_pooling0 (1, 128, 1, 1)
+D Calc tensor Conv_convolution1 (1, 128, 1, 1)
+D Calc tensor BatchNormalization_batchnorm1 (1, 128, 1, 1)
+D Calc tensor Relu_activation1 (1, 128, 1, 1)
+D Calc tensor GlobalAveragePool_pooling1 (1, 128, 1, 1)
+D Calc tensor Conv_convolution2 (1, 128, 1, 1)
+D Calc tensor BatchNormalization_batchnorm2 (1, 128, 1, 1)
+D Calc tensor Relu_activation2 (1, 128, 1, 1)
+D Calc tensor GlobalAveragePool_pooling2 (1, 128, 1, 1)
+D Calc tensor Flatten_flatten2 (1, 128)
+D Calc tensor Shape_fullyconnected2_orig_shape (2,)
+D Calc tensor Shape_fullyconnected2_dim (1,)
+D Calc tensor Sub_fullyconnected2dim_minus_1 (1,)
+D Calc tensor Slice_fullyconnected2_shape_sliced (1,)
+D Calc tensor Concat_fullyconnected2_shape_new (2,)
+D Calc tensor Flatten_fullyconnected2_data_flattened (1, 128)
+D Calc tensor Gemm_fullyconnected2_gemm (1, 5)
+D Calc tensor Reshape_fullyconnected2 (1, 5)
+D Calc tensor Flatten_flatten1 (1, 128)
+D Calc tensor Shape_fullyconnected1_orig_shape (2,)
+D Calc tensor Shape_fullyconnected1_dim (1,)
+D Calc tensor Sub_fullyconnected1dim_minus_1 (1,)
+D Calc tensor Slice_fullyconnected1_shape_sliced (1,)
+D Calc tensor Concat_fullyconnected1_shape_new (2,)
+D Calc tensor Flatten_fullyconnected1_data_flattened (1, 128)
+D Calc tensor Gemm_fullyconnected1_gemm (1, 10)
+D Calc tensor Reshape_fullyconnected1 (1, 10)
+D Calc tensor Flatten_flatten0 (1, 128)
+D Calc tensor Shape_fullyconnected0_orig_shape (2,)
+D Calc tensor Shape_fullyconnected0_dim (1,)
+D Calc tensor Sub_fullyconnected0dim_minus_1 (1,)
+D Calc tensor Slice_fullyconnected0_shape_sliced (1,)
+D Calc tensor Concat_fullyconnected0_shape_new (2,)
+D Calc tensor Flatten_fullyconnected0_data_flattened (1, 128)
+D Calc tensor Gemm_fullyconnected0_gemm (1, 3)
+D Calc tensor Reshape_fullyconnected0 (1, 3)
+D Calc tensor Concat_fc1 (1, 18)
+D import clients finished
+I Detect Op Shape exists, in some case it may cause parsing failed
+I build output layer attach_Concat_fc1:out0
+I Try match layer: Concat_fc1:out0
+I Match concat_3, convert ONNX layer: ['Concat_fc1'](OPs: ['Concat']) to ['concat']
+I Try match layer: Reshape_fullyconnected0:out0
+I Match r_dynamic_rsp_5x, convert ONNX layer: ['Reshape_fullyconnected0', 'Concat_fullyconnected0_shape_new'](OPs: ['Reshape']) to ['reshape']
+I Try match layer: Reshape_fullyconnected1:out0
+I Match r_dynamic_rsp_5x, convert ONNX layer: ['Reshape_fullyconnected1', 'Concat_fullyconnected1_shape_new'](OPs: ['Reshape']) to ['reshape']
+I Try match layer: Reshape_fullyconnected2:out0
+I Match r_dynamic_rsp_5x, convert ONNX layer: ['Reshape_fullyconnected2', 'Concat_fullyconnected2_shape_new'](OPs: ['Reshape']) to ['reshape']
+I Try match layer: Gemm_fullyconnected0_gemm:out0
+I Match r_gemm_2_fc_wb, convert ONNX layer: ['Gemm_fullyconnected0_gemm', 'Initializer_fullyconnected0_weight', 'Initializer_fullyconnected0_bias'](OPs: ['Gemm', 'Constant_0', 'Constant_1']) to ['fullconnect']
+I Try match layer: Gemm_fullyconnected1_gemm:out0
+I Match r_gemm_2_fc_wb, convert ONNX layer: ['Gemm_fullyconnected1_gemm', 'Initializer_fullyconnected1_weight', 'Initializer_fullyconnected1_bias'](OPs: ['Gemm', 'Constant_0', 'Constant_1']) to ['fullconnect']
+I Try match layer: Gemm_fullyconnected2_gemm:out0
+I Match r_gemm_2_fc_wb, convert ONNX layer: ['Gemm_fullyconnected2_gemm', 'Initializer_fullyconnected2_weight', 'Initializer_fullyconnected2_bias'](OPs: ['Gemm', 'Constant_0', 'Constant_1']) to ['fullconnect']
+I Try match layer: Flatten_fullyconnected0_data_flattened:out0
+I Match r_flatten, convert ONNX layer: ['Flatten_fullyconnected0_data_flattened'](OPs: ['Flatten']) to ['reshape']
+I Try match layer: Flatten_fullyconnected1_data_flattened:out0
+I Match r_flatten, convert ONNX layer: ['Flatten_fullyconnected1_data_flattened'](OPs: ['Flatten']) to ['reshape']
+I Try match layer: Flatten_fullyconnected2_data_flattened:out0
+I Match r_flatten, convert ONNX layer: ['Flatten_fullyconnected2_data_flattened'](OPs: ['Flatten']) to ['reshape']
+I Try match layer: Flatten_flatten0:out0
+I Match r_flatten, convert ONNX layer: ['Flatten_flatten0'](OPs: ['Flatten']) to ['reshape']
+I Try match layer: Flatten_flatten1:out0
+I Match r_flatten, convert ONNX layer: ['Flatten_flatten1'](OPs: ['Flatten']) to ['reshape']
+I Try match layer: Flatten_flatten2:out0
+I Match r_flatten, convert ONNX layer: ['Flatten_flatten2'](OPs: ['Flatten']) to ['reshape']
+I Try match layer: GlobalAveragePool_pooling0:out0
+I Match r_global_avgpool, convert ONNX layer: ['GlobalAveragePool_pooling0'](OPs: ['GlobalAveragePool']) to ['pooling']
+I Try match layer: GlobalAveragePool_pooling1:out0
+I Match r_global_avgpool, convert ONNX layer: ['GlobalAveragePool_pooling1'](OPs: ['GlobalAveragePool']) to ['pooling']
+I Try match layer: GlobalAveragePool_pooling2:out0
+I Match r_global_avgpool, convert ONNX layer: ['GlobalAveragePool_pooling2'](OPs: ['GlobalAveragePool']) to ['pooling']
+I Try match layer: Relu_activation0:out0
+I Match r_relu, convert ONNX layer: ['Relu_activation0'](OPs: ['Relu']) to ['relu']
+I Try match layer: Relu_activation1:out0
+I Match r_relu, convert ONNX layer: ['Relu_activation1'](OPs: ['Relu']) to ['relu']
+I Try match layer: Relu_activation2:out0
+I Match r_relu, convert ONNX layer: ['Relu_activation2'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_batchnorm0:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batchnorm0', 'Initializer_batchnorm0_gamma', 'Initializer_batchnorm0_beta', 'Initializer_batchnorm0_moving_mean', 'Initializer_batchnorm0_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batchnorm1:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batchnorm1', 'Initializer_batchnorm1_gamma', 'Initializer_batchnorm1_beta', 'Initializer_batchnorm1_moving_mean', 'Initializer_batchnorm1_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: BatchNormalization_batchnorm2:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_batchnorm2', 'Initializer_batchnorm2_gamma', 'Initializer_batchnorm2_beta', 'Initializer_batchnorm2_moving_mean', 'Initializer_batchnorm2_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_convolution0:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_convolution0', 'Initializer_convolution0_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_convolution1:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_convolution1', 'Initializer_convolution1_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Conv_convolution2:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_convolution2', 'Initializer_convolution2_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_13_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_13_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_13_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_13_batchnorm', 'Initializer_conv_13_batchnorm_gamma', 'Initializer_conv_13_batchnorm_beta', 'Initializer_conv_13_batchnorm_moving_mean', 'Initializer_conv_13_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_13_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_13_conv2d', 'Initializer_conv_13_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_13_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_13_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_13_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_13_dw_batchnorm', 'Initializer_conv_13_dw_batchnorm_gamma', 'Initializer_conv_13_dw_batchnorm_beta', 'Initializer_conv_13_dw_batchnorm_moving_mean', 'Initializer_conv_13_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_13_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_13_dw_conv2d', 'Initializer_conv_13_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_12_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_12_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_12_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_12_batchnorm', 'Initializer_conv_12_batchnorm_gamma', 'Initializer_conv_12_batchnorm_beta', 'Initializer_conv_12_batchnorm_moving_mean', 'Initializer_conv_12_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_12_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_12_conv2d', 'Initializer_conv_12_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_12_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_12_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_12_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_12_dw_batchnorm', 'Initializer_conv_12_dw_batchnorm_gamma', 'Initializer_conv_12_dw_batchnorm_beta', 'Initializer_conv_12_dw_batchnorm_moving_mean', 'Initializer_conv_12_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_12_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_12_dw_conv2d', 'Initializer_conv_12_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_11_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_11_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_11_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_11_batchnorm', 'Initializer_conv_11_batchnorm_gamma', 'Initializer_conv_11_batchnorm_beta', 'Initializer_conv_11_batchnorm_moving_mean', 'Initializer_conv_11_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_11_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_11_conv2d', 'Initializer_conv_11_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_11_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_11_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_11_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_11_dw_batchnorm', 'Initializer_conv_11_dw_batchnorm_gamma', 'Initializer_conv_11_dw_batchnorm_beta', 'Initializer_conv_11_dw_batchnorm_moving_mean', 'Initializer_conv_11_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_11_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_11_dw_conv2d', 'Initializer_conv_11_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_10_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_10_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_10_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_10_batchnorm', 'Initializer_conv_10_batchnorm_gamma', 'Initializer_conv_10_batchnorm_beta', 'Initializer_conv_10_batchnorm_moving_mean', 'Initializer_conv_10_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_10_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_10_conv2d', 'Initializer_conv_10_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_10_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_10_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_10_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_10_dw_batchnorm', 'Initializer_conv_10_dw_batchnorm_gamma', 'Initializer_conv_10_dw_batchnorm_beta', 'Initializer_conv_10_dw_batchnorm_moving_mean', 'Initializer_conv_10_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_10_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_10_dw_conv2d', 'Initializer_conv_10_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_9_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_9_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_9_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_9_batchnorm', 'Initializer_conv_9_batchnorm_gamma', 'Initializer_conv_9_batchnorm_beta', 'Initializer_conv_9_batchnorm_moving_mean', 'Initializer_conv_9_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_9_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_9_conv2d', 'Initializer_conv_9_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_9_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_9_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_9_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_9_dw_batchnorm', 'Initializer_conv_9_dw_batchnorm_gamma', 'Initializer_conv_9_dw_batchnorm_beta', 'Initializer_conv_9_dw_batchnorm_moving_mean', 'Initializer_conv_9_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_9_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_9_dw_conv2d', 'Initializer_conv_9_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_8_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_8_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_8_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_8_batchnorm', 'Initializer_conv_8_batchnorm_gamma', 'Initializer_conv_8_batchnorm_beta', 'Initializer_conv_8_batchnorm_moving_mean', 'Initializer_conv_8_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_8_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_8_conv2d', 'Initializer_conv_8_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_8_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_8_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_8_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_8_dw_batchnorm', 'Initializer_conv_8_dw_batchnorm_gamma', 'Initializer_conv_8_dw_batchnorm_beta', 'Initializer_conv_8_dw_batchnorm_moving_mean', 'Initializer_conv_8_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_8_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_8_dw_conv2d', 'Initializer_conv_8_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_7_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_7_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_7_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_7_batchnorm', 'Initializer_conv_7_batchnorm_gamma', 'Initializer_conv_7_batchnorm_beta', 'Initializer_conv_7_batchnorm_moving_mean', 'Initializer_conv_7_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_7_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_7_conv2d', 'Initializer_conv_7_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_7_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_7_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_7_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_7_dw_batchnorm', 'Initializer_conv_7_dw_batchnorm_gamma', 'Initializer_conv_7_dw_batchnorm_beta', 'Initializer_conv_7_dw_batchnorm_moving_mean', 'Initializer_conv_7_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_7_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_7_dw_conv2d', 'Initializer_conv_7_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_6_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_6_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_6_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_6_batchnorm', 'Initializer_conv_6_batchnorm_gamma', 'Initializer_conv_6_batchnorm_beta', 'Initializer_conv_6_batchnorm_moving_mean', 'Initializer_conv_6_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_6_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_6_conv2d', 'Initializer_conv_6_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_6_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_6_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_6_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_6_dw_batchnorm', 'Initializer_conv_6_dw_batchnorm_gamma', 'Initializer_conv_6_dw_batchnorm_beta', 'Initializer_conv_6_dw_batchnorm_moving_mean', 'Initializer_conv_6_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_6_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_6_dw_conv2d', 'Initializer_conv_6_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_5_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_5_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_5_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_5_batchnorm', 'Initializer_conv_5_batchnorm_gamma', 'Initializer_conv_5_batchnorm_beta', 'Initializer_conv_5_batchnorm_moving_mean', 'Initializer_conv_5_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_5_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_5_conv2d', 'Initializer_conv_5_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_5_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_5_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_5_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_5_dw_batchnorm', 'Initializer_conv_5_dw_batchnorm_gamma', 'Initializer_conv_5_dw_batchnorm_beta', 'Initializer_conv_5_dw_batchnorm_moving_mean', 'Initializer_conv_5_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_5_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_5_dw_conv2d', 'Initializer_conv_5_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_4_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_4_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_4_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_4_batchnorm', 'Initializer_conv_4_batchnorm_gamma', 'Initializer_conv_4_batchnorm_beta', 'Initializer_conv_4_batchnorm_moving_mean', 'Initializer_conv_4_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_4_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_4_conv2d', 'Initializer_conv_4_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_4_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_4_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_4_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_4_dw_batchnorm', 'Initializer_conv_4_dw_batchnorm_gamma', 'Initializer_conv_4_dw_batchnorm_beta', 'Initializer_conv_4_dw_batchnorm_moving_mean', 'Initializer_conv_4_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_4_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_4_dw_conv2d', 'Initializer_conv_4_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_3_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_3_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_3_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_3_batchnorm', 'Initializer_conv_3_batchnorm_gamma', 'Initializer_conv_3_batchnorm_beta', 'Initializer_conv_3_batchnorm_moving_mean', 'Initializer_conv_3_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_3_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_3_conv2d', 'Initializer_conv_3_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_3_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_3_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_3_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_3_dw_batchnorm', 'Initializer_conv_3_dw_batchnorm_gamma', 'Initializer_conv_3_dw_batchnorm_beta', 'Initializer_conv_3_dw_batchnorm_moving_mean', 'Initializer_conv_3_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_3_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_3_dw_conv2d', 'Initializer_conv_3_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_2_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_2_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_2_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_2_batchnorm', 'Initializer_conv_2_batchnorm_gamma', 'Initializer_conv_2_batchnorm_beta', 'Initializer_conv_2_batchnorm_moving_mean', 'Initializer_conv_2_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_2_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_2_conv2d', 'Initializer_conv_2_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_2_dw_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_2_dw_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_2_dw_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_2_dw_batchnorm', 'Initializer_conv_2_dw_batchnorm_gamma', 'Initializer_conv_2_dw_batchnorm_beta', 'Initializer_conv_2_dw_batchnorm_moving_mean', 'Initializer_conv_2_dw_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_2_dw_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_2_dw_conv2d', 'Initializer_conv_2_dw_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Relu_conv_1_relu:out0
+I Match r_relu, convert ONNX layer: ['Relu_conv_1_relu'](OPs: ['Relu']) to ['relu']
+I Try match layer: BatchNormalization_conv_1_batchnorm:out0
+I Match r_bn_v6, convert ONNX layer: ['BatchNormalization_conv_1_batchnorm', 'Initializer_conv_1_batchnorm_gamma', 'Initializer_conv_1_batchnorm_beta', 'Initializer_conv_1_batchnorm_moving_mean', 'Initializer_conv_1_batchnorm_moving_var'](OPs: ['BatchNormalization', 'Constant_0', 'Constant_1', 'Constant_2', 'Constant_3']) to ['batchnormalize']
+I Try match layer: Conv_conv_1_conv2d:out0
+I Match r_conv_no_bias, convert ONNX layer: ['Conv_conv_1_conv2d', 'Initializer_conv_1_conv2d_weight'](OPs: ['Conv', 'Constant_0']) to ['convolution']
+I Try match layer: Mul__mulscalar0:out0
+I Match r_mul, convert ONNX layer: ['Mul__mulscalar0'](OPs: ['Mul']) to ['multiply']
+I Try match layer: Sub__minusscalar0:out0
+I Match r_sub, convert ONNX layer: ['Sub__minusscalar0'](OPs: ['Sub']) to ['subtract']
+I Try match layer: Initializer_scalar_op2:out0
+I Match r_variable, convert ONNX layer: ['Initializer_scalar_op2'](OPs: ['Constant']) to ['variable']
+I Try match layer: Initializer_scalar_op1:out0
+I Match r_variable, convert ONNX layer: ['Initializer_scalar_op1'](OPs: ['Constant']) to ['variable']
+I build input layer data:out0
+D connect Reshape_fullyconnected0_2 0  ~ Concat_fc1_1 0
+D connect Reshape_fullyconnected1_3 0  ~ Concat_fc1_1 1
+D connect Reshape_fullyconnected2_4 0  ~ Concat_fc1_1 2
+D connect Gemm_fullyconnected0_gemm_5 0  ~ Reshape_fullyconnected0_2 0
+D connect Gemm_fullyconnected1_gemm_6 0  ~ Reshape_fullyconnected1_3 0
+D connect Gemm_fullyconnected2_gemm_7 0  ~ Reshape_fullyconnected2_4 0
+D connect Flatten_fullyconnected0_data_flattened_8 0  ~ Gemm_fullyconnected0_gemm_5 0
+D connect Flatten_fullyconnected1_data_flattened_9 0  ~ Gemm_fullyconnected1_gemm_6 0
+D connect Flatten_fullyconnected2_data_flattened_10 0  ~ Gemm_fullyconnected2_gemm_7 0
+D connect Flatten_flatten0_11 0  ~ Flatten_fullyconnected0_data_flattened_8 0
+D connect Flatten_flatten1_12 0  ~ Flatten_fullyconnected1_data_flattened_9 0
+D connect Flatten_flatten2_13 0  ~ Flatten_fullyconnected2_data_flattened_10 0
+D connect GlobalAveragePool_pooling0_14 0  ~ Flatten_flatten0_11 0
+D connect GlobalAveragePool_pooling1_15 0  ~ Flatten_flatten1_12 0
+D connect GlobalAveragePool_pooling2_16 0  ~ Flatten_flatten2_13 0
+D connect Relu_activation0_17 0  ~ GlobalAveragePool_pooling0_14 0
+D connect Relu_activation1_18 0  ~ GlobalAveragePool_pooling1_15 0
+D connect Relu_activation2_19 0  ~ GlobalAveragePool_pooling2_16 0
+D connect BatchNormalization_batchnorm0_20 0  ~ Relu_activation0_17 0
+D connect BatchNormalization_batchnorm1_21 0  ~ Relu_activation1_18 0
+D connect BatchNormalization_batchnorm2_22 0  ~ Relu_activation2_19 0
+D connect Conv_convolution0_23 0  ~ BatchNormalization_batchnorm0_20 0
+D connect Conv_convolution1_24 0  ~ BatchNormalization_batchnorm1_21 0
+D connect Conv_convolution2_25 0  ~ BatchNormalization_batchnorm2_22 0
+D connect Relu_conv_13_relu_26 0  ~ Conv_convolution0_23 0
+D connect GlobalAveragePool_pooling0_14 0  ~ Conv_convolution1_24 0
+D connect GlobalAveragePool_pooling1_15 0  ~ Conv_convolution2_25 0
+D connect BatchNormalization_conv_13_batchnorm_27 0  ~ Relu_conv_13_relu_26 0
+D connect Conv_conv_13_conv2d_28 0  ~ BatchNormalization_conv_13_batchnorm_27 0
+D connect Relu_conv_13_dw_relu_29 0  ~ Conv_conv_13_conv2d_28 0
+D connect BatchNormalization_conv_13_dw_batchnorm_30 0  ~ Relu_conv_13_dw_relu_29 0
+D connect Conv_conv_13_dw_conv2d_31 0  ~ BatchNormalization_conv_13_dw_batchnorm_30 0
+D connect Relu_conv_12_relu_32 0  ~ Conv_conv_13_dw_conv2d_31 0
+D connect BatchNormalization_conv_12_batchnorm_33 0  ~ Relu_conv_12_relu_32 0
+D connect Conv_conv_12_conv2d_34 0  ~ BatchNormalization_conv_12_batchnorm_33 0
+D connect Relu_conv_12_dw_relu_35 0  ~ Conv_conv_12_conv2d_34 0
+D connect BatchNormalization_conv_12_dw_batchnorm_36 0  ~ Relu_conv_12_dw_relu_35 0
+D connect Conv_conv_12_dw_conv2d_37 0  ~ BatchNormalization_conv_12_dw_batchnorm_36 0
+D connect Relu_conv_11_relu_38 0  ~ Conv_conv_12_dw_conv2d_37 0
+D connect BatchNormalization_conv_11_batchnorm_39 0  ~ Relu_conv_11_relu_38 0
+D connect Conv_conv_11_conv2d_40 0  ~ BatchNormalization_conv_11_batchnorm_39 0
+D connect Relu_conv_11_dw_relu_41 0  ~ Conv_conv_11_conv2d_40 0
+D connect BatchNormalization_conv_11_dw_batchnorm_42 0  ~ Relu_conv_11_dw_relu_41 0
+D connect Conv_conv_11_dw_conv2d_43 0  ~ BatchNormalization_conv_11_dw_batchnorm_42 0
+D connect Relu_conv_10_relu_44 0  ~ Conv_conv_11_dw_conv2d_43 0
+D connect BatchNormalization_conv_10_batchnorm_45 0  ~ Relu_conv_10_relu_44 0
+D connect Conv_conv_10_conv2d_46 0  ~ BatchNormalization_conv_10_batchnorm_45 0
+D connect Relu_conv_10_dw_relu_47 0  ~ Conv_conv_10_conv2d_46 0
+D connect BatchNormalization_conv_10_dw_batchnorm_48 0  ~ Relu_conv_10_dw_relu_47 0
+D connect Conv_conv_10_dw_conv2d_49 0  ~ BatchNormalization_conv_10_dw_batchnorm_48 0
+D connect Relu_conv_9_relu_50 0  ~ Conv_conv_10_dw_conv2d_49 0
+D connect BatchNormalization_conv_9_batchnorm_51 0  ~ Relu_conv_9_relu_50 0
+D connect Conv_conv_9_conv2d_52 0  ~ BatchNormalization_conv_9_batchnorm_51 0
+D connect Relu_conv_9_dw_relu_53 0  ~ Conv_conv_9_conv2d_52 0
+D connect BatchNormalization_conv_9_dw_batchnorm_54 0  ~ Relu_conv_9_dw_relu_53 0
+D connect Conv_conv_9_dw_conv2d_55 0  ~ BatchNormalization_conv_9_dw_batchnorm_54 0
+D connect Relu_conv_8_relu_56 0  ~ Conv_conv_9_dw_conv2d_55 0
+D connect BatchNormalization_conv_8_batchnorm_57 0  ~ Relu_conv_8_relu_56 0
+D connect Conv_conv_8_conv2d_58 0  ~ BatchNormalization_conv_8_batchnorm_57 0
+D connect Relu_conv_8_dw_relu_59 0  ~ Conv_conv_8_conv2d_58 0
+D connect BatchNormalization_conv_8_dw_batchnorm_60 0  ~ Relu_conv_8_dw_relu_59 0
+D connect Conv_conv_8_dw_conv2d_61 0  ~ BatchNormalization_conv_8_dw_batchnorm_60 0
+D connect Relu_conv_7_relu_62 0  ~ Conv_conv_8_dw_conv2d_61 0
+D connect BatchNormalization_conv_7_batchnorm_63 0  ~ Relu_conv_7_relu_62 0
+D connect Conv_conv_7_conv2d_64 0  ~ BatchNormalization_conv_7_batchnorm_63 0
+D connect Relu_conv_7_dw_relu_65 0  ~ Conv_conv_7_conv2d_64 0
+D connect BatchNormalization_conv_7_dw_batchnorm_66 0  ~ Relu_conv_7_dw_relu_65 0
+D connect Conv_conv_7_dw_conv2d_67 0  ~ BatchNormalization_conv_7_dw_batchnorm_66 0
+D connect Relu_conv_6_relu_68 0  ~ Conv_conv_7_dw_conv2d_67 0
+D connect BatchNormalization_conv_6_batchnorm_69 0  ~ Relu_conv_6_relu_68 0
+D connect Conv_conv_6_conv2d_70 0  ~ BatchNormalization_conv_6_batchnorm_69 0
+D connect Relu_conv_6_dw_relu_71 0  ~ Conv_conv_6_conv2d_70 0
+D connect BatchNormalization_conv_6_dw_batchnorm_72 0  ~ Relu_conv_6_dw_relu_71 0
+D connect Conv_conv_6_dw_conv2d_73 0  ~ BatchNormalization_conv_6_dw_batchnorm_72 0
+D connect Relu_conv_5_relu_74 0  ~ Conv_conv_6_dw_conv2d_73 0
+D connect BatchNormalization_conv_5_batchnorm_75 0  ~ Relu_conv_5_relu_74 0
+D connect Conv_conv_5_conv2d_76 0  ~ BatchNormalization_conv_5_batchnorm_75 0
+D connect Relu_conv_5_dw_relu_77 0  ~ Conv_conv_5_conv2d_76 0
+D connect BatchNormalization_conv_5_dw_batchnorm_78 0  ~ Relu_conv_5_dw_relu_77 0
+D connect Conv_conv_5_dw_conv2d_79 0  ~ BatchNormalization_conv_5_dw_batchnorm_78 0
+D connect Relu_conv_4_relu_80 0  ~ Conv_conv_5_dw_conv2d_79 0
+D connect BatchNormalization_conv_4_batchnorm_81 0  ~ Relu_conv_4_relu_80 0
+D connect Conv_conv_4_conv2d_82 0  ~ BatchNormalization_conv_4_batchnorm_81 0
+D connect Relu_conv_4_dw_relu_83 0  ~ Conv_conv_4_conv2d_82 0
+D connect BatchNormalization_conv_4_dw_batchnorm_84 0  ~ Relu_conv_4_dw_relu_83 0
+D connect Conv_conv_4_dw_conv2d_85 0  ~ BatchNormalization_conv_4_dw_batchnorm_84 0
+D connect Relu_conv_3_relu_86 0  ~ Conv_conv_4_dw_conv2d_85 0
+D connect BatchNormalization_conv_3_batchnorm_87 0  ~ Relu_conv_3_relu_86 0
+D connect Conv_conv_3_conv2d_88 0  ~ BatchNormalization_conv_3_batchnorm_87 0
+D connect Relu_conv_3_dw_relu_89 0  ~ Conv_conv_3_conv2d_88 0
+D connect BatchNormalization_conv_3_dw_batchnorm_90 0  ~ Relu_conv_3_dw_relu_89 0
+D connect Conv_conv_3_dw_conv2d_91 0  ~ BatchNormalization_conv_3_dw_batchnorm_90 0
+D connect Relu_conv_2_relu_92 0  ~ Conv_conv_3_dw_conv2d_91 0
+D connect BatchNormalization_conv_2_batchnorm_93 0  ~ Relu_conv_2_relu_92 0
+D connect Conv_conv_2_conv2d_94 0  ~ BatchNormalization_conv_2_batchnorm_93 0
+D connect Relu_conv_2_dw_relu_95 0  ~ Conv_conv_2_conv2d_94 0
+D connect BatchNormalization_conv_2_dw_batchnorm_96 0  ~ Relu_conv_2_dw_relu_95 0
+D connect Conv_conv_2_dw_conv2d_97 0  ~ BatchNormalization_conv_2_dw_batchnorm_96 0
+D connect Relu_conv_1_relu_98 0  ~ Conv_conv_2_dw_conv2d_97 0
+D connect BatchNormalization_conv_1_batchnorm_99 0  ~ Relu_conv_1_relu_98 0
+D connect Conv_conv_1_conv2d_100 0  ~ BatchNormalization_conv_1_batchnorm_99 0
+D connect Mul__mulscalar0_101 0  ~ Conv_conv_1_conv2d_100 0
+D connect Sub__minusscalar0_102 0  ~ Mul__mulscalar0_101 0
+D connect Initializer_scalar_op2_103 0  ~ Mul__mulscalar0_101 1
+D connect data_105 0  ~ Sub__minusscalar0_102 0
+D connect Initializer_scalar_op1_104 0  ~ Sub__minusscalar0_102 1
+D connect Concat_fc1_1 0  ~ attach_Concat_fc1/out0_0 0
+D Process data_105 ...
+D RKNN output shape(input): (1 96 96 3)
+D Tensor @data_105:out0 type: float32
+D Process Initializer_scalar_op1_104 ...
+D RKNN output shape(variable): (1)
+D Process Sub__minusscalar0_102 ...
+D RKNN output shape(Subtract): (1 96 96 3)
+D Tensor @Sub__minusscalar0_102:out0 type: float32
+D Process Initializer_scalar_op2_103 ...
+D RKNN output shape(variable): (1)
+D Process Mul__mulscalar0_101 ...
+D RKNN output shape(multiply): (1 96 96 3)
+D Tensor @Mul__mulscalar0_101:out0 type: float32
+D Process Conv_conv_1_conv2d_100 ...
+D RKNN output shape(convolution): (1 48 48 16)
+D Tensor @Conv_conv_1_conv2d_100:out0 type: float32
+D Process BatchNormalization_conv_1_batchnorm_99 ...
+D RKNN output shape(batchnormalize): (1 48 48 16)
+D Tensor @BatchNormalization_conv_1_batchnorm_99:out0 type: float32
+D Process Relu_conv_1_relu_98 ...
+D RKNN output shape(relu): (1 48 48 16)
+D Tensor @Relu_conv_1_relu_98:out0 type: float32
+D Process Conv_conv_2_dw_conv2d_97 ...
+D RKNN output shape(convolution): (1 48 48 16)
+D Tensor @Conv_conv_2_dw_conv2d_97:out0 type: float32
+D Process BatchNormalization_conv_2_dw_batchnorm_96 ...
+D RKNN output shape(batchnormalize): (1 48 48 16)
+D Tensor @BatchNormalization_conv_2_dw_batchnorm_96:out0 type: float32
+D Process Relu_conv_2_dw_relu_95 ...
+D RKNN output shape(relu): (1 48 48 16)
+D Tensor @Relu_conv_2_dw_relu_95:out0 type: float32
+D Process Conv_conv_2_conv2d_94 ...
+D RKNN output shape(convolution): (1 48 48 16)
+D Tensor @Conv_conv_2_conv2d_94:out0 type: float32
+D Process BatchNormalization_conv_2_batchnorm_93 ...
+D RKNN output shape(batchnormalize): (1 48 48 16)
+D Tensor @BatchNormalization_conv_2_batchnorm_93:out0 type: float32
+D Process Relu_conv_2_relu_92 ...
+D RKNN output shape(relu): (1 48 48 16)
+D Tensor @Relu_conv_2_relu_92:out0 type: float32
+D Process Conv_conv_3_dw_conv2d_91 ...
+D RKNN output shape(convolution): (1 24 24 16)
+D Tensor @Conv_conv_3_dw_conv2d_91:out0 type: float32
+D Process BatchNormalization_conv_3_dw_batchnorm_90 ...
+D RKNN output shape(batchnormalize): (1 24 24 16)
+D Tensor @BatchNormalization_conv_3_dw_batchnorm_90:out0 type: float32
+D Process Relu_conv_3_dw_relu_89 ...
+D RKNN output shape(relu): (1 24 24 16)
+D Tensor @Relu_conv_3_dw_relu_89:out0 type: float32
+D Process Conv_conv_3_conv2d_88 ...
+D RKNN output shape(convolution): (1 24 24 32)
+D Tensor @Conv_conv_3_conv2d_88:out0 type: float32
+D Process BatchNormalization_conv_3_batchnorm_87 ...
+D RKNN output shape(batchnormalize): (1 24 24 32)
+D Tensor @BatchNormalization_conv_3_batchnorm_87:out0 type: float32
+D Process Relu_conv_3_relu_86 ...
+D RKNN output shape(relu): (1 24 24 32)
+D Tensor @Relu_conv_3_relu_86:out0 type: float32
+D Process Conv_conv_4_dw_conv2d_85 ...
+D RKNN output shape(convolution): (1 24 24 32)
+D Tensor @Conv_conv_4_dw_conv2d_85:out0 type: float32
+D Process BatchNormalization_conv_4_dw_batchnorm_84 ...
+D RKNN output shape(batchnormalize): (1 24 24 32)
+D Tensor @BatchNormalization_conv_4_dw_batchnorm_84:out0 type: float32
+D Process Relu_conv_4_dw_relu_83 ...
+D RKNN output shape(relu): (1 24 24 32)
+D Tensor @Relu_conv_4_dw_relu_83:out0 type: float32
+D Process Conv_conv_4_conv2d_82 ...
+D RKNN output shape(convolution): (1 24 24 32)
+D Tensor @Conv_conv_4_conv2d_82:out0 type: float32
+D Process BatchNormalization_conv_4_batchnorm_81 ...
+D RKNN output shape(batchnormalize): (1 24 24 32)
+D Tensor @BatchNormalization_conv_4_batchnorm_81:out0 type: float32
+D Process Relu_conv_4_relu_80 ...
+D RKNN output shape(relu): (1 24 24 32)
+D Tensor @Relu_conv_4_relu_80:out0 type: float32
+D Process Conv_conv_5_dw_conv2d_79 ...
+D RKNN output shape(convolution): (1 12 12 32)
+D Tensor @Conv_conv_5_dw_conv2d_79:out0 type: float32
+D Process BatchNormalization_conv_5_dw_batchnorm_78 ...
+D RKNN output shape(batchnormalize): (1 12 12 32)
+D Tensor @BatchNormalization_conv_5_dw_batchnorm_78:out0 type: float32
+D Process Relu_conv_5_dw_relu_77 ...
+D RKNN output shape(relu): (1 12 12 32)
+D Tensor @Relu_conv_5_dw_relu_77:out0 type: float32
+D Process Conv_conv_5_conv2d_76 ...
+D RKNN output shape(convolution): (1 12 12 64)
+D Tensor @Conv_conv_5_conv2d_76:out0 type: float32
+D Process BatchNormalization_conv_5_batchnorm_75 ...
+D RKNN output shape(batchnormalize): (1 12 12 64)
+D Tensor @BatchNormalization_conv_5_batchnorm_75:out0 type: float32
+D Process Relu_conv_5_relu_74 ...
+D RKNN output shape(relu): (1 12 12 64)
+D Tensor @Relu_conv_5_relu_74:out0 type: float32
+D Process Conv_conv_6_dw_conv2d_73 ...
+D RKNN output shape(convolution): (1 12 12 64)
+D Tensor @Conv_conv_6_dw_conv2d_73:out0 type: float32
+D Process BatchNormalization_conv_6_dw_batchnorm_72 ...
+D RKNN output shape(batchnormalize): (1 12 12 64)
+D Tensor @BatchNormalization_conv_6_dw_batchnorm_72:out0 type: float32
+D Process Relu_conv_6_dw_relu_71 ...
+D RKNN output shape(relu): (1 12 12 64)
+D Tensor @Relu_conv_6_dw_relu_71:out0 type: float32
+D Process Conv_conv_6_conv2d_70 ...
+D RKNN output shape(convolution): (1 12 12 64)
+D Tensor @Conv_conv_6_conv2d_70:out0 type: float32
+D Process BatchNormalization_conv_6_batchnorm_69 ...
+D RKNN output shape(batchnormalize): (1 12 12 64)
+D Tensor @BatchNormalization_conv_6_batchnorm_69:out0 type: float32
+D Process Relu_conv_6_relu_68 ...
+D RKNN output shape(relu): (1 12 12 64)
+D Tensor @Relu_conv_6_relu_68:out0 type: float32
+D Process Conv_conv_7_dw_conv2d_67 ...
+D RKNN output shape(convolution): (1 6 6 64)
+D Tensor @Conv_conv_7_dw_conv2d_67:out0 type: float32
+D Process BatchNormalization_conv_7_dw_batchnorm_66 ...
+D RKNN output shape(batchnormalize): (1 6 6 64)
+D Tensor @BatchNormalization_conv_7_dw_batchnorm_66:out0 type: float32
+D Process Relu_conv_7_dw_relu_65 ...
+D RKNN output shape(relu): (1 6 6 64)
+D Tensor @Relu_conv_7_dw_relu_65:out0 type: float32
+D Process Conv_conv_7_conv2d_64 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_7_conv2d_64:out0 type: float32
+D Process BatchNormalization_conv_7_batchnorm_63 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_7_batchnorm_63:out0 type: float32
+D Process Relu_conv_7_relu_62 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_7_relu_62:out0 type: float32
+D Process Conv_conv_8_dw_conv2d_61 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_8_dw_conv2d_61:out0 type: float32
+D Process BatchNormalization_conv_8_dw_batchnorm_60 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_8_dw_batchnorm_60:out0 type: float32
+D Process Relu_conv_8_dw_relu_59 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_8_dw_relu_59:out0 type: float32
+D Process Conv_conv_8_conv2d_58 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_8_conv2d_58:out0 type: float32
+D Process BatchNormalization_conv_8_batchnorm_57 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_8_batchnorm_57:out0 type: float32
+D Process Relu_conv_8_relu_56 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_8_relu_56:out0 type: float32
+D Process Conv_conv_9_dw_conv2d_55 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_9_dw_conv2d_55:out0 type: float32
+D Process BatchNormalization_conv_9_dw_batchnorm_54 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_9_dw_batchnorm_54:out0 type: float32
+D Process Relu_conv_9_dw_relu_53 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_9_dw_relu_53:out0 type: float32
+D Process Conv_conv_9_conv2d_52 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_9_conv2d_52:out0 type: float32
+D Process BatchNormalization_conv_9_batchnorm_51 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_9_batchnorm_51:out0 type: float32
+D Process Relu_conv_9_relu_50 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_9_relu_50:out0 type: float32
+D Process Conv_conv_10_dw_conv2d_49 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_10_dw_conv2d_49:out0 type: float32
+D Process BatchNormalization_conv_10_dw_batchnorm_48 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_10_dw_batchnorm_48:out0 type: float32
+D Process Relu_conv_10_dw_relu_47 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_10_dw_relu_47:out0 type: float32
+D Process Conv_conv_10_conv2d_46 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_10_conv2d_46:out0 type: float32
+D Process BatchNormalization_conv_10_batchnorm_45 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_10_batchnorm_45:out0 type: float32
+D Process Relu_conv_10_relu_44 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_10_relu_44:out0 type: float32
+D Process Conv_conv_11_dw_conv2d_43 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_11_dw_conv2d_43:out0 type: float32
+D Process BatchNormalization_conv_11_dw_batchnorm_42 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_11_dw_batchnorm_42:out0 type: float32
+D Process Relu_conv_11_dw_relu_41 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_11_dw_relu_41:out0 type: float32
+D Process Conv_conv_11_conv2d_40 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_11_conv2d_40:out0 type: float32
+D Process BatchNormalization_conv_11_batchnorm_39 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_11_batchnorm_39:out0 type: float32
+D Process Relu_conv_11_relu_38 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_11_relu_38:out0 type: float32
+D Process Conv_conv_12_dw_conv2d_37 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_12_dw_conv2d_37:out0 type: float32
+D Process BatchNormalization_conv_12_dw_batchnorm_36 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_12_dw_batchnorm_36:out0 type: float32
+D Process Relu_conv_12_dw_relu_35 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_12_dw_relu_35:out0 type: float32
+D Process Conv_conv_12_conv2d_34 ...
+D RKNN output shape(convolution): (1 6 6 128)
+D Tensor @Conv_conv_12_conv2d_34:out0 type: float32
+D Process BatchNormalization_conv_12_batchnorm_33 ...
+D RKNN output shape(batchnormalize): (1 6 6 128)
+D Tensor @BatchNormalization_conv_12_batchnorm_33:out0 type: float32
+D Process Relu_conv_12_relu_32 ...
+D RKNN output shape(relu): (1 6 6 128)
+D Tensor @Relu_conv_12_relu_32:out0 type: float32
+D Process Conv_conv_13_dw_conv2d_31 ...
+D RKNN output shape(convolution): (1 3 3 128)
+D Tensor @Conv_conv_13_dw_conv2d_31:out0 type: float32
+D Process BatchNormalization_conv_13_dw_batchnorm_30 ...
+D RKNN output shape(batchnormalize): (1 3 3 128)
+D Tensor @BatchNormalization_conv_13_dw_batchnorm_30:out0 type: float32
+D Process Relu_conv_13_dw_relu_29 ...
+D RKNN output shape(relu): (1 3 3 128)
+D Tensor @Relu_conv_13_dw_relu_29:out0 type: float32
+D Process Conv_conv_13_conv2d_28 ...
+D RKNN output shape(convolution): (1 3 3 256)
+D Tensor @Conv_conv_13_conv2d_28:out0 type: float32
+D Process BatchNormalization_conv_13_batchnorm_27 ...
+D RKNN output shape(batchnormalize): (1 3 3 256)
+D Tensor @BatchNormalization_conv_13_batchnorm_27:out0 type: float32
+D Process Relu_conv_13_relu_26 ...
+D RKNN output shape(relu): (1 3 3 256)
+D Tensor @Relu_conv_13_relu_26:out0 type: float32
+D Process Conv_convolution0_23 ...
+D RKNN output shape(convolution): (1 3 3 128)
+D Tensor @Conv_convolution0_23:out0 type: float32
+D Process BatchNormalization_batchnorm0_20 ...
+D RKNN output shape(batchnormalize): (1 3 3 128)
+D Tensor @BatchNormalization_batchnorm0_20:out0 type: float32
+D Process Relu_activation0_17 ...
+D RKNN output shape(relu): (1 3 3 128)
+D Tensor @Relu_activation0_17:out0 type: float32
+D Process GlobalAveragePool_pooling0_14 ...
+D RKNN output shape(pooling): (1 1 1 128)
+D Tensor @GlobalAveragePool_pooling0_14:out0 type: float32
+D Process Flatten_flatten0_11 ...
+D RKNN output shape(reshape): (1 128)
+D Tensor @Flatten_flatten0_11:out0 type: float32
+D Process Flatten_fullyconnected0_data_flattened_8 ...
+D RKNN output shape(reshape): (1 128)
+D Tensor @Flatten_fullyconnected0_data_flattened_8:out0 type: float32
+D Process Gemm_fullyconnected0_gemm_5 ...
+D RKNN output shape(fullconnect): (1 3)
+D Tensor @Gemm_fullyconnected0_gemm_5:out0 type: float32
+D Process Reshape_fullyconnected0_2 ...
+D RKNN output shape(reshape): (1 3)
+D Tensor @Reshape_fullyconnected0_2:out0 type: float32
+D Process Conv_convolution1_24 ...
+D RKNN output shape(convolution): (1 1 1 128)
+D Tensor @Conv_convolution1_24:out0 type: float32
+D Process BatchNormalization_batchnorm1_21 ...
+D RKNN output shape(batchnormalize): (1 1 1 128)
+D Tensor @BatchNormalization_batchnorm1_21:out0 type: float32
+D Process Relu_activation1_18 ...
+D RKNN output shape(relu): (1 1 1 128)
+D Tensor @Relu_activation1_18:out0 type: float32
+D Process GlobalAveragePool_pooling1_15 ...
+D RKNN output shape(pooling): (1 1 1 128)
+D Tensor @GlobalAveragePool_pooling1_15:out0 type: float32
+D Process Flatten_flatten1_12 ...
+D RKNN output shape(reshape): (1 128)
+D Tensor @Flatten_flatten1_12:out0 type: float32
+D Process Flatten_fullyconnected1_data_flattened_9 ...
+D RKNN output shape(reshape): (1 128)
+D Tensor @Flatten_fullyconnected1_data_flattened_9:out0 type: float32
+D Process Gemm_fullyconnected1_gemm_6 ...
+D RKNN output shape(fullconnect): (1 10)
+D Tensor @Gemm_fullyconnected1_gemm_6:out0 type: float32
+D Process Reshape_fullyconnected1_3 ...
+D RKNN output shape(reshape): (1 10)
+D Tensor @Reshape_fullyconnected1_3:out0 type: float32
+D Process Conv_convolution2_25 ...
+D RKNN output shape(convolution): (1 1 1 128)
+D Tensor @Conv_convolution2_25:out0 type: float32
+D Process BatchNormalization_batchnorm2_22 ...
+D RKNN output shape(batchnormalize): (1 1 1 128)
+D Tensor @BatchNormalization_batchnorm2_22:out0 type: float32
+D Process Relu_activation2_19 ...
+D RKNN output shape(relu): (1 1 1 128)
+D Tensor @Relu_activation2_19:out0 type: float32
+D Process GlobalAveragePool_pooling2_16 ...
+D RKNN output shape(pooling): (1 1 1 128)
+D Tensor @GlobalAveragePool_pooling2_16:out0 type: float32
+D Process Flatten_flatten2_13 ...
+D RKNN output shape(reshape): (1 128)
+D Tensor @Flatten_flatten2_13:out0 type: float32
+D Process Flatten_fullyconnected2_data_flattened_10 ...
+D RKNN output shape(reshape): (1 128)
+D Tensor @Flatten_fullyconnected2_data_flattened_10:out0 type: float32
+D Process Gemm_fullyconnected2_gemm_7 ...
+D RKNN output shape(fullconnect): (1 5)
+D Tensor @Gemm_fullyconnected2_gemm_7:out0 type: float32
+D Process Reshape_fullyconnected2_4 ...
+D RKNN output shape(reshape): (1 5)
+D Tensor @Reshape_fullyconnected2_4:out0 type: float32
+D Process Concat_fc1_1 ...
+W Warning: Axis may need to be adjusted according to original model shape.
+D RKNN output shape(concat): (1 18)
+D Tensor @Concat_fc1_1:out0 type: float32
+D Process attach_Concat_fc1/out0_0 ...
+D RKNN output shape(output): (1 18)
+D Tensor @attach_Concat_fc1/out0_0:out0 type: float32
+I Build mxnet_converted_model complete.
+I Start C2T Switcher...
+D Optimizing network with broadcast_op
+D Align variable Initializer_scalar_op2_103 shape [1] to [1, 1, 1, 1]
+D Align variable Initializer_scalar_op1_104 shape [1] to [1, 1, 1, 1]
+D convert Mul__mulscalar0_101(multiply) axis 1 to 3
+D insert permute Flatten_flatten0_11_RKNN_mark_perm_106 before Flatten_flatten0_11
+D insert permute Flatten_flatten1_12_RKNN_mark_perm_107 before Flatten_flatten1_12
+D insert permute Flatten_flatten2_13_RKNN_mark_perm_108 before Flatten_flatten2_13
+I End C2T Switcher...
+D Optimizing network with force_1d_tensor, swapper, merge_duplicate_quantize_dequantize, merge_layer, auto_fill_bn, auto_fill_l2normalizescale, auto_fill_instancenormalize, resize_nearest_transformer, eltwise_transform, auto_fill_multiply, auto_fill_zero_bias, proposal_opt_import, special_add_to_conv2d
+D Merge ['Conv_convolution0_23', 'BatchNormalization_batchnorm0_20'] (convolution)
+D Merge ['Conv_convolution1_24', 'BatchNormalization_batchnorm1_21'] (convolution)
+D Merge ['Conv_convolution2_25', 'BatchNormalization_batchnorm2_22'] (convolution)
+D Merge ['Conv_conv_13_conv2d_28', 'BatchNormalization_conv_13_batchnorm_27'] (convolution)
+D Merge ['Conv_conv_13_dw_conv2d_31', 'BatchNormalization_conv_13_dw_batchnorm_30'] (convolution)
+D Merge ['Conv_conv_12_conv2d_34', 'BatchNormalization_conv_12_batchnorm_33'] (convolution)
+D Merge ['Conv_conv_12_dw_conv2d_37', 'BatchNormalization_conv_12_dw_batchnorm_36'] (convolution)
+D Merge ['Conv_conv_11_conv2d_40', 'BatchNormalization_conv_11_batchnorm_39'] (convolution)
+D Merge ['Conv_conv_11_dw_conv2d_43', 'BatchNormalization_conv_11_dw_batchnorm_42'] (convolution)
+D Merge ['Conv_conv_10_conv2d_46', 'BatchNormalization_conv_10_batchnorm_45'] (convolution)
+D Merge ['Conv_conv_10_dw_conv2d_49', 'BatchNormalization_conv_10_dw_batchnorm_48'] (convolution)
+D Merge ['Conv_conv_9_conv2d_52', 'BatchNormalization_conv_9_batchnorm_51'] (convolution)
+D Merge ['Conv_conv_9_dw_conv2d_55', 'BatchNormalization_conv_9_dw_batchnorm_54'] (convolution)
+D Merge ['Conv_conv_8_conv2d_58', 'BatchNormalization_conv_8_batchnorm_57'] (convolution)
+D Merge ['Conv_conv_8_dw_conv2d_61', 'BatchNormalization_conv_8_dw_batchnorm_60'] (convolution)
+D Merge ['Conv_conv_7_conv2d_64', 'BatchNormalization_conv_7_batchnorm_63'] (convolution)
+D Merge ['Conv_conv_7_dw_conv2d_67', 'BatchNormalization_conv_7_dw_batchnorm_66'] (convolution)
+D Merge ['Conv_conv_6_conv2d_70', 'BatchNormalization_conv_6_batchnorm_69'] (convolution)
+D Merge ['Conv_conv_6_dw_conv2d_73', 'BatchNormalization_conv_6_dw_batchnorm_72'] (convolution)
+D Merge ['Conv_conv_5_conv2d_76', 'BatchNormalization_conv_5_batchnorm_75'] (convolution)
+D Merge ['Conv_conv_5_dw_conv2d_79', 'BatchNormalization_conv_5_dw_batchnorm_78'] (convolution)
+D Merge ['Conv_conv_4_conv2d_82', 'BatchNormalization_conv_4_batchnorm_81'] (convolution)
+D Merge ['Conv_conv_4_dw_conv2d_85', 'BatchNormalization_conv_4_dw_batchnorm_84'] (convolution)
+D Merge ['Conv_conv_3_conv2d_88', 'BatchNormalization_conv_3_batchnorm_87'] (convolution)
+D Merge ['Conv_conv_3_dw_conv2d_91', 'BatchNormalization_conv_3_dw_batchnorm_90'] (convolution)
+D Merge ['Conv_conv_2_conv2d_94', 'BatchNormalization_conv_2_batchnorm_93'] (convolution)
+D Merge ['Conv_conv_2_dw_conv2d_97', 'BatchNormalization_conv_2_dw_batchnorm_96'] (convolution)
+D Merge ['Conv_conv_1_conv2d_100', 'BatchNormalization_conv_1_batchnorm_99'] (convolution)
+I End importing onnx...
+I Generate input meta ...
+I Load input meta
+I Generate input meta ...
+D import clients finished
+I Load net...
+I Load data...
+I Load input meta
+I Start quantization...
+D import clients finished
+W Can not find file: images/071797.jpg. This line will be ignored!
+W Can not find file: images/165084.jpg. This line will be ignored!
+W Can not find file: images/040774.jpg. This line will be ignored!
+W Can not find file: images/079678.jpg. This line will be ignored!
+W Can not find file: images/015417.jpg. This line will be ignored!
+W Can not find file: images/178189.jpg. This line will be ignored!
+W Can not find file: images/178605.jpg. This line will be ignored!
+W Can not find file: images/118683.jpg. This line will be ignored!
+W Can not find file: images/199376.jpg. This line will be ignored!
+W Can not find file: images/011300.jpg. This line will be ignored!
+W Can not find file: images/044275.jpg. This line will be ignored!
+W Can not find file: images/109822.jpg. This line will be ignored!
+W Can not find file: images/067137.jpg. This line will be ignored!
+W Can not find file: images/072262.jpg. This line will be ignored!
+W Can not find file: images/101065.jpg. This line will be ignored!
+W Can not find file: images/112623.jpg. This line will be ignored!
+W Can not find file: images/190152.jpg. This line will be ignored!
+W Can not find file: images/009217.jpg. This line will be ignored!
+W Can not find file: images/119951.jpg. This line will be ignored!
+W Can not find file: images/043861.jpg. This line will be ignored!
+W Can not find file: images/130643.jpg. This line will be ignored!
+W Can not find file: images/038593.jpg. This line will be ignored!
+W Can not find file: images/106290.jpg. This line will be ignored!
+W Can not find file: images/105799.jpg. This line will be ignored!
+W Can not find file: images/116044.jpg. This line will be ignored!
+W Can not find file: images/024960.jpg. This line will be ignored!
+W Can not find file: images/011267.jpg. This line will be ignored!
+W Can not find file: images/066004.jpg. This line will be ignored!
+W Can not find file: images/033993.jpg. This line will be ignored!
+W Can not find file: images/138024.jpg. This line will be ignored!
+W Can not find file: images/058288.jpg. This line will be ignored!
+W Can not find file: images/141928.jpg. This line will be ignored!
+W Can not find file: images/147342.jpg. This line will be ignored!
+W Can not find file: images/045743.jpg. This line will be ignored!
+W Can not find file: images/154882.jpg. This line will be ignored!
+W Can not find file: images/133038.jpg. This line will be ignored!
+W Can not find file: images/016509.jpg. This line will be ignored!
+W Can not find file: images/065732.jpg. This line will be ignored!
+W Can not find file: images/105775.jpg. This line will be ignored!
+W Can not find file: images/111099.jpg. This line will be ignored!
+W Can not find file: images/077446.jpg. This line will be ignored!
+W Can not find file: images/184121.jpg. This line will be ignored!
+W Can not find file: images/077056.jpg. This line will be ignored!
+W Can not find file: images/068348.jpg. This line will be ignored!
+W Can not find file: images/146089.jpg. This line will be ignored!
+W Can not find file: images/000976.jpg. This line will be ignored!
+W Can not find file: images/055023.jpg. This line will be ignored!
+W Can not find file: images/155023.jpg. This line will be ignored!
+W Can not find file: images/196054.jpg. This line will be ignored!
+W Can not find file: images/122718.jpg. This line will be ignored!
+W Can not find file: images/105358.jpg. This line will be ignored!
+W Can not find file: images/105210.jpg. This line will be ignored!
+W Can not find file: images/055355.jpg. This line will be ignored!
+W Can not find file: images/184242.jpg. This line will be ignored!
+W Can not find file: images/180725.jpg. This line will be ignored!
+W Can not find file: images/033289.jpg. This line will be ignored!
+W Can not find file: images/078713.jpg. This line will be ignored!
+W Can not find file: images/136124.jpg. This line will be ignored!
+W Can not find file: images/105459.jpg. This line will be ignored!
+W Can not find file: images/150100.jpg. This line will be ignored!
+W Can not find file: images/149337.jpg. This line will be ignored!
+W Can not find file: images/076879.jpg. This line will be ignored!
+W Can not find file: images/113979.jpg. This line will be ignored!
+W Can not find file: images/149336.jpg. This line will be ignored!
+W Can not find file: images/046818.jpg. This line will be ignored!
+W Can not find file: images/127228.jpg. This line will be ignored!
+W Can not find file: images/198545.jpg. This line will be ignored!
+W Can not find file: images/174260.jpg. This line will be ignored!
+W Can not find file: images/062364.jpg. This line will be ignored!
+W Can not find file: images/124866.jpg. This line will be ignored!
+W Can not find file: images/150671.jpg. This line will be ignored!
+W Can not find file: images/070210.jpg. This line will be ignored!
+W Can not find file: images/177556.jpg. This line will be ignored!
+W Can not find file: images/195262.jpg. This line will be ignored!
+W Can not find file: images/202005.jpg. This line will be ignored!
+W Can not find file: images/082642.jpg. This line will be ignored!
+W Can not find file: images/182861.jpg. This line will be ignored!
+W Can not find file: images/137823.jpg. This line will be ignored!
+W Can not find file: images/041792.jpg. This line will be ignored!
+W Can not find file: images/138720.jpg. This line will be ignored!
+W Can not find file: images/055848.jpg. This line will be ignored!
+W Can not find file: images/085300.jpg. This line will be ignored!
+W Can not find file: images/060373.jpg. This line will be ignored!
+W Can not find file: images/012915.jpg. This line will be ignored!
+W Can not find file: images/157454.jpg. This line will be ignored!
+W Can not find file: images/001821.jpg. This line will be ignored!
+W Can not find file: images/070014.jpg. This line will be ignored!
+W Can not find file: images/199463.jpg. This line will be ignored!
+W Can not find file: images/102681.jpg. This line will be ignored!
+W Can not find file: images/036530.jpg. This line will be ignored!
+W Can not find file: images/087674.jpg. This line will be ignored!
+W Can not find file: images/052713.jpg. This line will be ignored!
+W Can not find file: images/061118.jpg. This line will be ignored!
+W Can not find file: images/143568.jpg. This line will be ignored!
+W Can not find file: images/171041.jpg. This line will be ignored!
+W Can not find file: images/058347.jpg. This line will be ignored!
+W Can not find file: images/109444.jpg. This line will be ignored!
+W Can not find file: images/019131.jpg. This line will be ignored!
+W Can not find file: images/009518.jpg. This line will be ignored!
+W Can not find file: images/062391.jpg. This line will be ignored!
+W Can not find file: images/184833.jpg. This line will be ignored!
+W Can not find file: images/171879.jpg. This line will be ignored!
+W Can not find file: images/062192.jpg. This line will be ignored!
+W Can not find file: images/094638.jpg. This line will be ignored!
+W Can not find file: images/014038.jpg. This line will be ignored!
+W Can not find file: images/121444.jpg. This line will be ignored!
+W Can not find file: images/072949.jpg. This line will be ignored!
+W Can not find file: images/090714.jpg. This line will be ignored!
+W Can not find file: images/175940.jpg. This line will be ignored!
+W Can not find file: images/150256.jpg. This line will be ignored!
+W Can not find file: images/131455.jpg. This line will be ignored!
+W Can not find file: images/113621.jpg. This line will be ignored!
+W Can not find file: images/040523.jpg. This line will be ignored!
+W Can not find file: images/186612.jpg. This line will be ignored!
+W Can not find file: images/130365.jpg. This line will be ignored!
+W Can not find file: images/004572.jpg. This line will be ignored!
+W Can not find file: images/012106.jpg. This line will be ignored!
+W Can not find file: images/039397.jpg. This line will be ignored!
+W Can not find file: images/041562.jpg. This line will be ignored!
+W Can not find file: images/043375.jpg. This line will be ignored!
+W Can not find file: images/197905.jpg. This line will be ignored!
+W Can not find file: images/109320.jpg. This line will be ignored!
+W Can not find file: images/150533.jpg. This line will be ignored!
+W Can not find file: images/199525.jpg. This line will be ignored!
+W Can not find file: images/087041.jpg. This line will be ignored!
+W Can not find file: images/008200.jpg. This line will be ignored!
+W Can not find file: images/045462.jpg. This line will be ignored!
+W Can not find file: images/178046.jpg. This line will be ignored!
+W Can not find file: images/014349.jpg. This line will be ignored!
+W Can not find file: images/076686.jpg. This line will be ignored!
+W Can not find file: images/077214.jpg. This line will be ignored!
+W Can not find file: images/191791.jpg. This line will be ignored!
+W Can not find file: images/128738.jpg. This line will be ignored!
+W Can not find file: images/053177.jpg. This line will be ignored!
+W Can not find file: images/019693.jpg. This line will be ignored!
+W Can not find file: images/151614.jpg. This line will be ignored!
+W Can not find file: images/025801.jpg. This line will be ignored!
+W Can not find file: images/140733.jpg. This line will be ignored!
+W Can not find file: images/063713.jpg. This line will be ignored!
+W Can not find file: images/115135.jpg. This line will be ignored!
+W Can not find file: images/138110.jpg. This line will be ignored!
+W Can not find file: images/046394.jpg. This line will be ignored!
+W Can not find file: images/082467.jpg. This line will be ignored!
+W Can not find file: images/050092.jpg. This line will be ignored!
+W Can not find file: images/012577.jpg. This line will be ignored!
+W Can not find file: images/032116.jpg. This line will be ignored!
+W Can not find file: images/142618.jpg. This line will be ignored!
+W Can not find file: images/176595.jpg. This line will be ignored!
+W Can not find file: images/079895.jpg. This line will be ignored!
+W Can not find file: images/037330.jpg. This line will be ignored!
+W Can not find file: images/045598.jpg. This line will be ignored!
+W Can not find file: images/079261.jpg. This line will be ignored!
+W Can not find file: images/038599.jpg. This line will be ignored!
+W Can not find file: images/123378.jpg. This line will be ignored!
+W Can not find file: images/095948.jpg. This line will be ignored!
+W Can not find file: images/055577.jpg. This line will be ignored!
+W Can not find file: images/016062.jpg. This line will be ignored!
+W Can not find file: images/064386.jpg. This line will be ignored!
+W Can not find file: images/114891.jpg. This line will be ignored!
+W Can not find file: images/043063.jpg. This line will be ignored!
+W Can not find file: images/191127.jpg. This line will be ignored!
+W Can not find file: images/163819.jpg. This line will be ignored!
+W Can not find file: images/137521.jpg. This line will be ignored!
+W Can not find file: images/121431.jpg. This line will be ignored!
+W Can not find file: images/105418.jpg. This line will be ignored!
+W Can not find file: images/173968.jpg. This line will be ignored!
+W Can not find file: images/076192.jpg. This line will be ignored!
+W Can not find file: images/100979.jpg. This line will be ignored!
+W Can not find file: images/024602.jpg. This line will be ignored!
+W Can not find file: images/024831.jpg. This line will be ignored!
+W Can not find file: images/152019.jpg. This line will be ignored!
+W Can not find file: images/150418.jpg. This line will be ignored!
+W Can not find file: images/089594.jpg. This line will be ignored!
+W Can not find file: images/112213.jpg. This line will be ignored!
+W Can not find file: images/058691.jpg. This line will be ignored!
+W Can not find file: images/044469.jpg. This line will be ignored!
+W Can not find file: images/154849.jpg. This line will be ignored!
+W Can not find file: images/183693.jpg. This line will be ignored!
+W Can not find file: images/185977.jpg. This line will be ignored!
+W Can not find file: images/123342.jpg. This line will be ignored!
+W Can not find file: images/119828.jpg. This line will be ignored!
+W Can not find file: images/080210.jpg. This line will be ignored!
+W Can not find file: images/133233.jpg. This line will be ignored!
+W Can not find file: images/112200.jpg. This line will be ignored!
+W Can not find file: images/111709.jpg. This line will be ignored!
+W Can not find file: images/145416.jpg. This line will be ignored!
+W Can not find file: images/046321.jpg. This line will be ignored!
+W Can not find file: images/082565.jpg. This line will be ignored!
+W Can not find file: images/186059.jpg. This line will be ignored!
+W Can not find file: images/138589.jpg. This line will be ignored!
+W Can not find file: images/138761.jpg. This line will be ignored!
+W Can not find file: images/004073.jpg. This line will be ignored!
+W Can not find file: images/063942.jpg. This line will be ignored!
+W Can not find file: images/192011.jpg. This line will be ignored!
+W Can not find file: images/011293.jpg. This line will be ignored!
+W Can not find file: images/068750.jpg. This line will be ignored!
+W Can not find file: images/041498.jpg. This line will be ignored!
+W Can not find file: images/036406.jpg. This line will be ignored!
+W Can not find file: images/113889.jpg. This line will be ignored!
+W Can not find file: images/012215.jpg. This line will be ignored!
+E There is no valid data in the dataset: ./data.txt. Please check it.
+E Catch exception when building RKNN model!
 E Traceback (most recent call last):
-E   File "rknn/base/RKNNlib/onnx_ir/onnx_numpy_backend/shape_inference.py", line 65, in rknn.base.RKNNlib.onnx_ir.onnx_numpy_backend.shape_inference.infer_shape
-E   File "rknn/base/RKNNlib/onnx_ir/onnx_numpy_backend/ops/initializer.py", line 10, in rknn.base.RKNNlib.onnx_ir.onnx_numpy_backend.ops.initializer.Initializer
-E   File "/usr/local/lib/python3.6/dist-packages/onnx/numpy_helper.py", line 64, in to_array
-E     dtype=storage_np_dtype)
-E   File "/usr/local/lib/python3.6/dist-packages/numpy/core/numeric.py", line 538, in asarray
-E     return array(a, dtype, copy=False, order=order)
-E KeyboardInterrupt
-E During handling of the above exception, another exception occurred:
-E Traceback (most recent call last):
-E   File "rknn/base/RKNNlib/app/importer/import_onnx.py", line 118, in rknn.base.RKNNlib.app.importer.import_onnx.Importonnx.run
-E   File "rknn/base/RKNNlib/converter/convert_onnx.py", line 112, in rknn.base.RKNNlib.converter.convert_onnx.convert_onnx.__init__
-E   File "rknn/base/RKNNlib/converter/convert_onnx.py", line 1062, in rknn.base.RKNNlib.converter.convert_onnx.convert_onnx._shape_inference
-E   File "rknn/base/RKNNlib/onnx_ir/onnx_numpy_backend/shape_inference.py", line 70, in rknn.base.RKNNlib.onnx_ir.onnx_numpy_backend.shape_inference.infer_shape
+E   File "rknn/base/RKNNlib/RK_nn.py", line 559, in rknn.base.RKNNlib.RK_nn.RKnn.quantize
+E   File "rknn/base/RKNNlib/app/medusa/quantization.py", line 42, in rknn.base.RKNNlib.app.medusa.quantization.Quantization.__init__
+E   File "rknn/base/RKNNlib/app/medusa/workspace.py", line 68, in rknn.base.RKNNlib.app.medusa.workspace.Workspace.__init__
+E   File "rknn/base/RKNNlib/app/medusa/workspace.py", line 131, in rknn.base.RKNNlib.app.medusa.workspace.Workspace.update_net_batch_size
 E   File "rknn/api/rknn_log.py", line 323, in rknn.api.rknn_log.RKNNLog.e
-E ValueError: Calc node Initializer : Init_122 output shape fail
+E ValueError: There is no valid data in the dataset: ./data.txt. Please check it.
 E Please feedback the detailed log file <log_feedback_to_the_rknn_toolkit_dev_team.log> to the RKNN Toolkit development team.
 E You can also check github issues: https://github.com/rockchip-linux/rknn-toolkit/issues
