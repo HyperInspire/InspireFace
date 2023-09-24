@@ -27,9 +27,9 @@ if __name__ == '__main__':
                 # std_values=[[127.5, 127.5, 127.5]],
                 # mean_values=[[0, 0, 0]],
                 # std_values=[[255, 255, 255]],
-                # optimization_level=1,
+                optimization_level=3,
                 target_platform='rv1126',
-                # output_optimize=1,
+                output_optimize=1,
                 quantize_input_node=QUANTIZE_ON,
                 quantized_dtype='dynamic_fixed_point-i16',
 
