@@ -64,7 +64,12 @@ public:
         int height = input_size[1];
         m_input_image_size_ = {width, height};
         int channel = getParam<int>("input_channel");
-        input_tensor_info.tensor_dims =  { 1, channel, m_input_image_size_.height, m_input_image_size_.width };
+        if (getParam<bool>("nchw")) {
+            input_tensor_info.tensor_dims =  { 1, channel, m_input_image_size_.height, m_input_image_size_.width };
+        } else {
+            input_tensor_info.tensor_dims =  { 1, m_input_image_size_.height, m_input_image_size_.width, channel };
+        }
+
         input_tensor_info.data_type = getParam<int>("data_type");
         int image_channel = getParam<int>("input_image_channel");
         input_tensor_info.image_info.channel = image_channel;
@@ -98,9 +103,8 @@ public:
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
         // 先在外部简单实现一个临时的色彩转换
         if (getParam<bool>("swap_color")) {
-            cv::Mat trans;
-            cv::cvtColor(data, trans, cv::COLOR_BGR2RGB);
-            input_tensor_info.data = trans.data;
+            cv::cvtColor(data, m_cache_, cv::COLOR_BGR2RGB);
+            input_tensor_info.data = m_cache_.data;
         } else {
             input_tensor_info.data = data.data;
         }
@@ -125,8 +129,11 @@ public:
             std::vector<float> output_score_raw_list(m_output_tensor_info_list_[i].GetDataAsFloat(),
                                                      m_output_tensor_info_list_[i].GetDataAsFloat() +
                                                      m_output_tensor_info_list_[i].GetElementNum());
+            LOGE("m_output_tensor_info_list_[i].GetElementNum(): %d",m_output_tensor_info_list_[i].GetElementNum());
             outputs.push_back(std::make_pair(m_output_tensor_info_list_[i].name, output_score_raw_list));
         }
+
+        m_cache_.release();
     }
 
 
@@ -156,6 +163,8 @@ private:
     std::vector<OutputTensorInfo> m_output_tensor_info_list_;
 
     cv::Size m_input_image_size_{};
+
+    cv::Mat m_cache_;
 
 };
 

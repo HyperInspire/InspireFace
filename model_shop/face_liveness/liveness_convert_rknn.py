@@ -39,11 +39,11 @@ if __name__ == '__main__':
                 # std_values=[[127.5, 127.5, 127.5]],
                 # mean_values=[[0, 0, 0]],
                 # std_values=[[255, 255, 255]],
-                # optimization_level=1,
+                optimization_level=3,
                 target_platform='rv1126',
-                # output_optimize=1,
+                output_optimize=1,
                 quantize_input_node=QUANTIZE_ON,
-                quantized_dtype='dynamic_fixed_point-i16'
+                # quantized_dtype='dynamic_fixed_point-i16'
                 )
     print('done')
 
@@ -88,8 +88,9 @@ if __name__ == '__main__':
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         output = rknn.inference(inputs=[img])
         output = output[0][0]
-        # output = softmax(output)
-        print(f"{name} {output}")
+        sm = softmax(output)
+        print(f"ot: {name} {output}")
+        print(f"sm: {name} {sm}")
 
 '''
 --> Init runtime environment
@@ -99,4 +100,11 @@ done
 done
 fake.jpg [0.3475143  0.6419917  0.01049402]
 real.jpg [0.00201952 0.9899775  0.00800296]
+
+
+U8: 
+ot: fake.jpg [ 2.2725     1.1071154 -3.3796153]
+sm: fake.jpg [0.7602755  0.23705594 0.00266863]
+ot: real.jpg [-2.039423    2.5055768  -0.46615383]
+sm: real.jpg [0.01000172 0.9417661  0.04823218]
 '''
