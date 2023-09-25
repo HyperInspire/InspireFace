@@ -38,7 +38,20 @@ int main(int argc, char** argv) {
             return -1;
         }
         faces.push_back(face);
+
+        cv::Rect rect(face.rect.x, face.rect.y, face.rect.width, face.rect.height);
+        std::cout << rect << std::endl;
+        cv::rectangle(rot90, rect, cv::Scalar(0, 0, 233), 2);
+
+        for (auto &p: face.keyPoints) {
+            cv::Point2f point(p.x, p.y);
+            cv::circle(rot90, point, 0, cv::Scalar(0, 0, 255), 2);
+        }
     }
+
+    cv::imshow("wq", rot90);
+    cv::waitKey(0);
+
 
     ret = ctx.FacesProcess(stream, faces, param);
     if (ret != HSUCCEED) {

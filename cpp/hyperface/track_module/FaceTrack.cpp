@@ -8,6 +8,7 @@
 #include "model_index.h"
 #include "landmark/mean_shape.h"
 
+
 namespace hyper {
 
 FaceTrack::FaceTrack(int max_detected_faces):max_detected_faces_(max_detected_faces) {
@@ -73,20 +74,6 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     double time1 = (double) cv::getTickCount();
     crop = image.GetAffineRGBImage(affine, 112, 112);
 
-    if (m_face_quality_ != nullptr) {
-        // pose and quality
-        auto rect = face.bbox_;
-        auto affine_scale = FacePoseQuality::ComputeCropMatrix(rect);
-        affine.convertTo(affine, CV_64F);
-        auto pre_crop = image.GetAffineRGBImage(affine_scale, FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT);
-        if (image.getRotationMode() != ROTATION_0) {
-            cv::Point2f center(crop.cols / 2.0, crop.rows / 2.0);
-            cv::Mat rotationMatrix = cv::getRotationMatrix2D(center, image.getRotationMode() * 90, 1.0);
-            cv::warpAffine(crop, crop, rotationMatrix, cv::Size(FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT));
-        }
-        auto res = (*m_face_quality_)(pre_crop);
-        face.high_result = res;
-    }
 
     cv::Mat affine_inv;
     cv::invertAffineTransform(affine, affine_inv);
@@ -153,8 +140,56 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
         }
     }
 
+
     // realloc many times
     face.SetLandmark(landmark_back, true);
+
+    if (m_face_quality_ != nullptr) {
+        // pose and quality - BUG
+        auto rect = face.bbox_;
+        std::cout << rect << std::endl;
+        auto affine_scale = FacePoseQuality::ComputeCropMatrix(rect);
+        affine_scale.convertTo(affine_scale, CV_64F);
+        auto pre_crop = image.GetAffineRGBImage(affine_scale, FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT);
+        cv::imshow("crop", crop);
+        cv::imshow("pre_crop", pre_crop);
+        cv::Mat rotationMatrix;
+        if (image.getRotationMode() != ROTATION_0) {
+            cv::Point2f center(pre_crop.cols / 2.0, pre_crop.rows / 2.0);
+            rotationMatrix = cv::getRotationMatrix2D(center, image.getRotationMode() * 90, 1.0);
+            cv::warpAffine(pre_crop, pre_crop, rotationMatrix, cv::Size(FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT));
+        }
+        auto res = (*m_face_quality_)(pre_crop);
+        if (!rotationMatrix.empty()) {
+            cv::Mat invRotationMatrix;
+            cv::invertAffineTransform(rotationMatrix, invRotationMatrix);
+            invRotationMatrix.convertTo(invRotationMatrix, CV_32F);
+            for (auto p: res.lmk) {
+                cv::Vec3f tmp = {p.x, p.y, 1};
+                cv::Mat res = invRotationMatrix * tmp;
+                p.x = res.at<float>(0);
+                p.y = res.at<float>(1);
+//                cv::circle(pre_crop, p, 0, cv::Scalar(0, 0, 255), 2);
+            }
+        }
+
+        cv::Mat inv_affine_scale;
+        cv::invertAffineTransform(affine_scale, inv_affine_scale);
+        inv_affine_scale.convertTo(inv_affine_scale, CV_32F);
+        for (auto p: res.lmk) {
+            cv::Vec3f tmp = {p.x, p.y, 1};
+            cv::Mat res = inv_affine_scale * tmp;
+            p.x = res.at<float>(0);
+            p.y = res.at<float>(1);
+//                cv::circle(pre_crop, p, 0, cv::Scalar(0, 0, 255), 2);
+        }
+
+        cv::imshow("pre_crop_w", pre_crop);
+        cv::waitKey(0);
+
+        face.high_result = res;
+    }
+
     face.SetConfidence(score);
     face.UpdateFaceAction();
     return true;

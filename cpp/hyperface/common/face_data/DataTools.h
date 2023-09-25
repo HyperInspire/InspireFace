@@ -54,9 +54,17 @@ inline HyperFaceData HYPER_API FaceObjectToHyperFaceData(const FaceObject& obj, 
     data.trans.tx = obj.getTransMatrix().at<double>(0, 2);
     data.trans.ty = obj.getTransMatrix().at<double>(1, 2);
     // KetPoints five
-    for (int i = 0; i < obj.keyPointFive.size(); ++i) {
-        data.keyPoints[i].x = obj.keyPointFive[i].x;
-        data.keyPoints[i].y = obj.keyPointFive[i].y;
+    if (!obj.high_result.lmk.empty()) {
+        for (int i = 0; i < obj.high_result.lmk.size(); ++i) {
+            data.keyPoints[i].x = obj.high_result.lmk[i].x;
+            data.keyPoints[i].y = obj.high_result.lmk[i].y;
+        }
+        LOGD("HIGHT");
+    } else {
+        for (int i = 0; i < obj.keyPointFive.size(); ++i) {
+            data.keyPoints[i].x = obj.keyPointFive[i].x;
+            data.keyPoints[i].y = obj.keyPointFive[i].y;
+        }
     }
     // Basic data
     data.inGroupIndex = group_index;
