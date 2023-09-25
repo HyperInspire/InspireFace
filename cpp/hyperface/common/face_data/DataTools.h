@@ -59,7 +59,7 @@ inline HyperFaceData HYPER_API FaceObjectToHyperFaceData(const FaceObject& obj, 
             data.keyPoints[i].x = obj.high_result.lmk[i].x;
             data.keyPoints[i].y = obj.high_result.lmk[i].y;
         }
-        LOGD("HIGHT");
+//        LOGD("HIGHT");
     } else {
         for (int i = 0; i < obj.keyPointFive.size(); ++i) {
             data.keyPoints[i].x = obj.keyPointFive[i].x;

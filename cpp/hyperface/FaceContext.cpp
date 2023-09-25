@@ -42,12 +42,12 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
 }
 
 int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
-    vector<ByteArray>().swap(detectCache);
-    vector<FaceRect>().swap(faceRectsCache);
-    vector<FacePoseQualityResult>().swap(qualityResults);
-    vector<float>().swap(rollResultsCache);
-    vector<float>().swap(yamResultsCache);
-    vector<float>().swap(pitchResultsCache);
+    std::vector<ByteArray>().swap(detectCache);
+    std::vector<FaceRect>().swap(faceRectsCache);
+    std::vector<FacePoseQualityResult>().swap(qualityResults);
+    std::vector<float>().swap(rollResultsCache);
+    std::vector<float>().swap(yamResultsCache);
+    std::vector<float>().swap(pitchResultsCache);
     if (m_face_track_ == nullptr) {
         return HERR_CTX_TRACKER_FAILURE;
     }
@@ -74,15 +74,15 @@ FaceObjectList& FaceContext::GetTrackingFaceList() {
     return m_face_track_->trackingFace;
 }
 
-const shared_ptr<FaceRecognition>& FaceContext::FaceRecognitionModule() {
+const std::shared_ptr<FaceRecognition>& FaceContext::FaceRecognitionModule() {
     return m_face_recognition_;
 }
 
-const shared_ptr<FacePipeline>& FaceContext::FacePipelineModule() {
+const std::shared_ptr<FacePipeline>& FaceContext::FacePipelineModule() {
     return m_face_pipeline_;
 }
 
-vector<ByteArray> &FaceContext::getDetectCache() {
+std::vector<ByteArray> &FaceContext::getDetectCache() {
     return detectCache;
 }
 
@@ -90,7 +90,7 @@ const int32_t FaceContext::GetNumberOfFacesCurrentlyDetected() const {
     return m_face_track_->trackingFace.size();
 }
 
-int32_t FaceContext::FacesProcess(CameraStream &image, const vector<HyperFaceData> &faces, const CustomPipelineParameter &param) {
+int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFaceData> &faces, const CustomPipelineParameter &param) {
     maskResultsCache.resize(faces.size(), -1.0f);
     rbgLivenessResultsCache.resize(faces.size(), -1.0f);
     for (int i = 0; i < faces.size(); ++i) {

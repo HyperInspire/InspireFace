@@ -52,15 +52,15 @@ private:
     const bool m_enable_gender_ = false;                   ///< 性别预测功能
     const bool m_enable_interaction_liveness_ = false;     ///< 配合活体检测功能
 
-    shared_ptr<AgePredict> m_age_predict_;
+    std::shared_ptr<AgePredict> m_age_predict_;
 
-    shared_ptr<GenderPredict> m_gender_predict_;
+    std::shared_ptr<GenderPredict> m_gender_predict_;
 
-    shared_ptr<MaskPredict> m_mask_predict_;
+    std::shared_ptr<MaskPredict> m_mask_predict_;
 
-    shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_;
+    std::shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_;
 
-    shared_ptr<LivenessInteraction> m_liveness_interaction_spoofing_;
+    std::shared_ptr<LivenessInteraction> m_liveness_interaction_spoofing_;
 
 public:
 

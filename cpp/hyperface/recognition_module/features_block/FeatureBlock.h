@@ -25,7 +25,7 @@ typedef enum {
 typedef struct SearchResult {
     float score = -1.0f;
     int32_t index = -1;
-    string tag = "None";
+    std::string tag = "None";
 } SearchResult;
 
 class HYPER_API FeatureBlock {

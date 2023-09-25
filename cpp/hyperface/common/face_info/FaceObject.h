@@ -250,7 +250,7 @@ public:
 
     const std::vector<float> &getPoseEulerAngle() const { return pose_euler_angle_; }
 
-    void setPoseEulerAngle(const vector<float> &poseEulerAngle) {
+    void setPoseEulerAngle(const std::vector<float> &poseEulerAngle) {
         pose_euler_angle_[0] = poseEulerAngle[0];
         pose_euler_angle_[1] = poseEulerAngle[1];
         pose_euler_angle_[2] = poseEulerAngle[2];
@@ -303,7 +303,7 @@ public:
 
     FaceProcess faceProcess;
 
-    vector<Point2f> keyPointFive;
+    std::vector<Point2f> keyPointFive;
 
 private:
     TRACK_STATE tracking_state_;

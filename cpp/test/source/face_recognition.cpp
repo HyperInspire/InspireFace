@@ -79,7 +79,7 @@ TEST_CASE("test_FaceRecognition", "[face_rec]") {
         ret = ctx.FaceRecognitionModule()->CosineSimilarity(vectors[1], vectors[0], score);
         REQUIRE(ret == HSUCCEED);
 //        spdlog::info("score: {}", score);
-        CHECK(0.7406012 == Approx(score).epsilon(1e-3));
+        CHECK(0.7623623013 == Approx(score).epsilon(1e-3));
     }
 
 

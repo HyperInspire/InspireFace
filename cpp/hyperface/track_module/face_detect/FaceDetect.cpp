@@ -43,7 +43,7 @@ FaceLocList FaceDetect::operator()(const Matrix &bgr) {
 //    LOGD("Forward");
 
     std::vector<FaceLoc> results;
-    vector<int> strides = {8, 16, 32};
+    std::vector<int> strides = {8, 16, 32};
     for (int i = 0; i < strides.size(); ++i) {
         const std::vector<float> &tensor_cls = outputs[i].second;
         const std::vector<float> &tensor_box = outputs[i + 3].second;
@@ -68,7 +68,7 @@ FaceLocList FaceDetect::operator()(const Matrix &bgr) {
     return results;
 }
 
-void FaceDetect::_nms(vector<FaceLoc> &input_faces, float nms_threshold) {
+void FaceDetect::_nms(std::vector<FaceLoc> &input_faces, float nms_threshold) {
     std::sort(input_faces.begin(), input_faces.end(), [](FaceLoc a, FaceLoc b) { return a.score > b.score; });
     std::vector<float> area(input_faces.size());
     for (int i = 0; i < int(input_faces.size()); ++i) {
@@ -95,7 +95,7 @@ void FaceDetect::_nms(vector<FaceLoc> &input_faces, float nms_threshold) {
     }
 }
 
-void FaceDetect::_generate_anchors(int stride, int input_size, int num_anchors, vector<float> &anchors) {
+void FaceDetect::_generate_anchors(int stride, int input_size, int num_anchors, std::vector<float> &anchors) {
     int height = ceil(input_size / stride);
     int width = ceil(input_size / stride);
     for (int j = 0; j < height; ++j) {
@@ -109,7 +109,7 @@ void FaceDetect::_generate_anchors(int stride, int input_size, int num_anchors, 
 }
 
 void FaceDetect::_decode(const std::vector<float> &cls_pred, const std::vector<float> &box_pred, const std::vector<float>& lmk_pred, int stride, std::vector<FaceLoc> &results) {
-    vector<float> anchors_center;
+    std::vector<float> anchors_center;
     _generate_anchors(stride, m_input_size_, 2, anchors_center);
 //    const float *scores = cls_pred->host<float>();
 //    const float *boxes = box_pred->host<float>();

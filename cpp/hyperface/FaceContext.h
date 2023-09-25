@@ -8,8 +8,7 @@
 #include "DataType.h"
 #include "pipeline_module/FacePipeline.h"
 #include "recognition_module/FaceRecognition.h"
-
-using namespace std;
+#include <memory>
 
 namespace hyper {
 
@@ -43,15 +42,15 @@ public:
 
     FaceObjectList& GetTrackingFaceList();
 
-    int32_t FacesProcess(CameraStream &image, const vector<HyperFaceData> &faces, const CustomPipelineParameter& param);
+    int32_t FacesProcess(CameraStream &image, const std::vector<HyperFaceData> &faces, const CustomPipelineParameter& param);
 
     // 人脸识别相关
-    const shared_ptr<FaceRecognition>& FaceRecognitionModule();
+    const std::shared_ptr<FaceRecognition>& FaceRecognitionModule();
 
     // 人脸属性识别相关
-    const shared_ptr<FacePipeline>& FacePipelineModule();
+    const std::shared_ptr<FacePipeline>& FacePipelineModule();
 
-    vector<ByteArray> &getDetectCache();
+    std::vector<ByteArray> &getDetectCache();
 
     const int32_t GetNumberOfFacesCurrentlyDetected() const;
 

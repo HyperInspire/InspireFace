@@ -29,7 +29,7 @@ private:
     static void _nms(FaceLocList &input_faces, float nms_threshold);
 
     /** The detection anchor frame is generated according to stride */
-    void _generate_anchors(int stride, int input_size, int num_anchors, vector<float> &anchors);
+    void _generate_anchors(int stride, int input_size, int num_anchors, std::vector<float> &anchors);
 
     /** Network post-processing decoding */
     void _decode(const std::vector<float> &cls_pred, const std::vector<float> &box_pred, const std::vector<float>& lmk_pred, int stride, std::vector<FaceLoc> &results);

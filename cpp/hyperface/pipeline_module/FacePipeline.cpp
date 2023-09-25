@@ -112,7 +112,7 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
 int32_t FacePipeline::Process(CameraStream &image, FaceObject &face) {
     // 跟踪状态下计次达到要求 或 处于检测状态 执行pipeline
     auto lmk = face.landmark_;
-    vector<cv::Point2f> lmk_5 = {lmk[FaceLandmark::LEFT_EYE_CENTER],
+    std::vector<cv::Point2f> lmk_5 = {lmk[FaceLandmark::LEFT_EYE_CENTER],
                                  lmk[FaceLandmark::RIGHT_EYE_CENTER],
                                  lmk[FaceLandmark::NOSE_CORNER],
                                  lmk[FaceLandmark::MOUTH_LEFT_CORNER],
@@ -157,13 +157,13 @@ int32_t FacePipeline::InitGenderPredict(Model *model) {
 int32_t FacePipeline::InitMaskPredict(Model *model) {
     Parameter param;
     param.set<int>("model_index", ModelIndex::_05_mask);
-    param.set<string>("input_layer", "input_1");
-    param.set<vector<string>>("outputs_layers", {"activation_1/Softmax",});
-    param.set<vector<int>>("input_size", {96, 96});
-    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
-    param.set<vector<float>>("norm", {0.003921568627f, 0.003921568627f, 0.003921568627f});
+    param.set<std::string>("input_layer", "input_1");
+    param.set<std::vector<std::string>>("outputs_layers", {"activation_1/Softmax",});
+    param.set<std::vector<int>>("input_size", {96, 96});
+    param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<std::vector<float>>("norm", {0.003921568627f, 0.003921568627f, 0.003921568627f});
     param.set<bool>("swap_color", true);        // RGB mode
-    m_mask_predict_ = make_shared<MaskPredict>();
+    m_mask_predict_ = std::make_shared<MaskPredict>();
     m_mask_predict_->LoadParam(param, model);
     return 0;
 }
@@ -171,13 +171,13 @@ int32_t FacePipeline::InitMaskPredict(Model *model) {
 int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
     Parameter param;
     param.set<int>("model_index", ModelIndex::_06_msafa27);
-    param.set<string>("input_layer", "data");
-    param.set<vector<string>>("outputs_layers", {"softmax",});
-    param.set<vector<int>>("input_size", {112, 112});
-    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
-    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<std::string>("input_layer", "data");
+    param.set<std::vector<std::string>>("outputs_layers", {"softmax",});
+    param.set<std::vector<int>>("input_size", {112, 112});
+    param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);        // RGB mode
-    m_rgb_anti_spoofing_ = make_shared<RBGAntiSpoofing>();
+    m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofing>();
     m_rgb_anti_spoofing_->LoadParam(param, model);
     return 0;
 }
