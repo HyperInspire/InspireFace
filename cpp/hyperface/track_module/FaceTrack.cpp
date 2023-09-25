@@ -164,7 +164,7 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
             cv::Mat invRotationMatrix;
             cv::invertAffineTransform(rotationMatrix, invRotationMatrix);
             invRotationMatrix.convertTo(invRotationMatrix, CV_32F);
-            for (auto p: res.lmk) {
+            for (auto &p: res.lmk) {
                 cv::Vec3f tmp = {p.x, p.y, 1};
                 cv::Mat res = invRotationMatrix * tmp;
                 p.x = res.at<float>(0);
@@ -176,7 +176,7 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
         cv::Mat inv_affine_scale;
         cv::invertAffineTransform(affine_scale, inv_affine_scale);
         inv_affine_scale.convertTo(inv_affine_scale, CV_32F);
-        for (auto p: res.lmk) {
+        for (auto &p: res.lmk) {
             cv::Vec3f tmp = {p.x, p.y, 1};
             cv::Mat res = inv_affine_scale * tmp;
             p.x = res.at<float>(0);
