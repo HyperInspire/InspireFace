@@ -265,7 +265,7 @@ void test_liveness() {
 int main() {
     loader.Reset("test_res/model_zip/T1_rv1109rv1126");
 
-    test_rnet();
+//    test_rnet();
 
 //    test_mask();
 
@@ -273,7 +273,7 @@ int main() {
 
 //    test_landmark_mnn();
 
-    test_landmark();
+//    test_landmark();
 
 //    test_liveness();
 

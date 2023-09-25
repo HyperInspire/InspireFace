@@ -12,7 +12,6 @@
 #include "log.h"
 #include "middleware/model_loader/ModelLoader.h"
 
-namespace hyper {
 
 /**
  * @brief 获取RKNN数据类型字符串
@@ -249,6 +248,22 @@ public:
         return SUCCESS;
     }
 
+    Status SetInputData(const int index, void* data, int width, int height, int channels,
+                        rknn_tensor_type type = RKNN_TENSOR_UINT8,
+                        rknn_tensor_format format = RKNN_TENSOR_NHWC) {
+        if (index < input_tensors_.size()) {
+            input_tensors_[index].index = 0;
+            input_tensors_[index].type = type;
+            input_tensors_[index].size = width * height * channels;
+            input_tensors_[index].fmt = format;
+            input_tensors_[index].buf = data;
+            input_tensors_[index].pass_through = 0;
+        } else {
+            LOGE("error: assert index < len");
+        }
+        return SUCCESS;
+    }
+
     /**
      * @brief 执行神经网络推理
      * @details 需要完成输入数据到输入层后才能执行该步骤, 该步骤为耗时操作
@@ -287,6 +302,10 @@ public:
      */
     const float *GetOutputData(const int index) {
         return (float *) (output_tensors_[index].buf);
+    }
+
+    void *GetOutputFlow(const int index) {
+        return output_tensors_[index].buf;
     }
 
     /**
@@ -487,6 +506,5 @@ private:
     unsigned char *model_data;                          // 模型数据流
 };
 
-} // stsrc
 
 #endif //MAGIC_GESTURES_RKNN_ADAPTER_H
