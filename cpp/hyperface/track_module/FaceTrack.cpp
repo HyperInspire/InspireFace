@@ -85,7 +85,7 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     std::vector<float> bbox;
     auto timeStart = (double) cv::getTickCount();
     SparseLandmarkPredict(crop, landmark_rawout, score, 112);
-    vector<cv::Point2f> lmk_5 = {landmark_rawout[FaceLandmark::LEFT_EYE_CENTER],
+    std::vector<cv::Point2f> lmk_5 = {landmark_rawout[FaceLandmark::LEFT_EYE_CENTER],
                                  landmark_rawout[FaceLandmark::RIGHT_EYE_CENTER],
                                  landmark_rawout[FaceLandmark::NOSE_CORNER],
                                  landmark_rawout[FaceLandmark::MOUTH_LEFT_CORNER],
@@ -147,12 +147,12 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     if (m_face_quality_ != nullptr) {
         // pose and quality - BUG
         auto rect = face.bbox_;
-        std::cout << rect << std::endl;
+//        std::cout << rect << std::endl;
         auto affine_scale = FacePoseQuality::ComputeCropMatrix(rect);
         affine_scale.convertTo(affine_scale, CV_64F);
         auto pre_crop = image.GetAffineRGBImage(affine_scale, FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT);
-        cv::imshow("crop", crop);
-        cv::imshow("pre_crop", pre_crop);
+//        cv::imshow("crop", crop);
+//        cv::imshow("pre_crop", pre_crop);
         cv::Mat rotationMatrix;
         if (image.getRotationMode() != ROTATION_0) {
             cv::Point2f center(pre_crop.cols / 2.0, pre_crop.rows / 2.0);
@@ -184,8 +184,8 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
 //                cv::circle(pre_crop, p, 0, cv::Scalar(0, 0, 255), 2);
         }
 
-        cv::imshow("pre_crop_w", pre_crop);
-        cv::waitKey(0);
+//        cv::imshow("pre_crop_w", pre_crop);
+//        cv::waitKey(0);
 
         face.high_result = res;
     }
@@ -232,7 +232,7 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
         candidate_faces_.clear();
     }
 
-    for (vector<FaceObject>::iterator iter = trackingFace.begin();
+    for (std::vector<FaceObject>::iterator iter = trackingFace.begin();
          iter != trackingFace.end();) {
         if (!TrackFace(image, *iter)) {
             iter = trackingFace.erase(iter);
@@ -314,11 +314,11 @@ int FaceTrack::InitLandmarkModel(Model *model) {
     InferenceHelper::HelperType type;
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
     param.set<int>("model_index", ModelIndex::_01_lmk);
-    param.set<string>("input_layer", "input_1");
-    param.set<vector<string>>("outputs_layers", {"prelu1/add", });
-    param.set<vector<int>>("input_size", {112, 112});
-    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
-    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<std::string>("input_layer", "input_1");
+    param.set<std::vector<std::string>>("outputs_layers", {"prelu1/add", });
+    param.set<std::vector<int>>("input_size", {112, 112});
+    param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
     param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
     param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
@@ -326,11 +326,11 @@ int FaceTrack::InitLandmarkModel(Model *model) {
     type = InferenceHelper::kRknn;
 #else
     param.set<int>("model_index", ModelIndex::_01_lmk);
-    param.set<string>("input_layer", "input_1");
-    param.set<vector<string>>("outputs_layers", {"prelu1/add", });
-    param.set<vector<int>>("input_size", {112, 112});
-    param.set<vector<float>>("mean", {127.5f, 127.5f, 127.5f});
-    param.set<vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
+    param.set<std::string>("input_layer", "input_1");
+    param.set<std::vector<std::string>>("outputs_layers", {"prelu1/add", });
+    param.set<std::vector<int>>("input_size", {112, 112});
+    param.set<std::vector<float>>("mean", {127.5f, 127.5f, 127.5f});
+    param.set<std::vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
     type = InferenceHelper::kMnn;
 #endif
     m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
@@ -346,11 +346,11 @@ int FaceTrack::InitDetectModel(Model *model) {
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
     detect_size = 320;
     param.set<int>("model_index", ModelIndex::_00_fdet_160);
-    param.set<string>("input_layer", "input.1");
-    param.set<vector<string>>("outputs_layers", {"output", "output1", "output2", "output3", "output4", "output5", "output6", "output7", "output8"});
-    param.set<vector<int>>("input_size", {detect_size, detect_size});
-    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
-    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<std::string>("input_layer", "input.1");
+    param.set<std::vector<std::string>>("outputs_layers", {"output", "output1", "output2", "output3", "output4", "output5", "output6", "output7", "output8"});
+    param.set<std::vector<int>>("input_size", {detect_size, detect_size});
+    param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
     param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
     param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
@@ -359,11 +359,11 @@ int FaceTrack::InitDetectModel(Model *model) {
 #else
     detect_size = 160;
     param.set<int>("model_index", ModelIndex::_00_fdet_160);
-    param.set<string>("input_layer", "input.1");
-    param.set<vector<string>>("outputs_layers", {"443", "468", "493", "446", "471", "496", "449", "474", "499"});
-    param.set<vector<int>>("input_size", {detect_size, detect_size});
-    param.set<vector<float>>("mean", {127.5f, 127.5f, 127.5f});
-    param.set<vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
+    param.set<std::string>("input_layer", "input.1");
+    param.set<std::vector<std::string>>("outputs_layers", {"443", "468", "493", "446", "471", "496", "449", "474", "499"});
+    param.set<std::vector<int>>("input_size", {detect_size, detect_size});
+    param.set<std::vector<float>>("mean", {127.5f, 127.5f, 127.5f});
+    param.set<std::vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
     type = InferenceHelper::kMnn;
 #endif
     m_face_detector_ = std::make_shared<FaceDetect>(detect_size);
@@ -377,11 +377,11 @@ int FaceTrack::InitRNetModel(Model *model) {
     InferenceHelper::HelperType type;
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
     param.set<int>("model_index", ModelIndex::_04_refine_net);
-    param.set<string>("input_layer", "input_1");
-    param.set<vector<string>>("outputs_layers", {"conv5-1/Softmax", "conv5-2/BiasAdd"});
-    param.set<vector<int>>("input_size", {24, 24});
-    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
-    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<std::string>("input_layer", "input_1");
+    param.set<std::vector<std::string>>("outputs_layers", {"conv5-1/Softmax", "conv5-2/BiasAdd"});
+    param.set<std::vector<int>>("input_size", {24, 24});
+    param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);        // RGB mode
     param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
     param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
@@ -390,11 +390,11 @@ int FaceTrack::InitRNetModel(Model *model) {
     type = InferenceHelper::kRknn;
 #else
     param.set<int>("model_index", ModelIndex::_04_refine_net);
-    param.set<string>("input_layer", "data");
-    param.set<vector<string>>("outputs_layers", {"prob1", "conv5-2"});
-    param.set<vector<int>>("input_size", {24, 24});
-    param.set<vector<float>>("mean", {127.5f, 127.5f, 127.5f});
-    param.set<vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
+    param.set<std::string>("input_layer", "data");
+    param.set<std::vector<std::string>>("outputs_layers", {"prob1", "conv5-2"});
+    param.set<std::vector<int>>("input_size", {24, 24});
+    param.set<std::vector<float>>("mean", {127.5f, 127.5f, 127.5f});
+    param.set<std::vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
     param.set<bool>("swap_color", true);        // RGB mode
     type = InferenceHelper::kMnn;
 #endif
@@ -409,11 +409,11 @@ int FaceTrack::InitFacePoseModel(Model *model) {
     InferenceHelper::HelperType type;
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
     param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
-    param.set<string>("input_layer", "data");
-    param.set<vector<string>>("outputs_layers", {"fc1", });
-    param.set<vector<int>>("input_size", {96, 96});
-    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
-    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<std::string>("input_layer", "data");
+    param.set<std::vector<std::string>>("outputs_layers", {"fc1", });
+    param.set<std::vector<int>>("input_size", {96, 96});
+    param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);        // RGB mode
     param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
     param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
@@ -422,15 +422,15 @@ int FaceTrack::InitFacePoseModel(Model *model) {
     type = InferenceHelper::kRknn;
 #else
     param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
-    param.set<string>("input_layer", "data");
-    param.set<vector<string>>("outputs_layers", {"fc1", });
-    param.set<vector<int>>("input_size", {96, 96});
-    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
-    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<std::string>("input_layer", "data");
+    param.set<std::vector<std::string>>("outputs_layers", {"fc1", });
+    param.set<std::vector<int>>("input_size", {96, 96});
+    param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);        // RGB mode
     type = InferenceHelper::kMnn;
 #endif
-    m_face_quality_ = make_shared<FacePoseQuality>();
+    m_face_quality_ = std::make_shared<FacePoseQuality>();
     m_face_quality_->LoadParam(param, model, type);
 
     return 0;

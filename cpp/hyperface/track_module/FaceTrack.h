@@ -11,8 +11,6 @@
 #include "middleware/camera_stream/camera_stream.h"
 #include "quality/FacePoseQuality.h"
 
-using namespace std;
-
 namespace hyper {
 
 class HYPER_API FaceTrack {

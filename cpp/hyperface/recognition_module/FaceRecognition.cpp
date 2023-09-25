@@ -20,7 +20,7 @@ FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition, M
     }
 
     for (int i = 0; i < feature_block_num; ++i) {
-        shared_ptr<FeatureBlock> block;
+        std::shared_ptr<FeatureBlock> block;
         block.reset(FeatureBlock::Create(core, 512, 512));
         m_feature_matrix_list_.push_back(block);
     }
@@ -29,12 +29,12 @@ FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition, M
 int32_t FaceRecognition::InitExtractInteraction(Model *model) {
     Parameter param;
     param.set<int>("model_index", ModelIndex::_03_extract);
-    param.set<string>("input_layer", "data");
-    param.set<vector<string>>("outputs_layers", {"fc1_scale", });
-    param.set<vector<int>>("input_size", {112, 112});
-    param.set<vector<float>>("mean", {127.5f, 127.5f, 127.5f});
-    param.set<vector<float>>("norm", {0.0078125, 0.0078125, 0.0078125});
-    m_extract_ = make_shared<Extract>();
+    param.set<std::string>("input_layer", "data");
+    param.set<std::vector<std::string>>("outputs_layers", {"fc1_scale", });
+    param.set<std::vector<int>>("input_size", {112, 112});
+    param.set<std::vector<float>>("mean", {127.5f, 127.5f, 127.5f});
+    param.set<std::vector<float>>("norm", {0.0078125, 0.0078125, 0.0078125});
+    m_extract_ = std::make_shared<Extract>();
     m_extract_->LoadParam(param, model);
 
     return HSUCCEED;
@@ -73,7 +73,7 @@ int32_t FaceRecognition::FaceExtract(CameraStream &image, const FaceObject &face
     }
 
     auto lmk = face.landmark_;
-    vector<cv::Point2f> lmk_5 = {lmk[FaceLandmark::LEFT_EYE_CENTER],
+    std::vector<cv::Point2f> lmk_5 = {lmk[FaceLandmark::LEFT_EYE_CENTER],
                                  lmk[FaceLandmark::RIGHT_EYE_CENTER],
                                  lmk[FaceLandmark::NOSE_CORNER],
                                  lmk[FaceLandmark::MOUTH_LEFT_CORNER],
@@ -110,7 +110,7 @@ int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeatur
     bool found = false; // 是否找到匹配的特征
     float maxScore = -1.0f; // 最大分数初始化为一个负数
     int maxIndex = -1; // 最大分数对应的索引
-    string tag = "None";
+    std::string tag = "None";
 
     for (int blockIndex = 0; blockIndex < m_feature_matrix_list_.size(); ++blockIndex) {
         if (m_feature_matrix_list_[blockIndex]->GetUsedCount() == 0) {
@@ -197,7 +197,7 @@ int32_t FaceRecognition::GetFaceFeatureCount() {
     return totalFeatureCount;
 }
 
-int32_t FaceRecognition::UpdateFaceFeature(const vector<float> &feature, int featureIndex, const string &tag) {
+int32_t FaceRecognition::UpdateFaceFeature(const std::vector<float> &feature, int featureIndex, const std::string &tag) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
     }
@@ -216,7 +216,7 @@ void FaceRecognition::PrintFeatureMatrixInfo() {
     m_feature_matrix_list_[0]->PrintMatrix();
 }
 
-const shared_ptr<Extract> &FaceRecognition::getMExtract() const {
+const std::shared_ptr<Extract> &FaceRecognition::getMExtract() const {
     return m_extract_;
 }
 

@@ -14,7 +14,7 @@ FeatureBlockOpenCV::FeatureBlockOpenCV(int32_t features_max, int32_t feature_len
 
 }
 
-int32_t FeatureBlockOpenCV::UnsafeAddFeature(const vector<float> &feature, const std::string &tag) {
+int32_t FeatureBlockOpenCV::UnsafeAddFeature(const std::vector<float> &feature, const std::string &tag) {
     if (feature.empty()) {
         return HERR_CTX_REC_ADD_FEAT_EMPTY; // 如果特征为空，不进行添加
     }
@@ -59,7 +59,7 @@ int32_t FeatureBlockOpenCV::UnsafeDeleteFeature(int rowToDelete) {
 }
 
 
-int32_t FeatureBlockOpenCV::UnsafeRegisterFeature(int rowToUpdate, const vector<float> &feature, const std::string &tag) {
+int32_t FeatureBlockOpenCV::UnsafeRegisterFeature(int rowToUpdate, const std::vector<float> &feature, const std::string &tag) {
     if (rowToUpdate < 0 || rowToUpdate >= m_feature_matrix_.rows) {
         return HERR_CTX_REC_FEAT_SIZE_ERR; // 无效的行号，不进行更新
     }
@@ -78,7 +78,7 @@ int32_t FeatureBlockOpenCV::UnsafeRegisterFeature(int rowToUpdate, const vector<
     return 0;
 }
 
-int32_t FeatureBlockOpenCV::UnsafeUpdateFeature(int rowToUpdate, const vector<float> &newFeature, const std::string &tag) {
+int32_t FeatureBlockOpenCV::UnsafeUpdateFeature(int rowToUpdate, const std::vector<float> &newFeature, const std::string &tag) {
     if (rowToUpdate < 0 || rowToUpdate >= m_feature_matrix_.rows) {
         return HERR_CTX_REC_FEAT_SIZE_ERR; // 无效的行号，不进行更新
     }
@@ -166,7 +166,7 @@ void FeatureBlockOpenCV::PrintMatrix() {
     LOGD("Feature length: %d", m_feature_matrix_.rows);
 }
 
-int32_t FeatureBlockOpenCV::GetFeature(int row, vector<float> &feature) {
+int32_t FeatureBlockOpenCV::GetFeature(int row, std::vector<float> &feature) {
     if (row < 0 || row >= m_feature_matrix_.rows) {
         return HERR_CTX_REC_FEAT_SIZE_ERR; // 无效的行号，不进行更新
     }

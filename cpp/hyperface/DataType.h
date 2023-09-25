@@ -21,8 +21,6 @@
 #define M_PI 3.14159265358979323846264338327950288
 #endif
 
-using namespace std;
-
 namespace hyper {
 
 /**
@@ -93,7 +91,7 @@ typedef struct FaceLoc {
     float lmk[10];
 } FaceLoc;                                          ///< 人脸标准化检测地标
 
-typedef vector<FaceLoc> FaceLocList;                ///< 人脸地标列表
+typedef std::vector<FaceLoc> FaceLocList;                ///< 人脸地标列表
 
 
 

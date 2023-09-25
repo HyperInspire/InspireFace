@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
         LOGE("初始化错误");
         return -1;
     }
-    auto image = cv::imread("test_res/images/rgb_fake.jpg");
+    auto image = cv::imread("test_res/images/kun.jpg");
     cv::Mat rot90;
     TestUtils::rotate(image, rot90, ROTATION_90);
 
@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
 
         for (auto &p: face.keyPoints) {
             cv::Point2f point(p.x, p.y);
-            cv::circle(rot90, point, 0, cv::Scalar(0, 0, 255), 2);
+            cv::circle(rot90, point, 0, cv::Scalar(0, 0, 255), 5);
         }
     }
 

@@ -69,7 +69,7 @@ int main() {
             mean_quality /= pose_and_quality.lmk_quality.size();
             mean_quality = 1 - mean_quality;
             std::string pose_text = "pitch: " + std::to_string(pose_and_quality.pitch) + ",Yaw: " + std::to_string(pose_and_quality.yaw) + ",roll:" +std::to_string(pose_and_quality.roll) + ", q: " +
-                    to_string(mean_quality);
+                    std::to_string(mean_quality);
 
             // 设置文本显示位置，通常在框的下方
             cv::Point pose_position(rect.x, rect.y + rect.height + 20);

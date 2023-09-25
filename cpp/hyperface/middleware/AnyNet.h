@@ -8,7 +8,6 @@
 #include "inference_helper/inference_helper.h"
 #include "Parameter.h"
 #include "model_loader/ModelLoader.h"
-#include <assert.h>
 #include "opencv2/opencv.hpp"
 #include "../log.h"
 
@@ -129,7 +128,7 @@ public:
             std::vector<float> output_score_raw_list(m_output_tensor_info_list_[i].GetDataAsFloat(),
                                                      m_output_tensor_info_list_[i].GetDataAsFloat() +
                                                      m_output_tensor_info_list_[i].GetElementNum());
-            LOGE("m_output_tensor_info_list_[i].GetElementNum(): %d",m_output_tensor_info_list_[i].GetElementNum());
+//            LOGE("m_output_tensor_info_list_[i].GetElementNum(): %d",m_output_tensor_info_list_[i].GetElementNum());
             outputs.push_back(std::make_pair(m_output_tensor_info_list_[i].name, output_score_raw_list));
         }
 
@@ -139,11 +138,11 @@ public:
 
 public:
 
-    vector<InputTensorInfo> &getMInputTensorInfoList() {
+    std::vector<InputTensorInfo> &getMInputTensorInfoList() {
         return m_input_tensor_info_list_;
     }
 
-    vector<OutputTensorInfo> &getMOutputTensorInfoList() {
+    std::vector<OutputTensorInfo> &getMOutputTensorInfoList() {
         return m_output_tensor_info_list_;
     }
 

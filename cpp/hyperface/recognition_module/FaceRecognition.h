@@ -39,16 +39,16 @@ public:
 
     void PrintFeatureMatrixInfo();
 
-    const shared_ptr<Extract> &getMExtract() const;
+    const std::shared_ptr<Extract> &getMExtract() const;
 
 private:
     int32_t InitExtractInteraction(Model *model);
 
 private:
 
-    shared_ptr<Extract> m_extract_;
+    std::shared_ptr<Extract> m_extract_;
 
-    std::vector<shared_ptr<FeatureBlock>> m_feature_matrix_list_;
+    std::vector<std::shared_ptr<FeatureBlock>> m_feature_matrix_list_;
 
 
     // 临时固定

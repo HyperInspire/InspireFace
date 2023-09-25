@@ -17,7 +17,7 @@ FacePoseQualityResult FacePoseQuality::operator()(const Matrix &bgr_affine) {
     res.pitch = output[0] * 90;
     res.yaw = output[1] * 90;
     res.roll = output[2] * 90;
-    vector<float> quality(output.begin() + 13, output.end());
+    std::vector<float> quality(output.begin() + 13, output.end());
     res.lmk_quality = quality;
     std::vector<float> face_pts5(output.begin() + 3, output.begin() + 13);
     res.lmk.resize(5);
