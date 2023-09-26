@@ -8,23 +8,24 @@
 #include "model_index.h"
 #include "landmark/mean_shape.h"
 #include <opencv2/opencv.hpp>
+#include "middleware/Timer.h"
 
 namespace hyper {
 
-FaceTrack::FaceTrack(int max_detected_faces):max_detected_faces_(max_detected_faces) {
-
+FaceTrack::FaceTrack(int max_detected_faces, int detection_interval) : max_detected_faces_(max_detected_faces),
+                                                                       detection_interval_(detection_interval) {
+    detection_index_ = -1;
 }
 
 
-
 void FaceTrack::SparseLandmarkPredict(const cv::Mat &raw_face_crop, std::vector<cv::Point2f> &landmarks_output,
-                                         float &score, float size) {
+                                      float &score, float size) {
 //    LOGD("ready to landmark predict");
     landmarks_output.resize(FaceLandmark::NUM_OF_LANDMARK);
     std::vector<float> lmk_out = (*m_landmark_predictor_)(raw_face_crop);
     for (int i = 0; i < FaceLandmark::NUM_OF_LANDMARK; ++i) {
-        float x = lmk_out[i * 2 + 0] * 112;
-        float y = lmk_out[i * 2 + 1] * 112;
+        float x = lmk_out[i * 2 + 0] * size;
+        float y = lmk_out[i * 2 + 1] * size;
         landmarks_output[i] = cv::Point2f(x, y);
     }
     score = (*m_refine_net_)(raw_face_crop);
@@ -86,10 +87,10 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     auto timeStart = (double) cv::getTickCount();
     SparseLandmarkPredict(crop, landmark_rawout, score, 112);
     std::vector<cv::Point2f> lmk_5 = {landmark_rawout[FaceLandmark::LEFT_EYE_CENTER],
-                                 landmark_rawout[FaceLandmark::RIGHT_EYE_CENTER],
-                                 landmark_rawout[FaceLandmark::NOSE_CORNER],
-                                 landmark_rawout[FaceLandmark::MOUTH_LEFT_CORNER],
-                                 landmark_rawout[FaceLandmark::MOUTH_RIGHT_CORNER]};
+                                      landmark_rawout[FaceLandmark::RIGHT_EYE_CENTER],
+                                      landmark_rawout[FaceLandmark::NOSE_CORNER],
+                                      landmark_rawout[FaceLandmark::MOUTH_LEFT_CORNER],
+                                      landmark_rawout[FaceLandmark::MOUTH_RIGHT_CORNER]};
     face.setAlignMeanSquareError(lmk_5);
     double nTime =
             (((double) cv::getTickCount() - timeStart) / cv::getTickFrequency()) *
@@ -150,14 +151,16 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
 //        std::cout << rect << std::endl;
         auto affine_scale = FacePoseQuality::ComputeCropMatrix(rect);
         affine_scale.convertTo(affine_scale, CV_64F);
-        auto pre_crop = image.GetAffineRGBImage(affine_scale, FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT);
+        auto pre_crop = image.GetAffineRGBImage(affine_scale, FacePoseQuality::INPUT_WIDTH,
+                                                FacePoseQuality::INPUT_HEIGHT);
 //        cv::imshow("crop", crop);
 //        cv::imshow("pre_crop", pre_crop);
         cv::Mat rotationMatrix;
         if (image.getRotationMode() != ROTATION_0) {
             cv::Point2f center(pre_crop.cols / 2.0, pre_crop.rows / 2.0);
             rotationMatrix = cv::getRotationMatrix2D(center, image.getRotationMode() * 90, 1.0);
-            cv::warpAffine(pre_crop, pre_crop, rotationMatrix, cv::Size(FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT));
+            cv::warpAffine(pre_crop, pre_crop, rotationMatrix,
+                           cv::Size(FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT));
         }
         auto res = (*m_face_quality_)(pre_crop);
         if (!rotationMatrix.empty()) {
@@ -166,7 +169,8 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
             invRotationMatrix.convertTo(invRotationMatrix, CV_32F);
             for (auto &p: res.lmk) {
                 cv::Vec3f tmp = {p.x, p.y, 1};
-                cv::Mat result = invRotationMatrix * tmp;
+                cv::Mat result;
+                cv::gemm(invRotationMatrix, tmp, 1.0, cv::Mat(), 0.0, result);
                 p.x = result.at<float>(0);
                 p.y = result.at<float>(1);
 //                cv::circle(pre_crop, p, 0, cv::Scalar(0, 0, 255), 2);
@@ -178,7 +182,8 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
         inv_affine_scale.convertTo(inv_affine_scale, CV_32F);
         for (auto &p: res.lmk) {
             cv::Vec3f tmp = {p.x, p.y, 1};
-            cv::Mat result = inv_affine_scale * tmp;
+            cv::Mat result;
+            cv::gemm(inv_affine_scale, tmp, 1.0, cv::Mat(), 0.0, result);
             p.x = result.at<float>(0);
             p.y = result.at<float>(1);
 //                cv::circle(pre_crop, p, 0, cv::Scalar(0, 0, 255), 2);
@@ -202,6 +207,7 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
         trackingFace.clear();
 //    LOGD("%d, %d", detection_index_, detection_interval_);
     if (detection_index_ % detection_interval_ == 0 || is_detect) {
+//        Timer t_blacking;
         cv::Mat image_detect = image.GetPreviewImage(true);
         nms();
         for (auto const &face: trackingFace) {
@@ -215,6 +221,7 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
             cv::Rect mask_rect = cv::boundingRect(affine_pts);
             BlackingTrackingRegion(image_detect, mask_rect);
         }
+//        LOGD("Blacking Cost %f", t_blacking.GetCostTimeUpdate());
         // do detection in thread
 //        LOGD("detect scaled rows: %d cols: %d", image_detect.rows,
 //             image_detect.cols);
@@ -232,6 +239,7 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
         candidate_faces_.clear();
     }
 
+//    Timer t_track;
     for (std::vector<FaceObject>::iterator iter = trackingFace.begin();
          iter != trackingFace.end();) {
         if (!TrackFace(image, *iter)) {
@@ -240,12 +248,15 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
             iter++;
         }
     }
+
+//    LOGD("Track Cost %f", t_track.GetCostTimeUpdate());
     track_total_use_time_ = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
 
 }
 
 void FaceTrack::nms(float th) {
-    std::sort(trackingFace.begin(), trackingFace.end(), [](FaceObject a, FaceObject b) { return a.confidence_ > b.confidence_; });
+    std::sort(trackingFace.begin(), trackingFace.end(),
+              [](FaceObject a, FaceObject b) { return a.confidence_ > b.confidence_; });
     std::vector<float> area(trackingFace.size());
     for (int i = 0; i < int(trackingFace.size()); ++i) {
         area[i] = trackingFace.at(i).getBbox().area();
@@ -254,8 +265,10 @@ void FaceTrack::nms(float th) {
         for (int j = i + 1; j < int(trackingFace.size());) {
             float xx1 = (std::max)(trackingFace[i].getBbox().x, trackingFace[j].getBbox().x);
             float yy1 = (std::max)(trackingFace[i].getBbox().y, trackingFace[j].getBbox().y);
-            float xx2 = (std::min)(trackingFace[i].getBbox().x + trackingFace[i].getBbox().width, trackingFace[j].getBbox().x + trackingFace[j].getBbox().width);
-            float yy2 = (std::min)(trackingFace[i].getBbox().y + trackingFace[i].getBbox().height, trackingFace[j].getBbox().y + trackingFace[j].getBbox().height);
+            float xx2 = (std::min)(trackingFace[i].getBbox().x + trackingFace[i].getBbox().width,
+                                   trackingFace[j].getBbox().x + trackingFace[j].getBbox().width);
+            float yy2 = (std::min)(trackingFace[i].getBbox().y + trackingFace[i].getBbox().height,
+                                   trackingFace[j].getBbox().y + trackingFace[j].getBbox().height);
             float w = (std::max)(float(0), xx2 - xx1 + 1);
             float h = (std::max)(float(0), yy2 - yy1 + 1);
             float inter = w * h;
@@ -327,7 +340,7 @@ int FaceTrack::InitLandmarkModel(Model *model) {
 #else
     param.set<int>("model_index", ModelIndex::_01_lmk);
     param.set<std::string>("input_layer", "input_1");
-    param.set<std::vector<std::string>>("outputs_layers", {"prelu1/add", });
+    param.set<std::vector<std::string>>("outputs_layers", {"prelu1/add",});
     param.set<std::vector<int>>("input_size", {112, 112});
     param.set<std::vector<float>>("mean", {127.5f, 127.5f, 127.5f});
     param.set<std::vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
@@ -360,7 +373,8 @@ int FaceTrack::InitDetectModel(Model *model) {
     detect_size = 160;
     param.set<int>("model_index", ModelIndex::_00_fdet_160);
     param.set<std::string>("input_layer", "input.1");
-    param.set<std::vector<std::string>>("outputs_layers", {"443", "468", "493", "446", "471", "496", "449", "474", "499"});
+    param.set<std::vector<std::string>>("outputs_layers",
+                                        {"443", "468", "493", "446", "471", "496", "449", "474", "499"});
     param.set<std::vector<int>>("input_size", {detect_size, detect_size});
     param.set<std::vector<float>>("mean", {127.5f, 127.5f, 127.5f});
     param.set<std::vector<float>>("norm", {0.0078125f, 0.0078125f, 0.0078125f});
@@ -423,7 +437,7 @@ int FaceTrack::InitFacePoseModel(Model *model) {
 #else
     param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
     param.set<std::string>("input_layer", "data");
-    param.set<std::vector<std::string>>("outputs_layers", {"fc1", });
+    param.set<std::vector<std::string>>("outputs_layers", {"fc1",});
     param.set<std::vector<int>>("input_size", {96, 96});
     param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});

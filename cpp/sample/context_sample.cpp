@@ -4,7 +4,7 @@
 
 
 #include <iostream>
-#include "FaceContext.h"
+#include "face_context.h"
 #include "opencv2/opencv.hpp"
 #include "utils/test_helper.h"
 

@@ -16,7 +16,7 @@ namespace hyper {
 class HYPER_API FaceTrack {
 public:
 
-    explicit FaceTrack(int max_detected_faces = 1);
+    explicit FaceTrack(int max_detected_faces = 1, int detection_interval = 20);
 
     int Configuration(ModelLoader &loader);
 
@@ -27,7 +27,7 @@ private:
 
     void SparseLandmarkPredict(const cv::Mat &raw_face_crop,
                                std::vector<cv::Point2f> &landmarks_output,
-                               float &score, float size);
+                               float &score, float size = 112.0);
 
     bool TrackFace(CameraStream &image, FaceObject &face);
 
@@ -52,7 +52,7 @@ public:
 private:
     std::vector<FaceObject> candidate_faces_;
     int detection_index_;
-    int detection_interval_ = 1;
+    int detection_interval_;
     int tracking_idx_ = 0;
     double det_use_time_;
     double track_total_use_time_;
