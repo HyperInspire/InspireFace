@@ -5,7 +5,7 @@
 #ifndef HYPERFACEREPO_FACEPOSEQUALITY_H
 #define HYPERFACEREPO_FACEPOSEQUALITY_H
 
-#include "../../DataType.h"
+#include "../../data_type.h"
 #include "middleware/AnyNet.h"
 
 namespace hyper {

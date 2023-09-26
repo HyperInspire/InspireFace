@@ -8,7 +8,7 @@
 #include "FaceDataType.h"
 #include "../face_info/FaceObject.h"
 #include "herror.h"
-#include "DataType.h"
+#include "data_type.h"
 
 namespace hyper {
 

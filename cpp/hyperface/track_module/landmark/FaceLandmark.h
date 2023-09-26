@@ -4,7 +4,7 @@
 #pragma once
 #ifndef HYPERFACEREPO_FACELANDMARK_H
 #define HYPERFACEREPO_FACELANDMARK_H
-#include "../../DataType.h"
+#include "../../data_type.h"
 #include "middleware/AnyNet.h"
 
 namespace hyper {

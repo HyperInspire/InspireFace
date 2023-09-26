@@ -4,7 +4,7 @@
 #pragma once
 #ifndef BIGGUYSMAIN_ANYNET_H
 #define BIGGUYSMAIN_ANYNET_H
-#include "../DataType.h"
+#include "../data_type.h"
 #include "inference_helper/inference_helper.h"
 #include "Parameter.h"
 #include "model_loader/ModelLoader.h"

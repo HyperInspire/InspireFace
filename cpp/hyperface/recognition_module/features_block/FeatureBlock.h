@@ -6,7 +6,7 @@
 #define HYPERFACEREPO_FEATUREBLOCK_H
 #include <mutex>
 #include <iostream>
-#include "DataType.h"
+#include "data_type.h"
 
 namespace hyper {
 
