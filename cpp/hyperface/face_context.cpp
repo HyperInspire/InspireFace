@@ -42,12 +42,12 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
 }
 
 int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
-    std::vector<ByteArray>().swap(detectCache);
-    std::vector<FaceRect>().swap(faceRectsCache);
-    std::vector<FacePoseQualityResult>().swap(qualityResults);
-    std::vector<float>().swap(rollResultsCache);
-    std::vector<float>().swap(yamResultsCache);
-    std::vector<float>().swap(pitchResultsCache);
+    std::vector<ByteArray>().swap(m_detect_cache_);
+    std::vector<FaceRect>().swap(m_face_rects_cache_);
+    std::vector<FacePoseQualityResult>().swap(m_quality_results_cache_);
+    std::vector<float>().swap(m_roll_results_cache_);
+    std::vector<float>().swap(m_yaw_results_cache_);
+    std::vector<float>().swap(m_pitch_results_cache_);
     if (m_face_track_ == nullptr) {
         return HERR_CTX_TRACKER_FAILURE;
     }
@@ -57,13 +57,13 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
         HyperFaceData data = FaceObjectToHyperFaceData(face, i);
         ByteArray byteArray;
         auto ret = SerializeHyperFaceData(data, byteArray);
-        detectCache.push_back(byteArray);
+        m_detect_cache_.push_back(byteArray);
         assert(ret == HSUCCEED);
-        faceRectsCache.push_back(data.rect);
-        qualityResults.push_back(face.high_result);
-        rollResultsCache.push_back(face.high_result.roll);
-        yamResultsCache.push_back(face.high_result.yaw);
-        pitchResultsCache.push_back(face.high_result.pitch);
+        m_face_rects_cache_.push_back(data.rect);
+        m_quality_results_cache_.push_back(face.high_result);
+        m_roll_results_cache_.push_back(face.high_result.roll);
+        m_yaw_results_cache_.push_back(face.high_result.yaw);
+        m_pitch_results_cache_.push_back(face.high_result.pitch);
     }
 
 //    LOGD("跟踪COST: %f", m_face_track_->GetTrackTotalUseTime());
@@ -82,17 +82,14 @@ const std::shared_ptr<FacePipeline>& FaceContext::FacePipelineModule() {
     return m_face_pipeline_;
 }
 
-std::vector<ByteArray> &FaceContext::getDetectCache() {
-    return detectCache;
-}
 
 const int32_t FaceContext::GetNumberOfFacesCurrentlyDetected() const {
     return m_face_track_->trackingFace.size();
 }
 
 int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFaceData> &faces, const CustomPipelineParameter &param) {
-    maskResultsCache.resize(faces.size(), -1.0f);
-    rbgLivenessResultsCache.resize(faces.size(), -1.0f);
+    m_mask_results_cache_.resize(faces.size(), -1.0f);
+    m_rgb_liveness_results_cache_.resize(faces.size(), -1.0f);
     for (int i = 0; i < faces.size(); ++i) {
         const auto &face = faces[i];
         // RGB活体检测
@@ -101,7 +98,7 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
             if (ret != HSUCCEED) {
                 return ret;
             }
-            rbgLivenessResultsCache[i] = m_face_pipeline_->faceLivenessCache;
+            m_rgb_liveness_results_cache_[i] = m_face_pipeline_->faceLivenessCache;
         }
         // 口罩检测
         if (param.enable_mask_detect) {
@@ -109,7 +106,7 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
             if (ret != HSUCCEED) {
                 return ret;
             }
-            maskResultsCache[i] = m_face_pipeline_->faceMaskCache;
+            m_mask_results_cache_[i] = m_face_pipeline_->faceMaskCache;
         }
         // 年龄预测
         if (param.enable_age) {
@@ -130,5 +127,39 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
 
     return 0;
 }
+
+
+const std::vector<ByteArray>& hyper::FaceContext::GetDetectCache() const {
+    return m_detect_cache_;
+}
+
+const std::vector<FaceRect>& hyper::FaceContext::GetFaceRectsCache() const {
+    return m_face_rects_cache_;
+}
+
+const std::vector<float>& hyper::FaceContext::GetRollResultsCache() const {
+    return m_roll_results_cache_;
+}
+
+const std::vector<float>& hyper::FaceContext::GetYawResultsCache() const {
+    return m_yaw_results_cache_;
+}
+
+const std::vector<float>& hyper::FaceContext::GetPitchResultsCache() const {
+    return m_pitch_results_cache_;
+}
+
+const std::vector<FacePoseQualityResult>& hyper::FaceContext::GetQualityResultsCache() const {
+    return m_quality_results_cache_;
+}
+
+const std::vector<float>& hyper::FaceContext::GetMaskResultsCache() const {
+    return m_mask_results_cache_;
+}
+
+const std::vector<float>& hyper::FaceContext::GetRgbLivenessResultsCache() const {
+    return m_rgb_liveness_results_cache_;
+}
+
 
 }   // namespace hyper

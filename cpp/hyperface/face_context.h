@@ -50,9 +50,17 @@ public:
     // 人脸属性识别相关
     const std::shared_ptr<FacePipeline>& FacePipelineModule();
 
-    std::vector<ByteArray> &getDetectCache();
-
     const int32_t GetNumberOfFacesCurrentlyDetected() const;
+
+public:
+    const std::vector<ByteArray>& GetDetectCache() const;
+    const std::vector<FaceRect>& GetFaceRectsCache() const;
+    const std::vector<float>& GetRollResultsCache() const;
+    const std::vector<float>& GetYawResultsCache() const;
+    const std::vector<float>& GetPitchResultsCache() const;
+    const std::vector<FacePoseQualityResult>& GetQualityResultsCache() const;
+    const std::vector<float>& GetMaskResultsCache() const;
+    const std::vector<float>& GetRgbLivenessResultsCache() const;
 
 private:
 
@@ -70,17 +78,16 @@ private:
 
     std::shared_ptr<FacePipeline> m_face_pipeline_;
 
-public:
+private:
     // 缓存数据
-    std::vector<ByteArray> detectCache;
-    std::vector<FaceRect> faceRectsCache;
-    std::vector<float> rollResultsCache;
-    std::vector<float> yamResultsCache;
-    std::vector<float> pitchResultsCache;
-    std::vector<FacePoseQualityResult> qualityResults;
-
-    std::vector<float> maskResultsCache;
-    std::vector<float> rbgLivenessResultsCache;
+    std::vector<ByteArray> m_detect_cache_;
+    std::vector<FaceRect> m_face_rects_cache_;
+    std::vector<float> m_roll_results_cache_;
+    std::vector<float> m_yaw_results_cache_;
+    std::vector<float> m_pitch_results_cache_;
+    std::vector<FacePoseQualityResult> m_quality_results_cache_;
+    std::vector<float> m_mask_results_cache_;
+    std::vector<float> m_rgb_liveness_results_cache_;
 
 };
 
