@@ -80,7 +80,7 @@ int32_t InferenceHelperRknnAdapter::Process(std::vector<OutputTensorInfo> &outpu
         output_tensor.tensor_dims.clear();
         for (int i = 0; i < dim.size(); ++i) {
             output_tensor.tensor_dims.push_back((int)dim[i]);
-            LOGE("dim: %d", dim[i]);
+//            LOGE("dim: %d", dim[i]);
         }
 
     }

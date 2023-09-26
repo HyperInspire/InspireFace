@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "FaceContext.h"
+#include "face_context.h"
 #include "utils/test_helper.h"
 #include "hyperface/recognition_module/extract/Alignment.h"
 #include "recognition_module/features_block/FeatureBlock.h"

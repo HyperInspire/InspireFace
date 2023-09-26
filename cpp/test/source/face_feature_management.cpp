@@ -3,7 +3,7 @@
 //
 
 #include "common/test_settings.h"
-#include "hyperface/FaceContext.h"
+#include "hyperface/face_context.h"
 #include "herror.h"
 #include "test_helper/test_help.h"
 

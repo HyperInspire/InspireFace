@@ -117,14 +117,19 @@ void video_file_test(FaceTrack& ctx, const std::string& video_filename) {
 
             cv::rectangle(frame, rect, cv::Scalar(0, 0, 255), 2, 1);
 
+            auto lmk = face.GetLanmdark();
+            for (auto & p : lmk) {
+                cv::circle(frame, p, 0, cv::Scalar(0, 0, 242), 2);
+            }
+
             // 创建要显示的文本
             std::string text = "ID: " + std::to_string(track_id) + " Count: " + std::to_string(track_count);
 
             // 设置文本显示位置，通常在框的上方
             cv::Point text_position(rect.x, rect.y - 10);
 
-            const auto& euler = face.getPoseEulerAngle();
-            std::string pose_text = "P: " + std::to_string(euler[0]) + ",Yaw: " + std::to_string(euler[1]) + ",roll:" +std::to_string(euler[2]);
+            const auto& euler = face.high_result;
+            std::string pose_text = "pitch: " + std::to_string(euler.pitch) + ",Yaw: " + std::to_string(euler.yaw) + ",roll:" +std::to_string(euler.roll);
 
             // 设置文本显示位置，通常在框的下方
             cv::Point pose_position(rect.x, rect.y + rect.height + 20);

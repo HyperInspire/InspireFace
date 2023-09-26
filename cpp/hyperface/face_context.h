@@ -2,8 +2,8 @@
 // Created by Tunm-Air13 on 2023/9/7.
 //
 #pragma once
-#ifndef HYPERFACEREPO_FACECONTEXT_H
-#define HYPERFACEREPO_FACECONTEXT_H
+#ifndef HYPERFACEREPO_FACE_CONTEXT_H
+#define HYPERFACEREPO_FACE_CONTEXT_H
 #include "track_module/FaceTrack.h"
 #include "DataType.h"
 #include "pipeline_module/FacePipeline.h"
@@ -86,4 +86,4 @@ public:
 
 }   // namespace hyper
 
-#endif //HYPERFACEREPO_FACECONTEXT_H
+#endif //HYPERFACEREPO_FACE_CONTEXT_H

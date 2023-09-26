@@ -270,7 +270,7 @@ public:
      * @return 返回推理状态结果
      */
     int RunModel() {
-        LOGD("set input");
+//        LOGD("set input");
         int ret = rknn_inputs_set(rk_ctx_, rk_io_num_.n_input, input_tensors_.data());
         if (ret < 0)
             LOGE("rknn_input fail! ret=%d", ret);
@@ -279,7 +279,7 @@ public:
             output_tensors_[i].want_float = outputs_want_float_;
         }
 
-        LOGD("rknn_run");
+//        LOGD("rknn_run");
         ret = rknn_run(rk_ctx_, nullptr);
         if (ret < 0) {
             LOGE("rknn_run fail! ret=%d", ret);
