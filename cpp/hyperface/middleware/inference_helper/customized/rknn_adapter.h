@@ -8,7 +8,7 @@
 #include <iostream>
 #include "opencv2/opencv.hpp"
 #include "rknn_api.h"
-#include "DataType.h"
+#include "data_type.h"
 #include "log.h"
 #include "middleware/model_loader/ModelLoader.h"
 

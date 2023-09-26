@@ -5,7 +5,7 @@
 #ifndef HYPERFACEREPO_FACEDATATYPE_H
 #define HYPERFACEREPO_FACEDATATYPE_H
 
-#include "../../DataType.h"
+#include "../../data_type.h"
 #include "../face_info/FaceObject.h"
 
 namespace hyper {

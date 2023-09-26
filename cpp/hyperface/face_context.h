@@ -5,7 +5,7 @@
 #ifndef HYPERFACEREPO_FACE_CONTEXT_H
 #define HYPERFACEREPO_FACE_CONTEXT_H
 #include "track_module/FaceTrack.h"
-#include "DataType.h"
+#include "data_type.h"
 #include "pipeline_module/FacePipeline.h"
 #include "recognition_module/FaceRecognition.h"
 #include <memory>

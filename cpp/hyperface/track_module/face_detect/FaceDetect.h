@@ -5,7 +5,7 @@
 #pragma once
 #ifndef BIGGUYSMAIN_FACE_MODULE_FACE_DETECT_FACEDETECT_H
 #define BIGGUYSMAIN_FACE_MODULE_FACE_DETECT_FACEDETECT_H
-#include "../../DataType.h"
+#include "../../data_type.h"
 #include "middleware/AnyNet.h"
 
 namespace hyper {

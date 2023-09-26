@@ -4,7 +4,7 @@
 #pragma once
 #ifndef HYPERFACEREPO_RNET_H
 #define HYPERFACEREPO_RNET_H
-#include "../../DataType.h"
+#include "../../data_type.h"
 #include "middleware/AnyNet.h"
 
 

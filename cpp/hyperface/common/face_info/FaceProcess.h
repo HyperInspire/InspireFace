@@ -5,7 +5,7 @@
 #ifndef HYPERFACEREPO_FACEPROCESS_H
 #define HYPERFACEREPO_FACEPROCESS_H
 
-#include "DataType.h"
+#include "data_type.h"
 namespace hyper {
 
 typedef enum MaskInfo {
