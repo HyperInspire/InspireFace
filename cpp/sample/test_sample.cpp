@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
 
     std::vector<HyperFaceData> faces;
     for (int i = 0; i < ctx.GetNumberOfFacesCurrentlyDetected(); ++i) {
-        ByteArray &byteArray = ctx.detectCache[i];
+        const ByteArray &byteArray = ctx.GetDetectCache()[i];
         HyperFaceData face = {0};
         ret = DeserializeHyperFaceData(byteArray, face);
         if (ret != HSUCCEED) {
@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
 
     // view
     int32_t index = 0;
-    LOGD("liveness: %f", ctx.rbgLivenessResultsCache[index]);
+    LOGD("liveness: %f", ctx.GetRgbLivenessResultsCache()[index]);
 
     return 0;
 }
