@@ -2,7 +2,7 @@
 // Created by tunm on 2023/8/29.
 //
 #include <iostream>
-#include "hyperface/track_module/FaceTrack.h"
+#include "hyperface/track_module/face_track.h"
 #include "opencv2/opencv.hpp"
 
 using namespace hyper;
@@ -50,7 +50,8 @@ int video_test(FaceTrack &ctx, int cam_id) {
             // 设置文本显示位置，通常在框的上方
             cv::Point text_position(rect.x, rect.y - 10);
 
-            const auto& euler = face.getPoseEulerAngle();
+            const auto& pose_and_quality = face.high_result;
+            std::vector<float> euler = {pose_and_quality.yaw, pose_and_quality.roll, pose_and_quality.pitch};
             std::string pose_text = "P: " + std::to_string(euler[0]) + ",Yaw: " + std::to_string(euler[1]) + ",roll:" +std::to_string(euler[2]);
 
             // 设置文本显示位置，通常在框的下方

@@ -4,10 +4,10 @@
 #pragma once
 #ifndef HYPERFACEREPO_FACE_CONTEXT_H
 #define HYPERFACEREPO_FACE_CONTEXT_H
-#include "track_module/FaceTrack.h"
+#include "track_module/face_track.h"
 #include "data_type.h"
-#include "pipeline_module/FacePipeline.h"
-#include "recognition_module/FaceRecognition.h"
+#include "pipeline_module/face_pipeline.h"
+#include "recognition_module/face_recognition.h"
 #include <memory>
 
 namespace hyper {

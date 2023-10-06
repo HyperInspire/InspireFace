@@ -5,8 +5,8 @@
 #ifndef HYPERFACEREPO_FD_ALL_H
 #define HYPERFACEREPO_FD_ALL_H
 
-#include "RNet.h"
-#include "FaceDetect.h"
-#include "FacePose.h"
+#include "rnet.h"
+#include "face_detect.h"
+#include "face_pose.h"
 
 #endif //HYPERFACEREPO_FD_ALL_H

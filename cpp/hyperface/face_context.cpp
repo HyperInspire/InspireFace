@@ -129,35 +129,35 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
 }
 
 
-const std::vector<ByteArray>& hyper::FaceContext::GetDetectCache() const {
+const std::vector<ByteArray>& FaceContext::GetDetectCache() const {
     return m_detect_cache_;
 }
 
-const std::vector<FaceRect>& hyper::FaceContext::GetFaceRectsCache() const {
+const std::vector<FaceRect>& FaceContext::GetFaceRectsCache() const {
     return m_face_rects_cache_;
 }
 
-const std::vector<float>& hyper::FaceContext::GetRollResultsCache() const {
+const std::vector<float>& FaceContext::GetRollResultsCache() const {
     return m_roll_results_cache_;
 }
 
-const std::vector<float>& hyper::FaceContext::GetYawResultsCache() const {
+const std::vector<float>& FaceContext::GetYawResultsCache() const {
     return m_yaw_results_cache_;
 }
 
-const std::vector<float>& hyper::FaceContext::GetPitchResultsCache() const {
+const std::vector<float>& FaceContext::GetPitchResultsCache() const {
     return m_pitch_results_cache_;
 }
 
-const std::vector<FacePoseQualityResult>& hyper::FaceContext::GetQualityResultsCache() const {
+const std::vector<FacePoseQualityResult>& FaceContext::GetQualityResultsCache() const {
     return m_quality_results_cache_;
 }
 
-const std::vector<float>& hyper::FaceContext::GetMaskResultsCache() const {
+const std::vector<float>& FaceContext::GetMaskResultsCache() const {
     return m_mask_results_cache_;
 }
 
-const std::vector<float>& hyper::FaceContext::GetRgbLivenessResultsCache() const {
+const std::vector<float>& FaceContext::GetRgbLivenessResultsCache() const {
     return m_rgb_liveness_results_cache_;
 }
 

@@ -5,8 +5,8 @@
 #ifndef HYPERFACEREPO_ATTRIBUTE_ALL_H
 #define HYPERFACEREPO_ATTRIBUTE_ALL_H
 
-#include "MaskPredict.h"
-#include "GenderPredict.h"
-#include "AgePredict.h"
+#include "mask_predict.h"
+#include "gender_predict.h"
+#include "age_predict.h"
 
 #endif //HYPERFACEREPO_ATTRIBUTE_ALL_H
