@@ -2,7 +2,7 @@
 // Created by tunm on 2023/9/8.
 //
 #include <iostream>
-#include "track_module/face_detect/FacePose.h"
+#include "track_module/face_detect/face_pose.h"
 #include "model_index.h"
 
 using namespace hyper;
