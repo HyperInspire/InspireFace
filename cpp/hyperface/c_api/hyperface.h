@@ -62,14 +62,32 @@ typedef struct HF_ImageData {
 } HF_ImageData, *Ptr_HF_ImageData;
 
 
+typedef struct HF_ContextCustomParameter{
+    HInt32 enable_recognition = 0;               // 人脸识别功能
+    HInt32 enable_liveness = 0;                 // RGB活体检测功能
+    HInt32 enable_ir_liveness = 0;              // IR活体检测功能
+    HInt32 enable_mask_detect = 0;              // 口罩检测功能
+    HInt32 enable_age = 0;                     // 年龄预测功能
+    HInt32 enable_gender = 0;                  // 性别预测功能
+    HInt32 enable_face_quality = 0;            // 人脸质量检测功能
+    HInt32 enable_interaction_liveness = 0;    // 配合活体检测功能
+} HF_ContextCustomParameter, *Ptr_HF_ContextCustomParameter;
+
+
+enum HF_DetectMode {
+    HF_DETECT_MODE_IMAGE = 0,      ///< 图像检测模式 即 Always detect
+    HF_DETECT_MODE_VIDEO,          ///< 视频检测模式 即 Face track
+
+};
+
 /************************************************************************
 * Carry parameters to create a data buffer stream instantiation object.
 * 携带创建数据缓冲流实例化对象.
 * [out] return: Model instant handle - 返回实例化后的指针句柄
 ************************************************************************/
 HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(
-        Ptr_HF_ImageData data,       // [in] Image Buffer Data struct - 图像数据流结构
-        HHandle* handle              // [out] Return a stream handle
+        Ptr_HF_ImageData data,            // [in] Image Buffer Data struct - 图像数据流结构
+        HImageHandle* handle              // [out] Return a stream handle
 );
 
 /************************************************************************
@@ -78,9 +96,24 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(
 * [out] Result Code - 返回结果码
 ************************************************************************/
 HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(
-        HHandle streamHandle             // [in] DataBuffer handle - 相机流组件的句柄指针
+        HImageHandle streamHandle             // [in] DataBuffer handle - 相机流组件的句柄指针
 );
 
+
+HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
+        HString resourceFile,                           // [in] Resource file path - 资源文件路径
+        Ptr_HF_ContextCustomParameter parameter,        // [in]
+        HF_DetectMode detectMode,                       // [in]
+        HInt32 maxDetectFaceNum,                           // [in]
+        HContextHandle *handle                          // [out] Return a ctx handle
+);
+
+
+/********************************DEBUG****************************************/
+
+HYPER_CAPI_EXPORT extern void HF_DeBugImageStreamImShow(
+        HImageHandle streamHandle             // [in] DataBuffer handle - 相机流组件的句柄指针
+);
 
 #ifdef __cplusplus
 }
