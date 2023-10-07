@@ -64,10 +64,13 @@ int main() {
             LOGD("image handle: %ld", (long )imageSteamHandle);
         }
 
-        HInt32 detectedNum = 0;
-        HF_FaceContextRunFaceTrack(ctxHandle, imageSteamHandle, &detectedNum);
-        LOGD("检测到人脸数量: %d", detectedNum);
 
+        HF_MultipleFaceData multipleFaceData = {0};
+        HF_FaceContextRunFaceTrack(ctxHandle, imageSteamHandle, &multipleFaceData);
+        LOGD("检测到人脸数量: %d", multipleFaceData.detectedNum);
+
+        HFaceRect rect = multipleFaceData.rects[0];
+        LOGD("rect: %d", rect.height);
 
         ret = HF_ReleaseFaceContext(ctxHandle);
         if (ret != HSUCCEED) {
