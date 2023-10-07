@@ -119,9 +119,18 @@ else()
         )
 
     endif()
+
 endif()
 
 
 
+
+# C_API Demo测试
+add_executable(CAPISample ${CMAKE_CURRENT_SOURCE_DIR}/c_api_sample.cpp)
+target_link_libraries(CAPISample HyperFace)
+
+set_target_properties(CAPISample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
 
 

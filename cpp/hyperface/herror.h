@@ -7,8 +7,9 @@
 
 #define HSUCCEED						    (0)
 #define HERR_BASIC_BASE					0X0001							// 通用错误类型
-#define HERR_UNKNOWN					    MERR_BASIC_BASE					// 错误原因不明
-#define HERR_INVALID_PARAM				(MERR_BASIC_BASE+1)				// 无效的参数
+#define HERR_UNKNOWN					    HERR_BASIC_BASE					// 错误原因不明
+#define HERR_INVALID_PARAM				(HERR_BASIC_BASE+1)				// 无效的参数
+#define HERR_INVALID_HANDLE				(HERR_BASIC_BASE+24)				// 无效的句柄
 
 #define HERR_CTX_BASE				        0X500					         // Context 错误类型
 #define HERR_CTX_INVALID_RESOURCE            (HERR_CTX_BASE+1)               // 无效的静态资源
