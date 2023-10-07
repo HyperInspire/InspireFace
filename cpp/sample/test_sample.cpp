@@ -31,9 +31,14 @@ int main(int argc, char** argv) {
 
     std::vector<HyperFaceData> faces;
     for (int i = 0; i < ctx.GetNumberOfFacesCurrentlyDetected(); ++i) {
-        const ByteArray &byteArray = ctx.GetDetectCache()[i];
+//        const ByteArray &byteArray = ctx.GetDetectCache()[i];
         HyperFaceData face = {0};
-        ret = DeserializeHyperFaceData(byteArray, face);
+//        ret = DeserializeHyperFaceData(byteArray, face);
+
+        const FaceBasicData &faceBasic = ctx.GetFaceBasicDataCache()[i];
+        ret = DeserializeHyperFaceData((char* )faceBasic.data, faceBasic.dataSize, face);
+        LOGD("OK!");
+
         if (ret != HSUCCEED) {
             return -1;
         }

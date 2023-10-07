@@ -80,6 +80,22 @@ enum HF_DetectMode {
 
 };
 
+
+typedef struct HF_FaceBasicToken {
+    HPVoid data;
+    HInt32 size;
+} HF_FaceBasicToken, *Ptr_HF_FaceBasicToken;
+
+
+typedef struct HF_MultipleFaceData {
+    HInt32 detectedNum;
+    HFaceRect *rects;
+    HFaceEulerAngle *angles;
+    Ptr_HF_FaceBasicToken tokens;
+}HF_MultipleFaceData, *Ptr_HF_MultipleFaceData;
+
+//typedef struct
+
 /************************************************************************
 * Carry parameters to create a data buffer stream instantiation object.
 * 携带创建数据缓冲流实例化对象.
@@ -104,10 +120,21 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
         HString resourceFile,                           // [in] Resource file path - 资源文件路径
         Ptr_HF_ContextCustomParameter parameter,        // [in]
         HF_DetectMode detectMode,                       // [in]
-        HInt32 maxDetectFaceNum,                           // [in]
+        HInt32 maxDetectFaceNum,                        // [in]
         HContextHandle *handle                          // [out] Return a ctx handle
 );
 
+
+HYPER_CAPI_EXPORT extern HResult HF_ReleaseFaceContext(
+        HContextHandle handle                          // [in] Return a ctx handle
+);
+
+
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextRunFaceTrack(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HImageHandle streamHandle,                          // [in] DataBuffer handle - 相机流组件的句柄指针
+        Ptr_HF_MultipleFaceData results                     // [out]
+);
 
 /********************************DEBUG****************************************/
 

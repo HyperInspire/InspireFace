@@ -43,6 +43,7 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
 
 int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     std::vector<ByteArray>().swap(m_detect_cache_);
+    std::vector<FaceBasicData>().swap(m_face_basic_data_cache_);
     std::vector<FaceRect>().swap(m_face_rects_cache_);
     std::vector<FacePoseQualityResult>().swap(m_quality_results_cache_);
     std::vector<float>().swap(m_roll_results_cache_);
@@ -64,6 +65,13 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
         m_roll_results_cache_.push_back(face.high_result.roll);
         m_yaw_results_cache_.push_back(face.high_result.yaw);
         m_pitch_results_cache_.push_back(face.high_result.pitch);
+    }
+    // ptr face_basic
+    m_face_basic_data_cache_.resize(m_face_track_->trackingFace.size());
+    for (int i = 0; i < m_face_basic_data_cache_.size(); ++i) {
+        auto &basic = m_face_basic_data_cache_[i];
+        basic.dataSize = m_detect_cache_[i].size();
+        basic.data = m_detect_cache_[i].data();
     }
 
 //    LOGD("跟踪COST: %f", m_face_track_->GetTrackTotalUseTime());
@@ -131,6 +139,10 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
 
 const std::vector<ByteArray>& FaceContext::GetDetectCache() const {
     return m_detect_cache_;
+}
+
+const std::vector<FaceBasicData>& FaceContext::GetFaceBasicDataCache() const {
+    return m_face_basic_data_cache_;
 }
 
 const std::vector<FaceRect>& FaceContext::GetFaceRectsCache() const {

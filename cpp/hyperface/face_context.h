@@ -54,6 +54,7 @@ public:
 
 public:
     const std::vector<ByteArray>& GetDetectCache() const;
+    const std::vector<FaceBasicData>& GetFaceBasicDataCache() const;
     const std::vector<FaceRect>& GetFaceRectsCache() const;
     const std::vector<float>& GetRollResultsCache() const;
     const std::vector<float>& GetYawResultsCache() const;
@@ -81,6 +82,7 @@ private:
 private:
     // 缓存数据
     std::vector<ByteArray> m_detect_cache_;
+    std::vector<FaceBasicData> m_face_basic_data_cache_;
     std::vector<FaceRect> m_face_rects_cache_;
     std::vector<float> m_roll_results_cache_;
     std::vector<float> m_yaw_results_cache_;
