@@ -90,7 +90,7 @@ typedef struct HF_FaceBasicToken {
 typedef struct HF_MultipleFaceData {
     HInt32 detectedNum;
     HFaceRect *rects;
-    HFaceEulerAngle *angles;
+    HFaceEulerAngle angles;
     Ptr_HF_FaceBasicToken tokens;
 }HF_MultipleFaceData, *Ptr_HF_MultipleFaceData;
 

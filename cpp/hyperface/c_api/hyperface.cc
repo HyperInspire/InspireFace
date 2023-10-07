@@ -132,7 +132,10 @@ HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle stream
     }
     auto ret = ctx->impl.FaceDetectAndTrack(stream->impl);
     results->detectedNum = ctx->impl.GetNumberOfFacesCurrentlyDetected();
-    results->rects = (HFaceRect *) ctx->impl.GetFaceRectsCache();   // 无法转换BUG
+    results->rects = (HFaceRect *) ctx->impl.GetFaceRectsCache().data();
+    results->angles.pitch = (HFloat *) ctx->impl.GetPitchResultsCache().data();
+    results->angles.roll = (HFloat *) ctx->impl.GetRollResultsCache().data();
+    results->angles.yaw = (HFloat *) ctx->impl.GetYawResultsCache().data();
 
     return ret;
 }
