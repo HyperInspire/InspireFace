@@ -93,7 +93,10 @@ typedef struct FaceLoc {
 
 typedef std::vector<FaceLoc> FaceLocList;                ///< 人脸地标列表
 
-
+typedef struct FaceBasicData {
+    int32_t dataSize;
+    void* data;
+} FaceBasicData;
 
 /** @} */
 

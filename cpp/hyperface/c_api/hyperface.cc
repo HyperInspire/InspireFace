@@ -40,11 +40,11 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HIm
 
 HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(HImageHandle streamHandle) {
     if (streamHandle == nullptr) {
-        return HERR_INVALID_HANDLE;
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
     HF_CameraStream *stream = (HF_CameraStream* ) streamHandle;
     if (stream == nullptr) {
-        return HERR_INVALID_HANDLE;
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
     } else {
         delete stream;
         stream = nullptr;  // 设置指针为 nullptr，以避免悬挂指针
@@ -70,6 +70,21 @@ void HF_DeBugImageStreamImShow(HImageHandle streamHandle) {
 }
 
 
+HResult HF_ReleaseFaceContext(HContextHandle handle) {
+    if (handle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) handle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    } else {
+        delete ctx;
+        ctx = nullptr;
+    }
+
+    return HSUCCEED;
+}
+
 HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, Ptr_HF_ContextCustomParameter parameter, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
     hyper::ContextCustomParameter param;
     param.enable_mask_detect = parameter->enable_mask_detect;
@@ -91,7 +106,33 @@ HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, Ptr_HF_Contex
     if (ret != HSUCCEED) {
         delete ctx;
         ctx = nullptr;
+    } else {
+        *handle = ctx;
     }
+
+
+    return ret;
+}
+
+
+HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData results) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (streamHandle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_CameraStream *stream = (HF_CameraStream* ) streamHandle;
+    if (stream == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    auto ret = ctx->impl.FaceDetectAndTrack(stream->impl);
+    results->detectedNum = ctx->impl.GetNumberOfFacesCurrentlyDetected();
+    results->rects = (HFaceRect *) ctx->impl.GetFaceRectsCache();   // 无法转换BUG
 
     return ret;
 }
