@@ -145,14 +145,22 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextRunFaceTrack(
 
 typedef struct HF_FaceFeature {
     HInt32 size;
-    HPFloat feature;
+    HPFloat data;
 } HF_FaceFeature, *Ptr_HF_FaceFeature;
+
 
 HYPER_CAPI_EXPORT extern HResult HF_FaceContextFaceExtract(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HImageHandle streamHandle,                          // [in] DataBuffer handle - 相机流组件的句柄指针
         HF_FaceBasicToken singleFace,                       // [in]
         Ptr_HF_FaceFeature feature                          // [out]
+);
+
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextFaceExtractCpy(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HImageHandle streamHandle,                          // [in] DataBuffer handle - 相机流组件的句柄指针
+        HF_FaceBasicToken singleFace,                       // [in]
+        HPFloat feature                                     // [out]
 );
 
 HYPER_CAPI_EXPORT extern HResult HF_FaceContextComparison(

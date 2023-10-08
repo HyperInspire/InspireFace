@@ -95,7 +95,7 @@ int32_t FaceRecognition::FaceExtract(CameraStream &image, const FaceObject &face
     return 0;
 }
 
-int32_t FaceRecognition::RegisterFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag) {
+int32_t FaceRecognition::RegisterFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag, int32_t customId) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
     }
@@ -105,7 +105,7 @@ int32_t FaceRecognition::RegisterFaceFeature(const std::vector<float>& feature, 
     int rowIndex = featureIndex % NUM_OF_FEATURES_IN_BLOCK;   // 计算在FeatureBlock中的行号
 
     // 调用适当的FeatureBlock的注册函数
-    int32_t result = m_feature_matrix_list_[blockIndex]->RegisterFeature(rowIndex, feature, tag);
+    int32_t result = m_feature_matrix_list_[blockIndex]->RegisterFeature(rowIndex, feature, tag, customId);
 
     return result;
 }
@@ -119,6 +119,7 @@ int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeatur
     float maxScore = -1.0f; // 最大分数初始化为一个负数
     int maxIndex = -1; // 最大分数对应的索引
     std::string tag = "None";
+    int maxCid = -1;
 
     for (int blockIndex = 0; blockIndex < m_feature_matrix_list_.size(); ++blockIndex) {
         if (m_feature_matrix_list_[blockIndex]->GetUsedCount() == 0) {
@@ -142,6 +143,7 @@ int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeatur
             maxScore = tempResult.score;
             maxIndex = startIndex + tempResult.index;
             tag = tempResult.tag;
+            maxCid = tempResult.customId;
             if (maxScore >= threshold) {
                 found = true;
                 if (!mostSimilar) {
@@ -155,11 +157,13 @@ int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeatur
         searchResult.score = maxScore;
         searchResult.index = maxIndex;
         searchResult.tag = tag;
+        searchResult.customId = maxCid;
         return 0; // 返回成功
     } else {
         searchResult.score = -1.0f;
         searchResult.index = -1;
         searchResult.tag = "None";
+        searchResult.customId = -1;
     }
 
     return HSUCCEED; // 没有找到匹配的特征 但是不算错误
@@ -209,7 +213,7 @@ int32_t FaceRecognition::GetFeatureNum() {
     return NUM_OF_FEATURES_IN_BLOCK;
 }
 
-int32_t FaceRecognition::UpdateFaceFeature(const std::vector<float> &feature, int featureIndex, const std::string &tag) {
+int32_t FaceRecognition::UpdateFaceFeature(const std::vector<float> &feature, int featureIndex, const std::string &tag, int32_t customId) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
     }
@@ -219,7 +223,7 @@ int32_t FaceRecognition::UpdateFaceFeature(const std::vector<float> &feature, in
     int rowIndex = featureIndex % NUM_OF_FEATURES_IN_BLOCK;   // 计算在FeatureBlock中的行号
 
     // 调用适当的FeatureBlock的注册函数
-    int32_t result = m_feature_matrix_list_[blockIndex]->UpdateFeature(rowIndex, feature, tag);
+    int32_t result = m_feature_matrix_list_[blockIndex]->UpdateFeature(rowIndex, feature, tag, customId);
 
     return result;
 }

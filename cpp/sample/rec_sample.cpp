@@ -112,7 +112,7 @@ int search(FaceContext &ctx) {
         }
         Embedded feature;
         ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
-        ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, i, GetFileNameWithoutExtension(files_list[i]));
+        ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, i, GetFileNameWithoutExtension(files_list[i]), 1000 + i);
     }
 
 //    ctx.FaceRecognitionModule()->PrintMatrix();
@@ -166,7 +166,7 @@ int search(FaceContext &ctx) {
         ctx.FaceRecognitionModule()->SearchFaceFeature(feature, result);
         double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
         LOGD("搜索耗时: %f", cost);
-        LOGD("Top1: %d, %f, %s", result.index, result.score, result.tag.c_str());
+        LOGD("Top1: %d, %f, %s %d", result.index, result.score, result.tag.c_str(), result.customId);
     }
 
 

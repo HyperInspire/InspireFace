@@ -56,7 +56,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
 
         for (int i = 0; i < featureMatrix.size(); ++i) {
             auto &feat = featureMatrix[i];
-            auto ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feat, i, tagNames[i]);
+            auto ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feat, i, tagNames[i], i);
             CHECK(ret == HSUCCEED);
         }
 
@@ -91,9 +91,9 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         // 随便找个位置 修改这个位置的特征向量 把Kunkun继续塞回去
         auto newIndex = 2888;
         // 先插个未被使用的位置试试
-        ret = ctx.FaceRecognitionModule()->UpdateFaceFeature(KunkunFeature, 3001, "Chicken");
+        ret = ctx.FaceRecognitionModule()->UpdateFaceFeature(KunkunFeature, 3001, "Chicken", 3001);
         REQUIRE(ret == HERR_CTX_REC_BLOCK_UPDATE_FAILURE);
-        ret = ctx.FaceRecognitionModule()->UpdateFaceFeature(KunkunFeature, newIndex, "Chicken");
+        ret = ctx.FaceRecognitionModule()->UpdateFaceFeature(KunkunFeature, newIndex, "Chicken", 3001);
         REQUIRE(ret == HSUCCEED);
         SearchResult thirdlySearchResult;
         ret = ctx.FaceRecognitionModule()->SearchFaceFeature(feature, thirdlySearchResult, 0.5f);
@@ -131,7 +131,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
 
         for (int i = 0; i < featureMatrix.size(); ++i) {
             auto &feat = featureMatrix[i];
-            auto ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feat, i, tagNames[i]);
+            auto ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feat, i, tagNames[i], i);
             CHECK(ret == HSUCCEED);
         }
 
@@ -158,7 +158,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
 
         // 将该人脸插入较为靠后的位置
         auto regIndex = 4000;
-        ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, regIndex, "test");
+        ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, regIndex, "test", 4000);
         REQUIRE(ret == HSUCCEED);
 
         const auto loop = 1000;

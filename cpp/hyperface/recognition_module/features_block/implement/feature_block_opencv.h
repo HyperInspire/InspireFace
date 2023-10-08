@@ -17,13 +17,13 @@ public:
     int32_t GetFeature(int row, std::vector<float> &feature) override;
 
 protected:
-    int32_t UnsafeAddFeature(const std::vector<float> &feature, const std::string &tag) override;
+    int32_t UnsafeAddFeature(const std::vector<float> &feature, const std::string &tag, int32_t customId) override;
 
     int32_t UnsafeDeleteFeature(int rowToDelete) override;
 
-    int32_t UnsafeUpdateFeature(int rowToUpdate, const std::vector<float> &newFeature, const std::string &tag) override;
+    int32_t UnsafeUpdateFeature(int rowToUpdate, const std::vector<float> &newFeature, const std::string &tag, int32_t customId) override;
 
-    int32_t UnsafeRegisterFeature(int rowToUpdate, const std::vector<float> &feature, const std::string &tag) override;
+    int32_t UnsafeRegisterFeature(int rowToUpdate, const std::vector<float> &feature, const std::string &tag, int32_t customId) override;
 
 
 public:
