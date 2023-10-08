@@ -52,16 +52,20 @@ public:
 
     const int32_t GetNumberOfFacesCurrentlyDetected() const;
 
+    int32_t FaceFeatureExtract(CameraStream &image, FaceBasicData& data);
+
 public:
     const std::vector<ByteArray>& GetDetectCache() const;
     const std::vector<FaceBasicData>& GetFaceBasicDataCache() const;
     const std::vector<FaceRect>& GetFaceRectsCache() const;
+    const std::vector<int32_t>& GetTrackIDCache() const;
     const std::vector<float>& GetRollResultsCache() const;
     const std::vector<float>& GetYawResultsCache() const;
     const std::vector<float>& GetPitchResultsCache() const;
     const std::vector<FacePoseQualityResult>& GetQualityResultsCache() const;
     const std::vector<float>& GetMaskResultsCache() const;
     const std::vector<float>& GetRgbLivenessResultsCache() const;
+    const Embedded& GetFaceFeatureCache() const;
 
 private:
 
@@ -84,6 +88,7 @@ private:
     std::vector<ByteArray> m_detect_cache_;
     std::vector<FaceBasicData> m_face_basic_data_cache_;
     std::vector<FaceRect> m_face_rects_cache_;
+    std::vector<int32_t> m_track_id_cache_;
     std::vector<float> m_roll_results_cache_;
     std::vector<float> m_yaw_results_cache_;
     std::vector<float> m_pitch_results_cache_;
@@ -91,6 +96,7 @@ private:
     std::vector<float> m_mask_results_cache_;
     std::vector<float> m_rgb_liveness_results_cache_;
 
+    Embedded m_face_feature_cache_;
 };
 
 }   // namespace hyper

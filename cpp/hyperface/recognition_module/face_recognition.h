@@ -21,6 +21,8 @@ public:
     // 计算余弦相似性
     static int32_t CosineSimilarity(const std::vector<float>& v1, const std::vector<float>& v2, float &res);
 
+    static int32_t CosineSimilarity(const float* v1, const float *v2, int32_t size, float &res);
+
     int32_t FaceExtract(CameraStream &image, const FaceObject& face, Embedded &embedded);
 
     int32_t FaceExtract(CameraStream &image, const HyperFaceData& face, Embedded &embedded);
@@ -40,6 +42,8 @@ public:
     void PrintFeatureMatrixInfo();
 
     const std::shared_ptr<Extract> &getMExtract() const;
+
+    int32_t GetFeatureNum();
 
 private:
     int32_t InitExtractInteraction(Model *model);

@@ -24,7 +24,7 @@ typedef struct FaceRect {
     int height;
 } FaceRect;
 
-typedef struct HPoint {
+typedef struct Point2F {
     float x;
     float y;
 } HPoint;
@@ -45,7 +45,7 @@ typedef struct HyperFaceData {
     int trackCount;
     FaceRect rect;
     TransMatrix trans;
-    HPoint keyPoints[5];
+    Point2F keyPoints[5];
     Face3DAngle face3DAngle;
 } HyperFaceData;
 

@@ -6,11 +6,13 @@
 #define HYPERFACEREPO_HERROR_H
 
 #define HSUCCEED						        (0)
-#define HERR_BASIC_BASE					        0X0001							// 通用错误类型
+#define HERR_BASIC_BASE					    0X0001							// 通用错误类型
 #define HERR_UNKNOWN					        HERR_BASIC_BASE					// 错误原因不明
-#define HERR_INVALID_PARAM				        (HERR_BASIC_BASE+1)				// 无效的参数
+#define HERR_INVALID_PARAM				    (HERR_BASIC_BASE+1)				// 无效的参数
 #define HERR_INVALID_IMAGE_STREAM_HANDLE	    (HERR_BASIC_BASE+24)			// 无效的图像句柄
-#define HERR_INVALID_CONTEXT_HANDLE	            (HERR_BASIC_BASE+25)			// 无效的图像句柄
+#define HERR_INVALID_CONTEXT_HANDLE	        (HERR_BASIC_BASE+25)			// 无效的对象句柄
+#define HERR_INVALID_FACE_TOKEN     	        (HERR_BASIC_BASE+30)			// 无效的人脸token
+#define HERR_INVALID_FACE_FEATURE    	    (HERR_BASIC_BASE+31)			// 无效的人脸特征
 
 #define HERR_CTX_BASE				        0X500					         // Context 错误类型
 #define HERR_CTX_INVALID_RESOURCE            (HERR_CTX_BASE+1)               // 无效的静态资源

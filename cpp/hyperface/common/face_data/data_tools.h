@@ -94,7 +94,7 @@ inline cv::Rect HYPER_API FaceRectToRect(const FaceRect& faceRect) {
     return {faceRect.x, faceRect.y, faceRect.width, faceRect.height};
 }
 
-inline cv::Point2f HYPER_API HPointToPoint2f(const HPoint& point) {
+inline cv::Point2f HYPER_API HPointToPoint2f(const Point2F& point) {
     return {point.x, point.y};
 }
 
