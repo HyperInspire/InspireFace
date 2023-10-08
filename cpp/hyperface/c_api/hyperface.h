@@ -62,39 +62,6 @@ typedef struct HF_ImageData {
 } HF_ImageData, *Ptr_HF_ImageData;
 
 
-typedef struct HF_ContextCustomParameter{
-    HInt32 enable_recognition = 0;               // 人脸识别功能
-    HInt32 enable_liveness = 0;                 // RGB活体检测功能
-    HInt32 enable_ir_liveness = 0;              // IR活体检测功能
-    HInt32 enable_mask_detect = 0;              // 口罩检测功能
-    HInt32 enable_age = 0;                     // 年龄预测功能
-    HInt32 enable_gender = 0;                  // 性别预测功能
-    HInt32 enable_face_quality = 0;            // 人脸质量检测功能
-    HInt32 enable_interaction_liveness = 0;    // 配合活体检测功能
-} HF_ContextCustomParameter, *Ptr_HF_ContextCustomParameter;
-
-
-enum HF_DetectMode {
-    HF_DETECT_MODE_IMAGE = 0,      ///< 图像检测模式 即 Always detect
-    HF_DETECT_MODE_VIDEO,          ///< 视频检测模式 即 Face track
-
-};
-
-
-typedef struct HF_FaceBasicToken {
-    HPVoid data;
-    HInt32 size;
-} HF_FaceBasicToken, *Ptr_HF_FaceBasicToken;
-
-
-typedef struct HF_MultipleFaceData {
-    HInt32 detectedNum;
-    HFaceRect *rects;
-    HFaceEulerAngle angles;
-    Ptr_HF_FaceBasicToken tokens;
-}HF_MultipleFaceData, *Ptr_HF_MultipleFaceData;
-
-//typedef struct
 
 /************************************************************************
 * Carry parameters to create a data buffer stream instantiation object.
@@ -115,6 +82,42 @@ HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(
         HImageHandle streamHandle             // [in] DataBuffer handle - 相机流组件的句柄指针
 );
 
+/************************************************************************
+* FaceContext
+************************************************************************/
+
+typedef struct HF_ContextCustomParameter{
+    HInt32 enable_recognition = 0;               // 人脸识别功能
+    HInt32 enable_liveness = 0;                 // RGB活体检测功能
+    HInt32 enable_ir_liveness = 0;              // IR活体检测功能
+    HInt32 enable_mask_detect = 0;              // 口罩检测功能
+    HInt32 enable_age = 0;                     // 年龄预测功能
+    HInt32 enable_gender = 0;                  // 性别预测功能
+    HInt32 enable_face_quality = 0;            // 人脸质量检测功能
+    HInt32 enable_interaction_liveness = 0;    // 配合活体检测功能
+} HF_ContextCustomParameter, *Ptr_HF_ContextCustomParameter;
+
+
+enum HF_DetectMode {
+    HF_DETECT_MODE_IMAGE = 0,      ///< 图像检测模式 即 Always detect
+    HF_DETECT_MODE_VIDEO,          ///< 视频检测模式 即 Face track
+};
+
+
+typedef struct HF_FaceBasicToken {
+    HInt32 size;
+    HPVoid data;
+} HF_FaceBasicToken, *Ptr_HF_FaceBasicToken;
+
+
+typedef struct HF_MultipleFaceData {
+    HInt32 detectedNum;
+    HFaceRect *rects;
+    HInt32 *trackIds;
+    HFaceEulerAngle angles;
+    Ptr_HF_FaceBasicToken tokens;
+}HF_MultipleFaceData, *Ptr_HF_MultipleFaceData;
+
 
 HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
         HString resourceFile,                           // [in] Resource file path - 资源文件路径
@@ -134,6 +137,34 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextRunFaceTrack(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HImageHandle streamHandle,                          // [in] DataBuffer handle - 相机流组件的句柄指针
         Ptr_HF_MultipleFaceData results                     // [out]
+);
+
+/************************************************************************
+* Face Recognition
+************************************************************************/
+
+typedef struct HF_FaceFeature {
+    HInt32 size;
+    HPFloat feature;
+} HF_FaceFeature, *Ptr_HF_FaceFeature;
+
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextFaceExtract(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HImageHandle streamHandle,                          // [in] DataBuffer handle - 相机流组件的句柄指针
+        HF_FaceBasicToken singleFace,                       // [in]
+        Ptr_HF_FaceFeature feature                          // [out]
+);
+
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextComparison(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HF_FaceFeature feature1,                            // [in]
+        HF_FaceFeature feature2,                            // [in]
+        HPFloat result                                      // [out]
+);
+
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextGetFeatureNum(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HPInt32 num                                         // [out]
 );
 
 /********************************DEBUG****************************************/

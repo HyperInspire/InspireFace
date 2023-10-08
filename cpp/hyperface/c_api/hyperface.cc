@@ -133,9 +133,73 @@ HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle stream
     auto ret = ctx->impl.FaceDetectAndTrack(stream->impl);
     results->detectedNum = ctx->impl.GetNumberOfFacesCurrentlyDetected();
     results->rects = (HFaceRect *) ctx->impl.GetFaceRectsCache().data();
+    results->trackIds = (HInt32 *) ctx->impl.GetTrackIDCache().data();
     results->angles.pitch = (HFloat *) ctx->impl.GetPitchResultsCache().data();
     results->angles.roll = (HFloat *) ctx->impl.GetRollResultsCache().data();
     results->angles.yaw = (HFloat *) ctx->impl.GetYawResultsCache().data();
+    results->tokens = (HF_FaceBasicToken *) ctx->impl.GetFaceBasicDataCache().data();
 
     return ret;
+}
+
+HResult HF_FaceContextFaceExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (streamHandle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_CameraStream *stream = (HF_CameraStream* ) streamHandle;
+    if (stream == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    if (singleFace.data == nullptr || singleFace.size <= 0) {
+        return HERR_INVALID_FACE_TOKEN;
+    }
+    hyper::FaceBasicData data;
+    data.dataSize = singleFace.size;
+    data.data = singleFace.data;
+    auto ret = ctx->impl.FaceFeatureExtract(stream->impl, data);
+    feature->size = ctx->impl.GetFaceFeatureCache().size();
+    feature->feature = (HFloat *)ctx->impl.GetFaceFeatureCache().data();
+
+    return ret;
+}
+
+HResult HF_FaceContextComparison(HContextHandle ctxHandle, HF_FaceFeature feature1, HF_FaceFeature feature2, HPFloat result) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (feature1.feature == nullptr || feature2.feature == nullptr) {
+        return HERR_INVALID_FACE_FEATURE;
+    }
+    if (feature1.size != feature2.size) {
+        return HERR_INVALID_FACE_FEATURE;
+    }
+    float res = -1.0f;
+    auto ret = ctx->impl.FaceRecognitionModule()->CosineSimilarity(feature1.feature, feature2.feature, feature1.size, res);
+    *result = res;
+
+    return ret;
+}
+
+HResult HF_FaceContextGetFeatureNum(HContextHandle ctxHandle, HPInt32 num) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    *num = ctx->impl.FaceRecognitionModule()->GetFeatureNum();
+
+    return HSUCCEED;
 }

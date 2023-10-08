@@ -10,10 +10,12 @@ typedef void*               HPVoid;
 typedef void*               HImageHandle;
 typedef void*               HContextHandle;
 typedef long                HLong;
-typedef float               HFloat;
+typedef float                HFloat;
+typedef float*               HPFloat;
 typedef double              HDouble;
 typedef	unsigned char		HUInt8;
 typedef signed int			HInt32;
+typedef signed int*			HPInt32;
 typedef long                HResult;
 typedef char*               HString;
 

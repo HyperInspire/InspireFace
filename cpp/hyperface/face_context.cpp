@@ -45,6 +45,7 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     std::vector<ByteArray>().swap(m_detect_cache_);
     std::vector<FaceBasicData>().swap(m_face_basic_data_cache_);
     std::vector<FaceRect>().swap(m_face_rects_cache_);
+    std::vector<int32_t>().swap(m_track_id_cache_);
     std::vector<FacePoseQualityResult>().swap(m_quality_results_cache_);
     std::vector<float>().swap(m_roll_results_cache_);
     std::vector<float>().swap(m_yaw_results_cache_);
@@ -60,6 +61,7 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
         auto ret = SerializeHyperFaceData(data, byteArray);
         m_detect_cache_.push_back(byteArray);
         assert(ret == HSUCCEED);
+        m_track_id_cache_.push_back(face.GetTrackingId());
         m_face_rects_cache_.push_back(data.rect);
         m_quality_results_cache_.push_back(face.high_result);
         m_roll_results_cache_.push_back(face.high_result.roll);
@@ -149,6 +151,10 @@ const std::vector<FaceRect>& FaceContext::GetFaceRectsCache() const {
     return m_face_rects_cache_;
 }
 
+const std::vector<int32_t>& FaceContext::GetTrackIDCache() const {
+    return m_track_id_cache_;
+}
+
 const std::vector<float>& FaceContext::GetRollResultsCache() const {
     return m_roll_results_cache_;
 }
@@ -171,6 +177,23 @@ const std::vector<float>& FaceContext::GetMaskResultsCache() const {
 
 const std::vector<float>& FaceContext::GetRgbLivenessResultsCache() const {
     return m_rgb_liveness_results_cache_;
+}
+
+const Embedded& FaceContext::GetFaceFeatureCache() const {
+    return m_face_feature_cache_;
+}
+
+int32_t FaceContext::FaceFeatureExtract(CameraStream &image, FaceBasicData& data) {
+    int32_t ret;
+    HyperFaceData face = {0};
+    ret = DeserializeHyperFaceData((char* )data.data, data.dataSize, face);
+    if (ret != HSUCCEED) {
+        return ret;
+    }
+    Embedded().swap(m_face_feature_cache_);
+    ret = m_face_recognition_->FaceExtract(image, face, m_face_feature_cache_);
+
+    return ret;
 }
 
 

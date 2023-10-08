@@ -46,6 +46,14 @@ int32_t FaceRecognition::CosineSimilarity(const std::vector<float>& v1, const st
     }
     // 计算余弦相似性
     res = simd_dot(v1.data(), v2.data(), v1.size());
+
+    return HSUCCEED;
+}
+
+
+int32_t FaceRecognition::CosineSimilarity(const float *v1, const float *v2, int32_t size, float &res) {
+    res = simd_dot(v1, v2, size);
+
     return HSUCCEED;
 }
 
@@ -197,6 +205,10 @@ int32_t FaceRecognition::GetFaceFeatureCount() {
     return totalFeatureCount;
 }
 
+int32_t FaceRecognition::GetFeatureNum() {
+    return NUM_OF_FEATURES_IN_BLOCK;
+}
+
 int32_t FaceRecognition::UpdateFaceFeature(const std::vector<float> &feature, int featureIndex, const std::string &tag) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
@@ -219,5 +231,6 @@ void FaceRecognition::PrintFeatureMatrixInfo() {
 const std::shared_ptr<Extract> &FaceRecognition::getMExtract() const {
     return m_extract_;
 }
+
 
 } // namespace hyper
