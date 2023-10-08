@@ -26,6 +26,7 @@ typedef struct SearchResult {
     float score = -1.0f;
     int32_t index = -1;
     std::string tag = "None";
+    int32_t customId = -1;
 } SearchResult;
 
 class HYPER_API FeatureBlock {
@@ -35,9 +36,9 @@ public:
 public:
     virtual ~FeatureBlock() {}
 
-    virtual int32_t AddFeature(const std::vector<float>& feature, const std::string &tag) {
+    virtual int32_t AddFeature(const std::vector<float>& feature, const std::string &tag, int32_t customId) {
         std::lock_guard<std::mutex> lock(m_mtx_);  // 使用互斥锁保护共享数据
-        return UnsafeAddFeature(feature, tag);
+        return UnsafeAddFeature(feature, tag, customId);
     }
 
     virtual int32_t DeleteFeature(int rowToDelete) {
@@ -45,14 +46,14 @@ public:
         return UnsafeDeleteFeature(rowToDelete);
     }
 
-    virtual int32_t UpdateFeature(int rowToUpdate, const std::vector<float>& newFeature, const std::string &tag) {
+    virtual int32_t UpdateFeature(int rowToUpdate, const std::vector<float>& newFeature, const std::string &tag, int32_t customId) {
         std::lock_guard<std::mutex> lock(m_mtx_);
-        return UnsafeUpdateFeature(rowToUpdate, newFeature, tag);
+        return UnsafeUpdateFeature(rowToUpdate, newFeature, tag, customId);
     }
 
-    virtual int32_t RegisterFeature(int rowToUpdate, const std::vector<float>& feature, const std::string &tag) {
+    virtual int32_t RegisterFeature(int rowToUpdate, const std::vector<float>& feature, const std::string &tag, int32_t customId) {
         std::lock_guard<std::mutex> lock(m_mtx_);
-        return UnsafeRegisterFeature(rowToUpdate, feature, tag);
+        return UnsafeRegisterFeature(rowToUpdate, feature, tag, customId);
     }
 
     virtual int32_t SearchNearest(const std::vector<float>& queryFeature, SearchResult &searchResult) = 0;
@@ -102,10 +103,10 @@ public:
 
 
 protected:
-    virtual int32_t UnsafeAddFeature(const std::vector<float>& feature, const std::string &tag) = 0;
-    virtual int32_t UnsafeRegisterFeature(int rowToUpdate, const std::vector<float>& feature, const std::string &tag) = 0;
+    virtual int32_t UnsafeAddFeature(const std::vector<float>& feature, const std::string &tag, int32_t customId) = 0;
+    virtual int32_t UnsafeRegisterFeature(int rowToUpdate, const std::vector<float>& feature, const std::string &tag, int32_t customId) = 0;
     virtual int32_t UnsafeDeleteFeature(int rowToDelete) = 0;
-    virtual int32_t UnsafeUpdateFeature(int rowToUpdate, const std::vector<float>& newFeature, const std::string &tag) = 0;
+    virtual int32_t UnsafeUpdateFeature(int rowToUpdate, const std::vector<float>& newFeature, const std::string &tag, int32_t customId) = 0;
 
 protected:
     MatrixCore m_matrix_core_;
@@ -119,6 +120,8 @@ protected:
     std::vector<FEATURE_STATE> m_feature_state_;
 
     std::vector<String> m_tag_list_;
+
+    std::vector<int32_t> m_custom_id_list_;
 
 };
 

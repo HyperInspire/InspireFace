@@ -14,7 +14,7 @@ FeatureBlockOpenCV::FeatureBlockOpenCV(int32_t features_max, int32_t feature_len
 
 }
 
-int32_t FeatureBlockOpenCV::UnsafeAddFeature(const std::vector<float> &feature, const std::string &tag) {
+int32_t FeatureBlockOpenCV::UnsafeAddFeature(const std::vector<float> &feature, const std::string &tag, int32_t customId) {
     if (feature.empty()) {
         return HERR_CTX_REC_ADD_FEAT_EMPTY; // 如果特征为空，不进行添加
     }
@@ -39,6 +39,7 @@ int32_t FeatureBlockOpenCV::UnsafeAddFeature(const std::vector<float> &feature, 
 
     m_feature_state_[idx] = FEATURE_STATE::USED;    // 设置特征向量已使用
     m_tag_list_[idx] = tag;
+    m_custom_id_list_[idx] = customId;
 
     return HSUCCEED;
 }
@@ -59,7 +60,7 @@ int32_t FeatureBlockOpenCV::UnsafeDeleteFeature(int rowToDelete) {
 }
 
 
-int32_t FeatureBlockOpenCV::UnsafeRegisterFeature(int rowToUpdate, const std::vector<float> &feature, const std::string &tag) {
+int32_t FeatureBlockOpenCV::UnsafeRegisterFeature(int rowToUpdate, const std::vector<float> &feature, const std::string &tag, int32_t customId) {
     if (rowToUpdate < 0 || rowToUpdate >= m_feature_matrix_.rows) {
         return HERR_CTX_REC_FEAT_SIZE_ERR; // 无效的行号，不进行更新
     }
@@ -74,11 +75,12 @@ int32_t FeatureBlockOpenCV::UnsafeRegisterFeature(int rowToUpdate, const std::ve
     }
     m_feature_state_[rowToUpdate] = USED;
     m_tag_list_[rowToUpdate] = tag;
+    m_custom_id_list_[rowToUpdate] = customId;
 
     return 0;
 }
 
-int32_t FeatureBlockOpenCV::UnsafeUpdateFeature(int rowToUpdate, const std::vector<float> &newFeature, const std::string &tag) {
+int32_t FeatureBlockOpenCV::UnsafeUpdateFeature(int rowToUpdate, const std::vector<float> &newFeature, const std::string &tag, int32_t customId) {
     if (rowToUpdate < 0 || rowToUpdate >= m_feature_matrix_.rows) {
         return HERR_CTX_REC_FEAT_SIZE_ERR; // 无效的行号，不进行更新
     }
@@ -97,6 +99,7 @@ int32_t FeatureBlockOpenCV::UnsafeUpdateFeature(int rowToUpdate, const std::vect
         rowToUpdateMat.at<float>(0, i) = newFeature[i];
     }
     m_tag_list_[rowToUpdate] = tag;
+    m_custom_id_list_[rowToUpdate] = customId;
 
     return HSUCCEED;
 }
@@ -146,6 +149,7 @@ int32_t FeatureBlockOpenCV::SearchNearest(const std::vector<float>& queryFeature
         searchResult.score = maxScore;
         searchResult.index = maxScoreIndex;
         searchResult.tag = m_tag_list_[maxScoreIndex];
+        searchResult.customId = m_custom_id_list_[maxScoreIndex];
 
         return HSUCCEED; // 表示找到了最大分数
     }

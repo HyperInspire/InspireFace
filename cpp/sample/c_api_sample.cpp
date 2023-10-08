@@ -54,7 +54,7 @@ int main() {
 
         std::vector<std::string> names = {
                 "test_res/images/kun.jpg",
-                "test_res/images/Kunkun.jpg",
+                "test_res/images/yifei.jpg",
         };
         HInt32 featureNum;
         HF_FaceContextGetFeatureNum(ctxHandle, &featureNum);
@@ -92,14 +92,13 @@ int main() {
             cv::waitKey(0);
 
 
-            HF_FaceFeature feature;
-            ret = HF_FaceContextFaceExtract(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], &feature);
+            ret = HF_FaceContextFaceExtractCpy(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], featuresCache[i]);
+
+            std::cout << std::endl;
             if (ret != HSUCCEED) {
                 LOGE("特征提取有问题: %d", ret);
                 return -1;
             }
-
-            memcpy(featuresCache[i], feature.feature, feature.size);
 
             ret = HF_ReleaseImageStream(imageSteamHandle);
             if (ret == HSUCCEED) {
@@ -115,9 +114,9 @@ int main() {
         HF_FaceFeature compFeature1 = {0};
         HF_FaceFeature compFeature2 = {0};
         compFeature1.size = featureNum;
-        compFeature1.feature = featuresCache[0];
+        compFeature1.data = featuresCache[0];
         compFeature2.size = featureNum;
-        compFeature2.feature = featuresCache[1];
+        compFeature2.data = featuresCache[1];
         ret = HF_FaceContextComparison(ctxHandle, compFeature1, compFeature2, &compResult);
         if (ret != HSUCCEED) {
             LOGE("对比失败: %d", ret);

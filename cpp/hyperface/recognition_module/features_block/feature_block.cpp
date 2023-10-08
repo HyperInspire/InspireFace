@@ -37,6 +37,7 @@ FeatureBlock *FeatureBlock::Create(const MatrixCore crop_type, int32_t features_
         p->m_feature_length_ = feature_length;      // 人脸特征长度（默认512）
         p->m_feature_state_.resize(features_max, FEATURE_STATE::IDLE);
         p->m_tag_list_.resize(features_max, "None");
+        p->m_custom_id_list_.resize(features_max, -1);
     } else {
         LOGE("Create FeatureBlock error.");
     }

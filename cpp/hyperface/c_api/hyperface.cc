@@ -165,10 +165,42 @@ HResult HF_FaceContextFaceExtract(HContextHandle ctxHandle, HImageHandle streamH
     data.data = singleFace.data;
     auto ret = ctx->impl.FaceFeatureExtract(stream->impl, data);
     feature->size = ctx->impl.GetFaceFeatureCache().size();
-    feature->feature = (HFloat *)ctx->impl.GetFaceFeatureCache().data();
+    feature->data = (HFloat *)ctx->impl.GetFaceFeatureCache().data();
 
     return ret;
 }
+
+
+HResult HF_FaceContextFaceExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, HPFloat feature) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (streamHandle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_CameraStream *stream = (HF_CameraStream* ) streamHandle;
+    if (stream == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    if (singleFace.data == nullptr || singleFace.size <= 0) {
+        return HERR_INVALID_FACE_TOKEN;
+    }
+    hyper::FaceBasicData data;
+    data.dataSize = singleFace.size;
+    data.data = singleFace.data;
+    auto ret = ctx->impl.FaceFeatureExtract(stream->impl, data);
+    for (int i = 0; i < ctx->impl.GetFaceFeatureCache().size(); ++i) {
+        feature[i] = ctx->impl.GetFaceFeatureCache()[i];
+    }
+
+    return ret;
+}
+
+
 
 HResult HF_FaceContextComparison(HContextHandle ctxHandle, HF_FaceFeature feature1, HF_FaceFeature feature2, HPFloat result) {
     if (ctxHandle == nullptr) {
@@ -178,14 +210,14 @@ HResult HF_FaceContextComparison(HContextHandle ctxHandle, HF_FaceFeature featur
     if (ctx == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
-    if (feature1.feature == nullptr || feature2.feature == nullptr) {
+    if (feature1.data == nullptr || feature2.data == nullptr) {
         return HERR_INVALID_FACE_FEATURE;
     }
     if (feature1.size != feature2.size) {
         return HERR_INVALID_FACE_FEATURE;
     }
     float res = -1.0f;
-    auto ret = ctx->impl.FaceRecognitionModule()->CosineSimilarity(feature1.feature, feature2.feature, feature1.size, res);
+    auto ret = ctx->impl.FaceRecognitionModule()->CosineSimilarity(feature1.data, feature2.data, feature1.size, res);
     *result = res;
 
     return ret;
