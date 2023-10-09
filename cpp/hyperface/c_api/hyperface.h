@@ -203,6 +203,13 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextFeatureUpdate(
         HF_FaceFeatureIdentity featureIdentity              // [in]
 );
 
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextGetFeatureIdentity(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HInt32 customId,                                    // [in]
+        Ptr_HF_FaceFeatureIdentity mostSimilar              // [out]
+
+);
+
 /********************************DEBUG****************************************/
 
 HYPER_CAPI_EXPORT extern void HF_DeBugImageStreamImShow(
