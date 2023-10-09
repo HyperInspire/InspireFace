@@ -110,6 +110,19 @@ int32_t FaceRecognition::RegisterFaceFeature(const std::vector<float>& feature, 
     return result;
 }
 
+int32_t FaceRecognition::InsertFaceFeature(const std::vector<float>& feature, const std::string &tag, int32_t customId) {
+    int32_t ret;
+    for (int i = 0; i < m_feature_matrix_list_.size(); ++i) {
+        auto &block = m_feature_matrix_list_[i];
+        ret = block->AddFeature(feature, tag, customId);
+        if (ret != HERR_CTX_REC_BLOCK_FULL) {
+            break;
+        }
+    }
+
+    return ret;
+}
+
 int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold, bool mostSimilar) {
     if (queryFeature.size() != NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_FEAT_SIZE_ERR; // 查询特征大小与预期不符
@@ -235,6 +248,8 @@ void FaceRecognition::PrintFeatureMatrixInfo() {
 const std::shared_ptr<Extract> &FaceRecognition::getMExtract() const {
     return m_extract_;
 }
+
+
 
 
 } // namespace hyper

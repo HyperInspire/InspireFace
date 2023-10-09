@@ -148,6 +148,12 @@ typedef struct HF_FaceFeature {
     HPFloat data;
 } HF_FaceFeature, *Ptr_HF_FaceFeature;
 
+typedef struct HF_FaceFeatureIdentity {
+    HInt32 customId;
+    HString tag;
+    Ptr_HF_FaceFeature feature;
+} HF_FaceFeatureIdentity, *Ptr_HF_FaceFeatureIdentity;
+
 
 HYPER_CAPI_EXPORT extern HResult HF_FaceContextFaceExtract(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
@@ -173,6 +179,18 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextComparison(
 HYPER_CAPI_EXPORT extern HResult HF_FaceContextGetFeatureNum(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HPInt32 num                                         // [out]
+);
+
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextInsertFeature(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HF_FaceFeatureIdentity featureIdentity              // [in]
+);
+
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextFeatureSearch(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HF_FaceFeature searchFeature,                       // [in]
+        HPFloat confidence,                                  // [out]
+        Ptr_HF_FaceFeatureIdentity mostSimilar              // [out]
 );
 
 /********************************DEBUG****************************************/

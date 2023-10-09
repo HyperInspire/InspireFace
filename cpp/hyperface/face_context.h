@@ -54,6 +54,8 @@ public:
 
     int32_t FaceFeatureExtract(CameraStream &image, FaceBasicData& data);
 
+    int32_t SearchFaceFeature(const Embedded& queryFeature, SearchResult &searchResult);
+
 public:
     const std::vector<ByteArray>& GetDetectCache() const;
     const std::vector<FaceBasicData>& GetFaceBasicDataCache() const;
@@ -66,6 +68,9 @@ public:
     const std::vector<float>& GetMaskResultsCache() const;
     const std::vector<float>& GetRgbLivenessResultsCache() const;
     const Embedded& GetFaceFeatureCache() const;
+    const Embedded& GetSearchFaceFeatureCache() const;
+
+    char* GetStringCache();
 
 private:
 
@@ -83,6 +88,10 @@ private:
 
     std::shared_ptr<FacePipeline> m_face_pipeline_;
 
+    float m_recognition_threshold_ = 0.48f;
+
+    bool m_search_most_similar_ = true;
+
 private:
     // 缓存数据
     std::vector<ByteArray> m_detect_cache_;
@@ -97,6 +106,9 @@ private:
     std::vector<float> m_rgb_liveness_results_cache_;
 
     Embedded m_face_feature_cache_;
+    Embedded m_search_face_feature_cache_;
+
+    char m_string_cache_[256];
 };
 
 }   // namespace hyper
