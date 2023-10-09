@@ -37,6 +37,7 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
             param.enable_interaction_liveness
     );
 
+    m_face_feature_ptr_cache_ = std::make_shared<FaceFeatureEntity>();
 
     return HSUCCEED;
 }
@@ -187,9 +188,14 @@ const Embedded& FaceContext::GetSearchFaceFeatureCache() const {
     return m_search_face_feature_cache_;
 }
 
- char *FaceContext::GetStringCache() {
+char *FaceContext::GetStringCache() {
     return m_string_cache_;
 }
+
+const std::shared_ptr<FaceFeaturePtr>& FaceContext::GetFaceFeaturePtrCache() const {
+    return m_face_feature_ptr_cache_;
+}
+
 
 int32_t FaceContext::FaceFeatureExtract(CameraStream &image, FaceBasicData& data) {
     int32_t ret;
@@ -220,6 +226,26 @@ int32_t FaceContext::SearchFaceFeature(const Embedded &queryFeature, SearchResul
     return ret;
 }
 
+int32_t FaceContext::FaceFeatureRemoveFromCustomId(int32_t customId) {
+    auto index = m_face_recognition_->FindFeatureIndexByCustomId(customId);
+    if (index == -1) {
+        return HERR_CTX_REC_INVALID_INDEX;
+    }
+    auto ret = m_face_recognition_->DeleteFaceFeature(index);
+
+    return ret;
+}
+
+int32_t FaceContext::FaceFeatureUpdateFromCustomId(const std::vector<float> &feature, const std::string &tag,
+                                                   int32_t customId) {
+    auto index = m_face_recognition_->FindFeatureIndexByCustomId(customId);
+    if (index == -1) {
+        return HERR_CTX_REC_INVALID_INDEX;
+    }
+    auto ret = m_face_recognition_->UpdateFaceFeature(feature, index, tag, customId);
+
+    return ret;
+}
 
 
 }   // namespace hyper

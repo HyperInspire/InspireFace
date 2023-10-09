@@ -6,8 +6,6 @@
 #include "htypedef.h"
 #include "hyperface_internal.h"
 
-static std::mutex mtx;
-
 HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HImageHandle* handle) {
     auto stream = new HF_CameraStream();
     if (data->rotation == 1) {
@@ -280,14 +278,49 @@ HResult HF_FaceContextFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature sea
     }
     hyper::SearchResult result;
     HInt32 ret = ctx->impl.SearchFaceFeature(feat, result);
-    mtx.lock();
-    mostSimilar->feature = globalFaceFeature.get();
+    mostSimilar->feature = (HF_FaceFeature* )ctx->impl.GetFaceFeaturePtrCache().get();
     mostSimilar->feature->data = (HFloat* )ctx->impl.GetSearchFaceFeatureCache().data();
     mostSimilar->feature->size = ctx->impl.GetSearchFaceFeatureCache().size();
-    mtx.unlock();
     mostSimilar->tag = ctx->impl.GetStringCache();
     mostSimilar->customId = result.customId;
     *confidence = result.score;
+
+    return ret;
+}
+
+HResult HF_FaceContextFeatureRemove(HContextHandle ctxHandle, HInt32 customId) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    auto *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+
+    auto ret = ctx->impl.FaceFeatureRemoveFromCustomId(customId);
+
+    return ret;
+}
+
+HResult HF_FaceContextFeatureUpdate(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    auto *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (featureIdentity.feature->data == nullptr) {
+        return HERR_INVALID_FACE_FEATURE;
+    }
+    std::vector<float> feat;
+    feat.reserve(featureIdentity.feature->size);
+    for (int i = 0; i < featureIdentity.feature->size; ++i) {
+        feat.push_back(featureIdentity.feature->data[i]);
+    }
+    std::string tag(featureIdentity.tag);
+
+    auto ret = ctx->impl.FaceFeatureUpdateFromCustomId(feat, tag, featureIdentity.customId);
 
     return ret;
 }

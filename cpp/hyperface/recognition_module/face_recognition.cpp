@@ -250,6 +250,21 @@ const std::shared_ptr<Extract> &FaceRecognition::getMExtract() const {
 }
 
 
+int32_t FaceRecognition::FindFeatureIndexByCustomId(int32_t customId) {
+    // 遍历所有的 FeatureBlock
+    for (int blockIndex = 0; blockIndex < m_feature_matrix_list_.size(); ++blockIndex) {
+        int startIndex = blockIndex * NUM_OF_FEATURES_IN_BLOCK;
+
+        // 从当前 FeatureBlock 查询 customId
+        int rowIndex = m_feature_matrix_list_[blockIndex]->FindIndexByCustomId(customId);
+
+        if (rowIndex != -1) {
+            return startIndex + rowIndex;  // 返回行号
+        }
+    }
+
+    return -1;  // 如果所有 FeatureBlock 中都没有找到，则返回-1
+}
 
 
 } // namespace hyper

@@ -56,6 +56,10 @@ public:
 
     int32_t SearchFaceFeature(const Embedded& queryFeature, SearchResult &searchResult);
 
+    int32_t FaceFeatureRemoveFromCustomId(int32_t customId);
+
+    int32_t FaceFeatureUpdateFromCustomId(const std::vector<float>& feature, const std::string &tag, int32_t customId);
+
 public:
     const std::vector<ByteArray>& GetDetectCache() const;
     const std::vector<FaceBasicData>& GetFaceBasicDataCache() const;
@@ -70,7 +74,11 @@ public:
     const Embedded& GetFaceFeatureCache() const;
     const Embedded& GetSearchFaceFeatureCache() const;
 
+    const std::shared_ptr<FaceFeaturePtr>& GetFaceFeaturePtrCache() const;
+
     char* GetStringCache();
+
+
 
 private:
 
@@ -107,6 +115,8 @@ private:
 
     Embedded m_face_feature_cache_;
     Embedded m_search_face_feature_cache_;
+
+    std::shared_ptr<FaceFeaturePtr> m_face_feature_ptr_cache_;
 
     char m_string_cache_[256];
 };

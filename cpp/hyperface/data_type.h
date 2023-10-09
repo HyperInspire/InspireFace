@@ -98,6 +98,11 @@ typedef struct FaceBasicData {
     void* data;
 } FaceBasicData;
 
+typedef struct FaceFeatureEntity {
+    int32_t dataSize;
+    float *data;
+} FaceFeaturePtr;
+
 /** @} */
 
 }  // namespace yh

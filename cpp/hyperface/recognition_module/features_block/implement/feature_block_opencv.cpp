@@ -55,6 +55,7 @@ int32_t FeatureBlockOpenCV::UnsafeDeleteFeature(int rowToDelete) {
     }
 
     m_feature_state_[rowToDelete] = FEATURE_STATE::IDLE;
+    m_custom_id_list_[rowToDelete] = -1;
 
     return HSUCCEED;
 }

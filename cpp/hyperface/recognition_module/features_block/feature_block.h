@@ -6,7 +6,9 @@
 #define HYPERFACEREPO_FEATUREBLOCK_H
 #include <mutex>
 #include <iostream>
+#include <algorithm>
 #include "data_type.h"
+
 
 namespace hyper {
 
@@ -100,7 +102,13 @@ public:
     }
 
 
-
+    size_t FindIndexByCustomId(int32_t customId) {
+        auto it = std::find(m_custom_id_list_.begin(), m_custom_id_list_.end(), customId);
+        if (it != m_custom_id_list_.end()) {
+            return std::distance(m_custom_id_list_.begin(), it);  // 返回索引
+        }
+        return -1;
+    }
 
 protected:
     virtual int32_t UnsafeAddFeature(const std::vector<float>& feature, const std::string &tag, int32_t customId) = 0;
