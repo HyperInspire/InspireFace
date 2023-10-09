@@ -41,6 +41,8 @@ public:
 
     int32_t GetFaceFeatureCount();
 
+    int32_t FindFeatureIndexByCustomId(int32_t customId);
+
     void PrintFeatureMatrixInfo();
 
     const std::shared_ptr<Extract> &getMExtract() const;

@@ -211,6 +211,27 @@ int search() {
         return -1;
     }
 
+    // 删除测试
+//    ret = HF_FaceContextFeatureRemove(ctxHandle, 3);
+//    if (ret != HSUCCEED) {
+//        LOGE("删除失败: %ld", ret);
+//    }
+
+    // 修改测试
+    std::string newName = "老六";
+    char *newTagName = new char[newName.size() + 1];
+    std::strcpy(newTagName, newName.c_str());
+    HF_FaceFeatureIdentity updateIdentity = {0};
+    updateIdentity.customId = 1;
+    updateIdentity.tag = newTagName;
+    updateIdentity.feature = &feature;
+    ret = HF_FaceContextFeatureUpdate(ctxHandle, updateIdentity);
+    if (ret != HSUCCEED) {
+        LOGE("更新失败: %ld", ret);
+    }
+    delete[] newTagName;
+
+
     HF_FaceFeatureIdentity searchIdentity = {0};
 //    HF_FaceFeature featureSearched = {0};
 //    searchIdentity.feature = &featureSearched;
