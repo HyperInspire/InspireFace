@@ -6,6 +6,7 @@
 #include "htypedef.h"
 #include "hyperface_internal.h"
 
+static std::mutex mtx;
 
 HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HImageHandle* handle) {
     auto stream = new HF_CameraStream();
@@ -234,4 +235,59 @@ HResult HF_FaceContextGetFeatureNum(HContextHandle ctxHandle, HPInt32 num) {
     *num = ctx->impl.FaceRecognitionModule()->GetFeatureNum();
 
     return HSUCCEED;
+}
+
+
+HResult HF_FaceContextInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    auto *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (featureIdentity.feature->data == nullptr) {
+        return HERR_INVALID_FACE_FEATURE;
+    }
+    std::vector<float> feat;
+    feat.reserve(featureIdentity.feature->size);
+    for (int i = 0; i < featureIdentity.feature->size; ++i) {
+        feat.push_back(featureIdentity.feature->data[i]);
+    }
+    std::string tag(featureIdentity.tag);
+    HInt32 ret = ctx->impl.FaceRecognitionModule()->InsertFaceFeature(feat, tag, featureIdentity.customId);
+
+    return ret;
+}
+
+static const std::shared_ptr<HF_FaceFeature> globalFaceFeature = std::make_shared<HF_FaceFeature>();
+
+HResult HF_FaceContextFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature searchFeature, HPFloat confidence, Ptr_HF_FaceFeatureIdentity mostSimilar) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    auto *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (searchFeature.data == nullptr) {
+        return HERR_INVALID_FACE_FEATURE;
+    }
+    std::vector<float> feat;
+    feat.reserve(searchFeature.size);
+    for (int i = 0; i < searchFeature.size; ++i) {
+        feat.push_back(searchFeature.data[i]);
+    }
+    hyper::SearchResult result;
+    HInt32 ret = ctx->impl.SearchFaceFeature(feat, result);
+    mtx.lock();
+    mostSimilar->feature = globalFaceFeature.get();
+    mostSimilar->feature->data = (HFloat* )ctx->impl.GetSearchFaceFeatureCache().data();
+    mostSimilar->feature->size = ctx->impl.GetSearchFaceFeatureCache().size();
+    mtx.unlock();
+    mostSimilar->tag = ctx->impl.GetStringCache();
+    mostSimilar->customId = result.customId;
+    *confidence = result.score;
+
+    return ret;
 }

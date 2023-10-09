@@ -33,6 +33,8 @@ public:
 
     int32_t SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold = 0.5f, bool mostSimilar=true);
 
+    int32_t InsertFaceFeature(const std::vector<float>& feature, const std::string &tag, int32_t customId);
+
     int32_t DeleteFaceFeature(int featureIndex);
 
     int32_t GetFaceFeature(int featureIndex, Embedded &feature);
@@ -45,6 +47,7 @@ public:
 
     int32_t GetFeatureNum();
 
+
 private:
     int32_t InitExtractInteraction(Model *model);
 
@@ -53,7 +56,6 @@ private:
     std::shared_ptr<Extract> m_extract_;
 
     std::vector<std::shared_ptr<FeatureBlock>> m_feature_matrix_list_;
-
 
     // 临时固定
     const int32_t NUM_OF_FEATURES_IN_BLOCK = 512;

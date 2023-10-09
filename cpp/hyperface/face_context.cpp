@@ -183,6 +183,14 @@ const Embedded& FaceContext::GetFaceFeatureCache() const {
     return m_face_feature_cache_;
 }
 
+const Embedded& FaceContext::GetSearchFaceFeatureCache() const {
+    return m_search_face_feature_cache_;
+}
+
+ char *FaceContext::GetStringCache() {
+    return m_string_cache_;
+}
+
 int32_t FaceContext::FaceFeatureExtract(CameraStream &image, FaceBasicData& data) {
     int32_t ret;
     HyperFaceData face = {0};
@@ -195,6 +203,23 @@ int32_t FaceContext::FaceFeatureExtract(CameraStream &image, FaceBasicData& data
 
     return ret;
 }
+
+int32_t FaceContext::SearchFaceFeature(const Embedded &queryFeature, SearchResult &searchResult) {
+    Embedded().swap(m_search_face_feature_cache_);
+    std::memset(m_string_cache_, 0, sizeof(m_string_cache_)); // 初始化为0
+    auto ret = m_face_recognition_->SearchFaceFeature(queryFeature, searchResult, m_recognition_threshold_, m_search_most_similar_);
+    if (ret == HSUCCEED) {
+        m_face_recognition_->GetFaceFeature(searchResult.index, m_search_face_feature_cache_);
+        // 确保不会出现缓冲区溢出
+        size_t copy_length = std::min(searchResult.tag.size(), sizeof(m_string_cache_) - 1);
+        std::strncpy(m_string_cache_, searchResult.tag.c_str(), copy_length);
+        // 确保字符串以空字符结束
+        m_string_cache_[copy_length] = '\0';
+    }
+
+    return ret;
+}
+
 
 
 }   // namespace hyper
