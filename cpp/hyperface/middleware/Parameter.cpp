@@ -2,7 +2,7 @@
 // Created by tunm on 2023/5/5.
 //
 
-#include "Parameter.h"
+#include "parameter.h"
 
 namespace hyper {
 

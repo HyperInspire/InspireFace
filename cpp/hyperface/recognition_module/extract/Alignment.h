@@ -5,7 +5,7 @@
 #ifndef BIGGUYSMAIN_ALIGNMENT_H
 #define BIGGUYSMAIN_ALIGNMENT_H
 
-#include "DataType.h"
+#include "data_type.h"
 
 namespace hyper {
 
