@@ -84,16 +84,16 @@ HResult HF_ReleaseFaceContext(HContextHandle handle) {
     return HSUCCEED;
 }
 
-HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, Ptr_HF_ContextCustomParameter parameter, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
+HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, HF_ContextCustomParameter parameter, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
     hyper::ContextCustomParameter param;
-    param.enable_mask_detect = parameter->enable_mask_detect;
-    param.enable_age = parameter->enable_age;
-    param.enable_liveness = parameter->enable_liveness;
-    param.enable_face_quality = parameter->enable_face_quality;
-    param.enable_gender = parameter->enable_gender;
-    param.enable_interaction_liveness = parameter->enable_interaction_liveness;
-    param.enable_ir_liveness = parameter->enable_ir_liveness;
-    param.enable_recognition = parameter->enable_recognition;
+    param.enable_mask_detect = parameter.enable_mask_detect;
+    param.enable_age = parameter.enable_age;
+    param.enable_liveness = parameter.enable_liveness;
+    param.enable_face_quality = parameter.enable_face_quality;
+    param.enable_gender = parameter.enable_gender;
+    param.enable_interaction_liveness = parameter.enable_interaction_liveness;
+    param.enable_ir_liveness = parameter.enable_ir_liveness;
+    param.enable_recognition = parameter.enable_recognition;
     hyper::DetectMode detMode = hyper::DETECT_MODE_IMAGE;
     if (detectMode == HF_DETECT_MODE_VIDEO) {
         detMode = hyper::DETECT_MODE_VIDEO;
@@ -141,7 +141,7 @@ HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle stream
     return ret;
 }
 
-HResult HF_FaceContextFaceExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature) {
+HResult HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -170,7 +170,7 @@ HResult HF_FaceContextFaceExtract(HContextHandle ctxHandle, HImageHandle streamH
 }
 
 
-HResult HF_FaceContextFaceExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, HPFloat feature) {
+HResult HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, HPFloat feature) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -201,7 +201,7 @@ HResult HF_FaceContextFaceExtractCpy(HContextHandle ctxHandle, HImageHandle stre
 
 
 
-HResult HF_FaceContextComparison(HContextHandle ctxHandle, HF_FaceFeature feature1, HF_FaceFeature feature2, HPFloat result) {
+HResult HF_FaceComparison1v1(HContextHandle ctxHandle, HF_FaceFeature feature1, HF_FaceFeature feature2, HPFloat result) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -222,7 +222,7 @@ HResult HF_FaceContextComparison(HContextHandle ctxHandle, HF_FaceFeature featur
     return ret;
 }
 
-HResult HF_FaceContextGetFeatureNum(HContextHandle ctxHandle, HPInt32 num) {
+HResult HF_GetFeatureLength(HContextHandle ctxHandle, HPInt32 num) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -236,7 +236,7 @@ HResult HF_FaceContextGetFeatureNum(HContextHandle ctxHandle, HPInt32 num) {
 }
 
 
-HResult HF_FaceContextInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity) {
+HResult HF_FeaturesGroupInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -260,7 +260,7 @@ HResult HF_FaceContextInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureIden
 
 static const std::shared_ptr<HF_FaceFeature> globalFaceFeature = std::make_shared<HF_FaceFeature>();
 
-HResult HF_FaceContextFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature searchFeature, HPFloat confidence, Ptr_HF_FaceFeatureIdentity mostSimilar) {
+HResult HF_FeaturesGroupFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature searchFeature, HPFloat confidence, Ptr_HF_FaceFeatureIdentity mostSimilar) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -288,7 +288,7 @@ HResult HF_FaceContextFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature sea
     return ret;
 }
 
-HResult HF_FaceContextFeatureRemove(HContextHandle ctxHandle, HInt32 customId) {
+HResult HF_FeaturesGroupFeatureRemove(HContextHandle ctxHandle, HInt32 customId) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -302,7 +302,7 @@ HResult HF_FaceContextFeatureRemove(HContextHandle ctxHandle, HInt32 customId) {
     return ret;
 }
 
-HResult HF_FaceContextFeatureUpdate(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity) {
+HResult HF_FeaturesGroupFeatureUpdate(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -324,3 +324,77 @@ HResult HF_FaceContextFeatureUpdate(HContextHandle ctxHandle, HF_FaceFeatureIden
 
     return ret;
 }
+
+HResult HF_FeaturesGroupGetFeatureIdentity(HContextHandle ctxHandle, HInt32 customId, Ptr_HF_FaceFeatureIdentity identity) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    auto *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    auto ret = ctx->impl.GetFaceFeatureFromCustomId(customId);
+    identity->feature = (HF_FaceFeature* )ctx->impl.GetFaceFeaturePtrCache().get();
+    identity->feature->data = (HFloat* )ctx->impl.GetSearchFaceFeatureCache().data();
+    identity->feature->size = ctx->impl.GetSearchFaceFeatureCache().size();
+
+    return ret;
+}
+
+HResult HF_MultipleFacePipelineProcess(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData faces, HF_ContextCustomParameter parameter) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (streamHandle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_CameraStream *stream = (HF_CameraStream* ) streamHandle;
+    if (stream == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    if (faces->detectedNum <= 0 || faces->tokens->data == nullptr) {
+        return HERR_INVALID_FACE_LIST;
+    }
+    hyper::ContextCustomParameter param;
+    param.enable_mask_detect = parameter.enable_mask_detect;
+    param.enable_age = parameter.enable_age;
+    param.enable_liveness = parameter.enable_liveness;
+    param.enable_face_quality = parameter.enable_face_quality;
+    param.enable_gender = parameter.enable_gender;
+    param.enable_interaction_liveness = parameter.enable_interaction_liveness;
+    param.enable_ir_liveness = parameter.enable_ir_liveness;
+    param.enable_recognition = parameter.enable_recognition;
+
+    HResult ret;
+    std::vector<hyper::HyperFaceData> data;
+    data.resize(faces->detectedNum);
+    for (int i = 0; i < faces->detectedNum; ++i) {
+        auto &face = data[i];
+        ret = DeserializeHyperFaceData((char* )faces->tokens[i].data, faces->tokens[i].size, face);
+        if (ret != HSUCCEED) {
+            return HERR_INVALID_FACE_TOKEN;
+        }
+    }
+
+    ret = ctx->impl.FacesProcess(stream->impl, data, param);
+
+    return ret;
+
+}
+
+HResult HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLivenessConfidence) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+
+
+}
+

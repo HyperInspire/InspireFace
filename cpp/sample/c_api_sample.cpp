@@ -16,18 +16,17 @@ int compare() {
     parameter.enable_recognition = 1;
     HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // 选择图像模式 即总是检测
     HContextHandle ctxHandle;
-    ret = HF_CreateFaceContextFromResourceFile(path, &parameter, detMode, 3, &ctxHandle);
+    ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
     if (ret != HSUCCEED) {
         LOGD("An error occurred while creating ctx: %ld", ret);
     }
-
 
     std::vector<std::string> names = {
             "test_res/images/kun.jpg",
             "test_res/images/yifei.jpg",
     };
     HInt32 featureNum;
-    HF_FaceContextGetFeatureNum(ctxHandle, &featureNum);
+    HF_GetFeatureLength(ctxHandle, &featureNum);
     LOGD("特征长度: %d", featureNum);
     HFloat featuresCache[names.size()][featureNum];     // 存储缓存的向量
 
@@ -62,7 +61,7 @@ int compare() {
         cv::waitKey(0);
 
 
-        ret = HF_FaceContextFaceExtractCpy(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], featuresCache[i]);
+        ret = HF_FaceFeatureExtractCpy(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], featuresCache[i]);
 
         std::cout << std::endl;
         if (ret != HSUCCEED) {
@@ -87,7 +86,7 @@ int compare() {
     compFeature1.data = featuresCache[0];
     compFeature2.size = featureNum;
     compFeature2.data = featuresCache[1];
-    ret = HF_FaceContextComparison(ctxHandle, compFeature1, compFeature2, &compResult);
+    ret = HF_FaceComparison1v1(ctxHandle, compFeature1, compFeature2, &compResult);
     if (ret != HSUCCEED) {
         LOGE("对比失败: %d", ret);
         return -1;
@@ -112,7 +111,7 @@ int search() {
     parameter.enable_recognition = 1;
     HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // 选择图像模式 即总是检测
     HContextHandle ctxHandle;
-    ret = HF_CreateFaceContextFromResourceFile(path, &parameter, detMode, 3, &ctxHandle);
+    ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
     if (ret != HSUCCEED) {
         LOGD("An error occurred while creating ctx: %ld", ret);
     }
@@ -151,7 +150,7 @@ int search() {
         }
 
         HF_FaceFeature feature = {0};
-        ret = HF_FaceContextFaceExtract(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], &feature);
+        ret = HF_FaceFeatureExtract(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], &feature);
         if (ret != HSUCCEED) {
             LOGE("特征提取出错: %ld", ret);
             return -1;
@@ -164,7 +163,7 @@ int search() {
         identity.customId = i;
         identity.tag = tagName;
 
-        ret = HF_FaceContextInsertFeature(ctxHandle, identity);
+        ret = HF_FeaturesGroupInsertFeature(ctxHandle, identity);
         if (ret != HSUCCEED) {
             LOGE("插入失败: %ld", ret);
             return -1;
@@ -205,7 +204,7 @@ int search() {
     }
 
     HF_FaceFeature feature = {0};
-    ret = HF_FaceContextFaceExtract(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], &feature);
+    ret = HF_FaceFeatureExtract(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], &feature);
     if (ret != HSUCCEED) {
         LOGE("特征提取出错: %ld", ret);
         return -1;
@@ -225,7 +224,7 @@ int search() {
     updateIdentity.customId = 1;
     updateIdentity.tag = newTagName;
     updateIdentity.feature = &feature;
-    ret = HF_FaceContextFeatureUpdate(ctxHandle, updateIdentity);
+    ret = HF_FeaturesGroupFeatureUpdate(ctxHandle, updateIdentity);
     if (ret != HSUCCEED) {
         LOGE("更新失败: %ld", ret);
     }
@@ -236,7 +235,7 @@ int search() {
 //    HF_FaceFeature featureSearched = {0};
 //    searchIdentity.feature = &featureSearched;
     HFloat confidence;
-    ret = HF_FaceContextFeatureSearch(ctxHandle, feature, &confidence, &searchIdentity);
+    ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchIdentity);
     if (ret != HSUCCEED) {
         LOGE("搜索失败: %ld", ret);
         return -1;
@@ -245,6 +244,14 @@ int search() {
     LOGD("搜索置信度: %f", confidence);
     LOGD("匹配到的tag: %s", searchIdentity.tag);
     LOGD("匹配到的customId: %d", searchIdentity.customId);
+
+
+    // Face Pipeline
+    ret = HF_MultipleFacePipelineProcess(ctxHandle, imageSteamHandle, &multipleFaceData, parameter);
+    if (ret != HSUCCEED) {
+        LOGE("pipeline执行失败: %ld", ret);
+        return -1;
+    }
 
     ret = HF_ReleaseImageStream(imageSteamHandle);
     if (ret == HSUCCEED) {

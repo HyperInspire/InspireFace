@@ -41,10 +41,6 @@ float RBGAntiSpoofing::operator()(const Matrix &bgr_affine27) {
         auto sm = softmax(outputs[0].second);
         return sm[1];
     } else {
-        for (int i = 0; i < 3; ++i) {
-            std::cout << outputs[0].second[i] << ", ";
-        }
-        std::cout << std::endl;
         return outputs[0].second[1];
     }
 }

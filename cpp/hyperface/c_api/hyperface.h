@@ -103,6 +103,19 @@ enum HF_DetectMode {
     HF_DETECT_MODE_VIDEO,          ///< 视频检测模式 即 Face track
 };
 
+HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
+        HString resourceFile,                           // [in] Resource file path - 资源文件路径
+        HF_ContextCustomParameter parameter,            // [in]
+        HF_DetectMode detectMode,                       // [in]
+        HInt32 maxDetectFaceNum,                        // [in]
+        HContextHandle *handle                          // [out] Return a ctx handle
+);
+
+
+HYPER_CAPI_EXPORT extern HResult HF_ReleaseFaceContext(
+        HContextHandle handle                          // [in] Return a ctx handle
+);
+
 
 typedef struct HF_FaceBasicToken {
     HInt32 size;
@@ -116,22 +129,7 @@ typedef struct HF_MultipleFaceData {
     HInt32 *trackIds;
     HFaceEulerAngle angles;
     Ptr_HF_FaceBasicToken tokens;
-}HF_MultipleFaceData, *Ptr_HF_MultipleFaceData;
-
-
-HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
-        HString resourceFile,                           // [in] Resource file path - 资源文件路径
-        Ptr_HF_ContextCustomParameter parameter,        // [in]
-        HF_DetectMode detectMode,                       // [in]
-        HInt32 maxDetectFaceNum,                        // [in]
-        HContextHandle *handle                          // [out] Return a ctx handle
-);
-
-
-HYPER_CAPI_EXPORT extern HResult HF_ReleaseFaceContext(
-        HContextHandle handle                          // [in] Return a ctx handle
-);
-
+} HF_MultipleFaceData, *Ptr_HF_MultipleFaceData;
 
 HYPER_CAPI_EXPORT extern HResult HF_FaceContextRunFaceTrack(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
@@ -155,60 +153,81 @@ typedef struct HF_FaceFeatureIdentity {
 } HF_FaceFeatureIdentity, *Ptr_HF_FaceFeatureIdentity;
 
 
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextFaceExtract(
+HYPER_CAPI_EXPORT extern HResult HF_FaceFeatureExtract(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HImageHandle streamHandle,                          // [in] DataBuffer handle - 相机流组件的句柄指针
         HF_FaceBasicToken singleFace,                       // [in]
         Ptr_HF_FaceFeature feature                          // [out]
 );
 
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextFaceExtractCpy(
+HYPER_CAPI_EXPORT extern HResult HF_FaceFeatureExtractCpy(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HImageHandle streamHandle,                          // [in] DataBuffer handle - 相机流组件的句柄指针
         HF_FaceBasicToken singleFace,                       // [in]
         HPFloat feature                                     // [out]
 );
 
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextComparison(
+HYPER_CAPI_EXPORT extern HResult HF_FaceComparison1v1(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HF_FaceFeature feature1,                            // [in]
         HF_FaceFeature feature2,                            // [in]
         HPFloat result                                      // [out]
 );
 
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextGetFeatureNum(
+HYPER_CAPI_EXPORT extern HResult HF_GetFeatureLength(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HPInt32 num                                         // [out]
 );
 
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextInsertFeature(
+HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupInsertFeature(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HF_FaceFeatureIdentity featureIdentity              // [in]
 );
 
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextFeatureSearch(
+HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupFeatureSearch(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HF_FaceFeature searchFeature,                       // [in]
         HPFloat confidence,                                  // [out]
         Ptr_HF_FaceFeatureIdentity mostSimilar              // [out]
 );
 
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextFeatureRemove(
+HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupFeatureRemove(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HInt32 customId                                     // [in]
 );
 
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextFeatureUpdate(
+HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupFeatureUpdate(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HF_FaceFeatureIdentity featureIdentity              // [in]
 );
 
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextGetFeatureIdentity(
+HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupGetFeatureIdentity(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HInt32 customId,                                    // [in]
-        Ptr_HF_FaceFeatureIdentity mostSimilar              // [out]
-
+        Ptr_HF_FaceFeatureIdentity identity                 // [out]
 );
+
+/************************************************************************
+* Face Pipeline
+************************************************************************/
+
+HYPER_CAPI_EXPORT extern HResult HF_MultipleFacePipelineProcess(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HImageHandle streamHandle,                          // [in] DataBuffer handle - 相机流组件的句柄指针
+        Ptr_HF_MultipleFaceData faces,                      // [in]
+        HF_ContextCustomParameter parameter                 // [in]
+);
+
+typedef struct HF_RGBLivenessConfidence {
+    HInt32 num;
+    HPFloat Confidence;
+} HF_RGBLivenessConfidence, *Ptr_HF_RGBLivenessConfidence;
+
+HYPER_CAPI_EXPORT extern HResult HF_GetRGBLivenessConfidence(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        Ptr_HF_RGBLivenessConfidence                         // [out]
+);
+
 
 /********************************DEBUG****************************************/
 

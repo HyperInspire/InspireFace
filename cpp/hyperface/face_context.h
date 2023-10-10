@@ -60,6 +60,10 @@ public:
 
     int32_t FaceFeatureUpdateFromCustomId(const std::vector<float>& feature, const std::string &tag, int32_t customId);
 
+    int32_t GetFaceFeatureFromCustomId(int32_t customId);
+
+    const CustomPipelineParameter &getMParameter() const;
+
 public:
     const std::vector<ByteArray>& GetDetectCache() const;
     const std::vector<FaceBasicData>& GetFaceBasicDataCache() const;
@@ -77,7 +81,6 @@ public:
     const std::shared_ptr<FaceFeaturePtr>& GetFaceFeaturePtrCache() const;
 
     char* GetStringCache();
-
 
 
 private:
