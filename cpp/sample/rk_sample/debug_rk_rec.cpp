@@ -22,7 +22,7 @@ int main() {
     ModelLoader loader("test_res/model_zip/test_zip_rec");
     {
 
-        auto net = make_shared<RKNNAdapter>();
+        auto net = std::make_shared<RKNNAdapter>();
         net->Initialize(loader.ReadModel(0));
         net->setOutputsWantFloat(1);
 
@@ -72,22 +72,22 @@ int main() {
     }
 
     {
-        shared_ptr<Extract> m_extract_;
+        std::shared_ptr<Extract> m_extract_;
 
         Parameter param;
         param.set<int>("model_index", 0);
-        param.set<string>("input_layer", "input");
-        param.set<vector<string>>("outputs_layers", {"267", });
-        param.set<vector<int>>("input_size", {112, 112});
-        param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
-        param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+        param.set<std::string>("input_layer", "input");
+        param.set<std::vector<std::string>>("outputs_layers", {"267", });
+        param.set<std::vector<int>>("input_size", {112, 112});
+        param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+        param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
         param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
         param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
         param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
         param.set<bool>("nchw", false);
         param.set<bool>("swap_color", true);        // RK需要rgb输入
 
-        m_extract_ = make_shared<Extract>();
+        m_extract_ = std::make_shared<Extract>();
         auto model = loader.ReadModel(0);
         m_extract_->LoadParam(param, model, InferenceHelper::kRknn);
 

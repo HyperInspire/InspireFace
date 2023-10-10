@@ -3,9 +3,9 @@
 //
 
 #include "common/test_settings.h"
-#include "hyperface/common/face_data/DataTools.h"
+#include "hyperface/common/face_data/data_tools.h"
 #include "herror.h"
-#include "hyperface/FaceContext.h"
+#include "hyperface/face_context.h"
 
 using namespace hyper;
 

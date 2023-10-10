@@ -32,7 +32,7 @@ public:
     std::vector<std::string> GetInputNames() override;
 
 private:
-    shared_ptr<RKNNAdapter> net_;
+    std::shared_ptr<RKNNAdapter> net_;
     int32_t num_threads_;
 
 };
