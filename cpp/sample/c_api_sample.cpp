@@ -269,6 +269,7 @@ int search() {
     }
     LOGD("口罩佩戴置信度: %f", maskConfidence.confidence[0]);
 
+    LOGD("人脸特征数量: %d", HF_FeatureGroupGetCount(ctxHandle));
 
     ret = HF_ReleaseImageStream(imageSteamHandle);
     if (ret == HSUCCEED) {

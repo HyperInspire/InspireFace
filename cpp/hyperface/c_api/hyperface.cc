@@ -415,3 +415,18 @@ HResult HF_GetFaceMaskConfidence(HContextHandle ctxHandle, Ptr_HF_FaceMaskConfid
 
     return HSUCCEED;
 }
+
+
+HResult HF_FeatureGroupGetCount(HContextHandle ctxHandle, HInt32* count) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+
+    *count = ctx->impl.FaceRecognitionModule()->GetFaceFeatureCount();
+
+    return HSUCCEED;
+}
