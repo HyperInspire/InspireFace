@@ -16,7 +16,7 @@ int main() {
     int32_t ret = ctx.Configuration(
             "test_res/model_zip/T1_rv1109rv1126",
             DetectMode::DETECT_MODE_VIDEO,
-            1,
+            3,
             param);
     if (ret != HSUCCEED) {
         LOGE("初始化错误");
@@ -24,6 +24,7 @@ int main() {
     cv::Mat frame;
     std::string imageFolder = "test_res/video_frames/";
 
+//    auto video_frame_num = 10;
     auto video_frame_num = 288;
     for (int i = 0; i < video_frame_num; ++i) {
         auto index = i + 1;

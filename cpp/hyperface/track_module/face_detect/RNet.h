@@ -4,8 +4,8 @@
 #pragma once
 #ifndef HYPERFACEREPO_RNET_H
 #define HYPERFACEREPO_RNET_H
-#include "../../DataType.h"
-#include "middleware/AnyNet.h"
+#include "../../data_type.h"
+#include "middleware/any_net.h"
 
 
 namespace hyper {

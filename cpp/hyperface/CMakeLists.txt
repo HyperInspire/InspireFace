@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 14)
 
 option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
-file(GLOB_RECURSE CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/hyperface.cc)        # Add C_API file
 
 if (APPLE)
     set(PLAT darwin)
@@ -51,9 +52,9 @@ message(MNN_LIBS=${MNN_LIBS})
 #link_directories(${MNN_LIBS})
 
 if(BUILD_SHARED_LIBS)
-    add_library(HyperFace SHARED ${CPP_FILES})
+    add_library(HyperFace SHARED ${SOURCE_FILES})
 else()
-    add_library(HyperFace STATIC ${CPP_FILES})
+    add_library(HyperFace STATIC ${SOURCE_FILES})
 endif()
 
 target_compile_definitions(HyperFace PUBLIC INFERENCE_HELPER_ENABLE_MNN)
