@@ -39,6 +39,8 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
 
     m_face_feature_ptr_cache_ = std::make_shared<FaceFeatureEntity>();
 
+
+
     return HSUCCEED;
 }
 
@@ -215,7 +217,7 @@ int32_t FaceContext::SearchFaceFeature(const Embedded &queryFeature, SearchResul
     std::memset(m_string_cache_, 0, sizeof(m_string_cache_)); // 初始化为0
     auto ret = m_face_recognition_->SearchFaceFeature(queryFeature, searchResult, m_recognition_threshold_, m_search_most_similar_);
     if (ret == HSUCCEED) {
-        m_face_recognition_->GetFaceFeature(searchResult.index, m_search_face_feature_cache_);
+        ret = m_face_recognition_->GetFaceFeature(searchResult.index, m_search_face_feature_cache_);
         // 确保不会出现缓冲区溢出
         size_t copy_length = std::min(searchResult.tag.size(), sizeof(m_string_cache_) - 1);
         std::strncpy(m_string_cache_, searchResult.tag.c_str(), copy_length);
@@ -245,6 +247,20 @@ int32_t FaceContext::FaceFeatureUpdateFromCustomId(const std::vector<float> &fea
     auto ret = m_face_recognition_->UpdateFaceFeature(feature, index, tag, customId);
 
     return ret;
+}
+
+int32_t FaceContext::GetFaceFeatureFromCustomId(int32_t customId) {
+    auto index = m_face_recognition_->FindFeatureIndexByCustomId(customId);
+    if (index == -1) {
+        return HERR_CTX_REC_INVALID_INDEX;
+    }
+    auto ret = m_face_recognition_->GetFaceFeature(index, m_search_face_feature_cache_);
+
+    return ret;
+}
+
+const CustomPipelineParameter &FaceContext::getMParameter() const {
+    return m_parameter_;
 }
 
 

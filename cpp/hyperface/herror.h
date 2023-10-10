@@ -13,6 +13,7 @@
 #define HERR_INVALID_CONTEXT_HANDLE	        (HERR_BASIC_BASE+25)			// 无效的对象句柄
 #define HERR_INVALID_FACE_TOKEN     	        (HERR_BASIC_BASE+30)			// 无效的人脸token
 #define HERR_INVALID_FACE_FEATURE    	    (HERR_BASIC_BASE+31)			// 无效的人脸特征
+#define HERR_INVALID_FACE_LIST          	    (HERR_BASIC_BASE+32)			// 无效的人脸特征
 
 #define HERR_CTX_BASE				        0X500					         // Context 错误类型
 #define HERR_CTX_INVALID_RESOURCE            (HERR_CTX_BASE+1)               // 无效的静态资源
