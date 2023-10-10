@@ -3,10 +3,10 @@
 //
 
 #include <iostream>
-#include "FaceContext.h"
+#include "face_context.h"
 #include "utils/test_helper.h"
-#include "hyperface/recognition_module/extract/Alignment.h"
-#include "recognition_module/features_block/FeatureBlock.h"
+#include "hyperface/recognition_module/extract/alignment.h"
+#include "recognition_module/features_block/feature_block.h"
 
 using namespace hyper;
 
@@ -112,7 +112,7 @@ int search(FaceContext &ctx) {
         }
         Embedded feature;
         ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
-        ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, i, GetFileNameWithoutExtension(files_list[i]));
+        ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, i, GetFileNameWithoutExtension(files_list[i]), 1000 + i);
     }
 
 //    ctx.FaceRecognitionModule()->PrintMatrix();
@@ -166,7 +166,7 @@ int search(FaceContext &ctx) {
         ctx.FaceRecognitionModule()->SearchFaceFeature(feature, result);
         double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
         LOGD("搜索耗时: %f", cost);
-        LOGD("Top1: %d, %f, %s", result.index, result.score, result.tag.c_str());
+        LOGD("Top1: %d, %f, %s %d", result.index, result.score, result.tag.c_str(), result.customId);
     }
 
 
@@ -177,7 +177,7 @@ int main(int argc, char** argv) {
     FaceContext ctx;
     CustomPipelineParameter param;
     param.enable_recognition = true;
-    int32_t ret = ctx.Configuration("resource/model_zip/T1", DetectMode::DETECT_MODE_IMAGE, 1, param);
+    int32_t ret = ctx.Configuration("test_res/model_zip/T1", DetectMode::DETECT_MODE_IMAGE, 1, param);
     if (ret != 0) {
         LOGE("初始化错误");
         return -1;

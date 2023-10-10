@@ -37,18 +37,18 @@ int32_t InferenceHelperRknnAdapter::SetNumThreads(const int32_t num_threads) {
     return kRetOk;
 }
 
-int32_t InferenceHelperRknnAdapter::SetCustomOps(const vector<std::pair<const char *, const void *>> &custom_ops) {
+int32_t InferenceHelperRknnAdapter::SetCustomOps(const std::vector<std::pair<const char *, const void *>> &custom_ops) {
     PRINT("[WARNING] This method is not supported\n")
     return kRetOk;
 }
 
-int32_t InferenceHelperRknnAdapter::ParameterInitialization(vector<InputTensorInfo> &input_tensor_info_list,
-                                                            vector<OutputTensorInfo> &output_tensor_info_list) {
+int32_t InferenceHelperRknnAdapter::ParameterInitialization(std::vector<InputTensorInfo> &input_tensor_info_list,
+                                                            std::vector<OutputTensorInfo> &output_tensor_info_list) {
 
     return kRetOk;
 }
 
-int32_t InferenceHelperRknnAdapter::Process(vector<OutputTensorInfo> &output_tensor_info_list) {
+int32_t InferenceHelperRknnAdapter::Process(std::vector<OutputTensorInfo> &output_tensor_info_list) {
     if (output_tensor_info_list[0].tensor_type == TensorInfo::kTensorTypeFp32) {
         net_->setOutputsWantFloat(1);
 //        LOGD("WANT FLOAT!");
@@ -80,7 +80,7 @@ int32_t InferenceHelperRknnAdapter::Process(vector<OutputTensorInfo> &output_ten
         output_tensor.tensor_dims.clear();
         for (int i = 0; i < dim.size(); ++i) {
             output_tensor.tensor_dims.push_back((int)dim[i]);
-            LOGE("dim: %d", dim[i]);
+//            LOGE("dim: %d", dim[i]);
         }
 
     }
@@ -90,7 +90,7 @@ int32_t InferenceHelperRknnAdapter::Process(vector<OutputTensorInfo> &output_ten
     return kRetOk;
 }
 
-int32_t InferenceHelperRknnAdapter::PreProcess(const vector<InputTensorInfo> &input_tensor_info_list) {
+int32_t InferenceHelperRknnAdapter::PreProcess(const std::vector<InputTensorInfo> &input_tensor_info_list) {
     for (int i = 0; i < input_tensor_info_list.size(); ++i) {
         auto &input_tensor_info = input_tensor_info_list[i];
 //        cv::Mat mat(input_tensor_info.GetHeight(), input_tensor_info.GetWidth(), CV_8UC3, input_tensor_info.data);
@@ -123,16 +123,16 @@ int32_t InferenceHelperRknnAdapter::PreProcess(const vector<InputTensorInfo> &in
 }
 
 int32_t
-InferenceHelperRknnAdapter::Initialize(const string &model_filename, vector<InputTensorInfo> &input_tensor_info_list,
-                                       vector<OutputTensorInfo> &output_tensor_info_list) {
+InferenceHelperRknnAdapter::Initialize(const std::string &model_filename, std::vector<InputTensorInfo> &input_tensor_info_list,
+                                       std::vector<OutputTensorInfo> &output_tensor_info_list) {
     LOGE("NOT IMPL");
 
     return 0;
 }
 
 int32_t InferenceHelperRknnAdapter::Initialize(char *model_buffer, int model_size,
-                                               vector<InputTensorInfo> &input_tensor_info_list,
-                                               vector<OutputTensorInfo> &output_tensor_info_list) {
+                                               std::vector<InputTensorInfo> &input_tensor_info_list,
+                                               std::vector<OutputTensorInfo> &output_tensor_info_list) {
     net_ = std::make_shared<RKNNAdapter>();
     auto ret = net_->Initialize((unsigned char* )model_buffer, model_size);
     if (ret != 0) {

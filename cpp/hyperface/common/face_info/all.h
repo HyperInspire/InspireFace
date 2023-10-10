@@ -5,6 +5,6 @@
 #ifndef HYPERFACEREPO_FO_ALL_H
 #define HYPERFACEREPO_FO_ALL_H
 
-#include "FaceObject.h"
+#include "face_object.h"
 
 #endif //HYPERFACEREPO_FO_ALL_H

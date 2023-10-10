@@ -11,14 +11,14 @@ using namespace hyper;
 
 int main() {
     ModelLoader loader("test_res/model_zip/T1_rv1109rv1126");
-    shared_ptr<FaceDetect> m_face_detector_;
+    std::shared_ptr<FaceDetect> m_face_detector_;
     Parameter param;
     param.set<int>("model_index", ModelIndex::_00_fdet_160);
-    param.set<string>("input_layer", "input.1");
-    param.set<vector<string>>("outputs_layers", {"output", "output1", "output2", "output3", "output4", "output5", "output6", "output7", "output8"});
-    param.set<vector<int>>("input_size", {320, 320});
-    param.set<vector<float>>("mean", {0.0f, 0.0f, 0.0f});
-    param.set<vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+    param.set<std::string>("input_layer", "input.1");
+    param.set<std::vector<std::string>>("outputs_layers", {"output", "output1", "output2", "output3", "output4", "output5", "output6", "output7", "output8"});
+    param.set<std::vector<int>>("input_size", {320, 320});
+    param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+    param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
     param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
     param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
