@@ -207,6 +207,11 @@ HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupGetFeatureIdentity(
         Ptr_HF_FaceFeatureIdentity identity                 // [out]
 );
 
+HYPER_CAPI_EXPORT extern HResult HF_FeatureGroupGetCount(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HInt32* count
+);
+
 /************************************************************************
 * Face Pipeline
 ************************************************************************/
