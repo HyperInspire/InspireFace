@@ -386,7 +386,7 @@ HResult HF_MultipleFacePipelineProcess(HContextHandle ctxHandle, HImageHandle st
 
 }
 
-HResult HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLivenessConfidence) {
+HResult HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLivenessConfidence confidence) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -395,6 +395,23 @@ HResult HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLiveness
         return HERR_INVALID_CONTEXT_HANDLE;
     }
 
+    confidence->num = ctx->impl.GetRgbLivenessResultsCache().size();
+    confidence->confidence = (HFloat* )ctx->impl.GetRgbLivenessResultsCache().data();
 
+    return HSUCCEED;
 }
 
+HResult HF_GetFaceMaskConfidence(HContextHandle ctxHandle, Ptr_HF_FaceMaskConfidence confidence) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+
+    confidence->num = ctx->impl.GetMaskResultsCache().size();
+    confidence->confidence = (HFloat* )ctx->impl.GetMaskResultsCache().data();
+
+    return HSUCCEED;
+}

@@ -181,7 +181,7 @@ int search() {
     }
 
     // 准备一个图像进行搜索
-    cv::Mat image = cv::imread("/Users/tunm/Downloads/face_rec/刘奕君/刘奕君2.jpg");
+    cv::Mat image = cv::imread("test_res/images/kun.jpg");
     HF_ImageData imageData = {0};
     imageData.data = image.data;
     imageData.height = image.rows;
@@ -252,6 +252,23 @@ int search() {
         LOGE("pipeline执行失败: %ld", ret);
         return -1;
     }
+
+    HF_RGBLivenessConfidence livenessConfidence = {0};
+    ret = HF_GetRGBLivenessConfidence(ctxHandle, &livenessConfidence);
+    if (ret != HSUCCEED) {
+        LOGE("获取活体数据失败");
+        return -1;
+    }
+    LOGD("活体置信度: %f", livenessConfidence.confidence[0]);
+
+    HF_FaceMaskConfidence maskConfidence = {0};
+    ret = HF_GetFaceMaskConfidence(ctxHandle, &maskConfidence);
+    if (ret != HSUCCEED) {
+        LOGE("获取活体数据失败");
+        return -1;
+    }
+    LOGD("口罩佩戴置信度: %f", maskConfidence.confidence[0]);
+
 
     ret = HF_ReleaseImageStream(imageSteamHandle);
     if (ret == HSUCCEED) {

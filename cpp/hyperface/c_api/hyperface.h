@@ -220,14 +220,23 @@ HYPER_CAPI_EXPORT extern HResult HF_MultipleFacePipelineProcess(
 
 typedef struct HF_RGBLivenessConfidence {
     HInt32 num;
-    HPFloat Confidence;
+    HPFloat confidence;
 } HF_RGBLivenessConfidence, *Ptr_HF_RGBLivenessConfidence;
 
 HYPER_CAPI_EXPORT extern HResult HF_GetRGBLivenessConfidence(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
-        Ptr_HF_RGBLivenessConfidence                         // [out]
+        Ptr_HF_RGBLivenessConfidence confidence             // [out]
 );
 
+typedef struct HF_FaceMaskConfidence {
+    HInt32 num;
+    HPFloat confidence;
+} HF_FaceMaskConfidence, *Ptr_HF_FaceMaskConfidence;
+
+HYPER_CAPI_EXPORT extern HResult HF_GetFaceMaskConfidence(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        Ptr_HF_FaceMaskConfidence confidence                // [out]
+);
 
 /********************************DEBUG****************************************/
 
