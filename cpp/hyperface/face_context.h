@@ -10,6 +10,8 @@
 #include "recognition_module/face_recognition.h"
 #include <memory>
 
+#define DB_FILE_NAME ".E63520A95DD5B3892C56DA38C3B28E551D8173FD"
+
 namespace hyper {
 
 enum DetectMode {
@@ -68,6 +70,7 @@ public:
 
     const CustomPipelineParameter &getMParameter() const;
 
+    int32_t ViewDBTable();
 
 public:
     const std::vector<ByteArray>& GetDetectCache() const;
@@ -107,6 +110,10 @@ private:
     float m_recognition_threshold_ = 0.48f;
 
     bool m_search_most_similar_ = true;
+
+    DatabaseConfiguration m_db_configuration_;
+
+    std::shared_ptr<SQLiteFaceManage> m_db_;
 
 private:
     // 缓存数据

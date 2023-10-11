@@ -456,5 +456,5 @@ HResult HF_ViewFaceDBTable(HContextHandle ctxHandle) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
 
-    return ctx->impl.FaceRecognitionModule()->ViewDBTable();
+    return ctx->impl.ViewDBTable();
 }

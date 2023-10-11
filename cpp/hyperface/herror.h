@@ -16,9 +16,10 @@
 #define HERR_INVALID_FACE_LIST          	    (HERR_BASIC_BASE+32)			// 无效的人脸特征
 
 #define HERR_CTX_BASE				        0X500					         // Context 错误类型
-#define HERR_CTX_INVALID_RESOURCE            (HERR_CTX_BASE+1)               // 无效的静态资源
 #define HERR_CTX_FUNCTION_UNUSABLE           (HERR_CTX_BASE+2)               // 功能不可用的
 #define HERR_CTX_TRACKER_FAILURE             (HERR_CTX_BASE+3)               // Tracker模块未初始化
+#define HERR_CTX_INVALID_RESOURCE            (HERR_CTX_BASE+10)               // 无效的静态资源
+#define HERR_CTX_NUM_OF_MODELS_NOT_MATCH     (HERR_CTX_BASE+11)               // 模型数量不匹配
 
 #define HERR_CTX_PIPELINE_FAILURE            (HERR_CTX_BASE+8)               // Pipeline模块未初始化
 
@@ -43,6 +44,7 @@
 #define HERR_CTX_DB_INSERT_FAILURE           (HERR_CTX_BASE+54)               // 插入数据出错
 #define HERR_CTX_DB_PREPARING_FAILURE        (HERR_CTX_BASE+55)               // 准备数据出错
 #define HERR_CTX_DB_EXECUTING_FAILURE        (HERR_CTX_BASE+56)               // 执行SQL出错
+#define HERR_CTX_DB_NOT_VALID_FOLDER_PATH    (HERR_CTX_BASE+57)               // 不是有效的文件路径
 
 
 

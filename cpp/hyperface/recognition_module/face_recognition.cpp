@@ -115,14 +115,6 @@ int32_t FaceRecognition::InsertFaceFeature(const std::vector<float>& feature, co
     for (int i = 0; i < m_feature_matrix_list_.size(); ++i) {
         auto &block = m_feature_matrix_list_[i];
         ret = block->AddFeature(feature, tag, customId);
-        if (ret == HSUCCEED && m_db_ != nullptr) {
-            // operational database
-            FaceFeatureInfo item = {0};
-            item.customId = customId;
-            item.tag = tag;
-            item.feature = feature;
-            ret = m_db_->InsertFeature(item);
-        }
         if (ret != HERR_CTX_REC_BLOCK_FULL) {
             break;
         }
@@ -202,11 +194,6 @@ int32_t FaceRecognition::DeleteFaceFeature(int featureIndex) {
     // 调用适当的 FeatureBlock 的删除函数
     int32_t result = m_feature_matrix_list_[blockIndex]->DeleteFeature(rowIndex);
 
-    if (result == HSUCCEED && m_db_ != nullptr) {
-//        result = m_db_->DeleteFeature()
-        // 此处设计有问题
-    }
-
     return result;
 }
 
@@ -279,20 +266,8 @@ int32_t FaceRecognition::FindFeatureIndexByCustomId(int32_t customId) {
     return -1;  // 如果所有 FeatureBlock 中都没有找到，则返回-1
 }
 
-int32_t FaceRecognition::ConfigurationDB(DatabaseConfiguration& configuration) {
-    int32_t ret = HSUCCEED;
-    m_db_configuration_ = configuration;
-    if (m_db_configuration_.enable_use_db) {
-        m_db_ = std::make_shared<SQLiteFaceManage>();
-        ret = m_db_->OpenDatabase(m_db_configuration_.db_path);
-    }
-    return ret;
-}
 
-int32_t FaceRecognition::ViewDBTable() {
-    auto ret = m_db_->ViewTotal();
-    return ret;
-}
+
 
 
 } // namespace hyper
