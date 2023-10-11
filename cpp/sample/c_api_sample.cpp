@@ -6,6 +6,15 @@
 #include "opencv2/opencv.hpp"
 #include "hyperface/log.h"
 
+std::string basename(const std::string& path) {
+    size_t lastSlash = path.find_last_of("/\\");  // 考虑到跨平台的分隔符
+    if (lastSlash == std::string::npos) {
+        return path;  // 没有斜杠，整个路径就是基名
+    } else {
+        return path.substr(lastSlash + 1);  // 返回最后一个斜杠之后的部分
+    }
+}
+
 int compare() {
     HResult ret;
     // 初始化context
@@ -111,9 +120,20 @@ int search() {
     parameter.enable_recognition = 1;
     HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // 选择图像模式 即总是检测
     HContextHandle ctxHandle;
+    // 创建ctx
     ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
     if (ret != HSUCCEED) {
         LOGD("An error occurred while creating ctx: %ld", ret);
+    }
+    // 配置数据库持久化(如果有需要的话)
+    HF_DatabaseConfiguration databaseConfiguration = {0};
+    databaseConfiguration.enableUseDb = 1;
+    strncpy(databaseConfiguration.dbPath, "test.db", sizeof(databaseConfiguration.dbPath));
+    databaseConfiguration.dbPath[sizeof(databaseConfiguration.dbPath) - 1] = '\0';
+    ret = HF_FaceContextDataPersistence(ctxHandle, databaseConfiguration);
+    if (ret != HSUCCEED) {
+        LOGE("数据库配置失败: %ld", ret);
+        return -1;
     }
 
     std::vector<std::string> files_list = {
@@ -156,8 +176,9 @@ int search() {
             return -1;
         }
 
-        char *tagName = new char[name.size() + 1];
-        std::strcpy(tagName, name.c_str());
+        auto tag = basename(name);
+        char *tagName = new char[tag.size() + 1];
+        std::strcpy(tagName, tag.c_str());
         HF_FaceFeatureIdentity identity = {0};
         identity.feature = &feature;
         identity.customId = i;
@@ -168,6 +189,13 @@ int search() {
             LOGE("插入失败: %ld", ret);
             return -1;
         }
+
+
+//        // 在插入一次测试一下重复操作问题
+//        ret = HF_FeaturesGroupInsertFeature(ctxHandle, identity);
+//        if (ret != HSUCCEED) {
+//            LOGE("不能重复id插入: %ld", ret);
+//        }
 
         delete[] tagName;
 
@@ -269,7 +297,14 @@ int search() {
     }
     LOGD("口罩佩戴置信度: %f", maskConfidence.confidence[0]);
 
-    LOGD("人脸特征数量: %d", HF_FeatureGroupGetCount(ctxHandle));
+    HInt32 faceNum;
+    ret = HF_FeatureGroupGetCount(ctxHandle, &faceNum);
+    if (ret != HSUCCEED) {
+        LOGE("获取失败");
+    }
+    LOGD("人脸特征数量: %d", faceNum);
+
+    HF_ViewFaceDBTable(ctxHandle);
 
     ret = HF_ReleaseImageStream(imageSteamHandle);
     if (ret == HSUCCEED) {

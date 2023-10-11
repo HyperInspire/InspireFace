@@ -10,13 +10,20 @@
 #include "common/face_data/data_tools.h"
 #include "middleware/camera_stream/camera_stream.h"
 #include "features_block/feature_block.h"
-
+#include "persistence/sqlite_faces_manage.h"
 
 namespace hyper {
+
+typedef struct DatabaseConfiguration {
+    bool enable_use_db = false;                    ///< 是否打开数据持久化
+    std::string  db_path;
+} DatabaseConfiguration;
 
 class HYPER_API FaceRecognition {
 public:
     FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 8);
+
+    int32_t ConfigurationDB(DatabaseConfiguration& configuration);
 
     // 计算余弦相似性
     static int32_t CosineSimilarity(const std::vector<float>& v1, const std::vector<float>& v2, float &res);
@@ -47,13 +54,18 @@ public:
 
     const std::shared_ptr<Extract> &getMExtract() const;
 
-    int32_t GetFeatureNum();
+    int32_t GetFeatureNum() const;
 
+    int32_t ViewDBTable();
 
 private:
     int32_t InitExtractInteraction(Model *model);
 
 private:
+
+    DatabaseConfiguration m_db_configuration_;
+
+    std::shared_ptr<SQLiteFaceManage> m_db_;
 
     std::shared_ptr<Extract> m_extract_;
 
@@ -61,6 +73,8 @@ private:
 
     // 临时固定
     const int32_t NUM_OF_FEATURES_IN_BLOCK = 512;
+
+
 };
 
 }   // namespace hyper
