@@ -31,9 +31,19 @@
 #define HERR_CTX_REC_CONTRAST_FEAT_ERR       (HERR_CTX_BASE+23)              // 对比的特征向量长度错误
 #define HERR_CTX_REC_BLOCK_FULL              (HERR_CTX_BASE+24)              // 特征向量块满了
 #define HERR_CTX_REC_BLOCK_DEL_FAILURE       (HERR_CTX_BASE+25)              // 删除失败
-#define HERR_CTX_REC_BLOCK_UPDATE_FAILURE    (HERR_CTX_BASE+26)              // 删除失败
+#define HERR_CTX_REC_BLOCK_UPDATE_FAILURE    (HERR_CTX_BASE+26)              // 更新失败
+#define HERR_CTX_REC_ID_ALREADY_EXIST        (HERR_CTX_BASE+27)              // ID重复了
 
 #define HERR_CTX_FACE_DATA_ERROR             (HERR_CTX_BASE+30)               // 人脸数据解析错误
+
+#define HERR_CTX_DB_OPEN_ERROR               (HERR_CTX_BASE+50)               // 打开数据库错误
+#define HERR_CTX_DB_NOT_OPENED               (HERR_CTX_BASE+51)               // 重复关闭数据库
+#define HERR_CTX_DB_NO_RECORD_FOUND          (HERR_CTX_BASE+52)               // 找不到数据
+#define HERR_CTX_DB_CHECK_TABLE_ERROR        (HERR_CTX_BASE+53)               // 检测数据表出错
+#define HERR_CTX_DB_INSERT_FAILURE           (HERR_CTX_BASE+54)               // 插入数据出错
+#define HERR_CTX_DB_PREPARING_FAILURE        (HERR_CTX_BASE+55)               // 准备数据出错
+#define HERR_CTX_DB_EXECUTING_FAILURE        (HERR_CTX_BASE+56)               // 执行SQL出错
+
 
 
 #endif //HYPERFACEREPO_HERROR_H

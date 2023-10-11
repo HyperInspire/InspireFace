@@ -228,6 +228,17 @@ int32_t FaceContext::SearchFaceFeature(const Embedded &queryFeature, SearchResul
     return ret;
 }
 
+int32_t FaceContext::FaceFeatureInsertFromCustomId(const std::vector<float> &feature, const std::string &tag,
+                                                   int32_t customId) {
+    auto index = m_face_recognition_->FindFeatureIndexByCustomId(customId);
+    if (index != -1) {
+        return HERR_CTX_REC_ID_ALREADY_EXIST;
+    }
+    auto ret = m_face_recognition_->InsertFaceFeature(feature, tag, customId);
+
+    return ret;
+}
+
 int32_t FaceContext::FaceFeatureRemoveFromCustomId(int32_t customId) {
     auto index = m_face_recognition_->FindFeatureIndexByCustomId(customId);
     if (index == -1) {
@@ -262,6 +273,12 @@ int32_t FaceContext::GetFaceFeatureFromCustomId(int32_t customId) {
 const CustomPipelineParameter &FaceContext::getMParameter() const {
     return m_parameter_;
 }
+
+int32_t FaceContext::DataPersistenceConfiguration(DatabaseConfiguration configuration) {
+    return m_face_recognition_->ConfigurationDB(configuration);
+}
+
+
 
 
 }   // namespace hyper

@@ -111,6 +111,15 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
         HContextHandle *handle                          // [out] Return a ctx handle
 );
 
+typedef struct HF_DatabaseConfiguration {
+    HInt32 enableUseDb = false;
+    HChar dbPath[256];
+} HF_DatabaseConfiguration;
+
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextDataPersistence(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HF_DatabaseConfiguration configuration
+);
 
 HYPER_CAPI_EXPORT extern HResult HF_ReleaseFaceContext(
         HContextHandle handle                          // [in] Return a ctx handle
@@ -210,6 +219,10 @@ HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupGetFeatureIdentity(
 HYPER_CAPI_EXPORT extern HResult HF_FeatureGroupGetCount(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
         HInt32* count
+);
+
+HYPER_CAPI_EXPORT extern HResult HF_ViewFaceDBTable(
+        HContextHandle ctxHandle                            // [in] Return a ctx handle
 );
 
 /************************************************************************

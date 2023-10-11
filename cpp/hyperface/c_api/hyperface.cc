@@ -114,6 +114,22 @@ HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, HF_ContextCus
 }
 
 
+HResult HF_FaceContextDataPersistence(HContextHandle ctxHandle, HF_DatabaseConfiguration configuration) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    hyper::DatabaseConfiguration param = {0};
+    param.db_path = std::string(configuration.dbPath);
+    param.enable_use_db = configuration.enableUseDb;
+    auto ret = ctx->impl.DataPersistenceConfiguration(param);
+
+    return ret;
+}
+
 HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData results) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
@@ -253,7 +269,7 @@ HResult HF_FeaturesGroupInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureId
         feat.push_back(featureIdentity.feature->data[i]);
     }
     std::string tag(featureIdentity.tag);
-    HInt32 ret = ctx->impl.FaceRecognitionModule()->InsertFaceFeature(feat, tag, featureIdentity.customId);
+    HInt32 ret = ctx->impl.FaceFeatureInsertFromCustomId(feat, tag, featureIdentity.customId);
 
     return ret;
 }
@@ -429,4 +445,16 @@ HResult HF_FeatureGroupGetCount(HContextHandle ctxHandle, HInt32* count) {
     *count = ctx->impl.FaceRecognitionModule()->GetFaceFeatureCount();
 
     return HSUCCEED;
+}
+
+HResult HF_ViewFaceDBTable(HContextHandle ctxHandle) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+
+    return ctx->impl.FaceRecognitionModule()->ViewDBTable();
 }
