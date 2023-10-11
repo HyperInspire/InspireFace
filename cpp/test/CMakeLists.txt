@@ -25,3 +25,21 @@ target_include_directories(TestSource PUBLIC
 
 set_target_properties(TestSource PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test/")
+
+
+# =======================外部API测试===========================
+
+
+file(GLOB_RECURSE TEST_INTERNAL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/api/*.cpp)
+add_executable(TestAPI ${CMAKE_CURRENT_SOURCE_DIR}/test_api.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
+target_link_libraries(TestAPI HyperFace)
+target_include_directories(TestAPI PUBLIC
+        .
+        ${THIRD_PARTY_DIR}/spdlog
+        ${THIRD_PARTY_DIR}/catch2
+        ${THIRD_PARTY_DIR}/cnpy
+        ${SRC_DIR}
+        )
+
+set_target_properties(TestAPI PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test/")

@@ -23,8 +23,6 @@ class HYPER_API FaceRecognition {
 public:
     FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 8);
 
-    int32_t ConfigurationDB(DatabaseConfiguration& configuration);
-
     // 计算余弦相似性
     static int32_t CosineSimilarity(const std::vector<float>& v1, const std::vector<float>& v2, float &res);
 
@@ -56,16 +54,12 @@ public:
 
     int32_t GetFeatureNum() const;
 
-    int32_t ViewDBTable();
 
 private:
     int32_t InitExtractInteraction(Model *model);
 
 private:
 
-    DatabaseConfiguration m_db_configuration_;
-
-    std::shared_ptr<SQLiteFaceManage> m_db_;
 
     std::shared_ptr<Extract> m_extract_;
 

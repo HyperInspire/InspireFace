@@ -5,6 +5,7 @@
 #include "face_context.h"
 #include "log.h"
 #include "herror.h"
+#include "utils.h"
 
 namespace hyper {
 
@@ -17,9 +18,11 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
     m_max_detect_face_ = max_detect_face;
     m_parameter_ = param;
     ModelLoader loader(model_file_path);
-    if (loader.GetStatusCode() != 0) {
-        LOGE("Model loading error.");
-        return HERR_CTX_INVALID_RESOURCE;
+    if (loader.GetStatusCode() != PASS) {
+        if (loader.GetStatusCode() == PACK_ERROR)
+            return HERR_CTX_INVALID_RESOURCE;
+        else if (loader.GetStatusCode() == PACK_MODELS_NOT_MATCH)
+            return  HERR_CTX_NUM_OF_MODELS_NOT_MATCH;
     }
     m_face_track_ = std::make_shared<FaceTrack>(m_max_detect_face_);
     m_face_track_->Configuration(loader);
@@ -235,6 +238,14 @@ int32_t FaceContext::FaceFeatureInsertFromCustomId(const std::vector<float> &fea
         return HERR_CTX_REC_ID_ALREADY_EXIST;
     }
     auto ret = m_face_recognition_->InsertFaceFeature(feature, tag, customId);
+    if (ret == HSUCCEED && m_db_ != nullptr) {
+        // operational database
+        FaceFeatureInfo item = {0};
+        item.customId = customId;
+        item.tag = tag;
+        item.feature = feature;
+        ret = m_db_->InsertFeature(item);
+    }
 
     return ret;
 }
@@ -245,6 +256,9 @@ int32_t FaceContext::FaceFeatureRemoveFromCustomId(int32_t customId) {
         return HERR_CTX_REC_INVALID_INDEX;
     }
     auto ret = m_face_recognition_->DeleteFaceFeature(index);
+    if (ret == HSUCCEED && m_db_ != nullptr) {
+        ret = m_db_->DeleteFeature(customId);
+    }
 
     return ret;
 }
@@ -256,6 +270,13 @@ int32_t FaceContext::FaceFeatureUpdateFromCustomId(const std::vector<float> &fea
         return HERR_CTX_REC_INVALID_INDEX;
     }
     auto ret = m_face_recognition_->UpdateFaceFeature(feature, index, tag, customId);
+    if (ret == HSUCCEED && m_db_ != nullptr) {
+        FaceFeatureInfo item = {0};
+        item.customId = customId;
+        item.tag = tag;
+        item.feature = feature;
+        ret = m_db_->UpdateFeature(item);
+    }
 
     return ret;
 }
@@ -275,10 +296,24 @@ const CustomPipelineParameter &FaceContext::getMParameter() const {
 }
 
 int32_t FaceContext::DataPersistenceConfiguration(DatabaseConfiguration configuration) {
-    return m_face_recognition_->ConfigurationDB(configuration);
+    int32_t ret = HSUCCEED;
+    m_db_configuration_ = configuration;
+    if (m_db_configuration_.enable_use_db) {
+        m_db_ = std::make_shared<SQLiteFaceManage>();
+        if (IsDirectory(m_db_configuration_.db_path)){
+            std::string dbFile = m_db_configuration_.db_path + "/" + DB_FILE_NAME;
+            ret = m_db_->OpenDatabase(dbFile);
+        } else {
+            return HERR_CTX_DB_NOT_VALID_FOLDER_PATH;
+        }
+    }
+    return ret;
 }
 
-
+int32_t FaceContext::ViewDBTable() {
+    auto ret = m_db_->ViewTotal();
+    return ret;
+}
 
 
 }   // namespace hyper
