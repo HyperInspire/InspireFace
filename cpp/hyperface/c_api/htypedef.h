@@ -18,6 +18,7 @@ typedef signed int			HInt32;
 typedef signed int*			HPInt32;
 typedef long                HResult;
 typedef char*               HString;
+typedef char                HChar;
 
 typedef struct HFaceRect {
     HInt32 x;

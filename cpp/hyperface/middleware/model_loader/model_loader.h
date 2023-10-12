@@ -19,7 +19,8 @@ enum LOADER_STATUS_CODE {
     LICENSE_ERROR = 2,          ///< 认证错误
     LICENSE_FORMAT_ERROR = 3,   ///< 格式错误
     PACK_ERROR = 4,             ///< 文件错误
-    PACK_VERSION_ERROR = 5      ///< 版本号错误
+    PACK_VERSION_ERROR = 5,      ///< 版本号错误
+    PACK_MODELS_NOT_MATCH = 6    ///< 模型数量不匹配
 };
 
 struct ModelSize {

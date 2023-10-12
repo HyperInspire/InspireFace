@@ -10,9 +10,14 @@
 #include "common/face_data/data_tools.h"
 #include "middleware/camera_stream/camera_stream.h"
 #include "features_block/feature_block.h"
-
+#include "persistence/sqlite_faces_manage.h"
 
 namespace hyper {
+
+typedef struct DatabaseConfiguration {
+    bool enable_use_db = false;                    ///< 是否打开数据持久化
+    std::string  db_path;
+} DatabaseConfiguration;
 
 class HYPER_API FaceRecognition {
 public:
@@ -47,7 +52,7 @@ public:
 
     const std::shared_ptr<Extract> &getMExtract() const;
 
-    int32_t GetFeatureNum();
+    int32_t GetFeatureNum() const;
 
 
 private:
@@ -55,12 +60,15 @@ private:
 
 private:
 
+
     std::shared_ptr<Extract> m_extract_;
 
     std::vector<std::shared_ptr<FeatureBlock>> m_feature_matrix_list_;
 
     // 临时固定
     const int32_t NUM_OF_FEATURES_IN_BLOCK = 512;
+
+
 };
 
 }   // namespace hyper
