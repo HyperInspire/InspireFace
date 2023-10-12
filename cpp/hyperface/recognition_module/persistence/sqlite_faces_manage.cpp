@@ -300,4 +300,47 @@ int32_t SQLiteFaceManage::ViewTotal() {
     return HSUCCEED;
 }
 
+int32_t SQLiteFaceManage::GetTotalFeatures(std::vector<FaceFeatureInfo>& infoList) {
+    if (!m_db_) {
+        LOGE("Database is not opened. Please open the database first.");
+        return HERR_CTX_DB_NOT_OPENED;
+    }
+
+    const char* selectSQL = "SELECT customId, tag, feature FROM FaceFeatures";
+    sqlite3_stmt* stmt = nullptr;
+
+    int result = sqlite3_prepare_v2(m_db_.get(), selectSQL, -1, &stmt, nullptr);
+    if (result != SQLITE_OK) {
+        LOGE("Error preparing the SQL statement: %s", sqlite3_errmsg(m_db_.get()));
+        return HERR_CTX_DB_PREPARING_FAILURE;
+    }
+
+    while ((result = sqlite3_step(stmt)) == SQLITE_ROW) {
+        FaceFeatureInfo featureInfo;
+
+        featureInfo.customId = sqlite3_column_int(stmt, 0);
+        featureInfo.tag = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+
+        const void* blobData = sqlite3_column_blob(stmt, 2);
+        int blobSize = sqlite3_column_bytes(stmt, 2) / sizeof(float);
+        const float* begin = static_cast<const float*>(blobData);
+        featureInfo.feature = std::vector<float>(begin, begin + blobSize);
+
+        infoList.push_back(featureInfo);
+    }
+
+    if (result != SQLITE_DONE) {
+        LOGE("Error executing the SQL statement: %s", sqlite3_errmsg(m_db_.get()));
+        sqlite3_finalize(stmt);
+        return HERR_CTX_DB_EXECUTING_FAILURE;
+    }
+
+    // Clean up the statement
+    sqlite3_finalize(stmt);
+
+    LOGD("Successfully retrieved all features.");
+    return HSUCCEED;
+}
+
+
 }   // namespace hyper

@@ -113,7 +113,7 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
 
 typedef struct HF_DatabaseConfiguration {
     HInt32 enableUseDb = false;
-    HChar dbPath[256];
+    HString dbPath;
 } HF_DatabaseConfiguration;
 
 HYPER_CAPI_EXPORT extern HResult HF_FaceContextDataPersistence(

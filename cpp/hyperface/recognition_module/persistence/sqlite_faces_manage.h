@@ -33,6 +33,8 @@ public:
     int32_t DeleteFeature(int32_t customId);
     int32_t UpdateFeature(const FaceFeatureInfo& info);
 
+    int32_t GetTotalFeatures(std::vector<FaceFeatureInfo>& infoList);
+
     int32_t ViewTotal();
 
 private:

@@ -201,7 +201,6 @@ int32_t FaceRecognition::GetFaceFeature(int featureIndex, Embedded &feature) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
     }
-
     // 计算特征向量应该删除在哪个 FeatureBlock 和哪一行
     int blockIndex = featureIndex / NUM_OF_FEATURES_IN_BLOCK; // 计算所在的 FeatureBlock
     int rowIndex = featureIndex % NUM_OF_FEATURES_IN_BLOCK;   // 计算在 FeatureBlock 中的行号

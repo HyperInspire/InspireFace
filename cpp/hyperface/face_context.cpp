@@ -3,6 +3,8 @@
 //
 
 #include "face_context.h"
+
+#include <utility>
 #include "log.h"
 #include "herror.h"
 #include "utils.h"
@@ -220,7 +222,9 @@ int32_t FaceContext::SearchFaceFeature(const Embedded &queryFeature, SearchResul
     std::memset(m_string_cache_, 0, sizeof(m_string_cache_)); // 初始化为0
     auto ret = m_face_recognition_->SearchFaceFeature(queryFeature, searchResult, m_recognition_threshold_, m_search_most_similar_);
     if (ret == HSUCCEED) {
-        ret = m_face_recognition_->GetFaceFeature(searchResult.index, m_search_face_feature_cache_);
+        if (searchResult.index != -1) {
+            ret = m_face_recognition_->GetFaceFeature(searchResult.index, m_search_face_feature_cache_);
+        }
         // 确保不会出现缓冲区溢出
         size_t copy_length = std::min(searchResult.tag.size(), sizeof(m_string_cache_) - 1);
         std::strncpy(m_string_cache_, searchResult.tag.c_str(), copy_length);
@@ -297,15 +301,28 @@ const CustomPipelineParameter &FaceContext::getMParameter() const {
 
 int32_t FaceContext::DataPersistenceConfiguration(DatabaseConfiguration configuration) {
     int32_t ret = HSUCCEED;
-    m_db_configuration_ = configuration;
+    m_db_configuration_ = std::move(configuration);
     if (m_db_configuration_.enable_use_db) {
         m_db_ = std::make_shared<SQLiteFaceManage>();
         if (IsDirectory(m_db_configuration_.db_path)){
             std::string dbFile = m_db_configuration_.db_path + "/" + DB_FILE_NAME;
             ret = m_db_->OpenDatabase(dbFile);
         } else {
-            return HERR_CTX_DB_NOT_VALID_FOLDER_PATH;
+            ret = m_db_->OpenDatabase(m_db_configuration_.db_path);
         }
+
+        std::vector<FaceFeatureInfo> infos;
+        ret = m_db_->GetTotalFeatures(infos);
+        if (ret == HSUCCEED) {
+            for (auto &info: infos) {
+                ret = m_face_recognition_->InsertFaceFeature(info.feature, info.tag, info.customId);
+                if (ret != HSUCCEED) {
+                    LOGE("ID: %d, Inserting error: %d", info.customId, ret);
+                    return ret;
+                }
+            }
+        }
+
     }
     return ret;
 }
