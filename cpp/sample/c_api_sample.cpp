@@ -128,8 +128,7 @@ int search() {
     // 配置数据库持久化(如果有需要的话)
     HF_DatabaseConfiguration databaseConfiguration = {0};
     databaseConfiguration.enableUseDb = 1;
-    strncpy(databaseConfiguration.dbPath, "./", sizeof(databaseConfiguration.dbPath));
-    databaseConfiguration.dbPath[sizeof(databaseConfiguration.dbPath) - 1] = '\0';
+    databaseConfiguration.dbPath = "./";
     ret = HF_FaceContextDataPersistence(ctxHandle, databaseConfiguration);
     if (ret != HSUCCEED) {
         LOGE("数据库配置失败: %ld", ret);

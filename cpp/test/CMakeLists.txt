@@ -7,6 +7,7 @@ find_package(OpenCV REQUIRED)
 
 include_directories(${SRC_DIR})
 
+
 # =======================公共文件配置===========================
 set(TEST_COMMON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/common/test_settings.cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common)
@@ -28,8 +29,6 @@ set_target_properties(TestSource PROPERTIES
 
 
 # =======================外部API测试===========================
-
-
 file(GLOB_RECURSE TEST_INTERNAL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/api/*.cpp)
 add_executable(TestAPI ${CMAKE_CURRENT_SOURCE_DIR}/test_api.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
 target_link_libraries(TestAPI HyperFace)
