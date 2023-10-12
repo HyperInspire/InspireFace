@@ -122,7 +122,13 @@ else()
 
 endif()
 
+# 跟踪模块识别
+add_executable(SQLiteTest ${CMAKE_CURRENT_SOURCE_DIR}/test_sqlite_sample.cpp)
+target_link_libraries(SQLiteTest HyperFace)
 
+set_target_properties(SQLiteTest PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
 
 
 # C_API Demo测试

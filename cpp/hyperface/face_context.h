@@ -10,6 +10,8 @@
 #include "recognition_module/face_recognition.h"
 #include <memory>
 
+#define DB_FILE_NAME ".E63520A95DD5B3892C56DA38C3B28E551D8173FD"
+
 namespace hyper {
 
 enum DetectMode {
@@ -38,6 +40,8 @@ public:
     /** 初始化 临时方案 */
     int32_t Configuration(const String& model_file_path, DetectMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param);
 
+    int32_t DataPersistenceConfiguration(DatabaseConfiguration configuration);
+
     int32_t FaceDetectAndTrack(CameraStream &image);
 
     FaceObjectList& GetTrackingFaceList();
@@ -56,6 +60,8 @@ public:
 
     int32_t SearchFaceFeature(const Embedded& queryFeature, SearchResult &searchResult);
 
+    int32_t FaceFeatureInsertFromCustomId(const std::vector<float>& feature, const std::string &tag, int32_t customId);
+
     int32_t FaceFeatureRemoveFromCustomId(int32_t customId);
 
     int32_t FaceFeatureUpdateFromCustomId(const std::vector<float>& feature, const std::string &tag, int32_t customId);
@@ -63,6 +69,8 @@ public:
     int32_t GetFaceFeatureFromCustomId(int32_t customId);
 
     const CustomPipelineParameter &getMParameter() const;
+
+    int32_t ViewDBTable();
 
 public:
     const std::vector<ByteArray>& GetDetectCache() const;
@@ -102,6 +110,10 @@ private:
     float m_recognition_threshold_ = 0.48f;
 
     bool m_search_most_similar_ = true;
+
+    DatabaseConfiguration m_db_configuration_;
+
+    std::shared_ptr<SQLiteFaceManage> m_db_;
 
 private:
     // 缓存数据
