@@ -295,11 +295,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         // Prepare a zy query image
         cv::Mat zyImageQuery = cv::imread("test_res/images/face_comp.jpeg");
         HF_ImageData imageDataZyQuery = {0};
-        imageDataZy.data = zyImageQuery.data;
-        imageDataZy.height = zyImageQuery.rows;
-        imageDataZy.width = zyImageQuery.cols;
-        imageDataZy.format = STREAM_BGR;
-        imageDataZy.rotation = CAMERA_ROTATION_0;
+        imageDataZyQuery.data = zyImageQuery.data;
+        imageDataZyQuery.height = zyImageQuery.rows;
+        imageDataZyQuery.width = zyImageQuery.cols;
+        imageDataZyQuery.format = STREAM_BGR;
+        imageDataZyQuery.rotation = CAMERA_ROTATION_0;
         HImageHandle imgHandleZyQuery;
         ret = HF_CreateImageStream(&imageDataZyQuery, &imgHandleZyQuery);
         REQUIRE(ret == HSUCCEED);
@@ -310,17 +310,17 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceDataZyQuery.detectedNum > 0);
 //
-//        // Extract face feature
-//        HF_FaceFeature featureZyQuery = {0};
-//        ret = HF_FaceFeatureExtract(ctxHandle, imgHandleZyQuery, multipleFaceDataZyQuery.tokens[0], &featureZyQuery);
-//        REQUIRE(ret == HSUCCEED);
-//
-//        // Search
-//        HFloat confidenceQuery;
-//        HF_FaceFeatureIdentity searchedIdentityQuery = {0};
-//        ret = HF_FeaturesGroupFeatureSearch(ctxHandle, featureZyQuery, &confidenceQuery, &searchedIdentityQuery);
-//        REQUIRE(ret == HSUCCEED);
-//        CHECK(searchedIdentityQuery.customId == 10795);
+        // Extract face feature
+        HF_FaceFeature featureZyQuery = {0};
+        ret = HF_FaceFeatureExtract(ctxHandle, imgHandleZyQuery, multipleFaceDataZyQuery.tokens[0], &featureZyQuery);
+        REQUIRE(ret == HSUCCEED);
+
+        // Search
+        HFloat confidenceQuery;
+        HF_FaceFeatureIdentity searchedIdentityQuery = {0};
+        ret = HF_FeaturesGroupFeatureSearch(ctxHandle, featureZyQuery, &confidenceQuery, &searchedIdentityQuery);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(searchedIdentityQuery.customId == 11297);
 
     }
 
