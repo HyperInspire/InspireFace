@@ -9,6 +9,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/hyperface.cc)        # Add C_API file
 
+
 if (APPLE)
     set(PLAT darwin)
 else()
@@ -39,6 +40,9 @@ endif()
 
 set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
 
+# sqlite3
+set(SOURCE_FILES ${SOURCE_FILES} ${THIRD_PARTY_DIR}/sqlite/sqlite3.c)        # Add C_API file
+
 if (ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknn_api dl)
     # InferenceHelp use RkNN
@@ -68,6 +72,9 @@ endif ()
 if (BUILD_LINUX_ARM7)
     set(NEED_INCLUDE ${NEED_INCLUDE} ${OpenCV_STATIC_INCLUDE_DIR})
 endif ()
+
+# add sqlite3 header
+set(NEED_INCLUDE ${NEED_INCLUDE} ${THIRD_PARTY_DIR}/sqlite/)
 
 target_include_directories(HyperFace PUBLIC
     ${NEED_INCLUDE}

@@ -4,6 +4,31 @@
 
 //#include "face_attribute.h"
 #include <cmath>
+#include <iostream>
+#include <string>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
+
+inline bool IsDirectory(const std::string& path) {
+#ifdef _WIN32
+    DWORD dwAttrib = GetFileAttributes(path.c_str());
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+#else
+    struct stat st;
+    if (stat(path.c_str(), &st) == 0) {
+        return S_ISDIR(st.st_mode);
+    } else {
+        return false;
+    }
+#endif
+}
+
 
 inline void EstimateHeadPose(const std::vector<cv::Point2f> &current_shape,
                              cv::Vec3f &eav) {

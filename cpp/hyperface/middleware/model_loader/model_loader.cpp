@@ -4,6 +4,7 @@
 
 #include "model_loader.h"
 #include <cassert>
+#include "log.h"
 
 namespace hyper {
 
@@ -65,8 +66,10 @@ namespace hyper {
         number_of_models = 0;
         file.read((char *) &magic_number, sizeof(magic_number));
         if (magic_number != 1128) {
-            std::cout << "error can't find magic number ,magic number 1128" << std::endl;
-            exit(0);
+            LOGE("The loaded resource file cannot be matched.");
+            status_ = PACK_ERROR;
+            return;
+//            exit(0);
             //assert(magic_number != 1127);
         }
         file.read((char *) &number_of_models, sizeof(number_of_models));
@@ -93,8 +96,12 @@ namespace hyper {
             n2i_[line] = pp;
             pp += 1;
         }
-        assert(n2i_.size() == number_of_models);
-        status_ = 0;
+//        assert(n2i_.size() == number_of_models);
+        if (n2i_.size() != number_of_models) {
+            status_ = PACK_MODELS_NOT_MATCH;
+            return;
+        }
+        status_ = PASS;
     }
 
     ModelLoader::ModelLoader(std::string model_path) {
