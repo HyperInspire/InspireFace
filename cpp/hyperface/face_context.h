@@ -70,6 +70,8 @@ public:
 
     const CustomPipelineParameter &getMParameter() const;
 
+    static int32_t FaceQualityDetect(FaceBasicData& data, float &result);
+
     int32_t ViewDBTable();
 
 public:

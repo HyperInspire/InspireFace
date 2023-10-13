@@ -332,5 +332,23 @@ int32_t FaceContext::ViewDBTable() {
     return ret;
 }
 
+int32_t FaceContext::FaceQualityDetect(FaceBasicData& data, float &result) {
+    int32_t ret;
+    HyperFaceData face = {0};
+    ret = DeserializeHyperFaceData((char* )data.data, data.dataSize, face);
+    if (ret != HSUCCEED) {
+        return ret;
+    }
+    float avg = 0.0f;
+    for (int i = 0; i < 5; ++i) {
+        avg += face.quality[i];
+        LOGD("q: %f", face.quality[i]);
+    }
+    avg /= 5.0f;
+    result = avg;
+
+    return ret;
+}
+
 
 }   // namespace hyper

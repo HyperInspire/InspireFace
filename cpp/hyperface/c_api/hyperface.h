@@ -24,6 +24,15 @@
 extern "C" {
 #endif
 
+#define HF_ENABLE_FACE_RECOGNITION          0x00000002
+#define HF_ENABLE_LIVENESS                  0x00000004
+#define HF_ENABLE_IR_LIVENESS               0x00000006
+#define HF_ENABLE_MASK_DETECT               0x00000008
+#define HF_ENABLE_AGE_PREDICT               0x00000010
+#define HF_ENABLE_GENDER_PREDICT            0x00000012
+#define HF_ENABLE_QUALITY                   0x00000014
+#define HF_ENABLE_INTERACTION               0x00000020
+
 /**
  * camera stream format - 支持的相机流格式
  * Contains several common camera stream formats on the market -
@@ -55,8 +64,8 @@ typedef enum HF_Rotation {
  * */
 typedef struct HF_ImageData {
     uint8_t *data;                      ///< Image data stream - 图像数据流
-    int width;                          ///< Width of the image - 宽
-    int height;                         ///< Height of the image - 高
+    HInt32 width;                          ///< Width of the image - 宽
+    HInt32 height;                         ///< Height of the image - 高
     HF_ImageFormat format;            ///< Format of the image - 传入需要解析数据流格式
     HF_Rotation rotation;             ///< The rotation Angle of the image - 图像的画面旋转角角度
 } HF_ImageData, *Ptr_HF_ImageData;
@@ -86,7 +95,7 @@ HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(
 * FaceContext
 ************************************************************************/
 
-typedef struct HF_ContextCustomParameter{
+typedef struct HF_ContextCustomParameter {
     HInt32 enable_recognition = 0;               // 人脸识别功能
     HInt32 enable_liveness = 0;                 // RGB活体检测功能
     HInt32 enable_ir_liveness = 0;              // IR活体检测功能
@@ -111,6 +120,14 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
         HContextHandle *handle                          // [out] Return a ctx handle
 );
 
+HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFileOptional (
+        HString resourceFile,                           // [in] Resource file path - 资源文件路径
+        HInt32 customOption,                            // [in]
+        HF_DetectMode detectMode,                       // [in]
+        HInt32 maxDetectFaceNum,                        // [in]
+        HContextHandle *handle                          // [out] Return a ctx handle
+);
+
 typedef struct HF_DatabaseConfiguration {
     HInt32 enableUseDb = false;
     HString dbPath;
@@ -125,18 +142,22 @@ HYPER_CAPI_EXPORT extern HResult HF_ReleaseFaceContext(
         HContextHandle handle                          // [in] Return a ctx handle
 );
 
-
 typedef struct HF_FaceBasicToken {
     HInt32 size;
     HPVoid data;
 } HF_FaceBasicToken, *Ptr_HF_FaceBasicToken;
 
+typedef struct HF_FaceEulerAngle {
+    HFloat* roll;
+    HFloat* yaw;
+    HFloat* pitch;
+} HF_FaceEulerAngle;
 
 typedef struct HF_MultipleFaceData {
     HInt32 detectedNum;
     HFaceRect *rects;
     HInt32 *trackIds;
-    HFaceEulerAngle angles;
+    HF_FaceEulerAngle angles;
     Ptr_HF_FaceBasicToken tokens;
 } HF_MultipleFaceData, *Ptr_HF_MultipleFaceData;
 
@@ -253,7 +274,14 @@ typedef struct HF_FaceMaskConfidence {
 
 HYPER_CAPI_EXPORT extern HResult HF_GetFaceMaskConfidence(
         HContextHandle ctxHandle,                           // [in] Return a ctx handle
-        Ptr_HF_FaceMaskConfidence confidence                // [out]
+        Ptr_HF_FaceMaskConfidence confidence                  // [out]
+);
+
+
+HYPER_CAPI_EXPORT extern HResult HF_FaceQualityDetect(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HF_FaceBasicToken singleFace,
+        HFloat *confidence
 );
 
 /********************************DEBUG****************************************/

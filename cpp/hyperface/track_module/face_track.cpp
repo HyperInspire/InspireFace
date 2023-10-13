@@ -188,6 +188,15 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
             p.y = result.at<float>(1);
 //                cv::circle(pre_crop, p, 0, cv::Scalar(0, 0, 255), 2);
         }
+//
+//        auto img = image.GetScaledImage(1.0f, true);
+//        for (int i = 0; i < 5; ++i) {
+//            auto &p = res.lmk[i];
+//            cv::circle(img, p, 0, cv::Scalar(0, 0, 255), 5);
+//        }
+//        cv::imshow("AAAA", img);
+//        cv::waitKey(0);
+
 
 //        cv::imshow("pre_crop_w", pre_crop);
 //        cv::waitKey(0);

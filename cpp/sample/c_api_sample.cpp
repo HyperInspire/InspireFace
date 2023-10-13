@@ -316,6 +316,11 @@ int search() {
     return 0;
 }
 
+int opiton() {
+//    HInt32 mask = HF_ENABLE_FACE_RECOGNITION | HF_ENABLE_LIVENESS;
+
+    return 0;
+}
 
 int main() {
 
@@ -351,6 +356,8 @@ int main() {
 
 //    compare();
 
-    search();
+//    search();
 
+
+    opiton();
 }

@@ -27,10 +27,6 @@ typedef struct HFaceRect {
     HInt32 height;
 } HFaceRect;
 
-typedef struct HFaceEulerAngle {
-    HFloat* roll;
-    HFloat* yaw;
-    HFloat* pitch;
-} HFaceEulerAngle;
+
 
 #endif //HYPERFACEREPO_HTYPEDEF_H
