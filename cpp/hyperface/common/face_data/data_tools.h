@@ -59,11 +59,17 @@ inline HyperFaceData HYPER_API FaceObjectToHyperFaceData(const FaceObject& obj, 
             data.keyPoints[i].x = obj.high_result.lmk[i].x;
             data.keyPoints[i].y = obj.high_result.lmk[i].y;
         }
+        for (int i = 0; i < 5; ++i) {
+            data.quality[i] = obj.high_result.lmk_quality[i];
+        }
 //        LOGD("HIGHT");
     } else {
         for (int i = 0; i < obj.keyPointFive.size(); ++i) {
             data.keyPoints[i].x = obj.keyPointFive[i].x;
             data.keyPoints[i].y = obj.keyPointFive[i].y;
+        }
+        for (int i = 0; i < 5; ++i) {
+            data.quality[i] = -1.0f;
         }
     }
     // Basic data
@@ -116,7 +122,7 @@ inline int32_t HYPER_API DeserializeHyperFaceData(const ByteArray& byteArray, Hy
         // 从字节流中复制数据到 HyperFaceData 结构体
         std::memcpy(&data, byteArray.data(), sizeof(data));
     } else {
-        LOGE("字节流大小不足以还原 HyperFaceData");
+        LOGE("The byte stream size is insufficient to restore HyperFaceData");
         return HERR_CTX_FACE_DATA_ERROR;
     }
 
@@ -129,7 +135,7 @@ inline int32_t HYPER_API DeserializeHyperFaceData(const char* byteArray, size_t 
         // 从字节流中复制数据到 HyperFaceData 结构体
         std::memcpy(&data, byteArray, sizeof(data));
     } else {
-        LOGE("字节流大小不足以还原 HyperFaceData");
+        LOGE("The byte stream size is insufficient to restore HyperFaceData");
         return HERR_CTX_FACE_DATA_ERROR;
     }
 

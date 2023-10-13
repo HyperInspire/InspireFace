@@ -71,9 +71,18 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
             for (const auto &p: face.keyPoints) {
                 pointsFive.push_back(HPointToPoint2f(p));
             }
+            // debug
+//            auto img = image.GetScaledImage(1.0f, true);
+//            for (int i = 0; i < pointsFive.size(); ++i) {
+//                cv::circle(img, pointsFive[i], 0, cv::Scalar(233, 2, 211), 4);
+//            }
+//            cv::imshow("wqwe", img);
+//            cv::waitKey(0);
             auto trans = getTransformMatrix112(pointsFive);
             trans.convertTo(trans, CV_64F);
             auto crop = image.GetAffineRGBImage(trans, 112, 112);
+//            cv::imshow("wq", crop);
+//            cv::waitKey(0);
             auto mask_score = (*m_mask_predict_)(crop);
             faceMaskCache = mask_score;
             break;

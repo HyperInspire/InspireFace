@@ -130,7 +130,7 @@ int32_t SQLiteFaceManage::InsertFeature(const FaceFeatureInfo& info) {
     // Clean up the statement
     sqlite3_finalize(stmt);
 
-    LOGD("Feature successfully inserted.");
+//    LOGD("Feature successfully inserted.");
     return SQLITE_OK;  // or SUCCESS_CODE, based on your error code system
 }
 

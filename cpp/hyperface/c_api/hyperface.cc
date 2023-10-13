@@ -113,6 +113,49 @@ HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, HF_ContextCus
     return ret;
 }
 
+HResult HF_CreateFaceContextFromResourceFileOptional(HString resourceFile,HInt32 customOption, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
+    hyper::ContextCustomParameter param;
+    if (customOption & HF_ENABLE_FACE_RECOGNITION) {
+        param.enable_recognition = true;
+    }
+    if (customOption & HF_ENABLE_LIVENESS) {
+        param.enable_ir_liveness = true;
+    }
+    if (customOption & HF_ENABLE_IR_LIVENESS) {
+        param.enable_ir_liveness = true;
+    }
+    if (customOption & HF_ENABLE_AGE_PREDICT) {
+        param.enable_age = true;
+    }
+    if (customOption & HF_ENABLE_GENDER_PREDICT) {
+        param.enable_gender = true;
+    }
+    if (customOption & HF_ENABLE_MASK_DETECT) {
+        param.enable_mask_detect = true;
+    }
+    if (customOption & HF_ENABLE_QUALITY) {
+        param.enable_face_quality = true;
+    }
+    if (customOption & HF_ENABLE_INTERACTION) {
+        param.enable_interaction_liveness = true;
+    }
+    hyper::DetectMode detMode = hyper::DETECT_MODE_IMAGE;
+    if (detectMode == HF_DETECT_MODE_VIDEO) {
+        detMode = hyper::DETECT_MODE_VIDEO;
+    }
+
+    std::string path(resourceFile);
+    HF_FaceContext *ctx = new HF_FaceContext();
+    auto ret = ctx->impl.Configuration(path, detMode, maxDetectFaceNum, param);
+    if (ret != HSUCCEED) {
+        delete ctx;
+        ctx = nullptr;
+    } else {
+        *handle = ctx;
+    }
+
+    return ret;
+}
 
 HResult HF_FaceContextDataPersistence(HContextHandle ctxHandle, HF_DatabaseConfiguration configuration) {
     if (ctxHandle == nullptr) {
@@ -432,6 +475,24 @@ HResult HF_GetFaceMaskConfidence(HContextHandle ctxHandle, Ptr_HF_FaceMaskConfid
     return HSUCCEED;
 }
 
+HResult HF_FaceQualityDetect(HContextHandle ctxHandle, HF_FaceBasicToken singleFace, HFloat *confidence) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+
+    hyper::FaceBasicData data;
+    data.dataSize = singleFace.size;
+    data.data = singleFace.data;
+
+    auto ret = hyper::FaceContext::FaceQualityDetect(data, *confidence);
+
+    return ret;
+
+}
 
 HResult HF_FeatureGroupGetCount(HContextHandle ctxHandle, HInt32* count) {
     if (ctxHandle == nullptr) {

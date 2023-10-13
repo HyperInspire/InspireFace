@@ -47,6 +47,7 @@ typedef struct HyperFaceData {
     TransMatrix trans;
     Point2F keyPoints[5];
     Face3DAngle face3DAngle;
+    float quality[5];
 } HyperFaceData;
 
 
