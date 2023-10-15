@@ -445,6 +445,69 @@ HResult HF_MultipleFacePipelineProcess(HContextHandle ctxHandle, HImageHandle st
 
 }
 
+HResult HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData faces, HInt32 customOption) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (streamHandle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_CameraStream *stream = (HF_CameraStream* ) streamHandle;
+    if (stream == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    if (faces->detectedNum <= 0 || faces->tokens->data == nullptr) {
+        return HERR_INVALID_FACE_LIST;
+    }
+
+    hyper::ContextCustomParameter param;
+    if (customOption & HF_ENABLE_FACE_RECOGNITION) {
+        param.enable_recognition = true;
+    }
+    if (customOption & HF_ENABLE_LIVENESS) {
+        param.enable_ir_liveness = true;
+    }
+    if (customOption & HF_ENABLE_IR_LIVENESS) {
+        param.enable_ir_liveness = true;
+    }
+    if (customOption & HF_ENABLE_AGE_PREDICT) {
+        param.enable_age = true;
+    }
+    if (customOption & HF_ENABLE_GENDER_PREDICT) {
+        param.enable_gender = true;
+    }
+    if (customOption & HF_ENABLE_MASK_DETECT) {
+        param.enable_mask_detect = true;
+    }
+    if (customOption & HF_ENABLE_QUALITY) {
+        param.enable_face_quality = true;
+    }
+    if (customOption & HF_ENABLE_INTERACTION) {
+        param.enable_interaction_liveness = true;
+    }
+
+
+    HResult ret;
+    std::vector<hyper::HyperFaceData> data;
+    data.resize(faces->detectedNum);
+    for (int i = 0; i < faces->detectedNum; ++i) {
+        auto &face = data[i];
+        ret = DeserializeHyperFaceData((char* )faces->tokens[i].data, faces->tokens[i].size, face);
+        if (ret != HSUCCEED) {
+            return HERR_INVALID_FACE_TOKEN;
+        }
+    }
+
+    ret = ctx->impl.FacesProcess(stream->impl, data, param);
+
+    return ret;
+
+}
+
 HResult HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLivenessConfidence confidence) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
