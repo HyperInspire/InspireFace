@@ -24,14 +24,15 @@
 extern "C" {
 #endif
 
-#define HF_ENABLE_FACE_RECOGNITION          0x00000002
-#define HF_ENABLE_LIVENESS                  0x00000004
-#define HF_ENABLE_IR_LIVENESS               0x00000006
-#define HF_ENABLE_MASK_DETECT               0x00000008
-#define HF_ENABLE_AGE_PREDICT               0x00000010
-#define HF_ENABLE_GENDER_PREDICT            0x00000012
-#define HF_ENABLE_QUALITY                   0x00000014
-#define HF_ENABLE_INTERACTION               0x00000020
+#define HF_ENABLE_FACE_RECOGNITION          0x00000002  // 0000 0010
+#define HF_ENABLE_LIVENESS                  0x00000004  // 0000 0100
+#define HF_ENABLE_IR_LIVENESS               0x00000008  // 0000 1000
+#define HF_ENABLE_MASK_DETECT               0x00000010  // 0001 0000
+#define HF_ENABLE_AGE_PREDICT               0x00000020  // 0010 0000
+#define HF_ENABLE_GENDER_PREDICT            0x00000040  // 0100 0000
+#define HF_ENABLE_QUALITY                   0x00000080  // 1000 0000
+#define HF_ENABLE_INTERACTION               0x00000100  // 0001 0000 0000
+
 
 /**
  * camera stream format - 支持的相机流格式
@@ -255,6 +256,13 @@ HYPER_CAPI_EXPORT extern HResult HF_MultipleFacePipelineProcess(
         HImageHandle streamHandle,                          // [in] DataBuffer handle - 相机流组件的句柄指针
         Ptr_HF_MultipleFaceData faces,                      // [in]
         HF_ContextCustomParameter parameter                 // [in]
+);
+
+HYPER_CAPI_EXPORT extern HResult HF_MultipleFacePipelineProcessOptional(
+        HContextHandle ctxHandle,                           // [in] Return a ctx handle
+        HImageHandle streamHandle,                          // [in] DataBuffer handle - 相机流组件的句柄指针
+        Ptr_HF_MultipleFaceData faces,                      // [in]
+        HInt32 customOption                                 // [in]
 );
 
 typedef struct HF_RGBLivenessConfidence {

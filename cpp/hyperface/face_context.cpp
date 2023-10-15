@@ -342,10 +342,9 @@ int32_t FaceContext::FaceQualityDetect(FaceBasicData& data, float &result) {
     float avg = 0.0f;
     for (int i = 0; i < 5; ++i) {
         avg += face.quality[i];
-        LOGD("q: %f", face.quality[i]);
     }
     avg /= 5.0f;
-    result = avg;
+    result = 1.0f - avg;    // reversal
 
     return ret;
 }
