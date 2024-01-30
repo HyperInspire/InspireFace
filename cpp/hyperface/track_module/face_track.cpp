@@ -10,7 +10,7 @@
 #include <opencv2/opencv.hpp>
 #include "middleware/timer.h"
 
-namespace hyper {
+namespace inspire {
 
 FaceTrack::FaceTrack(int max_detected_faces, int detection_interval) : max_detected_faces_(max_detected_faces),
                                                                        detection_interval_(detection_interval) {

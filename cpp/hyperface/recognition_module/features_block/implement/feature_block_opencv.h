@@ -6,7 +6,7 @@
 #define HYPERFACEREPO_FEATUREBLOCKOPENCV_H
 #include "recognition_module/features_block/feature_block.h"
 
-namespace hyper {
+namespace inspire {
 
 class HYPER_API FeatureBlockOpenCV : public FeatureBlock{
 public:

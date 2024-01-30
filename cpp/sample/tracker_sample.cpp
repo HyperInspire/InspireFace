@@ -5,7 +5,7 @@
 #include "hyperface/track_module/face_track.h"
 #include "opencv2/opencv.hpp"
 
-using namespace hyper;
+using namespace inspire;
 
 int video_test(FaceTrack &ctx, int cam_id) {
     cv::VideoCapture cap(cam_id);

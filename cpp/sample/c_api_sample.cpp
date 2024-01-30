@@ -354,7 +354,7 @@ int main() {
 //    }
 
 
-//    compare();
+    compare();
 
 //    search();
 

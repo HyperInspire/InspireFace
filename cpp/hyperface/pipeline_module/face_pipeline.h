@@ -12,7 +12,7 @@
 #include "middleware/model_loader/model_loader.h"
 #include "common/face_data/data_tools.h"
 
-namespace hyper {
+namespace inspire {
 
 typedef enum FaceProcessFunction {
     PROCESS_MASK = 0,               // 口罩检测

@@ -8,7 +8,7 @@
 #include "hyperface/recognition_module/extract/alignment.h"
 #include "recognition_module/features_block/feature_block.h"
 
-using namespace hyper;
+using namespace inspire;
 
 std::string GetFileNameWithoutExtension(const std::string& filePath) {
     // 查找最后一个斜杠或反斜杠的位置

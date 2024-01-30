@@ -7,7 +7,7 @@
 #include "herror.h"
 #include "test_helper/test_help.h"
 
-using namespace hyper;
+using namespace inspire;
 
 TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
     DRAW_SPLIT_LINE

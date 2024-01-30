@@ -12,7 +12,7 @@
 #include "features_block/feature_block.h"
 #include "persistence/sqlite_faces_manage.h"
 
-namespace hyper {
+namespace inspire {
 
 typedef struct DatabaseConfiguration {
     bool enable_use_db = false;                    ///< 是否打开数据持久化

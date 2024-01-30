@@ -85,7 +85,7 @@ HResult HF_ReleaseFaceContext(HContextHandle handle) {
 }
 
 HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, HF_ContextCustomParameter parameter, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
-    hyper::ContextCustomParameter param;
+    inspire::ContextCustomParameter param;
     param.enable_mask_detect = parameter.enable_mask_detect;
     param.enable_age = parameter.enable_age;
     param.enable_liveness = parameter.enable_liveness;
@@ -94,9 +94,9 @@ HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, HF_ContextCus
     param.enable_interaction_liveness = parameter.enable_interaction_liveness;
     param.enable_ir_liveness = parameter.enable_ir_liveness;
     param.enable_recognition = parameter.enable_recognition;
-    hyper::DetectMode detMode = hyper::DETECT_MODE_IMAGE;
+    inspire::DetectMode detMode = inspire::DETECT_MODE_IMAGE;
     if (detectMode == HF_DETECT_MODE_VIDEO) {
-        detMode = hyper::DETECT_MODE_VIDEO;
+        detMode = inspire::DETECT_MODE_VIDEO;
     }
 
     std::string path(resourceFile);
@@ -114,7 +114,7 @@ HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, HF_ContextCus
 }
 
 HResult HF_CreateFaceContextFromResourceFileOptional(HString resourceFile,HInt32 customOption, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
-    hyper::ContextCustomParameter param;
+    inspire::ContextCustomParameter param;
     if (customOption & HF_ENABLE_FACE_RECOGNITION) {
         param.enable_recognition = true;
     }
@@ -139,9 +139,9 @@ HResult HF_CreateFaceContextFromResourceFileOptional(HString resourceFile,HInt32
     if (customOption & HF_ENABLE_INTERACTION) {
         param.enable_interaction_liveness = true;
     }
-    hyper::DetectMode detMode = hyper::DETECT_MODE_IMAGE;
+    inspire::DetectMode detMode = inspire::DETECT_MODE_IMAGE;
     if (detectMode == HF_DETECT_MODE_VIDEO) {
-        detMode = hyper::DETECT_MODE_VIDEO;
+        detMode = inspire::DETECT_MODE_VIDEO;
     }
 
     std::string path(resourceFile);
@@ -165,7 +165,7 @@ HResult HF_FaceContextDataPersistence(HContextHandle ctxHandle, HF_DatabaseConfi
     if (ctx == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
-    hyper::DatabaseConfiguration param = {0};
+    inspire::DatabaseConfiguration param = {0};
     param.db_path = std::string(configuration.dbPath);
     param.enable_use_db = configuration.enableUseDb;
     auto ret = ctx->impl.DataPersistenceConfiguration(param);
@@ -218,7 +218,7 @@ HResult HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandl
     if (singleFace.data == nullptr || singleFace.size <= 0) {
         return HERR_INVALID_FACE_TOKEN;
     }
-    hyper::FaceBasicData data;
+    inspire::FaceBasicData data;
     data.dataSize = singleFace.size;
     data.data = singleFace.data;
     auto ret = ctx->impl.FaceFeatureExtract(stream->impl, data);
@@ -247,7 +247,7 @@ HResult HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHa
     if (singleFace.data == nullptr || singleFace.size <= 0) {
         return HERR_INVALID_FACE_TOKEN;
     }
-    hyper::FaceBasicData data;
+    inspire::FaceBasicData data;
     data.dataSize = singleFace.size;
     data.data = singleFace.data;
     auto ret = ctx->impl.FaceFeatureExtract(stream->impl, data);
@@ -335,7 +335,7 @@ HResult HF_FeaturesGroupFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature s
     for (int i = 0; i < searchFeature.size; ++i) {
         feat.push_back(searchFeature.data[i]);
     }
-    hyper::SearchResult result;
+    inspire::SearchResult result;
     HInt32 ret = ctx->impl.SearchFaceFeature(feat, result);
     mostSimilar->feature = (HF_FaceFeature* )ctx->impl.GetFaceFeaturePtrCache().get();
     mostSimilar->feature->data = (HFloat* )ctx->impl.GetSearchFaceFeatureCache().data();
@@ -418,7 +418,7 @@ HResult HF_MultipleFacePipelineProcess(HContextHandle ctxHandle, HImageHandle st
     if (faces->detectedNum <= 0 || faces->tokens->data == nullptr) {
         return HERR_INVALID_FACE_LIST;
     }
-    hyper::ContextCustomParameter param;
+    inspire::ContextCustomParameter param;
     param.enable_mask_detect = parameter.enable_mask_detect;
     param.enable_age = parameter.enable_age;
     param.enable_liveness = parameter.enable_liveness;
@@ -429,7 +429,7 @@ HResult HF_MultipleFacePipelineProcess(HContextHandle ctxHandle, HImageHandle st
     param.enable_recognition = parameter.enable_recognition;
 
     HResult ret;
-    std::vector<hyper::HyperFaceData> data;
+    std::vector<inspire::HyperFaceData> data;
     data.resize(faces->detectedNum);
     for (int i = 0; i < faces->detectedNum; ++i) {
         auto &face = data[i];
@@ -464,7 +464,7 @@ HResult HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageH
         return HERR_INVALID_FACE_LIST;
     }
 
-    hyper::ContextCustomParameter param;
+    inspire::ContextCustomParameter param;
     if (customOption & HF_ENABLE_FACE_RECOGNITION) {
         param.enable_recognition = true;
     }
@@ -492,7 +492,7 @@ HResult HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageH
 
 
     HResult ret;
-    std::vector<hyper::HyperFaceData> data;
+    std::vector<inspire::HyperFaceData> data;
     data.resize(faces->detectedNum);
     for (int i = 0; i < faces->detectedNum; ++i) {
         auto &face = data[i];
@@ -547,11 +547,11 @@ HResult HF_FaceQualityDetect(HContextHandle ctxHandle, HF_FaceBasicToken singleF
         return HERR_INVALID_CONTEXT_HANDLE;
     }
 
-    hyper::FaceBasicData data;
+    inspire::FaceBasicData data;
     data.dataSize = singleFace.size;
     data.data = singleFace.data;
 
-    auto ret = hyper::FaceContext::FaceQualityDetect(data, *confidence);
+    auto ret = inspire::FaceContext::FaceQualityDetect(data, *confidence);
 
     return ret;
 

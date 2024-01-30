@@ -7,7 +7,7 @@
 #include "../../data_type.h"
 #include "middleware/any_net.h"
 
-namespace hyper {
+namespace inspire {
 
 class HYPER_API FaceLandmark: public AnyNet {
 public:

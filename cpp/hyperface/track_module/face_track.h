@@ -11,7 +11,7 @@
 #include "middleware/camera_stream/camera_stream.h"
 #include "quality/face_pose_quality.h"
 
-namespace hyper {
+namespace inspire {
 
 class HYPER_API FaceTrack {
 public:

@@ -9,7 +9,7 @@
 #include "recognition_module/extract/alignment.h"
 #include "herror.h"
 
-namespace hyper {
+namespace inspire {
 
 FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enableMaskDetect, bool enableAge,
                            bool enableGender, bool enableInteractionLiveness)

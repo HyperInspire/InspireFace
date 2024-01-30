@@ -8,7 +8,7 @@
 #include "face_context.h"
 
 typedef struct HF_FaceContext {
-    hyper::FaceContext impl;
+    inspire::FaceContext impl;
 } HF_FaceContext;
 
 typedef struct HF_CameraStream {

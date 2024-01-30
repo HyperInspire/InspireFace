@@ -11,7 +11,7 @@
 #include "face_process.h"
 #include "track_module/quality/face_pose_quality.h"
 
-namespace hyper {
+namespace inspire {
 
 enum TRACK_STATE {
     UNTRACKING = -1, DETECT = 0, READY = 1, TRACKING = 2

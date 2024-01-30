@@ -4,7 +4,7 @@
 
 #include "mask_predict.h"
 
-namespace hyper {
+namespace inspire {
 
 
 MaskPredict::MaskPredict(): AnyNet("MaskPredict") {}

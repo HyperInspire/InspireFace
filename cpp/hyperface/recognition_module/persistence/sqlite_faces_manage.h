@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 
-namespace hyper {
+namespace inspire {
 
 typedef struct {
     int32_t customId;

@@ -7,7 +7,7 @@
 #include "herror.h"
 #include "hyperface/face_context.h"
 
-using namespace hyper;
+using namespace inspire;
 
 TEST_CASE("test_FaceData", "[face_data]") {
     DRAW_SPLIT_LINE

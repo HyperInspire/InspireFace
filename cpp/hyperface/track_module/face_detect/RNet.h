@@ -8,7 +8,7 @@
 #include "middleware/any_net.h"
 
 
-namespace hyper {
+namespace inspire {
 
 class HYPER_API RNet: public AnyNet {
 public:

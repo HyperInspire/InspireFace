@@ -12,7 +12,7 @@
 
 #define DB_FILE_NAME ".E63520A95DD5B3892C56DA38C3B28E551D8173FD"
 
-namespace hyper {
+namespace inspire {
 
 enum DetectMode {
     DETECT_MODE_IMAGE = 0,      ///< 图像检测模式 即 Always detect
