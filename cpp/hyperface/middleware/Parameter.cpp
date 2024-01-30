@@ -4,7 +4,7 @@
 
 #include "parameter.h"
 
-namespace hyper {
+namespace inspire {
 
 
 std::string Parameter::toString(int indent) const {

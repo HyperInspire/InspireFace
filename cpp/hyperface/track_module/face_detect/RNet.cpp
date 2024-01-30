@@ -4,7 +4,7 @@
 
 #include "rnet.h"
 
-namespace hyper {
+namespace inspire {
 
 
 float RNet::operator()(const Matrix &bgr_affine) {

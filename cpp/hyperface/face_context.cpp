@@ -9,7 +9,7 @@
 #include "herror.h"
 #include "utils.h"
 
-namespace hyper {
+namespace inspire {
 
 
 FaceContext::FaceContext() = default;

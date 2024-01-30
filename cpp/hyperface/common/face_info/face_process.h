@@ -6,7 +6,7 @@
 #define HYPERFACEREPO_FACEPROCESS_H
 
 #include "data_type.h"
-namespace hyper {
+namespace inspire {
 
 typedef enum MaskInfo {
     UNKNOWN_MASK = -1,

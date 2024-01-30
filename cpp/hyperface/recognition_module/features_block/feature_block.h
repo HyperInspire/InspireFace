@@ -10,7 +10,7 @@
 #include "data_type.h"
 
 
-namespace hyper {
+namespace inspire {
 
 typedef enum {
     MC_NONE,           // C/C++ Native

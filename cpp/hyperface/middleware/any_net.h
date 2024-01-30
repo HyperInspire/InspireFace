@@ -11,7 +11,7 @@
 #include "opencv2/opencv.hpp"
 #include "../log.h"
 
-namespace hyper {
+namespace inspire {
 
 using AnyTensorOutputs = std::vector<std::pair<std::string, std::vector<float>>>;
 

@@ -7,7 +7,7 @@
 
 #include "data_type.h"
 
-namespace hyper {
+namespace inspire {
 
 inline cv::Mat HYPER_API meanAxis0(const cv::Mat &src) {
     int num = src.rows;

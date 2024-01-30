@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace hyper {
+namespace inspire {
 
 enum LOADER_STATUS_CODE {
     PASS = 0,                   ///< 通过

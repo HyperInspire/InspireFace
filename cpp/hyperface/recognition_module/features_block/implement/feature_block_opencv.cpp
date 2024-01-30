@@ -6,7 +6,7 @@
 #include "herror.h"
 #include "log.h"
 
-namespace hyper {
+namespace inspire {
 
 
 FeatureBlockOpenCV::FeatureBlockOpenCV(int32_t features_max, int32_t feature_length)

@@ -6,7 +6,7 @@
 #define HYPERFACEREPO_TIMER_H
 #include <opencv2/opencv.hpp>
 
-namespace hyper {
+namespace inspire {
 
 class Timer {
 public:

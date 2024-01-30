@@ -9,7 +9,7 @@
 #include "track_module/landmark/face_landmark.h"
 #include "herror.h"
 
-namespace hyper {
+namespace inspire {
 
 FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core, int feature_block_num) {
     if (enable_recognition) {

@@ -4,7 +4,7 @@
 
 #include "face_pose.h"
 
-namespace hyper {
+namespace inspire {
 
 FacePose::FacePose() : AnyNet("FacePose") {}
 

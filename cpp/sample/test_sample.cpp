@@ -7,7 +7,7 @@
 #include "opencv2/opencv.hpp"
 #include "utils/test_helper.h"
 
-using namespace hyper;
+using namespace inspire;
 
 int main(int argc, char** argv) {
     FaceContext ctx;

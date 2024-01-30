@@ -4,7 +4,7 @@
 
 #include "face_landmark.h"
 
-namespace hyper {
+namespace inspire {
 
 
 std::vector<float> FaceLandmark::operator()(const Matrix& bgr_affine) {

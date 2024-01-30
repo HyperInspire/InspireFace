@@ -4,7 +4,7 @@
 
 #include "extract.h"
 
-namespace hyper {
+namespace inspire {
 
 Embedded Extract::GetFaceFeature(const Matrix& bgr_affine) {
     AnyTensorOutputs outputs;

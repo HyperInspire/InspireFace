@@ -7,7 +7,7 @@
 #include "herror.h"
 #include "common/face_data/data_tools.h"
 
-using namespace hyper;
+using namespace inspire;
 
 TEST_CASE("test_FaceRecognition", "[face_rec]") {
     DRAW_SPLIT_LINE

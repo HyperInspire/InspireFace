@@ -5,7 +5,7 @@
 #include "face_pose_quality.h"
 #include "utils.h"
 
-namespace hyper {
+namespace inspire {
 
 FacePoseQuality::FacePoseQuality(): AnyNet("FacePoseQuality") {}
 

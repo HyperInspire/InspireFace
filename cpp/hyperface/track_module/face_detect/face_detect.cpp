@@ -4,7 +4,7 @@
 
 #include "face_detect.h"
 
-namespace hyper {
+namespace inspire {
 
 FaceDetect::FaceDetect(int input_size, float nms_threshold, float cls_threshold):
     AnyNet("FaceDetect"),

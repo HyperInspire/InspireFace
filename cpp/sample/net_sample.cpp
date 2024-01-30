@@ -5,7 +5,7 @@
 #include "track_module/face_detect/face_pose.h"
 #include "model_index.h"
 
-using namespace hyper;
+using namespace inspire;
 
 int main(int argc, char** argv) {
     ModelLoader loader("resource/model_zip/T1");

@@ -8,7 +8,7 @@
 #include "../../data_type.h"
 #include "../face_info/face_object.h"
 
-namespace hyper {
+namespace inspire {
 
 
 typedef struct Face3DAngle {

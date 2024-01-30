@@ -10,7 +10,7 @@
 #include "herror.h"
 #include "data_type.h"
 
-namespace hyper {
+namespace inspire {
 
 inline void PrintTransMatrix(const TransMatrix& matrix) {
         std::cout << "Transformation Matrix:" << std::endl;

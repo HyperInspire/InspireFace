@@ -7,7 +7,7 @@
 #include "data_type.h"
 #include "middleware/any_net.h"
 
-namespace hyper {
+namespace inspire {
 
 std::vector<float> softmax(const std::vector<float>& input);
 

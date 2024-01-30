@@ -14,7 +14,7 @@ using nlohmann::json;
 #define HYPER_API
 #endif
 
-namespace hyper {
+namespace inspire {
 
 class HYPER_API Parameter {
 public:
@@ -81,14 +81,14 @@ private:
 
 #define PARAMETERIZATION_SUPPORT                                                                                 \
 protected:                                                                                                \
-    hyper::Parameter m_params;                                                                            \
+    inspire::Parameter m_params;                                                                            \
                                                                                                           \
 public:                                                                                                   \
-    const hyper::Parameter& getParameter() const {                                                        \
+    const inspire::Parameter& getParameter() const {                                                        \
         return m_params;                                                                                  \
     }                                                                                                     \
                                                                                                           \
-    void setParameter(const hyper::Parameter& param) {                                                    \
+    void setParameter(const inspire::Parameter& param) {                                                    \
         m_params = param;                                                                                 \
     }                                                                                                     \
                                                                                                           \
@@ -107,7 +107,7 @@ public:                                                                         
     }                                                                                                     \
                                                                                                           \
     template <typename ValueType>                                                                         \
-    void _initSingleParam(const hyper::Parameter& param, const std::string& name,                              \
+    void _initSingleParam(const inspire::Parameter& param, const std::string& name,                              \
                           const ValueType& default_value) {                                               \
         if (param.have(name)) {                                                                           \
             setParam<ValueType>(name, param.get<ValueType>(name));                                        \

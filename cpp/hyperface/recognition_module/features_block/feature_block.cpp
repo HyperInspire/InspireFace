@@ -10,7 +10,7 @@
 #include "recognition_module/features_block/implement/feature_block_opencv.h"
 #endif
 
-namespace hyper {
+namespace inspire {
 
 
 FeatureBlock *FeatureBlock::Create(const MatrixCore crop_type, int32_t features_max, int32_t feature_length) {

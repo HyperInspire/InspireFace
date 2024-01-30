@@ -7,7 +7,7 @@
 #include "sqlite_faces_manage.h"
 #include "herror.h"
 
-namespace hyper {
+namespace inspire {
 
 
 SQLiteFaceManage::SQLiteFaceManage() {

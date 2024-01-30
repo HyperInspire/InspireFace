@@ -6,7 +6,7 @@
 #include "hyperface/face_context.h"
 #include "herror.h"
 
-using namespace hyper;
+using namespace inspire;
 
 TEST_CASE("test_FaceDetectTrack", "[face_track]") {
     DRAW_SPLIT_LINE

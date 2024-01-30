@@ -6,7 +6,7 @@
 #define HYPERFACEREPO_CONFIG_H
 #include <iostream>
 
-namespace hyper {
+namespace inspire {
 
 const std::string SCRFDD = "fdet_160.mnn";
 const std::string LMK = "lmk.mnn";
