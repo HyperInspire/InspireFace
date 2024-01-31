@@ -13,90 +13,115 @@
 
 namespace inspire {
 
+/**
+ * @enum LOADER_STATUS_CODE
+ * @brief Enum for loader status codes.
+ *
+ * This enum defines status codes for the loader, such as PASS, LICENSE_PAST_DUE, etc.
+ */
 enum LOADER_STATUS_CODE {
-    PASS = 0,                   ///< 通过
-    LICENSE_PAST_DUE = 1,       ///< 过期
-    LICENSE_ERROR = 2,          ///< 认证错误
-    LICENSE_FORMAT_ERROR = 3,   ///< 格式错误
-    PACK_ERROR = 4,             ///< 文件错误
-    PACK_VERSION_ERROR = 5,      ///< 版本号错误
-    PACK_MODELS_NOT_MATCH = 6    ///< 模型数量不匹配
+    PASS = 0,                   ///< Success
+    LICENSE_PAST_DUE = 1,       ///< License expired
+    LICENSE_ERROR = 2,          ///< License authentication error
+    LICENSE_FORMAT_ERROR = 3,   ///< License format error
+    PACK_ERROR = 4,             ///< File error
+    PACK_VERSION_ERROR = 5,     ///< Version number error
+    PACK_MODELS_NOT_MATCH = 6   ///< Model count mismatch
 };
 
+/**
+ * @struct ModelSize
+ * @brief Struct to represent the size of a model.
+ *
+ * This struct contains the size of the prototxt and caffemodel files for a model.
+ */
 struct ModelSize {
-    int prototxt_size;
-    int caffemodel_size;
+    int prototxt_size;    ///< Size of the prototxt file.
+    int caffemodel_size;  ///< Size of the caffemodel file.
 };
 
+/**
+ * @struct Model
+ * @brief Struct to represent a model with its data buffers and size.
+ *
+ * This struct contains pointers to the prototxt and caffemodel data buffers as well as their sizes.
+ */
 struct Model {
-    char *prototxtBuffer;
-    char *caffemodelBuffer;
-    ModelSize modelsize;
+    char *prototxtBuffer;   ///< Pointer to the prototxt data buffer.
+    char *caffemodelBuffer; ///< Pointer to the caffemodel data buffer.
+    ModelSize modelsize;    ///< Size of the model data.
 };
 
+/**
+ * @class ModelLoader
+ * @brief Class for loading and managing models.
+ *
+ * This class provides methods for loading models, retrieving model data, and checking the loader status.
+ */
 class ModelLoader {
 public:
     /**
-     * @brief 初始化算法资源加载器
-     * */
+     * @brief Initialize the model loader.
+     */
     ModelLoader();
 
     /**
-     * @brief 初始化算法资源加载器 以原始文件路径的形式加载
+     * @brief Initialize the model loader with a specific model path.
      *
-     * @param model_path 模型路径
-     * */
+     * @param model_path The path to the model files.
+     */
     explicit ModelLoader(std::string model_path);
 
     /**
-     * @brief 加载模型
+     * @brief Reset the model loader with a new model path.
      *
-     * @param model_path 模型路径
-     * */
+     * @param model_path The path to the model files.
+     */
     void Reset(const std::string &model_path);
 
-
+    /**
+     * @brief Destructor for the model loader.
+     */
     ~ModelLoader();
 
     /**
-     * @brief 获取模型
+     * @brief Read a model by index.
      *
-     * @param idx 模型index
-     * */
+     * @param idx The index of the model to read.
+     * @return Model* Pointer to the model data.
+     */
     Model *ReadModel(int idx);
 
     /**
-     * @brief 获取模型
+     * @brief Read a model by name.
      *
-     * @param name 模型名称
-     * */
+     * @param name The name of the model to read.
+     * @return Model* Pointer to the model data.
+     */
     Model *ReadModel(const std::string &name);
 
     /**
-     * @brief 模型数量
-     * */
+     * @brief Get the number of loaded models.
+     *
+     * @return std::size_t The number of loaded models.
+     */
     std::size_t Count() const;
 
-
     /**
-     * @brief 获取license认证状态
-     * */
+     * @brief Get the status code of the loader.
+     *
+     * @return int The status code.
+     */
     int GetStatusCode();
 
 private:
-    // 模型尺寸
-    ModelSize *modelSize;
-    // 模型指针
-    Model *model;
-    // 模型总数
-    int number_of_models;
-    // 魔法值
-    int magic_number;
-    // 数量字典
-    std::map<std::string, int> n2i_;
-
-    int status_ = -1;
+    ModelSize *modelSize;           ///< Array of model sizes.
+    Model *model;                   ///< Array of model data.
+    int number_of_models;           ///< Number of loaded models.
+    int magic_number;               ///< Magic number.
+    std::map<std::string, int> n2i_;///< Model name to index mapping.
+    int status_ = -1;               ///< Loader status code.
 };
-} // namespace pr
+} // namespace inspire
 
 #endif //FACEIN_LIB_MODEL_LOADER_H

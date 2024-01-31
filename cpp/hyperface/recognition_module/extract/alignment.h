@@ -9,6 +9,11 @@
 
 namespace inspire {
 
+/**
+ * @brief Calculates the mean of rows for the given matrix.
+ * @param src Source matrix.
+ * @return cv::Mat Mean of rows.
+ */
 inline cv::Mat HYPER_API meanAxis0(const cv::Mat &src) {
     int num = src.rows;
     int dim = src.cols;
@@ -28,6 +33,12 @@ inline cv::Mat HYPER_API meanAxis0(const cv::Mat &src) {
     return output;
 }
 
+/**
+ * @brief Performs element-wise subtraction between two matrices.
+ * @param A First matrix.
+ * @param B Second matrix.
+ * @return cv::Mat Result of the subtraction.
+ */
 inline cv::Mat HYPER_API elementwiseMinus(const cv::Mat &A, const cv::Mat &B) {
     cv::Mat output(A.rows, A.cols, A.type());
 
@@ -42,12 +53,22 @@ inline cv::Mat HYPER_API elementwiseMinus(const cv::Mat &A, const cv::Mat &B) {
     return output;
 }
 
+/**
+ * @brief Calculates variance across rows for the given matrix.
+ * @param src Source matrix.
+ * @return cv::Mat Variance of rows.
+ */
 inline cv::Mat HYPER_API varAxis0(const cv::Mat &src) {
     cv::Mat temp_ = elementwiseMinus(src, meanAxis0(src));
     cv::multiply(temp_, temp_, temp_);
     return meanAxis0(temp_);
 }
 
+/**
+ * @brief Computes the rank of a matrix.
+ * @param M Matrix to compute the rank of.
+ * @return int Rank of the matrix.
+ */
 inline int HYPER_API MatrixRank(cv::Mat M) {
     cv::Mat w, u, vt;
     cv::SVD::compute(M, w, u, vt);
@@ -56,11 +77,16 @@ inline int HYPER_API MatrixRank(cv::Mat M) {
     return rank;
 }
 
-//    References
-//    ----------
-//    .. [1] "Least-squares estimation of transformation parameters between two
-//    point patterns", Shinji Umeyama, PAMI 1991, DOI: 10.1109/34.88573
-//
+/**
+ * @brief Computes a similarity transformation matrix.
+ * @param src Source matrix of points.
+ * @param dst Destination matrix of points.
+ * @return cv::Mat Similarity transformation matrix.
+ *
+ * References:
+ * .. [1] "Least-squares estimation of transformation parameters between two
+ * point patterns", Shinji Umeyama, PAMI 1991, DOI: 10.1109/34.88573
+ */
 inline cv::Mat HYPER_API similarTransform(cv::Mat src, cv::Mat dst) {
     int num = src.rows;
     int dim = src.cols;
@@ -125,7 +151,13 @@ inline cv::Mat HYPER_API similarTransform(cv::Mat src, cv::Mat dst) {
     return T;
 }
 
-
+/**
+ * @brief Generates a transformation matrix for aligning facial landmarks.
+ * @param pts Landmark points.
+ * @param size Size of the transformation.
+ * @param scale Scale factor for transformation.
+ * @return cv::Mat Transformation matrix.
+ */
 inline cv::Mat HYPER_API getTransformMatrix(std::vector<cv::Point2f> &pts, int size, float scale) {
     float src_pts[] = {30.2946, 51.6963, 65.5318, 51.5014, 48.0252,
                        71.7366, 33.5493, 92.3655, 62.7299, 92.2041};
@@ -157,11 +189,10 @@ inline cv::Mat HYPER_API getTransformMatrix(std::vector<cv::Point2f> &pts, int s
 }
 
 /**
- * Obtain a similar transformation matrix with transformation size 112
- * @ingroup FaceDetector
- * @param pts Five key point location information
- * @return transform matrix
- * */
+ * @brief Generates a transformation matrix for aligning facial landmarks with a size of 112.
+ * @param pts Landmark points.
+ * @return cv::Mat Transformation matrix.
+ */
 inline cv::Mat HYPER_API getTransformMatrix112(PointsList2f &pts) {
     float src_pts[] = {30.2946, 51.6963, 65.5318, 51.5014, 48.0252,
                        71.7366, 33.5493, 92.3655, 62.7299, 92.2041};
@@ -183,11 +214,10 @@ inline cv::Mat HYPER_API getTransformMatrix112(PointsList2f &pts) {
 }
 
 /**
- * Returns a specially processed 256 similar transformation matrix (dense mesh specific)
- * @ingroup FaceDetector
- * @param pts Five key point location information
- * @return transform matrix
- * */
+ * @brief Generates a transformation matrix for dense mesh alignment with a specific size of 256.
+ * @param pts Landmark points.
+ * @return cv::Mat Transformation matrix.
+ */
 inline cv::Mat HYPER_API getTransformMatrix256specific(PointsList2f &pts) {
     int input_size = 256;
     int new_size = 144;
@@ -216,6 +246,11 @@ inline cv::Mat HYPER_API getTransformMatrix256specific(PointsList2f &pts) {
     return M;
 }
 
+/**
+ * @brief Generates a transformation matrix for SAFAS model alignment.
+ * @param pts Landmark points.
+ * @return cv::Mat Transformation matrix.
+ */
 inline cv::Mat HYPER_API getTransformMatrixSafas(PointsList2f &pts) {
     int input_size = 112;
     int new_size = 230;
@@ -245,13 +280,12 @@ inline cv::Mat HYPER_API getTransformMatrixSafas(PointsList2f &pts) {
 }
 
 /**
- * Image affine transformation
- * @ingroup FaceDetector
- * @param img origin image
- * @param transformed output transformation image
- * @param transM input transform matrix
- * @param size target size
- * */
+ * @brief Applies affine transformation to an image.
+ * @param img Original image.
+ * @param transformed Transformed image.
+ * @param transM Transformation matrix.
+ * @param size Target size of the transformed image.
+ */
 inline void HYPER_API toTransform(const Matrix& img, Matrix &transformed, Matrix& transM, cv::Size size) {
     cv::warpAffine(img, transformed, transM, std::move(size), cv::INTER_CUBIC);
 }

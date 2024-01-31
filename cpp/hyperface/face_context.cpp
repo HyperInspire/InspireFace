@@ -110,7 +110,7 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
     m_rgb_liveness_results_cache_.resize(faces.size(), -1.0f);
     for (int i = 0; i < faces.size(); ++i) {
         const auto &face = faces[i];
-        // RGB活体检测
+        // RGB Liveness Detect
         if (param.enable_liveness) {
             auto ret = m_face_pipeline_->Process(image, face, PROCESS_RGB_LIVENESS);
             if (ret != HSUCCEED) {
@@ -118,7 +118,7 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
             }
             m_rgb_liveness_results_cache_[i] = m_face_pipeline_->faceLivenessCache;
         }
-        // 口罩检测
+        // Mask detection
         if (param.enable_mask_detect) {
             auto ret = m_face_pipeline_->Process(image, face, PROCESS_MASK);
             if (ret != HSUCCEED) {
@@ -126,14 +126,14 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
             }
             m_mask_results_cache_[i] = m_face_pipeline_->faceMaskCache;
         }
-        // 年龄预测
+        // Age prediction
         if (param.enable_age) {
             auto ret = m_face_pipeline_->Process(image, face, PROCESS_AGE);
             if (ret != HSUCCEED) {
                 return ret;
             }
         }
-        // 性别预测
+        // Gender prediction
         if (param.enable_age) {
             auto ret = m_face_pipeline_->Process(image, face, PROCESS_GENDER);
             if (ret != HSUCCEED) {
@@ -225,10 +225,10 @@ int32_t FaceContext::SearchFaceFeature(const Embedded &queryFeature, SearchResul
         if (searchResult.index != -1) {
             ret = m_face_recognition_->GetFaceFeature(searchResult.index, m_search_face_feature_cache_);
         }
-        // 确保不会出现缓冲区溢出
+        // Ensure that buffer overflows do not occur
         size_t copy_length = std::min(searchResult.tag.size(), sizeof(m_string_cache_) - 1);
         std::strncpy(m_string_cache_, searchResult.tag.c_str(), copy_length);
-        // 确保字符串以空字符结束
+        // Make sure the string ends with a null character
         m_string_cache_[copy_length] = '\0';
     }
 
@@ -349,5 +349,15 @@ int32_t FaceContext::FaceQualityDetect(FaceBasicData& data, float &result) {
     return ret;
 }
 
+
+int32_t FaceContext::SetRecognitionThreshold(float threshold) {
+    m_recognition_threshold_ = threshold;
+    return HSUCCEED;
+}
+
+int32_t FaceContext::SetTrackPreviewSize(const int32_t preview_size) {
+    m_face_track_->SetTrackPreviewSize(preview_size);
+    return HSUCCEED;
+}
 
 }   // namespace hyper

@@ -16,6 +16,12 @@ using nlohmann::json;
 
 namespace inspire {
 
+/**
+ * @class Parameter
+ * @brief Class for managing parameters as JSON data.
+ *
+ * This class provides methods to set, get, and load parameters as JSON data.
+ */
 class HYPER_API Parameter {
 public:
     Parameter() = default;;
@@ -26,19 +32,43 @@ public:
 
     Parameter& operator=(const Parameter& other);
 
+    /**
+     * @brief Get a list of parameter names.
+     * @return std::vector<std::string> A list of parameter names.
+     */
     std::vector<std::string> getNameList() const;
 
+    /**
+     * @brief Convert parameters to a formatted JSON string.
+     * @param indent The indentation level for formatting.
+     * @return std::string The formatted JSON string representing the parameters.
+     */
     std::string toString(int indent = 4) const;
 
+    /**
+     * @brief Check if a parameter exists by name.
+     * @param name The name of the parameter to check.
+     * @return bool True if the parameter exists, false otherwise.
+     */
     bool have(const std::string& name) const noexcept {
         return m_params.contains(name);
     }
 
+    /**
+     * @brief Set a parameter with a specific name and value.
+     * @param name The name of the parameter.
+     * @param value The value to set for the parameter.
+     */
     template <typename ValueType>
     void set(const std::string& name, const ValueType& value) {
         m_params[name] = value;
     }
 
+    /**
+     * @brief Set a parameter with a specific name and value.
+     * @param name The name of the parameter.
+     * @param value The value to set for the parameter.
+     */
     template <typename ValueType>
     ValueType get(const std::string& name) const {
         if (!have(name)) {
@@ -47,6 +77,10 @@ public:
         return m_params.at(name).get<ValueType>();
     }
 
+    /**
+     * @brief Load parameters from a JSON object.
+     * @param j The JSON object containing parameters.
+     */
     void load(const nlohmann::json& j) {
         for (const auto& item : j.items()) {
             const auto& key = item.key();
@@ -70,13 +104,13 @@ public:
                     // ...
                 }
             }
-            // 其他类型如果有的话，则继续添加处理方法
+            // Add handling for other types as needed
         }
     }
 
 
 private:
-    json m_params;
+    json m_params;      ///< JSON object to store parameters.
 };
 
 #define PARAMETERIZATION_SUPPORT                                                                                 \
@@ -118,8 +152,6 @@ public:                                                                         
     void loadParam(const nlohmann::json& j) {                                                                  \
         m_params.load(j);                                                                                 \
     }
-
-
 
 
 } // namespace hyper
