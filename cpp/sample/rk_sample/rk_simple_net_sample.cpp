@@ -3,14 +3,14 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "hyperface/middleware/model_loader/ModelLoader.h"
-#include "hyperface/track_module/face_detect/all.h"
-#include "hyperface/pipeline_module/attribute/MaskPredict.h"
+#include "inspireface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/track_module/face_detect/all.h"
+#include "inspireface/pipeline_module/attribute/MaskPredict.h"
 #include "model_index.h"
-#include "hyperface/middleware/Timer.h"
-#include "hyperface/track_module/quality/FacePoseQuality.h"
-#include "hyperface/track_module/landmark/FaceLandmark.h"
-#include "hyperface/pipeline_module/liveness/RBGAntiSpoofing.h"
+#include "inspireface/middleware/Timer.h"
+#include "inspireface/track_module/quality/FacePoseQuality.h"
+#include "inspireface/track_module/landmark/FaceLandmark.h"
+#include "inspireface/pipeline_module/liveness/RBGAntiSpoofing.h"
 
 using namespace hyper;
 

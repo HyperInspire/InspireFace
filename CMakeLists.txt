@@ -17,8 +17,8 @@ set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
 
 
-add_subdirectory(cpp/hyperface)  # 添加子项目
-get_property(HyperFace TARGET HyperFace PROPERTY HyperFace)
+add_subdirectory(cpp/inspireface)  # 添加子项目
+get_property(HyperFace TARGET InspireFace PROPERTY InspireFace)
 
 add_subdirectory(cpp/sample)  # 添加子项目
 

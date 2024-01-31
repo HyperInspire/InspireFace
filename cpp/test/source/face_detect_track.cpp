@@ -3,7 +3,7 @@
 //
 
 #include "common/test_settings.h"
-#include "hyperface/face_context.h"
+#include "inspireface/face_context.h"
 #include "herror.h"
 
 using namespace inspire;

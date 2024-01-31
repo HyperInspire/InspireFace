@@ -3,13 +3,13 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "hyperface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/middleware/model_loader/ModelLoader.h"
 #include "model_index.h"
-#include "hyperface/middleware/Timer.h"
+#include "inspireface/middleware/Timer.h"
 #include "middleware/inference_helper/customized/rknn_adapter.h"
-#include "hyperface/recognition_module/simd.h"
+#include "inspireface/recognition_module/simd.h"
 #include <memory>
-#include "hyperface/recognition_module/extract/Extract.h"
+#include "inspireface/recognition_module/extract/Extract.h"
 
 using namespace hyper;
 

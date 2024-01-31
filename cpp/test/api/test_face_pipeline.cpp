@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "common/test_settings.h"
-#include "hyperface/c_api/hyperface.h"
+#include "inspireface/c_api/inspireface.h"
 #include "test_helper/test_tools.h"
 
 TEST_CASE("test_FacePipeline", "[face_pipeline]") {
