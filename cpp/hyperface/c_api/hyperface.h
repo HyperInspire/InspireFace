@@ -34,7 +34,6 @@ extern "C" {
 #define HF_ENABLE_INTERACTION               0x00000100  ///< Flag to enable interaction feature.
 
 
-
 /**
  * Camera stream format.
  * Contains several common camera stream formats available in the market.
@@ -85,7 +84,7 @@ typedef struct HF_ImageData {
  * @param handle Pointer to the stream handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HImageHandle* handle);
+HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HImageHandle *handle);
 
 
 /**
@@ -158,7 +157,7 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
  * @param handle Pointer to the context handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFileOptional (
+HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFileOptional(
         HString resourceFile,
         HInt32 customOption,
         HF_DetectMode detectMode,
@@ -184,7 +183,8 @@ typedef struct HF_DatabaseConfiguration {
  * @param configuration Database configuration details.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextDataPersistence(HContextHandle ctxHandle, HF_DatabaseConfiguration configuration);
+HYPER_CAPI_EXPORT extern HResult
+HF_FaceContextDataPersistence(HContextHandle ctxHandle, HF_DatabaseConfiguration configuration);
 
 /**
  * @brief Release the face context.
@@ -210,9 +210,9 @@ typedef struct HF_FaceBasicToken {
  * This struct represents the Euler angles (roll, yaw, pitch) for face orientation.
  */
 typedef struct HF_FaceEulerAngle {
-    HFloat* roll;       ///< Roll angle of the face.
-    HFloat* yaw;        ///< Yaw angle of the face.
-    HFloat* pitch;      ///< Pitch angle of the face.
+    HFloat *roll;       ///< Roll angle of the face.
+    HFloat *yaw;        ///< Yaw angle of the face.
+    HFloat *pitch;      ///< Pitch angle of the face.
 } HF_FaceEulerAngle;
 
 /**
@@ -246,7 +246,8 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetTrackPreviewSize(HContextHandl
  * @param results Pointer to the structure where the results will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData results);
+HYPER_CAPI_EXPORT extern HResult
+HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData results);
 
 /************************************************************************
 * Face Recognition
@@ -282,7 +283,9 @@ typedef struct HF_FaceFeatureIdentity {
  * @param feature Pointer to the extracted face feature.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature);
+HYPER_CAPI_EXPORT extern HResult
+HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace,
+                      Ptr_HF_FaceFeature feature);
 
 /**
  * @brief Extract a face feature from a given face and copy it to the provided feature buffer.
@@ -293,7 +296,9 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceFeatureExtract(HContextHandle ctxHandle,
  * @param feature Pointer to the buffer where the extracted feature will be copied.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, HPFloat feature);
+HYPER_CAPI_EXPORT extern HResult
+HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace,
+                         HPFloat feature);
 
 /**
  * @brief Perform a one-to-one comparison of two face features.
@@ -304,7 +309,8 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceFeatureExtractCpy(HContextHandle ctxHand
  * @param result Pointer to the floating-point value where the comparison result will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceComparison1v1(HContextHandle ctxHandle, HF_FaceFeature feature1, HF_FaceFeature feature2, HPFloat result);
+HYPER_CAPI_EXPORT extern HResult
+HF_FaceComparison1v1(HContextHandle ctxHandle, HF_FaceFeature feature1, HF_FaceFeature feature2, HPFloat result);
 
 /**
  * @brief Get the length of the face feature.
@@ -323,7 +329,8 @@ HYPER_CAPI_EXPORT extern HResult HF_GetFeatureLength(HContextHandle ctxHandle, H
  * @param featureIdentity The face feature identity to be inserted.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity);
+HYPER_CAPI_EXPORT extern HResult
+HF_FeaturesGroupInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity);
 
 /**
  * @brief Search for the most similar face feature in the features group.
@@ -334,7 +341,9 @@ HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupInsertFeature(HContextHandle ct
  * @param mostSimilar Pointer to the most similar face feature identity found.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature searchFeature, HPFloat confidence, Ptr_HF_FaceFeatureIdentity mostSimilar);
+HYPER_CAPI_EXPORT extern HResult
+HF_FeaturesGroupFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature searchFeature, HPFloat confidence,
+                              Ptr_HF_FaceFeatureIdentity mostSimilar);
 
 /**
  * @brief Remove a face feature from the features group based on custom ID.
@@ -352,7 +361,8 @@ HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupFeatureRemove(HContextHandle ct
  * @param featureIdentity The face feature identity to be updated.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupFeatureUpdate(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity);
+HYPER_CAPI_EXPORT extern HResult
+HF_FeaturesGroupFeatureUpdate(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity);
 
 /**
  * @brief Retrieve a face feature identity from the features group based on custom ID.
@@ -362,7 +372,8 @@ HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupFeatureUpdate(HContextHandle ct
  * @param identity Pointer to the face feature identity to be retrieved.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupGetFeatureIdentity(HContextHandle ctxHandle, HInt32 customId, Ptr_HF_FaceFeatureIdentity identity);
+HYPER_CAPI_EXPORT extern HResult
+HF_FeaturesGroupGetFeatureIdentity(HContextHandle ctxHandle, HInt32 customId, Ptr_HF_FaceFeatureIdentity identity);
 
 /**
  * @brief Get the count of face features in the features group.
@@ -371,7 +382,7 @@ HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupGetFeatureIdentity(HContextHand
  * @param count Pointer to an integer where the count of features will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FeatureGroupGetCount(HContextHandle ctxHandle, HInt32* count);
+HYPER_CAPI_EXPORT extern HResult HF_FeatureGroupGetCount(HContextHandle ctxHandle, HInt32 *count);
 
 /**
  * @brief View the face database table.
@@ -397,7 +408,9 @@ HYPER_CAPI_EXPORT extern HResult HF_ViewFaceDBTable(HContextHandle ctxHandle);
  * @param parameter Custom parameters for processing the faces.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_MultipleFacePipelineProcess(HContextHandle ctxHandle,HImageHandle streamHandle, Ptr_HF_MultipleFaceData faces, HF_ContextCustomParameter parameter);
+HYPER_CAPI_EXPORT extern HResult
+HF_MultipleFacePipelineProcess(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData faces,
+                               HF_ContextCustomParameter parameter);
 
 /**
  * @brief Process multiple faces in a pipeline with an optional custom option.
@@ -411,7 +424,9 @@ HYPER_CAPI_EXPORT extern HResult HF_MultipleFacePipelineProcess(HContextHandle c
  * @param customOption An integer representing a custom option for processing.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData faces, HInt32 customOption);
+HYPER_CAPI_EXPORT extern HResult
+HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageHandle streamHandle,
+                                       Ptr_HF_MultipleFaceData faces, HInt32 customOption);
 
 /**
  * @brief Struct representing RGB liveness confidence.
@@ -446,7 +461,8 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceRecognitionThresholdSetting(HContextHand
  * @param confidence Pointer to the structure where RGB liveness confidence data will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLivenessConfidence confidence);
+HYPER_CAPI_EXPORT extern HResult
+HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLivenessConfidence confidence);
 
 /**
  * @brief Struct representing face mask confidence.
@@ -469,7 +485,8 @@ typedef struct HF_FaceMaskConfidence {
  * @param confidence Pointer to the structure where face mask confidence data will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_GetFaceMaskConfidence(HContextHandle ctxHandle, Ptr_HF_FaceMaskConfidence confidence);
+HYPER_CAPI_EXPORT extern HResult
+HF_GetFaceMaskConfidence(HContextHandle ctxHandle, Ptr_HF_FaceMaskConfidence confidence);
 
 /**
  * @brief Detect the quality of a face in an image.
@@ -481,7 +498,8 @@ HYPER_CAPI_EXPORT extern HResult HF_GetFaceMaskConfidence(HContextHandle ctxHand
  * @param confidence Pointer to a floating-point value where the quality confidence will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceQualityDetect(HContextHandle ctxHandle, HF_FaceBasicToken singleFace, HFloat *confidence);
+HYPER_CAPI_EXPORT extern HResult
+HF_FaceQualityDetect(HContextHandle ctxHandle, HF_FaceBasicToken singleFace, HFloat *confidence);
 
 
 /********************************DEBUG Utils****************************************/
