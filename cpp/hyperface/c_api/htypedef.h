@@ -5,28 +5,26 @@
 #ifndef HYPERFACEREPO_HTYPEDEF_H
 #define HYPERFACEREPO_HTYPEDEF_H
 
-
-typedef void*               HPVoid;
-typedef void*               HImageHandle;
-typedef void*               HContextHandle;
-typedef long                HLong;
-typedef float                HFloat;
-typedef float*               HPFloat;
-typedef double              HDouble;
-typedef	unsigned char		HUInt8;
-typedef signed int			HInt32;
-typedef signed int*			HPInt32;
-typedef long                HResult;
-typedef char*               HString;
-typedef char                HChar;
+typedef void*               HPVoid; ///< Pointer to Void.
+typedef void*               HImageHandle; ///< Handle for image.
+typedef void*               HContextHandle; ///< Handle for context.
+typedef long                HLong; ///< Long integer.
+typedef float                HFloat; ///< Single-precision floating point.
+typedef float*               HPFloat; ///< Pointer to Single-precision floating point.
+typedef double              HDouble; ///< Double-precision floating point.
+typedef	unsigned char		HUInt8; ///< Unsigned 8-bit integer.
+typedef signed int			HInt32; ///< Signed 32-bit integer.
+typedef signed int*			HPInt32; ///< Pointer to signed 32-bit integer.
+typedef long                HResult; ///< Result code.
+typedef char*               HString; ///< String.
+typedef char                HChar; ///< Character.
 
 typedef struct HFaceRect {
-    HInt32 x;
-    HInt32 y;
-    HInt32 width;
-    HInt32 height;
-} HFaceRect;
-
+    HInt32 x; ///< X-coordinate of the top-left corner of the rectangle.
+    HInt32 y; ///< Y-coordinate of the top-left corner of the rectangle.
+    HInt32 width; ///< Width of the rectangle.
+    HInt32 height; ///< Height of the rectangle.
+} HFaceRect; ///< Rectangle representing a face region.
 
 
 #endif //HYPERFACEREPO_HTYPEDEF_H

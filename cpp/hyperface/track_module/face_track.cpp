@@ -12,8 +12,10 @@
 
 namespace inspire {
 
-FaceTrack::FaceTrack(int max_detected_faces, int detection_interval) : max_detected_faces_(max_detected_faces),
-                                                                       detection_interval_(detection_interval) {
+FaceTrack::FaceTrack(int max_detected_faces, int detection_interval, int track_preview_size) :
+                                                                        max_detected_faces_(max_detected_faces),
+                                                                        detection_interval_(detection_interval),
+                                                                        track_preview_size_(track_preview_size){
     detection_index_ = -1;
 }
 
@@ -217,6 +219,7 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
 //    LOGD("%d, %d", detection_index_, detection_interval_);
     if (detection_index_ % detection_interval_ == 0 || is_detect) {
 //        Timer t_blacking;
+        image.SetPreviewSize(track_preview_size_);
         cv::Mat image_detect = image.GetPreviewImage(true);
         nms();
         for (auto const &face: trackingFace) {
@@ -461,6 +464,10 @@ int FaceTrack::InitFacePoseModel(Model *model) {
 
 double FaceTrack::GetTrackTotalUseTime() const {
     return track_total_use_time_;
+}
+
+void FaceTrack::SetTrackPreviewSize(const int preview_size) {
+    track_preview_size_ = preview_size;
 }
 
 

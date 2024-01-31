@@ -7,6 +7,9 @@
 //
 //namespace hyper {
 
+/**
+ * @brief Enum to represent rotation modes.
+ */
 enum ROTATION_MODE {
     ROTATION_0 = 0,
     ROTATION_90 = 1,
@@ -14,12 +17,19 @@ enum ROTATION_MODE {
     ROTATION_270 = 3
 };
 
+/**
+ * @brief Enum to represent rotation modes.
+ */
 enum DATA_FORMAT {
     NV21 = 0, NV12 = 1, RGBA = 2, RGB = 3, BGR = 4, BGRA = 5
 };
 
+/**
+ * @brief A class to handle camera stream and image processing.
+ */
 class CameraStream {
 public:
+
     CameraStream() {
         config_.sourceFormat = MNN::CV::YUV_NV21;
         config_.destFormat = MNN::CV::BGR;
@@ -29,8 +39,16 @@ public:
         config_.wrap = MNN::CV::ZERO;
         rotation_mode_ = ROTATION_0;
         preview_size_ = 192;
-        //preview_size_ = 352;
+//        preview_size_ = 352;
     }
+
+    /**
+     * @brief Set the data buffer, height, and width of the camera stream.
+     *
+     * @param data_buffer Pointer to the data buffer.
+     * @param height Height of the image.
+     * @param width Width of the image.
+     */
     void SetDataBuffer(const uint8_t *data_buffer, int height, int width) {
         this->buffer_ = data_buffer;
         this->height_ = height;
@@ -38,15 +56,29 @@ public:
         preview_scale_ = preview_size_ / static_cast<float>(std::max(height,width));
     }
 
+    /**
+     * @brief Set the preview size.
+     *
+     * @param size Preview size.
+     */
     void SetPreviewSize(const int size)
     {
         preview_size_ = size;
         preview_scale_ = preview_size_ / static_cast<float>(std::max(this->height_,this->width_));
     }
 
-
+    /**
+     * @brief Set the rotation mode.
+     *
+     * @param mode Rotation mode (e.g., ROTATION_0, ROTATION_90).
+     */
     void SetRotationMode(ROTATION_MODE mode) { rotation_mode_ = mode; }
 
+    /**
+     * @brief Set the data format.
+     *
+     * @param data_format Data format (e.g., NV21, RGBA).
+     */
     void SetDataFormat(DATA_FORMAT data_format) {
         if (data_format == NV21) {
             config_.sourceFormat = MNN::CV::YUV_NV21;
@@ -68,6 +100,14 @@ public:
         }
     }
 
+    /**
+     * @brief Get an affine-transformed RGB image.
+     *
+     * @param affine_matrix Affine transformation matrix.
+     * @param width_out Width of the output image.
+     * @param height_out Height of the output image.
+     * @return cv::Mat Affine-transformed RGB image.
+     */
     cv::Mat GetAffineRGBImage(const cv::Mat &affine_matrix, const int width_out,
                               const int height_out) const {
         int sw = width_;
@@ -96,15 +136,33 @@ public:
         return img_out;
     }
 
+    /**
+     * @brief Get a preview image with optional rotation.
+     *
+     * @param with_rotation True if rotation is applied, false otherwise.
+     * @return cv::Mat Preview image.
+     */
     cv::Mat GetPreviewImage(bool with_rotation){
         return GetScaledImage(preview_scale_  , with_rotation);
     }
 
+    /**
+     * @brief Get the preview scale.
+     *
+     * @return float Preview scale.
+     */
     float GetPreviewScale()
     {
         return preview_scale_;
     }
 
+    /**
+     * @brief Get a scaled image with optional rotation.
+     *
+     * @param scale Scaling factor.
+     * @param with_rotation True if rotation is applied, false otherwise.
+     * @return cv::Mat Scaled image.
+     */
     cv::Mat GetScaledImage(const float scale, bool with_rotation) {
         int sw = width_;
         int sh = height_;
@@ -239,6 +297,11 @@ public:
         }
     }
 
+    /**
+     * @brief Get the affine transformation matrix.
+     *
+     * @return cv::Mat Affine transformation matrix.
+     */
     cv::Mat GetAffineMatrix() const {
         cv::Mat affine_matrix(3, 3, CV_32F);
         tr_.get9((float *)affine_matrix.data);
@@ -251,32 +314,47 @@ public:
         return affine_64;
     }
 
-
+    /**
+     * @brief Get the height of the camera stream image.
+     *
+     * @return int Height.
+     */
     int GetHeight() const{
         return height_;
     }
 
+    /**
+     * @brief Get the width of the camera stream image.
+     *
+     * @return int Width.
+     */
     int GetWidth() const{
         return width_;
     }
 
+    /**
+     * @brief Get the current rotation mode.
+     *
+     * @return ROTATION_MODE Current rotation mode.
+     */
     ROTATION_MODE getRotationMode() const {
         return rotation_mode_;
     }
 
 
 private:
-    const uint8_t *buffer_;
-    int buffer_size_;
-    std::vector<float> rotation_matrix;
-    int height_;
-    int width_;
-    float preview_scale_;
-    int preview_size_;
-    MNN::CV::Matrix tr_;
-    ROTATION_MODE rotation_mode_;
-    MNN::CV::ImageProcess::Config config_;
-    std::shared_ptr<MNN::CV::ImageProcess> process_;
+    const uint8_t *buffer_;                 ///< Pointer to the data buffer.
+    int buffer_size_;                       ///< Size of the data buffer.
+    std::vector<float> rotation_matrix;      ///< Rotation matrix.
+    int height_;                            ///< Height of the camera stream image.
+    int width_;                             ///< Width of the camera stream image.
+    float preview_scale_;                    ///< Scaling factor for the preview image.
+    int preview_size_;                      ///< Size of the preview image.
+    MNN::CV::Matrix tr_;                    ///< Affine transformation matrix.
+    ROTATION_MODE rotation_mode_;           ///< Current rotation mode.
+    MNN::CV::ImageProcess::Config config_;    ///< Configuration for image processing.
+    std::shared_ptr<MNN::CV::ImageProcess> process_; ///< Image processing instance.
+
 };
 //}
 #endif // CAMERA_STREAM_H

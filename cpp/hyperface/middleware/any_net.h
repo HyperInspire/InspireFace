@@ -15,13 +15,30 @@ namespace inspire {
 
 using AnyTensorOutputs = std::vector<std::pair<std::string, std::vector<float>>>;
 
+/**
+ * @class AnyNet
+ * @brief Generic neural network class for various inference tasks.
+ *
+ * This class provides a general interface for different types of neural networks,
+ * facilitating loading parameters, initializing models, and executing forward passes.
+ */
 class HYPER_API AnyNet {
-    PARAMETERIZATION_SUPPORT  // NOSONAR
+    PARAMETERIZATION_SUPPORT
 
 public:
-
+    /**
+     * @brief Constructor for AnyNet.
+     * @param name Name of the neural network.
+     */
     explicit AnyNet(const std::string &name):m_name_(name) {}
 
+    /**
+     * @brief Loads parameters and initializes the model for inference.
+     * @param param Parameters for network configuration.
+     * @param model Pointer to the model.
+     * @param type Type of the inference helper (default: kMnn).
+     * @return int32_t Status of the loading and initialization process.
+     */
     int32_t LoadParam(const Parameter &param, Model *model, InferenceHelper::HelperType type = InferenceHelper::kMnn) {
         // must
         _initSingleParam<int>(param, "model_index", 0);
@@ -97,10 +114,15 @@ public:
         return 0;
     }
 
+    /**
+     * @brief Performs a forward pass of the network with given input data.
+     * @param data The input matrix (image) to process.
+     * @param outputs Outputs of the network (tensor outputs).
+     */
     void Forward(const Matrix &data, AnyTensorOutputs& outputs) {
         InputTensorInfo& input_tensor_info = getMInputTensorInfoList()[0];
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
-        // 先在外部简单实现一个临时的色彩转换
+        // Start by simply implementing a temporary color shift on the outside
         if (getParam<bool>("swap_color")) {
             cv::cvtColor(data, m_cache_, cv::COLOR_BGR2RGB);
             input_tensor_info.data = m_cache_.data;
@@ -113,6 +135,10 @@ public:
         Forward(outputs);
     }
 
+    /**
+     * @brief Performs a forward pass of the network.
+     * @param outputs Outputs of the network (tensor outputs).
+     */
     void Forward(AnyTensorOutputs& outputs) {
 
 //        LOGD("ppPreProcess");
@@ -137,33 +163,40 @@ public:
 
 
 public:
-
+    /**
+     * @brief Gets a reference to the input tensor information list.
+     * @return Reference to the vector of input tensor information.
+     */
     std::vector<InputTensorInfo> &getMInputTensorInfoList() {
         return m_input_tensor_info_list_;
     }
 
+    /**
+     * @brief Gets a reference to the output tensor information list.
+     * @return Reference to the vector of output tensor information.
+     */
     std::vector<OutputTensorInfo> &getMOutputTensorInfoList() {
         return m_output_tensor_info_list_;
     }
 
+    /**
+     * @brief Gets the size of the input image.
+     * @return Size of the input image.
+     */
     cv::Size &getMInputImageSize() {
         return m_input_image_size_;
     }
 
 protected:
-    std::string m_name_;
+    std::string m_name_;                                                ///< Name of the neural network.
 
 private:
 
-    std::shared_ptr<InferenceHelper> m_nn_inference_;
-
-    std::vector<InputTensorInfo> m_input_tensor_info_list_;
-
-    std::vector<OutputTensorInfo> m_output_tensor_info_list_;
-
-    cv::Size m_input_image_size_{};
-
-    cv::Mat m_cache_;
+    std::shared_ptr<InferenceHelper> m_nn_inference_;                   ///< Shared pointer to the inference helper.
+    std::vector<InputTensorInfo> m_input_tensor_info_list_;             ///< List of input tensor information.
+    std::vector<OutputTensorInfo> m_output_tensor_info_list_;           ///< List of output tensor information.
+    cv::Size m_input_image_size_{};                                     ///< Size of the input image.
+    cv::Mat m_cache_;                                                   ///< Cached matrix for image data.
 
 };
 
@@ -184,6 +217,21 @@ AnyTensorOutputs ForwardService(
 }
 
 
+/**
+ * @brief Executes a forward pass through the neural network for a given input, with preprocessing.
+ * @tparam ImageT Type of the input image.
+ * @tparam TensorT Type of the transformed tensor.
+ * @tparam PreprocessCallbackT Type of the preprocessing callback function.
+ * @param net Shared pointer to the AnyNet neural network object.
+ * @param input The input image to be processed.
+ * @param callback Preprocessing callback function to be applied to the input.
+ * @param transform Transformation function to convert the input image to a tensor.
+ * @return AnyTensorOutputs Outputs of the network (tensor outputs).
+ *
+ * This template function handles the preprocessing of the input image, transformation to tensor,
+ * and then passes it through the neural network to get the output. The function is generic and
+ * can work with different types of images and tensors, as specified by the template parameters.
+ */
 template <typename ImageT, typename TensorT, typename PreprocessCallbackT>
 AnyTensorOutputs ForwardService(
         std::shared_ptr<AnyNet> net,

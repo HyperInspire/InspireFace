@@ -14,10 +14,9 @@
 
 
 /**
- * @brief 获取RKNN数据类型字符串
- * @ingroup NeuralNetwork
- * @param type 数据类型
- * @return 字符串编码类型
+ * @brief Function to get RKNN data type string.
+ * @param type Data type
+ * @return String representation of the data type
  */
 inline const char *get_type_string_(rknn_tensor_type type) {
     switch (type) {
@@ -36,6 +35,11 @@ inline const char *get_type_string_(rknn_tensor_type type) {
     }
 }
 
+/**
+ * @brief Function to get quantization type string.
+ * @param type Quantization type
+ * @return String representation of the quantization type
+ */
 inline const char *get_qnt_type_string_(rknn_tensor_qnt_type type) {
     switch (type) {
         case RKNN_TENSOR_QNT_NONE:
@@ -49,6 +53,10 @@ inline const char *get_qnt_type_string_(rknn_tensor_qnt_type type) {
     }
 }
 
+/**
+ * @brief Function to print tensor attributes.
+ * @param attr Tensor attributes
+ */
 inline void print_tensor_attr_(const rknn_tensor_attr &attr) {
     printf("  n_dims:%d \n", attr.n_dims);
     printf("  [ ");
@@ -62,6 +70,13 @@ inline void print_tensor_attr_(const rknn_tensor_attr &attr) {
     printf("  name:%s \n", attr.name);
 }
 
+/**
+ * @brief Function to load data from a file.
+ * @param fp File pointer
+ * @param ofst Offset
+ * @param sz Size
+ * @return Pointer to loaded data
+ */
 inline unsigned char *load_data_(FILE *fp, size_t ofst, size_t sz) {
     unsigned char *data;
     int ret;
@@ -87,6 +102,12 @@ inline unsigned char *load_data_(FILE *fp, size_t ofst, size_t sz) {
     return data;
 }
 
+/**
+ * @brief Function to load a model from a file.
+ * @param filename Model file name
+ * @param model_size Pointer to store model size
+ * @return Pointer to loaded model data
+ */
 inline unsigned char *load_model_(const char *filename, int *model_size) {
     FILE *fp;
     unsigned char *data;
@@ -109,7 +130,7 @@ inline unsigned char *load_model_(const char *filename, int *model_size) {
 }
 
 /**
- * RKNN执行推理的状态
+ * @brief Status of RKNN inference execution
  * @ingroup NeuralNetwork
  */
 enum Status {
@@ -119,22 +140,22 @@ enum Status {
 };
 
 /**
- * @brief RKNN神经网络推理适配器
- * @details 自定义化通用型的RKNN推理适配包装类, 可作与其他需要使用RKNN进行神经网络推理的任务进行组合使用
+ * @brief RKNN Neural Network Inference Adapter
+ * @details Customizable general-purpose RKNN inference adapter wrapper class, suitable for use in tasks requiring neural network inference with RKNN
  * @ingroup NeuralNetwork
  */
 class RKNNAdapter {
 public:
-    // 禁止拷贝
+
     RKNNAdapter(const RKNNAdapter &) = delete;
     RKNNAdapter &operator=(const RKNNAdapter &) = delete;
     RKNNAdapter() = default;
 
     /**
-     * @brief 手动初始化
-     * @details 初始化rknn模型，会申请一块内存进行创建推理器会话
-     * @param model_path rknn模型的路径
-     * @return 返回初始化结果
+     * @brief Manually initialize
+     * @details Initialize the RKNN model and allocate memory for creating the inference engine session
+     * @param model_path Path to the RKNN model
+     * @return Initialization result
      */
     int Initialize(const char *model_path) {
         /* Create the neural network */
@@ -150,11 +171,12 @@ public:
         return init_();
     }
 
+
     /**
-     * @brief 手动初始化
-     * @details 初始化rknn模型，会申请一块内存进行创建推理器会话
-     * @param model 传入SolexCV视觉库中的模型类型指针
-     * @return 返回初始化结果
+     * @brief Manually initialize
+     * @details Initialize the RKNN model using a hyper::Model object and allocate memory for creating the inference engine session
+     * @param model Pointer to the hyper::Model object
+     * @return Initialization result
      */
     int Initialize(hyper::Model *model) {
         /* Create the neural network */
@@ -171,6 +193,13 @@ public:
         return init_();
     }
 
+    /**
+     * @brief Manually initialize
+     * @details Initialize the RKNN model using model data and its size, and allocate memory for creating the inference engine session
+     * @param model_data Pointer to the model data
+     * @param model_size Size of the model data
+     * @return Initialization result
+     */
     int Initialize(const unsigned char* model_data, const unsigned int model_size) {
         /* Create the neural network */
         LOGD("The neural network is being initialized...");
@@ -185,10 +214,9 @@ public:
     }
 
     /**
-     * @brief 获取输入图像Tensor的尺寸
-     * @details 用于获取rknn模型的输入尺寸，提取预知输入大小方便进行输入的前处理操作
-     * @param index 输入层的索引号
-     * @return 返回由各个尺寸组成的维度信息
+     * @brief Get the size of the input image Tensor
+     * @param index Index of the input layer
+     * @return Dimensions information composed of various sizes
      */
     std::vector<int> GetInputTensorSize(const int &index) {
         std::vector<int> dims(input_attrs_[index].dims,
@@ -198,10 +226,9 @@ public:
     }
 
     /**
-     * @brief 获取s输出图像Tensor的尺寸
-     * @details 用于获取rknn模型的输出尺寸
-     * @param index 输出层的索引号
-     * @return 返回由各个尺寸组成的维度信息
+     * @brief Get the size of the output image Tensor
+     * @param index Index of the output layer
+     * @return Dimensions information composed of various sizes
      */
     std::vector<unsigned long> GetOutputTensorSize(const int &index) {
 //        std::cout << "output_attrs_[index].n_dims:" << output_attrs_[index].n_dims << std::endl;
@@ -212,10 +239,9 @@ public:
     }
 
     /**
-     * @brief 获取输出Tensor的长度
-     * @details 用于获取rknn模型的输出的长度信息
-     * @param index 输出层的索引号
-     * @return 长度信息
+     * @brief Get the length of the output Tensor
+     * @param index Index of the output layer
+     * @return Length information
      */
     int GetOutputTensorLen(const int &index) {
         std::vector<unsigned long> tensor_size_out = GetOutputTensorSize(index);
@@ -225,11 +251,10 @@ public:
     }
 
     /**
-     * @brief 设置输入层的数据流
-     * @details 将图像输入喂入输入层中，是执行推理的前一步骤
-     * @param index 输入层索引号
-     * @param data 图像数据, 采用opencv的mat类型
-     * @return 返回输入状态
+     * @brief Set the data stream for the input layer
+     * @param index Index of the input layer
+     * @param data Image data in the form of an OpenCV Mat
+     * @return Input status
      */
     Status SetInputData(const int index, const cv::Mat &data) {
         if (data.type() != CV_8UC3) {
@@ -248,6 +273,17 @@ public:
         return SUCCESS;
     }
 
+    /**
+     * @brief Set the data stream for the input layer
+     * @param index Index of the input layer
+     * @param data Pointer to the input data
+     * @param width Width of the input data
+     * @param height Height of the input data
+     * @param channels Number of channels in the input data
+     * @param type Type of the input data (default: RKNN_TENSOR_UINT8)
+     * @param format Format of the input data (default: RKNN_TENSOR_NHWC)
+     * @return Input status
+     */
     Status SetInputData(const int index, void* data, int width, int height, int channels,
                         rknn_tensor_type type = RKNN_TENSOR_UINT8,
                         rknn_tensor_format format = RKNN_TENSOR_NHWC) {
@@ -265,9 +301,9 @@ public:
     }
 
     /**
-     * @brief 执行神经网络推理
-     * @details 需要完成输入数据到输入层后才能执行该步骤, 该步骤为耗时操作
-     * @return 返回推理状态结果
+     * @brief Execute neural network inference
+     * @details This step should be executed after input data has been provided to the input layer. This step is time-consuming.
+     * @return Inference status result
      */
     int RunModel() {
 //        LOGD("set input");
@@ -295,15 +331,19 @@ public:
     }
 
     /**
-     * @brief 获取输出层的数据
-     * @details 返回推理结束后输出层数据，需要先执行推理才能获取
-     * @param index 输出层索引
-     * @return 返回输出数据的指针
+     * @brief Get the data from the output layer
+     * @param index Index of the output layer
+     * @return Pointer to the output data
      */
     const float *GetOutputData(const int index) {
         return (float *) (output_tensors_[index].buf);
     }
 
+    /**
+     * @brief Get the output data buffer for a specific output layer
+     * @param index Index of the output layer
+     * @return Pointer to the output data buffer
+     */
     void *GetOutputFlow(const int index) {
         return output_tensors_[index].buf;
     }
@@ -319,10 +359,10 @@ public:
     }
 
     /**
-     * @brief 可变长数据输入操作
-     * @details 暂时还未支持该功能
-     * @param index_name 输入层索引
-     * @param shape 需要改变的维度
+     * @brief Resize the input tensor with a specified name to a new shape
+     * @details This function is currently not implemented.
+     * @param index_name Name of the input tensor
+     * @param shape New shape for the input tensor
      */
     void ResizeInputTensor(const std::string &index_name,
                            const std::vector<int> &shape) {
@@ -330,50 +370,46 @@ public:
     }
 
     /**
-     * @brief 检测尺寸
-     * @details 暂时未实现该功能
-     * */
+     * @brief Check the size (Placeholder)
+     * @details This function is currently not implemented.
+     */
     void CheckSize() {
         // No implementation
     }
 
     /**
-     * @brief 获取输出层的数量
-     * @details 获取输出层的数量, 通常在多任务多输出神经网络使用
-     * @return 返回数量
+     * @brief Get the number of output layers
+     * @details This function is typically used in multi-task or multi-output neural networks.
+     * @return The number of output layers.
      */
     size_t GetOutputsNum() const {
         return rk_io_num_.n_output;
     }
 
     /**
-     * @brief 返回输出层的所有Tensor
-     * @details 将输出层所有的Tensor进行获取
-     * @return 返回所有Tensor
-     */
+     * @brief Get a reference to the vector of output tensors
+     * @return A reference to the vector of output tensors.
+    */
     std::vector<rknn_output> &GetOutputTensors() {
         return output_tensors_;
     }
 
     /**
-     * @brief 返回输出层的所有Tensor节点信息
-     * @details 节点信息包含输出尺寸、类型等其他信息
-     * @return 返回信息
+     * @brief Get a reference to a vector containing information about the attributes of the output tensors
+     * @details The attributes include output sizes, data types, and other relevant information.
+     * @return A reference to the vector containing output tensor attributes.
      */
     std::vector<rknn_tensor_attr> &GetOutputTensorAttr() {
         return output_attrs_;
     }
 
-    /**
-     * @brief 析构函数
-     */
     ~RKNNAdapter() {
         Release();
     }
 
     /**
-     * @brief 释放资源
-     * @details 释放掉所有内存中的资源，通常在析构函数下进行
+     * @brief Release resources
+     * @details Release all resources in memory, typically called in the destructor
      */
     void Release() {
         rknn_destroy(rk_ctx_);
@@ -383,9 +419,9 @@ public:
     }
 
     /**
-     * @brief 设置输出模式是否需要支持浮点格式
-     * @details 根据编码风格选定，有些后处理会使用UInt8类型的格式进编解码
-     * @param outputsWantFloat 0或1
+     * @brief Set the output mode to support float format
+     * @details Depending on the encoding style, some post-processing may use UInt8 format for encoding and decoding
+     * @param outputsWantFloat 0 or 1
      */
     void setOutputsWantFloat(int outputsWantFloat) {
         outputs_want_float_ = outputsWantFloat;
@@ -393,7 +429,7 @@ public:
 
 private:
     /**
-     * 初始化
+     * initial
      * @return
      */
     int init_() {
@@ -487,23 +523,22 @@ private:
     }
 
 private:
-    rknn_context rk_ctx_;                               // rknn的上下文管理器
-    rknn_input_output_num rk_io_num_;                   // rkn的输入输出流数量
+    rknn_context rk_ctx_;               ///< The context manager for RKNN.
+    rknn_input_output_num rk_io_num_;   ///< The number of input and output streams in RKNN.
 
-    std::vector<rknn_tensor_attr> input_attrs_;         // 输入属性
-    std::vector<rknn_tensor_attr> output_attrs_;        // 输出属性
-    std::vector<rknn_input> input_tensors_;             // 输入数据
-    std::vector<rknn_output> output_tensors_;           // 输出数据
+    std::vector<rknn_tensor_attr> input_attrs_;   ///< Attributes of input tensors.
+    std::vector<rknn_tensor_attr> output_attrs_;  ///< Attributes of output tensors.
+    std::vector<rknn_input> input_tensors_;       ///< Input data for the neural network.
+    std::vector<rknn_output> output_tensors_;     ///< Output data from the neural network.
 
-    int outputs_want_float_ = 0;                        // 支持浮点输出
+    int outputs_want_float_ = 0;        ///< Flag to indicate support for floating-point output.
 
-    std::vector<int> tensor_shape_;                     // 输入形状
-    int width_;                                         // 输入宽
-    int height_;                                        // 输入高
-    bool run_status_;                                   // 执行状态
+    std::vector<int> tensor_shape_;     ///< The shape of input tensors.
+    int width_;                         ///< The width of input data (typically for images).
+    int height_;                        ///< The height of input data (typically for images).
+    bool run_status_;                   ///< Flag to indicate the execution status of the neural network.
 
-
-    unsigned char *model_data;                          // 模型数据流
+    unsigned char *model_data;          ///< Pointer to the model's data stream.
 };
 
 

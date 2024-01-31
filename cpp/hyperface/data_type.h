@@ -24,64 +24,138 @@
 namespace inspire {
 
 /**
- * @ingroup DataType
- * @{
- */
+* @defgroup DataType Definitions
+* @brief Defines various data types used in the HyperFace project.
+* @{
+*/
 
 #if !defined(int64)
-/** 64位整型定义 */
+/** @typedef int64
+*  @brief 64-bit integer type.
+*/
 typedef int64_t int64;
 #endif
 
 #if !defined(uint64)
-/** 64位无符号整型定义 */
+/** @typedef uint64
+*  @brief 64-bit unsigned integer type.
+*/
 typedef uint64_t uint64;
 #endif
 
 #if !defined(int32)
-/** 32位整型定义 */
+/** @typedef int32
+*  @brief 32-bit integer type.
+*/
 typedef int32_t int32;
 #endif
 
 #if !defined(uint32)
-/** 32位无符号整型定义 */
+/** @typedef uint32
+*  @brief 32-bit unsigned integer type.
+*/
 typedef uint32_t uint32;
 #endif
 
 #if !defined(int8)
-/** 8位整型定义 */
+/** @typedef int8
+*  @brief 8-bit integer type.
+*/
 typedef int8_t int8;
 #endif
 
 #if !defined(uint8)
-/** 无符号8位整型定义 */
+/** @typedef uint8
+*  @brief 8-bit unsigned integer type.
+*/
 typedef uint8_t uint8;
 #endif
 
+/** @typedef ByteArray
+*  @brief Type definition for a byte array (vector of chars).
+*/
 typedef std::vector<char> ByteArray;
-typedef cv::Point Point2i;                          ///< int类型的2d坐标点
-typedef cv::Point2f Point2f;                        ///< float类型的2d坐标点
-typedef std::vector<Point2i> PointsList2i;          ///< int类型的2d坐标点列表
-typedef std::vector<Point2f> PointsList2f;          ///< float类型的2d坐标点列表
 
-typedef std::vector<PointsList2i> Contours2i;        ///< int类型的点集轮廓
-typedef std::vector<PointsList2f> Contours2f;        ///< float类型的点集轮廓
+/** @typedef Point2i
+*  @brief 2D coordinate point with integer precision.
+*/
+typedef cv::Point Point2i;
 
-typedef Contours2i Textures2i;                      ///< int纹理线条类型(与轮廓结构一致)
+/** @typedef Point2f
+*  @brief 2D coordinate point with float precision.
+*/
+typedef cv::Point2f Point2f;
 
-typedef std::vector<float> AnyTensorFp32;            ///< float的AnyTensor表达式
+/** @typedef PointsList2i
+*  @brief List of 2D coordinate points with integer precision.
+*/
+typedef std::vector<Point2i> PointsList2i;
 
-typedef cv::Mat Matrix;                             ///< 通用矩阵表达
-typedef cv::Rect_<int> Rectangle;                   ///< 通用矩形
-typedef cv::Size_<int> Size;                        ///< 通用尺寸
+/** @typedef PointsList2f
+*  @brief List of 2D coordinate points with float precision.
+*/
+typedef std::vector<Point2f> PointsList2f;
 
-typedef std::vector<float> Embedded;                ///< 特征嵌入稠密向量
-typedef std::vector<Embedded> EmbeddedList;         ///< 特征嵌入稠密向量列表
+/** @typedef Contours2i
+*  @brief Contours represented as a list of 2D integer points.
+*/
+typedef std::vector<PointsList2i> Contours2i;
 
-typedef std::string String;                         ///< 字符串
+/** @typedef Contours2f
+*  @brief Contours represented as a list of 2D float points.
+*/
+typedef std::vector<PointsList2f> Contours2f;
 
-typedef std::vector<int> IndexList;                 ///< 索引列表
+/** @typedef Textures2i
+*  @brief Texture lines represented as integer contours.
+*/
+typedef Contours2i Textures2i;
 
+/** @typedef AnyTensorFp32
+*  @brief Generic tensor representation using a vector of floats.
+*/
+typedef std::vector<float> AnyTensorFp32;
+
+/** @typedef Matrix
+*  @brief Generic matrix representation.
+*/
+typedef cv::Mat Matrix;
+
+/** @typedef Rectangle
+*  @brief Rectangle representation using integer values.
+*/
+typedef cv::Rect_<int> Rectangle;
+
+/** @typedef Size
+*  @brief Size representation using integer values.
+*/
+typedef cv::Size_<int> Size;
+
+/** @typedef Embedded
+*  @brief Dense vector for feature embedding.
+*/
+typedef std::vector<float> Embedded;
+
+/** @typedef EmbeddedList
+*  @brief List of dense vectors for feature embedding.
+*/
+typedef std::vector<Embedded> EmbeddedList;
+
+/** @typedef String
+*  @brief String type definition.
+*/
+typedef std::string String;
+
+/** @typedef IndexList
+*  @brief List of indices.
+*/
+typedef std::vector<int> IndexList;
+
+/** @struct FaceLoc
+*  @brief Struct representing standardized face landmarks for detection.
+*
+*  Contains coordinates for the face, detection score, and landmarks.
+*/
 typedef struct FaceLoc {
     float x1;
     float y1;
@@ -89,15 +163,28 @@ typedef struct FaceLoc {
     float y2;
     float score;
     float lmk[10];
-} FaceLoc;                                          ///< 人脸标准化检测地标
+} FaceLoc;
 
-typedef std::vector<FaceLoc> FaceLocList;                ///< 人脸地标列表
+/** @typedef FaceLocList
+*  @brief List of FaceLoc structures.
+*/
+typedef std::vector<FaceLoc> FaceLocList;
 
+/** @struct FaceBasicData
+*  @brief Struct for basic face data.
+*
+*  Contains the size of the data and a pointer to the data.
+*/
 typedef struct FaceBasicData {
     int32_t dataSize;
     void* data;
 } FaceBasicData;
 
+/** @struct FaceFeatureEntity
+*  @brief Struct for face feature data.
+*
+*  Contains the size of the feature data and a pointer to the feature array.
+*/
 typedef struct FaceFeatureEntity {
     int32_t dataSize;
     float *data;
@@ -105,6 +192,6 @@ typedef struct FaceFeatureEntity {
 
 /** @} */
 
-}  // namespace yh
+}  // namespace inspire
 
 #endif //HYPERFACE_DATATYPE_H

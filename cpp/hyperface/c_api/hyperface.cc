@@ -173,6 +173,17 @@ HResult HF_FaceContextDataPersistence(HContextHandle ctxHandle, HF_DatabaseConfi
     return ret;
 }
 
+HResult HF_FaceContextSetTrackPreviewSize(HContextHandle ctxHandle, HInt32 previewSize) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetTrackPreviewSize(previewSize);
+}
+
 HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData results) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
@@ -317,7 +328,6 @@ HResult HF_FeaturesGroupInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureId
     return ret;
 }
 
-static const std::shared_ptr<HF_FaceFeature> globalFaceFeature = std::make_shared<HF_FaceFeature>();
 
 HResult HF_FeaturesGroupFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature searchFeature, HPFloat confidence, Ptr_HF_FaceFeatureIdentity mostSimilar) {
     if (ctxHandle == nullptr) {
@@ -506,6 +516,17 @@ HResult HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageH
 
     return ret;
 
+}
+
+HResult HF_FaceRecognitionThresholdSetting(HContextHandle ctxHandle, float threshold) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetRecognitionThreshold(threshold);
 }
 
 HResult HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLivenessConfidence confidence) {

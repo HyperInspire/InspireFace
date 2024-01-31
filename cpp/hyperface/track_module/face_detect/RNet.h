@@ -7,14 +7,27 @@
 #include "../../data_type.h"
 #include "middleware/any_net.h"
 
-
 namespace inspire {
 
+/**
+ * @class RNet
+ * @brief Class representing the RNet (Refinement Network), inheriting from AnyNet.
+ *
+ * This class is used for refining face detection results, typically as part of a cascaded
+ * network system for facial recognition or detection tasks.
+ */
 class HYPER_API RNet: public AnyNet {
 public:
-
+    /**
+     * @brief Constructor for the RNet class.
+     */
     RNet();
 
+    /**
+     * @brief Operator to process an affine-transformed face image and return a score indicating the quality of the refinement.
+     * @param bgr_affine Affine-transformed face image in BGR format.
+     * @return float Score representing the quality or confidence of the refinement.
+     */
     float operator()(const Matrix& bgr_affine);
 
 };
