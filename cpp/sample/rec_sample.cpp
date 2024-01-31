@@ -5,7 +5,7 @@
 #include <iostream>
 #include "face_context.h"
 #include "utils/test_helper.h"
-#include "hyperface/recognition_module/extract/alignment.h"
+#include "inspireface/recognition_module/extract/alignment.h"
 #include "recognition_module/features_block/feature_block.h"
 
 using namespace inspire;

@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include "common/test_settings.h"
-#include "hyperface/c_api/hyperface.h"
+#include "inspireface/c_api/inspireface.h"
 #include <cstdio> // 提供std::remove函数
 
 TEST_CASE("test_FeatureContext", "[face_context]") {

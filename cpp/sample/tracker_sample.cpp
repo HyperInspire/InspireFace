@@ -2,7 +2,7 @@
 // Created by tunm on 2023/8/29.
 //
 #include <iostream>
-#include "hyperface/track_module/face_track.h"
+#include "inspireface/track_module/face_track.h"
 #include "opencv2/opencv.hpp"
 
 using namespace inspire;

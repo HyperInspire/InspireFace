@@ -4,11 +4,11 @@
 
 
 #include "opencv2/opencv.hpp"
-#include "hyperface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/middleware/model_loader/ModelLoader.h"
 #include "model_index.h"
-#include "hyperface/middleware/Timer.h"
-#include "hyperface/recognition_module/FaceRecognition.h"
-#include "hyperface/recognition_module/simd.h"
+#include "inspireface/middleware/Timer.h"
+#include "inspireface/recognition_module/FaceRecognition.h"
+#include "inspireface/recognition_module/simd.h"
 
 using namespace hyper;
 

@@ -2,10 +2,10 @@
 // Created by Tunm-Air13 on 2023/9/20.
 //
 #include "opencv2/opencv.hpp"
-#include "hyperface/middleware/model_loader/ModelLoader.h"
-#include "hyperface/track_module/face_detect/all.h"
+#include "inspireface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/track_module/face_detect/all.h"
 #include "model_index.h"
-#include "hyperface/middleware/timer.h"
+#include "inspireface/middleware/timer.h"
 
 using namespace hyper;
 

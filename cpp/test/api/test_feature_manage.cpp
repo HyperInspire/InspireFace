@@ -5,7 +5,7 @@
 #include <iostream>
 #include "test_helper/test_help.h"
 #include "common/test_settings.h"
-#include "hyperface/c_api/hyperface.h"
+#include "inspireface/c_api/inspireface.h"
 #include "opencv2/opencv.hpp"
 
 TEST_CASE("test_FeatureManage", "[feature_manage]") {

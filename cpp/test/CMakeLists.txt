@@ -15,7 +15,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common)
 # =======================内部引入测试===========================
 file(GLOB_RECURSE TEST_INTERNAL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 add_executable(TestSource ${CMAKE_CURRENT_SOURCE_DIR}/test_source.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
-target_link_libraries(TestSource HyperFace)
+target_link_libraries(TestSource InspireFace)
 target_include_directories(TestSource PUBLIC
         .
         ${THIRD_PARTY_DIR}/spdlog
@@ -31,7 +31,7 @@ set_target_properties(TestSource PROPERTIES
 # =======================外部API测试===========================
 file(GLOB_RECURSE TEST_INTERNAL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/api/*.cpp)
 add_executable(TestAPI ${CMAKE_CURRENT_SOURCE_DIR}/test_api.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
-target_link_libraries(TestAPI HyperFace)
+target_link_libraries(TestAPI InspireFace)
 target_include_directories(TestAPI PUBLIC
         .
         ${THIRD_PARTY_DIR}/spdlog

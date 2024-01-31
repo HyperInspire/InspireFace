@@ -6,7 +6,7 @@
 #define HYPERFACEREPO_TEST_TOOLS_H
 
 #include "opencv2/opencv.hpp"
-#include "hyperface/c_api/hyperface.h"
+#include "inspireface/c_api/inspireface.h"
 
 inline HResult ReadImageToImageStream(const char *path, HImageHandle& handle) {
     cv::Mat image = cv::imread(path);

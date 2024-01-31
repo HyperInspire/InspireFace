@@ -2,9 +2,9 @@
 // Created by tunm on 2023/10/3.
 //
 #include <iostream>
-#include "hyperface/c_api/hyperface.h"
+#include "inspireface/c_api/inspireface.h"
 #include "opencv2/opencv.hpp"
-#include "hyperface/log.h"
+#include "inspireface/log.h"
 
 std::string basename(const std::string& path) {
     size_t lastSlash = path.find_last_of("/\\");  // 考虑到跨平台的分隔符
