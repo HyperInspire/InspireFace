@@ -78,6 +78,11 @@ int compare() {
             return -1;
         }
 
+        for (int j = 0; j < 512; ++j) {
+            std::cout << featuresCache[0][j] << ", ";
+        }
+        std::cout << std::endl;
+
         ret = HF_ReleaseImageStream(imageSteamHandle);
         if (ret == HSUCCEED) {
             imageSteamHandle = nullptr;
