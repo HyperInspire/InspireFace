@@ -89,7 +89,7 @@ int main() {
 
         m_extract_ = std::make_shared<Extract>();
         auto model = loader.ReadModel(0);
-        m_extract_->LoadParam(param, model, InferenceHelper::kRknn);
+        m_extract_->loadData(param, model, InferenceHelper::kRknn);
 
         cv::Mat image = cv::imread(names[0]);
 //        cv::Mat rgb;

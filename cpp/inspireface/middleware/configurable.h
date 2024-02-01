@@ -17,20 +17,20 @@ using nlohmann::json;
 namespace inspire {
 
 /**
- * @class Parameter
+ * @class Configurable
  * @brief Class for managing parameters as JSON data.
  *
  * This class provides methods to set, get, and load parameters as JSON data.
  */
-class INSPIRE_API Parameter {
+class INSPIRE_API Configurable {
 public:
-    Parameter() = default;;
+    Configurable() = default;;
 
-    Parameter(const Parameter& p) : m_params(p.m_params) {}
+    Configurable(const Configurable& p) : m_configuration(p.m_configuration) {}
 
-    virtual ~Parameter() {}
+    virtual ~Configurable() {}
 
-    Parameter& operator=(const Parameter& other);
+    Configurable& operator=(const Configurable& other);
 
     /**
      * @brief Get a list of parameter names.
@@ -50,8 +50,8 @@ public:
      * @param name The name of the parameter to check.
      * @return bool True if the parameter exists, false otherwise.
      */
-    bool have(const std::string& name) const noexcept {
-        return m_params.contains(name);
+    bool has(const std::string& name) const noexcept {
+        return m_configuration.contains(name);
     }
 
     /**
@@ -61,7 +61,7 @@ public:
      */
     template <typename ValueType>
     void set(const std::string& name, const ValueType& value) {
-        m_params[name] = value;
+        m_configuration[name] = value;
     }
 
     /**
@@ -71,10 +71,10 @@ public:
      */
     template <typename ValueType>
     ValueType get(const std::string& name) const {
-        if (!have(name)) {
+        if (!has(name)) {
             throw std::out_of_range("out_of_range in Parameter::get : " + name);
         }
-        return m_params.at(name).get<ValueType>();
+        return m_configuration.at(name).get<ValueType>();
     }
 
     /**
@@ -110,47 +110,47 @@ public:
 
 
 private:
-    json m_params;      ///< JSON object to store parameters.
+    json m_configuration;      ///< JSON object to store parameters.
 };
 
-#define PARAMETERIZATION_SUPPORT                                                                                 \
+#define CONFIGURABLE_SUPPORT                                                                                 \
 protected:                                                                                                \
-    inspire::Parameter m_params;                                                                            \
+    inspire::Configurable m_configuration;                                                                            \
                                                                                                           \
 public:                                                                                                   \
-    const inspire::Parameter& getParameter() const {                                                        \
-        return m_params;                                                                                  \
+    const inspire::Configurable& getConfiguration() const {                                                        \
+        return m_configuration;                                                                                  \
     }                                                                                                     \
                                                                                                           \
-    void setParameter(const inspire::Parameter& param) {                                                    \
-        m_params = param;                                                                                 \
+    void setConfiguration(const inspire::Configurable& param) {                                                    \
+        m_configuration = param;                                                                                 \
     }                                                                                                     \
                                                                                                           \
-    bool haveParam(const std::string& name) const noexcept {                                                   \
-        return m_params.have(name);                                                                       \
-    }                                                                                                     \
-                                                                                                          \
-    template <typename ValueType>                                                                         \
-    void setParam(const std::string& name, const ValueType& value) {                                           \
-        m_params.set<ValueType>(name, value);                                                             \
+    bool hasData(const std::string& name) const noexcept {                                                   \
+        return m_configuration.has(name);                                                                       \
     }                                                                                                     \
                                                                                                           \
     template <typename ValueType>                                                                         \
-    ValueType getParam(const std::string& name) const {                                                        \
-        return m_params.get<ValueType>(name);                                                             \
+    void setData(const std::string& name, const ValueType& value) {                                           \
+        m_configuration.set<ValueType>(name, value);                                                             \
     }                                                                                                     \
                                                                                                           \
     template <typename ValueType>                                                                         \
-    void _initSingleParam(const inspire::Parameter& param, const std::string& name,                              \
+    ValueType getData(const std::string& name) const {                                                        \
+        return m_configuration.get<ValueType>(name);                                                             \
+    }                                                                                                     \
+                                                                                                          \
+    template <typename ValueType>                                                                         \
+    void pushData(const inspire::Configurable& param, const std::string& name,                              \
                           const ValueType& default_value) {                                               \
-        if (param.have(name)) {                                                                           \
-            setParam<ValueType>(name, param.get<ValueType>(name));                                        \
+        if (param.has(name)) {                                                                           \
+            setData<ValueType>(name, param.get<ValueType>(name));                                        \
         } else {                                                                                          \
-            setParam<ValueType>(name, default_value);                                                     \
+            setData<ValueType>(name, default_value);                                                     \
         }                                                                                                 \
     }                                                                                                     \
-    void loadParam(const nlohmann::json& j) {                                                                  \
-        m_params.load(j);                                                                                 \
+    void loadData(const nlohmann::json& j) {                                                                  \
+        m_configuration.load(j);                                                                                 \
     }
 
 

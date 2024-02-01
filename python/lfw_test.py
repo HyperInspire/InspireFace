@@ -104,8 +104,8 @@ def find_best_threshold(similarities, labels):
 
 
 if __name__ == "__main__":
-    lfw_dir = "/Users/tunm/Downloads/lfw_funneled"  # 修改为你的LFW_funneled文件夹路径
-    pairs_filename = "/Users/tunm/Downloads/lfw_funneled/pairs.txt"  # 修改为你的pairs.txt文件路径
+    lfw_dir = "/Users/tunm/datasets/lfw_funneled"  # 修改为你的LFW_funneled文件夹路径
+    pairs_filename = "/Users/tunm/datasets/lfw_funneled/pairs.txt"  # 修改为你的pairs.txt文件路径
 
     path = "/Users/tunm/work/HyperFace/test_res/model_zip/T1"
     quick = QuickComparison(path)

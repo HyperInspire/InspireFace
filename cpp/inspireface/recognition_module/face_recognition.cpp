@@ -27,7 +27,7 @@ FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition, M
 }
 
 int32_t FaceRecognition::InitExtractInteraction(Model *model) {
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_03_extract);
     param.set<std::string>("input_layer", "data");
     param.set<std::vector<std::string>>("outputs_layers", {"fc1_scale", });
@@ -35,7 +35,7 @@ int32_t FaceRecognition::InitExtractInteraction(Model *model) {
     param.set<std::vector<float>>("mean", {127.5f, 127.5f, 127.5f});
     param.set<std::vector<float>>("norm", {0.0078125, 0.0078125, 0.0078125});
     m_extract_ = std::make_shared<Extract>();
-    m_extract_->LoadParam(param, model);
+    m_extract_->loadData(param, model);
 
     return HSUCCEED;
 }

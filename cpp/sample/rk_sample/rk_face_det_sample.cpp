@@ -26,7 +26,7 @@ int main() {
 
     auto model = loader.ReadModel(ModelIndex::_00_fdet_160);
     m_face_detector_ = std::make_shared<FaceDetect>(320);
-    m_face_detector_->LoadParam(param, model, InferenceHelper::kRknn);
+    m_face_detector_->loadData(param, model, InferenceHelper::kRknn);
 
     // Load a image
     cv::Mat image = cv::imread("test_res/images/face_sample.png");

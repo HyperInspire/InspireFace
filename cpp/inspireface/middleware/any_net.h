@@ -4,9 +4,11 @@
 #pragma once
 #ifndef BIGGUYSMAIN_ANYNET_H
 #define BIGGUYSMAIN_ANYNET_H
+#include <utility>
+
 #include "../data_type.h"
 #include "inference_helper/inference_helper.h"
-#include "parameter.h"
+#include "configurable.h"
 #include "model_loader/model_loader.h"
 #include "opencv2/opencv.hpp"
 #include "../log.h"
@@ -23,14 +25,14 @@ using AnyTensorOutputs = std::vector<std::pair<std::string, std::vector<float>>>
  * facilitating loading parameters, initializing models, and executing forward passes.
  */
 class INSPIRE_API AnyNet {
-    PARAMETERIZATION_SUPPORT
+CONFIGURABLE_SUPPORT
 
 public:
     /**
      * @brief Constructor for AnyNet.
      * @param name Name of the neural network.
      */
-    explicit AnyNet(const std::string &name):m_name_(name) {}
+    explicit AnyNet(std::string name):m_name_(std::move(name)) {}
 
     /**
      * @brief Loads parameters and initializes the model for inference.
@@ -39,32 +41,32 @@ public:
      * @param type Type of the inference helper (default: kMnn).
      * @return int32_t Status of the loading and initialization process.
      */
-    int32_t LoadParam(const Parameter &param, Model *model, InferenceHelper::HelperType type = InferenceHelper::kMnn) {
+    int32_t loadData(const Configurable &param, Model *model, InferenceHelper::HelperType type = InferenceHelper::kMnn) {
         // must
-        _initSingleParam<int>(param, "model_index", 0);
-        _initSingleParam<std::string>(param, "input_layer", "");
-        _initSingleParam<std::vector<std::string>>(param, "outputs_layers", {"", });
-        _initSingleParam<std::vector<int>>(param, "input_size", {320, 320});
-        _initSingleParam<std::vector<float>>(param, "mean", {127.5f, 127.5f, 127.5f});
-        _initSingleParam<std::vector<float>>(param, "norm", {0.0078125f, 0.0078125f, 0.0078125f});
+        pushData<int>(param, "model_index", 0);
+        pushData<std::string>(param, "input_layer", "");
+        pushData<std::vector<std::string>>(param, "outputs_layers", {"", });
+        pushData<std::vector<int>>(param, "input_size", {320, 320});
+        pushData<std::vector<float>>(param, "mean", {127.5f, 127.5f, 127.5f});
+        pushData<std::vector<float>>(param, "norm", {0.0078125f, 0.0078125f, 0.0078125f});
         // rarely
-        _initSingleParam<int>(param, "input_channel", 3);
-        _initSingleParam<int>(param, "input_image_channel", 3);
-        _initSingleParam<bool>(param, "nchw", true);
-        _initSingleParam<bool>(param, "swap_color", false);
-        _initSingleParam<int>(param, "data_type", InputTensorInfo::InputTensorInfo::kDataTypeImage);
-        _initSingleParam<int>(param, "input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
-        _initSingleParam<int>(param, "output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
-        _initSingleParam<int>(param, "threads", 1);
+        pushData<int>(param, "input_channel", 3);
+        pushData<int>(param, "input_image_channel", 3);
+        pushData<bool>(param, "nchw", true);
+        pushData<bool>(param, "swap_color", false);
+        pushData<int>(param, "data_type", InputTensorInfo::InputTensorInfo::kDataTypeImage);
+        pushData<int>(param, "input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
+        pushData<int>(param, "output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
+        pushData<int>(param, "threads", 1);
 
-        int model_index = getParam<int>("model_index");
+        int model_index = getData<int>("model_index");
         m_nn_inference_.reset(InferenceHelper::Create(type));
-        m_nn_inference_->SetNumThreads(getParam<int>("threads"));
+        m_nn_inference_->SetNumThreads(getData<int>("threads"));
 
         m_output_tensor_info_list_.clear();
-        std::vector<std::string> outputs_layers = getParam<std::vector<std::string>>("outputs_layers");
-        int tensor_type = getParam<int>("input_tensor_type");
-        int out_tensor_type = getParam<int>("output_tensor_type");
+        std::vector<std::string> outputs_layers = getData<std::vector<std::string>>("outputs_layers");
+        int tensor_type = getData<int>("input_tensor_type");
+        int out_tensor_type = getData<int>("output_tensor_type");
         for (auto &name: outputs_layers) {
             m_output_tensor_info_list_.push_back(OutputTensorInfo(name, out_tensor_type));
         }
@@ -74,24 +76,24 @@ public:
         }
 
         m_input_tensor_info_list_.clear();
-        InputTensorInfo input_tensor_info(getParam<std::string>("input_layer"), tensor_type, getParam<bool>("nchw"));
-        std::vector<int> input_size = getParam<std::vector<int>>("input_size");
+        InputTensorInfo input_tensor_info(getData<std::string>("input_layer"), tensor_type, getData<bool>("nchw"));
+        std::vector<int> input_size = getData<std::vector<int>>("input_size");
         int width = input_size[0];
         int height = input_size[1];
         m_input_image_size_ = {width, height};
-        int channel = getParam<int>("input_channel");
-        if (getParam<bool>("nchw")) {
+        int channel = getData<int>("input_channel");
+        if (getData<bool>("nchw")) {
             input_tensor_info.tensor_dims =  { 1, channel, m_input_image_size_.height, m_input_image_size_.width };
         } else {
             input_tensor_info.tensor_dims =  { 1, m_input_image_size_.height, m_input_image_size_.width, channel };
         }
 
-        input_tensor_info.data_type = getParam<int>("data_type");
-        int image_channel = getParam<int>("input_image_channel");
+        input_tensor_info.data_type = getData<int>("data_type");
+        int image_channel = getData<int>("input_image_channel");
         input_tensor_info.image_info.channel = image_channel;
 
-        std::vector<float> mean = getParam<std::vector<float>>("mean");
-        std::vector<float> norm = getParam<std::vector<float>>("norm");
+        std::vector<float> mean = getData<std::vector<float>>("mean");
+        std::vector<float> norm = getData<std::vector<float>>("norm");
         input_tensor_info.normalize.mean[0] = mean[0];
         input_tensor_info.normalize.mean[1] = mean[1];
         input_tensor_info.normalize.mean[2] = mean[2];
@@ -106,8 +108,8 @@ public:
         input_tensor_info.image_info.crop_y = 0;
         input_tensor_info.image_info.crop_width = width;
         input_tensor_info.image_info.crop_height = height;
-        input_tensor_info.image_info.is_bgr = getParam<bool>("nchw");
-        input_tensor_info.image_info.swap_color = getParam<bool>("swap_color");
+        input_tensor_info.image_info.is_bgr = getData<bool>("nchw");
+        input_tensor_info.image_info.swap_color = getData<bool>("swap_color");
 
         m_input_tensor_info_list_.push_back(input_tensor_info);
 
@@ -123,7 +125,7 @@ public:
         InputTensorInfo& input_tensor_info = getMInputTensorInfoList()[0];
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
         // Start by simply implementing a temporary color shift on the outside
-        if (getParam<bool>("swap_color")) {
+        if (getData<bool>("swap_color")) {
             cv::cvtColor(data, m_cache_, cv::COLOR_BGR2RGB);
             input_tensor_info.data = m_cache_.data;
         } else {

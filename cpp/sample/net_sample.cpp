@@ -10,7 +10,7 @@ using namespace inspire;
 int main(int argc, char** argv) {
     ModelLoader loader("resource/model_zip/T1");
 
-    Parameter param;
+    Configurable param;
     param.set<std::string>("input_layer", "data");
     param.set<std::vector<std::string>>("outputs_layers", {"ip3_pose", });
     param.set<std::vector<int>>("input_size", {112, 112});
@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     param.set<int>("input_image_channel", 1);        // BGR 2 Gray
 
     auto m_pose_net_ = std::make_shared<FacePose>();
-    m_pose_net_->LoadParam(param, loader.ReadModel(ModelIndex::_02_pose_fp16));
+    m_pose_net_->loadData(param, loader.ReadModel(ModelIndex::_02_pose_fp16));
 
     auto image = cv::imread("resource/images/crop.png");
 

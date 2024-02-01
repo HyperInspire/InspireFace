@@ -26,6 +26,8 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
         else if (loader.GetStatusCode() == PACK_MODELS_NOT_MATCH)
             return  HERR_CTX_NUM_OF_MODELS_NOT_MATCH;
     }
+    // get magic number
+    auto magic_number = loader.GetMagicNumber();
     m_face_track_ = std::make_shared<FaceTrack>(m_max_detect_face_);
     m_face_track_->Configuration(loader);
     if (m_detect_mode_ == DetectMode::DETECT_MODE_IMAGE) {

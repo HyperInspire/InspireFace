@@ -33,7 +33,7 @@ void rec_function() {
 
     m_extract_ = std::make_shared<Extract>();
     auto model = loader->ReadModel(ModelIndex::_03_extract);
-    m_extract_->LoadParam(param, model, InferenceHelper::kRknn);
+    m_extract_->loadData(param, model, InferenceHelper::kRknn);
 
     loader.reset();
 
