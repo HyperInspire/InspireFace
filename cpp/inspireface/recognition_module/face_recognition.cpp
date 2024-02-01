@@ -70,6 +70,8 @@ int32_t FaceRecognition::FaceExtract(CameraStream &image, const HyperFaceData &f
     auto trans = getTransformMatrix112(pointsFive);
     trans.convertTo(trans, CV_64F);
     auto crop = image.GetAffineRGBImage(trans, 112, 112);
+//    cv::imshow("w", crop);
+//    cv::waitKey(0);
     embedded = (*m_extract_)(crop);
 
     return 0;
