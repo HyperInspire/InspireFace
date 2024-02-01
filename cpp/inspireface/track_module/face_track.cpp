@@ -336,7 +336,7 @@ int FaceTrack::Configuration(ModelLoader &loader) {
 }
 
 int FaceTrack::InitLandmarkModel(Model *model) {
-    Parameter param;
+    Configurable param;
     InferenceHelper::HelperType type;
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
     param.set<int>("model_index", ModelIndex::_01_lmk);
@@ -360,13 +360,13 @@ int FaceTrack::InitLandmarkModel(Model *model) {
     type = InferenceHelper::kMnn;
 #endif
     m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
-    m_landmark_predictor_->LoadParam(param, model, type);
+    m_landmark_predictor_->loadData(param, model, type);
 
     return 0;
 }
 
 int FaceTrack::InitDetectModel(Model *model) {
-    Parameter param;
+    Configurable param;
     InferenceHelper::HelperType type;
     int detect_size;
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
@@ -394,13 +394,13 @@ int FaceTrack::InitDetectModel(Model *model) {
     type = InferenceHelper::kMnn;
 #endif
     m_face_detector_ = std::make_shared<FaceDetect>(detect_size);
-    m_face_detector_->LoadParam(param, model, type);
+    m_face_detector_->loadData(param, model, type);
 
     return 0;
 }
 
 int FaceTrack::InitRNetModel(Model *model) {
-    Parameter param;
+    Configurable param;
     InferenceHelper::HelperType type;
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
     param.set<int>("model_index", ModelIndex::_04_refine_net);
@@ -426,13 +426,13 @@ int FaceTrack::InitRNetModel(Model *model) {
     type = InferenceHelper::kMnn;
 #endif
     m_refine_net_ = std::make_shared<RNet>();
-    m_refine_net_->LoadParam(param, model, type);
+    m_refine_net_->loadData(param, model, type);
 
     return 0;
 }
 
 int FaceTrack::InitFacePoseModel(Model *model) {
-    Parameter param;
+    Configurable param;
     InferenceHelper::HelperType type;
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
     param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
@@ -458,7 +458,7 @@ int FaceTrack::InitFacePoseModel(Model *model) {
     type = InferenceHelper::kMnn;
 #endif
     m_face_quality_ = std::make_shared<FacePoseQuality>();
-    m_face_quality_->LoadParam(param, model, type);
+    m_face_quality_->loadData(param, model, type);
 
     return 0;
 }

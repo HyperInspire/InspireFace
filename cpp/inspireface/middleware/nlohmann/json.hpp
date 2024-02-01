@@ -5086,7 +5086,7 @@ inline std::size_t combine(std::size_t seed, std::size_t h) noexcept
 @brief hash a JSON value
 
 The hash function tries to rely on std::hash where possible. Furthermore, the
-type of the JSON value is taken into account to have different hash values for
+type of the JSON value is taken into account to has different hash values for
 null, 0, 0U, and false, etc.
 
 @tparam BasicJsonType basic_json specialization
@@ -6611,7 +6611,7 @@ class lexer : public lexer_base<BasicJsonType>
     @param[in] ranges  list of integers; interpreted as list of pairs of
                        inclusive lower and upper bound, respectively
 
-    @pre The passed list @a ranges must have 2, 4, or 6 elements; that is,
+    @pre The passed list @a ranges must has 2, 4, or 6 elements; that is,
          1, 2, or 3 pairs. This precondition is enforced by an assertion.
 
     @return true if and only if no range violation was detected
@@ -16908,7 +16908,7 @@ class serializer
     be called initially with state 0 (accept). State 1 means the string must
     be rejected, because the current byte is not allowed. If the string is
     completely processed, but the state is non-zero, the string ended
-    prematurely; that is, the last byte indicated more bytes should have
+    prematurely; that is, the last byte indicated more bytes should has
     followed.
 
     @param[in,out] state  the state of the decoding
@@ -17263,7 +17263,7 @@ namespace nlohmann
 @brief a class to store JSON values
 
 @internal
-@invariant The member variables @a m_value and @a m_type have the following
+@invariant The member variables @a m_value and @a m_type has the following
 relationship:
 - If `m_type == value_t::object`, then `m_value.object != nullptr`.
 - If `m_type == value_t::array`, then `m_value.array != nullptr`.
@@ -17830,7 +17830,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     Furthermore, the parent relation is checked for arrays and objects: If
     @a check_parents true and the value is an array or object, then the
-    container's elements must have the current value as parent.
+    container's elements must has the current value as parent.
 
     @param[in] check_parents  whether the parent relation should be checked.
                The value is true by default and should only be set to false
@@ -18734,7 +18734,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     - @a ValueType is not @ref basic_json,
     - @ref json_serializer<ValueType> has a `from_json()` method of the form
       `void from_json(const basic_json&, ValueType&)`, and
-    - @ref json_serializer<ValueType> does not have a `from_json()` method of
+    - @ref json_serializer<ValueType> does not has a `from_json()` method of
       the form `ValueType from_json(const basic_json&)`
 
     @tparam ValueType the returned value type
@@ -21543,14 +21543,14 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                 if (JSON_HEDLEY_UNLIKELY(it == val.m_value.object->end()))
                 {
                     // NOLINTNEXTLINE(performance-inefficient-string-concatenation)
-                    JSON_THROW(parse_error::create(105, 0, error_msg + " must have member '" + member + "'", val));
+                    JSON_THROW(parse_error::create(105, 0, error_msg + " must has member '" + member + "'", val));
                 }
 
                 // check if result is of type string
                 if (JSON_HEDLEY_UNLIKELY(string_type && !it->second.is_string()))
                 {
                     // NOLINTNEXTLINE(performance-inefficient-string-concatenation)
-                    JSON_THROW(parse_error::create(105, 0, error_msg + " must have string member '" + member + "'", val));
+                    JSON_THROW(parse_error::create(105, 0, error_msg + " must has string member '" + member + "'", val));
                 }
 
                 // no error: return value

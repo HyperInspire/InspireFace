@@ -13,6 +13,7 @@
 
 namespace inspire {
 
+
 /**
  * @enum LOADER_STATUS_CODE
  * @brief Enum for loader status codes.
@@ -113,6 +114,13 @@ public:
      * @return int The status code.
      */
     int GetStatusCode();
+
+    /**
+     * @brief Get the MagicNumber
+     *
+     * @return MagicNumber.
+     */
+    int GetMagicNumber();
 
 private:
     ModelSize *modelSize;           ///< Array of model sizes.

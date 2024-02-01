@@ -164,7 +164,7 @@ int32_t FacePipeline::InitGenderPredict(Model *model) {
 }
 
 int32_t FacePipeline::InitMaskPredict(Model *model) {
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_05_mask);
     param.set<std::string>("input_layer", "input_1");
     param.set<std::vector<std::string>>("outputs_layers", {"activation_1/Softmax",});
@@ -173,12 +173,12 @@ int32_t FacePipeline::InitMaskPredict(Model *model) {
     param.set<std::vector<float>>("norm", {0.003921568627f, 0.003921568627f, 0.003921568627f});
     param.set<bool>("swap_color", true);        // RGB mode
     m_mask_predict_ = std::make_shared<MaskPredict>();
-    m_mask_predict_->LoadParam(param, model);
+    m_mask_predict_->loadData(param, model);
     return 0;
 }
 
 int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_06_msafa27);
     param.set<std::string>("input_layer", "data");
     param.set<std::vector<std::string>>("outputs_layers", {"softmax",});
@@ -187,7 +187,7 @@ int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);        // RGB mode
     m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofing>();
-    m_rgb_anti_spoofing_->LoadParam(param, model);
+    m_rgb_anti_spoofing_->loadData(param, model);
     return 0;
 }
 
