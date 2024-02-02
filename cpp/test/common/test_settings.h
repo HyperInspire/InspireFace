@@ -19,6 +19,7 @@ using namespace Catch::Detail;
 
 #define GET_DIR getTestDataDir()
 #define GET_DATA(filename) getTestData(filename)
+#define GET_MODEL_FILE() getTestModelsFile()
 
 #define GET_TMP_DIR getTestSaveDir()
 #define GET_TMP_DATA(filename) getTestSaveData(filename)

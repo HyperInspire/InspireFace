@@ -17,6 +17,7 @@ typedef signed int			HInt32;                           ///< Signed 32-bit intege
 typedef signed int*			HPInt32;                          ///< Pointer to signed 32-bit integer.
 typedef long                HResult;                          ///< Result code.
 typedef char*               HString;                          ///< String.
+typedef const char*         HPath;                            ///< Const String.
 typedef char                HChar;                            ///< Character.
 
 typedef struct HFaceRect {

@@ -7,6 +7,8 @@
 
 #include "opencv2/opencv.hpp"
 #include "inspireface/c_api/inspireface.h"
+#include <fstream>
+#include <cstdint> // For uint8_t
 
 inline HResult ReadImageToImageStream(const char *path, HImageHandle& handle) {
     cv::Mat image = cv::imread(path);
@@ -23,6 +25,36 @@ inline HResult ReadImageToImageStream(const char *path, HImageHandle& handle) {
     auto ret = HF_CreateImageStream(&imageData, &handle);
 
     return ret;
+}
+
+
+inline uint8_t* ReadNV21Data(const char* filePath, int width, int height) {
+    const int nv21Size = width * height * 3 / 2; // 计算NV21数据大小
+
+    // Memory is allocated dynamically to store NV21 data
+    uint8_t* nv21Data = new uint8_t[nv21Size];
+
+    std::ifstream file(filePath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Unable to open the file " << filePath << std::endl;
+        delete[] nv21Data;
+        return nullptr;
+    }
+
+    // Read data
+    file.read(reinterpret_cast<char*>(nv21Data), nv21Size);
+    if (!file) {
+        std::cerr << "Read error or incomplete file" << std::endl;
+        file.close();
+        delete[] nv21Data;
+        return nullptr;
+    }
+
+    // Open file
+    file.close();
+
+    // Returns a pointer to NV21 data
+    return nv21Data;
 }
 
 #endif //HYPERFACEREPO_TEST_TOOLS_H

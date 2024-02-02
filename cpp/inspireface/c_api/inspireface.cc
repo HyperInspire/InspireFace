@@ -85,7 +85,7 @@ HResult HF_ReleaseFaceContext(HContextHandle handle) {
     return HSUCCEED;
 }
 
-HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, HF_ContextCustomParameter parameter, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
+HResult HF_CreateFaceContextFromResourceFile(HPath resourceFile, HF_ContextCustomParameter parameter, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
     inspire::ContextCustomParameter param;
     param.enable_mask_detect = parameter.enable_mask_detect;
     param.enable_age = parameter.enable_age;
@@ -114,7 +114,7 @@ HResult HF_CreateFaceContextFromResourceFile(HString resourceFile, HF_ContextCus
     return ret;
 }
 
-HResult HF_CreateFaceContextFromResourceFileOptional(HString resourceFile,HInt32 customOption, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
+HResult HF_CreateFaceContextFromResourceFileOptional(HPath resourceFile,HInt32 customOption, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
     inspire::ContextCustomParameter param;
     if (customOption & HF_ENABLE_FACE_RECOGNITION) {
         param.enable_recognition = true;

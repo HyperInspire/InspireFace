@@ -14,7 +14,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
     SECTION("Face feature management basic functions") {
         HResult ret;
-        HString path = const_cast<HString>(getTestModelsFile().c_str());
+        std::string modelPath = GET_MODEL_FILE();
+        HPath path = modelPath.c_str();
         HF_ContextCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
@@ -118,7 +119,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
     SECTION("Import a large faces data") {
         HResult ret;
-        HString path = const_cast<HString>(getTestModelsFile().c_str());
+        std::string modelPath = GET_MODEL_FILE();
+        HPath path = modelPath.c_str();
         HF_ContextCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
@@ -186,7 +188,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
     SECTION("Faces Feature CURD") {
         HResult ret;
-        HString path = const_cast<HString>(getTestModelsFile().c_str());
+        std::string modelPath = GET_MODEL_FILE();
+        HPath path = modelPath.c_str();
         HF_ContextCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
