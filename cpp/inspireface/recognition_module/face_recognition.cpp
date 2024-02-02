@@ -8,10 +8,12 @@
 #include "recognition_module/extract/alignment.h"
 #include "track_module/landmark/face_landmark.h"
 #include "herror.h"
+#include "config.h"
 
 namespace inspire {
 
 FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core, int feature_block_num) {
+    m_mb_ = loader.GetMagicNumber();
     if (enable_recognition) {
         auto ret = InitExtractInteraction(loader.ReadModel(ModelIndex::_03_extract));
         if (ret != 0) {
@@ -24,20 +26,28 @@ FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition, M
         block.reset(FeatureBlock::Create(core, 512, 512));
         m_feature_matrix_list_.push_back(block);
     }
+
 }
 
 int32_t FaceRecognition::InitExtractInteraction(Model *model) {
-    Configurable param;
-    param.set<int>("model_index", ModelIndex::_03_extract);
-    param.set<std::string>("input_layer", "data");
-    param.set<std::vector<std::string>>("outputs_layers", {"fc1_scale", });
-    param.set<std::vector<int>>("input_size", {112, 112});
-    param.set<std::vector<float>>("mean", {127.5f, 127.5f, 127.5f});
-    param.set<std::vector<float>>("norm", {0.0078125, 0.0078125, 0.0078125});
-    m_extract_ = std::make_shared<Extract>();
-    m_extract_->loadData(param, model);
+    try {
+        Configurable config = ModelConfigManager::loadConfig(m_mb_);
+        Configurable param;
+        param.set<int>("model_index", ModelIndex::_03_extract);
+        param.set<std::string>("input_layer", config.get<std::string>("extract_input_name") );
+        param.set<std::vector<std::string>>("outputs_layers", {config.get<std::string>("extract_output_name"), });
+        param.set<std::vector<int>>("input_size", {112, 112});
+        param.set<std::vector<float>>("mean", {127.5f, 127.5f, 127.5f});
+        param.set<std::vector<float>>("norm", {0.0078125, 0.0078125, 0.0078125});
+        m_extract_ = std::make_shared<Extract>();
+        m_extract_->loadData(param, model);
 
-    return HSUCCEED;
+        return HSUCCEED;
+
+    } catch (const std::runtime_error& e) {
+        LOGE("%s", e.what());
+        return HERR_CTX_FACE_REC_OPTION_ERROR;
+    }
 }
 
 int32_t FaceRecognition::CosineSimilarity(const std::vector<float>& v1, const std::vector<float>& v2, float &res) {

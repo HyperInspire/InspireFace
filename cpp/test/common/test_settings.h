@@ -9,7 +9,7 @@
 #include <iostream>
 
 
-#define ENABLE_BENCHMARK 1                     // 是否运行benchmark的片段
+#define ENABLE_BENCHMARK 1                     // Whether to run the benchmark snippet
 
 using namespace Catch::Detail;
 
@@ -31,15 +31,17 @@ std::string getTestSaveDir();
 
 std::string getTestSaveData(const std::string &name);
 
+std::string getTestModelsFile();
+
 /** 日志级别 */
 enum LOG_LEVEL {
-    TRACE = 0,  ///< 跟踪
-    DEBUG = 1,  ///< 调试
-    INFO = 2,   ///< 一般信息
-    WARN = 3,   ///< 告警
-    ERROR = 4,  ///< 错误
-    FATAL = 5,  ///< 致命
-    OFF = 6,    ///< 关闭日志打印
+    TRACE = 0,  ///< trace
+    DEBUG = 1,  ///< debug
+    INFO = 2,   ///< information
+    WARN = 3,   ///< warn
+    ERROR = 4,  ///< error
+    FATAL = 5,  ///< fatal
+    OFF = 6,    ///< off
 };
 
 class TestMsgGuard {

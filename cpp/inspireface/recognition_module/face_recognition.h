@@ -190,6 +190,7 @@ private:
     std::shared_ptr<Extract> m_extract_; ///< Pointer to the Extract instance.
     std::vector<std::shared_ptr<FeatureBlock>> m_feature_matrix_list_; ///< List of feature blocks.
     const int32_t NUM_OF_FEATURES_IN_BLOCK = 512; ///< Number of features in each feature block.
+    int m_mb_;
 };
 
 }   // namespace inspire

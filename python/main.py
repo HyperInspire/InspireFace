@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     param = InspireFaceCustomParameter()
     param.enable_recognition = True
-    engine = InspireFaceEngine("/Users/tunm/work/HyperFace/test_res/model_zip/T1", param=param)
+    engine = InspireFaceEngine("/Users/tunm/work/HyperFace/test_res/model_zip/Optimus-t1", param=param)
     tracker = FaceTracker(engine)
     recognition = FaceRecognition(engine)
 

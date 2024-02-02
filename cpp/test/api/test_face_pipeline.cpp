@@ -13,7 +13,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
     SECTION("rgb liveness detect") {
         HResult ret;
-        HString path = "test_res/model_zip/T1";
+        HString path = const_cast<HString>(getTestModelsFile().c_str());
         HF_ContextCustomParameter parameter = {0};
         parameter.enable_liveness = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
@@ -72,7 +72,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
     SECTION("face mask detect") {
         HResult ret;
-        HString path = "test_res/model_zip/T1";
+        HString path = const_cast<HString>(getTestModelsFile().c_str());
         HF_ContextCustomParameter parameter = {0};
         parameter.enable_mask_detect = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
@@ -135,7 +135,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
     SECTION("face quality") {
         HResult ret;
-        HString path = "test_res/model_zip/T1";
+        HString path = const_cast<HString>(getTestModelsFile().c_str());
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HInt32 option = HF_ENABLE_QUALITY;
         HContextHandle ctxHandle;

@@ -35,7 +35,9 @@
 #define HERR_CTX_REC_BLOCK_UPDATE_FAILURE    (HERR_CTX_BASE+26)              // Update failed
 #define HERR_CTX_REC_ID_ALREADY_EXIST        (HERR_CTX_BASE+27)              // ID already exists
 
-#define HERR_CTX_FACE_DATA_ERROR             (HERR_CTX_BASE+30)              // Face data parsing error
+#define HERR_CTX_FACE_DATA_ERROR             (HERR_CTX_BASE+30)              // Face data parsing
+
+#define HERR_CTX_FACE_REC_OPTION_ERROR       (HERR_CTX_BASE+40)              // An optional parameter is incorrect
 
 #define HERR_CTX_DB_OPEN_ERROR               (HERR_CTX_BASE+50)              // Database open error
 #define HERR_CTX_DB_NOT_OPENED               (HERR_CTX_BASE+51)              // Database not opened

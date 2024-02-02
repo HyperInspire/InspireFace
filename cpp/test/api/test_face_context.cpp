@@ -17,7 +17,7 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
 
     SECTION("Test the new context positive process") {
         HResult ret;
-        HString path = "test_res/model_zip/T1";
+        HString path = const_cast<HString>(getTestModelsFile().c_str());
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
@@ -39,7 +39,7 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
 
     SECTION("Configure the positive flow for connecting to the database") {
         HResult ret;
-        HString path = "test_res/model_zip/T1";
+        HString path = const_cast<HString>(getTestModelsFile().c_str());
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;

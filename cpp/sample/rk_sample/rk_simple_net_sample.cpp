@@ -263,7 +263,7 @@ void test_liveness() {
 
 
 int main() {
-    loader.Reset("test_res/model_zip/T1_rv1109rv1126");
+    loader.Reset("test_res/model_zip/Pikachu-t1_rv1109rv1126");
 
 //    test_rnet();
 

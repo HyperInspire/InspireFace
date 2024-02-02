@@ -8,7 +8,7 @@
 using namespace inspire;
 
 int main(int argc, char** argv) {
-    ModelLoader loader("resource/model_zip/T1");
+    ModelLoader loader("resource/model_zip/Pikachu-t1");
 
     Configurable param;
     param.set<std::string>("input_layer", "data");
