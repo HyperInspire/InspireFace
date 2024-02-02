@@ -59,7 +59,7 @@ class QuickComparison(object):
 
 
 if __name__ == "__main__":
-    path = "/Users/tunm/work/HyperFace/test_res/model_zip/T1"
+    path = "/Users/tunm/work/HyperFace/test_res/model_zip/Pikachu-t1"
     quick = QuickComparison(path, threshold=0.47)
     image1 = cv2.imread("/Users/tunm/Downloads/lfw_funneled/Eliane_Karp/Eliane_Karp_0001.jpg")
     image2 = cv2.imread("/Users/tunm/Downloads/lfw_funneled/Eliane_Karp/Eliane_Karp_0002.jpg")

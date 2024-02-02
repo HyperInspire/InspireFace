@@ -147,14 +147,12 @@ args  = sys.argv
 
 print(args)
 if len(args) == 5:
-    # 如果提供了额外的参数
     packageModel(args[1], args[2], args[3], int(args[4]))
 elif len(args) == 4:
-    # 如果没有提供额外的参数
     packageModel(args[1], args[2], args[3])
 else:
     print("Usage: python[2.7] pack_tool.py folder package_name key [magic_number]")
     exit(0)
 
-packageModel(args[1],args[2] ,args[3])
+# packageModel(args[1],args[2] ,args[3])
 

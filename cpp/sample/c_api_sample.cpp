@@ -18,7 +18,7 @@ std::string basename(const std::string& path) {
 int compare() {
     HResult ret;
     // 初始化context
-    HString path = "test_res/model_zip/T1";
+    HString path = "test_res/model_zip/Optimus-t1";
     HF_ContextCustomParameter parameter = {0};
     parameter.enable_liveness = 1;
     parameter.enable_mask_detect = 1;
@@ -32,7 +32,7 @@ int compare() {
 
     std::vector<std::string> names = {
             "test_res/images/kun.jpg",
-            "test_res/images/yifei.jpg",
+            "test_res/images/kunkun.jpg",
     };
     HInt32 featureNum;
     HF_GetFeatureLength(ctxHandle, &featureNum);
@@ -118,7 +118,7 @@ int compare() {
 int search() {
     HResult ret;
     // 初始化context
-    HString path = "test_res/model_zip/T1";
+    HString path = "test_res/model_zip/Pikachu-t1";
     HF_ContextCustomParameter parameter = {0};
     parameter.enable_liveness = 1;
     parameter.enable_mask_detect = 1;

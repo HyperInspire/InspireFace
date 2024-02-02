@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 option(ENABLE_RKNN "Use RKNPU." ON)
 option(BUILD_LINUX_ARM7 "Platform Arm7." ON)
-option(BUILD_HYPERFACE_TEST "Platform Arm7." ON)
+option(BUILD_HYPERFACE_TEST "Open Build Unit-Test." ON)
 
 
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)

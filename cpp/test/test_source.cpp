@@ -10,8 +10,8 @@
 #include "spdlog/spdlog.h"
 
 
-#define ENABLE_DRAW_SPLIT_LINE 1               // 测试中是否打印分割线
-#define ENABLE_TEST_MSG 1                      // 测试消息(TEST_PRINT)输出
+#define ENABLE_DRAW_SPLIT_LINE 1               // Whether dividers are printed during the test
+#define ENABLE_TEST_MSG 1                      // TEST PRINT output
 
 int init_test_logger() {
     std::string name("TEST");

@@ -10,7 +10,7 @@
 using namespace hyper;
 
 int main() {
-    ModelLoader loader("test_res/model_zip/T1_rv1109rv1126");
+    ModelLoader loader("test_res/model_zip/Pikachu-t1_rv1109rv1126");
     std::shared_ptr<FaceDetect> m_face_detector_;
     Parameter param;
     param.set<int>("model_index", ModelIndex::_00_fdet_160);

@@ -14,14 +14,14 @@ TEST_CASE("test_FaceData", "[face_data]") {
     TEST_PRINT_OUTPUT(true);
 
     SECTION("DataConversion") {
-        // 初始化
+        // Initialize
         FaceContext ctx;
         CustomPipelineParameter param;
         param.enable_face_quality = true;
-        auto ret = ctx.Configuration(GET_DATA("model_zip/T1"), DetectMode::DETECT_MODE_VIDEO, 1, param);
+        auto ret = ctx.Configuration(GET_DATA("model_zip/Pikachu-t1"), DetectMode::DETECT_MODE_VIDEO, 1, param);
         REQUIRE(ret == HSUCCEED);
 
-        // 准备一张人脸
+        // Prepare a picture of a face
         auto image = cv::imread(GET_DATA("images/face_sample.png"));
         CameraStream stream;
         stream.SetDataFormat(BGR);
