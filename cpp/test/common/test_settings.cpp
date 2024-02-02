@@ -22,5 +22,5 @@ std::string getTestSaveData(const std::string& name) {
 }
 
 std::string getTestModelsFile() {
-    return getTestDataDir() + "/model_zip/" + "Pikachu-t1";
+    return getTestData("model_zip/Pikachu-t1");
 }

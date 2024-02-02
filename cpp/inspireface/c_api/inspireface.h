@@ -140,7 +140,7 @@ typedef enum HF_DetectMode {
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
-        HString resourceFile,
+        HPath resourceFile,
         HF_ContextCustomParameter parameter,
         HF_DetectMode detectMode,
         HInt32 maxDetectFaceNum,
@@ -158,7 +158,7 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFileOptional(
-        HString resourceFile,
+        HPath resourceFile,
         HInt32 customOption,
         HF_DetectMode detectMode,
         HInt32 maxDetectFaceNum,
