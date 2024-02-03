@@ -19,7 +19,7 @@ int main() {
             3,
             param);
     if (ret != HSUCCEED) {
-        LOGE("初始化错误");
+        LOGE("Initiate error");
     }
     cv::Mat frame;
     std::string imageFolder = "test_res/video_frames/";
@@ -56,18 +56,14 @@ int main() {
 
         cv::rectangle(frame, rect, cv::Scalar(0, 0, 255), 2, 1);
 
-        // 创建要显示的文本
         std::string text = "ID: " + std::to_string(track_id) + " Count: " + std::to_string(track_count) + " Cf: " + std::to_string(face.GetConfidence());
 
-        // 设置文本显示位置，通常在框的上方
         cv::Point text_position(rect.x, rect.y - 10);
-        // 设置文本字体和大小
         int font_face = cv::FONT_HERSHEY_SIMPLEX;
         double font_scale = 0.5;
         int font_thickness = 1;
-        cv::Scalar font_color(255, 255, 255); // 文本颜色，白色
+        cv::Scalar font_color(255, 255, 255);
 
-        // 在图像上绘制文本
         cv::putText(frame, text, text_position, font_face, font_scale, font_color, font_thickness);
 
         std::stringstream saveFile;

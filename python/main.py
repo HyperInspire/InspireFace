@@ -1,6 +1,7 @@
 import cv2
-from inspire_face.instantiation import CameraStream, InspireFaceEngine, InspireFaceCustomParameter, FaceTracker, \
-    FaceRecognition
+from inspire_face.base import CameraStream, create_engine, InspireFaceCustomParameter
+from inspire_face.tracker_module import FaceTrackerModule
+from inspire_face.recognition_module import FaceRecognitionModule
 
 if __name__ == '__main__':
 
@@ -11,9 +12,9 @@ if __name__ == '__main__':
 
     param = InspireFaceCustomParameter()
     param.enable_recognition = True
-    engine = InspireFaceEngine("/Users/tunm/work/HyperFace/test_res/model_zip/Optimus-t1", param=param)
-    tracker = FaceTracker(engine)
-    recognition = FaceRecognition(engine)
+    engine = create_engine("/Users/tunm/work/HyperFace/test_res/model_zip/Optimus-t1", param=param)
+    tracker = FaceTrackerModule(engine)
+    recognition = FaceRecognitionModule(engine)
 
     # 对比
     faces_information1 = tracker.execute(stream1)

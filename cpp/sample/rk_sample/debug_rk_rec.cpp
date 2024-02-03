@@ -85,7 +85,7 @@ int main() {
         param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
         param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
         param.set<bool>("nchw", false);
-        param.set<bool>("swap_color", true);        // RK需要rgb输入
+        param.set<bool>("swap_color", true);        // RK requires rgb input
 
         m_extract_ = std::make_shared<Extract>();
         auto model = loader.ReadModel(0);

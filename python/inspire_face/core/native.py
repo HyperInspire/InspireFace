@@ -667,7 +667,7 @@ class DarwinLibraryLoader(LibraryLoader):
             dirs.extend(_environ_path("LD_RUN_PATH"))
 
         if hasattr(sys, "frozen") and getattr(sys, "frozen") == "macosx_app":
-            dirs.append(os.path.join(os.environ["RESOURCEPATH"], "..", "Frameworks"))
+            dirs.append(os.path.join(os.environ["RESOURCEPATH"], "../..", "Frameworks"))
 
         dirs.extend(dyld_fallback_library_path)
 

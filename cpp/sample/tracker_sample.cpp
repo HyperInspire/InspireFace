@@ -11,7 +11,7 @@ int video_test(FaceTrack &ctx, int cam_id) {
     cv::VideoCapture cap(cam_id);
 
     if (!cap.isOpened()) {
-        std::cerr << "无法打开摄像头." << std::endl;
+        std::cerr << "Unable to open the camera." << std::endl;
         return -1;
     }
 
@@ -23,7 +23,7 @@ int video_test(FaceTrack &ctx, int cam_id) {
         cap >> frame;
 
         if (frame.empty()) {
-            std::cerr << "无法从摄像头获取图像." << std::endl;
+            std::cerr << "Unable to obtain images from the camera." << std::endl;
             break;
         }
 
@@ -44,27 +44,21 @@ int video_test(FaceTrack &ctx, int cam_id) {
 
             cv::rectangle(frame, rect, cv::Scalar(0, 0, 255), 2, 1);
 
-            // 创建要显示的文本
             std::string text = "ID: " + std::to_string(track_id) + " Count: " + std::to_string(track_count);
 
-            // 设置文本显示位置，通常在框的上方
             cv::Point text_position(rect.x, rect.y - 10);
 
             const auto& pose_and_quality = face.high_result;
             std::vector<float> euler = {pose_and_quality.yaw, pose_and_quality.roll, pose_and_quality.pitch};
             std::string pose_text = "P: " + std::to_string(euler[0]) + ",Yaw: " + std::to_string(euler[1]) + ",roll:" +std::to_string(euler[2]);
 
-            // 设置文本显示位置，通常在框的下方
             cv::Point pose_position(rect.x, rect.y + rect.height + 20);
 
-
-            // 设置文本字体和大小
             int font_face = cv::FONT_HERSHEY_SIMPLEX;
             double font_scale = 0.5;
             int font_thickness = 1;
-            cv::Scalar font_color(255, 255, 255); // 文本颜色，白色
+            cv::Scalar font_color(255, 255, 255);
 
-            // 在图像上绘制文本
             cv::putText(frame, text, text_position, font_face, font_scale, font_color, font_thickness);
             cv::putText(frame, pose_text, pose_position, font_face, font_scale, font_color, font_thickness);
         }
@@ -87,7 +81,7 @@ void video_file_test(FaceTrack& ctx, const std::string& video_filename) {
     cv::VideoCapture cap(video_filename);
 
     if (!cap.isOpened()) {
-        std::cerr << "无法打开视频文件: " << video_filename << std::endl;
+        std::cerr << "Unable to open the video file: " << video_filename << std::endl;
         return;
     }
 
@@ -98,7 +92,7 @@ void video_file_test(FaceTrack& ctx, const std::string& video_filename) {
         cap >> frame;
 
         if (frame.empty()) {
-            std::cerr << "无法从视频文件获取帧." << std::endl;
+            std::cerr << "Unable to get frames from the video file." << std::endl;
             break;
         }
 
@@ -123,25 +117,20 @@ void video_file_test(FaceTrack& ctx, const std::string& video_filename) {
                 cv::circle(frame, p, 0, cv::Scalar(0, 0, 242), 2);
             }
 
-            // 创建要显示的文本
             std::string text = "ID: " + std::to_string(track_id) + " Count: " + std::to_string(track_count);
 
-            // 设置文本显示位置，通常在框的上方
             cv::Point text_position(rect.x, rect.y - 10);
 
             const auto& euler = face.high_result;
             std::string pose_text = "pitch: " + std::to_string(euler.pitch) + ",Yaw: " + std::to_string(euler.yaw) + ",roll:" +std::to_string(euler.roll);
 
-            // 设置文本显示位置，通常在框的下方
             cv::Point pose_position(rect.x, rect.y + rect.height + 20);
 
-            // 设置文本字体和大小
             int font_face = cv::FONT_HERSHEY_SIMPLEX;
             double font_scale = 0.5;
             int font_thickness = 1;
-            cv::Scalar font_color(255, 255, 255); // 文本颜色，白色
+            cv::Scalar font_color(255, 255, 255);
 
-            // 在图像上绘制文本
             cv::putText(frame, text, text_position, font_face, font_scale, font_color, font_thickness);
             cv::putText(frame, pose_text, pose_position, font_face, font_scale, font_color, font_thickness);
         }
@@ -159,7 +148,7 @@ void video_file_test(FaceTrack& ctx, const std::string& video_filename) {
 
 int main(int argc, char** argv) {
     if (argc != 3) {
-        std::cerr << "用法: " << argv[0] << " <source> <input>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <source> <input>" << std::endl;
         return 1;
     }
 
@@ -182,12 +171,12 @@ int main(int argc, char** argv) {
         if (!image.empty()) {
 //            image_test(ctx, image);
         } else {
-            std::cerr << "无法打开图像文件." << std::endl;
+            std::cerr << "Unable to open the image file." << std::endl;
         }
     } else if (source == "video") {
         video_file_test(ctx, input);
     } else {
-        std::cerr << "无效的输入源: " << source << std::endl;
+        std::cerr << "Invalid input source: " << source << std::endl;
         return 1;
     }
 

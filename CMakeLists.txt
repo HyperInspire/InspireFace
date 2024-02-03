@@ -17,11 +17,11 @@ set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
 
 
-add_subdirectory(cpp/inspireface)  # 添加子项目
+add_subdirectory(cpp/inspireface)  # Add a child project: InspireFace Source
 get_property(HyperFace TARGET InspireFace PROPERTY InspireFace)
 
-add_subdirectory(cpp/sample)  # 添加子项目
+add_subdirectory(cpp/sample)  # Add a child project: Samples
 
 if (BUILD_HYPERFACE_TEST)
-    add_subdirectory(cpp/test)  # 添加子项目
+    add_subdirectory(cpp/test)  # Add a child project: Unit-Test
 endif ()
