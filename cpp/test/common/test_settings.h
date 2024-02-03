@@ -11,6 +11,8 @@
 
 #define ENABLE_BENCHMARK 1                     // Whether to run the benchmark snippet
 
+#define TEST_MODEL_FILE "Pikachu-t1"           // Optional model file
+
 using namespace Catch::Detail;
 
 #define TEST_PRINT(...) SPDLOG_LOGGER_CALL(spdlog::get("TEST"), spdlog::level::trace, __VA_ARGS__)

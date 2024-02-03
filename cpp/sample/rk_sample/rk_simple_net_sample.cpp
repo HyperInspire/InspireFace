@@ -255,7 +255,7 @@ void test_liveness() {
         auto image = cv::imread(names[i]);
         Timer timer;
         auto score = (*m_rgb_anti_spoofing_)(image);
-        LOGD("耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("cost: %f", timer.GetCostTimeUpdate());
         LOGD("%s : %f", names[i].c_str(), score);
     }
 

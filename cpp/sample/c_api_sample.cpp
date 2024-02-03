@@ -7,23 +7,23 @@
 #include "inspireface/log.h"
 
 std::string basename(const std::string& path) {
-    size_t lastSlash = path.find_last_of("/\\");  // 考虑到跨平台的分隔符
+    size_t lastSlash = path.find_last_of("/\\");  // Take into account the cross-platform separator
     if (lastSlash == std::string::npos) {
-        return path;  // 没有斜杠，整个路径就是基名
+        return path;  // Without the slash, the entire path is the base name
     } else {
-        return path.substr(lastSlash + 1);  // 返回最后一个斜杠之后的部分
+        return path.substr(lastSlash + 1);  // Returns the part after the last slash
     }
 }
 
 int compare() {
     HResult ret;
     // 初始化context
-    HString path = "test_res/model_zip/Optimus-t1";
+    HPath path = "test_res/model_zip/Optimus-t1";
     HF_ContextCustomParameter parameter = {0};
     parameter.enable_liveness = 1;
     parameter.enable_mask_detect = 1;
     parameter.enable_recognition = 1;
-    HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // 选择图像模式 即总是检测
+    HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // Selecting the image mode is always detection
     HContextHandle ctxHandle;
     ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
     if (ret != HSUCCEED) {
@@ -37,7 +37,7 @@ int compare() {
     HInt32 featureNum;
     HF_GetFeatureLength(ctxHandle, &featureNum);
     LOGD("特征长度: %d", featureNum);
-    HFloat featuresCache[names.size()][featureNum];     // 存储缓存的向量
+    HFloat featuresCache[names.size()][featureNum];     // Store the cached vector
 
     for (int i = 0; i < names.size(); ++i) {
         auto &name = names[i];
@@ -74,7 +74,7 @@ int compare() {
 
         std::cout << std::endl;
         if (ret != HSUCCEED) {
-            LOGE("特征提取有问题: %d", ret);
+            LOGE("Abnormal feature extraction: %d", ret);
             return -1;
         }
 

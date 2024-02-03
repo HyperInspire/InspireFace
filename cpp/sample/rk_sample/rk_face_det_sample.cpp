@@ -33,7 +33,7 @@ int main() {
 
     Timer timer;
     FaceLocList locs = (*m_face_detector_)(image);
-    LOGD("耗时: %f", timer.GetCostTimeUpdate());
+    LOGD("cost: %f", timer.GetCostTimeUpdate());
 
     LOGD("Faces: %ld", locs.size());
 

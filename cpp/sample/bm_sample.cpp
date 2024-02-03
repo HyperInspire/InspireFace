@@ -11,15 +11,15 @@
 int main() {
 
     int N = 512;
-    int vectorSize = 512; // 向量的长度
+    int vectorSize = 512; // Vector length
     {
-        // 创建一个 Nx512 的 CV_32F 类型的矩阵，并填充随机数
+        // Create an Nx512 matrix of type CV_32F and fill it with random numbers
         cv::Mat mat(N, vectorSize, CV_32F);
-        cv::randu(mat, cv::Scalar(0), cv::Scalar(1)); // 在 [0, 1) 范围内生成随机浮点数
+        cv::randu(mat, cv::Scalar(0), cv::Scalar(1));
 
-        // 创建一个 512x1 的 CV_32F 类型的矩阵，并填充随机数
+        // Create a 512x1 CV_32F matrix and fill it with random numbers
         cv::Mat one(vectorSize, 1, CV_32F);
-        cv::randu(one, cv::Scalar(0), cv::Scalar(1)); // 在 [0, 1) 范围内生成随机浮点数
+        cv::randu(one, cv::Scalar(0), cv::Scalar(1));
 
         std::cout << mat.size << std::endl;
         std::cout << one.size << std::endl;
