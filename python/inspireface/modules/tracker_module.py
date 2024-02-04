@@ -2,6 +2,7 @@ from .base import *
 from .typedef import *
 from typing import List
 
+
 class FaceTrackerModule(object):
 
     def __init__(self, engine: InspireFaceEngine):
@@ -58,6 +59,9 @@ class FaceTrackerModule(object):
     def track(self, image: np.ndarray) -> int:
         stream = CameraStream(image)
         return self.track_from_stream(stream)
+
+    def set_track_preview_size(self, size=192):
+        HF_FaceContextSetTrackPreviewSize(self.engine.handle, size)
 
     def get_faces_boundary_boxes(self):
         num_of_faces = self.multiple_faces.detectedNum

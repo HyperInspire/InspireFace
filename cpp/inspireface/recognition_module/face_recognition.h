@@ -144,6 +144,15 @@ public:
     int32_t GetFaceFeature(int featureIndex, Embedded &feature);
 
     /**
+     * @brief Retrieves a facial entity from the feature block.
+     *
+     * @param featureIndex Index of the feature to retrieve.
+     * @param result Output parameter to store the retrieved entity.
+     * @return int32_t Status code indicating success (0) or failure.
+     */
+    int32_t GetFaceEntity(int featureIndex, Embedded &feature, std::string& tag, FEATURE_STATE& status);
+
+    /**
      * @brief Retrieves the total number of facial features stored in the feature block.
      *
      * @return int32_t Total number of facial features.

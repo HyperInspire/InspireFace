@@ -1,20 +1,23 @@
 import cv2
-from inspire_face.base import CameraStream, create_engine, InspireFaceCustomParameter
-from inspire_face.tracker_module import FaceTrackerModule
-from inspire_face.recognition_module import FaceRecognitionModule
+import inspireface as isf
 
 if __name__ == '__main__':
 
     face_image_1 = cv2.imread("/Users/tunm/work/HyperFace/test_res/images/kun.jpg")
-    stream1 = CameraStream(face_image_1)
+    stream1 = isf.CameraStream(face_image_1)
     face_image_2 = cv2.imread("/Users/tunm/work/HyperFace/test_res/images/face_comp.jpeg")
-    stream2 = CameraStream(face_image_2)
+    stream2 = isf.CameraStream(face_image_2)
 
-    param = InspireFaceCustomParameter()
+    param = isf.EngineCustomParameter()
     param.enable_recognition = True
-    engine = create_engine("/Users/tunm/work/HyperFace/test_res/model_zip/Optimus-t1", param=param)
-    tracker = FaceTrackerModule(engine)
-    recognition = FaceRecognitionModule(engine)
+
+    db_config = isf.DatabaseConfiguration(enable_use_db=True, db_path="./")
+
+    engine = isf.create_engine("/Users/tunm/work/HyperFace/test_res/model_zip/Optimus-t1", param=param,
+                           db_configuration=db_config)
+    tracker = isf.FaceTrackerModule(engine)
+    recognition = isf.FaceRecognitionModule(engine)
+    guard = isf.FaceGuardModule(engine)
 
     # 对比
     faces_information1 = tracker.execute(stream1)
@@ -35,3 +38,5 @@ if __name__ == '__main__':
 
     res = recognition.face_comparison1v1(v1, v2)
     print(res)
+
+    guard.pipeline(stream1, faces_information1, isf.ENABLE_QUALITY|isf.ENABLE_MASK_DETECT)

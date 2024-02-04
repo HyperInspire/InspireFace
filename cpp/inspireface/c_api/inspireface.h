@@ -275,6 +275,18 @@ typedef struct HF_FaceFeatureIdentity {
 } HF_FaceFeatureIdentity, *Ptr_HF_FaceFeatureIdentity;
 
 /**
+ * @brief Set the face recognition search threshold.
+ *
+ * This function sets the threshold for face recognition, which determines the sensitivity
+ * of the recognition process. A lower threshold may yield more matches but with less confidence.
+ *
+ * @param ctxHandle Handle to the face context.
+ * @param threshold The threshold value to set for face recognition (default is 0.48, suitable for access control scenarios).
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HF_FaceRecognitionThresholdSetting(HContextHandle ctxHandle, float threshold);
+
+/**
  * @brief Extract a face feature from a given face.
  *
  * @param ctxHandle Handle to the face context.
@@ -438,18 +450,6 @@ typedef struct HF_RGBLivenessConfidence {
     HInt32 num;        ///< Number of faces detected.
     HPFloat confidence; ///< Confidence level of RGB liveness detection for each face.
 } HF_RGBLivenessConfidence, *Ptr_HF_RGBLivenessConfidence;
-
-/**
- * @brief Set the face recognition search threshold.
- *
- * This function sets the threshold for face recognition, which determines the sensitivity
- * of the recognition process. A lower threshold may yield more matches but with less confidence.
- *
- * @param ctxHandle Handle to the face context.
- * @param threshold The threshold value to set for face recognition (default is 0.48, suitable for access control scenarios).
- * @return HResult indicating the success or failure of the operation.
- */
-HYPER_CAPI_EXPORT extern HResult HF_FaceRecognitionThresholdSetting(HContextHandle ctxHandle, float threshold);
 
 /**
  * @brief Get the RGB liveness confidence.
