@@ -18,7 +18,10 @@ typedef signed int*			HPInt32;                          ///< Pointer to signed 3
 typedef long                HResult;                          ///< Result code.
 typedef char*               HString;                          ///< String.
 typedef const char*         HPath;                            ///< Const String.
-typedef char                HChar;                            ///< Character.
+typedef char                HBuffer;                            ///< Character.
+typedef char*               HPBuffer;                           ///< Pointer Character.
+typedef long                HSize;                            ///< Size
+typedef long*               HPSize;                            ///< Pointer Size
 
 typedef struct HFaceRect {
     HInt32 x;             ///< X-coordinate of the top-left corner of the rectangle.

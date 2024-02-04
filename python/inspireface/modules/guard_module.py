@@ -20,14 +20,16 @@ class FaceGuardModule(object):
         else:
             raise NotImplemented(f"The {type(image)} type is not supported")
         tokens = [face.token for face in faces]
-        multi_faces = HF_MultipleFaceData()
-        multi_faces.detectedNum = len(faces)
-        tokens_pointers = (Ptr_HF_FaceBasicToken * len(faces))()
-        for i, token in enumerate(tokens):
-            tokens_pointers[i] = Ptr_HF_FaceBasicToken(token)
 
-        multi_faces.tokens = Ptr_HF_FaceBasicToken(tokens_pointers)
-        ret = HF_MultipleFacePipelineProcessOptional(self.engine.handle, stream.handle, multi_faces, option)
+        HF_FaceBasicToken_Array = HF_FaceBasicToken * len(tokens)
+        tokens_array = HF_FaceBasicToken_Array(*tokens)
+        tokens_ptr = cast(tokens_array, Ptr_HF_FaceBasicToken)
+
+        multi_faces = HF_MultipleFaceData()
+        multi_faces.detectedNum = len(tokens)
+        multi_faces.tokens = tokens_ptr
+
+        ret = HF_MultipleFacePipelineProcessOptional(self.engine.handle, stream.handle, Ptr_HF_MultipleFaceData(multi_faces), option)
         print(f"ret = {ret}")
         mask_results = HF_FaceMaskConfidence()
         HF_GetFaceMaskConfidence(self.engine.handle, Ptr_HF_FaceMaskConfidence(mask_results))

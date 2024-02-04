@@ -212,6 +212,18 @@ HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle stream
     return ret;
 }
 
+HResult HF_CopyFaceBasicToken(HF_FaceBasicToken token, HPBuffer buffer, HInt32 bufferSize) {
+    if (bufferSize < sizeof(inspire::HyperFaceData)) {
+        return HERR_INVALID_BUFFER_SIZE;
+    }
+    std::memcpy(buffer, token.data, sizeof(inspire::HyperFaceData));
+    return HSUCCEED;
+}
+
+HResult HF_GetFaceBasicTokenSize(HPInt32 bufferSize) {
+    *bufferSize = sizeof(inspire::HyperFaceData);
+    return HSUCCEED;
+}
 
 HResult HF_FaceRecognitionThresholdSetting(HContextHandle ctxHandle, float threshold) {
     if (ctxHandle == nullptr) {

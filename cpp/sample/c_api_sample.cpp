@@ -23,6 +23,7 @@ int compare() {
     parameter.enable_liveness = 1;
     parameter.enable_mask_detect = 1;
     parameter.enable_recognition = 1;
+    parameter.enable_face_quality = 1;
     HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // Selecting the image mode is always detection
     HContextHandle ctxHandle;
     ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
@@ -78,10 +79,29 @@ int compare() {
             return -1;
         }
 
-        for (int j = 0; j < 512; ++j) {
-            std::cout << featuresCache[0][j] << ", ";
-        }
-        std::cout << std::endl;
+//        for (int j = 0; j < 512; ++j) {
+//            std::cout << featuresCache[0][j] << ", ";
+//        }
+//        std::cout << std::endl;
+
+//        HSize size;
+//        HF_GetFaceBasicTokenSize(&size);
+//        LOGD("in size: %ld", size);
+//
+//        LOGD("o size %d", multipleFaceData.tokens[0].size);
+
+        HBuffer buffer[multipleFaceData.tokens[0].size];
+        HF_CopyFaceBasicToken(multipleFaceData.tokens[0], buffer, multipleFaceData.tokens[0].size);
+
+        HF_FaceBasicToken token = {0};
+        token.size = multipleFaceData.tokens[0].size;
+        token.data = buffer;
+
+        HFloat quality;
+        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[0], &quality);
+        ret = HF_FaceQualityDetect(ctxHandle, token, &quality);
+        LOGD("RET : %d", ret);
+        LOGD("Q: %f", quality);
 
         ret = HF_ReleaseImageStream(imageSteamHandle);
         if (ret == HSUCCEED) {
@@ -366,9 +386,9 @@ int main() {
 //    }
 
 
-//    compare();
+    compare();
 //
-    search();
+//    search();
 
 
     opiton();

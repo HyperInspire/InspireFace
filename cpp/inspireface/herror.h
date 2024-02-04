@@ -14,6 +14,7 @@
 #define HERR_INVALID_FACE_TOKEN     	        (HERR_BASIC_BASE+30)			// Invalid face token
 #define HERR_INVALID_FACE_FEATURE    	    (HERR_BASIC_BASE+31)			// Invalid face feature
 #define HERR_INVALID_FACE_LIST          	    (HERR_BASIC_BASE+32)			// Invalid face feature list
+#define HERR_INVALID_BUFFER_SIZE          	    (HERR_BASIC_BASE+33)			// Invalid copy token
 
 #define HERR_CTX_BASE				        0X500					         // Context error types
 #define HERR_CTX_FUNCTION_UNUSABLE           (HERR_CTX_BASE+2)               // Function not usable
