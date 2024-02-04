@@ -249,6 +249,37 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetTrackPreviewSize(HContextHandl
 HYPER_CAPI_EXPORT extern HResult
 HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData results);
 
+/**
+ * @brief Copies the data from a HF_FaceBasicToken to a specified buffer.
+ *
+ * This function copies the data pointed to by the HF_FaceBasicToken's data field
+ * into a user-provided buffer. The caller is responsible for ensuring that the buffer
+ * is large enough to hold the data being copied.
+ *
+ * @param token The HF_FaceBasicToken containing the data to be copied.
+ * @param buffer The buffer where the data will be copied to.
+ * @param bufferSize The size of the buffer provided by the caller. Must be large enough
+ *        to hold the data pointed to by the token's data field.
+ * @return HResult indicating the success or failure of the operation. Returns HSUCCEED
+ *         if the operation was successful, or an error code if the buffer was too small
+ *         or if any other error occurred.
+ */
+HYPER_CAPI_EXPORT extern HResult HF_CopyFaceBasicToken(HF_FaceBasicToken token, HPBuffer buffer, HInt32 bufferSize);
+
+/**
+ * @brief Retrieves the size of the data contained in a HF_FaceBasicToken.
+ *
+ * This function is used to query the size of the data that a HF_FaceBasicToken is
+ * expected to contain. This is useful for allocating a buffer of appropriate size
+ * before copying data from a HF_FaceBasicToken.
+ *
+ * @param bufferSize Pointer to an integer where the size of the data will be stored.
+ *        On successful completion, this will contain the size of the data in bytes.
+ * @return HResult indicating the success or failure of the operation. Returns HSUCCEED
+ *         if the operation was successful, or an error code if it failed.
+ */
+HYPER_CAPI_EXPORT extern HResult HF_GetFaceBasicTokenSize(HPInt32 bufferSize);
+
 /************************************************************************
 * Face Recognition
 ************************************************************************/

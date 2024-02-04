@@ -348,6 +348,7 @@ int32_t FaceContext::FaceQualityDetect(FaceBasicData& data, float &result) {
     int32_t ret;
     HyperFaceData face = {0};
     ret = DeserializeHyperFaceData((char* )data.data, data.dataSize, face);
+    PrintHyperFaceData(face);
     if (ret != HSUCCEED) {
         return ret;
     }

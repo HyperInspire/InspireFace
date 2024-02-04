@@ -33,6 +33,15 @@ class FaceTrackerModule(object):
             track_id = track_ids[idx]
             _token = tokens[idx]
 
+            # copy token
+            token_size = HInt32()
+            HF_GetFaceBasicTokenSize(HPInt32(token_size))
+            buffer_size = token_size.value
+            buffer = create_string_buffer(buffer_size)
+            ret = HF_CopyFaceBasicToken(_token, buffer, token_size)
+            if ret != 0:
+                raise Exception("Failed to copy face basic token")
+
             info = FaceInformation(
                 top_left=top_left,
                 bottom_right=bottom_right,
@@ -44,6 +53,7 @@ class FaceTrackerModule(object):
                 _feature=None
             )
             infos.append(info)
+
 
         return infos
 
