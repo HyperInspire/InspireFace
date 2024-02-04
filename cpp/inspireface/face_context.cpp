@@ -225,6 +225,8 @@ int32_t FaceContext::SearchFaceFeature(const Embedded &queryFeature, SearchResul
         if (searchResult.index != -1) {
             ret = m_face_recognition_->GetFaceFeature(searchResult.index, m_search_face_feature_cache_);
         }
+        m_face_feature_ptr_cache_->data = m_search_face_feature_cache_.data();
+        m_face_feature_ptr_cache_->dataSize = m_search_face_feature_cache_.size();
         // Ensure that buffer overflows do not occur
         size_t copy_length = std::min(searchResult.tag.size(), sizeof(m_string_cache_) - 1);
         std::strncpy(m_string_cache_, searchResult.tag.c_str(), copy_length);
@@ -290,7 +292,17 @@ int32_t FaceContext::GetFaceFeatureFromCustomId(int32_t customId) {
     if (index == -1) {
         return HERR_CTX_REC_INVALID_INDEX;
     }
-    auto ret = m_face_recognition_->GetFaceFeature(index, m_search_face_feature_cache_);
+    std::string tag;
+    FEATURE_STATE status;
+    auto ret = m_face_recognition_->GetFaceEntity(index, m_search_face_feature_cache_, tag, status);
+    m_face_feature_ptr_cache_->data = m_search_face_feature_cache_.data();
+    m_face_feature_ptr_cache_->dataSize = m_search_face_feature_cache_.size();
+    // Ensure that buffer overflows do not occur
+    size_t copy_length = std::min(tag.size(), sizeof(m_string_cache_) - 1);
+    std::strncpy(m_string_cache_, tag.c_str(), copy_length);
+    // Make sure the string ends with a null character
+    m_string_cache_[copy_length] = '\0';
+    LOGD("heihei: %s", tag.c_str());
 
     return ret;
 }

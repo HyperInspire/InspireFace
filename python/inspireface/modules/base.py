@@ -25,7 +25,7 @@ def get_dict(struct):
 
 
 class CameraStream(object):
-    def __init__(self, image, stream_format=STREAM_BGR, rotation=CAMERA_ROTATION_0):
+    def __init__(self, image: np.ndarray, stream_format=STREAM_BGR, rotation=CAMERA_ROTATION_0):
         try:
             self.height, self.width, self.channel = image.shape
         except AttributeError as err:
@@ -65,7 +65,10 @@ class CameraStream(object):
 
 class InspireFaceEngine(object):
 
-    def __init__(self, bundle_file: str, param: InspireFaceCustomParameter, detect_mode: int = HF_DETECT_MODE_IMAGE,
+    def __init__(self, bundle_file: str,
+                 param: EngineCustomParameter,
+                 db_configuration: DatabaseConfiguration = None,
+                 detect_mode: int = HF_DETECT_MODE_IMAGE,
                  max_detect_num: int = 10):
         bundle_path = String(bytes(bundle_file, encoding="utf8"))
         self._handle = HContextHandle()
@@ -73,6 +76,11 @@ class InspireFaceEngine(object):
         ret = HF_CreateFaceContextFromResourceFile(bundle_path, param.dump(), detect_mode, max_detect_num, self._handle)
         if ret != 0:
             raise Exception(f"Create engine error: {ret}")
+
+        if db_configuration is not None:
+            ret = HF_FaceContextDataPersistence(self._handle, db_configuration.to_ctypes())
+            if ret != 0:
+                raise Exception(f"Failed to configure database: {ret}")
 
     def release(self):
         if self._handle is not None:
@@ -91,6 +99,14 @@ class InspireFaceEngine(object):
     def check(self):
         return self._handle is not None
 
+    @staticmethod
+    def version() -> str:
+        version = HF_InspireFaceVersion()
+        ret = HF_QueryInspireFaceVersion(Ptr_HF_InspireFaceVersion(version))
+        if ret != 0:
+            raise Exception(f"The version number cannot be obtained. Check whether the configuration is correct: {ret}")
+
+        return f"{version.major}.{version.minor}.{version.patch}"
 
 def create_engine(*args, **kwargs) -> InspireFaceEngine:
     return InspireFaceEngine(*args, **kwargs)

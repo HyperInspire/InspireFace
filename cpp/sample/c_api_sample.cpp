@@ -310,6 +310,13 @@ int search() {
 
     HF_ViewFaceDBTable(ctxHandle);
 
+
+    HF_FaceFeatureIdentity identity;
+    ret = HF_FeaturesGroupGetFeatureIdentity(ctxHandle, 100, &identity);
+    if (ret != HSUCCEED) {
+        LOGE("获取特征失败");
+    }
+
     ret = HF_ReleaseImageStream(imageSteamHandle);
     if (ret == HSUCCEED) {
         imageSteamHandle = nullptr;
@@ -359,9 +366,9 @@ int main() {
 //    }
 
 
-    compare();
-
-//    search();
+//    compare();
+//
+    search();
 
 
     opiton();

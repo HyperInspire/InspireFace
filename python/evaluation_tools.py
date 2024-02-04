@@ -1,14 +1,14 @@
 import cv2
 import numpy as np
 
-from inspire_face.base import InspireFaceEngine, InspireFaceCustomParameter, FaceTrackerModule, \
-    FaceRecognitionModule, FaceInformation
+from inspireface.modules.base import InspireFaceEngine, EngineCustomParameter, FaceTrackerModule, \
+    FaceRecognitionModule
 
 
 class QuickComparison(object):
 
     def __init__(self, path: str, threshold: float = 0.48):
-        param = InspireFaceCustomParameter()
+        param = EngineCustomParameter()
         param.enable_recognition = True
         self.engine = InspireFaceEngine(path, param=param)
         self.tracker = FaceTrackerModule(self.engine)

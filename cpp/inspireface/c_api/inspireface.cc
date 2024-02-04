@@ -212,6 +212,18 @@ HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle stream
     return ret;
 }
 
+
+HResult HF_FaceRecognitionThresholdSetting(HContextHandle ctxHandle, float threshold) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetRecognitionThreshold(threshold);
+}
+
 HResult HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
@@ -404,9 +416,15 @@ HResult HF_FeaturesGroupGetFeatureIdentity(HContextHandle ctxHandle, HInt32 cust
         return HERR_INVALID_CONTEXT_HANDLE;
     }
     auto ret = ctx->impl.GetFaceFeatureFromCustomId(customId);
-    identity->feature = (HF_FaceFeature* )ctx->impl.GetFaceFeaturePtrCache().get();
-    identity->feature->data = (HFloat* )ctx->impl.GetSearchFaceFeatureCache().data();
-    identity->feature->size = ctx->impl.GetSearchFaceFeatureCache().size();
+    if (ret == HSUCCEED) {
+        identity->tag = ctx->impl.GetStringCache();
+        identity->customId = customId;
+        identity->feature = (HF_FaceFeature* )ctx->impl.GetFaceFeaturePtrCache().get();
+        identity->feature->data = (HFloat* )ctx->impl.GetSearchFaceFeatureCache().data();
+        identity->feature->size = ctx->impl.GetSearchFaceFeatureCache().size();
+    } else {
+        identity->customId = -1;
+    }
 
     return ret;
 }
@@ -517,17 +535,6 @@ HResult HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageH
 
     return ret;
 
-}
-
-HResult HF_FaceRecognitionThresholdSetting(HContextHandle ctxHandle, float threshold) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    return ctx->impl.SetRecognitionThreshold(threshold);
 }
 
 HResult HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLivenessConfidence confidence) {

@@ -137,6 +137,34 @@ public:
 public:
 
     /**
+     * @brief Retrieves the tag associated with a feature at a given row index.
+     * @param row Index of the feature to retrieve the tag for.
+     * @return std::string Tag associated with the feature at the given row, or an empty string if the row is invalid.
+     */
+    std::string GetTagFromRow(int row) {
+        std::lock_guard<std::mutex> lock(m_mtx_);  // Ensure thread safety
+        if (row >= 0 && row < m_tag_list_.size() && m_feature_state_[row] == FEATURE_STATE::USED) {
+            return m_tag_list_[row];
+        } else {
+            return "";  // Return an empty string for invalid row or unused slot
+        }
+    }
+
+    /**
+     * @brief Retrieves the state of a feature slot at a given row index.
+     * @param row Index of the feature slot to retrieve the state for.
+     * @return FEATURE_STATE State of the feature slot at the given row, or IDLE if the row is invalid.
+     */
+    FEATURE_STATE GetStateFromRow(int row) {
+        std::lock_guard<std::mutex> lock(m_mtx_);  // Ensure thread safety
+        if (row >= 0 && row < m_feature_state_.size()) {
+            return m_feature_state_[row];
+        } else {
+            return FEATURE_STATE::IDLE;  // Treat invalid rows as IDLE
+        }
+    }
+
+    /**
      * @brief Finds the index of the first idle (unused) feature slot.
      * @return int Index of the first idle slot, or -1 if no idle slot is found.
      */
