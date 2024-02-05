@@ -15,10 +15,10 @@ if __name__ == '__main__':
     recognition = isf.FaceRecognitionModule(engine)
 
     face_image_1 = cv2.imread("/Users/tunm/work/HyperFace/test_res/images/kun.jpg")
-    stream1 = isf.CameraStream(face_image_1)
+    stream1 = isf.CameraStream.load_from_cv_image(face_image_1)
 
     face_image_2 = cv2.imread("/Users/tunm/work/HyperFace/test_res/images/kunkun.jpg")
-    stream2 = isf.CameraStream(face_image_2)
+    stream2 = isf.CameraStream.load_from_cv_image(face_image_2)
 
     faces_information1 = tracker.execute(stream1)
     v1 = None

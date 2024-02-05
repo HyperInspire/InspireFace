@@ -4,9 +4,9 @@ import inspireface as isf
 if __name__ == '__main__':
 
     face_image_1 = cv2.imread("/Users/tunm/work/HyperFace/test_res/images/kun.jpg")
-    stream1 = isf.CameraStream(face_image_1)
+    stream1 = isf.CameraStream.load_from_cv_image(face_image_1)
     face_image_2 = cv2.imread("/Users/tunm/work/HyperFace/test_res/images/face_comp.jpeg")
-    stream2 = isf.CameraStream(face_image_2)
+    stream2 = isf.CameraStream.load_from_cv_image(face_image_2)
 
     param = isf.EngineCustomParameter()
     param.enable_recognition = True

@@ -78,8 +78,8 @@ void ModelLoader::Reset(const std::string &model_path) {
     //std::cout<<"ModelSize:"<<sizeof(ModelSize)<<std::endl;
     file.read((char *) modelSize, sizeof(ModelSize) * number_of_models);
     model = new Model[number_of_models];
-    std::cout << magic_number << std::endl;
-    std::cout << number_of_models << std::endl;
+//    std::cout << magic_number << std::endl;
+//    std::cout << number_of_models << std::endl;
     for (int i = 0; i < number_of_models; i++) {
         model[i].prototxtBuffer = new char[modelSize[i].prototxt_size];
         model[i].caffemodelBuffer = new char[modelSize[i].caffemodel_size];

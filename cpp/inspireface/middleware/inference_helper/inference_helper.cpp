@@ -131,7 +131,7 @@ InferenceHelper* InferenceHelper::Create(const InferenceHelper::HelperType helpe
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_MNN
     case kMnn:
-        PRINT("Use General Inference\n");
+//        PRINT("Use General Inference\n");
         p = new InferenceHelperMnn();
         break;
 #endif

@@ -13,7 +13,7 @@ class FaceTrackerModule(object):
 
     def execute(self, image) -> List[FaceInformation]:
         if isinstance(image, np.ndarray):
-            num_of_faces = self.track(image)
+            num_of_faces = self.track_from_bgr(image)
         elif isinstance(image, CameraStream):
             num_of_faces = self.track_from_stream(image)
         else:
@@ -56,8 +56,8 @@ class FaceTrackerModule(object):
 
         return self.multiple_faces.detectedNum
 
-    def track(self, image: np.ndarray) -> int:
-        stream = CameraStream(image)
+    def track_from_bgr(self, image: np.ndarray) -> int:
+        stream = CameraStream.load_from_cv_image(image)
         return self.track_from_stream(stream)
 
     def set_track_preview_size(self, size=192):

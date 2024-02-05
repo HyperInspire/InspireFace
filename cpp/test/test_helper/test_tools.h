@@ -29,7 +29,7 @@ inline HResult ReadImageToImageStream(const char *path, HImageHandle& handle) {
 
 
 inline uint8_t* ReadNV21Data(const char* filePath, int width, int height) {
-    const int nv21Size = width * height * 3 / 2; // 计算NV21数据大小
+    const int nv21Size = width * height * 3 / 2; // Calculate the NV21 data size
 
     // Memory is allocated dynamically to store NV21 data
     uint8_t* nv21Data = new uint8_t[nv21Size];
