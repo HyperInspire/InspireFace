@@ -1,3 +1,4 @@
+import numpy as np
 from loguru import logger
 from .typedef import *
 
@@ -25,26 +26,62 @@ def get_dict(struct):
 
 
 class CameraStream(object):
-    def __init__(self, image: np.ndarray, stream_format=STREAM_BGR, rotation=CAMERA_ROTATION_0):
-        try:
-            self.height, self.width, self.channel = image.shape
-        except AttributeError as err:
-            logger.error(err)
-            logger.error("The image data entered is incorrect. Please check whether empty data is entered!")
 
+    @staticmethod
+    def load_from_cv_image(image: np.ndarray, stream_format=STREAM_BGR, rotation=CAMERA_ROTATION_0):
+        h, w, c = image.shape
+        if c != 3 and c != 4:
+            raise Exception("Thr channel must be 3 or 4.")
+
+        return CameraStream(image, w, h, stream_format, rotation)
+
+    @staticmethod
+    def load_from_ndarray(data: np.ndarray, width: int, height: int, stream_format: int, rotation: int):
+        return CameraStream(data, width, height, stream_format, rotation)
+
+    @staticmethod
+    def load_from_buffer(data, width: int, height: int, stream_format: int, rotation: int):
+        return CameraStream(data, width, height, stream_format, rotation)
+
+    def __init__(self, data, width: int, height: int, stream_format: int, rotation: int, ):
         self.rotate = rotation
         self.data_format = stream_format
-        image_data_ptr = ctypes.cast(image.ctypes.data, ctypes.POINTER(ctypes.c_uint8))
+        if isinstance(data, np.ndarray):
+            data_ptr = ctypes.cast(data.ctypes.data, ctypes.POINTER(ctypes.c_uint8))
+        else:
+            data_ptr = ctypes.cast(data, ctypes.POINTER(ctypes.c_uint8))
         image_struct = HF_ImageData()
-        image_struct.data = image_data_ptr
-        image_struct.width = image.shape[1]
-        image_struct.height = image.shape[0]
+        image_struct.data = data_ptr
+        image_struct.width = width
+        image_struct.height = height
         image_struct.format = self.data_format
         image_struct.rotation = self.rotate
         self._handle = HImageHandle()
         ret = HF_CreateImageStream(Ptr_HF_ImageData(image_struct), self._handle)
         if ret != 0:
             raise Exception("Error")
+
+
+    # def __init__(self, image: np.ndarray, stream_format=STREAM_BGR, rotation=CAMERA_ROTATION_0):
+    #     try:
+    #         self.height, self.width, self.channel = image.shape
+    #     except AttributeError as err:
+    #         logger.error(err)
+    #         logger.error("The image data entered is incorrect. Please check whether empty data is entered!")
+    #
+    #     self.rotate = rotation
+    #     self.data_format = stream_format
+    #     image_data_ptr = ctypes.cast(image.ctypes.data, ctypes.POINTER(ctypes.c_uint8))
+    #     image_struct = HF_ImageData()
+    #     image_struct.data = image_data_ptr
+    #     image_struct.width = image.shape[1]
+    #     image_struct.height = image.shape[0]
+    #     image_struct.format = self.data_format
+    #     image_struct.rotation = self.rotate
+    #     self._handle = HImageHandle()
+    #     ret = HF_CreateImageStream(Ptr_HF_ImageData(image_struct), self._handle)
+    #     if ret != 0:
+    #         raise Exception("Error")
 
     def release(self):
         if self._handle is not None:
@@ -107,6 +144,7 @@ class InspireFaceEngine(object):
             raise Exception(f"The version number cannot be obtained. Check whether the configuration is correct: {ret}")
 
         return f"{version.major}.{version.minor}.{version.patch}"
+
 
 def create_engine(*args, **kwargs) -> InspireFaceEngine:
     return InspireFaceEngine(*args, **kwargs)
