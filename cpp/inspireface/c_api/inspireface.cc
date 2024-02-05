@@ -120,7 +120,7 @@ HResult HF_CreateFaceContextFromResourceFileOptional(HPath resourceFile,HInt32 c
         param.enable_recognition = true;
     }
     if (customOption & HF_ENABLE_LIVENESS) {
-        param.enable_ir_liveness = true;
+        param.enable_liveness = true;
     }
     if (customOption & HF_ENABLE_IR_LIVENESS) {
         param.enable_ir_liveness = true;
@@ -510,7 +510,7 @@ HResult HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageH
         param.enable_recognition = true;
     }
     if (customOption & HF_ENABLE_LIVENESS) {
-        param.enable_ir_liveness = true;
+        param.enable_liveness = true;
     }
     if (customOption & HF_ENABLE_IR_LIVENESS) {
         param.enable_ir_liveness = true;

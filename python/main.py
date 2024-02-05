@@ -12,6 +12,7 @@ if __name__ == '__main__':
     param.enable_recognition = True
     param.enable_liveness = True
     param.enable_mask_detect = True
+    param.enable_face_quality = True
 
     db_config = isf.DatabaseConfiguration(enable_use_db=True, db_path="./")
 
@@ -30,15 +31,17 @@ if __name__ == '__main__':
         recognition.extract_feature(stream1, item)
         v1 = item
 
-    # faces_information2 = tracker.execute(stream2)
-    #
-    # v2 = None
-    # if len(faces_information2) > 0:
-    #     item = faces_information2[0]
-    #     recognition.extract_feature(stream2, item)
-    #     v2 = item
-    #
-    # res = recognition.face_comparison1v1(v1, v2)
-    # print(res)
+    faces_information2 = tracker.execute(stream2)
 
-    guard.pipeline(stream1, faces_information1, isf.ENABLE_QUALITY|isf.ENABLE_MASK_DETECT)
+    v2 = None
+    if len(faces_information2) > 0:
+        item = faces_information2[0]
+        recognition.extract_feature(stream2, item)
+        v2 = item
+
+    res = recognition.face_comparison1v1(v1, v2)
+    print(res)
+
+    guard.pipeline_to_information(stream1, faces_information1, isf.ENABLE_QUALITY|isf.ENABLE_MASK_DETECT|isf.ENABLE_LIVENESS)
+
+    print(faces_information1[0].extend)
