@@ -54,17 +54,38 @@ class DatabaseConfiguration:
         )
 
 
-@dataclass
 class FaceInformation:
-    track_id: int
-    top_left: Tuple
-    bottom_right: Tuple
-    roll: float
-    yaw: float
-    pitch: float
-    _token: HF_FaceBasicToken
-    _feature: np.array
 
+    def __init__(self,
+                 track_id: int,
+                 top_left: Tuple,
+                 bottom_right: Tuple,
+                 roll: float,
+                 yaw: float,
+                 pitch: float,
+                 _token: HF_FaceBasicToken,
+                 _feature: np.array = None):
+        self.track_id = track_id
+        self.top_left = top_left
+        self.bottom_right = bottom_right
+        self.roll = roll
+        self.yaw = yaw
+        self.pitch = pitch
+        self._feature = _feature
+        self.extend = None # Expand some face information
+
+        # copy token
+        token_size = HInt32()
+        HF_GetFaceBasicTokenSize(HPInt32(token_size))
+        buffer_size = token_size.value
+        self.buffer = create_string_buffer(buffer_size)
+        ret = HF_CopyFaceBasicToken(_token, self.buffer, token_size)
+        if ret != 0:
+            raise Exception("Failed to copy face basic token")
+
+        self._token = HF_FaceBasicToken()
+        self._token.size = buffer_size
+        self._token.data = cast(addressof(self.buffer), c_void_p)
 
     @property
     def token(self):
@@ -77,7 +98,6 @@ class FaceInformation:
 
 @dataclass
 class FaceExtended:
-    track_id: int
     rgb_liveness_confidence: float
     mask_confidence: float
     quality_confidence: float

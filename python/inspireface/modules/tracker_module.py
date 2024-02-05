@@ -33,15 +33,6 @@ class FaceTrackerModule(object):
             track_id = track_ids[idx]
             _token = tokens[idx]
 
-            # copy token
-            token_size = HInt32()
-            HF_GetFaceBasicTokenSize(HPInt32(token_size))
-            buffer_size = token_size.value
-            buffer = create_string_buffer(buffer_size)
-            ret = HF_CopyFaceBasicToken(_token, buffer, token_size)
-            if ret != 0:
-                raise Exception("Failed to copy face basic token")
-
             info = FaceInformation(
                 top_left=top_left,
                 bottom_right=bottom_right,
@@ -53,7 +44,6 @@ class FaceTrackerModule(object):
                 _feature=None
             )
             infos.append(info)
-
 
         return infos
 
@@ -73,28 +63,28 @@ class FaceTrackerModule(object):
     def set_track_preview_size(self, size=192):
         HF_FaceContextSetTrackPreviewSize(self.engine.handle, size)
 
-    def get_faces_boundary_boxes(self):
+    def get_faces_boundary_boxes(self) -> List:
         num_of_faces = self.multiple_faces.detectedNum
         rects_ptr = self.multiple_faces.rects
         rects = [(rects_ptr[i].x, rects_ptr[i].y, rects_ptr[i].width, rects_ptr[i].height) for i in range(num_of_faces)]
 
         return rects
 
-    def get_faces_track_ids(self):
+    def get_faces_track_ids(self) -> List:
         num_of_faces = self.multiple_faces.detectedNum
         track_ids_ptr = self.multiple_faces.trackIds
         track_ids = [track_ids_ptr[i] for i in range(num_of_faces)]
 
         return track_ids
 
-    def get_faces_euler_angle(self):
+    def get_faces_euler_angle(self) -> List:
         num_of_faces = self.multiple_faces.detectedNum
         euler_angle = self.multiple_faces.angles
         angles = [(euler_angle.roll[i], euler_angle.yaw[i], euler_angle.pitch[i]) for i in range(num_of_faces)]
 
         return angles
 
-    def get_faces_tokens(self):
+    def get_faces_tokens(self) -> List[HF_FaceBasicToken]:
         num_of_faces = self.multiple_faces.detectedNum
         tokens_ptr = self.multiple_faces.tokens
         tokens = [tokens_ptr[i] for i in range(num_of_faces)]
