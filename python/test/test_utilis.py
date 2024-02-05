@@ -1,6 +1,10 @@
 from test.test_settings import *
 import inspireface as isf
 import numpy as np
+import time
+from functools import wraps
+
+from unittest import skipUnless as optional
 
 
 def title(name: str = None):
@@ -116,3 +120,27 @@ def print_benchmark_table(benchmark_results):
     for name, loops, total_time in benchmark_results:
         avg_time = total_time / loops
         print(row_format.format(name, loops, total_time * 1000, avg_time * 1000))
+
+
+def benchmark(test_name, loop):
+    def benchmark_decorator(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            # 在测试对象上设置loop属性
+            setattr(self, 'loop', loop)
+
+            start_time = time.time()
+            try:
+                result = func(self, *args, **kwargs)
+            finally:
+                end_time = time.time()
+                cost_total = end_time - start_time
+                self.__class__.benchmark_results.append((test_name, loop, cost_total))
+
+            # 测试完成后，删除loop属性，防止影响其他测试
+            delattr(self, 'loop')
+            return result
+
+        return wrapper
+
+    return benchmark_decorator
