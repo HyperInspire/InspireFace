@@ -185,6 +185,21 @@ HResult HF_FaceContextSetTrackPreviewSize(HContextHandle ctxHandle, HInt32 previ
     return ctx->impl.SetTrackPreviewSize(previewSize);
 }
 
+HResult HF_FaceContextSetFaceTrackMode(HContextHandle ctxHandle, HF_DetectMode detectMode) {
+    if (ctxHandle == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    inspire::DetectMode detMode = inspire::DETECT_MODE_IMAGE;
+    if (detectMode == HF_DETECT_MODE_VIDEO) {
+        detMode = inspire::DETECT_MODE_VIDEO;
+    }
+    return ctx->impl.SetDetectMode(detMode);
+}
+
 HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData results) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;

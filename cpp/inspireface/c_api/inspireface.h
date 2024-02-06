@@ -239,6 +239,15 @@ typedef struct HF_MultipleFaceData {
 HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetTrackPreviewSize(HContextHandle ctxHandle, HInt32 previewSize);
 
 /**
+ * @brief Set the face track mode in the face context.
+ *
+ * @param ctxHandle Handle to the face context.
+ * @param detectMode The mode of the detection mode for tracking.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceTrackMode(HContextHandle ctxHandle, HF_DetectMode detectMode);
+
+/**
  * @brief Run face tracking in the face context.
  *
  * @param ctxHandle Handle to the face context.

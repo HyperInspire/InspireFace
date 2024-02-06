@@ -208,6 +208,13 @@ public:
      */
     int32_t SetTrackPreviewSize(int32_t preview_size);
 
+    /**
+     * @brief Sets the mode for face detection.
+     * @param mode You can select mode for track or detect.
+     * @return int32_t Status code of the operation.
+     * */
+    int32_t SetDetectMode(DetectMode mode);
+
 public:
     // Accessor methods for various cached data
     /**

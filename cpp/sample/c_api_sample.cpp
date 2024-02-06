@@ -32,7 +32,7 @@ int compare() {
     }
 
     std::vector<std::string> names = {
-            "test_res/images/kun.jpg",
+            "/Users/tunm/work/HyperFace/python/test/data/bulk/view.jpg",
             "test_res/images/kunkun.jpg",
     };
     HInt32 featureNum;
