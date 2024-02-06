@@ -28,9 +28,7 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
     }
     m_face_track_ = std::make_shared<FaceTrack>(m_max_detect_face_);
     m_face_track_->Configuration(loader);
-    if (m_detect_mode_ == DetectMode::DETECT_MODE_IMAGE) {
-        m_always_detect_ = true;
-    }
+    SetDetectMode(detect_mode);
 
     m_face_recognition_ = std::make_shared<FaceRecognition>(loader, m_parameter_.enable_recognition);
     m_face_pipeline_ = std::make_shared<FacePipeline>(
@@ -368,7 +366,17 @@ int32_t FaceContext::SetRecognitionThreshold(float threshold) {
     return HSUCCEED;
 }
 
-int32_t FaceContext::SetTrackPreviewSize(const int32_t preview_size) {
+int32_t FaceContext::SetDetectMode(DetectMode mode) {
+    m_detect_mode_ = mode;
+    if (m_detect_mode_ == DetectMode::DETECT_MODE_IMAGE) {
+        m_always_detect_ = true;
+    } else {
+        m_always_detect_ = false;
+    }
+    return HSUCCEED;
+}
+
+    int32_t FaceContext::SetTrackPreviewSize(const int32_t preview_size) {
     m_face_track_->SetTrackPreviewSize(preview_size);
     return HSUCCEED;
 }

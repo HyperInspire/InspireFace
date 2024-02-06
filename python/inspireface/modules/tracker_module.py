@@ -17,35 +17,45 @@ class FaceTrackerModule(object):
         elif isinstance(image, CameraStream):
             num_of_faces = self.track_from_stream(image)
         else:
-            raise NotImplemented(f"The {type(image)} type is not supported")
-        boxes = self.get_faces_boundary_boxes()
-        track_ids = self.get_faces_track_ids()
-        euler_angle = self.get_faces_euler_angle()
-        tokens = self.get_faces_tokens()
+            error = f"The {type(image)} type is not supported"
+            raise NotImplemented(error)
+        if num_of_faces > 0:
+            boxes = self.get_faces_boundary_boxes()
+            track_ids = self.get_faces_track_ids()
+            euler_angle = self.get_faces_euler_angle()
+            tokens = self.get_faces_tokens()
 
-        infos = list()
-        for idx in range(num_of_faces):
-            top_left = (boxes[idx][0], boxes[idx][1])
-            bottom_right = (boxes[idx][0] + boxes[idx][2], boxes[idx][1] + boxes[idx][3])
-            roll = euler_angle[idx][0]
-            yaw = euler_angle[idx][1]
-            pitch = euler_angle[idx][2]
-            track_id = track_ids[idx]
-            _token = tokens[idx]
+            infos = list()
+            for idx in range(num_of_faces):
+                top_left = (boxes[idx][0], boxes[idx][1])
+                bottom_right = (boxes[idx][0] + boxes[idx][2], boxes[idx][1] + boxes[idx][3])
+                roll = euler_angle[idx][0]
+                yaw = euler_angle[idx][1]
+                pitch = euler_angle[idx][2]
+                track_id = track_ids[idx]
+                _token = tokens[idx]
 
-            info = FaceInformation(
-                top_left=top_left,
-                bottom_right=bottom_right,
-                roll=roll,
-                yaw=yaw,
-                pitch=pitch,
-                track_id=track_id,
-                _token=_token,
-                _feature=None
-            )
-            infos.append(info)
+                info = FaceInformation(
+                    top_left=top_left,
+                    bottom_right=bottom_right,
+                    roll=roll,
+                    yaw=yaw,
+                    pitch=pitch,
+                    track_id=track_id,
+                    _token=_token,
+                    _feature=None
+                )
+                infos.append(info)
 
-        return infos
+            return infos
+
+        else:
+            return []
+
+    def set_track_mode(self, mode: int):
+        ret = HF_FaceContextSetFaceTrackMode(self.engine.handle, mode)
+        if ret != 0:
+            raise Exception("Select track mode error.")
 
     def track_from_stream(self, stream: CameraStream) -> int:
         self.multiple_faces = HF_MultipleFaceData()

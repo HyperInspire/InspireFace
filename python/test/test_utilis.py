@@ -3,6 +3,7 @@ import inspireface as isf
 import numpy as np
 import time
 from functools import wraps
+import cv2
 
 from unittest import skipUnless as optional
 
@@ -144,3 +145,18 @@ def benchmark(test_name, loop):
         return wrapper
 
     return benchmark_decorator
+
+
+def read_video_generator(video_path):
+    cap = cv2.VideoCapture(video_path)
+
+    if not cap.isOpened():
+        raise IOError(f"Cannot open video {video_path}")
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        yield frame
+
+    cap.release()
