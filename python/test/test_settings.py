@@ -36,4 +36,4 @@ TMP_FOLDER = os.path.join(CURRENT_PROJECT_PATH, "tmp")
 DEFAULT_DB_PATH = os.path.join(TMP_FOLDER, ".E63520A95DD5B3892C56DA38C3B28E551D8173FD")
 
 # Create tmp if not exist
-os.makedirs(TMP_FOLDER)
+os.makedirs(TMP_FOLDER, exist_ok=True)

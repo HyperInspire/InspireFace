@@ -138,14 +138,14 @@ class FaceTrackerBenchmarkCase(unittest.TestCase):
 
     @benchmark(test_name="Face Detect", loop=1000)
     def test_benchmark_face_detect(self):
-        self.tracker.set_track_mode(isf.DETECT_MODE_VIDEO)
+        self.tracker.set_track_mode(isf.DETECT_MODE_IMAGE)
         for _ in range(self.loop):
             faces = self.tracker.execute(self.image)
             self.assertEqual(len(faces), 1, "No face detected may have an error, please check.")
 
     @benchmark(test_name="Face Track", loop=1000)
     def test_benchmark_face_track(self):
-        self.tracker.set_track_mode(isf.DETECT_MODE_IMAGE)
+        self.tracker.set_track_mode(isf.DETECT_MODE_VIDEO)
         for _ in range(self.loop):
             faces = self.tracker.execute(self.image)
             self.assertEqual(len(faces), 1, "No face detected may have an error, please check.")
