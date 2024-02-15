@@ -9,6 +9,9 @@ ENABLE_BENCHMARK_TEST = True
 # Testing model name
 TEST_MODEL_NAME = "Pikachu-t1"
 
+# Testing length of face feature
+TEST_MODEL_FACE_FEATURE_LENGTH = 512
+
 # ++ END OPTION ++
 
 # Current project path
