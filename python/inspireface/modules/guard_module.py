@@ -19,7 +19,7 @@ class FaceGuardModule(object):
 
     def pipeline(self, image, faces: List[FaceInformation], option: int) -> List[FaceExtended]:
         if isinstance(image, np.ndarray):
-            stream = CameraStream(image)
+            stream = CameraStream.load_from_cv_image(image)
         elif isinstance(image, CameraStream):
             stream = image
         else:

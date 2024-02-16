@@ -40,7 +40,7 @@ public:
      * @param core Type of matrix core to use for feature extraction.
      * @param feature_block_num Number of feature blocks to use.
      */
-    FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 8);
+    FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 20);
 
     /**
      * @brief Computes the cosine similarity between two feature vectors.

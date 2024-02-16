@@ -84,9 +84,12 @@ class FaceRecognitionModule(object):
                                             Ptr_HF_FaceFeatureIdentity(most_similar))
         if ret != 0:
             raise Exception(f"Failed to search face: {ret}")
-
-        search_identity = FaceIdentity.from_ctypes(most_similar)
-        search_result = SearchResult(confidence=confidence.value, similar_identity=search_identity, )
+        if most_similar.customId != -1:
+            search_identity = FaceIdentity.from_ctypes(most_similar)
+            search_result = SearchResult(confidence=confidence.value, similar_identity=search_identity, )
+        else:
+            none = FaceIdentity(np.zeros(0), most_similar.customId, "None")
+            search_result = SearchResult(confidence=confidence.value, similar_identity=none, )
 
         return search_result
 

@@ -4,6 +4,8 @@ import numpy as np
 import time
 from functools import wraps
 import cv2
+from itertools import cycle
+from tqdm import tqdm
 
 from unittest import skipUnless as optional
 
@@ -160,3 +162,46 @@ def read_video_generator(video_path):
         yield frame
 
     cap.release()
+
+
+def lfw_generator(directory_path):
+    for root, dirs, files in os.walk(directory_path):
+        for file_name in files:
+            # 确保只处理以'0001.jpg'结尾的JPG图片
+            if file_name.endswith('0001.jpg'):
+                # 提取人名为目录名的最后一部分
+                name = os.path.basename(root)
+                image_path = os.path.join(root, file_name)
+                image = cv2.imread(image_path)
+                assert image is not None, "Error of image data."
+
+                yield image, name
+
+
+def batch_import_lfw_faces(lfw_path, engine: isf.InspireFaceEngine, num_of_faces: int):
+    tracker = isf.FaceTrackerModule(engine)
+    tracker.set_track_mode(isf.DETECT_MODE_IMAGE)
+    recognition = isf.FaceRecognitionModule(engine)
+    generator = lfw_generator(lfw_path)
+    registered_faces = 0
+
+    # 使用tqdm包装生成器，未知的总数使用total=None，tqdm将以未知总量模式运行
+    for image, name in tqdm(generator, total=num_of_faces, desc="Registering faces"):
+        # 执行人脸检测
+        faces_info = tracker.execute(image)
+        if len(faces_info) == 0:
+            continue
+
+        # 从检测到的第一个人脸提取特征
+        first_face_info = faces_info[0]
+        recognition.extract_feature(image, first_face_info)
+
+        # 使用提取的特征进行人脸注册
+        if first_face_info._feature is not None:
+            face_identity = isf.FaceIdentity(data=first_face_info, tag=name, custom_id=registered_faces)
+            recognition.face_register(face_identity)
+            registered_faces += 1
+            if registered_faces >= num_of_faces:
+                break
+
+    print(f"Completed. Total faces registered: {registered_faces}")

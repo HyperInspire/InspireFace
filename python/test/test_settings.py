@@ -12,6 +12,9 @@ TEST_MODEL_NAME = "Pikachu-t1"
 # Testing length of face feature
 TEST_MODEL_FACE_FEATURE_LENGTH = 512
 
+# Testing face comparison image threshold
+TEST_FACE_COMPARISON_IMAGE_THRESHOLD = 0.45
+
 # ++ END OPTION ++
 
 # Current project path
@@ -40,3 +43,10 @@ DEFAULT_DB_PATH = os.path.join(TMP_FOLDER, ".E63520A95DD5B3892C56DA38C3B28E551D8
 
 # Create tmp if not exist
 os.makedirs(TMP_FOLDER, exist_ok=True)
+
+# lfw_funneled Dataset dir path
+LFW_FUNNELED_DIR_PATH = "/Users/tunm/datasets/lfw_funneled/"
+
+# Option CRUD Test
+ENABLE_CRUD_TEST = True
+

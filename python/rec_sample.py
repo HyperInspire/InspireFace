@@ -7,10 +7,13 @@ if __name__ == '__main__':
     param = isf.EngineCustomParameter()
     param.enable_recognition = True
 
-    db_config = isf.DatabaseConfiguration(enable_use_db=True, db_path="./")
+    # db_config = isf.DatabaseConfiguration(enable_use_db=True, db_path="./")
+    db_config = None
 
     engine = isf.create_engine("/Users/tunm/work/HyperFace/test_res/model_zip/Optimus-t1", param=param,
-                           db_configuration=db_config)
+                           db_configuration=db_config
+
+   )
     tracker = isf.FaceTrackerModule(engine)
     recognition = isf.FaceRecognitionModule(engine)
 
@@ -36,7 +39,7 @@ if __name__ == '__main__':
         item = faces_information2[0]
         recognition.extract_feature(stream2, item)
         v2 = item
-
+        print("search")
         searched = recognition.face_search(v2)
         print(searched.confidence)
         print(searched.similar_identity.tag)
@@ -45,4 +48,4 @@ if __name__ == '__main__':
     print(face.feature)
 
     print(recognition.get_face_count())
-    recognition.view_table_in_terminal()
+    # recognition.view_table_in_terminal()
