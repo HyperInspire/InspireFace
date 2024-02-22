@@ -162,8 +162,19 @@ class FaceRecognitionCRUDMemoryCase(unittest.TestCase):
         self.assertEqual(True, result.confidence < TEST_FACE_COMPARISON_IMAGE_THRESHOLD)
         self.assertEqual(result.similar_identity.custom_id, -1)
 
-        
+        # Reusability testing
+        new_face_image = cv2.imread(get_test_data("bulk/yifei.jpg"))
+        self.assertIsNotNone(new_face_image)
+        faces = self.track.execute(new_face_image)
+        self.assertEqual(len(faces), 1)
+        new_face = faces[0]
+        self.recognition.extract_feature(new_face_image, new_face)
+        # Insert that
+        registered_identity = isf.FaceIdentity(new_face, custom_id=remove_id, tag="YF")
+        self.recognition.face_register(registered_identity)
 
+    def test_face_update(self):
+        pass
 
 
 @optional(ENABLE_BENCHMARK_TEST, "All benchmark related tests have been closed.")
