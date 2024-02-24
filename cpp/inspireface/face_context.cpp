@@ -28,7 +28,7 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
     }
     m_face_track_ = std::make_shared<FaceTrack>(m_max_detect_face_);
     m_face_track_->Configuration(loader);
-    SetDetectMode(detect_mode);
+    SetDetectMode(m_detect_mode_);
 
     m_face_recognition_ = std::make_shared<FaceRecognition>(loader, m_parameter_.enable_recognition);
     m_face_pipeline_ = std::make_shared<FacePipeline>(
@@ -82,7 +82,7 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
         basic.data = m_detect_cache_[i].data();
     }
 
-//    LOGD("跟踪COST: %f", m_face_track_->GetTrackTotalUseTime());
+//    LOGD("Track COST: %f", m_face_track_->GetTrackTotalUseTime());
     return HSUCCEED;
 }
 

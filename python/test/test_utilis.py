@@ -165,17 +165,18 @@ def read_video_generator(video_path):
 
 
 def lfw_generator(directory_path):
-    for root, dirs, files in os.walk(directory_path):
-        for file_name in files:
-            # 确保只处理以'0001.jpg'结尾的JPG图片
-            if file_name.endswith('0001.jpg'):
-                # 提取人名为目录名的最后一部分
-                name = os.path.basename(root)
-                image_path = os.path.join(root, file_name)
-                image = cv2.imread(image_path)
-                assert image is not None, "Error of image data."
+    while True:
+        for root, dirs, files in os.walk(directory_path):
+            for file_name in files:
+                # 确保只处理以'0001.jpg'结尾的JPG图片
+                if file_name.endswith('0001.jpg'):
+                    # 提取人名为目录名的最后一部分
+                    name = os.path.basename(root)
+                    image_path = os.path.join(root, file_name)
+                    image = cv2.imread(image_path)
+                    assert image is not None, "Error of image data."
 
-                yield image, name
+                    yield image, name
 
 
 def batch_import_lfw_faces(lfw_path, engine: isf.InspireFaceEngine, num_of_faces: int):

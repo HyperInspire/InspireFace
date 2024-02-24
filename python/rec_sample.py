@@ -1,4 +1,6 @@
 import cv2
+import numpy as np
+
 import inspireface as isf
 
 print(isf.__version__)
@@ -43,6 +45,8 @@ if __name__ == '__main__':
         searched = recognition.face_search(v2)
         print(searched.confidence)
         print(searched.similar_identity.tag)
+        print(searched.similar_identity.feature)
+        print(np.dot(v2.feature, searched.similar_identity.feature.T))
 
     face = recognition.get_face_identity(custom_id=1)
     print(face.feature)

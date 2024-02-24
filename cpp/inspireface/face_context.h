@@ -255,9 +255,9 @@ public:
 
 
     /**
- * @brief Gets the cache of pitch results from face pose estimation.
- * @return A const reference to a vector containing pitch results.
- */
+     * @brief Gets the cache of pitch results from face pose estimation.
+     * @return A const reference to a vector containing pitch results.
+     */
     const std::vector<float>& GetPitchResultsCache() const;
 
     /**

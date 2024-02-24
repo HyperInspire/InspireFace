@@ -6,6 +6,12 @@ import sys
 # Enabling will run all the benchmark tests, which takes time
 ENABLE_BENCHMARK_TEST = True
 
+# Enabling will run all the CRUD tests, which will take time
+ENABLE_CRUD_TEST = False
+
+# Enabling will run the face search benchmark, which takes time and must be configured with the correct 'LFW_FUNNELED_DIR_PATH' parameter
+ENABLE_SEARCH_BENCHMARK_TEST = False
+
 # Testing model name
 TEST_MODEL_NAME = "Pikachu-t1"
 
@@ -14,6 +20,7 @@ TEST_MODEL_FACE_FEATURE_LENGTH = 512
 
 # Testing face comparison image threshold
 TEST_FACE_COMPARISON_IMAGE_THRESHOLD = 0.45
+
 
 # ++ END OPTION ++
 
@@ -47,6 +54,4 @@ os.makedirs(TMP_FOLDER, exist_ok=True)
 # lfw_funneled Dataset dir path
 LFW_FUNNELED_DIR_PATH = "/Users/tunm/datasets/lfw_funneled/"
 
-# Option CRUD Test
-ENABLE_CRUD_TEST = True
-
+assert os.path.exists(LFW_FUNNELED_DIR_PATH), "'LFW_FUNNELED_DIR_PATH' is not found."

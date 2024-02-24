@@ -89,7 +89,7 @@ class FaceRecognitionCRUDMemoryCase(unittest.TestCase):
     """
 
     engine = None
-    default_faces_num = 6000
+    default_faces_num = 10000
 
     @classmethod
     def setUpClass(cls):
@@ -97,7 +97,7 @@ class FaceRecognitionCRUDMemoryCase(unittest.TestCase):
         param = isf.EngineCustomParameter()
         param.enable_recognition = True
         cls.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=param,
-                                        detect_mode=track_mode)
+                                       detect_mode=track_mode)
         batch_import_lfw_faces(LFW_FUNNELED_DIR_PATH, cls.engine, cls.default_faces_num)
         cls.track = isf.FaceTrackerModule(cls.engine)
         cls.recognition = isf.FaceRecognitionModule(cls.engine)
@@ -112,7 +112,7 @@ class FaceRecognitionCRUDMemoryCase(unittest.TestCase):
         self.recognition.extract_feature(registered, face)
         self.assertEqual(face.feature.size, TEST_MODEL_FACE_FEATURE_LENGTH)
         # Insert a new face
-        registered_identity = isf.FaceIdentity(face, custom_id=num_current+1, tag="Kun")
+        registered_identity = isf.FaceIdentity(face, custom_id=num_current + 1, tag="Kun")
         self.recognition.face_register(registered_identity)
 
         # Prepare a picture of searched face
@@ -215,14 +215,105 @@ class FaceRecognitionFeatureExtractCase(unittest.TestCase):
 
         # Create a recognition
         self.recognition = isf.FaceRecognitionModule(self.engine)
+        self.recognition.extract_feature(image, self.face)
 
     @benchmark(test_name="Feature Extract", loop=1000)
-    def test_benchmark_face_detect(self):
+    def test_benchmark_feature_extract(self):
         self.tracker.set_track_mode(isf.DETECT_MODE_IMAGE)
         for _ in range(self.loop):
             self.recognition.extract_feature(self.stream, self.face)
             self.assertIsNotNone(self.face.feature)
             self.assertEqual(TEST_MODEL_FACE_FEATURE_LENGTH, self.face.feature.size)
+
+    @benchmark(test_name="Face comparison 1v1", loop=1000)
+    def test_benchmark_face_comparison1v1(self):
+        for _ in range(self.loop):
+            self.recognition.face_comparison1v1(self.face, self.face)
+
+    @classmethod
+    def tearDownClass(cls):
+        print_benchmark_table(cls.benchmark_results)
+
+
+@optional(ENABLE_SEARCH_BENCHMARK_TEST, "Face search benchmark related tests have been closed.")
+class FaceRecognitionSearchCase(unittest.TestCase):
+    benchmark_results = list()
+    loop = 1
+    inventory_level = list()
+
+    # Set the stock level of faces you want to test
+    inventory_level_list = [1000, 5000, 10000]
+
+    @classmethod
+    def setUpClass(cls):
+        cls.benchmark_results = []
+        # Prepare image
+        image = cv2.imread(get_test_data("bulk/kun.jpg"))
+
+        num = len(cls.inventory_level_list)
+        track_mode = isf.DETECT_MODE_IMAGE
+        param = isf.EngineCustomParameter()
+        param.enable_recognition = True
+        cls.inventory_level = [isf.create_engine(bundle_file=TEST_MODEL_PATH, param=param,
+                                                 detect_mode=track_mode) for _ in range(num)]
+        [batch_import_lfw_faces(LFW_FUNNELED_DIR_PATH, engine, cls.inventory_level_list[idx]) for
+         idx, engine in enumerate(cls.inventory_level)]
+
+        # Use tracker module
+        # Prepare a face and insert to db
+        faces = isf.FaceTrackerModule(cls.inventory_level[0]).execute(image)
+        face = faces[0]
+        isf.FaceRecognitionModule(cls.inventory_level[0]).extract_feature(image, face)
+        identity_list = [isf.FaceIdentity(face, cls.inventory_level_list[idx] + 1, "Kun") for idx in range(num)]
+        [isf.FaceRecognitionModule(engine).face_register(identity_list[idx]) for idx, engine in
+         enumerate(cls.inventory_level)]
+
+    def setUp(self) -> None:
+        # Prepare material
+        track_mode = isf.DETECT_MODE_IMAGE
+        param = isf.EngineCustomParameter()
+        param.enable_recognition = True
+        self.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=param,
+                                        detect_mode=track_mode)
+        # Create a recognition
+        self.recognition = isf.FaceRecognitionModule(self.engine)
+        self.assertEqual(True, self.engine.check(), "Failed to create engine.")
+
+        searched = cv2.imread(get_test_data("bulk/jntm.jpg"))
+        self.assertIsNotNone(searched)
+        # Prepare a search face
+        faces_search = isf.FaceTrackerModule(self.engine).execute(searched)
+        self.assertEqual(len(faces_search), 1)
+        self.search_face = faces_search[0]
+        self.recognition.extract_feature(searched, self.search_face)
+        self.assertIsNotNone(self.search_face.feature)
+
+    @benchmark(test_name="Search Face from 1k", loop=1000)
+    def test_benchmark_search_1k(self):
+        engine = self.inventory_level[0]
+        for _ in range(self.loop):
+            searched = isf.FaceRecognitionModule(engine).face_search(self.search_face)
+            self.assertEqual(True, searched.confidence > TEST_FACE_COMPARISON_IMAGE_THRESHOLD)
+            self.assertEqual(searched.similar_identity.tag, "Kun")
+            self.assertEqual(searched.similar_identity.custom_id, 1001)
+
+    @benchmark(test_name="Search Face from 5k", loop=1000)
+    def test_benchmark_search_5k(self):
+        engine = self.inventory_level[1]
+        for _ in range(self.loop):
+            searched = isf.FaceRecognitionModule(engine).face_search(self.search_face)
+            self.assertEqual(True, searched.confidence > TEST_FACE_COMPARISON_IMAGE_THRESHOLD)
+            self.assertEqual(searched.similar_identity.tag, "Kun")
+            self.assertEqual(searched.similar_identity.custom_id, 5001)
+
+    @benchmark(test_name="Search Face from 10k", loop=1000)
+    def test_benchmark_search_10k(self):
+        engine = self.inventory_level[2]
+        for _ in range(self.loop):
+            searched = isf.FaceRecognitionModule(engine).face_search(self.search_face)
+            self.assertEqual(True, searched.confidence > TEST_FACE_COMPARISON_IMAGE_THRESHOLD)
+            self.assertEqual(searched.similar_identity.tag, "Kun")
+            self.assertEqual(searched.similar_identity.custom_id, 10001)
 
     @classmethod
     def tearDownClass(cls):
