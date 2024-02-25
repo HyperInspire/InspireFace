@@ -3,3 +3,4 @@ from .test_utilis import *
 
 # Unit module
 from .unit import *
+from .performance import *
