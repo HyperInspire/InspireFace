@@ -5,7 +5,7 @@
 #include "opencv2/opencv.hpp"
 #include "inspireface/middleware/model_loader/ModelLoader.h"
 #include "model_index.h"
-#include "inspireface/middleware/Timer.h"
+#include "inspireface/middleware/timer.h"
 #include "middleware/inference_helper/customized/rknn_adapter.h"
 #include "inspireface/recognition_module/simd.h"
 #include <memory>

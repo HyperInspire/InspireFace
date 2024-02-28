@@ -8,10 +8,10 @@
 
 namespace inspire {
 
-class Timer {
+class timer {
 public:
 
-    Timer() {
+    timer() {
         current_time = (double) cv::getTickCount();
     }
 
