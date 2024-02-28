@@ -1,6 +1,6 @@
 #cmake_minimum_required(VERSION 3.19)
 cmake_minimum_required(VERSION 3.10)
-project(HyperFaceSample)
+project(InspireFaceSample)
 
 if (BUILD_LINUX_ARM7)
     set(OpenCV_DIR ${THIRD_PARTY_DIR}/opencv/opencv-linux-armhf/share/OpenCV)
@@ -16,54 +16,48 @@ include_directories(${SRC_DIR})
 
 if (NOT BUILD_LINUX_ARM7)
 
-# =======================HyperFace测试===========================
-    # 跟踪测试
+# =======================InspireFace Sample===========================
     add_executable(TrackerSample ${CMAKE_CURRENT_SOURCE_DIR}/tracker_sample.cpp)
-    target_link_libraries(TrackerSample HyperFace)
+    target_link_libraries(TrackerSample InspireFace)
 
     set_target_properties(TrackerSample PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
     )
 
 
-    # Context测试
     add_executable(ContextSample ${CMAKE_CURRENT_SOURCE_DIR}/context_sample.cpp)
-    target_link_libraries(ContextSample HyperFace)
+    target_link_libraries(ContextSample InspireFace)
 
     set_target_properties(ContextSample PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
     )
 
 
-    # 测试
     add_executable(TestSample ${CMAKE_CURRENT_SOURCE_DIR}/test_sample.cpp)
-    target_link_libraries(TestSample HyperFace)
+    target_link_libraries(TestSample InspireFace)
 
     set_target_properties(TestSample PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
     )
 
-    # 调试测试
     add_executable(NetSample ${CMAKE_CURRENT_SOURCE_DIR}/net_sample.cpp)
-    target_link_libraries(NetSample HyperFace)
+    target_link_libraries(NetSample InspireFace)
 
     set_target_properties(NetSample PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
     )
 
 
-    # 调试测试
     add_executable(RecSample ${CMAKE_CURRENT_SOURCE_DIR}/rec_sample.cpp)
-    target_link_libraries(RecSample HyperFace)
+    target_link_libraries(RecSample InspireFace)
 
     set_target_properties(RecSample PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
     )
 
 
-    # 性能测试
     add_executable(BMSample ${CMAKE_CURRENT_SOURCE_DIR}/bm_sample.cpp)
-    target_link_libraries(BMSample HyperFace)
+    target_link_libraries(BMSample InspireFace)
 
     set_target_properties(BMSample PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
@@ -71,48 +65,48 @@ if (NOT BUILD_LINUX_ARM7)
 
 else()
 
-# =======================RK临时测试类目===========================
+# =======================RK Temporary test category===========================
 
     if (ENABLE_RKNN)
         set(RKNN_API_LIB ${THIRD_PARTY_DIR}/rknn_api/lib)
         message("Enable RKNN Inference")
         link_directories(${RKNN_API_LIB})
 
-        # 人脸检测
+        # Face detection
         add_executable(RKFaceDetSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_face_det_sample.cpp)
-        target_link_libraries(RKFaceDetSample HyperFace rknn_api dl)
+        target_link_libraries(RKFaceDetSample InspireFace rknn_api dl)
 
         set_target_properties(RKFaceDetSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
         )
 
-        # 简单的网络测试
+        # Simple network test
         add_executable(RKSimpleNetSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_simple_net_sample.cpp)
-        target_link_libraries(RKSimpleNetSample HyperFace rknn_api dl)
+        target_link_libraries(RKSimpleNetSample InspireFace rknn_api dl)
 
         set_target_properties(RKSimpleNetSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
         )
 
-        # 人脸识别
+        # Face recognize
         add_executable(RKFaceRecSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_face_recognize_sample.cpp)
-        target_link_libraries(RKFaceRecSample HyperFace rknn_api dl)
+        target_link_libraries(RKFaceRecSample InspireFace rknn_api dl)
 
         set_target_properties(RKFaceRecSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
         )
 
-        # 跟踪模块识别
+        # Tracking module
         add_executable(RKTrackerSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_tracker_sample.cpp)
-        target_link_libraries(RKTrackerSample HyperFace rknn_api dl)
+        target_link_libraries(RKTrackerSample InspireFace rknn_api dl)
 
         set_target_properties(RKTrackerSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
         )
 
-        # 跟踪模块识别
+        # Debug
         add_executable(DebugRKRec ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/debug_rk_rec.cpp)
-        target_link_libraries(DebugRKRec HyperFace rknn_api dl)
+        target_link_libraries(DebugRKRec InspireFace rknn_api dl)
 
         set_target_properties(DebugRKRec PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
@@ -122,18 +116,18 @@ else()
 
 endif()
 
-# 跟踪模块识别
+# Tracking module
 add_executable(SQLiteTest ${CMAKE_CURRENT_SOURCE_DIR}/test_sqlite_sample.cpp)
-target_link_libraries(SQLiteTest HyperFace)
+target_link_libraries(SQLiteTest InspireFace)
 
 set_target_properties(SQLiteTest PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
 
-# C_API Demo测试
+# C_API Demo
 add_executable(CAPISample ${CMAKE_CURRENT_SOURCE_DIR}/c_api_sample.cpp)
-target_link_libraries(CAPISample HyperFace)
+target_link_libraries(CAPISample InspireFace)
 
 set_target_properties(CAPISample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
