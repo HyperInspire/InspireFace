@@ -14,6 +14,9 @@ option(BUILD_HYPERFACE_TEST "Open Build Unit-Test." ON)
 
 option(USE_MOBILE_OPENCV_IN_LOCAL "Use mobile-opencv in local environment." ON)
 
+if (USE_MOBILE_OPENCV_IN_LOCAL)
+    add_definitions(-DUSE_MOBILE_OPENCV_IN_LOCAL)
+endif ()
 
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
