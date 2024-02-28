@@ -8,7 +8,7 @@
 #include "model_index.h"
 #include "landmark/mean_shape.h"
 #include <opencv2/opencv.hpp>
-#include "middleware/timer.h"
+#include "middleware/Timer.h"
 
 namespace inspire {
 
