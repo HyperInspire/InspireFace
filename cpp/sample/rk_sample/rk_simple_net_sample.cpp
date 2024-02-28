@@ -3,14 +3,14 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "hyperface/middleware/model_loader/ModelLoader.h"
-#include "hyperface/track_module/face_detect/all.h"
-#include "hyperface/pipeline_module/attribute/MaskPredict.h"
+#include "inspireface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/track_module/face_detect/all.h"
+#include "inspireface/pipeline_module/attribute/MaskPredict.h"
 #include "model_index.h"
-#include "hyperface/middleware/Timer.h"
-#include "hyperface/track_module/quality/FacePoseQuality.h"
-#include "hyperface/track_module/landmark/FaceLandmark.h"
-#include "hyperface/pipeline_module/liveness/RBGAntiSpoofing.h"
+#include "inspireface/middleware/Timer.h"
+#include "inspireface/track_module/quality/FacePoseQuality.h"
+#include "inspireface/track_module/landmark/FaceLandmark.h"
+#include "inspireface/pipeline_module/liveness/RBGAntiSpoofing.h"
 
 using namespace hyper;
 
@@ -34,7 +34,7 @@ void test_rnet() {
 
     auto model = loader.ReadModel(ModelIndex::_04_refine_net);
     m_rnet_ = std::make_shared<RNet>();
-    m_rnet_->LoadParam(param, model, InferenceHelper::kRknn);
+    m_rnet_->loadData(param, model, InferenceHelper::kRknn);
 
     {
         // Load a image
@@ -75,7 +75,7 @@ void test_mask() {
     std::shared_ptr<MaskPredict> m_mask_predict_;
     m_mask_predict_ = std::make_shared<MaskPredict>();
     auto model = loader.ReadModel(ModelIndex::_05_mask);
-    m_mask_predict_->LoadParam(param, model, InferenceHelper::kRknn);
+    m_mask_predict_->loadData(param, model, InferenceHelper::kRknn);
 
     {
         // Load a image
@@ -115,7 +115,7 @@ void test_quality() {
     std::shared_ptr<FacePoseQuality> m_face_quality_;
     m_face_quality_ = std::make_shared<FacePoseQuality>();
     auto model = loader.ReadModel(ModelIndex::_07_pose_q_fp16);
-    m_face_quality_->LoadParam(param, model, InferenceHelper::kRknn);
+    m_face_quality_->loadData(param, model, InferenceHelper::kRknn);
 
     {
         std::vector<std::string> names = {
@@ -161,7 +161,7 @@ void test_landmark_mnn() {
     std::shared_ptr<FaceLandmark> m_landmark_predictor_;
     m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
     auto model = loader.ReadModel(ModelIndex::_01_lmk);
-    m_landmark_predictor_->LoadParam(param, model);
+    m_landmark_predictor_->loadData(param, model);
 
     cv::Mat image = cv::imread("test_res/images/test_data/crop.png");
     cv::resize(image, image, cv::Size(112, 112));
@@ -202,7 +202,7 @@ void test_landmark() {
     std::shared_ptr<FaceLandmark> m_landmark_predictor_;
     m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
     auto model = loader.ReadModel(ModelIndex::_01_lmk);
-    m_landmark_predictor_->LoadParam(param, model, InferenceHelper::kRknn);
+    m_landmark_predictor_->loadData(param, model, InferenceHelper::kRknn);
 
     cv::Mat image = cv::imread("test_res/images/test_data/0.jpg");
     cv::resize(image, image, cv::Size(112, 112));
@@ -244,7 +244,7 @@ void test_liveness() {
     std::shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_;
     auto model = loader.ReadModel(ModelIndex::_06_msafa27);
     m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofing>(80, true);
-    m_rgb_anti_spoofing_->LoadParam(param, model, InferenceHelper::kRknn);
+    m_rgb_anti_spoofing_->loadData(param, model, InferenceHelper::kRknn);
 
     std::vector<std::string> names = {
             "test_res/images/test_data/real.jpg",
@@ -255,7 +255,7 @@ void test_liveness() {
         auto image = cv::imread(names[i]);
         Timer timer;
         auto score = (*m_rgb_anti_spoofing_)(image);
-        LOGD("耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("cost: %f", timer.GetCostTimeUpdate());
         LOGD("%s : %f", names[i].c_str(), score);
     }
 
@@ -263,7 +263,7 @@ void test_liveness() {
 
 
 int main() {
-    loader.Reset("test_res/model_zip/T1_rv1109rv1126");
+    loader.Reset("test_res/model_zip/Pikachu-t1_rv1109rv1126");
 
 //    test_rnet();
 

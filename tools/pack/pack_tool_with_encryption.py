@@ -16,7 +16,7 @@ def encryption(password,data):
     return str(data)
 
 
-def packageModel(model_folder,output , key):
+def packageModel(model_folder, output, key, magic_number=1128):
     # int magic num 1127 HyperLPR model
     # int model nums
     # int int  prototxt caffemodel 1
@@ -100,7 +100,7 @@ namespace Model{
             model_data.append([b"None",f_c.read(),name])
 
     offset = 0
-    header = [1128, len(model_data)]
+    header = [magic_number, len(model_data)]
     header_format = '<II'+len(model_data)*"II"
     length =  0 ;
     for a,b,name in model_data:
@@ -146,9 +146,13 @@ import sys
 args  = sys.argv
 
 print(args)
-if len(args) != 4:
-    print("python[2.7] pack_tool.py folder packge_name key")
+if len(args) == 5:
+    packageModel(args[1], args[2], args[3], int(args[4]))
+elif len(args) == 4:
+    packageModel(args[1], args[2], args[3])
+else:
+    print("Usage: python[2.7] pack_tool.py folder package_name key [magic_number]")
     exit(0)
 
-packageModel(args[1],args[2] ,args[3])
+# packageModel(args[1],args[2] ,args[3])
 

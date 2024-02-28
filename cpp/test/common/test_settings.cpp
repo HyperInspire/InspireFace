@@ -20,3 +20,9 @@ std::string getTestSaveDir() {
 std::string getTestSaveData(const std::string& name) {
     return getTestSaveDir() + "/" + name;
 }
+
+std::string getTestModelsFile() {
+    std::string path = "model_zip/";
+    path = path + TEST_MODEL_FILE;
+    return getTestData(path);
+}

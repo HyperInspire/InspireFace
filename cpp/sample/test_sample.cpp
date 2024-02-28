@@ -7,16 +7,16 @@
 #include "opencv2/opencv.hpp"
 #include "utils/test_helper.h"
 
-using namespace hyper;
+using namespace inspire;
 
 int main(int argc, char** argv) {
     FaceContext ctx;
     CustomPipelineParameter param;
     param.enable_liveness = true;
     param.enable_face_quality = true;
-    int32_t ret = ctx.Configuration("test_res/model_zip/T1", DetectMode::DETECT_MODE_IMAGE, 1, param);
+    int32_t ret = ctx.Configuration("test_res/model_zip/Pikachu-t1", DetectMode::DETECT_MODE_IMAGE, 1, param);
     if (ret != 0) {
-        LOGE("初始化错误");
+        LOGE("Initialization error");
         return -1;
     }
     auto image = cv::imread("test_res/images/kun.jpg");
