@@ -12,6 +12,8 @@ option(ENABLE_RKNN "Use RKNPU." ON)
 option(BUILD_LINUX_ARM7 "Platform Arm7." ON)
 option(BUILD_HYPERFACE_TEST "Open Build Unit-Test." ON)
 
+option(USE_MOBILE_OPENCV_IN_LOCAL "Use mobile-opencv in local environment." ON)
+
 
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
