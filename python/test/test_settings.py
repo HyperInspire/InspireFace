@@ -1,7 +1,7 @@
 import os
 import sys
 
-# ++ OPTION ++
+# ++ OPTIONAL ++
 
 # Enabling will run all the benchmark tests, which takes time
 ENABLE_BENCHMARK_TEST = False
@@ -14,10 +14,11 @@ ENABLE_CRUD_TEST = False
 ENABLE_SEARCH_BENCHMARK_TEST = False
 
 # Enabling will run the LFW dataset precision test, which will take time
-ENABLE_LFW_PRECISION_TEST = False
+ENABLE_LFW_PRECISION_TEST = True
 
 # Testing model name
-TEST_MODEL_NAME = "Pikachu-t1"
+# TEST_MODEL_NAME = "Pikachu-t1"
+TEST_MODEL_NAME = "Megatron-t1"
 
 # Testing length of face feature
 TEST_MODEL_FACE_FEATURE_LENGTH = 512
@@ -25,7 +26,7 @@ TEST_MODEL_FACE_FEATURE_LENGTH = 512
 # Testing face comparison image threshold
 TEST_FACE_COMPARISON_IMAGE_THRESHOLD = 0.45
 
-# ++ END OPTION ++
+# ++ END OPTIONAL ++
 
 # Current project path
 TEST_PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
