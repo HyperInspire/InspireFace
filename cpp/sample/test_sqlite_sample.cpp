@@ -3,9 +3,9 @@
 //
 
 #include <iostream>
-#include "hyperface/recognition_module/persistence/sqlite_faces_manage.h"
+#include "inspireface/recognition_module/persistence/sqlite_faces_manage.h"
 
-using namespace hyper;
+using namespace inspire;
 
 int main() {
     SQLiteFaceManage db;

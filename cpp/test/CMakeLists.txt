@@ -8,14 +8,14 @@ find_package(OpenCV REQUIRED)
 include_directories(${SRC_DIR})
 
 
-# =======================公共文件配置===========================
+# =======================Common File Configuration===========================
 set(TEST_COMMON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/common/test_settings.cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common)
 
-# =======================内部引入测试===========================
+# =======================Internal Import Tests===========================
 file(GLOB_RECURSE TEST_INTERNAL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
 add_executable(TestSource ${CMAKE_CURRENT_SOURCE_DIR}/test_source.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
-target_link_libraries(TestSource HyperFace)
+target_link_libraries(TestSource InspireFace)
 target_include_directories(TestSource PUBLIC
         .
         ${THIRD_PARTY_DIR}/spdlog
@@ -28,10 +28,10 @@ set_target_properties(TestSource PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test/")
 
 
-# =======================外部API测试===========================
+# =======================External API Testing===========================
 file(GLOB_RECURSE TEST_INTERNAL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/api/*.cpp)
 add_executable(TestAPI ${CMAKE_CURRENT_SOURCE_DIR}/test_api.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
-target_link_libraries(TestAPI HyperFace)
+target_link_libraries(TestAPI InspireFace)
 target_include_directories(TestAPI PUBLIC
         .
         ${THIRD_PARTY_DIR}/spdlog

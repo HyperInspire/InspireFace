@@ -4,11 +4,11 @@
 
 
 #include "opencv2/opencv.hpp"
-#include "hyperface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/middleware/model_loader/ModelLoader.h"
 #include "model_index.h"
-#include "hyperface/middleware/Timer.h"
-#include "hyperface/recognition_module/FaceRecognition.h"
-#include "hyperface/recognition_module/simd.h"
+#include "inspireface/middleware/Timer.h"
+#include "inspireface/recognition_module/FaceRecognition.h"
+#include "inspireface/recognition_module/simd.h"
 
 using namespace hyper;
 
@@ -29,11 +29,11 @@ void rec_function() {
     param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
     param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
     param.set<bool>("nchw", false);
-    param.set<bool>("swap_color", true);        // RK需要rgb输入
+    param.set<bool>("swap_color", true);        // RK requires rgb input
 
     m_extract_ = std::make_shared<Extract>();
     auto model = loader->ReadModel(ModelIndex::_03_extract);
-    m_extract_->LoadParam(param, model, InferenceHelper::kRknn);
+    m_extract_->loadData(param, model, InferenceHelper::kRknn);
 
     loader.reset();
 
@@ -78,7 +78,7 @@ void rec_function() {
 
 int main() {
     loader = std::make_shared<ModelLoader>();
-    loader->Reset("test_res/model_zip/T1_rv1109rv1126");
+    loader->Reset("test_res/model_zip/Pikachu-t1_rv1109rv1126");
 
 
 

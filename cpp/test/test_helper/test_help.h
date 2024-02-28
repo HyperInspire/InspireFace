@@ -27,23 +27,23 @@ inline std::pair<std::vector<std::vector<float>>, std::vector<std::string>> Load
     unsigned long vector_length = shape[1];
     assert(shape[1] == 512);
 
-    // 遍历 data，每次填充一个向量的数据
+    // Iterate through the data, putting the data one vector ata time
     for (unsigned long i = 0; i < feature_num; ++i) {
-        // 创建一个新的向量来存储当前向量的数据
+        //Creates a new vector to store the data of the current vector
         std::vector<float> vector_data(vector_length);
 
-        // 将 data 中的数据按顺序填充到向量中
+        // Put the data in data into the vector in order
         for (unsigned long j = 0; j < vector_length; ++j) {
             vector_data[j] = (float)(data[i * vector_length + j]);
         }
 
-        // 将当前向量添加到 featureMatrix
+        // Adds the current vector to featureMatrix
         featureMatrix.push_back(vector_data);
 
-        // 在这里你可以添加对应的 tag 名称，例如 tagNames.push_back("Tag_Name");
+        // Here you can add the corresponding tag name, such as tagNames.push_back("Tag_Name");
     }
 
-    // 读取文本文件
+    // Read txt file
     std::ifstream txtFile(tagsFileName);
     if (txtFile.is_open()) {
         std::string line;
