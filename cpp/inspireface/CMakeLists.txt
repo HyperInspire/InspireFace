@@ -22,6 +22,16 @@ set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.c
 
 if (APPLE)
     set(PLAT darwin)
+    if (USE_MOBILE_OPENCV_IN_LOCAL)
+        set(OPENCV_FRAMEWORK "${THIRD_PARTY_DIR}/opencv-mobile/4.9.0/drawin-x86/opencv2.framework")
+        list(APPEND CMAKE_FRAMEWORK_PATH "${OPENCV_FRAMEWORK}")
+        include_directories("${OPENCV_FRAMEWORK}/Headers")
+        message(OPENCV_FRAMEWORK=${OPENCV_FRAMEWORK})
+        find_library(ACCELERATE_FRAMEWORK Accelerate)
+    else()
+        find_package(OpenCV REQUIRED)
+
+    endif ()
 else()
     if (BUILD_LINUX_ARM7)
         set(PLAT linux-arm7)
@@ -32,7 +42,6 @@ else()
     endif ()
 endif ()
 
-find_package(OpenCV REQUIRED)
 
 if (NOT ANDROID)
     # MNN Third party dependence
@@ -48,7 +57,12 @@ if (ENABLE_RKNN)
     link_directories(${RKNN_API_LIB})
 endif()
 
-set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
+# OpenCV
+if(APPLE AND USE_MOBILE_OPENCV_IN_LOCAL)
+    set(LINK_THIRD_LIBS "${OPENCV_FRAMEWORK}" ${MNN_LIBS} "${ACCELERATE_FRAMEWORK}")
+else()
+    set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
+endif()
 
 # sqlite3
 set(SOURCE_FILES ${SOURCE_FILES} ${THIRD_PARTY_DIR}/sqlite/sqlite3.c)        # Add C_API file
