@@ -7,7 +7,7 @@
 #include "inspireface/track_module/face_detect/all.h"
 #include "inspireface/pipeline_module/attribute/MaskPredict.h"
 #include "model_index.h"
-#include "inspireface/middleware/Timer.h"
+#include "inspireface/middleware/timer.h"
 #include "inspireface/track_module/quality/FacePoseQuality.h"
 #include "inspireface/track_module/landmark/FaceLandmark.h"
 #include "inspireface/pipeline_module/liveness/RBGAntiSpoofing.h"
