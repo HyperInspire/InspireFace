@@ -2,28 +2,29 @@
 // Created by tunm on 2023/10/3.
 //
 #include <iostream>
-#include "hyperface/c_api/hyperface.h"
+#include "inspireface/c_api/inspireface.h"
 #include "opencv2/opencv.hpp"
-#include "hyperface/log.h"
+#include "inspireface/log.h"
 
 std::string basename(const std::string& path) {
-    size_t lastSlash = path.find_last_of("/\\");  // 考虑到跨平台的分隔符
+    size_t lastSlash = path.find_last_of("/\\");  // Take into account the cross-platform separator
     if (lastSlash == std::string::npos) {
-        return path;  // 没有斜杠，整个路径就是基名
+        return path;  // Without the slash, the entire path is the base name
     } else {
-        return path.substr(lastSlash + 1);  // 返回最后一个斜杠之后的部分
+        return path.substr(lastSlash + 1);  // Returns the part after the last slash
     }
 }
 
 int compare() {
     HResult ret;
     // 初始化context
-    HString path = "test_res/model_zip/T1";
+    HPath path = "test_res/model_zip/Optimus-t1";
     HF_ContextCustomParameter parameter = {0};
     parameter.enable_liveness = 1;
     parameter.enable_mask_detect = 1;
     parameter.enable_recognition = 1;
-    HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // 选择图像模式 即总是检测
+    parameter.enable_face_quality = 1;
+    HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // Selecting the image mode is always detection
     HContextHandle ctxHandle;
     ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
     if (ret != HSUCCEED) {
@@ -31,13 +32,13 @@ int compare() {
     }
 
     std::vector<std::string> names = {
-            "test_res/images/kun.jpg",
-            "test_res/images/yifei.jpg",
+            "/Users/tunm/work/HyperFace/python/test/data/bulk/view.jpg",
+            "test_res/images/kunkun.jpg",
     };
     HInt32 featureNum;
     HF_GetFeatureLength(ctxHandle, &featureNum);
     LOGD("特征长度: %d", featureNum);
-    HFloat featuresCache[names.size()][featureNum];     // 存储缓存的向量
+    HFloat featuresCache[names.size()][featureNum];     // Store the cached vector
 
     for (int i = 0; i < names.size(); ++i) {
         auto &name = names[i];
@@ -74,9 +75,33 @@ int compare() {
 
         std::cout << std::endl;
         if (ret != HSUCCEED) {
-            LOGE("特征提取有问题: %d", ret);
+            LOGE("Abnormal feature extraction: %d", ret);
             return -1;
         }
+
+//        for (int j = 0; j < 512; ++j) {
+//            std::cout << featuresCache[0][j] << ", ";
+//        }
+//        std::cout << std::endl;
+
+//        HSize size;
+//        HF_GetFaceBasicTokenSize(&size);
+//        LOGD("in size: %ld", size);
+//
+//        LOGD("o size %d", multipleFaceData.tokens[0].size);
+
+        HBuffer buffer[multipleFaceData.tokens[0].size];
+        HF_CopyFaceBasicToken(multipleFaceData.tokens[0], buffer, multipleFaceData.tokens[0].size);
+
+        HF_FaceBasicToken token = {0};
+        token.size = multipleFaceData.tokens[0].size;
+        token.data = buffer;
+
+        HFloat quality;
+        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[0], &quality);
+        ret = HF_FaceQualityDetect(ctxHandle, token, &quality);
+        LOGD("RET : %d", ret);
+        LOGD("Q: %f", quality);
 
         ret = HF_ReleaseImageStream(imageSteamHandle);
         if (ret == HSUCCEED) {
@@ -113,7 +138,7 @@ int compare() {
 int search() {
     HResult ret;
     // 初始化context
-    HString path = "test_res/model_zip/T1";
+    HString path = "test_res/model_zip/Pikachu-t1";
     HF_ContextCustomParameter parameter = {0};
     parameter.enable_liveness = 1;
     parameter.enable_mask_detect = 1;
@@ -305,6 +330,13 @@ int search() {
 
     HF_ViewFaceDBTable(ctxHandle);
 
+
+    HF_FaceFeatureIdentity identity;
+    ret = HF_FeaturesGroupGetFeatureIdentity(ctxHandle, 100, &identity);
+    if (ret != HSUCCEED) {
+        LOGE("获取特征失败");
+    }
+
     ret = HF_ReleaseImageStream(imageSteamHandle);
     if (ret == HSUCCEED) {
         imageSteamHandle = nullptr;
@@ -316,6 +348,11 @@ int search() {
     return 0;
 }
 
+int opiton() {
+//    HInt32 mask = HF_ENABLE_FACE_RECOGNITION | HF_ENABLE_LIVENESS;
+
+    return 0;
+}
 
 int main() {
 
@@ -349,8 +386,10 @@ int main() {
 //    }
 
 
-//    compare();
+    compare();
+//
+//    search();
 
-    search();
 
+    opiton();
 }

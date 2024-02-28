@@ -3,13 +3,13 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "hyperface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/middleware/model_loader/ModelLoader.h"
 #include "model_index.h"
-#include "hyperface/middleware/Timer.h"
+#include "inspireface/middleware/Timer.h"
 #include "middleware/inference_helper/customized/rknn_adapter.h"
-#include "hyperface/recognition_module/simd.h"
+#include "inspireface/recognition_module/simd.h"
 #include <memory>
-#include "hyperface/recognition_module/extract/Extract.h"
+#include "inspireface/recognition_module/extract/Extract.h"
 
 using namespace hyper;
 
@@ -85,11 +85,11 @@ int main() {
         param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
         param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
         param.set<bool>("nchw", false);
-        param.set<bool>("swap_color", true);        // RK需要rgb输入
+        param.set<bool>("swap_color", true);        // RK requires rgb input
 
         m_extract_ = std::make_shared<Extract>();
         auto model = loader.ReadModel(0);
-        m_extract_->LoadParam(param, model, InferenceHelper::kRknn);
+        m_extract_->loadData(param, model, InferenceHelper::kRknn);
 
         cv::Mat image = cv::imread(names[0]);
 //        cv::Mat rgb;

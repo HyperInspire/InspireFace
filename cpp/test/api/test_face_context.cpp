@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include "common/test_settings.h"
-#include "hyperface/c_api/hyperface.h"
+#include "inspireface/c_api/inspireface.h"
 #include <cstdio> // 提供std::remove函数
 
 TEST_CASE("test_FeatureContext", "[face_context]") {
@@ -17,7 +17,8 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
 
     SECTION("Test the new context positive process") {
         HResult ret;
-        HString path = "test_res/model_zip/T1";
+        std::string modelPath = GET_MODEL_FILE();
+        HPath path = modelPath.c_str();
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
@@ -29,7 +30,7 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
 
     SECTION("Test the new context egative processn") {
         HResult ret;
-        HString path = "test_res/model_zip/abc";     // Use error path
+        HPath path = "test_res/model_zip/abc";     // Use error path
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
@@ -39,7 +40,8 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
 
     SECTION("Configure the positive flow for connecting to the database") {
         HResult ret;
-        HString path = "test_res/model_zip/T1";
+        std::string modelPath = GET_MODEL_FILE();
+        HPath path = modelPath.c_str();
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
