@@ -5,7 +5,7 @@
 #include "inspireface/middleware/model_loader/ModelLoader.h"
 #include "inspireface/track_module/face_detect/all.h"
 #include "model_index.h"
-#include "inspireface/middleware/timer.h"
+#include "inspireface/middleware/Timer.h"
 
 using namespace hyper;
 
