@@ -8,8 +8,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
-option(ENABLE_RKNN "Use RKNPU." ON)
-option(BUILD_LINUX_ARM7 "Platform Arm7." ON)
+option(ENABLE_RKNN "Use RKNPU." OFF)
+option(BUILD_LINUX_ARM7 "Platform Arm7." OFF)
 option(BUILD_HYPERFACE_TEST "Open Build Unit-Test." ON)
 
 option(USE_MOBILE_OPENCV_IN_LOCAL "Use mobile-opencv in local environment." ON)
