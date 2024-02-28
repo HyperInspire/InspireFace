@@ -6,7 +6,7 @@
 #include "opencv2/opencv.hpp"
 #include "inspireface/middleware/model_loader/ModelLoader.h"
 #include "model_index.h"
-#include "inspireface/middleware/timer.h"
+#include "inspireface/middleware/Timer.h"
 #include "inspireface/recognition_module/FaceRecognition.h"
 #include "inspireface/recognition_module/simd.h"
 
