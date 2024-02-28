@@ -11,6 +11,7 @@
 using namespace inspire;
 
 int main() {
+#ifndef USE_MOBILE_OPENCV_IN_LOCAL
     FaceContext ctx;
     CustomPipelineParameter param;
     param.enable_liveness = true;
@@ -91,6 +92,6 @@ int main() {
     cap.release();
 
     cv::destroyAllWindows();
-
+#endif
     return 0;
 }
