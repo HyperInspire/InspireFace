@@ -47,9 +47,34 @@ endif ()
 
 
 if (NOT ANDROID)
-    # MNN Third party dependence
-    set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
-    set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
+
+    if (LINUX_FETCH_MNN)
+        # Include FetchContent module
+        include(FetchContent)
+        # Fetch MNN
+        message("Downloading MNN from https://github.com/alibaba/MNN.git, this may take a while.")
+        FetchContent_Declare(
+                mnn
+                GIT_REPOSITORY https://github.com/alibaba/MNN.git
+                GIT_TAG        2.2.0
+        )
+        set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+        set(MNN_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
+        set(MNN_BUILD_CONVERTER OFF CACHE BOOL "" FORCE)
+
+        FetchContent_MakeAvailable(mnn)
+        set(MNN_INCLUDE_DIRS ${mnn_SOURCE_DIR}/include)
+        if (MNN_BUILD_SHARED_LIBS)
+            set(MNN_LIBS ${mnn_BINARY_DIR})
+        else()
+            set(MNN_LIBS ${mnn_BINARY_DIR}/libMNN.a)
+        endif ()
+
+    else ()
+        # MNN Third party dependence
+        set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
+        set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
+    endif ()
 endif()
 
 
