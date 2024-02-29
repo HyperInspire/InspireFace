@@ -105,7 +105,7 @@ endif()
 # mnn
 message(MNN_INCLUDE_DIRS=${MNN_INCLUDE_DIRS})
 message(MNN_LIBS=${MNN_LIBS})
-#link_directories(${MNN_LIBS})
+link_directories(${MNN_LIBS})
 
 if(BUILD_SHARED_LIBS)
     add_library(InspireFace SHARED ${SOURCE_FILES})
