@@ -14,7 +14,7 @@ option(BUILD_WITH_TEST "Open Build Unit-Test." ON)
 option(BUILD_WITH_SAMPLE "Open Build Sample Exec." ON)
 
 option(USE_MOBILE_OPENCV_IN_LOCAL "Use mobile-opencv in local environment." ON)
-option(LINUX_FETCH_MNN "Fetch and build MNN from git" ON)
+option(LINUX_FETCH_MNN "Fetch and build MNN from git" OFF)
 
 if (USE_MOBILE_OPENCV_IN_LOCAL)
     add_definitions(-DUSE_MOBILE_OPENCV_IN_LOCAL)
