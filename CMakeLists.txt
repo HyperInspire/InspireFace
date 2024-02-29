@@ -14,6 +14,7 @@ option(BUILD_WITH_TEST "Open Build Unit-Test." ON)
 option(BUILD_WITH_SAMPLE "Open Build Sample Exec." ON)
 
 option(USE_MOBILE_OPENCV_IN_LOCAL "Use mobile-opencv in local environment." ON)
+option(LINUX_FETCH_MNN "Fetch and build MNN from git" ON)
 
 if (USE_MOBILE_OPENCV_IN_LOCAL)
     add_definitions(-DUSE_MOBILE_OPENCV_IN_LOCAL)
@@ -28,7 +29,7 @@ get_property(HyperFace TARGET InspireFace PROPERTY InspireFace)
 
 if (BUILD_WITH_SAMPLE)
     add_subdirectory(cpp/sample)  # Add a child project: Samples
-endif()
+endif ()
 
 if (BUILD_WITH_TEST)
     add_subdirectory(cpp/test)  # Add a child project: Unit-Test
