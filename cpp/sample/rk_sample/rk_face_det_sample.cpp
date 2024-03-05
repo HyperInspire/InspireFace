@@ -12,7 +12,7 @@ using namespace inspire;
 int main() {
     ModelLoader loader("test_res/model_zip/Pikachu-t1_rv1109rv1126");
     std::shared_ptr<FaceDetect> m_face_detector_;
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_00_fdet_160);
     param.set<std::string>("input_layer", "input.1");
     param.set<std::vector<std::string>>("outputs_layers", {"output", "output1", "output2", "output3", "output4", "output5", "output6", "output7", "output8"});
