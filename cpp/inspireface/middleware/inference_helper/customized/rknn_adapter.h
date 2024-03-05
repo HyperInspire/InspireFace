@@ -10,7 +10,7 @@
 #include "rknn_api.h"
 #include "data_type.h"
 #include "log.h"
-#include "middleware/model_loader/ModelLoader.h"
+#include "middleware/model_loader/model_loader.h"
 
 
 /**
@@ -174,11 +174,11 @@ public:
 
     /**
      * @brief Manually initialize
-     * @details Initialize the RKNN model using a hyper::Model object and allocate memory for creating the inference engine session
-     * @param model Pointer to the hyper::Model object
+     * @details Initialize the RKNN model using a inspire::Model object and allocate memory for creating the inference engine session
+     * @param model Pointer to the inspire::Model object
      * @return Initialization result
      */
-    int Initialize(hyper::Model *model) {
+    int Initialize(inspire::Model *model) {
         /* Create the neural network */
         int model_data_size = 0;
 //        LOGD("Read models size: %f MB", round(float(model->modelsize.caffemodel_size) / (1024 * 1024)));
