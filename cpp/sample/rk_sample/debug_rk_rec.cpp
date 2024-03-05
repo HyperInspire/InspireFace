@@ -74,7 +74,7 @@ int main() {
     {
         std::shared_ptr<Extract> m_extract_;
 
-        Parameter param;
+        Configurable param;
         param.set<int>("model_index", 0);
         param.set<std::string>("input_layer", "input");
         param.set<std::vector<std::string>>("outputs_layers", {"267", });
