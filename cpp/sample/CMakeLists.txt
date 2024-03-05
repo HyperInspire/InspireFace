@@ -1,24 +1,11 @@
-#cmake_minimum_required(VERSION 3.19)
 cmake_minimum_required(VERSION 3.10)
 project(InspireFaceSample)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++14")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-
-if (BUILD_LINUX_ARM7 OR BUILD_LINUX_AARCH64)
-    set(OpenCV_DIR ${THIRD_PARTY_DIR}/opencv/opencv-linux-armhf/share/OpenCV)
-    set(OpenCV_STATIC_INCLUDE_DIR ${PATH_3RDPARTY}/opencv/opencv-linux-armhf/include/)
-endif()
-
 # OpenCV Configuration
 if(NOT APPLE)
+    message(STATUS OpenCV_DIR=${OpenCV_DIR})
     find_package(OpenCV REQUIRED)
 endif()
-
-#find_package(OpenCV REQUIRED)
 
 include_directories(${SRC_DIR})
 
@@ -85,7 +72,7 @@ else()
 
         # Face detection
         add_executable(RKFaceDetSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_face_det_sample.cpp)
-        target_link_libraries(RKFaceDetSample InspireFace rknn_api dl ${OpenCV_LIBS})
+        target_link_libraries(RKFaceDetSample InspireFace rknn_api dl)
 
         set_target_properties(RKFaceDetSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
@@ -93,7 +80,7 @@ else()
 
         # Simple network test
         add_executable(RKSimpleNetSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_simple_net_sample.cpp)
-        target_link_libraries(RKSimpleNetSample InspireFace rknn_api dl ${OpenCV_LIBS})
+        target_link_libraries(RKSimpleNetSample InspireFace rknn_api dl)
 
         set_target_properties(RKSimpleNetSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
@@ -101,7 +88,7 @@ else()
 
         # Face recognize
         add_executable(RKFaceRecSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_face_recognize_sample.cpp)
-        target_link_libraries(RKFaceRecSample InspireFace rknn_api dl ${OpenCV_LIBS})
+        target_link_libraries(RKFaceRecSample InspireFace rknn_api dl)
 
         set_target_properties(RKFaceRecSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
@@ -109,7 +96,7 @@ else()
 
         # Tracking module
         add_executable(RKTrackerSample ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/rk_tracker_sample.cpp)
-        target_link_libraries(RKTrackerSample InspireFace rknn_api dl ${OpenCV_LIBS})
+        target_link_libraries(RKTrackerSample InspireFace rknn_api dl)
 
         set_target_properties(RKTrackerSample PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
@@ -117,7 +104,7 @@ else()
 
         # Debug
         add_executable(DebugRKRec ${CMAKE_CURRENT_SOURCE_DIR}/rk_sample/debug_rk_rec.cpp)
-        target_link_libraries(DebugRKRec InspireFace rknn_api dl ${OpenCV_LIBS})
+        target_link_libraries(DebugRKRec InspireFace rknn_api dl)
 
         set_target_properties(DebugRKRec PROPERTIES
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
@@ -127,6 +114,7 @@ else()
 
 endif()
 
+
 # Tracking module
 add_executable(SQLiteTest ${CMAKE_CURRENT_SOURCE_DIR}/test_sqlite_sample.cpp)
 target_link_libraries(SQLiteTest InspireFace)
@@ -135,10 +123,13 @@ set_target_properties(SQLiteTest PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
+if (ENABLE_RKNN)
+    set(DEPEND rknn_api dl)
+endif ()
 
 # C_API Demo
 add_executable(CAPISample ${CMAKE_CURRENT_SOURCE_DIR}/c_api_sample.cpp)
-target_link_libraries(CAPISample InspireFace)
+target_link_libraries(CAPISample InspireFace ${DEPEND})
 
 set_target_properties(CAPISample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"

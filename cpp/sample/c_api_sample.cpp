@@ -66,10 +66,10 @@ int compare() {
             LOGD("%d, track_id: %d, pitch: %f, yaw: %f, roll: %f", i, multipleFaceData.trackIds[i], multipleFaceData.angles.pitch[i], multipleFaceData.angles.yaw[i], multipleFaceData.angles.roll[i]);
             LOGD("token size: %d", multipleFaceData.tokens->size);
         }
-
+#ifndef DISABLE_GUI
         cv::imshow("wq", image);
         cv::waitKey(0);
-
+#endif
 
         ret = HF_FaceFeatureExtractCpy(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], featuresCache[i]);
 
