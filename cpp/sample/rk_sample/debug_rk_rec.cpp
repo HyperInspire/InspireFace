@@ -3,7 +3,7 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/middleware/model_loader/model_loader.h"
 #include "model_index.h"
 #include "inspireface/middleware/Timer.h"
 #include "middleware/inference_helper/customized/rknn_adapter.h"
@@ -11,7 +11,7 @@
 #include <memory>
 #include "inspireface/recognition_module/extract/Extract.h"
 
-using namespace hyper;
+using namespace inspire;
 
 int main() {
     std::vector<std::string> names = {
