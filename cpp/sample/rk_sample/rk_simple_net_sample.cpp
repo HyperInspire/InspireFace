@@ -3,16 +3,16 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/middleware/model_loader/model_loader.h"
 #include "inspireface/track_module/face_detect/all.h"
-#include "inspireface/pipeline_module/attribute/MaskPredict.h"
+#include "inspireface/pipeline_module/attribute/mask_predict.h"
 #include "model_index.h"
-#include "inspireface/middleware/Timer.h"
-#include "inspireface/track_module/quality/FacePoseQuality.h"
-#include "inspireface/track_module/landmark/FaceLandmark.h"
-#include "inspireface/pipeline_module/liveness/RBGAntiSpoofing.h"
+#include "inspireface/middleware/timer.h"
+#include "inspireface/track_module/quality/face_pose_quality.h"
+#include "inspireface/track_module/landmark/face_landmark.h"
+#include "inspireface/pipeline_module/liveness/rgb_anti_spoofing.h"
 
-using namespace hyper;
+using namespace inspire;
 
 ModelLoader loader;
 

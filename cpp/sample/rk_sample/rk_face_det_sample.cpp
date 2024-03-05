@@ -2,12 +2,12 @@
 // Created by Tunm-Air13 on 2023/9/20.
 //
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/middleware/model_loader/model_loader.h"
 #include "inspireface/track_module/face_detect/all.h"
 #include "model_index.h"
-#include "inspireface/middleware/Timer.h"
+#include "inspireface/middleware/timer.h"
 
-using namespace hyper;
+using namespace inspire;
 
 int main() {
     ModelLoader loader("test_res/model_zip/Pikachu-t1_rv1109rv1126");

@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(InspireFaceSample)
 
-if (BUILD_LINUX_ARM7)
+if (BUILD_LINUX_ARM7 OR BUILD_LINUX_AARCH64)
     set(OpenCV_DIR ${THIRD_PARTY_DIR}/opencv/opencv-linux-armhf/share/OpenCV)
     set(OpenCV_STATIC_INCLUDE_DIR ${PATH_3RDPARTY}/opencv/opencv-linux-armhf/include/)
 endif()
@@ -18,7 +18,7 @@ if (APPLE)
         find_package(OpenCV REQUIRED)
     endif()
 else ()
-    if (BUILD_LINUX_ARM7)
+    if (BUILD_LINUX_ARM7 OR BUILD_LINUX_AARCH64)
         set(PLAT linux-arm7)
         set(OpenCV_DIR ${THIRD_PARTY_DIR}/opencv/opencv-linux-armhf/share/OpenCV)
         set(OpenCV_STATIC_INCLUDE_DIR ${PATH_3RDPARTY}/opencv/opencv-linux-armhf/include/)
@@ -37,7 +37,7 @@ include_directories(${SRC_DIR})
 #find_package(Eigen3 REQUIRED)
 #include_directories("/usr/local/include/eigen3")
 
-if (NOT BUILD_LINUX_ARM7)
+if (NOT BUILD_LINUX_ARM7 AND NOT BUILD_LINUX_AARCH64)
 
 # =======================InspireFace Sample===========================
     add_executable(TrackerSample ${CMAKE_CURRENT_SOURCE_DIR}/tracker_sample.cpp)
