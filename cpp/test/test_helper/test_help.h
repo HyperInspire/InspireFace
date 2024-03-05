@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include "cnpy/npy.hpp"
+#include <cassert>
 
 inline std::pair<std::vector<std::vector<float>>, std::vector<std::string>> LoadMatrixAndTags(
         const std::string& matrixFileName, const std::string& tagsFileName) {

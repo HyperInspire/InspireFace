@@ -5,11 +5,11 @@
 #include "opencv2/opencv.hpp"
 #include "inspireface/middleware/model_loader/model_loader.h"
 #include "model_index.h"
-#include "inspireface/middleware/Timer.h"
+#include "inspireface/middleware/timer.h"
 #include "middleware/inference_helper/customized/rknn_adapter.h"
 #include "inspireface/recognition_module/simd.h"
 #include <memory>
-#include "inspireface/recognition_module/extract/Extract.h"
+#include "inspireface/recognition_module/extract/extract.h"
 
 using namespace inspire;
 
