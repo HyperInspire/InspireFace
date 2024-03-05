@@ -64,9 +64,12 @@ void HF_DeBugImageStreamImShow(HImageHandle streamHandle) {
         return;
     }
     auto image = stream->impl.GetScaledImage(1.0f, true);
-
+# ifdef DISABLE_GUI
+    cv::imwrite("tmp.jpg", image);
+#else
     cv::imshow("Debug", image);
     cv::waitKey(0);
+#endif
 }
 
 
