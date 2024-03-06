@@ -11,7 +11,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 set(TARGET_PLATFORM "drawin-x86" CACHE STRING "Target platform")
 
 # OpenCV dependency configuration
-option(USE_MOBILE_OPENCV_IN_LOCAL "Use mobile-opencv in local environment." ON)
+option(USE_MOBILE_OPENCV_IN_LOCAL "Use mobile-opencv in local environment." OFF)
 set(MOBILE_OPENCV_VERSION "4.9.0" CACHE STRING "The mobile-opencv version number")
 if (USE_MOBILE_OPENCV_IN_LOCAL)
     message("Use mobile-opencv ${MOBILE_OPENCV_VERSION}, Target platform ${TARGET_PLATFORM}")
@@ -21,6 +21,7 @@ endif ()
 option(ENABLE_RKNN "Use RKNPU." OFF)
 set(RK_DEVICE_TYPE "RV1109RV1126" CACHE STRING "Type of the device")
 if (ENABLE_RKNN)
+    add_definitions("-DENABLE_RKNN")
     # Device list
     set(RKNPU1_DEVICES "RV1109RV1126")
     set(RKNPU2_DEVICES "RK356X" "RK3588" "RV1106")

@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     db_config = isf.DatabaseConfiguration(enable_use_db=True, db_path="./")
 
-    engine = isf.create_engine("/Users/tunm/work/HyperFace/test_res/model_zip/Optimus-t1", param=param,
+    engine = isf.create_engine("/Users/tunm/work/HyperFace/test_res/model_zip/Pikachu-t1", param=param,
                            db_configuration=db_config)
     tracker = isf.FaceTrackerModule(engine)
     recognition = isf.FaceRecognitionModule(engine)
