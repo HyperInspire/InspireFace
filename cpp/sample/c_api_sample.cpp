@@ -106,7 +106,7 @@ int compare() {
         token.data = buffer;
 
         HFloat quality;
-        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[0], &quality);
+//        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[0], &quality);
         ret = HF_FaceQualityDetect(ctxHandle, token, &quality);
         LOGD("RET : %d", ret);
         LOGD("Q: %f", quality);
