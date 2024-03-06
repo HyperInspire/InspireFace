@@ -496,7 +496,7 @@ private:
 
             if (output_attrs_[i].qnt_type != RKNN_TENSOR_QNT_AFFINE_ASYMMETRIC ||
                 output_attrs_[i].type != RKNN_TENSOR_UINT8) {
-                LOGE("The Demo required for a Affine asymmetric u8 quantized rknn models, but output quant type is %s, output "
+                LOGW("The Demo required for a Affine asymmetric u8 quantized rknn models, but output quant type is %s, output "
                         "data type is %s",
                         get_qnt_type_string_(output_attrs_[i].qnt_type), get_type_string_(output_attrs_[i].type));
 //                return -1;
