@@ -78,7 +78,7 @@ void rec_function() {
 
 int main() {
     loader = std::make_shared<ModelLoader>();
-    loader->Reset("test_res/model_zip/Pikachu-t1_rv1109rv1126");
+    loader->Reset("test_res/model_zip/Gundam_RV1109");
 
 
 
