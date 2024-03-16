@@ -147,6 +147,7 @@ args  = sys.argv
 
 print(args)
 if len(args) == 5:
+    print(int(args[4]))
     packageModel(args[1], args[2], args[3], int(args[4]))
 elif len(args) == 4:
     packageModel(args[1], args[2], args[3])
