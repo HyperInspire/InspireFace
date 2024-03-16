@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.10)
 project(InspireFaceSDK)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++14")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 # Current version
 set(INSPIRE_FACE_VERSION_MAJOR 0)
@@ -19,36 +23,88 @@ option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
 
+## OpenCV Configuration
+#if (APPLE)
+#    set(PLAT darwin)
+#    if (USE_MOBILE_OPENCV_IN_LOCAL)
+#        set(OPENCV_FRAMEWORK "${THIRD_PARTY_DIR}/opencv-mobile/${MOBILE_OPENCV_VERSION}/${TARGET_PLATFORM}/opencv2.framework")
+#        list(APPEND CMAKE_FRAMEWORK_PATH "${OPENCV_FRAMEWORK}")
+#        include_directories("${OPENCV_FRAMEWORK}/Headers")
+#        message(OPENCV_FRAMEWORK=${OPENCV_FRAMEWORK})
+#        find_library(ACCELERATE_FRAMEWORK Accelerate)
+#    else ()
+#        find_package(OpenCV REQUIRED)
+#
+#    endif ()
+#else()
+#    if (BUILD_LINUX_ARM7 OR BUILD_LINUX_AARCH64)
+##        set(OpenCV_DIR ${THIRD_PARTY_DIR}/opencv/opencv-linux-armhf/share/OpenCV)
+##        set(OpenCV_STATIC_INCLUDE_DIR ${PATH_3RDPARTY}/opencv/opencv-linux-armhf/include/)
+#        if(BUILD_LINUX_ARM7)
+#            set(PLAT linux-arm7)
+#            set(OpenCV_DIR "${THIRD_PARTY_DIR}/opencv-mobile/${MOBILE_OPENCV_VERSION}/${TARGET_PLATFORM}/arm-linux-gnueabihf/lib/cmake/opencv4")
+#        elseif(BUILD_LINUX_AARCH64)
+#            set(OpenCV_DIR "${THIRD_PARTY_DIR}/opencv-mobile/${MOBILE_OPENCV_VERSION}/${TARGET_PLATFORM}/aarch64-linux-gnu/lib/cmake/opencv4")
+#        endif()
+#    else ()
+#        set(PLAT linux)
+#        message(OpenCV_DIR=${OpenCV_DIR})
+#        set(OpenCV_DIR "${THIRD_PARTY_DIR}/opencv-mobile/${MOBILE_OPENCV_VERSION}/ubuntu-2004/lib/cmake/opencv4")
+#    endif ()
+#    find_package(OpenCV REQUIRED)
+#endif ()
 
-if (APPLE)
-    set(PLAT darwin)
-else()
-    if (BUILD_LINUX_ARM7)
-        set(PLAT linux-arm7)
-        set(OpenCV_DIR ${THIRD_PARTY_DIR}/opencv/opencv-linux-armhf/share/OpenCV)
-        set(OpenCV_STATIC_INCLUDE_DIR ${PATH_3RDPARTY}/opencv/opencv-linux-armhf/include/)
-    else()
-        set(PLAT linux)
-    endif ()
-endif ()
-
-find_package(OpenCV REQUIRED)
+if(NOT APPLE)
+    find_package(OpenCV REQUIRED)
+endif()
 
 if (NOT ANDROID)
-    # MNN Third party dependence
-    set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
-    set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
+
+    if (LINUX_FETCH_MNN)
+        # Include FetchContent module
+        include(FetchContent)
+        # Fetch MNN
+        message("Downloading MNN from https://github.com/alibaba/MNN.git, this may take a while.")
+        FetchContent_Declare(
+                mnn
+                GIT_REPOSITORY https://github.com/alibaba/MNN.git
+                GIT_TAG        2.2.0
+        )
+        set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+        set(MNN_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
+        set(MNN_BUILD_CONVERTER OFF CACHE BOOL "" FORCE)
+
+        FetchContent_MakeAvailable(mnn)
+        set(MNN_INCLUDE_DIRS ${mnn_SOURCE_DIR}/include)
+        if (MNN_BUILD_SHARED_LIBS)
+            set(MNN_LIBS ${mnn_BINARY_DIR})
+        else()
+            set(MNN_LIBS ${mnn_BINARY_DIR}/libMNN.a)
+        endif ()
+
+    else ()
+        # MNN Third party dependence
+        set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
+        set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
+    endif ()
 endif()
 
 
 if (ENABLE_RKNN)
-    set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/rknn_api/include)
-    set(RKNN_API_LIB ${THIRD_PARTY_DIR}/rknn_api/lib)
-    message("Enable RKNN Inference")
+    message("Enable RKNN Inference: ${RK_DEVICE_TYPE}")
+    set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/include)
+    set(RKNN_API_LIB ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
+    message(RKNN_API_LIB="${RKNN_API_LIB}")
+    message(RKNN_API_INCLUDE_DIRS="${RKNN_API_INCLUDE_DIRS}")
     link_directories(${RKNN_API_LIB})
 endif()
 
-set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
+# OpenCV
+if(APPLE AND USE_MOBILE_OPENCV_IN_LOCAL)
+    set(LINK_THIRD_LIBS "${OPENCV_FRAMEWORK}" ${MNN_LIBS} "${ACCELERATE_FRAMEWORK}")
+else()
+    set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
+endif()
 
 # sqlite3
 set(SOURCE_FILES ${SOURCE_FILES} ${THIRD_PARTY_DIR}/sqlite/sqlite3.c)        # Add C_API file
@@ -60,10 +116,10 @@ if (ENABLE_RKNN)
 
 endif()
 
-# mnn
+# MNN
 message(MNN_INCLUDE_DIRS=${MNN_INCLUDE_DIRS})
 message(MNN_LIBS=${MNN_LIBS})
-#link_directories(${MNN_LIBS})
+link_directories(${MNN_LIBS})
 
 if(BUILD_SHARED_LIBS)
     add_library(InspireFace SHARED ${SOURCE_FILES})

@@ -174,12 +174,11 @@ int main(int argc, char** argv) {
         LOGE("Initialization error");
         return -1;
     }
-
     // 1v1对比
-//    comparison1v1(ctx);
+    comparison1v1(ctx);
 
     // 搜索
-    search(ctx);
+//    search(ctx);
 
     return 0;
 

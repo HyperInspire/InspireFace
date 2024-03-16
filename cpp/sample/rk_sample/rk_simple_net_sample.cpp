@@ -3,23 +3,23 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/middleware/model_loader/model_loader.h"
 #include "inspireface/track_module/face_detect/all.h"
-#include "inspireface/pipeline_module/attribute/MaskPredict.h"
+#include "inspireface/pipeline_module/attribute/mask_predict.h"
 #include "model_index.h"
-#include "inspireface/middleware/Timer.h"
-#include "inspireface/track_module/quality/FacePoseQuality.h"
-#include "inspireface/track_module/landmark/FaceLandmark.h"
-#include "inspireface/pipeline_module/liveness/RBGAntiSpoofing.h"
+#include "inspireface/middleware/timer.h"
+#include "inspireface/track_module/quality/face_pose_quality.h"
+#include "inspireface/track_module/landmark/face_landmark.h"
+#include "inspireface/pipeline_module/liveness/rgb_anti_spoofing.h"
 
-using namespace hyper;
+using namespace inspire;
 
 ModelLoader loader;
 
 
 void test_rnet() {
     std::shared_ptr<RNet> m_rnet_;
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_04_refine_net);
     param.set<std::string>("input_layer", "input_1");
     param.set<std::vector<std::string>>("outputs_layers", {"conv5-1/Softmax", "conv5-2/BiasAdd"});
@@ -59,7 +59,7 @@ void test_rnet() {
 }
 
 void test_mask() {
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_05_mask);
     param.set<std::string>("input_layer", "input_1");
     param.set<std::vector<std::string>>("outputs_layers", {"activation_1/Softmax",});
@@ -100,7 +100,7 @@ void test_mask() {
 }
 
 void test_quality() {
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
     param.set<std::string>("input_layer", "data");
     param.set<std::vector<std::string>>("outputs_layers", {"fc1", });
@@ -150,7 +150,7 @@ void test_quality() {
 
 
 void test_landmark_mnn() {
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_01_lmk);
     param.set<std::string>("input_layer", "input_1");
     param.set<std::vector<std::string>>("outputs_layers", {"prelu1/add", });
@@ -187,7 +187,7 @@ void test_landmark_mnn() {
 
 
 void test_landmark() {
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_01_lmk);
     param.set<std::string>("input_layer", "input_1");
     param.set<std::vector<std::string>>("outputs_layers", {"prelu1/add", });
@@ -228,7 +228,7 @@ void test_landmark() {
 
 void test_liveness() {
 
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_06_msafa27);
     param.set<std::string>("input_layer", "data");
     param.set<std::vector<std::string>>("outputs_layers", {"556",});
