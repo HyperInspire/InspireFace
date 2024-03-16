@@ -3,15 +3,15 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/middleware/model_loader/model_loader.h"
 #include "model_index.h"
-#include "inspireface/middleware/Timer.h"
+#include "inspireface/middleware/timer.h"
 #include "middleware/inference_helper/customized/rknn_adapter.h"
 #include "inspireface/recognition_module/simd.h"
 #include <memory>
-#include "inspireface/recognition_module/extract/Extract.h"
+#include "inspireface/recognition_module/extract/extract.h"
 
-using namespace hyper;
+using namespace inspire;
 
 int main() {
     std::vector<std::string> names = {
@@ -74,7 +74,7 @@ int main() {
     {
         std::shared_ptr<Extract> m_extract_;
 
-        Parameter param;
+        Configurable param;
         param.set<int>("model_index", 0);
         param.set<std::string>("input_layer", "input");
         param.set<std::vector<std::string>>("outputs_layers", {"267", });

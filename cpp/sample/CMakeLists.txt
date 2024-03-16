@@ -1,20 +1,18 @@
-#cmake_minimum_required(VERSION 3.19)
 cmake_minimum_required(VERSION 3.10)
 project(InspireFaceSample)
 
-if (BUILD_LINUX_ARM7)
-    set(OpenCV_DIR ${THIRD_PARTY_DIR}/opencv/opencv-linux-armhf/share/OpenCV)
-    set(OpenCV_STATIC_INCLUDE_DIR ${PATH_3RDPARTY}/opencv/opencv-linux-armhf/include/)
+# OpenCV Configuration
+if(NOT APPLE)
+    message(STATUS OpenCV_DIR=${OpenCV_DIR})
+    find_package(OpenCV REQUIRED)
 endif()
-
-find_package(OpenCV REQUIRED)
 
 include_directories(${SRC_DIR})
 
 #find_package(Eigen3 REQUIRED)
 #include_directories("/usr/local/include/eigen3")
 
-if (NOT BUILD_LINUX_ARM7)
+if (NOT BUILD_LINUX_ARM7 AND NOT BUILD_LINUX_AARCH64)
 
 # =======================InspireFace Sample===========================
     add_executable(TrackerSample ${CMAKE_CURRENT_SOURCE_DIR}/tracker_sample.cpp)
@@ -68,7 +66,7 @@ else()
 # =======================RK Temporary test category===========================
 
     if (ENABLE_RKNN)
-        set(RKNN_API_LIB ${THIRD_PARTY_DIR}/rknn_api/lib)
+        set(RKNN_API_LIB ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
         message("Enable RKNN Inference")
         link_directories(${RKNN_API_LIB})
 
@@ -116,6 +114,7 @@ else()
 
 endif()
 
+
 # Tracking module
 add_executable(SQLiteTest ${CMAKE_CURRENT_SOURCE_DIR}/test_sqlite_sample.cpp)
 target_link_libraries(SQLiteTest InspireFace)
@@ -124,10 +123,13 @@ set_target_properties(SQLiteTest PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
+if (ENABLE_RKNN)
+    set(DEPEND rknn_api dl)
+endif ()
 
 # C_API Demo
 add_executable(CAPISample ${CMAKE_CURRENT_SOURCE_DIR}/c_api_sample.cpp)
-target_link_libraries(CAPISample InspireFace)
+target_link_libraries(CAPISample InspireFace ${DEPEND})
 
 set_target_properties(CAPISample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"

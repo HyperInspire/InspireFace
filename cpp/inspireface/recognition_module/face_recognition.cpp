@@ -31,16 +31,34 @@ FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition, M
 
 int32_t FaceRecognition::InitExtractInteraction(Model *model) {
     try {
+        InferenceHelper::HelperType type;
         Configurable config = ModelConfigManager::loadConfig(m_mb_);
         Configurable param;
+#ifdef INFERENCE_HELPER_ENABLE_RKNN
+        param.set<int>("model_index", ModelIndex::_03_extract);
+        param.set<std::string>("input_layer", config.get<std::string>("extract_input_name") );
+        param.set<std::vector<std::string>>("outputs_layers", {config.get<std::string>("extract_output_name"), });
+        param.set<std::vector<int>>("input_size", {112, 112});
+        param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
+        param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
+        param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
+        param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
+        param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+        param.set<bool>("nchw", false);
+        param.set<bool>("swap_color", true);        // RK requires rgb input
+        type = InferenceHelper::kRknn;
+#else
         param.set<int>("model_index", ModelIndex::_03_extract);
         param.set<std::string>("input_layer", config.get<std::string>("extract_input_name") );
         param.set<std::vector<std::string>>("outputs_layers", {config.get<std::string>("extract_output_name"), });
         param.set<std::vector<int>>("input_size", {112, 112});
         param.set<std::vector<float>>("mean", {127.5f, 127.5f, 127.5f});
         param.set<std::vector<float>>("norm", {0.0078125, 0.0078125, 0.0078125});
+        type = InferenceHelper::kMnn;
+#endif
         m_extract_ = std::make_shared<Extract>();
-        m_extract_->loadData(param, model);
+//        LOGD("LOAD EXT");
+        m_extract_->loadData(param, model, type);
 
         return HSUCCEED;
 

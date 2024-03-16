@@ -15,9 +15,14 @@ const nlohmann::json Pikachu_t1 = R"({
 })"_json;
 
 
-const nlohmann::json Optimus_t1 = R"({
+const nlohmann::json Megatron_t1 = R"({
     "extract_input_name": "input.1",
     "extract_output_name": "267"
+})"_json;
+
+const nlohmann::json Gundam_RV1109_t1 = R"({
+    "extract_input_name": "input",
+    "extract_output_name": "output"
 })"_json;
 
 /**
@@ -27,39 +32,43 @@ const nlohmann::json Optimus_t1 = R"({
 class ModelConfigManager {
 public:
 
-    static Configurable loadConfig(const std::string& modelName) {
-        Configurable config;
+static Configurable loadConfig(const std::string& modelName) {
+    Configurable config;
 
-        if (modelName == "Pikachu_t1") {
-            config.load(Pikachu_t1);
-        } else if (modelName == "Optimus_t1") {
-            config.load(Optimus_t1);
-        }
-            // ...
+    if (modelName == "Pikachu_t1") {
+        config.load(Pikachu_t1);
+    } else if (modelName == "Megatron_t1") {
+        config.load(Megatron_t1);
+    } else if (modelName == "Gundam_RV1109_t1") {
+        config.load(Gundam_RV1109_t1);
+    }
+        // ...
 
-        else {
-            throw std::runtime_error("Unknown model name: " + modelName);
-        }
-
-        return config;
+    else {
+        throw std::runtime_error("Unknown model name: " + modelName);
     }
 
-    static Configurable loadConfig(const int magicNumber) {
-        Configurable config;
+    return config;
+}
 
-        if (magicNumber == 1128) {
-            config.load(Pikachu_t1);
-        } else if (magicNumber == 1129) {
-            config.load(Optimus_t1);
-        }
-            // ...
+static Configurable loadConfig(const int magicNumber) {
+    Configurable config;
 
-        else {
-            throw std::runtime_error("Unknown magic number: " + magicNumber);
-        }
-
-        return config;
+    if (magicNumber == 2097) {
+        config.load(Pikachu_t1);
+    } else if (magicNumber == 2098) {
+        config.load(Megatron_t1);
+    } else if (magicNumber == 2090) {
+        config.load(Gundam_RV1109_t1);
     }
+        // ...
+
+    else {
+        throw std::runtime_error("Unknown magic number: " + magicNumber);
+    }
+
+    return config;
+}
 
 };
 
