@@ -66,8 +66,8 @@ void ModelLoader::Reset(const std::string &model_path) {
     number_of_models = 0;
     file.read((char *) &magic_number, sizeof(magic_number));
 //        if (magic_number != 1128) {
-    if ((magic_number < 1000) || (magic_number > 1280)) {
-        LOGE("The loaded resource file cannot be matched.");
+    if ((magic_number < 2000) || (magic_number > 3000)) {
+        LOGE("The loaded resource file cannot be matched(%d).", magic_number);
         status_ = PACK_ERROR;
         return;
 //            exit(0);

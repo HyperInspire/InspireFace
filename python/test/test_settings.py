@@ -4,21 +4,21 @@ import sys
 # ++ OPTIONAL ++
 
 # Enabling will run all the benchmark tests, which takes time
-ENABLE_BENCHMARK_TEST = False
+ENABLE_BENCHMARK_TEST = True
 
 # Enabling will run all the CRUD tests, which will take time
-ENABLE_CRUD_TEST = False
+ENABLE_CRUD_TEST = True
 
 # Enabling will run the face search benchmark, which takes time and must be configured with the correct
 # 'LFW_FUNNELED_DIR_PATH' parameter
-ENABLE_SEARCH_BENCHMARK_TEST = False
+ENABLE_SEARCH_BENCHMARK_TEST = True
 
 # Enabling will run the LFW dataset precision test, which will take time
 ENABLE_LFW_PRECISION_TEST = True
 
 # Testing model name
-# TEST_MODEL_NAME = "Pikachu-t1"
-TEST_MODEL_NAME = "Megatron-t1"
+TEST_MODEL_NAME = "Pikachu-t1"
+# TEST_MODEL_NAME = "Megatron-t1"
 
 # Testing length of face feature
 TEST_MODEL_FACE_FEATURE_LENGTH = 512

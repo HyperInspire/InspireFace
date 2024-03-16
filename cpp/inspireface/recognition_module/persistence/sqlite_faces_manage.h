@@ -11,6 +11,7 @@
 #include "sqlite/sqlite3.h"  // Include the SQLite3 header
 #include <vector>
 #include <string>
+#include "memory"
 
 namespace inspire {
 
@@ -18,11 +19,11 @@ namespace inspire {
  * @struct FaceFeatureInfo
  * @brief Structure to represent information about a facial feature.
  */
-    typedef struct {
-        int32_t customId;              ///< Custom identifier for the feature.
-        std::string tag;              ///< Tag associated with the feature.
-        std::vector<float> feature;   ///< Vector of floats representing the feature.
-    } FaceFeatureInfo;
+typedef struct {
+    int32_t customId;              ///< Custom identifier for the feature.
+    std::string tag;              ///< Tag associated with the feature.
+    std::vector<float> feature;   ///< Vector of floats representing the feature.
+} FaceFeatureInfo;
 
 /**
  * @class SQLiteFaceManage

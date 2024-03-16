@@ -18,7 +18,11 @@ std::string basename(const std::string& path) {
 int compare() {
     HResult ret;
     // 初始化context
-    HPath path = "test_res/model_zip/Optimus-t1";
+#ifdef ENABLE_RKNN
+    HPath path = "test_res/model_zip/Gundam_RV1109";
+#else
+    HPath path = "test_res/model_zip/Pikachu-t1";
+#endif
     HF_ContextCustomParameter parameter = {0};
     parameter.enable_liveness = 1;
     parameter.enable_mask_detect = 1;
@@ -32,8 +36,8 @@ int compare() {
     }
 
     std::vector<std::string> names = {
-            "/Users/tunm/work/HyperFace/python/test/data/bulk/view.jpg",
-            "test_res/images/kunkun.jpg",
+            "test_res/images/kun.jpg",
+            "test_res/images/Kunkun.jpg",
     };
     HInt32 featureNum;
     HF_GetFeatureLength(ctxHandle, &featureNum);
@@ -43,6 +47,10 @@ int compare() {
     for (int i = 0; i < names.size(); ++i) {
         auto &name = names[i];
         cv::Mat image = cv::imread(name);
+        if (image.empty()) {
+            LOGD("%s is empty!", name.c_str());
+            return -1;
+        }
         HF_ImageData imageData = {0};
         imageData.data = image.data;
         imageData.height = image.rows;
@@ -66,14 +74,14 @@ int compare() {
             LOGD("%d, track_id: %d, pitch: %f, yaw: %f, roll: %f", i, multipleFaceData.trackIds[i], multipleFaceData.angles.pitch[i], multipleFaceData.angles.yaw[i], multipleFaceData.angles.roll[i]);
             LOGD("token size: %d", multipleFaceData.tokens->size);
         }
-
-        cv::imshow("wq", image);
-        cv::waitKey(0);
-
+#ifndef DISABLE_GUI
+//        cv::imshow("wq", image);
+//        cv::waitKey(0);
+#endif
 
         ret = HF_FaceFeatureExtractCpy(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], featuresCache[i]);
 
-        std::cout << std::endl;
+        std::cout << "wtg" << std::endl;
         if (ret != HSUCCEED) {
             LOGE("Abnormal feature extraction: %d", ret);
             return -1;
@@ -98,7 +106,7 @@ int compare() {
         token.data = buffer;
 
         HFloat quality;
-        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[0], &quality);
+//        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[0], &quality);
         ret = HF_FaceQualityDetect(ctxHandle, token, &quality);
         LOGD("RET : %d", ret);
         LOGD("Q: %f", quality);

@@ -4,13 +4,13 @@
 
 
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/ModelLoader.h"
+#include "inspireface/middleware/model_loader/model_loader.h"
 #include "model_index.h"
-#include "inspireface/middleware/Timer.h"
-#include "inspireface/recognition_module/FaceRecognition.h"
+#include "inspireface/middleware/timer.h"
+#include "inspireface/recognition_module/face_recognition.h"
 #include "inspireface/recognition_module/simd.h"
 
-using namespace hyper;
+using namespace inspire;
 
 std::shared_ptr<ModelLoader> loader;
 
@@ -18,7 +18,7 @@ void rec_function() {
 
     std::shared_ptr<Extract> m_extract_;
 
-    Parameter param;
+    Configurable param;
     param.set<int>("model_index", ModelIndex::_03_extract);
     param.set<std::string>("input_layer", "input");
     param.set<std::vector<std::string>>("outputs_layers", {"267", });
@@ -78,7 +78,7 @@ void rec_function() {
 
 int main() {
     loader = std::make_shared<ModelLoader>();
-    loader->Reset("test_res/model_zip/Pikachu-t1_rv1109rv1126");
+    loader->Reset("test_res/model_zip/Gundam_RV1109");
 
 
 
