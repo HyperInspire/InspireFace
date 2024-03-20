@@ -3,8 +3,8 @@
 //
 
 #include <iostream>
-#include "test_helper/test_help.h"
-#include "common/test_settings.h"
+#include "../test_helper/test_help.h"
+#include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
 #include "opencv2/opencv.hpp"
 

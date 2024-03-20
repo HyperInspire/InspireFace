@@ -7,9 +7,9 @@
 //
 
 #include <iostream>
-#include "common/test_settings.h"
+#include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
-#include <cstdio> // 提供std::remove函数
+#include <cstdio>
 
 TEST_CASE("test_FeatureContext", "[face_context]") {
     DRAW_SPLIT_LINE

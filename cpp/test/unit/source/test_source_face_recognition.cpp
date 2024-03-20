@@ -2,7 +2,7 @@
 // Created by Tunm-Air13 on 2023/9/12.
 //
 
-#include "common/test_settings.h"
+#include "settings/test_settings.h"
 #include "inspireface/face_context.h"
 #include "herror.h"
 #include "common/face_data/data_tools.h"

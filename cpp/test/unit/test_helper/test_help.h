@@ -9,8 +9,35 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include "cnpy/npy.hpp"
 #include <cassert>
+#include <indicators/block_progress_bar.hpp>
+#include <indicators/cursor_control.hpp>
+#include "inspireface/c_api/inspireface.h"
+#include "limonp/StringUtil.hpp"
+#include "cnpy/npy.hpp"
+
+using namespace indicators;
+
+typedef std::vector<std::pair<std::string, std::string>> FaceImageDataList;
+
+inline FaceImageDataList LoadLFWFunneledValidData(const std::string &dir, const std::string &txtPath){
+    FaceImageDataList list;
+    std::ifstream file(txtPath);
+    std::string line;
+
+    while (std::getline(file, line)) {
+        std::vector<std::string> parts;
+        limonp::Split(line, parts, "/");
+        if (parts.size() >= 2) {
+            std::string name = parts[0];
+            std::string fullPath = dir + "/" + line;
+
+            list.push_back({name, fullPath});
+        }
+    }
+
+    return list;
+}
 
 inline std::pair<std::vector<std::vector<float>>, std::vector<std::string>> LoadMatrixAndTags(
         const std::string& matrixFileName, const std::string& tagsFileName) {
@@ -58,5 +85,7 @@ inline std::pair<std::vector<std::vector<float>>, std::vector<std::string>> Load
 //
     return std::make_pair(featureMatrix, tagNames);
 }
+
+
 
 #endif //HYPERFACEREPO_TEST_HELP_H
