@@ -3,9 +3,9 @@
 //
 
 #include <iostream>
-#include "common/test_settings.h"
+#include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
-#include "test_helper/test_tools.h"
+#include "../test_helper/test_tools.h"
 
 TEST_CASE("test_FacePipeline", "[face_pipeline]") {
     DRAW_SPLIT_LINE
