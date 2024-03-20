@@ -2,10 +2,10 @@
 // Created by Tunm-Air13 on 2024/2/2.
 //
 
-#include "common/test_settings.h"
+#include "settings/test_settings.h"
 #include "inspireface/face_context.h"
 #include "common/face_data/data_tools.h"
-#include "test_helper/test_tools.h"
+#include "../test_helper/test_tools.h"
 #include "herror.h"
 
 using namespace inspire;

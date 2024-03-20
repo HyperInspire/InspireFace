@@ -6,7 +6,7 @@
 #define CATCH_CONFIG_RUNNER
 
 #include <iostream>
-#include "common/test_settings.h"
+#include "settings/test_settings.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include "spdlog/spdlog.h"
 
