@@ -11,6 +11,7 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
         TEST_PRINT_OUTPUT(true);
 
     SECTION("Load lfw funneled data") {
+#ifdef ENABLE_USE_LFW_DATA
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
@@ -53,5 +54,8 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
 
         delete []dbPathStr;
 
+#else
+        TEST_PRINT("The test case that uses LFW is not enabled, so it will be skipped.");
+#endif
     }
 }

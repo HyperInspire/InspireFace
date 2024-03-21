@@ -37,7 +37,7 @@ std::string getLFWFunneledDir() {
     if (testLfwFunneledDir != nullptr && std::string(testLfwFunneledDir) != "") {
         lfwFunneledPath = testLfwFunneledDir;
     } else {
-        const char* lfwFunneled = std::getenv("LFW_FUNNELED");
+        const char* lfwFunneled = std::getenv("LFW_FUNNELED_DIR");
         if (lfwFunneled != nullptr) {
             lfwFunneledPath = lfwFunneled;
         }
