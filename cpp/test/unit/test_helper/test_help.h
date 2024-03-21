@@ -15,6 +15,7 @@
 #include "inspireface/c_api/inspireface.h"
 #include "limonp/StringUtil.hpp"
 #include "cnpy/npy.hpp"
+#include "opencv2/opencv.hpp"
 
 using namespace indicators;
 
@@ -37,6 +38,85 @@ inline FaceImageDataList LoadLFWFunneledValidData(const std::string &dir, const 
     }
 
     return list;
+}
+
+inline bool ImportLFWFunneledValidData(HContextHandle handle, FaceImageDataList& data, size_t importNum) {
+    auto dataSize = data.size();
+    std::string title = "Import " + std::to_string(importNum) + " face data...";
+    // Hide cursor
+    show_console_cursor(false);
+    BlockProgressBar bar{
+            option::BarWidth{60},
+            option::Start{"["},
+            option::End{"]"},
+            option::PostfixText{title},
+            option::ForegroundColor{Color::white}  ,
+            option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
+    };
+
+    auto progress = 0.0f;
+    for (size_t i = 0; i < importNum; ++i) {
+        bar.set_progress(progress);
+        size_t index = i % dataSize;
+        // Data processing
+        auto item = data[index];
+        cv::Mat image = cv::imread(item.second);
+        HF_ImageData imageData = {0};
+        imageData.data = image.data;
+        imageData.height = image.rows;
+        imageData.width = image.cols;
+        imageData.format = STREAM_BGR;
+        imageData.rotation = CAMERA_ROTATION_0;
+        HImageHandle imgHandle;
+        auto ret = HF_CreateImageStream(&imageData, &imgHandle);
+        if (ret != HSUCCEED || image.empty()) {
+            std::cerr << "Error image: " << std::to_string(ret)  << " , " << item.second << std::endl;
+            return false;
+        }
+        // Face tracked
+        HF_MultipleFaceData multipleFaceData = {0};
+        ret = HF_FaceContextRunFaceTrack(handle, imgHandle, &multipleFaceData);
+
+        if (ret != HSUCCEED) {
+            std::cerr << "Error Track: " << std::to_string(ret)  << " , " << item.second << std::endl;
+            return false;
+        }
+
+        if (multipleFaceData.detectedNum == 0) {
+            std::cerr << "Not Detected face: " << item.second << std::endl;
+            return false;
+        }
+
+        // Extract face feature
+        HF_FaceFeature feature = {0};
+        ret = HF_FaceFeatureExtract(handle, imgHandle, multipleFaceData.tokens[0], &feature);
+        if (ret != HSUCCEED) {
+            std::cerr << "Error extract: " << std::to_string(ret)  << " , " << item.second << std::endl;
+            return false;
+        }
+        char *newTagName = new char[item.first.size() + 1];
+        std::strcpy(newTagName, item.first.c_str());
+        HF_FaceFeatureIdentity identity = {0};
+        identity.customId = index;
+        identity.tag = newTagName;
+        identity.feature = &feature;
+        ret = HF_FeaturesGroupInsertFeature(handle, identity);
+        if (ret != HSUCCEED) {
+            std::cerr << "Error insert feature: " << std::to_string(ret)  << " , " << item.second << std::endl;
+            return false;
+        }
+
+        delete[] newTagName;
+        HF_ReleaseImageStream(imgHandle);
+        // Update progress
+        progress = 100.0f * (float)(i + 1) / importNum;
+    }
+    bar.set_progress(100.0f);
+    // Show cursor
+    show_console_cursor(true);
+    std::cout << "\033[0m\n"; // ANSI resets the color code
+
+    return true;
 }
 
 inline std::pair<std::vector<std::vector<float>>, std::vector<std::string>> LoadMatrixAndTags(
