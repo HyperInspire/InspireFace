@@ -97,7 +97,7 @@ inline bool ImportLFWFunneledValidData(HContextHandle handle, FaceImageDataList&
         char *newTagName = new char[item.first.size() + 1];
         std::strcpy(newTagName, item.first.c_str());
         HF_FaceFeatureIdentity identity = {0};
-        identity.customId = index;
+        identity.customId = i;
         identity.tag = newTagName;
         identity.feature = &feature;
         ret = HF_FeaturesGroupInsertFeature(handle, identity);

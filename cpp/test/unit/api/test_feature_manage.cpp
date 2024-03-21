@@ -148,7 +148,6 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         auto lfwDir = getLFWFunneledDir();
         auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
         size_t numOfNeedImport = 1000;
-        TEST_PRINT("{}", dataList.size());
         auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
@@ -405,6 +404,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 #endif
     }
 
+
     SECTION("Search Face benchmark from 5k") {
 #if ENABLE_BENCHMARK && ENABLE_USE_LFW_DATA
         size_t loop = 1000;
@@ -433,7 +433,6 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         auto lfwDir = getLFWFunneledDir();
         auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
-        TEST_PRINT("{}", dataList.size());
         auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
@@ -478,6 +477,124 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(std::string(searchedIdentity.tag) == "Mary_Katherine_Smart");
 
         TEST_PRINT("<Benchmark> Search Face from 5k -> Loop: {}, Total Time: {:.2f}ms, Average Time: {:.2f}ms", loop, cost, cost / loop);
+
+        // Finish
+        ret = HF_ReleaseFaceContext(ctxHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        delete []dbPathStr;
+#else
+        TEST_PRINT("The benchmark test case for searching faces can only be executed if both the benchmark and lfw data functions are enabled at the same time, which has been skipped at present.");
+#endif
+    }
+
+    SECTION("Search Face benchmark from 10k") {
+#if ENABLE_BENCHMARK && ENABLE_USE_LFW_DATA
+        size_t loop = 1000;
+        size_t numOfNeedImport = 10000;
+        HResult ret;
+        std::string modelPath = GET_MODEL_FILE();
+        HPath path = modelPath.c_str();
+        HF_ContextCustomParameter parameter = {0};
+        parameter.enable_recognition = 1;
+        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HContextHandle ctxHandle;
+        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        REQUIRE(ret == HSUCCEED);
+        HF_DatabaseConfiguration configuration = {0};
+        auto dbPath = GET_SAVE_DATA(".test");
+        HString dbPathStr = new char[dbPath.size() + 1];
+        std::strcpy(dbPathStr, dbPath.c_str());
+        configuration.enableUseDb = 1;
+        configuration.dbPath = dbPathStr;
+        // Delete the previous data before testing
+        if (std::remove(configuration.dbPath) != 0) {
+            spdlog::trace("Error deleting file");
+        }
+        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        REQUIRE(ret == HSUCCEED);
+
+        auto lfwDir = getLFWFunneledDir();
+        auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
+        TEST_PRINT("{}", dataList.size());
+        auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
+        REQUIRE(importStatus);
+        HInt32 count;
+        ret = HF_FeatureGroupGetCount(ctxHandle, &count);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(count == numOfNeedImport);
+
+        // Update any feature
+        HInt32 updateId = numOfNeedImport - 1;
+        cv::Mat zyImage = cv::imread(GET_DATA("data/bulk/woman.png"));
+        HF_ImageData imageDataZy = {0};
+        imageDataZy.data = zyImage.data;
+        imageDataZy.height = zyImage.rows;
+        imageDataZy.width = zyImage.cols;
+        imageDataZy.format = STREAM_BGR;
+        imageDataZy.rotation = CAMERA_ROTATION_0;
+        HImageHandle imgHandleZy;
+        ret = HF_CreateImageStream(&imageDataZy, &imgHandleZy);
+        REQUIRE(ret == HSUCCEED);
+
+        // Extract basic face information from photos
+        HF_MultipleFaceData multipleFaceDataZy = {0};
+        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandleZy, &multipleFaceDataZy);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceDataZy.detectedNum > 0);
+
+        // Extract face feature
+        HF_FaceFeature featureZy = {0};
+        ret = HF_FaceFeatureExtract(ctxHandle, imgHandleZy, multipleFaceDataZy.tokens[0], &featureZy);
+        REQUIRE(ret == HSUCCEED);
+
+        // Update id: 11297
+        HF_FaceFeatureIdentity updateIdentity = {0};
+        updateIdentity.customId = updateId;
+        updateIdentity.tag = "ZY";
+        updateIdentity.feature = &featureZy;
+        ret = HF_FeaturesGroupFeatureUpdate(ctxHandle, updateIdentity);
+        REQUIRE(ret == HSUCCEED);
+
+        HF_ReleaseImageStream(imgHandleZy);
+
+        // Face track
+        cv::Mat dstImage = cv::imread(GET_DATA("data/bulk/woman_search.jpeg"));
+        HF_ImageData imageData = {0};
+        imageData.data = dstImage.data;
+        imageData.height = dstImage.rows;
+        imageData.width = dstImage.cols;
+        imageData.format = STREAM_BGR;
+        imageData.rotation = CAMERA_ROTATION_0;
+        HImageHandle imgHandle;
+        ret = HF_CreateImageStream(&imageData, &imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        // Extract basic face information from photos
+        HF_MultipleFaceData multipleFaceData = {0};
+        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum > 0);
+
+        // Extract face feature
+        HF_FaceFeature feature = {0};
+        ret = HF_FaceFeatureExtract(ctxHandle, imgHandle, multipleFaceData.tokens[0], &feature);
+        REQUIRE(ret == HSUCCEED);
+
+        // Search for a face
+        HFloat confidence;
+        HF_FaceFeatureIdentity searchedIdentity = {0};
+        auto start = (double) cv::getTickCount();
+        for (int i = 0; i < loop; ++i) {
+            ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedIdentity);
+        }
+        auto cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
+
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(searchedIdentity.customId == updateId);
+        REQUIRE(std::string(searchedIdentity.tag) == "ZY");
+
+        TEST_PRINT("<Benchmark> Search Face from 10k -> Loop: {}, Total Time: {:.2f}ms, Average Time: {:.2f}ms", loop, cost, cost / loop);
 
         // Finish
         ret = HF_ReleaseFaceContext(ctxHandle);
