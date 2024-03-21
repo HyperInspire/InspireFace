@@ -9,9 +9,13 @@
 #include <iostream>
 
 
-#define ENABLE_BENCHMARK 1                     // Whether to run the benchmark snippet
+#define ENABLE_BENCHMARK 1                                 // Whether to run the benchmark snippet
 
-#define TEST_MODEL_FILE "Pikachu-t1"           // Optional model file
+#define TEST_MODEL_FILE "Pikachu-t1"                       // Optional model file
+
+#define ENABLE_USE_LFW_DATA 1                              // Example Start the case for using LFW Data
+#define TEST_LFW_FUNNELED_TXT "valid_lfw_funneled.txt"     // LFW Index txt file
+#define LFW_FUNNELED_DIR ""                                // LFW funneled data dir
 
 using namespace Catch::Detail;
 
@@ -22,9 +26,10 @@ using namespace Catch::Detail;
 #define GET_DIR getTestDataDir()
 #define GET_DATA(filename) getTestData(filename)
 #define GET_MODEL_FILE() getTestModelsFile()
+#define GET_LFW_FUNNELED_TXT() getTestLFWFunneledTxt()
 
-#define GET_TMP_DIR getTestSaveDir()
-#define GET_TMP_DATA(filename) getTestSaveData(filename)
+#define GET_SAVE_DIR getTestSaveDir()
+#define GET_SAVE_DATA(filename) getTestSaveData(filename)
 
 std::string getTestDataDir();
 
@@ -35,6 +40,10 @@ std::string getTestSaveDir();
 std::string getTestSaveData(const std::string &name);
 
 std::string getTestModelsFile();
+
+std::string getTestLFWFunneledTxt();
+
+std::string getLFWFunneledDir();
 
 /** 日志级别 */
 enum LOG_LEVEL {

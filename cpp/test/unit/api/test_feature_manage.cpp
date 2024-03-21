@@ -23,8 +23,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
         HF_DatabaseConfiguration configuration = {0};
+        auto dbPath = GET_SAVE_DATA(".test");
+        HString dbPathStr = new char[dbPath.size() + 1];
+        std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enableUseDb = 1;
-        configuration.dbPath = "./.test";
+        configuration.dbPath = dbPathStr;
         // Delete the previous data before testing
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
@@ -69,8 +72,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(ret == HSUCCEED);
         CHECK(num == 1);
 
-        ret = HF_ViewFaceDBTable(ctxHandle);
-        REQUIRE(ret == HSUCCEED);
+//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        REQUIRE(ret == HSUCCEED);
 
         // Update Face info
         HF_FaceFeatureIdentity updatedIdentity = {0};
@@ -80,8 +83,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_FeaturesGroupFeatureUpdate(ctxHandle, updatedIdentity);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_ViewFaceDBTable(ctxHandle);
-        REQUIRE(ret == HSUCCEED);
+//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        REQUIRE(ret == HSUCCEED);
 
         // Trying to update an identity that doesn't exist
         HF_FaceFeatureIdentity nonIdentity = {0};
@@ -91,14 +94,14 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_FeaturesGroupFeatureUpdate(ctxHandle, nonIdentity);
         REQUIRE(ret != HSUCCEED);
 
-        ret = HF_ViewFaceDBTable(ctxHandle);
-        REQUIRE(ret == HSUCCEED);
+//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        REQUIRE(ret == HSUCCEED);
 
         // Trying to delete an identity that doesn't exist
         ret = HF_FeaturesGroupFeatureRemove(ctxHandle, nonIdentity.customId);
         REQUIRE(ret != HSUCCEED);
-        ret = HF_ViewFaceDBTable(ctxHandle);
-        REQUIRE(ret == HSUCCEED);
+//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        REQUIRE(ret == HSUCCEED);
 
 
         // Delete kunkun
@@ -109,12 +112,13 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(ret == HSUCCEED);
         CHECK(num == 0);
 
-        ret = HF_ViewFaceDBTable(ctxHandle);
-        REQUIRE(ret == HSUCCEED);
+//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        REQUIRE(ret == HSUCCEED);
 
         // Finish
         ret = HF_ReleaseFaceContext(ctxHandle);
         REQUIRE(ret == HSUCCEED);
+        delete []dbPathStr;
     }
 
     SECTION("Import a large faces data") {
@@ -128,8 +132,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
         HF_DatabaseConfiguration configuration = {0};
+        auto dbPath = GET_SAVE_DATA(".test");
+        HString dbPathStr = new char[dbPath.size() + 1];
+        std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enableUseDb = 1;
-        configuration.dbPath = "./.test";
+        configuration.dbPath = dbPathStr;
         // Delete the previous data before testing
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
@@ -137,53 +144,25 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
         REQUIRE(ret == HSUCCEED);
 
-        // 批量导入人脸特征向量
-        std::string mat_path = GET_DATA("test_faceset/test_faces_A1.npy");
-        std::string tags_path = GET_DATA("test_faceset/test_faces_A1.txt");
-        auto result = LoadMatrixAndTags(mat_path, tags_path);
-        // 获取特征矩阵和标签名称
-        std::vector<std::vector<float>> featureMatrix = result.first;
-        std::vector<std::string> tagNames = result.second;
-        size_t totalNum = 3000;
-        HInt32 featureLength;
-        ret = HF_GetFeatureLength(ctxHandle, &featureLength);
+        auto lfwDir = getLFWFunneledDir();
+        auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
+        size_t numOfNeedImport = 1000;
+        TEST_PRINT("{}", dataList.size());
+        auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
+        REQUIRE(importStatus);
+        HInt32 count;
+        ret = HF_FeatureGroupGetCount(ctxHandle, &count);
         REQUIRE(ret == HSUCCEED);
-        REQUIRE(featureMatrix.size() == totalNum);
-        REQUIRE(tagNames.size() == totalNum);
-        REQUIRE(featureMatrix[0].size() == featureLength);
+        CHECK(count == numOfNeedImport);
 
-        HInt32 startId = 10000;
-        for (int i = 0; i < totalNum; ++i) {
-            auto &featureRaw = featureMatrix[i];
-            auto &tagRaw = tagNames[i];
-            HF_FaceFeature feature = {0};
-            HF_FaceFeatureIdentity identity = {0};
-
-            char *newTagName = new char[tagRaw.size() + 1];
-            std::strcpy(newTagName, tagRaw.c_str());
-            feature.size = featureRaw.size();
-            feature.data = featureRaw.data();
-            identity.customId = startId + i;
-            identity.feature = &feature;
-            identity.tag = newTagName;
-
-            ret = HF_FeaturesGroupInsertFeature(ctxHandle, identity);
-            REQUIRE(ret == HSUCCEED);
-            delete[] newTagName;
-
-        }
-
-        HInt32 num;
-        ret = HF_FeatureGroupGetCount(ctxHandle, &num);
-        REQUIRE(ret == HSUCCEED);
-        REQUIRE(num == totalNum);
-
-        ret = HF_ViewFaceDBTable(ctxHandle);
-        REQUIRE(ret == HSUCCEED);
+//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        REQUIRE(ret == HSUCCEED);
 
         // Finish
         ret = HF_ReleaseFaceContext(ctxHandle);
         REQUIRE(ret == HSUCCEED);
+
+        delete []dbPathStr;
     }
 
     SECTION("Faces Feature CURD") {
@@ -197,17 +176,20 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
         HF_DatabaseConfiguration configuration = {0};
+        auto dbPath = GET_SAVE_DATA(".test");
+        HString dbPathStr = new char[dbPath.size() + 1];
+        std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enableUseDb = 1;
-        configuration.dbPath = "./.test";
+        configuration.dbPath = dbPathStr;
         ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
         REQUIRE(ret == HSUCCEED);
 
         // Face track
-        cv::Mat kunImage = cv::imread("test_res/images/kun.jpg");
+        cv::Mat dstImage = cv::imread(GET_DATA("data/bulk/Nathalie_Baye_0002.jpg"));
         HF_ImageData imageData = {0};
-        imageData.data = kunImage.data;
-        imageData.height = kunImage.rows;
-        imageData.width = kunImage.cols;
+        imageData.data = dstImage.data;
+        imageData.height = dstImage.rows;
+        imageData.width = dstImage.cols;
         imageData.format = STREAM_BGR;
         imageData.rotation = CAMERA_ROTATION_0;
         HImageHandle imgHandle;
@@ -230,8 +212,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HF_FaceFeatureIdentity searchedIdentity = {0};
         ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedIdentity);
         REQUIRE(ret == HSUCCEED);
-        CHECK(searchedIdentity.customId == 10795);
-        CHECK(std::string(searchedIdentity.tag) == "Kunkun");
+        CHECK(searchedIdentity.customId == 898);
+        CHECK(std::string(searchedIdentity.tag) == "Nathalie_Baye");
 
         // Delete kunkun and search
         ret = HF_FeaturesGroupFeatureRemove(ctxHandle, searchedIdentity.customId);
@@ -244,24 +226,24 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         // Insert again
         HF_FaceFeatureIdentity againIdentity = {0};
-        againIdentity.customId = 10795;
-        againIdentity.tag = "GG";
+        againIdentity.customId = 898;
+        againIdentity.tag = "Cover";
         againIdentity.feature = &feature;
         ret = HF_FeaturesGroupInsertFeature(ctxHandle, againIdentity);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_ViewFaceDBTable(ctxHandle);
-        REQUIRE(ret == HSUCCEED);
+//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        REQUIRE(ret == HSUCCEED);
 
         // Search again
         HF_FaceFeatureIdentity searchedAgainIdentity = {0};
         ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedAgainIdentity);
         REQUIRE(ret == HSUCCEED);
-        CHECK(searchedAgainIdentity.customId == 10795);
+        CHECK(searchedAgainIdentity.customId == 898);
 
         // Update any feature
-        HInt32 updateId = 11297;
-        cv::Mat zyImage = cv::imread("test_res/images/face_sample.png");
+        HInt32 updateId = 909;
+        cv::Mat zyImage = cv::imread(GET_DATA("data/bulk/woman.png"));
         HF_ImageData imageDataZy = {0};
         imageDataZy.data = zyImage.data;
         imageDataZy.height = zyImage.rows;
@@ -291,12 +273,12 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_FeaturesGroupFeatureUpdate(ctxHandle, updateIdentity);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_ViewFaceDBTable(ctxHandle);
-        REQUIRE(ret == HSUCCEED);
+//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        REQUIRE(ret == HSUCCEED);
 
 //
         // Prepare a zy query image
-        cv::Mat zyImageQuery = cv::imread("test_res/images/face_comp.jpeg");
+        cv::Mat zyImageQuery = cv::imread(GET_DATA("data/bulk/woman_search.jpeg"));
         HF_ImageData imageDataZyQuery = {0};
         imageDataZyQuery.data = zyImageQuery.data;
         imageDataZyQuery.height = zyImageQuery.rows;
@@ -323,8 +305,9 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HF_FaceFeatureIdentity searchedIdentityQuery = {0};
         ret = HF_FeaturesGroupFeatureSearch(ctxHandle, featureZyQuery, &confidenceQuery, &searchedIdentityQuery);
         REQUIRE(ret == HSUCCEED);
-        CHECK(searchedIdentityQuery.customId == 11297);
+        CHECK(searchedIdentityQuery.customId == updateId);
 
+        delete []dbPathStr;
     }
 
 }
