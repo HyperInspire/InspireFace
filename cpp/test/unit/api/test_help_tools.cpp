@@ -37,7 +37,6 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
         auto lfwDir = getLFWFunneledDir();
         auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
         size_t numOfNeedImport = 100;
-        TEST_PRINT("{}", dataList.size());
         auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
