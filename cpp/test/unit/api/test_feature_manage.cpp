@@ -122,6 +122,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
     }
 
     SECTION("Import a large faces data") {
+#if ENABLE_USE_LFW_DATA
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
@@ -163,9 +164,14 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(ret == HSUCCEED);
 
         delete []dbPathStr;
+
+#else
+        TEST_PRINT("The test case that uses LFW is not enabled, so it will be skipped.");
+#endif
     }
 
     SECTION("Faces Feature CURD") {
+#if ENABLE_USE_LFW_DATA
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
@@ -308,6 +314,187 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         CHECK(searchedIdentityQuery.customId == updateId);
 
         delete []dbPathStr;
+
+#else
+        TEST_PRINT("The test case that uses LFW is not enabled, so it will be skipped.");
+#endif
+    }
+
+    // Test the search time at 1k, 5k and 10k of the face library (the target face is at the back).
+    SECTION("Search Face benchmark from 1k") {
+#if ENABLE_BENCHMARK && ENABLE_USE_LFW_DATA
+        size_t loop = 1000;
+        size_t numOfNeedImport = 1000;
+        HResult ret;
+        std::string modelPath = GET_MODEL_FILE();
+        HPath path = modelPath.c_str();
+        HF_ContextCustomParameter parameter = {0};
+        parameter.enable_recognition = 1;
+        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HContextHandle ctxHandle;
+        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        REQUIRE(ret == HSUCCEED);
+        HF_DatabaseConfiguration configuration = {0};
+        auto dbPath = GET_SAVE_DATA(".test");
+        HString dbPathStr = new char[dbPath.size() + 1];
+        std::strcpy(dbPathStr, dbPath.c_str());
+        configuration.enableUseDb = 1;
+        configuration.dbPath = dbPathStr;
+        // Delete the previous data before testing
+        if (std::remove(configuration.dbPath) != 0) {
+            spdlog::trace("Error deleting file");
+        }
+        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        REQUIRE(ret == HSUCCEED);
+
+        auto lfwDir = getLFWFunneledDir();
+        auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
+        TEST_PRINT("{}", dataList.size());
+        auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
+        REQUIRE(importStatus);
+        HInt32 count;
+        ret = HF_FeatureGroupGetCount(ctxHandle, &count);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(count == numOfNeedImport);
+
+        // Face track
+        cv::Mat dstImage = cv::imread(GET_DATA("data/search/Teresa_Williams_0001_1k.jpg"));
+        HF_ImageData imageData = {0};
+        imageData.data = dstImage.data;
+        imageData.height = dstImage.rows;
+        imageData.width = dstImage.cols;
+        imageData.format = STREAM_BGR;
+        imageData.rotation = CAMERA_ROTATION_0;
+        HImageHandle imgHandle;
+        ret = HF_CreateImageStream(&imageData, &imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        // Extract basic face information from photos
+        HF_MultipleFaceData multipleFaceData = {0};
+        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum > 0);
+
+        // Extract face feature
+        HF_FaceFeature feature = {0};
+        ret = HF_FaceFeatureExtract(ctxHandle, imgHandle, multipleFaceData.tokens[0], &feature);
+        REQUIRE(ret == HSUCCEED);
+
+        // Search for a face
+        HFloat confidence;
+        HF_FaceFeatureIdentity searchedIdentity = {0};
+        auto start = (double) cv::getTickCount();
+        for (int i = 0; i < loop; ++i) {
+            ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedIdentity);
+        }
+        auto cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
+
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(searchedIdentity.customId == 999);
+        REQUIRE(std::string(searchedIdentity.tag) == "Teresa_Williams");
+
+        TEST_PRINT("<Benchmark> Search Face from 1k -> Loop: {}, Total Time: {:.2f}ms, Average Time: {:.2f}ms", loop, cost, cost / loop);
+
+        // Finish
+        ret = HF_ReleaseFaceContext(ctxHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        delete []dbPathStr;
+#else
+        TEST_PRINT("The benchmark test case for searching faces can only be executed if both the benchmark and lfw data functions are enabled at the same time, which has been skipped at present.");
+#endif
+    }
+
+    SECTION("Search Face benchmark from 5k") {
+#if ENABLE_BENCHMARK && ENABLE_USE_LFW_DATA
+        size_t loop = 1000;
+        size_t numOfNeedImport = 5000;
+        HResult ret;
+        std::string modelPath = GET_MODEL_FILE();
+        HPath path = modelPath.c_str();
+        HF_ContextCustomParameter parameter = {0};
+        parameter.enable_recognition = 1;
+        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HContextHandle ctxHandle;
+        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        REQUIRE(ret == HSUCCEED);
+        HF_DatabaseConfiguration configuration = {0};
+        auto dbPath = GET_SAVE_DATA(".test");
+        HString dbPathStr = new char[dbPath.size() + 1];
+        std::strcpy(dbPathStr, dbPath.c_str());
+        configuration.enableUseDb = 1;
+        configuration.dbPath = dbPathStr;
+        // Delete the previous data before testing
+        if (std::remove(configuration.dbPath) != 0) {
+            spdlog::trace("Error deleting file");
+        }
+        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        REQUIRE(ret == HSUCCEED);
+
+        auto lfwDir = getLFWFunneledDir();
+        auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
+        TEST_PRINT("{}", dataList.size());
+        auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
+        REQUIRE(importStatus);
+        HInt32 count;
+        ret = HF_FeatureGroupGetCount(ctxHandle, &count);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(count == numOfNeedImport);
+
+        // Face track
+        cv::Mat dstImage = cv::imread(GET_DATA("data/search/Mary_Katherine_Smart_0001_5k.jpg"));
+        HF_ImageData imageData = {0};
+        imageData.data = dstImage.data;
+        imageData.height = dstImage.rows;
+        imageData.width = dstImage.cols;
+        imageData.format = STREAM_BGR;
+        imageData.rotation = CAMERA_ROTATION_0;
+        HImageHandle imgHandle;
+        ret = HF_CreateImageStream(&imageData, &imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        // Extract basic face information from photos
+        HF_MultipleFaceData multipleFaceData = {0};
+        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum > 0);
+
+        // Extract face feature
+        HF_FaceFeature feature = {0};
+        ret = HF_FaceFeatureExtract(ctxHandle, imgHandle, multipleFaceData.tokens[0], &feature);
+        REQUIRE(ret == HSUCCEED);
+
+        // Search for a face
+        HFloat confidence;
+        HF_FaceFeatureIdentity searchedIdentity = {0};
+        auto start = (double) cv::getTickCount();
+        for (int i = 0; i < loop; ++i) {
+            ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedIdentity);
+        }
+        auto cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
+
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(searchedIdentity.customId == 4998);
+        REQUIRE(std::string(searchedIdentity.tag) == "Mary_Katherine_Smart");
+
+        TEST_PRINT("<Benchmark> Search Face from 5k -> Loop: {}, Total Time: {:.2f}ms, Average Time: {:.2f}ms", loop, cost, cost / loop);
+
+        // Finish
+        ret = HF_ReleaseFaceContext(ctxHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        delete []dbPathStr;
+#else
+        TEST_PRINT("The benchmark test case for searching faces can only be executed if both the benchmark and lfw data functions are enabled at the same time, which has been skipped at present.");
+#endif
+    }
+
+    SECTION("Feature extract benchmark") {
+#if ENABLE_BENCHMARK
+
+#else
+        TEST_PRINT("The benchmark is not enabled, so all relevant test cases are skipped.");
+#endif
     }
 
 }
