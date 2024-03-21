@@ -105,7 +105,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
 
     }
 
-#ifdef ENABLE_BENCHMARK
+#if ENABLE_BENCHMARK
     SECTION("FeatureSearchBenchmark") {
         DRAW_SPLIT_LINE
 
