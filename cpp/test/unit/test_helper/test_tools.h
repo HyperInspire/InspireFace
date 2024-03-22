@@ -10,7 +10,8 @@
 #include <fstream>
 #include <cstdint> // For uint8_t
 
-inline HResult ReadImageToImageStream(const char *path, HImageHandle& handle) {
+inline HResult ReadImageToImageStream(const char *path, HImageHandle &handle, HF_ImageFormat format = STREAM_BGR,
+                                      HF_Rotation rot = CAMERA_ROTATION_0) {
     cv::Mat image = cv::imread(path);
     if (image.empty()) {
         return -1;
@@ -19,8 +20,8 @@ inline HResult ReadImageToImageStream(const char *path, HImageHandle& handle) {
     imageData.data = image.data;
     imageData.height = image.rows;
     imageData.width = image.cols;
-    imageData.format = STREAM_BGR;
-    imageData.rotation = CAMERA_ROTATION_0;
+    imageData.format = format;
+    imageData.rotation = rot;
 
     auto ret = HF_CreateImageStream(&imageData, &handle);
 
@@ -28,11 +29,11 @@ inline HResult ReadImageToImageStream(const char *path, HImageHandle& handle) {
 }
 
 
-inline uint8_t* ReadNV21Data(const char* filePath, int width, int height) {
+inline uint8_t *ReadNV21Data(const char *filePath, int width, int height) {
     const int nv21Size = width * height * 3 / 2; // Calculate the NV21 data size
 
     // Memory is allocated dynamically to store NV21 data
-    uint8_t* nv21Data = new uint8_t[nv21Size];
+    uint8_t *nv21Data = new uint8_t[nv21Size];
 
     std::ifstream file(filePath, std::ios::binary);
     if (!file.is_open()) {
@@ -42,7 +43,7 @@ inline uint8_t* ReadNV21Data(const char* filePath, int width, int height) {
     }
 
     // Read data
-    file.read(reinterpret_cast<char*>(nv21Data), nv21Size);
+    file.read(reinterpret_cast<char *>(nv21Data), nv21Size);
     if (!file) {
         std::cerr << "Read error or incomplete file" << std::endl;
         file.close();

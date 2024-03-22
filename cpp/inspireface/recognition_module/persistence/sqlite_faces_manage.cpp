@@ -68,7 +68,7 @@ int32_t SQLiteFaceManage::CloseDatabase() {
     m_db_.reset();
 
     // Optionally, log that the database was successfully closed
-    LOGD("Database successfully closed.");
+//    LOGD("Database successfully closed.");
 
     return HSUCCEED;
 }
@@ -96,7 +96,7 @@ int32_t SQLiteFaceManage::CreateTable() {
         return result;
     }
 
-    LOGD("Table successfully created or already exists.");
+//    LOGD("Table successfully created or already exists.");
     return SQLITE_OK;  // or SUCCESS_CODE, based on your error code system
 }
 
@@ -214,7 +214,7 @@ int32_t SQLiteFaceManage::DeleteFeature(int32_t customId) {
     // Clean up the statement
     sqlite3_finalize(stmt);
 
-    LOGD("Feature with customId: %d successfully deleted.", customId);
+//    LOGD("Feature with customId: %d successfully deleted.", customId);
     return HSUCCEED;
 }
 
@@ -255,7 +255,7 @@ int32_t SQLiteFaceManage::UpdateFeature(const FaceFeatureInfo& info) {
     // Clean up the statement
     sqlite3_finalize(stmt);
 
-    LOGD("Feature with customId: %d successfully updated.", info.customId);
+//    LOGD("Feature with customId: %d successfully updated.", info.customId);
     return HSUCCEED;
 }
 
@@ -338,7 +338,7 @@ int32_t SQLiteFaceManage::GetTotalFeatures(std::vector<FaceFeatureInfo>& infoLis
     // Clean up the statement
     sqlite3_finalize(stmt);
 
-    LOGD("Successfully retrieved all features.");
+//    LOGD("Successfully retrieved all features.");
     return HSUCCEED;
 }
 
