@@ -47,3 +47,7 @@ std::string getLFWFunneledDir() {
     }
     return lfwFunneledPath;
 }
+
+std::string getBenchmarkRecordFile() {
+    return getTestSaveData(TEST_BENCHMARK_RECORD);
+}

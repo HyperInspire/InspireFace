@@ -8,20 +8,20 @@
 #include <spdlog/spdlog.h>
 #include <iostream>
 
+#define TEST_MODEL_FILE "Pikachu-t1"                       // Optional model file
 
 #define ENABLE_BENCHMARK 1                                 // Whether to run the benchmark snippet
 #define ENABLE_USE_LFW_DATA 1                              // Example Start the case for using LFW Data
 
-#define TEST_MODEL_FILE "Pikachu-t1"                       // Optional model file
-
 #define TEST_LFW_FUNNELED_TXT "valid_lfw_funneled.txt"     // LFW Index txt file
 #define LFW_FUNNELED_DIR ""                                // LFW funneled data dir
+#define TEST_BENCHMARK_RECORD "benchmark.csv"
 
 using namespace Catch::Detail;
 
 #define TEST_PRINT(...) SPDLOG_LOGGER_CALL(spdlog::get("TEST"), spdlog::level::trace, __VA_ARGS__)
-#define TEST_PRINT_OUTPUT(open) TestMsgGuard test_msg_guard_##open(open)
-#define LOG_OUTPUT_LEVEL(level) LogLevelGuard log_level_guard_##level(level);
+#define TEST_PRINT_OUTPUT(open) TestMessageBroadcast test_msg_broadcast_##open(open)
+#define LOG_OUTPUT_LEVEL(level) LogLevelBroadcast log_level_broadcast_##level(level);
 
 #define GET_DIR getTestDataDir()
 #define GET_DATA(filename) getTestData(filename)
@@ -45,7 +45,9 @@ std::string getTestLFWFunneledTxt();
 
 std::string getLFWFunneledDir();
 
-/** 日志级别 */
+std::string getBenchmarkRecordFile();
+
+/** Logger level */
 enum LOG_LEVEL {
     TRACE = 0,  ///< trace
     DEBUG = 1,  ///< debug
@@ -56,9 +58,9 @@ enum LOG_LEVEL {
     OFF = 6,    ///< off
 };
 
-class TestMsgGuard {
+class TestMessageBroadcast {
 public:
-    TestMsgGuard(bool open) : m_old_level(spdlog::level::trace) {
+    explicit TestMessageBroadcast(bool open) : m_old_level(spdlog::level::trace) {
         auto logger = spdlog::get("TEST");
         m_old_level = logger->level();
         if (open) {
@@ -72,7 +74,7 @@ public:
         }
     }
 
-    ~TestMsgGuard() {
+    ~TestMessageBroadcast() {
         spdlog::get("TEST")->set_level(m_old_level);
     }
 
@@ -82,14 +84,14 @@ private:
 };
 
 
-class LogLevelGuard {
+class LogLevelBroadcast {
 public:
-    LogLevelGuard(LOG_LEVEL level) {
+    explicit LogLevelBroadcast(LOG_LEVEL level) {
         m_oldLevel = level;
         spdlog::set_level(spdlog::level::level_enum(level));
     }
 
-    ~LogLevelGuard() {
+    ~LogLevelBroadcast() {
         spdlog::set_level(spdlog::level::level_enum(spdlog::level::trace));
     }
 
