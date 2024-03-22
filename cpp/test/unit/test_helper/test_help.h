@@ -10,6 +10,8 @@
 #include <string>
 #include <fstream>
 #include <cassert>
+#include <sstream>
+#include <iomanip>
 #include <indicators/block_progress_bar.hpp>
 #include <indicators/cursor_control.hpp>
 #include "inspireface/c_api/inspireface.h"
@@ -166,6 +168,35 @@ inline std::pair<std::vector<std::vector<float>>, std::vector<std::string>> Load
     return std::make_pair(featureMatrix, tagNames);
 }
 
+inline double CalculateOverlap(const HFaceRect& box1, const HFaceRect& box2) {
+    // Calculate the coordinates of the intersection rectangle
+    HInt32 x_overlap = std::max(0, std::min(box1.x + box1.width, box2.x + box2.width) - std::max(box1.x, box2.x));
+    HInt32 y_overlap = std::max(0, std::min(box1.y + box1.height, box2.y + box2.height) - std::max(box1.y, box2.y));
 
+    // Calculate the area of the intersection
+    HInt32 overlap_area = x_overlap * y_overlap;
+
+    // Calculate the area of each rectangle
+    HInt32 box1_area = box1.width * box1.height;
+    HInt32 box2_area = box2.width * box2.height;
+
+    // Calculate the total area
+    HInt32 total_area = box1_area + box2_area - overlap_area;
+
+    // Calculate the overlap ratio
+    double overlap_ratio = total_area > 0 ? static_cast<double>(overlap_area) / total_area : 0;
+
+    return overlap_ratio;
+}
+
+inline std::vector<std::string> generateFilenames(const std::string& templateStr, int start, int end) {
+    std::vector<std::string> filenames;
+    for (int i = start; i <= end; ++i) {
+        std::ostringstream oss;
+        oss << "frame-" << std::setw(4) << std::setfill('0') << i << ".jpg";
+        filenames.push_back(oss.str());
+    }
+    return filenames;
+}
 
 #endif //HYPERFACEREPO_TEST_HELP_H

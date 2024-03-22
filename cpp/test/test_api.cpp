@@ -9,6 +9,7 @@
 #include "settings/test_settings.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include "spdlog/spdlog.h"
+#include "unit/test_helper/simple_csv_writer.h"
 
 int init_test_logger() {
     std::string name("TEST");
@@ -19,13 +20,24 @@ int init_test_logger() {
 #else
     logger->set_level(spdlog::level::off);
 #endif
-    logger->set_pattern("%Y-%m-%d %H:%M:%S.%e [test message] =====> %v");
+    logger->set_pattern("%Y-%m-%d %H:%M:%S.%e [Test Message] ===> %v");
     spdlog::register_logger(logger);
+    return 0;
+}
+
+int init_test_benchmark_record() {
+#if ENABLE_BENCHMARK
+    if (std::remove(getBenchmarkRecordFile().c_str()) != 0) {
+        spdlog::trace("Error deleting file");
+    }
+    BenchmarkRecord record(getBenchmarkRecordFile());
+#endif
     return 0;
 }
 
 int main(int argc, char* argv[]) {
     init_test_logger();
+    init_test_benchmark_record();
 
     return Catch::Session().run(argc, argv);
 }
