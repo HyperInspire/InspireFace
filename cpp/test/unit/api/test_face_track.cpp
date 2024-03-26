@@ -125,18 +125,89 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
 
         // Left side face
         HImageHandle leftHandle;
-        ret = ReadImageToImageStream(GET_DATA("pose/left_face.jpeg").c_str(), leftHandle);
+        ret = ReadImageToImageStream(GET_DATA("data/pose/left_face.jpeg").c_str(), leftHandle);
         REQUIRE(ret == HSUCCEED);
 
         ret = HF_FaceContextRunFaceTrack(ctxHandle, leftHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
 
-        angle = multipleFaceData.angles[0];
+        HFloat yaw, pitch, roll;
+        bool checked;
 
+        // Left-handed rotation
+        yaw = multipleFaceData.angles.yaw[0];
+        checked = (yaw > -90 && yaw < -10);
+        CHECK(checked);
 
+        HF_ReleaseImageStream(leftHandle);
+
+        // Right-handed rotation
+        HImageHandle rightHandle;
+        ret = ReadImageToImageStream(GET_DATA("data/pose/right_face.png").c_str(), rightHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HF_FaceContextRunFaceTrack(ctxHandle, rightHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum == 1);
+        yaw = multipleFaceData.angles.yaw[0];
+        checked = (yaw > 10 && yaw < 90);
+        CHECK(checked);
+
+        HF_ReleaseImageStream(rightHandle);
+
+        // Rise head
+        HImageHandle riseHandle;
+        ret = ReadImageToImageStream(GET_DATA("data/pose/rise_face.jpeg").c_str(), riseHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HF_FaceContextRunFaceTrack(ctxHandle, riseHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum == 1);
+        pitch = multipleFaceData.angles.pitch[0];
+        CHECK(pitch > 5);
+        HF_ReleaseImageStream(riseHandle);
+
+        // Lower head
+        HImageHandle lowerHandle;
+        ret = ReadImageToImageStream(GET_DATA("data/pose/lower_face.jpeg").c_str(), lowerHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HF_FaceContextRunFaceTrack(ctxHandle, lowerHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum == 1);
+        pitch = multipleFaceData.angles.pitch[0];
+        CHECK(pitch < -10);
+        HF_ReleaseImageStream(lowerHandle);
+
+        // Roll head
+        HImageHandle leftWryneckHandle;
+        ret = ReadImageToImageStream(GET_DATA("data/pose/left_wryneck.png").c_str(), leftWryneckHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HF_FaceContextRunFaceTrack(ctxHandle, leftWryneckHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum == 1);
+        roll = multipleFaceData.angles.roll[0];
+        CHECK(roll < -30);
+        HF_ReleaseImageStream(leftWryneckHandle);
+
+        // Roll head
+        HImageHandle rightWryneckHandle;
+        ret = ReadImageToImageStream(GET_DATA("data/pose/right_wryneck.png").c_str(), rightWryneckHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HF_FaceContextRunFaceTrack(ctxHandle, rightWryneckHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum == 1);
+        roll = multipleFaceData.angles.roll[0];
+        CHECK(roll > 30);
+        HF_ReleaseImageStream(rightWryneckHandle);
+
+        //  finish
         ret = HF_ReleaseFaceContext(ctxHandle);
         REQUIRE(ret == HSUCCEED);
+
     }
 
     SECTION("Face detection benchmark") {
