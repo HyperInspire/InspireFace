@@ -56,7 +56,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
 
 
     SECTION("Test LFW evaluation") {
-//#if TEST_EVALUATION_ENABLE
+#if ENABLE_TEST_EVALUATION
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
@@ -113,8 +113,6 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
             float mostSim;
             auto succ = FindMostSimilarScoreFromTwoPic(ctxHandle, imgPath1, imgPath2, mostSim);
             if (!succ) {
-                std::cout << imgPath1 << std::endl;
-                std::cout << imgPath2 << std::endl;
                 continue;
             }
 
@@ -124,6 +122,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
             // Update progress
             progress = 100.0f * (float)(i + 1) / pairs.size();
         }
+
         REQUIRE(labels.size() == confidences.size());
         TEST_PRINT("scan pair: {}", labels.size());
         bar.set_progress(100.0f);
@@ -132,11 +131,12 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
 
         auto result = FindBestThreshold(confidences, labels);
         TEST_PRINT("Best Threshold: {}, Best Accuracy: {}", result.first, result.second);
-
+        EvaluationRecord record(getEvaluationRecordFile());
+        record.insertEvaluationData(TEST_MODEL_FILE, "LFW", result.second, result.first);
         // finish
         ret = HF_ReleaseFaceContext(ctxHandle);
         REQUIRE(ret == HSUCCEED);
-//#endif
+#endif
     }
 
 }
