@@ -125,6 +125,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
             progress = 100.0f * (float)(i + 1) / pairs.size();
         }
         REQUIRE(labels.size() == confidences.size());
+        TEST_PRINT("scan pair: {}", labels.size());
         bar.set_progress(100.0f);
         // Show cursor
         show_console_cursor(true);
