@@ -12,11 +12,13 @@
 
 #define ENABLE_BENCHMARK 1                                 // Whether to run the benchmark snippet
 #define ENABLE_USE_LFW_DATA 1                              // Example Start the case for using LFW Data
+#define ENABLE_TEST_EVALUATION 1                           // Enable the evaluation test
 
 #define TEST_LFW_FUNNELED_TXT "valid_lfw_funneled.txt"     // LFW Index txt file
 #define LFW_FUNNELED_DIR ""                                // LFW funneled data dir
 #define TEST_LFW_EVALUATION_TXT "pairs.txt"
 #define TEST_BENCHMARK_RECORD "benchmark.csv"
+#define TEST_EVALUATION_RECORD "evaluation.csv"
 
 using namespace Catch::Detail;
 
@@ -49,6 +51,8 @@ std::string getTestLFWFunneledEvaTxt();
 std::string getLFWFunneledDir();
 
 std::string getBenchmarkRecordFile();
+
+std::string getEvaluationRecordFile();
 
 /** Logger level */
 enum LOG_LEVEL {

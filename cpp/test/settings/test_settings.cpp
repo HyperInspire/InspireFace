@@ -55,3 +55,7 @@ std::string getLFWFunneledDir() {
 std::string getBenchmarkRecordFile() {
     return getTestSaveData(TEST_BENCHMARK_RECORD);
 }
+
+std::string getEvaluationRecordFile() {
+    return getTestSaveData(TEST_EVALUATION_RECORD);
+}
