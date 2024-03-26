@@ -15,6 +15,7 @@
 
 #define TEST_LFW_FUNNELED_TXT "valid_lfw_funneled.txt"     // LFW Index txt file
 #define LFW_FUNNELED_DIR ""                                // LFW funneled data dir
+#define TEST_LFW_EVALUATION_TXT "pairs.txt"
 #define TEST_BENCHMARK_RECORD "benchmark.csv"
 
 using namespace Catch::Detail;
@@ -42,6 +43,8 @@ std::string getTestSaveData(const std::string &name);
 std::string getTestModelsFile();
 
 std::string getTestLFWFunneledTxt();
+
+std::string getTestLFWFunneledEvaTxt();
 
 std::string getLFWFunneledDir();
 
