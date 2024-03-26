@@ -31,6 +31,10 @@ std::string getTestLFWFunneledTxt() {
     return getTestData(TEST_LFW_FUNNELED_TXT);
 }
 
+std::string getTestLFWFunneledEvaTxt() {
+    return getLFWFunneledDir() + "/" + TEST_LFW_EVALUATION_TXT;
+}
+
 std::string getLFWFunneledDir() {
     const char* testLfwFunneledDir = LFW_FUNNELED_DIR;
     std::string lfwFunneledPath;

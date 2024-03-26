@@ -18,6 +18,8 @@
 #include "limonp/StringUtil.hpp"
 #include "cnpy/npy.hpp"
 #include "opencv2/opencv.hpp"
+#include <iomanip>
+#include "test_tools.h"
 
 using namespace indicators;
 
@@ -197,6 +199,132 @@ inline std::vector<std::string> generateFilenames(const std::string& templateStr
         filenames.push_back(oss.str());
     }
     return filenames;
+}
+
+inline bool FindMostSimilarScoreFromTwoPic(HContextHandle handle, const std::string& img1, const std::string& img2, float& mostSimilar){
+    mostSimilar = -1.0f;
+    std::vector<std::vector<std::vector<float>>> features(2);
+    std::vector<std::string> images = {img1, img2};
+    for (int i = 0; i < 2; ++i) {
+        HImageHandle img;
+        auto ret = ReadImageToImageStream(images[i].c_str(), img);
+        if (ret != 0) {
+            std::cerr << "Image is not found: " << ret << std::endl;
+            return false;
+        }
+        HF_MultipleFaceData multipleFaceData = {0};
+        ret = HF_FaceContextRunFaceTrack(handle, img, &multipleFaceData);
+        if (ret != 0) {
+            std::cerr << "Error track: " << ret << std::endl;
+            HF_ReleaseImageStream(img);
+            return false;
+        }
+        HInt32 featureNum;
+        HF_GetFeatureLength(handle, &featureNum);
+        for (int j = 0; j < multipleFaceData.detectedNum; ++j) {
+            std::vector<float> feature(featureNum, 0.0f);
+            ret = HF_FaceFeatureExtractCpy(handle, img, multipleFaceData.tokens[j], feature.data());
+            if (ret != 0) {
+                std::cerr << "Error extract: " << ret << std::endl;
+                HF_ReleaseImageStream(img);
+                return false;
+            }
+            features[i].push_back(feature);
+        }
+        HF_ReleaseImageStream(img);
+    }
+
+    if (features[0].empty() || features[1].empty()) {
+//        std::cerr << "Not detected " << std::endl;
+        return false;
+    }
+    auto &features1 = features[0];
+    auto &features2 = features[1];
+    for (auto &feat1: features1) {
+        for (auto &feat2: features2) {
+            float comp;
+            HF_FaceFeature faceFeature1 = {0};
+            faceFeature1.size = feat1.size();
+            faceFeature1.data = feat1.data();
+            HF_FaceFeature faceFeature2 = {0};
+            faceFeature2.size = feat2.size();
+            faceFeature2.data = feat2.data();
+
+            HF_FaceComparison1v1(handle, faceFeature1, faceFeature2, &comp);
+            if (comp > mostSimilar) {
+                mostSimilar = comp;
+            }
+        }
+    }
+
+    return true;
+}
+
+inline std::vector<std::vector<std::string>> ReadPairs(const std::string& pairs_filename) {
+    std::vector<std::vector<std::string>> pairs;
+    std::ifstream file(pairs_filename); // Open the file
+    std::string line;
+
+    if (!file.is_open()) {
+        std::cerr << "Unable to open file: " << pairs_filename << std::endl;
+        return pairs; // If the file cannot be opened, an empty list is returned
+    }
+
+    std::getline(file, line); // Skip the first line
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::vector<std::string> pair;
+        std::string element;
+
+        while (iss >> element) {
+            pair.push_back(element);
+        }
+        if (!pair.empty()) {
+            pairs.push_back(pair);
+        }
+    }
+
+    return pairs;
+}
+
+inline std::string zfill(int number, int width) {
+    std::ostringstream oss;
+    // Set padding to '0' and define the string width
+    oss << std::setfill('0') << std::setw(width) << number;
+    return oss.str();
+}
+
+inline std::pair<float, float> FindBestThreshold(const std::vector<float>& similarities, const std::vector<int>& labels) {
+    std::vector<float> thresholds;
+    for (float i = 0.0f; i < 1.0f; i += 0.01f) {
+        thresholds.push_back(i);
+    }
+
+    float best_threshold = 0.0f;
+    float best_accuracy = 0.0f;
+
+    for (auto& threshold : thresholds) {
+        std::vector<int> predictions;
+        for (auto& similarity : similarities) {
+            predictions.push_back(similarity > threshold ? 1 : 0);
+        }
+
+        int correct = 0;
+        for (size_t i = 0; i < labels.size(); ++i) {
+            if (predictions[i] == labels[i]) {
+                ++correct;
+            }
+        }
+
+        float accuracy = static_cast<float>(correct) / static_cast<float>(labels.size());
+
+        if (accuracy > best_accuracy) {
+            best_accuracy = accuracy;
+            best_threshold = threshold;
+        }
+    }
+
+    return {best_threshold, best_accuracy};
 }
 
 #endif //HYPERFACEREPO_TEST_HELP_H
