@@ -43,7 +43,8 @@ set_target_properties(TestSource PROPERTIES
 
 # =======================External API Testing===========================
 file(GLOB_RECURSE TEST_INTERNAL_FILES unit/api/*.cpp)
-add_executable(TestAPI ${CMAKE_CURRENT_SOURCE_DIR}/test_api.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
+add_executable(TestAPI ${CMAKE_CURRENT_SOURCE_DIR}/test_api.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES}
+        unit/api/test_evaluation.cpp)
 target_link_libraries(TestAPI InspireFace ${DEPEND})
 target_include_directories(TestAPI PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/

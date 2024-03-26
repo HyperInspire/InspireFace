@@ -52,10 +52,10 @@ protected:
 
 class BenchmarkRecord : public SimpleCSVWriter {
 public:
-    BenchmarkRecord(const std::string& filepath) : SimpleCSVWriter(filepath) {
+    BenchmarkRecord(const std::string& filepath, const std::string &name = "Benchmark") : SimpleCSVWriter(filepath) {
         std::ifstream file(this->filepath);
         if (file.peek() == std::ifstream::traits_type::eof()) { // If the file is empty, insert header data
-            std::vector<std::string> header = {"Benchmark", "Loops", "Total Time(ms)", "Average Time(ms)"};
+            std::vector<std::string> header = {name, "Loops", "Total Time(ms)", "Average Time(ms)"};
             SimpleCSVWriter::insertData(header);
         }
     }
@@ -69,6 +69,30 @@ public:
         // Format output
         file << std::fixed << std::setprecision(5);
         file << caseName << "," << loops << "," << totalCost << "," << avgCost << "\n";
+        file.close();
+    }
+};
+
+
+class EvaluationRecord : public SimpleCSVWriter {
+public:
+    EvaluationRecord(const std::string& filepath) : SimpleCSVWriter(filepath) {
+        std::ifstream file(this->filepath);
+        if (file.peek() == std::ifstream::traits_type::eof()) { // If the file is empty, insert header data
+            std::vector<std::string> header = {"Resource Version", "Dataset", "Accuracy", "Best Threshold"};
+            SimpleCSVWriter::insertData(header);
+        }
+    }
+
+    void insertEvaluationData(const std::string &modelName, const std::string &dataset, double accuracy, double bestThreshold) {
+        std::ofstream file(this->filepath, std::ios_base::app);
+        if (!file.is_open()) {
+            std::cerr << "Failed to open file: " << this->filepath << std::endl;
+            return;
+        }
+        // Format output
+        file << std::fixed << std::setprecision(5);
+        file << modelName << "," << dataset << "," << accuracy << "," << bestThreshold << "\n";
         file.close();
     }
 };

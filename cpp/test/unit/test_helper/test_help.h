@@ -207,7 +207,9 @@ inline bool FindMostSimilarScoreFromTwoPic(HContextHandle handle, const std::str
     std::vector<std::string> images = {img1, img2};
     for (int i = 0; i < 2; ++i) {
         HImageHandle img;
-        auto ret = ReadImageToImageStream(images[i].c_str(), img);
+//        auto ret = ReadImageToImageStream(images[i].c_str(), img);
+        auto cvMat = cv::imread(images[i]);
+        auto ret = CVImageToImageStream(cvMat, img);
         if (ret != 0) {
             std::cerr << "Image is not found: " << ret << std::endl;
             return false;
