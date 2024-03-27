@@ -198,10 +198,10 @@ int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
     Configurable param;
     InferenceHelper::HelperType type;
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
-    param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
+    param.set<int>("model_index", ModelIndex::_06_msafa27);
     param.set<std::string>("input_layer", "data");
-    param.set<std::vector<std::string>>("outputs_layers", {"fc1", });
-    param.set<std::vector<int>>("input_size", {96, 96});
+    param.set<std::vector<std::string>>("outputs_layers", {"556", });
+    param.set<std::vector<int>>("input_size", {80, 80});
     param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);        // RGB mode
@@ -210,6 +210,7 @@ int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
     param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
     param.set<bool>("nchw", false);
     type = InferenceHelper::kRknn;
+    m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofing>(80, true);
 #else
     param.set<int>("model_index", ModelIndex::_06_msafa27);
     param.set<std::string>("input_layer", "data");
@@ -219,8 +220,8 @@ int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);        // RGB mode
     type = InferenceHelper::kMnn;
+    m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofing>(112);
 #endif
-    m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofing>();
     m_rgb_anti_spoofing_->loadData(param, model, type);
     return 0;
 }
