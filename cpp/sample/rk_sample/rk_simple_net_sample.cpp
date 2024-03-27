@@ -249,6 +249,7 @@ void test_liveness() {
     std::vector<std::string> names = {
             "test_res/images/test_data/real.jpg",
             "test_res/images/test_data/fake.jpg",
+            "test_res/images/test_data/live.jpg",
     };
 
     for (int i = 0; i < names.size(); ++i) {
@@ -263,19 +264,19 @@ void test_liveness() {
 
 
 int main() {
-    loader.Reset("test_res/model_zip/Pikachu-t1_rv1109rv1126");
+    loader.Reset("test_res/model_zip/Gundam_RV1109");
 
 //    test_rnet();
 
 //    test_mask();
 
-    test_quality();
+//    test_quality();
 
 //    test_landmark_mnn();
 
 //    test_landmark();
 
-//    test_liveness();
+    test_liveness();
 
     return 0;
 }
