@@ -8,8 +8,8 @@ import cv2
 from rknn.api import RKNN
 
 
-ONNX_MODEL = '/tunm/work/HyperFace/resource/models_raw/_06_2_7_80x80_MiniFASNetV2.onnx'
-RKNN_MODEL = '/tunm/work/HyperFace/resource/models_rv1109rv1126/_06_2_7_80x80_MiniFASNetV2.rknn'
+ONNX_MODEL = '/tunm/work/InspireFace/resource/models_raw/_06_2_7_80x80_MiniFASNetV2.onnx'
+RKNN_MODEL = '_06_2_7_80x80_MiniFASNetV2.rknn'
 
 DATASET = './data.txt'
 QUANTIZE_ON = True
@@ -81,16 +81,17 @@ if __name__ == '__main__':
         exit(ret)
     print('done')
 
-    list_ = ["fake.jpg", "real.jpg", ]
+    list_ = ["fake.jpg", "real.jpg", "ttt.jpg", "live.jpg"]
     outputs = list()
     for name in list_:
         img = cv2.imread(name)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         output = rknn.inference(inputs=[img])
         output = output[0][0]
         sm = softmax(output)
-        print(f"ot: {name} {output}")
-        print(f"sm: {name} {sm}")
+        print(f"origin: {name} {output}")
+        print(f"softmax: {name} {sm}")
+        print("---")
 
 '''
 --> Init runtime environment
