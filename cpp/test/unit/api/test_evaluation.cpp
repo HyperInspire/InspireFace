@@ -122,12 +122,12 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
             // Update progress
             progress = 100.0f * (float)(i + 1) / pairs.size();
         }
+        // Show cursor
+        show_console_cursor(true);
 
         REQUIRE(labels.size() == confidences.size());
         TEST_PRINT("scan pair: {}", labels.size());
         bar.set_progress(100.0f);
-        // Show cursor
-        show_console_cursor(true);
 
         auto result = FindBestThreshold(confidences, labels);
         TEST_PRINT("Best Threshold: {}, Best Accuracy: {}", result.first, result.second);
