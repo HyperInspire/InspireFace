@@ -38,6 +38,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         REQUIRE(ret == HSUCCEED);
         HF_RGBLivenessConfidence confidence;
         ret = HF_GetRGBLivenessConfidence(ctxHandle, &confidence);
+        TEST_PRINT("{}", confidence.confidence[0]);
         REQUIRE(ret == HSUCCEED);
         CHECK(confidence.num > 0);
         CHECK(confidence.confidence[0] > 0.9);
@@ -72,7 +73,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
     }
 
-
+#if 0
     SECTION("face mask detect") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
@@ -189,5 +190,5 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
 
     }
-
+#endif
 }

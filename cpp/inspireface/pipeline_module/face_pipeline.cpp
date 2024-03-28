@@ -97,10 +97,12 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
 
             auto img = image.GetScaledImage(1.0, true);
             cv::Rect oriRect(face.rect.x, face.rect.y, face.rect.width, face.rect.height);
-            auto rect = GetNewBox(img.cols, img.rows, oriRect, 2.7);
+            auto rect = GetNewBox(img.cols, img.rows, oriRect, 2.7f);
             auto crop = img(rect);
 //            cv::imwrite("crop.jpg", crop);
             auto score = (*m_rgb_anti_spoofing_)(crop);
+//            auto i = cv::imread("zsb.jpg");
+//            LOGE("SBA: %f", (*m_rgb_anti_spoofing_)(i));
             faceLivenessCache = score;
             break;
         }
