@@ -81,7 +81,7 @@ if __name__ == '__main__':
         exit(ret)
     print('done')
 
-    list_ = ["fake.jpg", "real.jpg", "ttt.jpg", "live.jpg"]
+    list_ = ["fake.jpg", "real.jpg", "ttt.jpg", "live.jpg", "w2.jpg"]
     outputs = list()
     for name in list_:
         img = cv2.imread(name)
@@ -108,4 +108,24 @@ ot: fake.jpg [ 2.2725     1.1071154 -3.3796153]
 sm: fake.jpg [0.7602755  0.23705594 0.00266863]
 ot: real.jpg [-2.039423    2.5055768  -0.46615383]
 sm: real.jpg [0.01000172 0.9417661  0.04823218]
+'''
+
+
+'''New quant 
+origin: fake.jpg [ 5.252926  -4.377438  -0.8754876]
+softmax: fake.jpg [9.9775928e-01 6.5555912e-05 2.1751518e-03]
+---
+origin: real.jpg [-5.1945596  3.968877   1.2256826]
+softmax: real.jpg [9.8454810e-05 9.3943536e-01 6.0466200e-02]
+---
+origin: ttt.jpg [-4.8443646  3.3268528  1.5175118]
+softmax: ttt.jpg [2.4283746e-04 8.5907352e-01 1.4068362e-01]
+---
+origin: live.jpg [-6.4202423  2.217902   4.8443646]
+softmax: live.jpg [1.1953859e-05 6.7453817e-02 9.3253422e-01]
+---
+origin: w2.jpg [-4.2023406  3.0350237  1.1673168]
+softmax: w2.jpg [6.2258221e-04 8.6565346e-01 1.3372397e-01]
+---
+
 '''

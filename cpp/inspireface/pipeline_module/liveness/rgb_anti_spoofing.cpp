@@ -35,7 +35,7 @@ RBGAntiSpoofing::RBGAntiSpoofing(int input_size, bool use_softmax): AnyNet("RBGA
 float RBGAntiSpoofing::operator()(const Matrix &bgr_affine27) {
     cv::Mat input;
     cv::resize(bgr_affine27, input, cv::Size(m_input_size_, m_input_size_));
-//    cv::imwrite("live.jpg", input);
+//    cv::imwrite("bb.jpg", input);
     AnyTensorOutputs outputs;
     Forward(input, outputs);
     if (m_softmax_) {
