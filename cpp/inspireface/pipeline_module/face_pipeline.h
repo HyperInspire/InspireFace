@@ -66,6 +66,8 @@ public:
      */
     int32_t Process(CameraStream &image, const HyperFaceData &face, FaceProcessFunction proc);
 
+    const std::shared_ptr<RBGAntiSpoofing> &getMRgbAntiSpoofing() const;
+
 private:
     /**
      * @brief Initializes the AgePredict model.
@@ -117,7 +119,7 @@ private:
     std::shared_ptr<AgePredict> m_age_predict_;            ///< Pointer to AgePredict instance.
     std::shared_ptr<GenderPredict> m_gender_predict_;      ///< Pointer to GenderPredict instance.
     std::shared_ptr<MaskPredict> m_mask_predict_;          ///< Pointer to MaskPredict instance.
-    std::shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_; ///< Pointer to RBGAntiSpoofing instance.
+    std::shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_;   ///< Pointer to RBGAntiSpoofing instance.
     std::shared_ptr<LivenessInteraction> m_liveness_interaction_spoofing_; ///< Pointer to LivenessInteraction instance.
 
 public:
