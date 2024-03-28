@@ -584,6 +584,61 @@ inline cv::Mat RotateRect(cv::Rect &rect, std::vector<cv::Point2f> &dst,
     return trans;
 }
 
+// Structure to hold bounding box coordinates
+struct BoundingBox {
+    int left_top_x;
+    int left_top_y;
+    int right_bottom_x;
+    int right_bottom_y;
+};
+
+inline cv::Rect GetNewBox(int src_w, int src_h, cv::Rect bbox, float scale) {
+    // Convert cv::Rect to BoundingBox
+    BoundingBox box;
+    box.left_top_x = bbox.x;
+    box.left_top_y = bbox.y;
+    box.right_bottom_x = bbox.x + bbox.width;
+    box.right_bottom_y = bbox.y + bbox.height;
+
+    // Compute new bounding box
+    scale = std::min({static_cast<float>(src_h - 1) / bbox.height, static_cast<float>(src_w - 1) / bbox.width, scale});
+
+    float new_width = bbox.width * scale;
+    float new_height = bbox.height * scale;
+    float center_x = bbox.width / 2.0f + bbox.x;
+    float center_y = bbox.height / 2.0f + bbox.y;
+
+    float left_top_x = center_x - new_width / 2.0f;
+    float left_top_y = center_y - new_height / 2.0f;
+    float right_bottom_x = center_x + new_width / 2.0f;
+    float right_bottom_y = center_y + new_height / 2.0f;
+
+    if (left_top_x < 0) {
+        right_bottom_x -= left_top_x;
+        left_top_x = 0;
+    }
+
+    if (left_top_y < 0) {
+        right_bottom_y -= left_top_y;
+        left_top_y = 0;
+    }
+
+    if (right_bottom_x > src_w - 1) {
+        left_top_x -= right_bottom_x - src_w + 1;
+        right_bottom_x = src_w - 1;
+    }
+
+    if (right_bottom_y > src_h - 1) {
+        left_top_y -= right_bottom_y - src_h + 1;
+        right_bottom_y = src_h - 1;
+    }
+
+    // Convert back to cv::Rect for output
+    cv::Rect new_bbox(static_cast<int>(left_top_x), static_cast<int>(left_top_y),
+                      static_cast<int>(right_bottom_x - left_top_x), static_cast<int>(right_bottom_y - left_top_y));
+    return new_bbox;
+}
+
 // inline void ScaleAffineMatrixAlignCenter(cv::Mat &affine,float scale , int w,
 // int h) {
 //
