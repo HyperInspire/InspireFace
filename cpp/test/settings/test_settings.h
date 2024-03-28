@@ -8,12 +8,12 @@
 #include <spdlog/spdlog.h>
 #include <iostream>
 
-#define TEST_MODEL_FILE "Pikachu-t1"                       // Optional model file
-//#define TEST_MODEL_FILE "Gundam_RV1109"                       // Optional model file
+//#define TEST_MODEL_FILE "Pikachu-t1"                       // Optional model file
+#define TEST_MODEL_FILE "Gundam_RV1109"                       // Optional model file
 
 #define ENABLE_BENCHMARK 1                                 // Whether to run the benchmark snippet
-#define ENABLE_USE_LFW_DATA 0                              // Example Start the case for using LFW Data
-#define ENABLE_TEST_EVALUATION 0                           // Enable the evaluation test
+#define ENABLE_USE_LFW_DATA 1                              // Example Start the case for using LFW Data
+#define ENABLE_TEST_EVALUATION 1                           // Enable the evaluation test
 
 #define TEST_LFW_FUNNELED_TXT "valid_lfw_funneled.txt"     // LFW Index txt file
 #define LFW_FUNNELED_DIR ""                                // LFW funneled data dir
