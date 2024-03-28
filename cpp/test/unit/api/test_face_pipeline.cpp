@@ -10,7 +10,7 @@
 TEST_CASE("test_FacePipeline", "[face_pipeline]") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
-
+#if ENABLE_TEST_LINEVENESS
     SECTION("rgb liveness detect") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
@@ -49,31 +49,31 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
 
         // fake face
-//        HImageHandle img2Handle;
-//        auto img2 = cv::imread(GET_DATA("images/rgb_fake.jpg"));
-//        ret = CVImageToImageStream(img2, img2Handle);
-//        REQUIRE(ret == HSUCCEED);
-//        ret = HF_FaceContextRunFaceTrack(ctxHandle, img2Handle, &multipleFaceData);
-//        REQUIRE(ret == HSUCCEED);
-//        ret = HF_MultipleFacePipelineProcess(ctxHandle, img2Handle, &multipleFaceData, parameter);
-//        REQUIRE(ret == HSUCCEED);
-//        ret = HF_GetRGBLivenessConfidence(ctxHandle, &confidence);
-//        REQUIRE(ret == HSUCCEED);
-//        CHECK(confidence.num > 0);
-//        CHECK(confidence.confidence[0] < 0.9);
-//
-//        ret = HF_ReleaseImageStream(img2Handle);
-//        REQUIRE(ret == HSUCCEED);
-//        img2Handle = nullptr;
-//
-//
-//        ret = HF_ReleaseFaceContext(ctxHandle);
-//        ctxHandle = nullptr;
-//        REQUIRE(ret == HSUCCEED);
+        HImageHandle img2Handle;
+        auto img2 = cv::imread(GET_DATA("images/rgb_fake.jpg"));
+        ret = CVImageToImageStream(img2, img2Handle);
+        REQUIRE(ret == HSUCCEED);
+        ret = HF_FaceContextRunFaceTrack(ctxHandle, img2Handle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        ret = HF_MultipleFacePipelineProcess(ctxHandle, img2Handle, &multipleFaceData, parameter);
+        REQUIRE(ret == HSUCCEED);
+        ret = HF_GetRGBLivenessConfidence(ctxHandle, &confidence);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(confidence.num > 0);
+        CHECK(confidence.confidence[0] < 0.9);
+
+        ret = HF_ReleaseImageStream(img2Handle);
+        REQUIRE(ret == HSUCCEED);
+        img2Handle = nullptr;
+
+
+        ret = HF_ReleaseFaceContext(ctxHandle);
+        ctxHandle = nullptr;
+        REQUIRE(ret == HSUCCEED);
 
     }
+#endif
 
-#if 0
     SECTION("face mask detect") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
@@ -87,7 +87,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // Get a face picture
         HImageHandle img1Handle;
-        auto img1 = cv::imread(GET_DATA("images/mask.png"));
+        auto img1 = cv::imread(GET_DATA("images/mask2.jpg"));
         ret = CVImageToImageStream(img1, img1Handle);
         REQUIRE(ret == HSUCCEED);
 
@@ -190,5 +190,5 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
 
     }
-#endif
+
 }
