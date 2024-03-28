@@ -7,6 +7,9 @@ import numpy as np
 import cv2
 from rknn.api import RKNN
 
+"""
+用来量化的数据对推理结果有较大的影响，当前采用LFW数据进行原图量化 未进行测试
+"""
 
 ONNX_MODEL = '/tunm/work/InspireFace/resource/models_raw/_06_2_7_80x80_MiniFASNetV2.onnx'
 RKNN_MODEL = '_06_2_7_80x80_MiniFASNetV2.rknn'
