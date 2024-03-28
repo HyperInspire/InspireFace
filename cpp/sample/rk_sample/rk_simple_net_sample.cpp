@@ -11,6 +11,7 @@
 #include "inspireface/track_module/quality/face_pose_quality.h"
 #include "inspireface/track_module/landmark/face_landmark.h"
 #include "inspireface/pipeline_module/liveness/rgb_anti_spoofing.h"
+#include "inspireface/face_context.h"
 
 using namespace inspire;
 
@@ -235,7 +236,7 @@ void test_liveness() {
     param.set<std::vector<int>>("input_size", {80, 80});
     param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
-    param.set<bool>("swap_color", true);        // RGB mode
+    param.set<bool>("swap_color", false);        // RGB mode
     param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
     param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
     param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
@@ -250,6 +251,9 @@ void test_liveness() {
             "test_res/images/test_data/real.jpg",
             "test_res/images/test_data/fake.jpg",
             "test_res/images/test_data/live.jpg",
+            "test_res/images/test_data/ttt.jpg",
+            "test_res/images/test_data/w.jpg",
+            "test_res/images/test_data/w2.jpg",
     };
 
     for (int i = 0; i < names.size(); ++i) {
@@ -262,6 +266,29 @@ void test_liveness() {
 
 }
 
+int test_liveness_ctx() {
+    CustomPipelineParameter parameter;
+    parameter.enable_liveness = true;
+    FaceContext ctx;
+    ctx.Configuration("test_res/model_zip/Gundam_RV1109", inspire::DETECT_MODE_IMAGE, 3, parameter);
+    std::vector<std::string> names = {
+            "test_res/images/test_data/real.jpg",
+            "test_res/images/test_data/fake.jpg",
+            "test_res/images/test_data/live.jpg",
+            "test_res/images/test_data/ttt.jpg",
+            "test_res/images/test_data/w.jpg",
+            "test_res/images/test_data/w2.jpg",
+    };
+
+    for (int i = 0; i < names.size(); ++i) {
+        auto image = cv::imread(names[i]);
+        auto score = (*ctx.FacePipelineModule()->getMRgbAntiSpoofing())(image);
+        LOGD("%s : %f", names[i].c_str(), score);
+    }
+
+
+    return 0;
+}
 
 int main() {
     loader.Reset("test_res/model_zip/Gundam_RV1109");
@@ -277,6 +304,6 @@ int main() {
 //    test_landmark();
 
     test_liveness();
-
+    test_liveness_ctx();
     return 0;
 }

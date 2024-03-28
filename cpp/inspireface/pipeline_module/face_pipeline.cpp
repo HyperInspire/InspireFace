@@ -91,14 +91,16 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
             if (m_rgb_anti_spoofing_ == nullptr) {
                 return HERR_CTX_PIPELINE_FAILURE;       // 未初始化
             }
-            std::vector<cv::Point2f> pointsFive;
-            for (const auto &p: face.keyPoints) {
-                pointsFive.push_back(HPointToPoint2f(p));
-            }
-            auto trans27 = getTransformMatrixSafas(pointsFive);
-            trans27.convertTo(trans27, CV_64F);
-            auto align112x27 = image.GetAffineRGBImage(trans27, 112, 112);
-            auto score = (*m_rgb_anti_spoofing_)(align112x27);
+//            auto trans27 = getTransformMatrixSafas(pointsFive);
+//            trans27.convertTo(trans27, CV_64F);
+//            auto align112x27 = image.GetAffineRGBImage(trans27, 112, 112);
+
+            auto img = image.GetScaledImage(1.0, true);
+            cv::Rect oriRect(face.rect.x, face.rect.y, face.rect.width, face.rect.height);
+            auto rect = GetNewBox(img.cols, img.rows, oriRect, 2.7);
+            auto crop = img(rect);
+//            cv::imwrite("crop.jpg", crop);
+            auto score = (*m_rgb_anti_spoofing_)(crop);
             faceLivenessCache = score;
             break;
         }
@@ -139,10 +141,13 @@ int32_t FacePipeline::Process(CameraStream &image, FaceObject &face) {
     }
 
     if (m_rgb_anti_spoofing_ != nullptr) {
-        auto trans27 = getTransformMatrixSafas(lmk_5);
-        trans27.convertTo(trans27, CV_64F);
-        auto align112x27 = image.GetAffineRGBImage(trans27, 112, 112);
-        auto score = (*m_rgb_anti_spoofing_)(align112x27);
+//        auto trans27 = getTransformMatrixSafas(lmk_5);
+//        trans27.convertTo(trans27, CV_64F);
+//        auto align112x27 = image.GetAffineRGBImage(trans27, 112, 112);
+        auto img = image.GetScaledImage(1.0, true);
+        auto rect = GetNewBox(img.cols, img.rows, face.getBbox(), 2.7);
+        auto crop = img(rect);
+        auto score = (*m_rgb_anti_spoofing_)(crop);
         if (score > 0.88) {
             face.faceProcess.rgbLivenessInfo = RGBLivenessInfo::LIVENESS_REAL;
         } else {
@@ -200,11 +205,11 @@ int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
     param.set<int>("model_index", ModelIndex::_06_msafa27);
     param.set<std::string>("input_layer", "data");
-    param.set<std::vector<std::string>>("outputs_layers", {"556", });
+    param.set<std::vector<std::string>>("outputs_layers", {"556",});
     param.set<std::vector<int>>("input_size", {80, 80});
     param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
-    param.set<bool>("swap_color", true);        // RGB mode
+    param.set<bool>("swap_color", false);        // RGB mode
     param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
     param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
     param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
@@ -228,6 +233,10 @@ int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
 
 int32_t FacePipeline::InitLivenessInteraction(Model *model) {
     return 0;
+}
+
+const std::shared_ptr<RBGAntiSpoofing> &FacePipeline::getMRgbAntiSpoofing() const {
+    return m_rgb_anti_spoofing_;
 }
 
 
