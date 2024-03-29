@@ -42,6 +42,7 @@ public:
      * @return int32_t Status of the loading and initialization process.
      */
     int32_t loadData(const Configurable &param, Model *model, InferenceHelper::HelperType type = InferenceHelper::kMnn) {
+        m_infer_type_ = type;
         // must
         pushData<int>(param, "model_index", 0);
         pushData<std::string>(param, "input_layer", "");
@@ -60,7 +61,7 @@ public:
         pushData<int>(param, "threads", 1);
 
         int model_index = getData<int>("model_index");
-        m_nn_inference_.reset(InferenceHelper::Create(type));
+        m_nn_inference_.reset(InferenceHelper::Create(m_infer_type_));
         m_nn_inference_->SetNumThreads(getData<int>("threads"));
 
         m_output_tensor_info_list_.clear();
@@ -123,17 +124,17 @@ public:
      */
     void Forward(const Matrix &data, AnyTensorOutputs& outputs) {
         InputTensorInfo& input_tensor_info = getMInputTensorInfoList()[0];
-#ifdef INFERENCE_HELPER_ENABLE_RKNN
-        // Start by simply implementing a temporary color shift on the outside
-        if (getData<bool>("swap_color")) {
-            cv::cvtColor(data, m_cache_, cv::COLOR_BGR2RGB);
-            input_tensor_info.data = m_cache_.data;
+        if (m_infer_type_ == InferenceHelper::kRknn) {
+            // Start by simply implementing a temporary color shift on the outside
+            if (getData<bool>("swap_color")) {
+                cv::cvtColor(data, m_cache_, cv::COLOR_BGR2RGB);
+                input_tensor_info.data = m_cache_.data;
+            } else {
+                input_tensor_info.data = data.data;
+            }
         } else {
             input_tensor_info.data = data.data;
         }
-#else
-        input_tensor_info.data = data.data;
-#endif
         Forward(outputs);
     }
 
@@ -193,7 +194,7 @@ protected:
     std::string m_name_;                                                ///< Name of the neural network.
 
 private:
-
+    InferenceHelper::HelperType m_infer_type_;                          ///< Inference engine type
     std::shared_ptr<InferenceHelper> m_nn_inference_;                   ///< Shared pointer to the inference helper.
     std::vector<InputTensorInfo> m_input_tensor_info_list_;             ///< List of input tensor information.
     std::vector<OutputTensorInfo> m_output_tensor_info_list_;           ///< List of output tensor information.

@@ -26,7 +26,7 @@ FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enable
         }
     }
 
-    // 初始化性别预测模型（假设Index为0）
+    // Initialize the gender prediction model (assuming Index is 0)
     if (m_enable_gender_) {
         auto ret = InitGenderPredict(loader.ReadModel(0));
         if (ret != 0) {
@@ -34,7 +34,7 @@ FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enable
         }
     }
 
-    // 初始化口罩检测模型（假设Index为0）
+    // Initialize the mask detection model
     if (m_enable_mask_detect_) {
         auto ret = InitMaskPredict(loader.ReadModel(ModelIndex::_05_mask));
         if (ret != 0) {
@@ -42,7 +42,7 @@ FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enable
         }
     }
 
-    // 初始化RGB活体检测模型（假设Index为0）
+    // Initializing the RGB live detection model
     if (m_enable_liveness_) {
         auto ret = InitRBGAntiSpoofing(loader.ReadModel(ModelIndex::_06_msafa27));
         if (ret != 0) {
@@ -50,7 +50,7 @@ FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enable
         }
     }
 
-    // 初始化配合活体检测的模型（假设Index为0）
+    // Initializing the model for in-vivo detection (assuming Index is 0)
     if (m_enable_interaction_liveness_) {
         auto ret = InitLivenessInteraction(loader.ReadModel(0));
         if (ret != 0) {
@@ -65,7 +65,7 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
     switch (proc) {
         case PROCESS_MASK: {
             if (m_mask_predict_ == nullptr) {
-                return HERR_CTX_PIPELINE_FAILURE;       // 未初始化
+                return HERR_CTX_PIPELINE_FAILURE;       // uninitialized
             }
             std::vector<cv::Point2f> pointsFive;
             for (const auto &p: face.keyPoints) {
@@ -89,7 +89,7 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
         }
         case PROCESS_RGB_LIVENESS: {
             if (m_rgb_anti_spoofing_ == nullptr) {
-                return HERR_CTX_PIPELINE_FAILURE;       // 未初始化
+                return HERR_CTX_PIPELINE_FAILURE;       // uninitialized
             }
 //            auto trans27 = getTransformMatrixSafas(pointsFive);
 //            trans27.convertTo(trans27, CV_64F);
@@ -108,13 +108,13 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
         }
         case PROCESS_AGE: {
             if (m_age_predict_ == nullptr) {
-                return HERR_CTX_PIPELINE_FAILURE;       // 未初始化
+                return HERR_CTX_PIPELINE_FAILURE;       // uninitialized
             }
             break;
         }
         case PROCESS_GENDER: {
             if (m_gender_predict_ == nullptr) {
-                return HERR_CTX_PIPELINE_FAILURE;       // 未初始化
+                return HERR_CTX_PIPELINE_FAILURE;       // uninitialized
             }
             break;
         }
@@ -123,7 +123,7 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
 }
 
 int32_t FacePipeline::Process(CameraStream &image, FaceObject &face) {
-    // 跟踪状态下计次达到要求 或 处于检测状态 执行pipeline
+    // In the tracking state, the count meets the requirements or the pipeline is executed in the detection state
     auto lmk = face.landmark_;
     std::vector<cv::Point2f> lmk_5 = {lmk[FaceLandmark::LEFT_EYE_CENTER],
                                  lmk[FaceLandmark::RIGHT_EYE_CENTER],
@@ -204,7 +204,7 @@ int32_t FacePipeline::InitMaskPredict(Model *model) {
 int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
     Configurable param;
     InferenceHelper::HelperType type;
-#ifdef INFERENCE_HELPER_ENABLE_RKNN
+#if defined(INFERENCE_HELPER_ENABLE_RKNN) && defined(ENABLE_RKNPU_RGBLIVENESS)
     param.set<int>("model_index", ModelIndex::_06_msafa27);
     param.set<std::string>("input_layer", "data");
     param.set<std::vector<std::string>>("outputs_layers", {"556",});
