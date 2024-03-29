@@ -278,6 +278,7 @@ int test_liveness_ctx() {
             "test_res/images/test_data/ttt.jpg",
             "test_res/images/test_data/w.jpg",
             "test_res/images/test_data/w2.jpg",
+            "test_res/images/test_data/bb.png",
     };
 
     for (int i = 0; i < names.size(); ++i) {

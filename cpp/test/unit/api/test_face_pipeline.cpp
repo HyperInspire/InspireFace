@@ -10,7 +10,7 @@
 TEST_CASE("test_FacePipeline", "[face_pipeline]") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
-#if ENABLE_TEST_LINEVENESS
+
     SECTION("rgb liveness detect") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
@@ -47,7 +47,6 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         REQUIRE(ret == HSUCCEED);
         img1Handle = nullptr;
 
-
         // fake face
         HImageHandle img2Handle;
         auto img2 = cv::imread(GET_DATA("images/rgb_fake.jpg"));
@@ -72,7 +71,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         REQUIRE(ret == HSUCCEED);
 
     }
-#endif
+
 
     SECTION("face mask detect") {
         HResult ret;
