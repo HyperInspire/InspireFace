@@ -85,7 +85,7 @@ def decoding(data, input_size=(320, 320)):
     fmc = 3
     _num_anchors = 2
     center_cache = {}
-    thresh = 0.4
+    thresh = 0.3
     max_num = 0
     for idx, stride in enumerate(_feat_stride_fpn):
         scores = data[idx]
@@ -140,7 +140,7 @@ if __name__ == '__main__':
     loaded_data_list = np.load('pickle.npy', allow_pickle=True)
     # for arr in loaded_data_list:
     #     print(arr.shape)
-    img = cv2.imread("input.jpg")
+    img = cv2.imread("Ben_Chandler_0001_norm.jpg")
     dets = decoding(loaded_data_list)
 
     for det in dets:
