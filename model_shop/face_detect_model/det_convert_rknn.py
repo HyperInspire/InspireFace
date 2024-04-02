@@ -9,11 +9,11 @@ from rknn.api import RKNN
 
 
 ONNX_MODEL = '/tunm/work/HyperFace/resource/models_raw/_00_scrfd_500m_bnkps_shape320x320.onnx'
-RKNN_MODEL = '/tunm/work/HyperFace/resource/models_rv1109rv1126/_00_scrfd_500m_bnkps_shape320x320.rknn'
+RKNN_MODEL = '_00_scrfd_500m_bnkps_shape320x320_wider_qt.rknn'
 
 DATASET = './data.txt'
 QUANTIZE_ON = True
-IMG_PATH = "input.jpg"
+IMG_PATH = "Ben_Chandler_0001_norm.jpg"
 
 if __name__ == '__main__':
     rknn = RKNN()

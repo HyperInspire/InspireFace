@@ -36,8 +36,4 @@
 
 #endif //ANDROID
 
-//#else
-//#define LOGD(format, ...)
-//#endif
-
 #endif // _LOG_UTILS_H_

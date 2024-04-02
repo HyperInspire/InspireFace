@@ -338,6 +338,8 @@ private:
     std::shared_ptr<FaceFeaturePtr> m_face_feature_ptr_cache_;     ///< Shared pointer to cache of face feature pointers
 
     char m_string_cache_[256];                                     ///< Cache for temporary string storage
+
+    ModelLoader m_model_loader_;
 };
 
 }   // namespace hyper
