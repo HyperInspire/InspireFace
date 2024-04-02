@@ -85,6 +85,14 @@ if (ENABLE_RKNN)
 
 endif()
 
+# cpp yaml
+file(GLOB_RECURSE CPP_YAML_SRC ${THIRD_PARTY_DIR}/cpp_yaml/src/)
+set(SOURCE_FILES ${SOURCE_FILES} ${CPP_YAML_SRC})
+set(CPP_YAML_INCLUDE ${THIRD_PARTY_DIR}/cpp_yaml/include)
+
+# archive
+set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/microtar/microtar.c)
+
 # MNN
 message(MNN_INCLUDE_DIRS=${MNN_INCLUDE_DIRS})
 message(MNN_LIBS=${MNN_LIBS})
@@ -110,6 +118,9 @@ endif ()
 
 # add sqlite3 header
 set(NEED_INCLUDE ${NEED_INCLUDE} ${THIRD_PARTY_DIR}/sqlite/)
+
+# add cpp yaml header
+set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE})
 
 target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
