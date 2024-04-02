@@ -49,5 +49,9 @@
 #define HERR_CTX_DB_EXECUTING_FAILURE        (HERR_CTX_BASE+56)              // SQL execution error
 #define HERR_CTX_DB_NOT_VALID_FOLDER_PATH    (HERR_CTX_BASE+57)              // Invalid folder path
 
+#define HERR_CTX_ARCHIVE_LOAD_FAILURE           (HERR_CTX_BASE+80)              // Archive load failure
+#define HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE     (HERR_CTX_BASE+81)              // Model load failure
+#define HERR_CTX_ARCHIVE_FILE_FORMAT_ERROR      (HERR_CTX_BASE+82)              // The archive format is incorrect
+
 
 #endif //HYPERFACEREPO_HERROR_H

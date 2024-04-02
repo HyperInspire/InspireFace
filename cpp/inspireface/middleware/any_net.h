@@ -12,6 +12,7 @@
 #include "model_loader/model_loader.h"
 #include "opencv2/opencv.hpp"
 #include "../log.h"
+#include "model_archive/inspire_archive.h"
 
 namespace inspire {
 
@@ -74,6 +75,89 @@ public:
         auto ret = m_nn_inference_->Initialize(model->caffemodelBuffer, model->modelsize.caffemodel_size, m_input_tensor_info_list_, m_output_tensor_info_list_);
         if (ret != InferenceHelper::kRetOk) {
             LOGE("NN Initialize fail");
+        }
+
+        m_input_tensor_info_list_.clear();
+        InputTensorInfo input_tensor_info(getData<std::string>("input_layer"), tensor_type, getData<bool>("nchw"));
+        std::vector<int> input_size = getData<std::vector<int>>("input_size");
+        int width = input_size[0];
+        int height = input_size[1];
+        m_input_image_size_ = {width, height};
+        int channel = getData<int>("input_channel");
+        if (getData<bool>("nchw")) {
+            input_tensor_info.tensor_dims =  { 1, channel, m_input_image_size_.height, m_input_image_size_.width };
+        } else {
+            input_tensor_info.tensor_dims =  { 1, m_input_image_size_.height, m_input_image_size_.width, channel };
+        }
+
+        input_tensor_info.data_type = getData<int>("data_type");
+        int image_channel = getData<int>("input_image_channel");
+        input_tensor_info.image_info.channel = image_channel;
+
+        std::vector<float> mean = getData<std::vector<float>>("mean");
+        std::vector<float> norm = getData<std::vector<float>>("norm");
+        input_tensor_info.normalize.mean[0] = mean[0];
+        input_tensor_info.normalize.mean[1] = mean[1];
+        input_tensor_info.normalize.mean[2] = mean[2];
+        input_tensor_info.normalize.norm[0] = norm[0];
+        input_tensor_info.normalize.norm[1] = norm[1];
+        input_tensor_info.normalize.norm[2] = norm[2];
+
+        input_tensor_info.image_info.width = width;
+        input_tensor_info.image_info.height = height;
+        input_tensor_info.image_info.channel = channel;
+        input_tensor_info.image_info.crop_x = 0;
+        input_tensor_info.image_info.crop_y = 0;
+        input_tensor_info.image_info.crop_width = width;
+        input_tensor_info.image_info.crop_height = height;
+        input_tensor_info.image_info.is_bgr = getData<bool>("nchw");
+        input_tensor_info.image_info.swap_color = getData<bool>("swap_color");
+
+        m_input_tensor_info_list_.push_back(input_tensor_info);
+
+        return 0;
+    }
+ /**
+     * @brief Loads parameters and initializes the model for inference.
+     * @param param Parameters for network configuration.
+     * @param model Pointer to the model.
+     * @param type Type of the inference helper (default: kMnn).
+     * @return int32_t Status of the loading and initialization process.
+     */
+    int32_t loadData(InspireModel &model, InferenceHelper::HelperType type = InferenceHelper::kMnn) {
+        m_infer_type_ = type;
+        // must
+        pushData<int>(model.Config(), "model_index", 0);
+        pushData<std::string>(model.Config(), "input_layer", "");
+        pushData<std::vector<std::string>>(model.Config(), "outputs_layers", {"", });
+        pushData<std::vector<int>>(model.Config(), "input_size", {320, 320});
+        pushData<std::vector<float>>(model.Config(), "mean", {127.5f, 127.5f, 127.5f});
+        pushData<std::vector<float>>(model.Config(), "norm", {0.0078125f, 0.0078125f, 0.0078125f});
+        // rarely
+        pushData<int>(model.Config(), "input_channel", 3);
+        pushData<int>(model.Config(), "input_image_channel", 3);
+        pushData<bool>(model.Config(), "nchw", true);
+        pushData<bool>(model.Config(), "swap_color", false);
+        pushData<int>(model.Config(), "data_type", InputTensorInfo::InputTensorInfo::kDataTypeImage);
+        pushData<int>(model.Config(), "input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
+        pushData<int>(model.Config(), "output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
+        pushData<int>(model.Config(), "threads", 1);
+
+        int model_index = getData<int>("model_index");
+        m_nn_inference_.reset(InferenceHelper::Create(m_infer_type_));
+        m_nn_inference_->SetNumThreads(getData<int>("threads"));
+
+        m_output_tensor_info_list_.clear();
+        std::vector<std::string> outputs_layers = getData<std::vector<std::string>>("outputs_layers");
+        int tensor_type = getData<int>("input_tensor_type");
+        int out_tensor_type = getData<int>("output_tensor_type");
+        for (auto &name: outputs_layers) {
+            m_output_tensor_info_list_.push_back(OutputTensorInfo(name, out_tensor_type));
+        }
+        auto ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);
+        if (ret != InferenceHelper::kRetOk) {
+            LOGE("NN Initialize fail");
+            return ret;
         }
 
         m_input_tensor_info_list_.clear();
