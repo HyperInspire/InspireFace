@@ -10,6 +10,7 @@
 #include <opencv2/opencv.hpp>
 #include "middleware/Timer.h"
 #include "middleware/model_archive/inspire_archive.h"
+#include "herror.h"
 
 namespace inspire {
 
@@ -336,6 +337,42 @@ int FaceTrack::Configuration(ModelLoader &loader) {
     return 0;
 }
 
+int FaceTrack::Configuration(inspire::InspireArchive &archive) {
+    // Initialize the detection model
+    InspireModel detModel;
+    auto ret = archive.LoadModel("face_detect", detModel);
+    if (ret != SARC_SUCCESS) {
+        return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
+    }
+    InitDetectModel(detModel);
+
+    // Initialize the landmark model
+    InspireModel lmkModel;
+    ret = archive.LoadModel("landmark", lmkModel);
+    if (ret != SARC_SUCCESS) {
+        return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
+    }
+    InitLandmarkModel(lmkModel);
+
+    // Initialize the r-net model
+    InspireModel rnetModel;
+    ret = archive.LoadModel("refine_net", rnetModel);
+    if (ret != SARC_SUCCESS) {
+        return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
+    }
+    InitRNetModel(rnetModel);
+
+    // Initialize the pose quality model
+    InspireModel pquModel;
+    ret = archive.LoadModel("pose_quality", pquModel);
+    if (ret != SARC_SUCCESS) {
+        return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
+    }
+    InitFacePoseModel(pquModel);
+
+    return 0;
+}
+
 int FaceTrack::InitLandmarkModel(Model *model) {
     Configurable param;
     InferenceHelper::HelperType type;
@@ -364,6 +401,15 @@ int FaceTrack::InitLandmarkModel(Model *model) {
     m_landmark_predictor_->loadData(param, model, type);
 
     return 0;
+}
+
+int FaceTrack::InitLandmarkModel(InspireModel &model) {
+    m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
+    auto ret = m_landmark_predictor_->loadData(model, model.modelType);
+    if (ret != InferenceHelper::kRetOk) {
+        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+    }
+    return HSUCCEED;
 }
 
 int FaceTrack::InitDetectModel(Model *model) {
@@ -400,6 +446,16 @@ int FaceTrack::InitDetectModel(Model *model) {
     return 0;
 }
 
+int FaceTrack::InitDetectModel(InspireModel &model) {
+    auto input_size = model.Config().get<std::vector<int>>("input_size");
+    m_face_detector_ = std::make_shared<FaceDetect>(input_size[0]);
+    auto ret = m_face_detector_->loadData(model, model.modelType);
+    if (ret != InferenceHelper::kRetOk) {
+        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+    }
+    return HSUCCEED;
+}
+
 int FaceTrack::InitRNetModel(Model *model) {
     Configurable param;
     InferenceHelper::HelperType type;
@@ -432,6 +488,15 @@ int FaceTrack::InitRNetModel(Model *model) {
     return 0;
 }
 
+int FaceTrack::InitRNetModel(InspireModel &model) {
+    m_refine_net_ = std::make_shared<RNet>();
+    auto ret = m_refine_net_->loadData(model, model.modelType);
+    if (ret != InferenceHelper::kRetOk) {
+        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+    }
+    return HSUCCEED;
+}
+
 int FaceTrack::InitFacePoseModel(Model *model) {
     Configurable param;
     InferenceHelper::HelperType type;
@@ -462,6 +527,15 @@ int FaceTrack::InitFacePoseModel(Model *model) {
     m_face_quality_->loadData(param, model, type);
 
     return 0;
+}
+
+int FaceTrack::InitFacePoseModel(InspireModel &model) {
+    m_face_quality_ = std::make_shared<FacePoseQuality>();
+    auto ret = m_face_quality_->loadData(model, model.modelType);
+    if (ret != InferenceHelper::kRetOk) {
+        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+    }
+    return HSUCCEED;
 }
 
 double FaceTrack::GetTrackTotalUseTime() const {
