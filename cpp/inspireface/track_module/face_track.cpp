@@ -9,6 +9,7 @@
 #include "landmark/mean_shape.h"
 #include <opencv2/opencv.hpp>
 #include "middleware/Timer.h"
+#include "middleware/model_archive/inspire_archive.h"
 
 namespace inspire {
 
