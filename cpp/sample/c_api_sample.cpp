@@ -36,8 +36,8 @@ int compare() {
     }
 
     std::vector<std::string> names = {
-            "test_res/images/kun.jpg",
-            "test_res/images/Kunkun.jpg",
+            "/Users/tunm/datasets/lfw_funneled/Abel_Pacheco/Abel_Pacheco_0001.jpg",
+            "/Users/tunm/datasets/lfw_funneled/Abel_Pacheco/Abel_Pacheco_0004.jpg",
     };
     HInt32 featureNum;
     HF_GetFeatureLength(ctxHandle, &featureNum);

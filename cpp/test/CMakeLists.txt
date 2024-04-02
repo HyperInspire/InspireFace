@@ -20,18 +20,20 @@ if (ENABLE_RKNN)
 endif ()
 
 # =======================Common File Configuration===========================
-set(TEST_COMMON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/common/test_settings.cpp)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common)
+set(TEST_COMMON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/settings/test_settings.cpp)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/settings)
 
 # =======================Internal Import Tests===========================
-file(GLOB_RECURSE INTERNAL_TEST_INTERNAL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp)
+file(GLOB_RECURSE INTERNAL_TEST_INTERNAL_FILES unit/source/*.cpp)
 add_executable(TestSource ${CMAKE_CURRENT_SOURCE_DIR}/test_source.cpp ${INTERNAL_TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
 target_link_libraries(TestSource InspireFace ${DEPEND})
 target_include_directories(TestSource PUBLIC
-        .
+        ${CMAKE_CURRENT_SOURCE_DIR}/
         ${THIRD_PARTY_DIR}/spdlog
         ${THIRD_PARTY_DIR}/catch2
         ${THIRD_PARTY_DIR}/cnpy
+        ${THIRD_PARTY_DIR}/indicators
+        ${THIRD_PARTY_DIR}/limonp
         ${SRC_DIR}
 )
 
@@ -40,14 +42,17 @@ set_target_properties(TestSource PROPERTIES
 
 
 # =======================External API Testing===========================
-file(GLOB_RECURSE TEST_INTERNAL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/api/*.cpp)
-add_executable(TestAPI ${CMAKE_CURRENT_SOURCE_DIR}/test_api.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
+file(GLOB_RECURSE TEST_INTERNAL_FILES unit/api/*.cpp)
+add_executable(TestAPI ${CMAKE_CURRENT_SOURCE_DIR}/test_api.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES}
+        unit/api/test_evaluation.cpp)
 target_link_libraries(TestAPI InspireFace ${DEPEND})
 target_include_directories(TestAPI PUBLIC
-        .
+        ${CMAKE_CURRENT_SOURCE_DIR}/
         ${THIRD_PARTY_DIR}/spdlog
         ${THIRD_PARTY_DIR}/catch2
         ${THIRD_PARTY_DIR}/cnpy
+        ${THIRD_PARTY_DIR}/indicators
+        ${THIRD_PARTY_DIR}/limonp
         ${SRC_DIR}
         )
 

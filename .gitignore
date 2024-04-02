@@ -3,3 +3,5 @@ cmake-build-debug/*
 build/*
 test_*.rknn
 test_zip_*
+test_res/save/*
+!test_res/save/placeholder
