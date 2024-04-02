@@ -40,7 +40,7 @@ void FaceTrack::SparseLandmarkPredict(const cv::Mat &raw_face_crop, std::vector<
 bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     if (face.GetConfidence() < 0.1) {
         face.DisableTracking();
-//        LOGD("flag disable TrackFace");
+//        LOGD("flag disable TrackFace: %f", face.GetConfidence());
         return false;
     }
 //    LOGD("start track one");

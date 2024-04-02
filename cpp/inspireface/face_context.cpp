@@ -19,20 +19,21 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
     m_detect_mode_ = detect_mode;
     m_max_detect_face_ = max_detect_face;
     m_parameter_ = param;
-    ModelLoader loader(model_file_path);
-    if (loader.GetStatusCode() != PASS) {
-        if (loader.GetStatusCode() == PACK_ERROR)
+
+    m_model_loader_.Reset(model_file_path);
+    if (m_model_loader_.GetStatusCode() != PASS) {
+        if (m_model_loader_.GetStatusCode() == PACK_ERROR)
             return HERR_CTX_INVALID_RESOURCE;
-        else if (loader.GetStatusCode() == PACK_MODELS_NOT_MATCH)
+        else if (m_model_loader_.GetStatusCode() == PACK_MODELS_NOT_MATCH)
             return  HERR_CTX_NUM_OF_MODELS_NOT_MATCH;
     }
     m_face_track_ = std::make_shared<FaceTrack>(m_max_detect_face_);
-    m_face_track_->Configuration(loader);
+    m_face_track_->Configuration(m_model_loader_);
     SetDetectMode(m_detect_mode_);
 
-    m_face_recognition_ = std::make_shared<FaceRecognition>(loader, m_parameter_.enable_recognition);
+    m_face_recognition_ = std::make_shared<FaceRecognition>(m_model_loader_, m_parameter_.enable_recognition);
     m_face_pipeline_ = std::make_shared<FacePipeline>(
-            loader,
+            m_model_loader_,
             param.enable_liveness,
             param.enable_mask_detect,
             param.enable_age,

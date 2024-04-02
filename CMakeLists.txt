@@ -112,7 +112,7 @@ else()
 endif ()
 
 add_subdirectory(cpp/inspireface)  # Add a child project: InspireFace Source
-get_property(HyperFace TARGET InspireFace PROPERTY InspireFace)
+get_property(InspireFace TARGET InspireFace PROPERTY InspireFace)
 
 if (BUILD_WITH_SAMPLE)
     add_subdirectory(cpp/sample)  # Add a child project: Samples
