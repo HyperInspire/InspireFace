@@ -1,0 +1,228 @@
+tag: Pikachu
+version: v0.1.0
+
+face_detect:
+  name: _00_scrfd_500m_bnkps_shape320x320
+  fullname: _00_scrfd_500m_bnkps_shape320x320.rknn
+  version: 0.1
+  model_type: RKNN
+  infer_engine: RKNN
+  infer_device: RKNPU
+  infer_backend: RKNPU
+  input_channel: 3
+  input_image_channel: 3
+  nchw: false
+  swap_color: false
+  data_type: image
+  input_tensor_type: uint8
+  output_tensor_type: float32
+  threads: 1
+  input_layer: input.1
+  outputs_layers:
+    - output
+    - output1
+    - output2
+    - output3
+    - output4
+    - output5
+    - output6
+    - output7
+    - output8
+  input_size:
+    - 320
+    - 320
+  mean:
+    - 0.0
+    - 0.0
+    - 0.0
+  norm:
+    - 1.0
+    - 1.0
+    - 1.0
+
+landmark:
+  name: _01_lmk_u8
+  fullname: _01_lmk_u8.rknn
+  version: 0.1
+  model_type: RKNN
+  infer_engine: RKNN
+  infer_device: RKNPU
+  infer_backend: RKNPU
+  input_channel: 3
+  input_image_channel: 3
+  nchw: false
+  swap_color: false
+  data_type: image
+  input_tensor_type: uint8
+  output_tensor_type: float32
+  threads: 1
+  input_layer: input_1
+  outputs_layers:
+    - prelu1/add
+  input_size:
+    - 112
+    - 112
+  mean:
+    - 0.0
+    - 0.0
+    - 0.0
+  norm:
+    - 1.0
+    - 1.0
+    - 1.0
+
+refine_net:
+  name: _04_rnet
+  fullname: _04_rnet.rknn
+  version: 0.1
+  model_type: RKNN
+  infer_engine: RKNN
+  infer_device: RKNPU
+  infer_backend: RKNPU
+  input_channel: 3
+  input_image_channel: 3
+  nchw: false
+  swap_color: input_1
+  data_type: image
+  input_tensor_type: uint8
+  output_tensor_type: float32
+  threads: 1
+  input_layer: data
+  outputs_layers:
+    - conv5-1/Softma
+    - conv5-2/BiasAdd
+  input_size:
+    - 24
+    - 24
+  mean:
+    - 0.0
+    - 0.0
+    - 0.0
+  norm:
+    - 1.0
+    - 1.0
+    - 1.0
+
+pose_quality:
+  name: _07_pose-quality
+  fullname: _07_pose-quality.rknn
+  version: 0.1
+  model_type: RKNN
+  infer_engine: RKNN
+  infer_device: RKNPU
+  infer_backend: RKNPU
+  input_channel: 3
+  input_image_channel: 3
+  nchw: false
+  swap_color: true
+  data_type: image
+  input_tensor_type: uint8
+  output_tensor_type: float32
+  threads: 1
+  input_layer: data
+  outputs_layers:
+    - fc1
+  input_size:
+    - 96
+    - 96
+  mean:
+    - 0.0
+    - 0.0
+    - 0.0
+  norm:
+    - 1.0
+    - 1.0
+    - 1.0
+
+feature:
+  name: _03_r18_Glint360K_fixed
+  fullname: _03_r18_Glint360K_fixed.rknn
+  version: 0.1
+  model_type: RKNN
+  infer_engine: RKNN
+  infer_device: RKNPU
+  infer_backend: RKNPU
+  input_channel: 3
+  input_image_channel: 3
+  nchw: false
+  swap_color: true    # RK requires rgb input
+  data_type: image
+  input_tensor_type: uint8
+  output_tensor_type: float32
+  threads: 1
+  input_layer: input
+  outputs_layers:
+    - output
+  input_size:
+    - 112
+    - 112
+  mean:
+    - 0.0
+    - 0.0
+    - 0.0
+  norm:
+    - 1.0
+    - 1.0
+    - 1.0
+
+mask_detect:
+  name: _05_facemask_mb_025
+  fullname: _05_facemask_mb_025.rknn
+  version: 0.1
+  model_type: RKNN
+  infer_engine: RKNN
+  infer_device: RKNPU
+  infer_backend: RKNPU
+  input_channel: 3
+  input_image_channel: 3
+  nchw: false
+  swap_color: true
+  data_type: image
+  input_tensor_type: uint8
+  output_tensor_type: float32
+  threads: 1
+  input_layer: input_1
+  outputs_layers:
+    - activation_1/Softmax
+  input_size:
+    - 96
+    - 96
+  mean:
+    - 0.0
+    - 0.0
+    - 0.0
+  norm:
+    - 1.0
+    - 1.0
+    - 1.0
+
+rgb_anti_spoofing:
+  name: _06_msafa27
+  fullname: _06_msafa27.mnn
+  version: 0.1
+  model_type: MNN
+  infer_engine: MNN
+  infer_device: MNN
+  infer_backend: CPU
+  input_channel: 3
+  input_image_channel: 3
+  nchw: true
+  swap_color: true
+  data_type: image
+  input_tensor_type: float32
+  output_tensor_type: float32
+  threads: 1
+  input_layer: data
+  outputs_layers:
+    - softmax
+  input_size:
+    - 112
+    - 112
+  mean:
+    - 0.0
+    - 0.0
+    - 0.0
+  norm:
+    - 1.0
+    - 1.0
+    - 1.0
