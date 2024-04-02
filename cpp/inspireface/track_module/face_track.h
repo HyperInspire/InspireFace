@@ -10,6 +10,7 @@
 #include "common/face_info/all.h"
 #include "middleware/camera_stream/camera_stream.h"
 #include "quality/face_pose_quality.h"
+#include "middleware/model_archive/inspire_archive.h"
 
 namespace inspire {
 
@@ -37,6 +38,7 @@ public:
      * @return int Status of the configuration.
      */
     int Configuration(ModelLoader &loader);
+    int Configuration(InspireArchive &archive);
 
     /**
      * @brief Updates the video stream for face tracking.
@@ -99,6 +101,7 @@ private:
      * @return int Status of initialization.
      */
     int InitLandmarkModel(Model* model);
+    int InitLandmarkModel(InspireModel& model);
 
     /**
      * @brief Initializes the detection model.
@@ -106,6 +109,7 @@ private:
      * @return int Status of the initialization process. Returns 0 for success.
      */
     int InitDetectModel(Model* model);
+    int InitDetectModel(InspireModel& model);
 
     /**
      * @brief Initializes the RNet (Refinement Network) model.
@@ -113,6 +117,7 @@ private:
      * @return int Status of the initialization process. Returns 0 for success.
      */
     int InitRNetModel(Model* model);
+    int InitRNetModel(InspireModel& model);
 
     /**
      * @brief Initializes the face pose estimation model.
@@ -120,6 +125,7 @@ private:
      * @return int Status of the initialization process. Returns 0 for success.
      */
     int InitFacePoseModel(Model* model);
+    int InitFacePoseModel(InspireModel& model);
 
 public:
 

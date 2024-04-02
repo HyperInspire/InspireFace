@@ -78,6 +78,10 @@ public:
         bufferSize = size;
     }
 
+    Configurable& Config() {
+        return m_configuration;
+    }
+
 private:
 
     int32_t decode(const YAML::Node &node) {
@@ -185,7 +189,7 @@ public:
     std::string name;
     std::string fullname;
     std::string version;
-    int modelType;
+    InferenceHelper::HelperType modelType;
     int inferEngine;
     int inferDevice;
     int inferBackend;
