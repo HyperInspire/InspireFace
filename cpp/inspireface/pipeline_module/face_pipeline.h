@@ -11,6 +11,7 @@
 #include "liveness/all.h"
 #include "middleware/model_loader/model_loader.h"
 #include "common/face_data/data_tools.h"
+#include "middleware/model_archive/inspire_archive.h"
 
 namespace inspire {
 
@@ -46,6 +47,8 @@ public:
      */
     explicit FacePipeline(ModelLoader &loader, bool enableLiveness, bool enableMaskDetect, bool enableAge,
                           bool enableGender, bool enableInteractionLiveness);
+    explicit FacePipeline(InspireArchive &archive, bool enableLiveness, bool enableMaskDetect, bool enableAge,
+                          bool enableGender, bool enableInteractionLiveness);
 
     /**
      * @brief Processes a face using the specified FaceProcessFunction.
@@ -76,6 +79,7 @@ private:
      * @return int32_t Status code indicating success (0) or failure.
      */
     int32_t InitAgePredict(Model *model);
+    int32_t InitAgePredict(InspireModel &model);
 
     /**
      * @brief Initializes the GenderPredict model.
@@ -84,6 +88,7 @@ private:
      * @return int32_t Status code indicating success (0) or failure.
      */
     int32_t InitGenderPredict(Model *model);
+    int32_t InitGenderPredict(InspireModel &model);
 
     /**
      * @brief Initializes the MaskPredict model.
@@ -92,6 +97,7 @@ private:
      * @return int32_t Status code indicating success (0) or failure.
      */
     int32_t InitMaskPredict(Model *model);
+    int32_t InitMaskPredict(InspireModel &model);
 
     /**
      * @brief Initializes the RBGAntiSpoofing model.
@@ -100,6 +106,7 @@ private:
      * @return int32_t Status code indicating success (0) or failure.
      */
     int32_t InitRBGAntiSpoofing(Model *model);
+    int32_t InitRBGAntiSpoofing(InspireModel &model);
 
     /**
      * @brief Initializes the LivenessInteraction model.
@@ -108,6 +115,7 @@ private:
      * @return int32_t Status code indicating success (0) or failure.
      */
     int32_t InitLivenessInteraction(Model *model);
+    int32_t InitLivenessInteraction(InspireModel &model);
 
 private:
     const bool m_enable_liveness_ = false;                 ///< Whether RGB liveness detection is enabled.

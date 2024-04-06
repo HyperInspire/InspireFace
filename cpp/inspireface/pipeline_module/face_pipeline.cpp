@@ -60,6 +60,68 @@ FacePipeline::FacePipeline(ModelLoader &loader, bool enableLiveness, bool enable
 
 }
 
+FacePipeline::FacePipeline(InspireArchive &archive, bool enableLiveness, bool enableMaskDetect, bool enableAge,
+                           bool enableGender, bool enableInteractionLiveness)
+        : m_enable_liveness_(enableLiveness),
+          m_enable_mask_detect_(enableMaskDetect),
+          m_enable_age_(enableAge),
+          m_enable_gender_(enableGender),
+          m_enable_interaction_liveness_(enableInteractionLiveness) {
+
+    if (m_enable_age_) {
+        InspireModel ageModel;
+        auto ret = InitAgePredict(ageModel);
+        if (ret != 0) {
+            LOGE("InitAgePredict error.");
+        }
+    }
+
+    // Initialize the gender prediction model (assuming Index is 0)
+    if (m_enable_gender_) {
+        InspireModel genderModel;
+        auto ret = InitGenderPredict(genderModel);
+        if (ret != 0) {
+            LOGE("InitGenderPredict error.");
+        }
+    }
+
+    // Initialize the mask detection model
+    if (m_enable_mask_detect_) {
+        InspireModel maskModel;
+        auto ret = archive.LoadModel("mask_detect", maskModel);
+        if (ret != 0) {
+            LOGE("Load Mask model.");
+        }
+        ret = InitMaskPredict(maskModel);
+        if (ret != 0) {
+            LOGE("InitMaskPredict error.");
+        }
+    }
+
+    // Initializing the RGB live detection model
+    if (m_enable_liveness_) {
+        InspireModel livenessModel;
+        auto ret = archive.LoadModel("rgb_anti_spoofing", livenessModel);
+        if (ret != 0) {
+            LOGE("Load anti-spoofing model.");
+        }
+        ret = InitRBGAntiSpoofing(livenessModel);
+        if (ret != 0) {
+            LOGE("InitRBGAntiSpoofing error.");
+        }
+    }
+
+    // Initializing the model for in-vivo detection (assuming Index is 0)
+    if (m_enable_interaction_liveness_) {
+        InspireModel actLivenessModel;
+        auto ret = InitLivenessInteraction(actLivenessModel);
+        if (ret != 0) {
+            LOGE("InitLivenessInteraction error.");
+        }
+    }
+
+}
+
 
 int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, FaceProcessFunction proc) {
     switch (proc) {
@@ -166,7 +228,16 @@ int32_t FacePipeline::InitAgePredict(Model *model) {
     return 0;
 }
 
+int32_t FacePipeline::InitAgePredict(InspireModel &) {
+
+    return 0;
+}
+
 int32_t FacePipeline::InitGenderPredict(Model *model) {
+    return 0;
+}
+
+int32_t FacePipeline::InitGenderPredict(InspireModel &model) {
     return 0;
 }
 
@@ -201,6 +272,15 @@ int32_t FacePipeline::InitMaskPredict(Model *model) {
     return 0;
 }
 
+int32_t FacePipeline::InitMaskPredict(InspireModel &model) {
+    m_mask_predict_ = std::make_shared<MaskPredict>();
+    auto ret = m_mask_predict_->loadData(model, model.modelType);
+    if (ret != InferenceHelper::kRetOk) {
+        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+    }
+    return HSUCCEED;
+}
+
 int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
     Configurable param;
     InferenceHelper::HelperType type;
@@ -233,7 +313,21 @@ int32_t FacePipeline::InitRBGAntiSpoofing(Model *model) {
     return 0;
 }
 
+int32_t FacePipeline::InitRBGAntiSpoofing(InspireModel &model) {
+    auto input_size = model.Config().get<std::vector<int>>("input_size");
+    m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofing>(input_size[0]);
+    auto ret = m_rgb_anti_spoofing_->loadData(model, model.modelType);
+    if (ret != InferenceHelper::kRetOk) {
+        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+    }
+    return HSUCCEED;
+}
+
 int32_t FacePipeline::InitLivenessInteraction(Model *model) {
+    return 0;
+}
+
+int32_t FacePipeline::InitLivenessInteraction(InspireModel &model) {
     return 0;
 }
 

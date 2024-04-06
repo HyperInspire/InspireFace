@@ -11,12 +11,12 @@
  *        Includes definitions for face detection, tracking, and feature extraction.
  */
 
+#include <memory>
 #include "track_module/face_track.h"
 #include "data_type.h"
 #include "pipeline_module/face_pipeline.h"
 #include "recognition_module/face_recognition.h"
-#include <memory>
-
+#include "middleware/model_archive/inspire_archive.h"
 
 /**
  * @def DB_FILE_NAME
@@ -339,7 +339,8 @@ private:
 
     char m_string_cache_[256];                                     ///< Cache for temporary string storage
 
-    ModelLoader m_model_loader_;
+//    ModelLoader m_model_loader_;
+    InspireArchive m_archive_;
 };
 
 }   // namespace hyper

@@ -16,16 +16,26 @@ enum {
     FORMAT_ERROR = -12,
     NOT_MATCH_MODEL = -13,
     ERROR_MODEL_BUFFER = -14,
+    NOT_READ = -15,
 };
 
 class INSPIRE_API InspireArchive: SimpleArchive {
 public:
     InspireArchive() : SimpleArchive() {
-        m_status_ = loadManifestFile();
+        m_status_ = NOT_READ;
     }
 
     explicit InspireArchive(const std::string& archiveFile) : SimpleArchive(archiveFile) {
         m_status_ = loadManifestFile();
+    }
+
+    int32 ReLoad(const std::string& archiveFile) {
+        auto ret = Reset(archiveFile);
+        if (ret != SARC_SUCCESS) {
+            return ret;
+        }
+        m_status_ = loadManifestFile();
+        return m_status_;
     }
 
     int32_t QueryStatus() const {
