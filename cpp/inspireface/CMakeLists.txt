@@ -86,7 +86,7 @@ if (ENABLE_RKNN)
 endif()
 
 # cpp yaml
-file(GLOB_RECURSE CPP_YAML_SRC ${THIRD_PARTY_DIR}/cpp_yaml/src/)
+file(GLOB_RECURSE CPP_YAML_SRC ${THIRD_PARTY_DIR}/cpp_yaml/src/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CPP_YAML_SRC})
 set(CPP_YAML_INCLUDE ${THIRD_PARTY_DIR}/cpp_yaml/include)
 

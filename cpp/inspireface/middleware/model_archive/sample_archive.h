@@ -44,11 +44,13 @@ public:
         m_load_file_status_ = mtar_open(m_tar_.get(), archiveFile.c_str(), "r");
         if (m_load_file_status_ != MTAR_ESUCCESS) {
             LOGE("Invalid archive file");
+            return m_load_file_status_;
         }
         mtar_header_t h;
         m_load_file_status_ = mtar_read_header(m_tar_.get(), &h);
         if (m_load_file_status_ != MTAR_ESUCCESS) {
             LOGE("Error reading root from archive.");
+            return m_load_file_status_;
         }
         m_file_archive_root_ = std::string(h.name);
         size_t index = 0;
@@ -56,6 +58,7 @@ public:
             m_load_file_status_ = mtar_next(m_tar_.get());
             if (m_load_file_status_ != MTAR_ESUCCESS) {
                 LOGE("Failed to scan the file");
+                return m_load_file_status_;
             }
             if (index == 0) {
                 m_file_archive_root_ = std::string(h.name);

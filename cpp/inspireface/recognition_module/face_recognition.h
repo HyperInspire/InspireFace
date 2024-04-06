@@ -12,6 +12,7 @@
 #include "middleware/camera_stream/camera_stream.h"
 #include "features_block/feature_block.h"
 #include "persistence/sqlite_faces_manage.h"
+#include "middleware/model_archive/inspire_archive.h"
 
 namespace inspire {
 
@@ -41,6 +42,7 @@ public:
      * @param feature_block_num Number of feature blocks to use.
      */
     FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 20);
+    FaceRecognition(InspireArchive &archive, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 20);
 
     /**
      * @brief Computes the cosine similarity between two feature vectors.
@@ -194,6 +196,7 @@ private:
      * @return int32_t Status code indicating success (0) or failure.
      */
     int32_t InitExtractInteraction(Model *model);
+    int32_t InitExtractInteraction(InspireModel& model);
 
 private:
     std::shared_ptr<Extract> m_extract_; ///< Pointer to the Extract instance.
