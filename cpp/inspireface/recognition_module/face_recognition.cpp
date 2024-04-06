@@ -29,6 +29,27 @@ FaceRecognition::FaceRecognition(ModelLoader &loader, bool enable_recognition, M
 
 }
 
+FaceRecognition::FaceRecognition(InspireArchive &archive, bool enable_recognition, MatrixCore core, int feature_block_num) {
+    if (enable_recognition) {
+        InspireModel model;
+        auto ret = archive.LoadModel("feature", model);
+        if (ret != SARC_SUCCESS) {
+            LOGE("Load rec model error.");
+        }
+        ret = InitExtractInteraction(model);
+        if (ret != 0) {
+            LOGE("FaceRecognition error.");
+        }
+    }
+
+    for (int i = 0; i < feature_block_num; ++i) {
+        std::shared_ptr<FeatureBlock> block;
+        block.reset(FeatureBlock::Create(core, 512, 512));
+        m_feature_matrix_list_.push_back(block);
+    }
+
+}
+
 int32_t FaceRecognition::InitExtractInteraction(Model *model) {
     try {
         InferenceHelper::HelperType type;
@@ -60,6 +81,22 @@ int32_t FaceRecognition::InitExtractInteraction(Model *model) {
 //        LOGD("LOAD EXT");
         m_extract_->loadData(param, model, type);
 
+        return HSUCCEED;
+
+    } catch (const std::runtime_error& e) {
+        LOGE("%s", e.what());
+        return HERR_CTX_FACE_REC_OPTION_ERROR;
+    }
+}
+
+int32_t FaceRecognition::InitExtractInteraction(InspireModel& model) {
+    try {
+        auto input_size = model.Config().get<std::vector<int>>("input_size");
+        m_extract_ = std::make_shared<Extract>();
+        auto ret = m_extract_->loadData(model, model.modelType);
+        if (ret != InferenceHelper::kRetOk) {
+            return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+        }
         return HSUCCEED;
 
     } catch (const std::runtime_error& e) {
