@@ -61,6 +61,13 @@ if (NOT BUILD_LINUX_ARM7 AND NOT BUILD_LINUX_AARCH64)
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
     )
 
+    add_executable(ArchTracker ${CMAKE_CURRENT_SOURCE_DIR}/archive_tracker.cpp)
+    target_link_libraries(ArchTracker InspireFace)
+
+    set_target_properties(ArchTracker PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+    )
+
 else()
 
 # =======================RK Temporary test category===========================
