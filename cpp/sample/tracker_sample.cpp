@@ -156,6 +156,8 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    SET_LOG_LEVEL(LogLevel::LOG_NONE);
+
     const std::string source = argv[1];
     const std::string input = argv[2];
 
@@ -164,7 +166,13 @@ int main(int argc, char** argv) {
 //    ModelLoader loader;
 //    loader.Reset(folder);
 
-    InspireArchive archive(folder);
+    InspireArchive archive;
+    archive.ReLoad(folder);
+    std::cout << archive.QueryStatus() << std::endl;
+    if (archive.QueryStatus() != SARC_SUCCESS) {
+        LOGE("error archive");
+        return -1;
+    }
 
     FaceTrack ctx;
     ctx.Configuration(archive);
