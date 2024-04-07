@@ -26,7 +26,10 @@ public:
     }
 
     explicit InspireArchive(const std::string& archiveFile) : SimpleArchive(archiveFile) {
-        m_status_ = loadManifestFile();
+        m_status_ = QueryStatus();
+        if (m_status_ == SARC_SUCCESS) {
+            m_status_ = loadManifestFile();
+        }
     }
 
     int32 ReLoad(const std::string& archiveFile) {
