@@ -67,9 +67,9 @@ int main(int argc, char* argv[]) {
     // Check whether custom parameters are set
     if (!pack.empty()) {
         SET_PACK_NAME(pack);
-        std::cout << "Updated global packName to: " << TEST_MODEL_FILE << std::endl;
+        TEST_PRINT("Updated global Pack to: {}", TEST_MODEL_FILE);
     } else {
-        std::cout << "Using default global packName: " << TEST_MODEL_FILE << std::endl;
+        TEST_PRINT("Using default global Pack:", TEST_MODEL_FILE);
     }
 
     return session.run();
