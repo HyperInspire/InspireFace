@@ -50,5 +50,27 @@ int main(int argc, char* argv[]) {
     init_test_benchmark_record();
     init_test_evaluation_record();
 
-    return Catch::Session().run(argc, argv);
+    Catch::Session session;
+    // Pack file name
+    std::string pack;
+
+    // Add command line options
+    auto cli = session.cli() | Catch::clara::Opt(pack, "value")["--pack"]("Resource pack filename");
+
+    session.cli(cli);
+
+    // Parse command line arguments
+    int returnCode = session.applyCommandLine(argc, argv);
+    if (returnCode != 0) // Indicate an error
+        return returnCode;
+
+    // Check whether custom parameters are set
+    if (!pack.empty()) {
+        SET_PACK_NAME(pack);
+        std::cout << "Updated global packName to: " << TEST_MODEL_FILE << std::endl;
+    } else {
+        std::cout << "Using default global packName: " << TEST_MODEL_FILE << std::endl;
+    }
+
+    return session.run();
 }

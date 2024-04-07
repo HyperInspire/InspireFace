@@ -59,6 +59,10 @@ public:
         }
     }
 
+    void PublicPrintSubFiles() {
+        PrintSubFiles();
+    }
+
 private:
 
     int32_t loadManifestFile() {
