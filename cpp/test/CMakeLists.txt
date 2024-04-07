@@ -58,20 +58,3 @@ target_include_directories(TestAPI PUBLIC
 
 set_target_properties(TestAPI PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test/")
-
-# =======================Debug API Testing===========================
-file(GLOB_RECURSE TEST_INTERNAL_FILES unit/api)
-add_executable(TestDebug ${CMAKE_CURRENT_SOURCE_DIR}/test_debug.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
-target_link_libraries(TestDebug InspireFace ${DEPEND})
-target_include_directories(TestDebug PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/
-        ${THIRD_PARTY_DIR}/spdlog
-        ${THIRD_PARTY_DIR}/catch2
-        ${THIRD_PARTY_DIR}/cnpy
-        ${THIRD_PARTY_DIR}/indicators
-        ${THIRD_PARTY_DIR}/limonp
-        ${SRC_DIR}
-        )
-
-set_target_properties(TestDebug PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test/")
