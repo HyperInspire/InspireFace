@@ -1,0 +1,17 @@
+version: 0.1
+test_folder_root: ./test_res/
+test_save_folder: save/
+test_pack_folder: model_zip/
+test_resource_pack: Pikachu
+lfw_dataset:
+  enable: true
+  lfw_funneled_path: /Users/tunm/datasets/lfw_funneled
+  pair_txt: pairs.txt
+benchmark:
+  enable: true
+  record_file: benchmark.csv
+evalution:
+  enable: true
+  lfw_range: valid_lfw_funneled.txt
+  record_file: evaluation.csv
+

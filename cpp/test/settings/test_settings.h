@@ -7,9 +7,11 @@
 #include <catch2/catch.hpp>
 #include <spdlog/spdlog.h>
 #include <iostream>
+#include "enviro.h"
 
-#define TEST_MODEL_FILE "Pikachu"                       // Optional model file
-//#define TEST_MODEL_FILE "Gundam_RV1109"                       // Optional model file
+
+#define TEST_MODEL_FILE Enviro::getInstance().getPackName()                       // Optional model file
+#define SET_PACK_NAME(name) Enviro::getInstance().setPackName(name)
 
 #define ENABLE_BENCHMARK 1                                 // Whether to run the benchmark snippet
 #define ENABLE_USE_LFW_DATA 1                              // Example Start the case for using LFW Data
