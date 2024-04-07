@@ -159,13 +159,15 @@ int main(int argc, char** argv) {
     const std::string source = argv[1];
     const std::string input = argv[2];
 
-    const std::string folder = "test_res/model_zip/Pikachu-t1";
+    const std::string folder = "test_res/model_zip/Pikachu";
     LOGD("%s", folder.c_str());
-    ModelLoader loader;
-    loader.Reset(folder);
+//    ModelLoader loader;
+//    loader.Reset(folder);
+
+    InspireArchive archive(folder);
 
     FaceTrack ctx;
-    ctx.Configuration(loader);
+    ctx.Configuration(archive);
 
     if (source == "webcam") {
         int cam_id = std::stoi(input);

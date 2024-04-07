@@ -25,13 +25,19 @@ int main() {
 
     track.UpdateStream(stream, true);
 
-    if (!track.trackingFace.empty()) {
-        auto const &face = track.trackingFace[0];
-        cv::rectangle(image, face.GetRectSquare(), cv::Scalar(200, 0, 20), 2);
-    }
+//    if (!track.trackingFace.empty()) {
+//        auto const &face = track.trackingFace[0];
+//        cv::rectangle(image, face.GetRectSquare(), cv::Scalar(200, 0, 20), 2);
+//    }
+//
+//    cv::imshow("w", image);
+//    cv::waitKey(0);
 
-    cv::imshow("w", image);
-    cv::waitKey(0);
+    InspireModel model;
+    ret = archive.LoadModel("mask_detect", model);
+    std::cout << ret << std::endl;
+
+    archive.PublicPrintSubFiles();
 
     return 0;
 }
