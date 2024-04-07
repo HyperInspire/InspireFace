@@ -90,7 +90,7 @@ FacePipeline::FacePipeline(InspireArchive &archive, bool enableLiveness, bool en
         InspireModel maskModel;
         auto ret = archive.LoadModel("mask_detect", maskModel);
         if (ret != 0) {
-            LOGE("Load Mask model.");
+            LOGE("Load Mask model: %d", ret);
         }
         ret = InitMaskPredict(maskModel);
         if (ret != 0) {

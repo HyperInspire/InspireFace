@@ -92,8 +92,8 @@ refine_net:
     - prob1
     - conv5-2
   input_size:
-    - 112
-    - 112
+    - 24
+    - 24
   mean:
     - 127.5
     - 127.5

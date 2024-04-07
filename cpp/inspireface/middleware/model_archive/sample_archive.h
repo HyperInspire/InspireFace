@@ -52,7 +52,7 @@ public:
             LOGE("Error reading root from archive.");
             return m_load_file_status_;
         }
-        m_file_archive_root_ = std::string(h.name);
+//        m_file_archive_root_ = std::string(h.name);
         size_t index = 0;
         while ( (mtar_read_header(m_tar_.get(), &h)) != MTAR_ENULLRECORD ) {
             m_load_file_status_ = mtar_next(m_tar_.get());
@@ -60,11 +60,7 @@ public:
                 LOGE("Failed to scan the file");
                 return m_load_file_status_;
             }
-            if (index == 0) {
-                m_file_archive_root_ = std::string(h.name);
-            } else {
-                m_subfiles_names_.emplace_back(h.name);
-            }
+            m_subfiles_names_.emplace_back(h.name);
             index++;
         }
         return m_load_file_status_;
@@ -96,6 +92,14 @@ public:
             mtar_close(m_tar_.get());
         }
         m_tar_.reset();
+    }
+
+
+    void PrintSubFiles() {
+        std::cout << "Subfiles: " << m_subfiles_names_.size() << std::endl;
+        for (int i = 0; i < m_subfiles_names_.size(); ++i) {
+            std::cout << m_subfiles_names_[i] << std::endl;
+        }
     }
 
 protected:
