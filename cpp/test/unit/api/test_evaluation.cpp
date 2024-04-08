@@ -56,7 +56,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
 
 
     SECTION("Test LFW evaluation") {
-#if ENABLE_TEST_EVALUATION
+#ifdef ENABLE_TEST_EVALUATION
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();

@@ -143,3 +143,13 @@ set_target_properties(CAPISample PROPERTIES
 )
 
 
+
+# C_API Demo
+add_executable(LoopTracker ${CMAKE_CURRENT_SOURCE_DIR}/loop_tracker.cpp)
+target_link_libraries(LoopTracker InspireFace ${DEPEND})
+
+set_target_properties(LoopTracker PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+
