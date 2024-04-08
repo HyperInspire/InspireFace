@@ -3,7 +3,7 @@
 //
 #include <iostream>
 #include "track_module/face_track.h"
-//#include "recognition_module/face_recognition.h"
+#include "recognition_module/face_recognition.h"
 #include "log.h"
 
 using namespace inspire;
@@ -12,7 +12,7 @@ int main() {
     InspireArchive archive("test_res/model_zip/Pikachu");
 
     FaceTrack track;
-//    FaceRecognition recognition(archive, true);
+    FaceRecognition recognition(archive, true);
 
     auto ret = track.Configuration(archive);
     LOGD("ret=%d", ret);
