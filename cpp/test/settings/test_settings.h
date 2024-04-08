@@ -13,9 +13,9 @@
 #define TEST_MODEL_FILE Enviro::getInstance().getPackName()                       // Optional model file
 #define SET_PACK_NAME(name) Enviro::getInstance().setPackName(name)
 
-#define ENABLE_BENCHMARK 1                                 // Whether to run the benchmark snippet
-#define ENABLE_USE_LFW_DATA 1                              // Example Start the case for using LFW Data
-#define ENABLE_TEST_EVALUATION 1                           // Enable the evaluation test
+//#define ENABLE_BENCHMARK 1                                 // Whether to run the benchmark snippet
+//#define ENABLE_USE_LFW_DATA 1                              // Example Start the case for using LFW Data
+//#define ENABLE_TEST_EVALUATION 1                           // Enable the evaluation test
 
 #define TEST_LFW_FUNNELED_TXT "valid_lfw_funneled.txt"     // LFW Index txt file
 #define LFW_FUNNELED_DIR ""                                // LFW funneled data dir

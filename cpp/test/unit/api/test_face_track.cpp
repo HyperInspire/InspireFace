@@ -230,7 +230,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
     }
 
     SECTION("Face detection benchmark") {
-#if ENABLE_BENCHMARK
+#ifdef ENABLE_BENCHMARK
         int loop = 1000;
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
