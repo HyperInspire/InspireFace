@@ -26,7 +26,7 @@ int init_test_logger() {
 }
 
 int init_test_benchmark_record() {
-#if ENABLE_BENCHMARK
+#ifdef ENABLE_BENCHMARK
     if (std::remove(getBenchmarkRecordFile().c_str()) != 0) {
         spdlog::trace("Error deleting file");
     }
@@ -36,7 +36,7 @@ int init_test_benchmark_record() {
 }
 
 int init_test_evaluation_record() {
-#if ENABLE_TEST_EVALUATION
+#ifdef ENABLE_TEST_EVALUATION
     if (std::remove(getEvaluationRecordFile().c_str()) != 0) {
         spdlog::trace("Error deleting file");
     }
