@@ -127,17 +127,17 @@ private:
             if (node["output_tensor_type"]) {
                 auto type = node["output_tensor_type"].as<std::string>();
                 if (type == "none") {
-                    setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeNone);
+                    setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeNone);
                 } else if(type == "uint8") {
-                    setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeUint8);
+                    setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeUint8);
                 } else if(type == "int8") {
-                    setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt8);
+                    setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt8);
                 } else if(type == "float32") {
-                    setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
+                    setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
                 } else if(type == "int32") {
-                    setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt32);
+                    setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt32);
                 } else if(type == "int64") {
-                    setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt64);
+                    setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt64);
                 }
             }
             if (node["threads"]) {
