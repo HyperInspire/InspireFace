@@ -120,7 +120,7 @@ protected:
         mtar_header_t h;
         auto ret = mtar_find(m_tar_.get(), filename.c_str(), &h);
         if (ret == MTAR_ESUCCESS) {
-            std::vector<char> content(h.size + 1, '\0');
+            std::vector<char> content(h.size);
             ret = mtar_read_data(m_tar_.get(), content.data(), h.size);
             if (ret == MTAR_ESUCCESS) {
                 m_file_content_cache_map_[filename] = std::move(content); // Load and store the file contents

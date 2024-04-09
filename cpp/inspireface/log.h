@@ -3,12 +3,15 @@
 
 #include <mutex>
 #include <string>
+#include <cstdarg>
+#include <cstring>
 
 // Macro to extract the filename from the full path
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
 #ifdef ANDROID
 // Android platform log macros
+const std::string TAG = "InspireFace";
 #define LOGD(...) LogManager::getInstance()->logAndroid(LOG_DEBUG, TAG, __VA_ARGS__)
 #define LOGI(...) LogManager::getInstance()->logAndroid(LOG_INFO, TAG, __VA_ARGS__)
 #define LOGW(...) LogManager::getInstance()->logAndroid(LOG_WARN, TAG, __VA_ARGS__)

@@ -9,13 +9,17 @@
 using namespace inspire;
 
 int main() {
-    InspireArchive archive("test_res/model_zip/Pikachu");
+    InspireArchive archive;
+    archive.ReLoad("test_res/model_zip/Gundam_RV1109");
 
     FaceTrack track;
-    FaceRecognition recognition(archive, true);
+//    FaceRecognition recognition(archive, true);
 
     auto ret = track.Configuration(archive);
     LOGD("ret=%d", ret);
+    if (ret != 0) {
+        return -1;
+    }
 
     auto image = cv::imread("test_res/data/bulk/kun.jpg");
     CameraStream stream;
