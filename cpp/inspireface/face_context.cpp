@@ -43,40 +43,7 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
 
     return HSUCCEED;
 }
-//
-//int32_t FaceContext::Configuration(const String &model_file_path, DetectMode detect_mode, int32_t max_detect_face,
-//                                   CustomPipelineParameter param) {
-//    m_detect_mode_ = detect_mode;
-//    m_max_detect_face_ = max_detect_face;
-//    m_parameter_ = param;
-//
-//    m_model_loader_.Reset(model_file_path);
-//    if (m_model_loader_.GetStatusCode() != PASS) {
-//        if (m_model_loader_.GetStatusCode() == PACK_ERROR)
-//            return HERR_CTX_INVALID_RESOURCE;
-//        else if (m_model_loader_.GetStatusCode() == PACK_MODELS_NOT_MATCH)
-//            return  HERR_CTX_NUM_OF_MODELS_NOT_MATCH;
-//    }
-//    m_face_track_ = std::make_shared<FaceTrack>(m_max_detect_face_);
-//    m_face_track_->Configuration(m_model_loader_);
-//    SetDetectMode(m_detect_mode_);
-//
-//    m_face_recognition_ = std::make_shared<FaceRecognition>(m_model_loader_, m_parameter_.enable_recognition);
-//    m_face_pipeline_ = std::make_shared<FacePipeline>(
-//            m_model_loader_,
-//            param.enable_liveness,
-//            param.enable_mask_detect,
-//            param.enable_age,
-//            param.enable_gender,
-//            param.enable_interaction_liveness
-//    );
-//
-//    m_face_feature_ptr_cache_ = std::make_shared<FaceFeatureEntity>();
-//
-//
-//
-//    return HSUCCEED;
-//}
+
 
 int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     std::vector<ByteArray>().swap(m_detect_cache_);

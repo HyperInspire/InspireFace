@@ -339,7 +339,6 @@ private:
 
     char m_string_cache_[256];                                     ///< Cache for temporary string storage
 
-//    ModelLoader m_model_loader_;
     InspireArchive m_archive_;
 };
 
