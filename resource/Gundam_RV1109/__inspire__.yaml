@@ -1,4 +1,4 @@
-tag: Pikachu
+tag: Gundam_RV1109
 version: v0.1.0
 
 face_detect:
@@ -82,14 +82,14 @@ refine_net:
   input_channel: 3
   input_image_channel: 3
   nchw: false
-  swap_color: input_1
+  swap_color: true
   data_type: image
   input_tensor_type: uint8
   output_tensor_type: float32
   threads: 1
   input_layer: data
   outputs_layers:
-    - conv5-1/Softma
+    - conv5-1/Softmax
     - conv5-2/BiasAdd
   input_size:
     - 24

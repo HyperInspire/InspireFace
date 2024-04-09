@@ -71,6 +71,7 @@ private:
     int32_t loadManifestFile() {
         if (QueryLoadStatus() == SARC_SUCCESS) {
             auto configBuffer = GetFileContent(MANIFEST_FILE);
+            configBuffer.push_back('\0');
             if (configBuffer.empty()) {
                 return MISS_MANIFEST;
             }
@@ -78,6 +79,9 @@ private:
             if (!m_config_["tag"] || !m_config_["version"]) {
                 return FORMAT_ERROR;
             }
+            m_tag_ = m_config_["tag"].as<std::string>();
+            m_version_ = m_config_["version"].as<std::string>();
+            LOGD("== %s %s ==", m_tag_.c_str(), m_version_.c_str());
         }
         return 0;
     }
@@ -88,6 +92,9 @@ private:
     int32_t m_status_;
 
     const std::string MANIFEST_FILE = "__inspire__";
+
+    std::string m_tag_;
+    std::string m_version_;
 
 };
 
