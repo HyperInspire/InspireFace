@@ -2,8 +2,8 @@ tag: Gundam_RV1109
 version: v0.1.0
 
 face_detect:
-  name: _00_scrfd_500m_bnkps_shape320x320
-  fullname: _00_scrfd_500m_bnkps_shape320x320.rknn
+  name: _00_scrfd_500m_bnkps_shape320x320_wider_qt
+  fullname: _00_scrfd_500m_bnkps_shape320x320_wider_qt.rknn
   version: 0.1
   model_type: RKNN
   infer_engine: RKNN

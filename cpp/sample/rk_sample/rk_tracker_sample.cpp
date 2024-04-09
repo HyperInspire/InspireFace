@@ -14,7 +14,7 @@ int main() {
     FaceContext ctx;
     CustomPipelineParameter param;
     int32_t ret = ctx.Configuration(
-            "test_res/model_zip/Pikachu-t1_rv1109rv1126",
+            "test_res/model_zip/Gundam_RV1109",
             DetectMode::DETECT_MODE_VIDEO,
             3,
             param);
