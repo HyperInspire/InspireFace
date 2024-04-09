@@ -151,8 +151,10 @@ public:                                                                         
     }                                                                                                     \
     void loadData(const nlohmann::json& j) {                                                                  \
         m_configuration.load(j);                                                                                 \
+    }                                                                                                        \
+    std::string toStr(int indent = 4) {                                                                      \
+        return m_configuration.toString(indent);                                                          \
     }
-
 
 } // namespace hyper
 #endif //HYPERAI_PARAMETER_H

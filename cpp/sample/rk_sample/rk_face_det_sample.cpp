@@ -2,31 +2,36 @@
 // Created by Tunm-Air13 on 2023/9/20.
 //
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/model_loader.h"
+//#include "inspireface/middleware/model_loader/model_loader.h"
 #include "inspireface/track_module/face_detect/all.h"
 #include "model_index.h"
 #include "inspireface/middleware/timer.h"
+#include "middleware/model_archive/inspire_archive.h"
+#include "log.h"
 
 using namespace inspire;
 
 int main() {
-    ModelLoader loader("test_res/model_zip/Pikachu-t1_rv1109rv1126");
-    std::shared_ptr<FaceDetect> m_face_detector_;
-    Configurable param;
-    param.set<int>("model_index", ModelIndex::_00_fdet_160);
-    param.set<std::string>("input_layer", "input.1");
-    param.set<std::vector<std::string>>("outputs_layers", {"output", "output1", "output2", "output3", "output4", "output5", "output6", "output7", "output8"});
-    param.set<std::vector<int>>("input_size", {320, 320});
-    param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
-    param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
-    param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
-    param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
-    param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
-    param.set<bool>("nchw", false);
+    auto detModel = "test_res/model_zip/Gundam_RV1109";
+    InspireArchive inspireArchive;
+    auto ret = inspireArchive.ReLoad(detModel);
+    if (ret != SARC_SUCCESS) {
+        LOGE("Error load");
+        return ret;
+    }
+    InspireModel model;
+    ret = inspireArchive.LoadModel("face_detect", model);
+    if (ret != SARC_SUCCESS) {
+        LOGE("Error model");
+        return ret;
+    }
 
-    auto model = loader.ReadModel(ModelIndex::_00_fdet_160);
+    std::cout << model.Config().toString() << std::endl;
+
+    std::shared_ptr<FaceDetect> m_face_detector_;
     m_face_detector_ = std::make_shared<FaceDetect>(320);
-    m_face_detector_->loadData(param, model, InferenceHelper::kRknn);
+    m_face_detector_->loadData(model, InferenceHelper::kRknn);
+
 
     // Load a image
     cv::Mat image = cv::imread("test_res/images/face_sample.png");
