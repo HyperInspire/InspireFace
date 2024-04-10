@@ -135,8 +135,8 @@ pose_quality:
     - 1.0
 
 feature:
-  name: _03_extract
-  fullname: _03_extract.mnn
+  name: _03_r18_Glint360K_fixed
+  fullname: _03_r18_Glint360K_fixed.mnn
   version: 0.1
   model_type: MNN
   infer_engine: MNN
@@ -150,9 +150,9 @@ feature:
   input_tensor_type: float32
   output_tensor_type: float32
   threads: 1
-  input_layer: data
+  input_layer: input.1
   outputs_layers:
-    - fc1_scale
+    - 267
   input_size:
     - 112
     - 112
