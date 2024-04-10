@@ -1,8 +1,0 @@
-_00_scrfd_500m_bnkps_shape320x320_u8
-_01_lmk_u8
-_02_pose_fp16
-_03_r18_Glint360K_fixed
-_04_rnet
-_05_facemask_mb_025
-_06_2_7_80x80_MiniFASNetV2
-_07_pose-quality
