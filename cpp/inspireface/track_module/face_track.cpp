@@ -8,7 +8,7 @@
 #include "model_index.h"
 #include "landmark/mean_shape.h"
 #include <opencv2/opencv.hpp>
-#include "middleware/Timer.h"
+#include "middleware/costman.h"
 #include "middleware/model_archive/inspire_archive.h"
 #include "herror.h"
 
