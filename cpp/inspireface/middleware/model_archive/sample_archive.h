@@ -44,6 +44,7 @@ public:
         m_load_file_status_ = mtar_open(m_tar_.get(), archiveFile.c_str(), "r");
         if (m_load_file_status_ != MTAR_ESUCCESS) {
             LOGE("Invalid archive file: %d", m_load_file_status_);
+            m_tar_.reset();
             return m_load_file_status_;
         }
         mtar_header_t h;

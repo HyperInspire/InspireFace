@@ -12,7 +12,7 @@ typedef struct HF_FaceContext {
 } HF_FaceContext; ///< Handle for managing face context.
 
 typedef struct HF_CameraStream {
-    CameraStream impl; ///< Implementation of the camera stream.
+    inspire::CameraStream impl; ///< Implementation of the camera stream.
 } HF_CameraStream; ///< Handle for managing camera stream.
 
 
