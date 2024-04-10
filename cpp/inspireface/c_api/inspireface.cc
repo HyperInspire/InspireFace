@@ -7,6 +7,8 @@
 #include "inspireface_internal.h"
 #include "information.h"
 
+using namespace inspire;
+
 HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HImageHandle* handle) {
     auto stream = new HF_CameraStream();
     if (data->rotation == 1) {
@@ -109,6 +111,7 @@ HResult HF_CreateFaceContextFromResourceFile(HPath resourceFile, HF_ContextCusto
     if (ret != HSUCCEED) {
         delete ctx;
         ctx = nullptr;
+        *handle = nullptr;
     } else {
         *handle = ctx;
     }
