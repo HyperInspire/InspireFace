@@ -48,7 +48,6 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         CHECK(!succ);
         TEST_PRINT("kun v other :{}", mostSim);
 
-
         // finish
         ret = HF_ReleaseFaceContext(ctxHandle);
         REQUIRE(ret == HSUCCEED);

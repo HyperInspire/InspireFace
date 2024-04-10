@@ -33,8 +33,8 @@ FeatureBlock *FeatureBlock::Create(const MatrixCore crop_type, int32_t features_
 
     if (p != nullptr) {
         p->m_matrix_core_ = crop_type;
-        p->m_features_max_ = features_max;          // 人脸特征数量
-        p->m_feature_length_ = feature_length;      // 人脸特征长度（默认512）
+        p->m_features_max_ = features_max;          // Number of facial features
+        p->m_feature_length_ = feature_length;      // Face feature length (default: 512)
         p->m_feature_state_.resize(features_max, FEATURE_STATE::IDLE);
         p->m_tag_list_.resize(features_max, "None");
         p->m_custom_id_list_.resize(features_max, -1);

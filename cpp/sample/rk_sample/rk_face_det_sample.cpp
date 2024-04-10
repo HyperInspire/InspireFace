@@ -4,8 +4,8 @@
 #include "opencv2/opencv.hpp"
 //#include "inspireface/middleware/model_loader/model_loader.h"
 #include "inspireface/track_module/face_detect/all.h"
-#include "model_index.h"
-#include "inspireface/middleware/timer.h"
+
+#include "inspireface/middleware/costman.h"
 #include "middleware/model_archive/inspire_archive.h"
 #include "log.h"
 
