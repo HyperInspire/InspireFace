@@ -63,7 +63,10 @@ public:
         int model_index = getData<int>("model_index");
         m_nn_inference_.reset(InferenceHelper::Create(m_infer_type_));
         m_nn_inference_->SetNumThreads(getData<int>("threads"));
-
+#if defined(GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA) && !defined(ENABLE_RKNN)
+        LOGW("You have forced the global use of MNN_CUDA as the neural network inference backend");
+        m_nn_inference_->SetSpecialBackend(InferenceHelper::kMnnCuda);
+#endif
         m_output_tensor_info_list_.clear();
         std::vector<std::string> outputs_layers = getData<std::vector<std::string>>("outputs_layers");
         int tensor_type = getData<int>("input_tensor_type");
