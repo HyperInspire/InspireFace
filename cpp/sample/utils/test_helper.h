@@ -53,13 +53,13 @@ inline uint8_t *rgb2nv21(const cv::Mat &Img) {
 }
 
 inline void rotate(const cv::Mat &image, cv::Mat &out,
-                   ROTATION_MODE mode) {
-  if (mode == ROTATION_90) {
+                   inspire::ROTATION_MODE mode) {
+  if (mode == inspire::ROTATION_90) {
     cv::transpose(image, out);
     cv::flip(out, out, 2);
-  } else if (mode == ROTATION_180) {
+  } else if (mode == inspire::ROTATION_180) {
     cv::flip(out, out, -1);
-  } else if (mode == ROTATION_270) {
+  } else if (mode == inspire::ROTATION_270) {
     cv::transpose(image, out);
     cv::flip(out, out, 0);
   }

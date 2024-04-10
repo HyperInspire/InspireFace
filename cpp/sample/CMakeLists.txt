@@ -162,3 +162,10 @@ target_link_libraries(ArchTracker InspireFace)
 set_target_properties(ArchTracker PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
         )
+
+add_executable(ErrorTest ${CMAKE_CURRENT_SOURCE_DIR}/error_test.cpp)
+target_link_libraries(ErrorTest InspireFace)
+
+set_target_properties(ErrorTest PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
