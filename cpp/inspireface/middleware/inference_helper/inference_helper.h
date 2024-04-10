@@ -223,6 +223,11 @@ public:
     };
 
     typedef enum {
+        kDefaultCPU,
+        kMnnCuda,
+    } SpecialBackend;
+
+    typedef enum {
         kOpencv,
         kOpencvGpu,
         kTensorflowLite,
@@ -263,6 +268,11 @@ public:
     virtual int32_t Process(std::vector<OutputTensorInfo>& output_tensor_info_list) = 0;
     virtual int32_t ParameterInitialization(std::vector<InputTensorInfo>& input_tensor_info_list, std::vector<OutputTensorInfo>& output_tensor_info_list) = 0;
 
+    virtual int32_t SetSpecialBackend(SpecialBackend backend) {
+        special_backend_ = backend;
+        return kRetOk;
+    };
+
     virtual std::vector<std::string> GetInputNames() = 0;
 
 protected:
@@ -277,6 +287,7 @@ protected:
 
 protected:
     HelperType helper_type_;
+    SpecialBackend special_backend_;
 };
 
 #endif
