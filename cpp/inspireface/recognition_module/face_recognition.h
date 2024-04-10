@@ -36,12 +36,11 @@ public:
     /**
      * @brief Constructor for FaceRecognition class.
      *
-     * @param loader ModelLoader instance for model loading.
+     * @param archive Model active instance for model loading.
      * @param enable_recognition Whether face recognition is enabled.
      * @param core Type of matrix core to use for feature extraction.
      * @param feature_block_num Number of feature blocks to use.
      */
-    FaceRecognition(ModelLoader &loader, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 20);
     FaceRecognition(InspireArchive &archive, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 20);
 
     /**
@@ -195,7 +194,6 @@ private:
      * @param model Pointer to the loaded model.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t InitExtractInteraction(Model *model);
     int32_t InitExtractInteraction(InspireModel& model);
 
 private:

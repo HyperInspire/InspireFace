@@ -1,7 +1,7 @@
 //
 // Created by Tunm-Air13 on 2023/9/11.
 //
-
+#pragma once
 #ifndef HYPERFACEREPO_FEATUREBLOCK_H
 #define HYPERFACEREPO_FEATUREBLOCK_H
 #include <mutex>

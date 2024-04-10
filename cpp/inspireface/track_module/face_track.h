@@ -34,10 +34,9 @@ public:
 
     /**
      * @brief Configures the face tracking with models.
-     * @param loader Model loader for loading the required models.
+     * @param archive Model archive for loading the required models.
      * @return int Status of the configuration.
      */
-    int Configuration(ModelLoader &loader);
     int Configuration(InspireArchive &archive);
 
     /**
@@ -100,7 +99,6 @@ private:
      * @param model Pointer to the landmark model.
      * @return int Status of initialization.
      */
-    int InitLandmarkModel(Model* model);
     int InitLandmarkModel(InspireModel& model);
 
     /**
@@ -108,7 +106,6 @@ private:
      * @param model Pointer to the detection model to be initialized.
      * @return int Status of the initialization process. Returns 0 for success.
      */
-    int InitDetectModel(Model* model);
     int InitDetectModel(InspireModel& model);
 
     /**
@@ -116,7 +113,6 @@ private:
      * @param model Pointer to the RNet model to be initialized.
      * @return int Status of the initialization process. Returns 0 for success.
      */
-    int InitRNetModel(Model* model);
     int InitRNetModel(InspireModel& model);
 
     /**
@@ -124,7 +120,6 @@ private:
      * @param model Pointer to the face pose model to be initialized.
      * @return int Status of the initialization process. Returns 0 for success.
      */
-    int InitFacePoseModel(Model* model);
     int InitFacePoseModel(InspireModel& model);
 
 public:
