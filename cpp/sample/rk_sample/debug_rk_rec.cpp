@@ -3,13 +3,13 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/model_loader.h"
-#include "model_index.h"
-#include "inspireface/middleware/timer.h"
+
+#include "inspireface/middleware/costman.h"
 #include "middleware/inference_helper/customized/rknn_adapter.h"
 #include "inspireface/recognition_module/simd.h"
 #include <memory>
 #include "inspireface/recognition_module/extract/extract.h"
+#include "middleware/model_archive/inspire_archive.h"
 
 using namespace inspire;
 
@@ -19,14 +19,13 @@ int main() {
             "test_res/images/test_data/1.jpg",
             "test_res/images/test_data/2.jpg",
     };
-    ModelLoader loader("test_res/model_zip/test_zip_rec");
+    InspireArchive loader("test_res/model_zip/test_zip_rec");
     {
-
+        InspireModel model;
+        loader.LoadModel("feature", model);
         auto net = std::make_shared<RKNNAdapter>();
-        net->Initialize(loader.ReadModel(0));
+        net->Initialize((unsigned char* )model.buffer, model.bufferSize);
         net->setOutputsWantFloat(1);
-
-
 
         EmbeddedList list;
         for (int i = 0; i < names.size(); ++i) {
@@ -88,8 +87,9 @@ int main() {
         param.set<bool>("swap_color", true);        // RK requires rgb input
 
         m_extract_ = std::make_shared<Extract>();
-        auto model = loader.ReadModel(0);
-        m_extract_->loadData(param, model, InferenceHelper::kRknn);
+        InspireModel model;
+        loader.LoadModel("feature", model);
+        m_extract_->loadData(model, InferenceHelper::kRknn);
 
         cv::Mat image = cv::imread(names[0]);
 //        cv::Mat rgb;

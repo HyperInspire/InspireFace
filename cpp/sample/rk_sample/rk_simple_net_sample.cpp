@@ -3,11 +3,10 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/model_loader.h"
 #include "inspireface/track_module/face_detect/all.h"
 #include "inspireface/pipeline_module/attribute/mask_predict.h"
-#include "model_index.h"
-#include "inspireface/middleware/timer.h"
+
+#include "inspireface/middleware/costman.h"
 #include "inspireface/track_module/quality/face_pose_quality.h"
 #include "inspireface/track_module/landmark/face_landmark.h"
 #include "inspireface/pipeline_module/liveness/rgb_anti_spoofing.h"
@@ -15,13 +14,13 @@
 
 using namespace inspire;
 
-ModelLoader loader;
+InspireArchive loader;
 
 
 void test_rnet() {
     std::shared_ptr<RNet> m_rnet_;
     Configurable param;
-    param.set<int>("model_index", ModelIndex::_04_refine_net);
+//    param.set<int>("model_index", ModelIndex::_04_refine_net);
     param.set<std::string>("input_layer", "input_1");
     param.set<std::vector<std::string>>("outputs_layers", {"conv5-1/Softmax", "conv5-2/BiasAdd"});
     param.set<std::vector<int>>("input_size", {24, 24});
@@ -33,9 +32,10 @@ void test_rnet() {
     param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
     param.set<bool>("nchw", false);
 
-    auto model = loader.ReadModel(ModelIndex::_04_refine_net);
+    InspireModel model;
+    loader.LoadModel("refine_net", model);
     m_rnet_ = std::make_shared<RNet>();
-    m_rnet_->loadData(param, model, InferenceHelper::kRknn);
+    m_rnet_->loadData(model, InferenceHelper::kRknn);
 
     {
         // Load a image
@@ -61,7 +61,7 @@ void test_rnet() {
 
 void test_mask() {
     Configurable param;
-    param.set<int>("model_index", ModelIndex::_05_mask);
+//    param.set<int>("model_index", ModelIndex::_05_mask);
     param.set<std::string>("input_layer", "input_1");
     param.set<std::vector<std::string>>("outputs_layers", {"activation_1/Softmax",});
     param.set<std::vector<int>>("input_size", {96, 96});
@@ -75,8 +75,9 @@ void test_mask() {
 
     std::shared_ptr<MaskPredict> m_mask_predict_;
     m_mask_predict_ = std::make_shared<MaskPredict>();
-    auto model = loader.ReadModel(ModelIndex::_05_mask);
-    m_mask_predict_->loadData(param, model, InferenceHelper::kRknn);
+    InspireModel model;
+    loader.LoadModel("mask_detect", model);
+    m_mask_predict_->loadData(model, InferenceHelper::kRknn);
 
     {
         // Load a image
@@ -102,7 +103,7 @@ void test_mask() {
 
 void test_quality() {
     Configurable param;
-    param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
+//    param.set<int>("model_index", ModelIndex::_07_pose_q_fp16);
     param.set<std::string>("input_layer", "data");
     param.set<std::vector<std::string>>("outputs_layers", {"fc1", });
     param.set<std::vector<int>>("input_size", {96, 96});
@@ -115,8 +116,9 @@ void test_quality() {
     param.set<bool>("nchw", false);
     std::shared_ptr<FacePoseQuality> m_face_quality_;
     m_face_quality_ = std::make_shared<FacePoseQuality>();
-    auto model = loader.ReadModel(ModelIndex::_07_pose_q_fp16);
-    m_face_quality_->loadData(param, model, InferenceHelper::kRknn);
+    InspireModel model;
+    loader.LoadModel("pose_quality", model);
+    m_face_quality_->loadData(model, InferenceHelper::kRknn);
 
     {
         std::vector<std::string> names = {
@@ -152,7 +154,7 @@ void test_quality() {
 
 void test_landmark_mnn() {
     Configurable param;
-    param.set<int>("model_index", ModelIndex::_01_lmk);
+//    param.set<int>("model_index", ModelIndex::_01_lmk);
     param.set<std::string>("input_layer", "input_1");
     param.set<std::vector<std::string>>("outputs_layers", {"prelu1/add", });
     param.set<std::vector<int>>("input_size", {112, 112});
@@ -161,8 +163,9 @@ void test_landmark_mnn() {
 
     std::shared_ptr<FaceLandmark> m_landmark_predictor_;
     m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
-    auto model = loader.ReadModel(ModelIndex::_01_lmk);
-    m_landmark_predictor_->loadData(param, model);
+    InspireModel model;
+    loader.LoadModel("landmark", model);
+    m_landmark_predictor_->loadData(model);
 
     cv::Mat image = cv::imread("test_res/images/test_data/crop.png");
     cv::resize(image, image, cv::Size(112, 112));
@@ -189,7 +192,7 @@ void test_landmark_mnn() {
 
 void test_landmark() {
     Configurable param;
-    param.set<int>("model_index", ModelIndex::_01_lmk);
+//    param.set<int>("model_index", ModelIndex::_01_lmk);
     param.set<std::string>("input_layer", "input_1");
     param.set<std::vector<std::string>>("outputs_layers", {"prelu1/add", });
     param.set<std::vector<int>>("input_size", {112, 112});
@@ -202,8 +205,9 @@ void test_landmark() {
 
     std::shared_ptr<FaceLandmark> m_landmark_predictor_;
     m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
-    auto model = loader.ReadModel(ModelIndex::_01_lmk);
-    m_landmark_predictor_->loadData(param, model, InferenceHelper::kRknn);
+    InspireModel model;
+    loader.LoadModel("landmark", model);
+    m_landmark_predictor_->loadData(model, InferenceHelper::kRknn);
 
     cv::Mat image = cv::imread("test_res/images/test_data/0.jpg");
     cv::resize(image, image, cv::Size(112, 112));
@@ -230,7 +234,7 @@ void test_landmark() {
 void test_liveness() {
 
     Configurable param;
-    param.set<int>("model_index", ModelIndex::_06_msafa27);
+//    param.set<int>("model_index", ModelIndex::_06_msafa27);
     param.set<std::string>("input_layer", "data");
     param.set<std::vector<std::string>>("outputs_layers", {"556",});
     param.set<std::vector<int>>("input_size", {80, 80});
@@ -243,9 +247,11 @@ void test_liveness() {
     param.set<bool>("nchw", false);
 
     std::shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_;
-    auto model = loader.ReadModel(ModelIndex::_06_msafa27);
+
+    InspireModel model;
+    loader.LoadModel("rgb_anti_spoofing", model);
     m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofing>(80, true);
-    m_rgb_anti_spoofing_->loadData(param, model, InferenceHelper::kRknn);
+    m_rgb_anti_spoofing_->loadData(model, InferenceHelper::kRknn);
 
     std::vector<std::string> names = {
             "test_res/images/test_data/real.jpg",
@@ -292,7 +298,7 @@ int test_liveness_ctx() {
 }
 
 int main() {
-    loader.Reset("test_res/model_zip/Gundam_RV1109");
+    loader.ReLoad("test_res/model_zip/Gundam_RV1109");
 
 //    test_rnet();
 

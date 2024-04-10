@@ -3,9 +3,8 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/model_loader.h"
-#include "model_index.h"
-#include "inspireface/middleware/timer.h"
+
+#include "inspireface/middleware/costman.h"
 #include "inspireface/face_context.h"
 
 using namespace inspire;
