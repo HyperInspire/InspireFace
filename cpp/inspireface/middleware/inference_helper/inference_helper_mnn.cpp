@@ -156,7 +156,12 @@ int32_t InferenceHelperMnn::Initialize(char* model_buffer, int model_size, std::
     }
 
     MNN::ScheduleConfig scheduleConfig;
-    scheduleConfig.type = MNN_FORWARD_CPU;
+    if (special_backend_ == kMnnCuda) {
+        scheduleConfig.type = MNN_FORWARD_CPU;
+    } else {
+        LOGD("Enable CUDA");
+        scheduleConfig.type = MNN_FORWARD_CUDA;
+    }
     scheduleConfig.numThread = num_threads_;    // it seems, setting 1 has better performance on Android
      MNN::BackendConfig bnconfig;
      bnconfig.power = MNN::BackendConfig::Power_High;
