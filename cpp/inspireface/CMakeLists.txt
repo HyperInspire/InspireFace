@@ -22,6 +22,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
 
+
 if(NOT APPLE)
     find_package(OpenCV REQUIRED)
 endif()
@@ -56,11 +57,13 @@ if (NOT ANDROID)
     else ()
         # MNN Third party dependence
         if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+            find_package(Threads REQUIRED)
             message("Global MNN CUDA device inference")
             add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
             set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
             link_directories(${LINUX_MNN_CUDA}/lib)
             set(MNN_LIBS MNN)
+            set(LINK_THIRD_LIBS dl)
         else()
             set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
             set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
@@ -80,7 +83,7 @@ endif()
 
 # OpenCV
 if(APPLE AND USE_MOBILE_OPENCV_IN_LOCAL)
-    set(LINK_THIRD_LIBS "${OPENCV_FRAMEWORK}" ${MNN_LIBS} "${ACCELERATE_FRAMEWORK}")
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} "${OPENCV_FRAMEWORK}" ${MNN_LIBS} "${ACCELERATE_FRAMEWORK}")
 else()
     set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
 endif()
