@@ -160,7 +160,6 @@ int32_t InferenceHelperMnn::Initialize(char* model_buffer, int model_size, std::
         LOGD("Enable CUDA");
         scheduleConfig.type = MNN_FORWARD_CUDA;
     } else {
-        LOGD("Disable CUDA");
         scheduleConfig.type = MNN_FORWARD_CPU;
     }
     scheduleConfig.numThread = num_threads_;    // it seems, setting 1 has better performance on Android
