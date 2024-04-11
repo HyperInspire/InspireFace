@@ -60,7 +60,6 @@ public:
         pushData<int>(model.Config(), "output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
         pushData<int>(model.Config(), "threads", 1);
 
-        int model_index = getData<int>("model_index");
         m_nn_inference_.reset(InferenceHelper::Create(m_infer_type_));
         m_nn_inference_->SetNumThreads(getData<int>("threads"));
 #if defined(GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA) && !defined(ENABLE_RKNN)
