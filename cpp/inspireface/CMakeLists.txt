@@ -36,11 +36,14 @@ if (NOT ANDROID)
         FetchContent_Declare(
                 mnn
                 GIT_REPOSITORY https://github.com/alibaba/MNN.git
-                GIT_TAG        2.2.0
+                GIT_TAG        2.7.0
         )
         set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
         set(MNN_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
         set(MNN_BUILD_CONVERTER OFF CACHE BOOL "" FORCE)
+        if(GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+            set(MNN_CUDA ON CACHE BOOL "" FORCE)
+        endif()
 
         FetchContent_MakeAvailable(mnn)
         set(MNN_INCLUDE_DIRS ${mnn_SOURCE_DIR}/include)
@@ -52,8 +55,16 @@ if (NOT ANDROID)
 
     else ()
         # MNN Third party dependence
-        set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
-        set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
+        if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+            message("Global MNN CUDA device inference")
+            add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
+            set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
+            link_directories(${LINUX_MNN_CUDA}/lib)
+            set(MNN_LIBS MNN)
+        else()
+            set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
+            set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
+        endif ()
     endif ()
 endif()
 
