@@ -26,7 +26,7 @@ int init_test_logger() {
 }
 
 int init_test_benchmark_record() {
-#if ENABLE_BENCHMARK
+#ifdef ENABLE_BENCHMARK
     if (std::remove(getBenchmarkRecordFile().c_str()) != 0) {
         spdlog::trace("Error deleting file");
     }
@@ -36,7 +36,7 @@ int init_test_benchmark_record() {
 }
 
 int init_test_evaluation_record() {
-#if ENABLE_TEST_EVALUATION
+#ifdef ENABLE_TEST_EVALUATION
     if (std::remove(getEvaluationRecordFile().c_str()) != 0) {
         spdlog::trace("Error deleting file");
     }
@@ -50,5 +50,27 @@ int main(int argc, char* argv[]) {
     init_test_benchmark_record();
     init_test_evaluation_record();
 
-    return Catch::Session().run(argc, argv);
+    Catch::Session session;
+    // Pack file name
+    std::string pack;
+
+    // Add command line options
+    auto cli = session.cli() | Catch::clara::Opt(pack, "value")["--pack"]("Resource pack filename");
+
+    session.cli(cli);
+
+    // Parse command line arguments
+    int returnCode = session.applyCommandLine(argc, argv);
+    if (returnCode != 0) // Indicate an error
+        return returnCode;
+
+    // Check whether custom parameters are set
+    if (!pack.empty()) {
+        SET_PACK_NAME(pack);
+        TEST_PRINT("Updated global Pack to: {}", TEST_MODEL_FILE);
+    } else {
+        TEST_PRINT("Using default global Pack:", TEST_MODEL_FILE);
+    }
+
+    return session.run();
 }

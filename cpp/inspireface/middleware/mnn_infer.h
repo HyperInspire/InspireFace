@@ -1,9 +1,7 @@
 #ifndef NCNN_MOBILEFACENET_FACE_LANDMARK_H
 #define NCNN_MOBILEFACENET_FACE_LANDMARK_H
 
-//#include "model_loader.h"
 #include "opencv2/opencv.hpp"
-//#include "zip_wrapper.h"
 #include <MNN/ImageProcess.hpp>
 #include <MNN/Interpreter.hpp>
 #include <MNN/MNNDefine.h>
