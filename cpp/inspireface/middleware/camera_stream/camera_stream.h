@@ -4,8 +4,9 @@
 #include "MNN/ImageProcess.hpp"
 //#include "basic_types.h"
 #include "opencv2/opencv.hpp"
+#include "log.h"
 //
-//namespace hyper {
+namespace inspire {
 
 /**
  * @brief Enum to represent rotation modes.
@@ -292,7 +293,7 @@ public:
             cv::Mat img_out(scaled_height, scaled_width, CV_8UC3);
             std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
                     std::vector<int>{1, scaled_height, scaled_width, 3}, img_out.data));
-            process->convert(buffer_, sw, sh, 0, tensor.get());
+            auto err = process->convert(buffer_, sw, sh, 0, tensor.get());
             return img_out;
         }
     }
@@ -356,5 +357,7 @@ private:
     std::shared_ptr<MNN::CV::ImageProcess> process_; ///< Image processing instance.
 
 };
-//}
+
+} // inspire
+
 #endif // CAMERA_STREAM_H

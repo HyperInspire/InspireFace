@@ -3,12 +3,14 @@
 //
 #include <iostream>
 #include "track_module/face_detect/face_pose.h"
-#include "model_index.h"
+
+#include "middleware/model_archive/inspire_archive.h"
 
 using namespace inspire;
 
 int main(int argc, char** argv) {
-    ModelLoader loader("resource/model_zip/Pikachu-t1");
+    InspireArchive loader;
+    loader.ReLoad("resource/model_zip/Pikachu");
 
     Configurable param;
     param.set<std::string>("input_layer", "data");
@@ -20,7 +22,9 @@ int main(int argc, char** argv) {
     param.set<int>("input_image_channel", 1);        // BGR 2 Gray
 
     auto m_pose_net_ = std::make_shared<FacePose>();
-    m_pose_net_->loadData(param, loader.ReadModel(ModelIndex::_02_pose_fp16));
+    InspireModel model;
+    loader.LoadModel("", model);
+    m_pose_net_->loadData(model);
 
     auto image = cv::imread("resource/images/crop.png");
 

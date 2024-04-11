@@ -4,22 +4,22 @@
 
 
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/model_loader.h"
-#include "model_index.h"
-#include "inspireface/middleware/timer.h"
+
+#include "inspireface/middleware/costman.h"
 #include "inspireface/recognition_module/face_recognition.h"
 #include "inspireface/recognition_module/simd.h"
+#include "inspireface/middleware/model_archive/inspire_archive.h"
 
 using namespace inspire;
 
-std::shared_ptr<ModelLoader> loader;
+std::shared_ptr<InspireArchive> loader;
 
 void rec_function() {
 
     std::shared_ptr<Extract> m_extract_;
 
     Configurable param;
-    param.set<int>("model_index", ModelIndex::_03_extract);
+//    param.set<int>("model_index", ModelIndex::_03_extract);
     param.set<std::string>("input_layer", "input");
     param.set<std::vector<std::string>>("outputs_layers", {"267", });
     param.set<std::vector<int>>("input_size", {112, 112});
@@ -32,8 +32,9 @@ void rec_function() {
     param.set<bool>("swap_color", true);        // RK requires rgb input
 
     m_extract_ = std::make_shared<Extract>();
-    auto model = loader->ReadModel(ModelIndex::_03_extract);
-    m_extract_->loadData(param, model, InferenceHelper::kRknn);
+    InspireModel model;
+    loader->LoadModel("feature", model);
+    m_extract_->loadData(model, InferenceHelper::kRknn);
 
     loader.reset();
 
@@ -77,8 +78,8 @@ void rec_function() {
 
 
 int main() {
-    loader = std::make_shared<ModelLoader>();
-    loader->Reset("test_res/model_zip/Gundam_RV1109");
+    loader = std::make_shared<InspireArchive>();
+    loader->ReLoad("test_res/model_zip/Gundam_RV1109");
 
 
 

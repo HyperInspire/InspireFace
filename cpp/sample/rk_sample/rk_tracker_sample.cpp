@@ -3,9 +3,8 @@
 //
 
 #include "opencv2/opencv.hpp"
-#include "inspireface/middleware/model_loader/model_loader.h"
-#include "model_index.h"
-#include "inspireface/middleware/timer.h"
+
+#include "inspireface/middleware/costman.h"
 #include "inspireface/face_context.h"
 
 using namespace inspire;
@@ -14,7 +13,7 @@ int main() {
     FaceContext ctx;
     CustomPipelineParameter param;
     int32_t ret = ctx.Configuration(
-            "test_res/model_zip/Pikachu-t1_rv1109rv1126",
+            "test_res/model_zip/Gundam_RV1109",
             DetectMode::DETECT_MODE_VIDEO,
             3,
             param);

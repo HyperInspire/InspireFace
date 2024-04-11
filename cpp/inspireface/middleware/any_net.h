@@ -9,9 +9,9 @@
 #include "../data_type.h"
 #include "inference_helper/inference_helper.h"
 #include "configurable.h"
-#include "model_loader/model_loader.h"
 #include "opencv2/opencv.hpp"
 #include "../log.h"
+#include "model_archive/inspire_archive.h"
 
 namespace inspire {
 
@@ -34,36 +34,38 @@ public:
      */
     explicit AnyNet(std::string name):m_name_(std::move(name)) {}
 
-    /**
+     /**
      * @brief Loads parameters and initializes the model for inference.
      * @param param Parameters for network configuration.
      * @param model Pointer to the model.
      * @param type Type of the inference helper (default: kMnn).
      * @return int32_t Status of the loading and initialization process.
      */
-    int32_t loadData(const Configurable &param, Model *model, InferenceHelper::HelperType type = InferenceHelper::kMnn) {
+    int32_t loadData(InspireModel &model, InferenceHelper::HelperType type = InferenceHelper::kMnn) {
         m_infer_type_ = type;
         // must
-        pushData<int>(param, "model_index", 0);
-        pushData<std::string>(param, "input_layer", "");
-        pushData<std::vector<std::string>>(param, "outputs_layers", {"", });
-        pushData<std::vector<int>>(param, "input_size", {320, 320});
-        pushData<std::vector<float>>(param, "mean", {127.5f, 127.5f, 127.5f});
-        pushData<std::vector<float>>(param, "norm", {0.0078125f, 0.0078125f, 0.0078125f});
+        pushData<int>(model.Config(), "model_index", 0);
+        pushData<std::string>(model.Config(), "input_layer", "");
+        pushData<std::vector<std::string>>(model.Config(), "outputs_layers", {"", });
+        pushData<std::vector<int>>(model.Config(), "input_size", {320, 320});
+        pushData<std::vector<float>>(model.Config(), "mean", {127.5f, 127.5f, 127.5f});
+        pushData<std::vector<float>>(model.Config(), "norm", {0.0078125f, 0.0078125f, 0.0078125f});
         // rarely
-        pushData<int>(param, "input_channel", 3);
-        pushData<int>(param, "input_image_channel", 3);
-        pushData<bool>(param, "nchw", true);
-        pushData<bool>(param, "swap_color", false);
-        pushData<int>(param, "data_type", InputTensorInfo::InputTensorInfo::kDataTypeImage);
-        pushData<int>(param, "input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
-        pushData<int>(param, "output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
-        pushData<int>(param, "threads", 1);
+        pushData<int>(model.Config(), "input_channel", 3);
+        pushData<int>(model.Config(), "input_image_channel", 3);
+        pushData<bool>(model.Config(), "nchw", true);
+        pushData<bool>(model.Config(), "swap_color", false);
+        pushData<int>(model.Config(), "data_type", InputTensorInfo::InputTensorInfo::kDataTypeImage);
+        pushData<int>(model.Config(), "input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
+        pushData<int>(model.Config(), "output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
+        pushData<int>(model.Config(), "threads", 1);
 
-        int model_index = getData<int>("model_index");
         m_nn_inference_.reset(InferenceHelper::Create(m_infer_type_));
         m_nn_inference_->SetNumThreads(getData<int>("threads"));
-
+#if defined(GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA) && !defined(ENABLE_RKNN)
+        LOGW("You have forced the global use of MNN_CUDA as the neural network inference backend");
+        m_nn_inference_->SetSpecialBackend(InferenceHelper::kMnnCuda);
+#endif
         m_output_tensor_info_list_.clear();
         std::vector<std::string> outputs_layers = getData<std::vector<std::string>>("outputs_layers");
         int tensor_type = getData<int>("input_tensor_type");
@@ -71,9 +73,10 @@ public:
         for (auto &name: outputs_layers) {
             m_output_tensor_info_list_.push_back(OutputTensorInfo(name, out_tensor_type));
         }
-        auto ret = m_nn_inference_->Initialize(model->caffemodelBuffer, model->modelsize.caffemodel_size, m_input_tensor_info_list_, m_output_tensor_info_list_);
+        auto ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);
         if (ret != InferenceHelper::kRetOk) {
             LOGE("NN Initialize fail");
+            return ret;
         }
 
         m_input_tensor_info_list_.clear();
