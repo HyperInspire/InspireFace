@@ -157,6 +157,7 @@ int32_t InferenceHelperMnn::Initialize(char* model_buffer, int model_size, std::
 
     MNN::ScheduleConfig scheduleConfig;
     if (special_backend_ == kMnnCuda) {
+        LOGD("Disable CUDA");
         scheduleConfig.type = MNN_FORWARD_CPU;
     } else {
         LOGD("Enable CUDA");
