@@ -63,7 +63,7 @@ if (NOT ANDROID)
             set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
             link_directories(${LINUX_MNN_CUDA}/lib)
             set(MNN_LIBS MNN)
-            set(LINK_THIRD_LIBS dl)
+
         else()
             set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
             set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
@@ -134,6 +134,10 @@ set(NEED_INCLUDE ${NEED_INCLUDE} ${THIRD_PARTY_DIR}/sqlite/)
 
 # add cpp yaml header
 set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE})
+
+if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} dl)
+endif()
 
 target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
