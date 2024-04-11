@@ -42,13 +42,8 @@ endif ()
 
 option(BUILD_LINUX_ARM7 "Platform Armv7." OFF)
 option(BUILD_LINUX_AARCH64 "Platform Armv8." OFF)
-
 option(GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA "The global inference backend uses MNN CUDA." OFF)
-if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
-    message("Global MNN CUDA device inference")
-    add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
 
-endif ()
 
 if (BUILD_LINUX_ARM7)
     set(CPU_ARCH "armhf")
