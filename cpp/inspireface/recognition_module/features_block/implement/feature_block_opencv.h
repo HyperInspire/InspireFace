@@ -1,7 +1,7 @@
 //
 // Created by Tunm-Air13 on 2023/9/11.
 //
-
+#pragma once
 #ifndef HYPERFACEREPO_FEATUREBLOCKOPENCV_H
 #define HYPERFACEREPO_FEATUREBLOCKOPENCV_H
 #include "recognition_module/features_block/feature_block.h"
