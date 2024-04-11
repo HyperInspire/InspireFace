@@ -12,7 +12,7 @@ int main() {
     InspireArchive archive("test_res/model_zip/Pikachu");
 
     FaceTrack track;
-    FaceRecognition recognition(archive, true);
+//    FaceRecognition recognition(archive, true);
 
     auto ret = track.Configuration(archive);
     LOGD("ret=%d", ret);
