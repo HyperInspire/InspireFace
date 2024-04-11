@@ -144,6 +144,7 @@ target_include_directories(InspireFace PUBLIC
 )
 
 if (NOT ANDROID)
+    message("ld: ${LINK_THIRD_LIBS}")
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
 else()
     # xxx
