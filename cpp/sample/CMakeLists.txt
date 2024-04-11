@@ -61,6 +61,7 @@ if (NOT BUILD_LINUX_ARM7 AND NOT BUILD_LINUX_AARCH64)
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
     )
 
+
 else()
 
 # =======================RK Temporary test category===========================
@@ -110,6 +111,14 @@ else()
                 RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
         )
 
+
+        add_executable(ArchTest ${CMAKE_CURRENT_SOURCE_DIR}/archive_test.cpp)
+        target_link_libraries(ArchTest InspireFace)
+
+        set_target_properties(ArchTest PROPERTIES
+                RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+                )
+
     endif()
 
 endif()
@@ -136,3 +145,27 @@ set_target_properties(CAPISample PROPERTIES
 )
 
 
+
+# C_API Demo
+add_executable(LoopTracker ${CMAKE_CURRENT_SOURCE_DIR}/loop_tracker.cpp)
+target_link_libraries(LoopTracker InspireFace ${DEPEND})
+
+set_target_properties(LoopTracker PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+
+
+add_executable(ArchTracker ${CMAKE_CURRENT_SOURCE_DIR}/archive_tracker.cpp)
+target_link_libraries(ArchTracker InspireFace)
+
+set_target_properties(ArchTracker PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+        )
+
+add_executable(ErrorTest ${CMAKE_CURRENT_SOURCE_DIR}/error_test.cpp)
+target_link_libraries(ErrorTest InspireFace)
+
+set_target_properties(ErrorTest PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)

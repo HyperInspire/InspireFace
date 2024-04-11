@@ -2,7 +2,21 @@ cmake_minimum_required(VERSION 3.10)
 project(HyperFaceTest)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+option(ENABLE_BENCHMARK "Enable the benchmark test cases." ON)
+option(ENABLE_USE_LFW_DATA "Enable test cases for LFW data sets." ON)
+option(ENABLE_TEST_EVALUATION "Enable evaluation function test cases." ON)
 
+if (ENABLE_BENCHMARK)
+    add_definitions("-DENABLE_BENCHMARK")
+endif ()
+
+if (ENABLE_USE_LFW_DATA)
+    add_definitions("-DENABLE_USE_LFW_DATA")
+endif ()
+
+if (ENABLE_USE_LFW_DATA)
+    add_definitions("-DENABLE_TEST_EVALUATION")
+endif ()
 
 # OpenCV Configuration
 if(NOT APPLE)

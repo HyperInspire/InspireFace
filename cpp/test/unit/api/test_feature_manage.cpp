@@ -123,7 +123,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
     }
 
     SECTION("Import a large faces data") {
-#if ENABLE_USE_LFW_DATA
+#ifdef ENABLE_USE_LFW_DATA
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
@@ -171,7 +171,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
     }
 
     SECTION("Faces feature CURD") {
-#if ENABLE_USE_LFW_DATA
+#ifdef ENABLE_USE_LFW_DATA
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
@@ -322,7 +322,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
     // Test the search time at 1k, 5k and 10k of the face library (the target face is at the back).
     SECTION("Search face benchmark from 1k") {
-#if ENABLE_BENCHMARK && ENABLE_USE_LFW_DATA
+#if defined(ENABLE_BENCHMARK) && defined(ENABLE_USE_LFW_DATA)
         size_t loop = 1000;
         size_t numOfNeedImport = 1000;
         HResult ret;
@@ -408,7 +408,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
     }
 
     SECTION("Search face benchmark from 5k") {
-#if ENABLE_BENCHMARK && ENABLE_USE_LFW_DATA
+#if defined(ENABLE_BENCHMARK) && defined(ENABLE_USE_LFW_DATA)
         size_t loop = 1000;
         size_t numOfNeedImport = 5000;
         HResult ret;
@@ -493,7 +493,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
     }
 
     SECTION("Search face benchmark from 10k") {
-#if ENABLE_BENCHMARK && ENABLE_USE_LFW_DATA
+#if defined(ENABLE_BENCHMARK) && defined(ENABLE_USE_LFW_DATA)
         size_t loop = 1000;
         size_t numOfNeedImport = 10000;
         HResult ret;
@@ -614,7 +614,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
     }
 
     SECTION("Face comparison benchmark") {
-#if ENABLE_BENCHMARK
+#ifdef ENABLE_BENCHMARK
         int loop = 1000;
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
@@ -716,7 +716,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
     }
 
     SECTION("Face feature extract benchmark") {
-#if ENABLE_BENCHMARK
+#ifdef ENABLE_BENCHMARK
         int loop = 1000;
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();

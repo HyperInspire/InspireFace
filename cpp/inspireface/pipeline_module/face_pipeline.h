@@ -9,8 +9,8 @@
 #include "common/face_info/face_object.h"
 #include "attribute/all.h"
 #include "liveness/all.h"
-#include "middleware/model_loader/model_loader.h"
 #include "common/face_data/data_tools.h"
+#include "middleware/model_archive/inspire_archive.h"
 
 namespace inspire {
 
@@ -37,14 +37,14 @@ public:
     /**
      * @brief Constructor for FacePipeline class.
      *
-     * @param loader ModelLoader instance for model loading.
+     * @param archive Model archive instance for model loading.
      * @param enableLiveness Whether RGB liveness detection is enabled.
      * @param enableMaskDetect Whether mask detection is enabled.
      * @param enableAge Whether age estimation is enabled.
      * @param enableGender Whether gender prediction is enabled.
      * @param enableInteractionLiveness Whether interaction liveness detection is enabled.
      */
-    explicit FacePipeline(ModelLoader &loader, bool enableLiveness, bool enableMaskDetect, bool enableAge,
+    explicit FacePipeline(InspireArchive &archive, bool enableLiveness, bool enableMaskDetect, bool enableAge,
                           bool enableGender, bool enableInteractionLiveness);
 
     /**
@@ -75,7 +75,7 @@ private:
      * @param model Pointer to the AgePredict model.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t InitAgePredict(Model *model);
+    int32_t InitAgePredict(InspireModel &model);
 
     /**
      * @brief Initializes the GenderPredict model.
@@ -83,7 +83,7 @@ private:
      * @param model Pointer to the GenderPredict model.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t InitGenderPredict(Model *model);
+    int32_t InitGenderPredict(InspireModel &model);
 
     /**
      * @brief Initializes the MaskPredict model.
@@ -91,7 +91,7 @@ private:
      * @param model Pointer to the MaskPredict model.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t InitMaskPredict(Model *model);
+    int32_t InitMaskPredict(InspireModel &model);
 
     /**
      * @brief Initializes the RBGAntiSpoofing model.
@@ -99,7 +99,7 @@ private:
      * @param model Pointer to the RBGAntiSpoofing model.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t InitRBGAntiSpoofing(Model *model);
+    int32_t InitRBGAntiSpoofing(InspireModel &model);
 
     /**
      * @brief Initializes the LivenessInteraction model.
@@ -107,7 +107,7 @@ private:
      * @param model Pointer to the LivenessInteraction model.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t InitLivenessInteraction(Model *model);
+    int32_t InitLivenessInteraction(InspireModel &model);
 
 private:
     const bool m_enable_liveness_ = false;                 ///< Whether RGB liveness detection is enabled.

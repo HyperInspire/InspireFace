@@ -10,7 +10,6 @@
 #include "rknn_api.h"
 #include "data_type.h"
 #include "log.h"
-#include "middleware/model_loader/model_loader.h"
 
 
 /**
@@ -171,27 +170,6 @@ public:
         return init_();
     }
 
-
-    /**
-     * @brief Manually initialize
-     * @details Initialize the RKNN model using a inspire::Model object and allocate memory for creating the inference engine session
-     * @param model Pointer to the inspire::Model object
-     * @return Initialization result
-     */
-    int Initialize(inspire::Model *model) {
-        /* Create the neural network */
-        int model_data_size = 0;
-//        LOGD("Read models size: %f MB", round(float(model->modelsize.caffemodel_size) / (1024 * 1024)));
-        LOGD("The neural network is being initialized...");
-        int ret = rknn_init(&rk_ctx_, model->caffemodelBuffer, model->modelsize.caffemodel_size, 0);
-//        LOG_INFO("RKNN Init ok.");
-        if (ret < 0) {
-            LOGE("rknn_init fail! ret=%d", ret);
-            return -1;
-        }
-
-        return init_();
-    }
 
     /**
      * @brief Manually initialize

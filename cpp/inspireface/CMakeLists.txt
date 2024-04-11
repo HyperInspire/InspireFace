@@ -1,4 +1,3 @@
-#cmake_minimum_required(VERSION 3.19)
 cmake_minimum_required(VERSION 3.10)
 project(InspireFaceSDK)
 
@@ -10,7 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 # Current version
 set(INSPIRE_FACE_VERSION_MAJOR 0)
-set(INSPIRE_FACE_VERSION_MINOR 1)
+set(INSPIRE_FACE_VERSION_MINOR 2)
 set(INSPIRE_FACE_VERSION_PATCH 0)
 # Converts the version number to a string
 string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
@@ -22,6 +21,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
+
 
 if(NOT APPLE)
     find_package(OpenCV REQUIRED)
@@ -37,11 +37,14 @@ if (NOT ANDROID)
         FetchContent_Declare(
                 mnn
                 GIT_REPOSITORY https://github.com/alibaba/MNN.git
-                GIT_TAG        2.2.0
+                GIT_TAG        2.7.0
         )
         set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
         set(MNN_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
         set(MNN_BUILD_CONVERTER OFF CACHE BOOL "" FORCE)
+        if(GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+            set(MNN_CUDA ON CACHE BOOL "" FORCE)
+        endif()
 
         FetchContent_MakeAvailable(mnn)
         set(MNN_INCLUDE_DIRS ${mnn_SOURCE_DIR}/include)
@@ -53,8 +56,17 @@ if (NOT ANDROID)
 
     else ()
         # MNN Third party dependence
-        set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
-        set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
+        if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+            message("Global MNN CUDA device inference")
+            add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
+            set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
+            link_directories(${LINUX_MNN_CUDA}/lib)
+            set(MNN_LIBS MNN)
+
+        else()
+            set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
+            set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
+        endif ()
     endif ()
 endif()
 
@@ -70,7 +82,7 @@ endif()
 
 # OpenCV
 if(APPLE AND USE_MOBILE_OPENCV_IN_LOCAL)
-    set(LINK_THIRD_LIBS "${OPENCV_FRAMEWORK}" ${MNN_LIBS} "${ACCELERATE_FRAMEWORK}")
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} "${OPENCV_FRAMEWORK}" ${MNN_LIBS} "${ACCELERATE_FRAMEWORK}")
 else()
     set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
 endif()
@@ -84,6 +96,14 @@ if (ENABLE_RKNN)
     add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN")
 
 endif()
+
+# cpp yaml
+file(GLOB_RECURSE CPP_YAML_SRC ${THIRD_PARTY_DIR}/cpp_yaml/src/*.cpp)
+set(SOURCE_FILES ${SOURCE_FILES} ${CPP_YAML_SRC})
+set(CPP_YAML_INCLUDE ${THIRD_PARTY_DIR}/cpp_yaml/include)
+
+# archive
+set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/microtar/microtar.c)
 
 # MNN
 message(MNN_INCLUDE_DIRS=${MNN_INCLUDE_DIRS})
@@ -111,11 +131,20 @@ endif ()
 # add sqlite3 header
 set(NEED_INCLUDE ${NEED_INCLUDE} ${THIRD_PARTY_DIR}/sqlite/)
 
+# add cpp yaml header
+set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE})
+
+if(PLAT STREQUAL "linux")
+    find_package(Threads REQUIRED)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${CMAKE_THREAD_LIBS_INIT} dl)
+endif()
+
 target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
 )
 
 if (NOT ANDROID)
+    message("ld: ${LINK_THIRD_LIBS}")
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
 else()
     # xxx
