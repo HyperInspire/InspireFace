@@ -53,16 +53,27 @@ int main(int argc, char* argv[]) {
     Catch::Session session;
     // Pack file name
     std::string pack;
+    std::string testDir;
 
     // Add command line options
-    auto cli = session.cli() | Catch::clara::Opt(pack, "value")["--pack"]("Resource pack filename");
+    auto cli_pack = session.cli() | Catch::clara::Opt(pack, "value")["--pack"]("Resource pack filename");
+    auto cli_test_dir = session.cli() | Catch::clara::Opt(testDir, "value")["--test_dir"]("Test dir resource");
 
-    session.cli(cli);
+    session.cli(cli_pack);
+    session.cli(cli_test_dir);
 
     // Parse command line arguments
     int returnCode = session.applyCommandLine(argc, argv);
     if (returnCode != 0) // Indicate an error
         return returnCode;
+
+
+    if (!testDir.empty()) {
+        SET_TEST_DIR(testDir);
+        TEST_PRINT("Updated test dir to: {}", getTestDataDir());
+    } else {
+        TEST_PRINT("Using default test dir:", getTestDataDir());
+    }
 
     // Check whether custom parameters are set
     if (!pack.empty()) {
@@ -71,6 +82,7 @@ int main(int argc, char* argv[]) {
     } else {
         TEST_PRINT("Using default global Pack:", TEST_MODEL_FILE);
     }
+
 
     return session.run();
 }

@@ -12,6 +12,7 @@
 
 #define TEST_MODEL_FILE Enviro::getInstance().getPackName()                       // Optional model file
 #define SET_PACK_NAME(name) Enviro::getInstance().setPackName(name)
+#define SET_TEST_DIR(dir) Enviro::getInstance().setTestResDir(dir)
 
 #define TEST_LFW_FUNNELED_TXT "valid_lfw_funneled.txt"     // LFW Index txt file
 #define LFW_FUNNELED_DIR ""                                // LFW funneled data dir
