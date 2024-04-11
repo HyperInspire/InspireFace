@@ -57,7 +57,6 @@ if (NOT ANDROID)
     else ()
         # MNN Third party dependence
         if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
-            find_package(Threads REQUIRED)
             message("Global MNN CUDA device inference")
             add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
             set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
@@ -135,7 +134,8 @@ set(NEED_INCLUDE ${NEED_INCLUDE} ${THIRD_PARTY_DIR}/sqlite/)
 # add cpp yaml header
 set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE})
 
-if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+if(PLAT STREQUAL "linux")
+    find_package(Threads REQUIRED)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${CMAKE_THREAD_LIBS_INIT} dl)
 endif()
 
