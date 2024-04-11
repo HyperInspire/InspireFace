@@ -20,10 +20,15 @@ public:
     std::string getPackName() const { return packName; }
     void setPackName(const std::string& name) { packName = name; }
 
+    const std::string &getTestResDir() const { return testResDir; }
+
+    void setTestResDir(const std::string &dir) { Enviro::testResDir = dir; }
+
 private:
     Enviro() {}
 
     std::string packName = "Pikachu";
+    std::string testResDir = "test_res";
 };
 
 #endif //INSPIREFACE_ENVIRO_H
