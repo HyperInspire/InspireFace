@@ -287,7 +287,7 @@ protected:
 
 protected:
     HelperType helper_type_;
-    SpecialBackend special_backend_;
+    SpecialBackend special_backend_ = kDefaultCPU;
 };
 
 #endif
