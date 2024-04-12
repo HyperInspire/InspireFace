@@ -6,7 +6,7 @@
 
 
 std::string getTestDataDir() {
-    return "./test_res";
+    return Enviro::getInstance().getTestResDir();
 }
 
 std::string getTestData(const std::string& name) {
