@@ -5,7 +5,7 @@
 #include <iostream>
 #include "opencv2/opencv.hpp"
 #include "log.h"
-#include "recognition_module/simd.h"
+#include "inspireface/feature_hub/simd.h"
 //#include <Eigen/Dense>
 
 int main() {

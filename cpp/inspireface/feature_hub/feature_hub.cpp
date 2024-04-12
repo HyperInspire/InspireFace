@@ -2,8 +2,7 @@
 // Created by tunm on 2023/9/8.
 //
 
-#include "face_recognition.h"
-
+#include "feature_hub.h"
 #include "simd.h"
 #include "recognition_module/extract/alignment.h"
 #include "track_module/landmark/face_landmark.h"
@@ -11,19 +10,7 @@
 
 namespace inspire {
 
-FaceRecognition::FaceRecognition(InspireArchive &archive, bool enable_recognition, MatrixCore core, int feature_block_num) {
-    if (enable_recognition) {
-        InspireModel model;
-        auto ret = archive.LoadModel("feature", model);
-        if (ret != SARC_SUCCESS) {
-            LOGE("Load rec model error.");
-        }
-        ret = InitExtractInteraction(model);
-        if (ret != 0) {
-            LOGE("FaceRecognition error.");
-        }
-    }
-
+FeatureHub::FeatureHub(MatrixCore core, int feature_block_num) {
     for (int i = 0; i < feature_block_num; ++i) {
         std::shared_ptr<FeatureBlock> block;
         block.reset(FeatureBlock::Create(core, 512, 512));
@@ -32,23 +19,7 @@ FaceRecognition::FaceRecognition(InspireArchive &archive, bool enable_recognitio
 
 }
 
-int32_t FaceRecognition::InitExtractInteraction(InspireModel& model) {
-    try {
-        auto input_size = model.Config().get<std::vector<int>>("input_size");
-        m_extract_ = std::make_shared<Extract>();
-        auto ret = m_extract_->loadData(model, model.modelType);
-        if (ret != InferenceHelper::kRetOk) {
-            return HERR_CTX_ARCHIVE_LOAD_FAILURE;
-        }
-        return HSUCCEED;
-
-    } catch (const std::runtime_error& e) {
-        LOGE("%s", e.what());
-        return HERR_CTX_FACE_REC_OPTION_ERROR;
-    }
-}
-
-int32_t FaceRecognition::CosineSimilarity(const std::vector<float>& v1, const std::vector<float>& v2, float &res) {
+int32_t FeatureHub::CosineSimilarity(const std::vector<float>& v1, const std::vector<float>& v2, float &res) {
     if (v1.size() != v2.size() || v1.empty()) {
         return HERR_CTX_REC_CONTRAST_FEAT_ERR; // 无法计算相似性
     }
@@ -59,53 +30,14 @@ int32_t FaceRecognition::CosineSimilarity(const std::vector<float>& v1, const st
 }
 
 
-int32_t FaceRecognition::CosineSimilarity(const float *v1, const float *v2, int32_t size, float &res) {
+int32_t FeatureHub::CosineSimilarity(const float *v1, const float *v2, int32_t size, float &res) {
     res = simd_dot(v1, v2, size);
 
     return HSUCCEED;
 }
 
 
-int32_t FaceRecognition::FaceExtract(CameraStream &image, const HyperFaceData &face, Embedded &embedded) {
-    if (m_extract_ == nullptr) {
-        return HERR_CTX_REC_EXTRACT_FAILURE;
-    }
-
-    std::vector<cv::Point2f> pointsFive;
-    for (const auto &p: face.keyPoints) {
-        pointsFive.push_back(HPointToPoint2f(p));
-    }
-    auto trans = getTransformMatrix112(pointsFive);
-    trans.convertTo(trans, CV_64F);
-    auto crop = image.GetAffineRGBImage(trans, 112, 112);
-//    cv::imshow("w", crop);
-//    cv::waitKey(0);
-    embedded = (*m_extract_)(crop);
-
-    return 0;
-}
-
-int32_t FaceRecognition::FaceExtract(CameraStream &image, const FaceObject &face, Embedded &embedded) {
-    if (m_extract_ == nullptr) {
-        return HERR_CTX_REC_EXTRACT_FAILURE;
-    }
-
-    auto lmk = face.landmark_;
-    std::vector<cv::Point2f> lmk_5 = {lmk[FaceLandmark::LEFT_EYE_CENTER],
-                                 lmk[FaceLandmark::RIGHT_EYE_CENTER],
-                                 lmk[FaceLandmark::NOSE_CORNER],
-                                 lmk[FaceLandmark::MOUTH_LEFT_CORNER],
-                                 lmk[FaceLandmark::MOUTH_RIGHT_CORNER]};
-
-    auto trans = getTransformMatrix112(lmk_5);
-    trans.convertTo(trans, CV_64F);
-    auto crop = image.GetAffineRGBImage(trans, 112, 112);
-    embedded = (*m_extract_)(crop);
-
-    return 0;
-}
-
-int32_t FaceRecognition::RegisterFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag, int32_t customId) {
+int32_t FeatureHub::RegisterFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag, int32_t customId) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
     }
@@ -120,7 +52,7 @@ int32_t FaceRecognition::RegisterFaceFeature(const std::vector<float>& feature, 
     return result;
 }
 
-int32_t FaceRecognition::InsertFaceFeature(const std::vector<float>& feature, const std::string &tag, int32_t customId) {
+int32_t FeatureHub::InsertFaceFeature(const std::vector<float>& feature, const std::string &tag, int32_t customId) {
     int32_t ret;
     for (int i = 0; i < m_feature_matrix_list_.size(); ++i) {
         auto &block = m_feature_matrix_list_[i];
@@ -133,7 +65,7 @@ int32_t FaceRecognition::InsertFaceFeature(const std::vector<float>& feature, co
     return ret;
 }
 
-int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold, bool mostSimilar) {
+int32_t FeatureHub::SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold, bool mostSimilar) {
     if (queryFeature.size() != NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_FEAT_SIZE_ERR; // 查询特征大小与预期不符
     }
@@ -192,7 +124,7 @@ int32_t FaceRecognition::SearchFaceFeature(const std::vector<float>& queryFeatur
     return HSUCCEED; // 没有找到匹配的特征 但是不算错误
 }
 
-int32_t FaceRecognition::DeleteFaceFeature(int featureIndex) {
+int32_t FeatureHub::DeleteFaceFeature(int featureIndex) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
     }
@@ -207,7 +139,7 @@ int32_t FaceRecognition::DeleteFaceFeature(int featureIndex) {
     return result;
 }
 
-int32_t FaceRecognition::GetFaceFeature(int featureIndex, Embedded &feature) {
+int32_t FeatureHub::GetFaceFeature(int featureIndex, Embedded &feature) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
     }
@@ -220,7 +152,7 @@ int32_t FaceRecognition::GetFaceFeature(int featureIndex, Embedded &feature) {
     return result;
 }
 
-int32_t FaceRecognition::GetFaceEntity(int featureIndex, Embedded &feature, std::string& tag, FEATURE_STATE& status) {
+int32_t FeatureHub::GetFaceEntity(int featureIndex, Embedded &feature, std::string& tag, FEATURE_STATE& status) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
     }
@@ -236,7 +168,7 @@ int32_t FaceRecognition::GetFaceEntity(int featureIndex, Embedded &feature, std:
     return result;
 }
 
-int32_t FaceRecognition::GetFaceFeatureCount() {
+int32_t FeatureHub::GetFaceFeatureCount() {
     int totalFeatureCount = 0;
 
     // 遍历所有 FeatureBlock，累加已使用的特征向量数量
@@ -247,11 +179,11 @@ int32_t FaceRecognition::GetFaceFeatureCount() {
     return totalFeatureCount;
 }
 
-int32_t FaceRecognition::GetFeatureNum() const {
+int32_t FeatureHub::GetFeatureNum() const {
     return NUM_OF_FEATURES_IN_BLOCK;
 }
 
-int32_t FaceRecognition::UpdateFaceFeature(const std::vector<float> &feature, int featureIndex, const std::string &tag, int32_t customId) {
+int32_t FeatureHub::UpdateFaceFeature(const std::vector<float> &feature, int featureIndex, const std::string &tag, int32_t customId) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_CTX_REC_INVALID_INDEX; // 无效的特征索引号
     }
@@ -266,16 +198,12 @@ int32_t FaceRecognition::UpdateFaceFeature(const std::vector<float> &feature, in
     return result;
 }
 
-void FaceRecognition::PrintFeatureMatrixInfo() {
+void FeatureHub::PrintFeatureMatrixInfo() {
     m_feature_matrix_list_[0]->PrintMatrix();
 }
 
-const std::shared_ptr<Extract> &FaceRecognition::getMExtract() const {
-    return m_extract_;
-}
 
-
-int32_t FaceRecognition::FindFeatureIndexByCustomId(int32_t customId) {
+int32_t FeatureHub::FindFeatureIndexByCustomId(int32_t customId) {
     // 遍历所有的 FeatureBlock
     for (int blockIndex = 0; blockIndex < m_feature_matrix_list_.size(); ++blockIndex) {
         int startIndex = blockIndex * NUM_OF_FEATURES_IN_BLOCK;
@@ -291,8 +219,9 @@ int32_t FaceRecognition::FindFeatureIndexByCustomId(int32_t customId) {
     return -1;  // 如果所有 FeatureBlock 中都没有找到，则返回-1
 }
 
+FeatureHub::FeatureHub() : m_enable_(false) {
 
-
+}
 
 
 } // namespace hyper
