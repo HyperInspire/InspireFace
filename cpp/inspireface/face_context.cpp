@@ -29,7 +29,11 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
     m_face_track_->Configuration(m_archive_);
     SetDetectMode(m_detect_mode_);
 
-    m_face_recognition_ = std::make_shared<FaceRecognition>(m_archive_, m_parameter_.enable_recognition);
+    m_face_recognition_ = std::make_shared<FeatureExtraction>(m_archive_, m_parameter_.enable_recognition);
+    if (m_face_recognition_->QueryStatus() != HSUCCEED) {
+        return m_face_recognition_->QueryStatus();
+    }
+
     m_face_pipeline_ = std::make_shared<FacePipeline>(
             m_archive_,
             param.enable_liveness,
@@ -88,7 +92,7 @@ FaceObjectList& FaceContext::GetTrackingFaceList() {
     return m_face_track_->trackingFace;
 }
 
-const std::shared_ptr<FaceRecognition>& FaceContext::FaceRecognitionModule() {
+const std::shared_ptr<FeatureExtraction>& FaceContext::FaceRecognitionModule() {
     return m_face_recognition_;
 }
 

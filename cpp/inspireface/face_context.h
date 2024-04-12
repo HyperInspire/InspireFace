@@ -15,7 +15,7 @@
 #include "track_module/face_track.h"
 #include "data_type.h"
 #include "pipeline_module/face_pipeline.h"
-#include "recognition_module/face_recognition.h"
+#include "recognition_module/face_feature_extraction.h"
 #include "middleware/model_archive/inspire_archive.h"
 
 /**
@@ -112,7 +112,7 @@ public:
      * @brief Retrieves the face recognition module.
      * @return std::shared_ptr<FaceRecognition> Shared pointer to the FaceRecognition module.
      */
-    const std::shared_ptr<FaceRecognition>& FaceRecognitionModule();
+    const std::shared_ptr<FeatureExtraction>& FaceRecognitionModule();
 
     /**
      * @brief Retrieves the face pipeline module.
@@ -311,7 +311,7 @@ private:
     bool m_always_detect_{};                               ///< Flag to determine if detection should always occur
 
     std::shared_ptr<FaceTrack> m_face_track_;              ///< Shared pointer to the FaceTrack object
-    std::shared_ptr<FaceRecognition> m_face_recognition_;  ///< Shared pointer to the FaceRecognition object
+    std::shared_ptr<FeatureExtraction> m_face_recognition_;  ///< Shared pointer to the FaceRecognition object
     std::shared_ptr<FacePipeline> m_face_pipeline_;        ///< Shared pointer to the FacePipeline object
 
     float m_recognition_threshold_ = 0.48f;                 ///< Threshold value for face recognition
