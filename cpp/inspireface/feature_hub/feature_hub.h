@@ -6,12 +6,11 @@
 #define HYPERFACEREPO_FACERECOGNITION_H
 
 #include <mutex>
-#include "extract/extract.h"
 #include "common/face_info/face_object.h"
 #include "common/face_data/data_tools.h"
 #include "middleware/camera_stream/camera_stream.h"
-#include "features_block/feature_block.h"
-#include "persistence/sqlite_faces_manage.h"
+#include "feature_hub/features_block/feature_block.h"
+#include "feature_hub/persistence/sqlite_faces_manage.h"
 #include "middleware/model_archive/inspire_archive.h"
 
 namespace inspire {
@@ -20,28 +19,29 @@ namespace inspire {
  * @struct DatabaseConfiguration
  * @brief Structure to configure database settings for FaceRecognition.
  */
-    typedef struct DatabaseConfiguration {
-        bool enable_use_db = false; ///< Whether to enable data persistence.
-        std::string  db_path;      ///< Path to the database file.
-    } DatabaseConfiguration;
+typedef struct DatabaseConfiguration {
+    int feature_block_num = 20;
+    bool enable_use_db = false; ///< Whether to enable data persistence.
+    std::string  db_path;      ///< Path to the database file.
+} DatabaseConfiguration;
 
 /**
- * @class FaceRecognition
- * @brief Class for performing face recognition tasks.
+ * @class FeatureHub
+ * @brief Service for internal feature vector storage.
  *
  * This class provides methods for face feature extraction, registration, update, search, and more.
  */
-class INSPIRE_API FaceRecognition {
+class INSPIRE_API FeatureHub {
 public:
     /**
-     * @brief Constructor for FaceRecognition class.
+     * @brief Constructor for FeatureHub class.
      *
-     * @param archive Model active instance for model loading.
-     * @param enable_recognition Whether face recognition is enabled.
      * @param core Type of matrix core to use for feature extraction.
      * @param feature_block_num Number of feature blocks to use.
      */
-    FaceRecognition(InspireArchive &archive, bool enable_recognition, MatrixCore core = MC_OPENCV, int feature_block_num = 20);
+    FeatureHub();
+
+    int32_t EnableHub(const DatabaseConfiguration& configuration, MatrixCore core = MC_OPENCV);
 
     /**
      * @brief Computes the cosine similarity between two feature vectors.
@@ -63,26 +63,6 @@ public:
      * @return int32_t Status code indicating success (0) or failure.
      */
     static int32_t CosineSimilarity(const float* v1, const float *v2, int32_t size, float &res);
-
-    /**
-     * @brief Extracts a facial feature from an image and stores it in the provided 'embedded'.
-     *
-     * @param image CameraStream instance containing the image.
-     * @param face FaceObject representing the detected face.
-     * @param embedded Output parameter to store the extracted facial feature.
-     * @return int32_t Status code indicating success (0) or failure.
-     */
-    int32_t FaceExtract(CameraStream &image, const FaceObject& face, Embedded &embedded);
-
-    /**
-     * @brief Extracts a facial feature from an image and stores it in the provided 'embedded'.
-     *
-     * @param image CameraStream instance containing the image.
-     * @param face HyperFaceData representing the detected face.
-     * @param embedded Output parameter to store the extracted facial feature.
-     * @return int32_t Status code indicating success (0) or failure.
-     */
-    int32_t FaceExtract(CameraStream &image, const HyperFaceData& face, Embedded &embedded);
 
     /**
      * @brief Registers a facial feature in the feature block.
@@ -174,33 +154,19 @@ public:
     void PrintFeatureMatrixInfo();
 
     /**
-     * @brief Gets the Extract instance associated with this FaceRecognition.
-     *
-     * @return const std::shared_ptr<Extract>& Pointer to the Extract instance.
-     */
-    const std::shared_ptr<Extract> &getMExtract() const;
-
-    /**
      * @brief Gets the number of features in the feature block.
      *
      * @return int32_t Number of features.
      */
     int32_t GetFeatureNum() const;
 
-private:
-    /**
-     * @brief Initializes the interaction with the Extract model.
-     *
-     * @param model Pointer to the loaded model.
-     * @return int32_t Status code indicating success (0) or failure.
-     */
-    int32_t InitExtractInteraction(InspireModel& model);
 
 private:
-    std::shared_ptr<Extract> m_extract_; ///< Pointer to the Extract instance.
     std::vector<std::shared_ptr<FeatureBlock>> m_feature_matrix_list_; ///< List of feature blocks.
     const int32_t NUM_OF_FEATURES_IN_BLOCK = 512; ///< Number of features in each feature block.
-    int m_mb_;
+
+    bool m_enable_;
+
 };
 
 }   // namespace inspire

@@ -6,7 +6,7 @@
 
 #include "inspireface/middleware/costman.h"
 #include "middleware/inference_helper/customized/rknn_adapter.h"
-#include "inspireface/recognition_module/simd.h"
+#include "inspireface/feature_hub/simd.h"
 #include <memory>
 #include "inspireface/recognition_module/extract/extract.h"
 #include "middleware/model_archive/inspire_archive.h"

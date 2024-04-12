@@ -4,10 +4,10 @@
 
 #include "feature_block.h"
 #include "log.h"
-#include "recognition_module/features_block/implement/feature_block_none.h"
+#include "feature_hub/features_block/implement/feature_block_none.h"
 
 #ifdef FEATURE_BLOCK_ENABLE_OPENCV
-#include "recognition_module/features_block/implement/feature_block_opencv.h"
+#include "feature_hub/features_block/implement/feature_block_opencv.h"
 #endif
 
 namespace inspire {
