@@ -21,7 +21,7 @@ int compare() {
 #ifdef ENABLE_RKNN
     HPath path = "test_res/model_zip/Gundam_RV1109";
 #else
-    HPath path = "test_res/model_zip/Pikachu-t1";
+    HPath path = "test_res/model_zip/Pikachu";
 #endif
     HF_ContextCustomParameter parameter = {0};
     parameter.enable_liveness = 1;
@@ -40,7 +40,7 @@ int compare() {
             "/Users/tunm/datasets/lfw_funneled/Abel_Pacheco/Abel_Pacheco_0004.jpg",
     };
     HInt32 featureNum;
-    HF_GetFeatureLength(ctxHandle, &featureNum);
+    HF_GetFeatureLength(&featureNum);
     LOGD("特征长度: %d", featureNum);
     HFloat featuresCache[names.size()][featureNum];     // Store the cached vector
 
@@ -128,7 +128,7 @@ int compare() {
     compFeature1.data = featuresCache[0];
     compFeature2.size = featureNum;
     compFeature2.data = featuresCache[1];
-    ret = HF_FaceComparison1v1(ctxHandle, compFeature1, compFeature2, &compResult);
+    ret = HF_FaceComparison1v1(compFeature1, compFeature2, &compResult);
     if (ret != HSUCCEED) {
         LOGE("对比失败: %d", ret);
         return -1;
@@ -146,7 +146,7 @@ int compare() {
 int search() {
     HResult ret;
     // 初始化context
-    HString path = "test_res/model_zip/Pikachu-t1";
+    HString path = "test_res/model_zip/Pikachu";
     HF_ContextCustomParameter parameter = {0};
     parameter.enable_liveness = 1;
     parameter.enable_mask_detect = 1;
@@ -159,10 +159,10 @@ int search() {
         LOGD("An error occurred while creating ctx: %ld", ret);
     }
     // 配置数据库持久化(如果有需要的话)
-    HF_DatabaseConfiguration databaseConfiguration = {0};
-    databaseConfiguration.enableUseDb = 1;
+    HF_FeatureHubConfiguration databaseConfiguration = {0};
+    databaseConfiguration.enablePersistence = 1;
     databaseConfiguration.dbPath = "./";
-    ret = HF_FaceContextDataPersistence(ctxHandle, databaseConfiguration);
+    ret = HF_FeatureHubDataEnable(databaseConfiguration);
     if (ret != HSUCCEED) {
         LOGE("数据库配置失败: %ld", ret);
         return -1;
@@ -216,7 +216,7 @@ int search() {
         identity.customId = i;
         identity.tag = tagName;
 
-        ret = HF_FeaturesGroupInsertFeature(ctxHandle, identity);
+        ret = HF_FeatureHubInsertFeature(identity);
         if (ret != HSUCCEED) {
             LOGE("插入失败: %ld", ret);
             return -1;
@@ -284,7 +284,7 @@ int search() {
     updateIdentity.customId = 1;
     updateIdentity.tag = newTagName;
     updateIdentity.feature = &feature;
-    ret = HF_FeaturesGroupFeatureUpdate(ctxHandle, updateIdentity);
+    ret = HF_FeatureHubFaceUpdate(updateIdentity);
     if (ret != HSUCCEED) {
         LOGE("更新失败: %ld", ret);
     }
@@ -295,7 +295,7 @@ int search() {
 //    HF_FaceFeature featureSearched = {0};
 //    searchIdentity.feature = &featureSearched;
     HFloat confidence;
-    ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchIdentity);
+    ret = HF_FeatureHubFaceSearch(feature, &confidence, &searchIdentity);
     if (ret != HSUCCEED) {
         LOGE("搜索失败: %ld", ret);
         return -1;
@@ -330,17 +330,17 @@ int search() {
     LOGD("口罩佩戴置信度: %f", maskConfidence.confidence[0]);
 
     HInt32 faceNum;
-    ret = HF_FeatureGroupGetCount(ctxHandle, &faceNum);
+    ret = HF_FeatureHubGetFaceCount(&faceNum);
     if (ret != HSUCCEED) {
         LOGE("获取失败");
     }
     LOGD("人脸特征数量: %d", faceNum);
 
-    HF_ViewFaceDBTable(ctxHandle);
+    HF_FeatureHubViewDBTable();
 
 
     HF_FaceFeatureIdentity identity;
-    ret = HF_FeaturesGroupGetFeatureIdentity(ctxHandle, 100, &identity);
+    ret = HF_FeatureHubGetFaceIdentity(100, &identity);
     if (ret != HSUCCEED) {
         LOGE("获取特征失败");
     }
@@ -394,9 +394,9 @@ int main() {
 //    }
 
 
-    compare();
-//
-//    search();
+//    compare();
+
+    search();
 
 
     opiton();

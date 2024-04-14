@@ -639,17 +639,4 @@ inline cv::Rect GetNewBox(int src_w, int src_h, cv::Rect bbox, float scale) {
     return new_bbox;
 }
 
-// inline void ScaleAffineMatrixAlignCenter(cv::Mat &affine,float scale , int w,
-// int h) {
-//
-//}
-// std::vector<cv::Point2f> ApplyAffineToRect(cv::Rect rect){
-//    float x1 = static_cast<float>(rect.x);
-//    float y1 = static_cast<float>(rect.y);
-//    float x2 = static_cast<float>(rect.x + rect.width);
-//    float y2 = static_cast<float>(rect.y + rect.height);
-//    std::vector<cv::Point2f> src_pts = {{x1, y1}, {x2, y1}, {x2, y2},{x1,y2}};
-//    return src_pts;
-//}
-//
 #endif

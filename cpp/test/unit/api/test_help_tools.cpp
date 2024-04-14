@@ -21,26 +21,30 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
         HContextHandle ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
-        HF_DatabaseConfiguration configuration = {0};
+        HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
         HString dbPathStr = new char[dbPath.size() + 1];
         std::strcpy(dbPathStr, dbPath.c_str());
-        configuration.enableUseDb = 1;
+        configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
+        configuration.featureblockNum = 20;
+        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+        configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
         }
-        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        ret = HF_FeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
         auto lfwDir = getLFWFunneledDir();
         auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
         size_t numOfNeedImport = 100;
         auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
+        HF_FeatureHubViewDBTable();
         REQUIRE(importStatus);
         HInt32 count;
-        ret = HF_FeatureGroupGetCount(ctxHandle, &count);
+        ret = HF_FeatureHubGetFaceCount(&count);
         REQUIRE(ret == HSUCCEED);
         CHECK(count == numOfNeedImport);
 
@@ -49,6 +53,9 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
 
         // Finish
         ret = HF_ReleaseFaceContext(ctxHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HF_FeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
 
         delete []dbPathStr;

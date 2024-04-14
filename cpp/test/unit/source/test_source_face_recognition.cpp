@@ -6,6 +6,7 @@
 #include "inspireface/face_context.h"
 #include "herror.h"
 #include "common/face_data/data_tools.h"
+#include "feature_hub/feature_hub.h"
 
 using namespace inspire;
 
@@ -76,7 +77,7 @@ TEST_CASE("test_FaceRecognition", "[face_rec]") {
             vectors.push_back(feature);
         }
         float score;
-        ret = ctx.FaceRecognitionModule()->CosineSimilarity(vectors[1], vectors[0], score);
+        ret = FEATURE_HUB->CosineSimilarity(vectors[1], vectors[0], score);
         REQUIRE(ret == HSUCCEED);
 //        spdlog::info("score: {}", score);
         CHECK(0.7623623013 == Approx(score).epsilon(1e-2));

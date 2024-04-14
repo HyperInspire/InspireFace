@@ -59,7 +59,7 @@ int32_t SQLiteFaceManage::OpenDatabase(const std::string &dbPath) {
 
 int32_t SQLiteFaceManage::CloseDatabase() {
     if (!m_db_) {
-        LOGE("Attempted to close an already closed or uninitialized database.");
+//        LOGE("Attempted to close an already closed or uninitialized database.");
         return HERR_CTX_DB_NOT_OPENED;
     }
 
