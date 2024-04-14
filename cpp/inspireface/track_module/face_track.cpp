@@ -315,13 +315,13 @@ void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
         FaceObject faceinfo(tracking_idx_, bbox[i], FaceLandmark::NUM_OF_LANDMARK);
         faceinfo.detect_bbox_ = bbox[i];
 
-        // 控制检测到的人脸数量不超过最大限制
+        // Control that the number of faces detected does not exceed the maximum limit
         if (candidate_faces_.size() < max_detected_faces_) {
             candidate_faces_.push_back(faceinfo);
         } else {
-            // 如果超过了最大限制，您可以选择丢弃当前检测到的人脸或根据策略来选择要丢弃的人脸
-            // 例如，可以比较人脸置信度，丢弃置信度较低的人脸
-            // 这里以直接丢弃最后一个人脸为例
+            // If the maximum limit is exceeded, you can choose to discard the currently detected face or choose the face to discard according to the policy
+            // For example, face confidence can be compared and faces with lower confidence can be discarded
+            // Take the example of simply discarding the last face
             candidate_faces_.pop_back();
         }
     }
