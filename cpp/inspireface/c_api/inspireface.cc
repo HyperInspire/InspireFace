@@ -6,6 +6,7 @@
 #include "intypedef.h"
 #include "inspireface_internal.h"
 #include "information.h"
+#include "feature_hub/feature_hub.h"
 
 using namespace inspire;
 
@@ -164,18 +165,18 @@ HResult HF_CreateFaceContextFromResourceFileOptional(HPath resourceFile,HInt32 c
     return ret;
 }
 
-HResult HF_FaceContextDataPersistence(HContextHandle ctxHandle, HF_DatabaseConfiguration configuration) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
+HResult HF_FeatureHubDataDisable() {
+    return FEATURE_HUB->DisableHub();
+}
+
+HResult HF_FeatureHubDataEnable(HF_FeatureHubConfiguration configuration) {
     inspire::DatabaseConfiguration param = {0};
-    param.db_path = std::string(configuration.dbPath);
-    param.enable_use_db = configuration.enableUseDb;
-    auto ret = ctx->impl.DataPersistenceConfiguration(param);
+    param.db_path = (configuration.dbPath != nullptr) ? std::string(configuration.dbPath) : std::string();
+    param.enable_use_db = configuration.enablePersistence;
+    param.feature_block_num = configuration.featureblockNum;
+    param.recognition_threshold = configuration.searchThreshold;
+    param.search_mode = (SearchMode )configuration.searchMode;
+    auto ret = FEATURE_HUB->EnableHub(param);
 
     return ret;
 }
@@ -246,15 +247,9 @@ HResult HF_GetFaceBasicTokenSize(HPInt32 bufferSize) {
     return HSUCCEED;
 }
 
-HResult HF_FaceRecognitionThresholdSetting(HContextHandle ctxHandle, float threshold) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    return ctx->impl.SetRecognitionThreshold(threshold);
+HResult HF_FeatureHubFaceSearchThresholdSetting(float threshold) {
+    FEATURE_HUB->SetRecognitionThreshold(threshold);
+    return HSUCCEED;
 }
 
 HResult HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature) {
@@ -317,49 +312,31 @@ HResult HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHa
 
 
 
-HResult HF_FaceComparison1v1(HContextHandle ctxHandle, HF_FaceFeature feature1, HF_FaceFeature feature2, HPFloat result) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
+HResult HF_FaceComparison1v1(HF_FaceFeature feature1, HF_FaceFeature feature2, HPFloat result) {
     if (feature1.data == nullptr || feature2.data == nullptr) {
+        LOGE("1");
         return HERR_INVALID_FACE_FEATURE;
     }
     if (feature1.size != feature2.size) {
+        LOGE("feature1.size: %d, feature2.size: %d", feature1.size, feature2.size);
         return HERR_INVALID_FACE_FEATURE;
     }
+    *result = 0.0f;
     float res = -1.0f;
-    auto ret = ctx->impl.FaceRecognitionModule()->CosineSimilarity(feature1.data, feature2.data, feature1.size, res);
+    auto ret = FEATURE_HUB->CosineSimilarity(feature1.data, feature2.data, feature1.size, res);
     *result = res;
 
     return ret;
 }
 
-HResult HF_GetFeatureLength(HContextHandle ctxHandle, HPInt32 num) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    *num = ctx->impl.FaceRecognitionModule()->GetFeatureNum();
+HResult HF_GetFeatureLength(HPInt32 num) {
+    *num = FEATURE_HUB->GetFeatureNum();
 
     return HSUCCEED;
 }
 
 
-HResult HF_FeaturesGroupInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    auto *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
+HResult HF_FeatureHubInsertFeature(HF_FaceFeatureIdentity featureIdentity) {
     if (featureIdentity.feature->data == nullptr) {
         return HERR_INVALID_FACE_FEATURE;
     }
@@ -369,20 +346,13 @@ HResult HF_FeaturesGroupInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureId
         feat.push_back(featureIdentity.feature->data[i]);
     }
     std::string tag(featureIdentity.tag);
-    HInt32 ret = ctx->impl.FaceFeatureInsertFromCustomId(feat, tag, featureIdentity.customId);
+    HInt32 ret = FEATURE_HUB->FaceFeatureInsertFromCustomId(feat, tag, featureIdentity.customId);
 
     return ret;
 }
 
 
-HResult HF_FeaturesGroupFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature searchFeature, HPFloat confidence, Ptr_HF_FaceFeatureIdentity mostSimilar) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    auto *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
+HResult HF_FeatureHubFaceSearch(HF_FaceFeature searchFeature, HPFloat confidence, Ptr_HF_FaceFeatureIdentity mostSimilar) {
     if (searchFeature.data == nullptr) {
         return HERR_INVALID_FACE_FEATURE;
     }
@@ -392,39 +362,23 @@ HResult HF_FeaturesGroupFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature s
         feat.push_back(searchFeature.data[i]);
     }
     inspire::SearchResult result;
-    HInt32 ret = ctx->impl.SearchFaceFeature(feat, result);
-    mostSimilar->feature = (HF_FaceFeature* )ctx->impl.GetFaceFeaturePtrCache().get();
-    mostSimilar->feature->data = (HFloat* )ctx->impl.GetSearchFaceFeatureCache().data();
-    mostSimilar->feature->size = ctx->impl.GetSearchFaceFeatureCache().size();
-    mostSimilar->tag = ctx->impl.GetStringCache();
+    HInt32 ret = FEATURE_HUB->SearchFaceFeature(feat, result);
+    mostSimilar->feature = (HF_FaceFeature* ) FEATURE_HUB->GetFaceFeaturePtrCache().get();
+    mostSimilar->feature->data = (HFloat* ) FEATURE_HUB->GetSearchFaceFeatureCache().data();
+    mostSimilar->feature->size = FEATURE_HUB->GetSearchFaceFeatureCache().size();
+    mostSimilar->tag = FEATURE_HUB->GetStringCache();
     mostSimilar->customId = result.customId;
     *confidence = result.score;
 
     return ret;
 }
 
-HResult HF_FeaturesGroupFeatureRemove(HContextHandle ctxHandle, HInt32 customId) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    auto *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-
-    auto ret = ctx->impl.FaceFeatureRemoveFromCustomId(customId);
-
+HResult HF_FeatureHubFaceRemove(HInt32 customId) {
+    auto ret = FEATURE_HUB->FaceFeatureRemoveFromCustomId(customId);
     return ret;
 }
 
-HResult HF_FeaturesGroupFeatureUpdate(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    auto *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
+HResult HF_FeatureHubFaceUpdate(HF_FaceFeatureIdentity featureIdentity) {
     if (featureIdentity.feature->data == nullptr) {
         return HERR_INVALID_FACE_FEATURE;
     }
@@ -435,26 +389,19 @@ HResult HF_FeaturesGroupFeatureUpdate(HContextHandle ctxHandle, HF_FaceFeatureId
     }
     std::string tag(featureIdentity.tag);
 
-    auto ret = ctx->impl.FaceFeatureUpdateFromCustomId(feat, tag, featureIdentity.customId);
+    auto ret = FEATURE_HUB->FaceFeatureUpdateFromCustomId(feat, tag, featureIdentity.customId);
 
     return ret;
 }
 
-HResult HF_FeaturesGroupGetFeatureIdentity(HContextHandle ctxHandle, HInt32 customId, Ptr_HF_FaceFeatureIdentity identity) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    auto *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    auto ret = ctx->impl.GetFaceFeatureFromCustomId(customId);
+HResult HF_FeatureHubGetFaceIdentity(HInt32 customId, Ptr_HF_FaceFeatureIdentity identity) {
+    auto ret = FEATURE_HUB->GetFaceFeatureFromCustomId(customId);
     if (ret == HSUCCEED) {
-        identity->tag = ctx->impl.GetStringCache();
+        identity->tag = FEATURE_HUB->GetStringCache();
         identity->customId = customId;
-        identity->feature = (HF_FaceFeature* )ctx->impl.GetFaceFeaturePtrCache().get();
-        identity->feature->data = (HFloat* )ctx->impl.GetSearchFaceFeatureCache().data();
-        identity->feature->size = ctx->impl.GetSearchFaceFeatureCache().size();
+        identity->feature = (HF_FaceFeature* ) FEATURE_HUB->GetFaceFeaturePtrCache().get();
+        identity->feature->data = (HFloat* ) FEATURE_HUB->GetFaceFeaturePtrCache()->data;
+        identity->feature->size = FEATURE_HUB->GetFaceFeaturePtrCache()->dataSize;
     } else {
         identity->customId = -1;
     }
@@ -619,30 +566,13 @@ HResult HF_FaceQualityDetect(HContextHandle ctxHandle, HF_FaceBasicToken singleF
 
 }
 
-HResult HF_FeatureGroupGetCount(HContextHandle ctxHandle, HInt32* count) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-
-    *count = ctx->impl.FaceRecognitionModule()->GetFaceFeatureCount();
-
+HResult HF_FeatureHubGetFaceCount(HInt32* count) {
+    *count = FEATURE_HUB->GetFaceFeatureCount();
     return HSUCCEED;
 }
 
-HResult HF_ViewFaceDBTable(HContextHandle ctxHandle) {
-    if (ctxHandle == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    HF_FaceContext *ctx = (HF_FaceContext* ) ctxHandle;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-
-    return ctx->impl.ViewDBTable();
+HResult HF_FeatureHubViewDBTable() {
+    return FEATURE_HUB->ViewDBTable();
 }
 
 

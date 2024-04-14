@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "inspireface/recognition_module/persistence/sqlite_faces_manage.h"
+#include "inspireface/feature_hub/persistence/sqlite_faces_manage.h"
 
 using namespace inspire;
 
