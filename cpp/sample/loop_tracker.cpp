@@ -3,7 +3,7 @@
 //
 #include <iostream>
 #include "track_module/face_track.h"
-#include "inspireface/feature_hub/face_recognition.h"
+#include "inspireface/recognition_module/face_feature_extraction.h"
 #include "log.h"
 
 using namespace inspire;

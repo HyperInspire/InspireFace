@@ -13,17 +13,33 @@
 #include "feature_hub/persistence/sqlite_faces_manage.h"
 #include "middleware/model_archive/inspire_archive.h"
 
+/**
+* @def DB_FILE_NAME
+* @brief Default database file name used in the FaceContext.
+*/
+#define DB_FILE_NAME ".E63520A95DD5B3892C56DA38C3B28E551D8173FD"
+
+#define FEATURE_HUB FeatureHub::GetInstance()
+
 namespace inspire {
+
+typedef enum SearchMode {
+    SEARCH_MODE_EAGER = 0,     // Eager mode: Stops when a vector meets the threshold.
+    SEARCH_MODE_EXHAUSTIVE,    // Exhaustive mode: Searches until the best match is found.
+} SearchMode;
+
 
 /**
  * @struct DatabaseConfiguration
  * @brief Structure to configure database settings for FaceRecognition.
  */
-typedef struct DatabaseConfiguration {
+using DatabaseConfiguration = struct DatabaseConfiguration {
     int feature_block_num = 20;
-    bool enable_use_db = false; ///< Whether to enable data persistence.
-    std::string  db_path;      ///< Path to the database file.
-} DatabaseConfiguration;
+    bool enable_use_db = false;                    ///< Whether to enable data persistence.
+    std::string db_path;                           ///< Path to the database file.
+    float recognition_threshold = 0.48f;           ///< Face search threshold
+    SearchMode search_mode = SEARCH_MODE_EAGER;    ///< Search mode
+};
 
 /**
  * @class FeatureHub
@@ -32,16 +48,102 @@ typedef struct DatabaseConfiguration {
  * This class provides methods for face feature extraction, registration, update, search, and more.
  */
 class INSPIRE_API FeatureHub {
-public:
-    /**
-     * @brief Constructor for FeatureHub class.
-     *
-     * @param core Type of matrix core to use for feature extraction.
-     * @param feature_block_num Number of feature blocks to use.
-     */
-    FeatureHub();
+private:
+    static std::mutex mutex_;                         ///< Mutex lock
+    static std::shared_ptr<FeatureHub> instance_;     ///< FeatureHub Instance
+    const int32_t NUM_OF_FEATURES_IN_BLOCK = 512;     ///< Number of features in each feature block.
 
+    FeatureHub(const FeatureHub&) = delete;
+    FeatureHub& operator=(const FeatureHub&) = delete;
+
+public:
+
+    /**
+     * @brief Enables the feature hub with the specified configuration and matrix core.
+     *
+     * This function initializes and configures the feature hub based on the provided database
+     * configuration and the specified matrix processing core. It prepares the hub for operation,
+     * setting up necessary resources such as database connections and data processing pipelines.
+     *
+     * @param configuration The database configuration settings used to configure the hub.
+     * @param core The matrix core used for processing, defaulting to OpenCV if not specified.
+     * @return int32_t Returns a status code indicating success (0) or failure (non-zero).
+     */
     int32_t EnableHub(const DatabaseConfiguration& configuration, MatrixCore core = MC_OPENCV);
+
+    /**
+     * @brief Disables the feature hub, freeing all associated resources.
+     *
+     * This function stops all operations within the hub, releases all occupied resources,
+     * such as database connections and internal data structures. It is used to safely
+     * shutdown the hub when it is no longer needed or before the application exits, ensuring
+     * that all resources are properly cleaned up.
+     *
+     * @return int32_t Returns a status code indicating success (0) or failure (non-zero).
+     */
+    int32_t DisableHub();
+
+
+    static std::shared_ptr<FeatureHub> GetInstance();
+
+    /**
+     * @brief Searches for a face feature within stored data.
+     * @param queryFeature Embedded feature to search for.
+     * @param searchResult SearchResult object to store search results.
+     * @return int32_t Status code of the search operation.
+     */
+    int32_t SearchFaceFeature(const Embedded& queryFeature, SearchResult &searchResult);
+
+    /**
+     * @brief Inserts a face feature with a custom ID.
+     * @param feature Vector of floats representing the face feature.
+     * @param tag String tag associated with the feature.
+     * @param customId Custom ID for the feature.
+     * @return int32_t Status code of the insertion operation.
+     */
+    int32_t FaceFeatureInsertFromCustomId(const std::vector<float>& feature, const std::string &tag, int32_t customId);
+
+    /**
+     * @brief Removes a face feature by its custom ID.
+     * @param customId Custom ID of the feature to remove.
+     * @return int32_t Status code of the removal operation.
+     */
+    int32_t FaceFeatureRemoveFromCustomId(int32_t customId);
+
+    /**
+     * @brief Updates a face feature by its custom ID.
+     * @param feature Vector of floats representing the new face feature.
+     * @param tag String tag associated with the feature.
+     * @param customId Custom ID of the feature to update.
+     * @return int32_t Status code of the update operation.
+     */
+    int32_t FaceFeatureUpdateFromCustomId(const std::vector<float>& feature, const std::string &tag, int32_t customId);
+
+    /**
+     * @brief Retrieves a face feature by its custom ID.
+     * @param customId Custom ID of the feature to retrieve.
+     * @return int32_t Status code of the retrieval operation.
+     */
+    int32_t GetFaceFeatureFromCustomId(int32_t customId);
+
+    /**
+     * @brief Views the database table containing face data.
+     * @return int32_t Status code of the operation.
+     */
+    int32_t ViewDBTable();
+
+    /**
+     * @brief Sets the recognition threshold for face recognition.
+     * @param threshold Float value of the new threshold.
+     */
+    void SetRecognitionThreshold(float threshold);
+
+    /**
+     * @brief Sets the search mode for face recognition.
+     * @param mode Search mode.
+     */
+    void SetRecognitionSearchMode(SearchMode mode);
+
 
     /**
      * @brief Computes the cosine similarity between two feature vectors.
@@ -63,6 +165,51 @@ public:
      * @return int32_t Status code indicating success (0) or failure.
      */
     static int32_t CosineSimilarity(const float* v1, const float *v2, int32_t size, float &res);
+
+public:
+    // Getter Function
+
+
+    /**
+     * @brief Gets the cache used for search operations in face feature data.
+     * @return A const reference to the Embedded object containing face feature data for search.
+     */
+    const Embedded& GetSearchFaceFeatureCache() const;
+
+    /**
+     * @brief Gets the cache of face feature pointers.
+     * @return A shared pointer to the cache of face feature pointers.
+     */
+    const std::shared_ptr<FaceFeaturePtr>& GetFaceFeaturePtrCache() const;
+
+    /**
+     * @brief Gets the cache for temporary string storage.
+     * @return A pointer to the character array used as a string cache.
+     */
+    char* GetStringCache();
+
+
+    /**
+     * @brief Gets the number of features in the feature block.
+     *
+     * @return int32_t Number of features.
+     */
+    int32_t GetFeatureNum() const;
+
+
+    /**
+     * @brief Retrieves the total number of facial features stored in the feature block.
+     *
+     * @return int32_t Total number of facial features.
+     */
+    int32_t GetFaceFeatureCount();
+
+public:
+
+    /**
+     * @brief Constructor for FeatureHub class.
+     */
+    FeatureHub();
 
     /**
      * @brief Registers a facial feature in the feature block.
@@ -95,7 +242,7 @@ public:
      * @param mostSimilar Whether to find the most similar feature.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold = 0.5f, bool mostSimilar=true);
+    int32_t SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold, bool mostSimilar=true);
 
     /**
      * @brief Inserts a facial feature into the feature block.
@@ -134,13 +281,6 @@ public:
     int32_t GetFaceEntity(int featureIndex, Embedded &feature, std::string& tag, FEATURE_STATE& status);
 
     /**
-     * @brief Retrieves the total number of facial features stored in the feature block.
-     *
-     * @return int32_t Total number of facial features.
-     */
-    int32_t GetFaceFeatureCount();
-
-    /**
      * @brief Finds the index of a feature by its custom ID.
      *
      * @param customId Custom identifier to search for.
@@ -153,21 +293,26 @@ public:
      */
     void PrintFeatureMatrixInfo();
 
-    /**
-     * @brief Gets the number of features in the feature block.
-     *
-     * @return int32_t Number of features.
-     */
-    int32_t GetFeatureNum() const;
+private:
 
+    Embedded m_search_face_feature_cache_;                         ///< Cache for face feature data used in search operations
+    Embedded m_getter_face_feature_cache_;                         ///< Cache for face feature data used in search operations
+    std::shared_ptr<FaceFeaturePtr> m_face_feature_ptr_cache_;     ///< Shared pointer to cache of face feature pointers
+    char m_string_cache_[256];                                     ///< Cache for temporary string storage
 
 private:
     std::vector<std::shared_ptr<FeatureBlock>> m_feature_matrix_list_; ///< List of feature blocks.
-    const int32_t NUM_OF_FEATURES_IN_BLOCK = 512; ///< Number of features in each feature block.
 
-    bool m_enable_;
+    DatabaseConfiguration m_db_configuration_;                     ///< Configuration settings for the database
+    float m_recognition_threshold_{0.48f};                          ///< Threshold value for face recognition
+    SearchMode m_search_mode_{SEARCH_MODE_EAGER};                  ///< Flag to determine if the search should find the most similar feature
+
+    std::shared_ptr<SQLiteFaceManage> m_db_;                       ///< Shared pointer to the SQLiteFaceManage object
+
+    bool m_enable_{false};                                         ///< Running status
 
 };
+
 
 }   // namespace inspire
 

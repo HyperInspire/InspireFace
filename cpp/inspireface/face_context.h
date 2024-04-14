@@ -80,13 +80,6 @@ public:
     int32_t Configuration(const String& model_file_path, DetectMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param);
 
     /**
-     * @brief Configures data persistence for face data.
-     * @param configuration The database configuration for storing face data.
-     * @return int32_t Returns 0 on success, non-zero for any error.
-     */
-    int32_t DataPersistenceConfiguration(DatabaseConfiguration configuration);
-
-    /**
      * @brief Performs face detection and tracking on a given image stream.
      * @param image The camera stream to process for face detection and tracking.
      * @return int32_t Returns the number of faces detected and tracked.
@@ -135,46 +128,6 @@ public:
     int32_t FaceFeatureExtract(CameraStream &image, FaceBasicData& data);
 
     /**
-     * @brief Searches for a face feature within stored data.
-     * @param queryFeature Embedded feature to search for.
-     * @param searchResult SearchResult object to store search results.
-     * @return int32_t Status code of the search operation.
-     */
-    int32_t SearchFaceFeature(const Embedded& queryFeature, SearchResult &searchResult);
-
-    /**
-     * @brief Inserts a face feature with a custom ID.
-     * @param feature Vector of floats representing the face feature.
-     * @param tag String tag associated with the feature.
-     * @param customId Custom ID for the feature.
-     * @return int32_t Status code of the insertion operation.
-     */
-    int32_t FaceFeatureInsertFromCustomId(const std::vector<float>& feature, const std::string &tag, int32_t customId);
-
-    /**
-     * @brief Removes a face feature by its custom ID.
-     * @param customId Custom ID of the feature to remove.
-     * @return int32_t Status code of the removal operation.
-     */
-    int32_t FaceFeatureRemoveFromCustomId(int32_t customId);
-
-    /**
-     * @brief Updates a face feature by its custom ID.
-     * @param feature Vector of floats representing the new face feature.
-     * @param tag String tag associated with the feature.
-     * @param customId Custom ID of the feature to update.
-     * @return int32_t Status code of the update operation.
-     */
-    int32_t FaceFeatureUpdateFromCustomId(const std::vector<float>& feature, const std::string &tag, int32_t customId);
-
-    /**
-     * @brief Retrieves a face feature by its custom ID.
-     * @param customId Custom ID of the feature to retrieve.
-     * @return int32_t Status code of the retrieval operation.
-     */
-    int32_t GetFaceFeatureFromCustomId(int32_t customId);
-
-    /**
      * @brief Retrieves the custom pipeline parameters.
      * @return CustomPipelineParameter Current custom pipeline parameters.
      */
@@ -187,19 +140,6 @@ public:
      * @return int32_t Status code of the quality detection.
      */
     static int32_t FaceQualityDetect(FaceBasicData& data, float &result);
-
-    /**
-     * @brief Views the database table containing face data.
-     * @return int32_t Status code of the operation.
-     */
-    int32_t ViewDBTable();
-
-    /**
-     * @brief Sets the recognition threshold for face recognition.
-     * @param threshold Float value of the new threshold.
-     * @return int32_t Status code of the operation.
-     */
-    int32_t SetRecognitionThreshold(float threshold);
 
     /**
      * @brief Sets the preview size for face tracking.
@@ -284,24 +224,6 @@ public:
      */
     const Embedded& GetFaceFeatureCache() const;
 
-    /**
-     * @brief Gets the cache used for search operations in face feature data.
-     * @return A const reference to the Embedded object containing face feature data for search.
-     */
-    const Embedded& GetSearchFaceFeatureCache() const;
-
-    /**
-     * @brief Gets the cache of face feature pointers.
-     * @return A shared pointer to the cache of face feature pointers.
-     */
-    const std::shared_ptr<FaceFeaturePtr>& GetFaceFeaturePtrCache() const;
-
-    /**
-     * @brief Gets the cache for temporary string storage.
-     * @return A pointer to the character array used as a string cache.
-     */
-    char* GetStringCache();
-
 
 private:
     // Private member variables
@@ -313,11 +235,6 @@ private:
     std::shared_ptr<FaceTrack> m_face_track_;              ///< Shared pointer to the FaceTrack object
     std::shared_ptr<FeatureExtraction> m_face_recognition_;  ///< Shared pointer to the FaceRecognition object
     std::shared_ptr<FacePipeline> m_face_pipeline_;        ///< Shared pointer to the FacePipeline object
-
-    float m_recognition_threshold_ = 0.48f;                 ///< Threshold value for face recognition
-    bool m_search_most_similar_ = true;                    ///< Flag to determine if the search should find the most similar feature
-    DatabaseConfiguration m_db_configuration_;               ///< Configuration settings for the database
-    std::shared_ptr<SQLiteFaceManage> m_db_;               ///< Shared pointer to the SQLiteFaceManage object
 
 private:
     // Cache data
@@ -331,13 +248,7 @@ private:
     std::vector<FacePoseQualityResult> m_quality_results_cache_;   ///< Cache for face pose quality results
     std::vector<float> m_mask_results_cache_;                       ///< Cache for mask detection results
     std::vector<float> m_rgb_liveness_results_cache_;               ///< Cache for RGB liveness detection results
-
     Embedded m_face_feature_cache_;                                ///< Cache for current face feature data
-    Embedded m_search_face_feature_cache_;                         ///< Cache for face feature data used in search operations
-
-    std::shared_ptr<FaceFeaturePtr> m_face_feature_ptr_cache_;     ///< Shared pointer to cache of face feature pointers
-
-    char m_string_cache_[256];                                     ///< Cache for temporary string storage
 
     InspireArchive m_archive_;
 };
