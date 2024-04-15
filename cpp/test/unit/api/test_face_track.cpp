@@ -23,6 +23,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        spdlog::error("error ret :{}", ret);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
