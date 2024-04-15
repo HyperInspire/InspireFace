@@ -10,7 +10,7 @@
 
 namespace inspire {
 
-FeatureExtraction::FeatureExtraction(InspireArchive &archive, bool enable_recognition) {
+FeatureExtraction::FeatureExtraction(InspireArchive &archive, bool enable_recognition):m_status_code_(SARC_SUCCESS) {
     if (enable_recognition) {
         InspireModel model;
         m_status_code_ = archive.LoadModel("feature", model);
