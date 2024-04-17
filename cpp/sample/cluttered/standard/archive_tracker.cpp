@@ -16,7 +16,7 @@ int main() {
 //    FaceRecognition recognition(archive, true);
 
     auto ret = track.Configuration(archive);
-    LOGD("ret=%d", ret);
+    INSPIRE_LOGD("ret=%d", ret);
     if (ret != 0) {
         return -1;
     }

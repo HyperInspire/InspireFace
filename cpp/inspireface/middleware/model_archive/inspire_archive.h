@@ -81,7 +81,7 @@ private:
             }
             m_tag_ = m_config_["tag"].as<std::string>();
             m_version_ = m_config_["version"].as<std::string>();
-            LOGD("== %s %s ==", m_tag_.c_str(), m_version_.c_str());
+            INSPIRE_LOGI("== %s %s ==", m_tag_.c_str(), m_version_.c_str());
         }
         return 0;
     }

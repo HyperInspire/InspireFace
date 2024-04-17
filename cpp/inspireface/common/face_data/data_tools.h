@@ -162,7 +162,7 @@ inline int32_t INSPIRE_API DeserializeHyperFaceData(const ByteArray& byteArray, 
         // Copy data from the byte stream to the HyperFaceData structure
         std::memcpy(&data, byteArray.data(), sizeof(data));
     } else {
-        LOGE("The byte stream size is insufficient to restore HyperFaceData");
+        INSPIRE_LOGE("The byte stream size is insufficient to restore HyperFaceData");
         return HERR_CTX_FACE_DATA_ERROR;
     }
 
@@ -182,7 +182,7 @@ inline int32_t INSPIRE_API DeserializeHyperFaceData(const char* byteArray, size_
         // Copy data from the byte stream to the HyperFaceData structure
         std::memcpy(&data, byteArray, sizeof(data));
     } else {
-        LOGE("The byte stream size is insufficient to restore HyperFaceData");
+        INSPIRE_LOGE("The byte stream size is insufficient to restore HyperFaceData");
         return HERR_CTX_FACE_DATA_ERROR;
     }
 

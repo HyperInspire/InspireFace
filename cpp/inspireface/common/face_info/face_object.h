@@ -65,7 +65,7 @@ public:
     void SetLandmark(const std::vector<cv::Point2f> &lmk, bool update_rect = true,
                      bool update_matrix = true) {
         if (lmk.size() != landmark_.size()) {
-            LOGW("The SetLandmark function displays an exception indicating that the lmk number does not match");
+            INSPIRE_LOGW("The SetLandmark function displays an exception indicating that the lmk number does not match");
             return;
         }
         std::copy(lmk.begin(), lmk.end(), landmark_.begin());
