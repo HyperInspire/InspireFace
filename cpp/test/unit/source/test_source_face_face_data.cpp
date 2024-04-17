@@ -40,10 +40,10 @@ TEST_CASE("test_FaceData", "[face_data]") {
         PrintHyperFaceData(faceData);
 
         ByteArray byteArray;
-        LOGD("sizeof: %lu", sizeof(byteArray));
+        INSPIRE_LOGD("sizeof: %lu", sizeof(byteArray));
         ret = SerializeHyperFaceData(faceData, byteArray);
         CHECK(ret == HSUCCEED);
-        LOGD("sizeof: %lu", sizeof(byteArray));
+        INSPIRE_LOGD("sizeof: %lu", sizeof(byteArray));
 
 
         HyperFaceData decode;

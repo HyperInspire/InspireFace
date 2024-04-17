@@ -70,7 +70,7 @@ public:
     }
 
     void print() {
-        LOGD("%s", m_configuration.toString().c_str());
+        INSPIRE_LOGD("%s", m_configuration.toString().c_str());
     }
 
     void SetBuffer(std::vector<char>& modelBuffer, size_t size) {
@@ -179,7 +179,7 @@ private:
                 setData<std::vector<float>>("norm", norm);
             }
         } catch (const YAML::Exception& e) {
-            LOGE("An error occurred parsing the interpretation file in archive: %s", e.what());
+            INSPIRE_LOGE("An error occurred parsing the interpretation file in archive: %s", e.what());
             return -1;
         }
         return 0;

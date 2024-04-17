@@ -32,9 +32,9 @@ int main(int argc, char** argv) {
     cv::resize(image, gray, cv::Size(112, 112));
 
     auto res = (*m_pose_net_)(gray);
-    LOGD("%f", res[0]);
-    LOGD("%f", res[1]);
-    LOGD("%f", res[2]);
+    INSPIRE_LOGD("%f", res[0]);
+    INSPIRE_LOGD("%f", res[1]);
+    INSPIRE_LOGD("%f", res[2]);
 
     return 0;
 }
