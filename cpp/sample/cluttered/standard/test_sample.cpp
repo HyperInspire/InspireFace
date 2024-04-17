@@ -5,7 +5,7 @@
 #include <iostream>
 #include "face_context.h"
 #include "opencv2/opencv.hpp"
-#include "utils/test_helper.h"
+#include "sample/utils/test_helper.h"
 
 using namespace inspire;
 
@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     param.enable_face_quality = true;
     int32_t ret = ctx.Configuration("test_res/model_zip/Pikachu", DetectMode::DETECT_MODE_IMAGE, 1, param);
     if (ret != 0) {
-        LOGE("Initialization error");
+        INSPIRE_LOGE("Initialization error");
         return -1;
     }
     auto image = cv::imread("test_res/images/kun.jpg");
@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 
         const FaceBasicData &faceBasic = ctx.GetFaceBasicDataCache()[i];
         ret = DeserializeHyperFaceData((char* )faceBasic.data, faceBasic.dataSize, face);
-        LOGD("OK!");
+        INSPIRE_LOGD("OK!");
 
         if (ret != HSUCCEED) {
             return -1;
@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
 
     // view
     int32_t index = 0;
-    LOGD("liveness: %f", ctx.GetRgbLivenessResultsCache()[index]);
+    INSPIRE_LOGD("liveness: %f", ctx.GetRgbLivenessResultsCache()[index]);
 
     return 0;
 }

@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "face_context.h"
-#include "utils/test_helper.h"
+#include "sample/utils/test_helper.h"
 #include "inspireface/recognition_module/extract/alignment.h"
 #include "recognition_module/face_feature_extraction.h"
 #include "feature_hub/feature_hub.h"
@@ -48,7 +48,7 @@ int comparison1v1(FaceContext &ctx) {
         ctx.FaceDetectAndTrack(stream);
         const auto &faces = ctx.GetTrackingFaceList();
         if (faces.empty()) {
-            LOGD("image1 not face");
+            INSPIRE_LOGD("image1 not face");
             return -1;
         }
         ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature_1);
@@ -64,7 +64,7 @@ int comparison1v1(FaceContext &ctx) {
         ctx.FaceDetectAndTrack(stream);
         const auto &faces = ctx.GetTrackingFaceList();
         if (faces.empty()) {
-            LOGD("image1 not face");
+            INSPIRE_LOGD("image1 not face");
             return -1;
         }
         ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature_2);
@@ -73,7 +73,7 @@ int comparison1v1(FaceContext &ctx) {
 
     float rec;
     auto ret = FEATURE_HUB->CosineSimilarity(feature_1, feature_2, rec);
-    LOGD("rec: %f", rec);
+    INSPIRE_LOGD("rec: %f", rec);
 
     return 0;
 }
@@ -100,7 +100,7 @@ int search(FaceContext &ctx) {
         ctx.FaceDetectAndTrack(stream);
         const auto &faces = ctx.GetTrackingFaceList();
         if (faces.empty()) {
-            LOGD("image1 not face");
+            INSPIRE_LOGD("image1 not face");
             return -1;
         }
         Embedded feature;
@@ -116,7 +116,7 @@ int search(FaceContext &ctx) {
 
     FEATURE_HUB->DeleteFaceFeature(2);
 
-    LOGD("Number of faces in the library: %d", FEATURE_HUB->GetFaceFeatureCount());
+    INSPIRE_LOGD("Number of faces in the library: %d", FEATURE_HUB->GetFaceFeatureCount());
 
     // Update or insert a face
     {
@@ -129,7 +129,7 @@ int search(FaceContext &ctx) {
         ctx.FaceDetectAndTrack(stream);
         const auto &faces = ctx.GetTrackingFaceList();
         if (faces.empty()) {
-            LOGD("image1 not face");
+            INSPIRE_LOGD("image1 not face");
             return -1;
         }
         ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
@@ -149,7 +149,7 @@ int search(FaceContext &ctx) {
         ctx.FaceDetectAndTrack(stream);
         const auto &faces = ctx.GetTrackingFaceList();
         if (faces.empty()) {
-            LOGD("image1 not face");
+            INSPIRE_LOGD("image1 not face");
             return -1;
         }
         ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
@@ -158,8 +158,8 @@ int search(FaceContext &ctx) {
         auto timeStart = (double) cv::getTickCount();
         FEATURE_HUB->SearchFaceFeature(feature, result);
         double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
-        LOGD("Search time: %f", cost);
-        LOGD("Top1: %d, %f, %s %d", result.index, result.score, result.tag.c_str(), result.customId);
+        INSPIRE_LOGD("Search time: %f", cost);
+        INSPIRE_LOGD("Top1: %d, %f, %s %d", result.index, result.score, result.tag.c_str(), result.customId);
     }
 
 
@@ -172,7 +172,7 @@ int main(int argc, char** argv) {
     param.enable_recognition = true;
     int32_t ret = ctx.Configuration("test_res/model_zip/Pikachu", DetectMode::DETECT_MODE_IMAGE, 1, param);
     if (ret != 0) {
-        LOGE("Initialization error");
+        INSPIRE_LOGE("Initialization error");
         return -1;
     }
     // 1v1对比

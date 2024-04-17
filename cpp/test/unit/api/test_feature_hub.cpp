@@ -19,7 +19,7 @@ TEST_CASE("test_FeatureHubBase", "[FeatureHub][BasicFunction]") {
         std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
-        configuration.featureblockNum = 20;
+        configuration.featureBlockNum = 20;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
@@ -43,7 +43,7 @@ TEST_CASE("test_FeatureHubBase", "[FeatureHub][BasicFunction]") {
         HF_FeatureHubConfiguration configuration = {0};
         configuration.enablePersistence = 0;
         configuration.dbPath = dbPathStr;
-        configuration.featureblockNum = 20;
+        configuration.featureBlockNum = 20;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
 
@@ -88,7 +88,7 @@ TEST_CASE("test_ConcurrencyInsertion", "[FeatureHub][Concurrency]") {
     std::strcpy(dbPathStr, dbPath.c_str());
     configuration.enablePersistence = 1;
     configuration.dbPath = dbPathStr;
-    configuration.featureblockNum = 20;
+    configuration.featureBlockNum = 20;
     configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
     configuration.searchThreshold = 0.48f;
     // Delete the previous data before testing
@@ -155,7 +155,7 @@ TEST_CASE("test_ConcurrencyRemove", "[FeatureHub][Concurrency]") {
     std::strcpy(dbPathStr, dbPath.c_str());
     configuration.enablePersistence = 1;
     configuration.dbPath = dbPathStr;
-    configuration.featureblockNum = 20;
+    configuration.featureBlockNum = 20;
     configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
     configuration.searchThreshold = 0.48f;
     // Delete the previous data before testing
@@ -232,7 +232,7 @@ TEST_CASE("test_ConcurrencySearch", "[FeatureHub][Concurrency]") {
     std::strcpy(dbPathStr, dbPath.c_str());
     configuration.enablePersistence = 1;
     configuration.dbPath = dbPathStr;
-    configuration.featureblockNum = 20;
+    configuration.featureBlockNum = 20;
     configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
     configuration.searchThreshold = 0.48f;
     // Delete the previous data before testing
@@ -368,7 +368,7 @@ TEST_CASE("test_FeatureCache", "[FeatureHub][Concurrency]") {
     std::strcpy(dbPathStr, dbPath.c_str());
     configuration.enablePersistence = 1;
     configuration.dbPath = dbPathStr;
-    configuration.featureblockNum = 20;
+    configuration.featureBlockNum = 20;
     configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
     configuration.searchThreshold = 0.48f;
     // Delete the previous data before testing

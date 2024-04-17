@@ -29,7 +29,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
-        configuration.featureblockNum = 20;
+        configuration.featureBlockNum = 20;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
@@ -145,7 +145,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
-        configuration.featureblockNum = 20;
+        configuration.featureBlockNum = 20;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
@@ -197,7 +197,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 //        std::strcpy(dbPathStr, dbPath.c_str());
 //        configuration.enablePersistence = 1;
 //        configuration.dbPath = dbPathStr;
-//        configuration.featureblockNum = 20;
+//        configuration.featureBlockNum = 20;
 //        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
 //        configuration.searchThreshold = 0.48f;
 //        ret = HF_FaceHubDataEnable(configuration);
@@ -355,7 +355,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
-        configuration.featureblockNum = 20;
+        configuration.featureBlockNum = 20;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
@@ -446,7 +446,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
-        configuration.featureblockNum = 20;
+        configuration.featureBlockNum = 20;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
@@ -536,7 +536,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
-        configuration.featureblockNum = 20;
+        configuration.featureBlockNum = 20;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
@@ -661,7 +661,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
-        configuration.featureblockNum = 20;
+        configuration.featureBlockNum = 20;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
@@ -768,7 +768,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
-        configuration.featureblockNum = 20;
+        configuration.featureBlockNum = 20;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing

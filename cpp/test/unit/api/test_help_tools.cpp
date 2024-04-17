@@ -27,7 +27,7 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
         std::strcpy(dbPathStr, dbPath.c_str());
         configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
-        configuration.featureblockNum = 20;
+        configuration.featureBlockNum = 20;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing

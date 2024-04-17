@@ -9,7 +9,6 @@
 #include "settings/test_settings.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include "spdlog/spdlog.h"
-#include "unit/test_helper/simple_csv_writer.h"
 
 int init_test_logger() {
     std::string name("TEST");
