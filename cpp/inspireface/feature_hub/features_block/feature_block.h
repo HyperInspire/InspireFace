@@ -68,7 +68,7 @@ public:
      * @return int32_t Status of the feature addition.
      */
     virtual int32_t AddFeature(const std::vector<float>& feature, const std::string &tag, int32_t customId) {
-        std::lock_guard<std::mutex> lock(m_mtx_);  // 使用互斥锁保护共享数据
+        std::lock_guard<std::mutex> lock(m_mtx_);  // Use mutex to protect shared data
         return UnsafeAddFeature(feature, tag, customId);
     }
 

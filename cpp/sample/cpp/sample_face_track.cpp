@@ -19,6 +19,13 @@ int main(int argc, char* argv[]) {
     std::cout << "Source file Path: " << sourcePath << std::endl;
 
     HResult ret;
+    // The resource file must be loaded before it can be used
+    ret = HF_InspireFaceLaunch(packPath);
+    if (ret != HSUCCEED) {
+        std::cout << "Load Resource error: " << ret << std::endl;
+        return ret;
+    }
+
     // Enable the functions in the pipeline: mask detection, live detection, and face quality detection
     HInt32 option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     // Non-video or frame sequence mode uses IMAGE-MODE, which is always face detection without tracking
@@ -27,7 +34,7 @@ int main(int argc, char* argv[]) {
     HInt32 maxDetectNum = 5;
     // Handle of the current face SDK algorithm context
     HContextHandle ctxHandle = {0};
-    ret = HF_CreateFaceContextFromResourceFileOptional(packPath, option, detMode, maxDetectNum, &ctxHandle);
+    ret = HF_CreateFaceContextFromResourceFileOptional(option, detMode, maxDetectNum, &ctxHandle);
     if (ret != HSUCCEED) {
         std::cout << "Create FaceContext error: " << ret << std::endl;
         return ret;

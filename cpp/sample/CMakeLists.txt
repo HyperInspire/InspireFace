@@ -19,6 +19,14 @@ set_target_properties(FaceTrackSample PROPERTIES
 )
 
 
+# Examples of face detection and tracking
+add_executable(MTFaceTrackSample cpp/sample_face_track_mt.cpp)
+target_link_libraries(MTFaceTrackSample InspireFace)
+set_target_properties(MTFaceTrackSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+
 # Platform watershed
 if (BUILD_LINUX_ARM7 OR BUILD_LINUX_AARCH64)
     # Typically this is an embedded system or development board scenario where some GUI-related functions are not supported
