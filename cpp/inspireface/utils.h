@@ -15,6 +15,8 @@
 #include <unistd.h>
 #endif
 
+namespace inspire {
+
 inline bool IsDirectory(const std::string& path) {
 #ifdef _WIN32
     DWORD dwAttrib = GetFileAttributes(path.c_str());
@@ -638,5 +640,7 @@ inline cv::Rect GetNewBox(int src_w, int src_h, cv::Rect bbox, float scale) {
                       static_cast<int>(right_bottom_x - left_top_x), static_cast<int>(right_bottom_y - left_top_y));
     return new_bbox;
 }
+
+}   // namespace inspire
 
 #endif

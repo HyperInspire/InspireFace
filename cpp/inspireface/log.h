@@ -5,6 +5,11 @@
 #include <string>
 #include <cstdarg>
 #include <cstring>
+#include <iostream>
+
+#ifndef INSPIRE_API
+#define INSPIRE_API
+#endif
 
 // Macro to extract the filename from the full path
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
@@ -12,22 +17,25 @@
 #ifdef ANDROID
 // Android platform log macros
 const std::string TAG = "InspireFace";
-#define LOGD(...) LogManager::getInstance()->logAndroid(LOG_DEBUG, TAG, __VA_ARGS__)
-#define LOGI(...) LogManager::getInstance()->logAndroid(LOG_INFO, TAG, __VA_ARGS__)
-#define LOGW(...) LogManager::getInstance()->logAndroid(LOG_WARN, TAG, __VA_ARGS__)
-#define LOGE(...) LogManager::getInstance()->logAndroid(LOG_ERROR, TAG, __VA_ARGS__)
-#define LOGF(...) LogManager::getInstance()->logAndroid(LOG_FATAL, TAG, __VA_ARGS__)
+#define INSPIRE_LOGD(...) LogManager::getInstance()->logAndroid(LOG_DEBUG, TAG, __VA_ARGS__)
+#define INSPIRE_LOGI(...) LogManager::getInstance()->logAndroid(LOG_INFO, TAG, __VA_ARGS__)
+#define INSPIRE_LOGW(...) LogManager::getInstance()->logAndroid(LOG_WARN, TAG, __VA_ARGS__)
+#define INSPIRE_LOGE(...) LogManager::getInstance()->logAndroid(LOG_ERROR, TAG, __VA_ARGS__)
+#define INSPIRE_LOGF(...) LogManager::getInstance()->logAndroid(LOG_FATAL, TAG, __VA_ARGS__)
 #else
 // Standard platform log macros
-#define LOGD(...) LogManager::getInstance()->logStandard(LOG_DEBUG, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
-#define LOGI(...) LogManager::getInstance()->logStandard(LOG_INFO, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
-#define LOGW(...) LogManager::getInstance()->logStandard(LOG_WARN, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
-#define LOGE(...) LogManager::getInstance()->logStandard(LOG_ERROR, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
-#define LOGF(...) LogManager::getInstance()->logStandard(LOG_FATAL, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define INSPIRE_LOGD(...) LogManager::getInstance()->logStandard(LOG_DEBUG, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define INSPIRE_LOGI(...) LogManager::getInstance()->logStandard(LOG_INFO, "", "", -1, __VA_ARGS__)
+#define INSPIRE_LOGW(...) LogManager::getInstance()->logStandard(LOG_WARN, __FILENAME__, "", __LINE__, __VA_ARGS__)
+#define INSPIRE_LOGE(...) LogManager::getInstance()->logStandard(LOG_ERROR, __FILENAME__, "", __LINE__, __VA_ARGS__)
+#define INSPIRE_LOGF(...) LogManager::getInstance()->logStandard(LOG_FATAL, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
+
 // Macro to set the global log level
-#define SET_LOG_LEVEL(level) LogManager::getInstance()->setLogLevel(level)
+#define INSPIRE_SET_LOG_LEVEL(level) LogManager::getInstance()->setLogLevel(level)
+
+namespace inspire {
 
 // Log levels
 enum LogLevel {
@@ -39,7 +47,7 @@ enum LogLevel {
     LOG_FATAL
 };
 
-class LogManager {
+class INSPIRE_API LogManager {
 private:
     LogLevel currentLevel;
     static LogManager* instance;
@@ -95,25 +103,55 @@ public:
 #else
     // Method for standard platform logging
     void logStandard(LogLevel level, const char* filename, const char* function, int line, const char* format, ...) const {
-        if (level < currentLevel) return;
+        // Check whether the current level is LOG NONE or the log level is not enough to log
+        if (currentLevel == LOG_NONE || level < currentLevel) return;
 
-        printf("[%s][%s][%d]: ", filename, function, line);
-        if (level == LOG_ERROR || level == LOG_FATAL) {
-            printf("\033[1;31m");  // Red color
-        } else if (level == LOG_WARN) {
-            printf("\033[1;33m");  // Yellow color
+        // Build log prefix dynamically based on available data
+        bool hasPrintedPrefix = false;
+        if (filename && strlen(filename) > 0) {
+            printf("[%s]", filename);
+            hasPrintedPrefix = true;
         }
+        if (function && strlen(function) > 0) {
+            printf("[%s]", function);
+            hasPrintedPrefix = true;
+        }
+        if (line != -1) {
+            printf("[%d]", line);
+            hasPrintedPrefix = true;
+        }
+
+        // Only add colon and space if any prefix was printed
+        if (hasPrintedPrefix) {
+            printf(": ");
+        }
+
+        // Set text color for different log levels
+        if (level == LOG_ERROR || level == LOG_FATAL) {
+            printf("\033[1;31m");  // Red color for errors and fatal issues
+        } else if (level == LOG_WARN) {
+            printf("\033[1;33m");  // Yellow color for warnings
+        }
+
+        // Print the actual log message
         va_list args;
         va_start(args, format);
         vprintf(format, args);
         va_end(args);
+
+        // Reset text color if needed
         if (level == LOG_ERROR || level == LOG_WARN || level == LOG_FATAL) {
             printf("\033[0m");  // Reset color
         }
-        printf("\n");
+
+        printf("\n"); // New line after log message
     }
+
+
 #endif
 
 };
+
+}   // namespace inspire
 
 #endif // LOG_MANAGER_H

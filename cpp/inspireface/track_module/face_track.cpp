@@ -78,7 +78,6 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     double time1 = (double) cv::getTickCount();
     crop = image.GetAffineRGBImage(affine, 112, 112);
 
-
     cv::Mat affine_inv;
     cv::invertAffineTransform(affine, affine_inv);
     double _diff =
@@ -332,7 +331,7 @@ int FaceTrack::Configuration(inspire::InspireArchive &archive) {
     InspireModel detModel;
     auto ret = archive.LoadModel("face_detect", detModel);
     if (ret != SARC_SUCCESS) {
-        LOGE("Load %s error: %d", "face_detect", ret);
+        INSPIRE_LOGE("Load %s error: %d", "face_detect", ret);
         return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
     }
     InitDetectModel(detModel);
@@ -341,7 +340,7 @@ int FaceTrack::Configuration(inspire::InspireArchive &archive) {
     InspireModel lmkModel;
     ret = archive.LoadModel("landmark", lmkModel);
     if (ret != SARC_SUCCESS) {
-        LOGE("Load %s error: %d", "landmark", ret);
+        INSPIRE_LOGE("Load %s error: %d", "landmark", ret);
         return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
     }
     InitLandmarkModel(lmkModel);
@@ -350,7 +349,7 @@ int FaceTrack::Configuration(inspire::InspireArchive &archive) {
     InspireModel rnetModel;
     ret = archive.LoadModel("refine_net", rnetModel);
     if (ret != SARC_SUCCESS) {
-        LOGE("Load %s error: %d", "refine_net", ret);
+        INSPIRE_LOGE("Load %s error: %d", "refine_net", ret);
         return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
     }
     InitRNetModel(rnetModel);
@@ -359,7 +358,7 @@ int FaceTrack::Configuration(inspire::InspireArchive &archive) {
     InspireModel pquModel;
     ret = archive.LoadModel("pose_quality", pquModel);
     if (ret != SARC_SUCCESS) {
-        LOGE("Load %s error: %d", "pose_quality", ret);
+        INSPIRE_LOGE("Load %s error: %d", "pose_quality", ret);
         return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
     }
     InitFacePoseModel(pquModel);
@@ -404,11 +403,15 @@ int FaceTrack::InitFacePoseModel(InspireModel &model) {
     return HSUCCEED;
 }
 
+void FaceTrack::SetDetectThreshold(float value) {
+    m_face_detector_->SetClsThreshold(value);
+}
+
 double FaceTrack::GetTrackTotalUseTime() const {
     return track_total_use_time_;
 }
 
-void FaceTrack::SetTrackPreviewSize(const int preview_size) {
+void FaceTrack::SetTrackPreviewSize(int preview_size) {
     track_preview_size_ = preview_size;
 }
 

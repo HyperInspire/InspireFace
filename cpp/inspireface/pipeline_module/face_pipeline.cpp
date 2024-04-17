@@ -23,7 +23,7 @@ FacePipeline::FacePipeline(InspireArchive &archive, bool enableLiveness, bool en
         InspireModel ageModel;
         auto ret = InitAgePredict(ageModel);
         if (ret != 0) {
-            LOGE("InitAgePredict error.");
+            INSPIRE_LOGE("InitAgePredict error.");
         }
     }
 
@@ -32,7 +32,7 @@ FacePipeline::FacePipeline(InspireArchive &archive, bool enableLiveness, bool en
         InspireModel genderModel;
         auto ret = InitGenderPredict(genderModel);
         if (ret != 0) {
-            LOGE("InitGenderPredict error.");
+            INSPIRE_LOGE("InitGenderPredict error.");
         }
     }
 
@@ -41,11 +41,11 @@ FacePipeline::FacePipeline(InspireArchive &archive, bool enableLiveness, bool en
         InspireModel maskModel;
         auto ret = archive.LoadModel("mask_detect", maskModel);
         if (ret != 0) {
-            LOGE("Load Mask model: %d", ret);
+            INSPIRE_LOGE("Load Mask model: %d", ret);
         }
         ret = InitMaskPredict(maskModel);
         if (ret != 0) {
-            LOGE("InitMaskPredict error.");
+            INSPIRE_LOGE("InitMaskPredict error.");
         }
     }
 
@@ -54,11 +54,11 @@ FacePipeline::FacePipeline(InspireArchive &archive, bool enableLiveness, bool en
         InspireModel livenessModel;
         auto ret = archive.LoadModel("rgb_anti_spoofing", livenessModel);
         if (ret != 0) {
-            LOGE("Load anti-spoofing model.");
+            INSPIRE_LOGE("Load anti-spoofing model.");
         }
         ret = InitRBGAntiSpoofing(livenessModel);
         if (ret != 0) {
-            LOGE("InitRBGAntiSpoofing error.");
+            INSPIRE_LOGE("InitRBGAntiSpoofing error.");
         }
     }
 
@@ -67,7 +67,7 @@ FacePipeline::FacePipeline(InspireArchive &archive, bool enableLiveness, bool en
         InspireModel actLivenessModel;
         auto ret = InitLivenessInteraction(actLivenessModel);
         if (ret != 0) {
-            LOGE("InitLivenessInteraction error.");
+            INSPIRE_LOGE("InitLivenessInteraction error.");
         }
     }
 

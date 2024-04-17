@@ -15,7 +15,7 @@ int main() {
 //    FaceRecognition recognition(archive, true);
 
     auto ret = track.Configuration(archive);
-    LOGD("ret=%d", ret);
+    INSPIRE_LOGD("ret=%d", ret);
 
     auto image = cv::imread("test_res/data/bulk/kun.jpg");
     for (int i = 0; i < 10000000; ++i) {

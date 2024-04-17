@@ -86,6 +86,8 @@ public:
      */// Method for face detection and tracking
     int32_t FaceDetectAndTrack(CameraStream &image);
 
+    int32_t SetFaceDetectThreshold(float value);
+
     /**
      * @brief Retrieves the list of currently tracked faces.
      * @return FaceObjectList A list of face objects currently being tracked.
@@ -250,7 +252,7 @@ private:
     std::vector<float> m_rgb_liveness_results_cache_;               ///< Cache for RGB liveness detection results
     Embedded m_face_feature_cache_;                                ///< Cache for current face feature data
 
-    InspireArchive m_archive_;
+    InspireArchive m_archive_;                                     ///< Model Archive
 };
 
 }   // namespace hyper

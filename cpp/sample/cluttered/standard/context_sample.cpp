@@ -6,7 +6,7 @@
 #include <iostream>
 #include "face_context.h"
 #include "opencv2/opencv.hpp"
-#include "utils/test_helper.h"
+#include "sample/utils/test_helper.h"
 
 using namespace inspire;
 
@@ -18,7 +18,7 @@ int main() {
     param.enable_face_quality = true;
     int32_t ret = ctx.Configuration("test_res/model_zip/Pikachu-t1", DetectMode::DETECT_MODE_VIDEO, 1, param);
     if (ret != 0) {
-        LOGE("Initialization error");
+        INSPIRE_LOGE("Initialization error");
         return -1;
     }
     cv::VideoCapture cap(0);
