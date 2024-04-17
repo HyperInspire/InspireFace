@@ -77,7 +77,7 @@ public:
      * @param param Custom parameters for the face pipeline.
      * @return int32_t Returns 0 on success, non-zero for any error.
      */
-    int32_t Configuration(const String& model_file_path, DetectMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param);
+    int32_t Configuration(DetectMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param);
 
     /**
      * @brief Performs face detection and tracking on a given image stream.
@@ -252,7 +252,8 @@ private:
     std::vector<float> m_rgb_liveness_results_cache_;               ///< Cache for RGB liveness detection results
     Embedded m_face_feature_cache_;                                ///< Cache for current face feature data
 
-    InspireArchive m_archive_;                                     ///< Model Archive
+    std::mutex m_mtx_;                                             ///< Mutex for thread safety.
+
 };
 
 }   // namespace hyper

@@ -59,6 +59,8 @@
 #define HERR_CTX_ARCHIVE_LOAD_FAILURE           (HERR_CTX_BASE+80)              // Archive load failure
 #define HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE     (HERR_CTX_BASE+81)              // Model load failure
 #define HERR_CTX_ARCHIVE_FILE_FORMAT_ERROR      (HERR_CTX_BASE+82)              // The archive format is incorrect
+#define HERR_CTX_ARCHIVE_REPETITION_LOAD      (HERR_CTX_BASE+83)              // Do not reload the model
+#define HERR_CTX_ARCHIVE_NOT_LOAD             (HERR_CTX_BASE+84)              // Do not reload the model
 
 // [Anchor-End]
 
