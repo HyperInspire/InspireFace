@@ -96,6 +96,18 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HIm
  */
 HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(HImageHandle streamHandle);
 
+/************************************************************************
+* Resource Function
+************************************************************************/
+
+/**
+ * @brief Launch InspireFace SDK
+ * Start the InspireFace SDK at the initialization stage of your program, as it is global and designed to be used only once.
+ * It serves as a prerequisite for other function interfaces, so it is essential to ensure it is initialized before calling any other APIs.
+ * @param resourcePath Initializes the path to the resource file that needs to be loaded
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HF_InspireFaceLaunch(const char* resourcePath);
 
 /************************************************************************
 * FaceContext
@@ -131,7 +143,6 @@ typedef enum HF_DetectMode {
 /**
  * @brief Create a face context from a resource file.
  *
- * @param resourceFile Path to the resource file.
  * @param parameter Custom parameters for face context.
  * @param detectMode Detection mode to be used.
  * @param maxDetectFaceNum Maximum number of faces to detect.
@@ -139,7 +150,6 @@ typedef enum HF_DetectMode {
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
-        HPath resourceFile,
         HF_ContextCustomParameter parameter,
         HF_DetectMode detectMode,
         HInt32 maxDetectFaceNum,
@@ -149,7 +159,6 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
 /**
  * @brief Create a face context from a resource file with additional options.
  *
- * @param resourceFile Path to the resource file.
  * @param customOption Custom option for additional configuration.
  * @param detectMode Detection mode to be used.
  * @param maxDetectFaceNum Maximum number of faces to detect.
@@ -157,7 +166,6 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFileOptional(
-        HPath resourceFile,
         HInt32 customOption,
         HF_DetectMode detectMode,
         HInt32 maxDetectFaceNum,
