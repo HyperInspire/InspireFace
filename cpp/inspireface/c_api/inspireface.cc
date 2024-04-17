@@ -7,6 +7,7 @@
 #include "inspireface_internal.h"
 #include "information.h"
 #include "feature_hub/feature_hub.h"
+#include "model_hub/model_hub.h"
 
 using namespace inspire;
 
@@ -75,7 +76,7 @@ HResult HF_ReleaseFaceContext(HContextHandle handle) {
 }
 
 
-HResult HF_CreateFaceContextFromResourceFile(HPath resourceFile, HF_ContextCustomParameter parameter, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
+HResult HF_CreateFaceContextFromResourceFile(HF_ContextCustomParameter parameter, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
     inspire::ContextCustomParameter param;
     param.enable_mask_detect = parameter.enable_mask_detect;
     param.enable_age = parameter.enable_age;
@@ -90,9 +91,8 @@ HResult HF_CreateFaceContextFromResourceFile(HPath resourceFile, HF_ContextCusto
         detMode = inspire::DETECT_MODE_VIDEO;
     }
 
-    std::string path(resourceFile);
     HF_FaceContext *ctx = new HF_FaceContext();
-    auto ret = ctx->impl.Configuration(path, detMode, maxDetectFaceNum, param);
+    auto ret = ctx->impl.Configuration(detMode, maxDetectFaceNum, param);
     if (ret != HSUCCEED) {
         delete ctx;
         *handle = nullptr;
@@ -104,7 +104,7 @@ HResult HF_CreateFaceContextFromResourceFile(HPath resourceFile, HF_ContextCusto
     return ret;
 }
 
-HResult HF_CreateFaceContextFromResourceFileOptional(HPath resourceFile,HInt32 customOption, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
+HResult HF_CreateFaceContextFromResourceFileOptional(HInt32 customOption, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
     inspire::ContextCustomParameter param;
     if (customOption & HF_ENABLE_FACE_RECOGNITION) {
         param.enable_recognition = true;
@@ -134,10 +134,8 @@ HResult HF_CreateFaceContextFromResourceFileOptional(HPath resourceFile,HInt32 c
     if (detectMode == HF_DETECT_MODE_VIDEO) {
         detMode = inspire::DETECT_MODE_VIDEO;
     }
-
-    std::string path(resourceFile);
     HF_FaceContext *ctx = new HF_FaceContext();
-    auto ret = ctx->impl.Configuration(path, detMode, maxDetectFaceNum, param);
+    auto ret = ctx->impl.Configuration(detMode, maxDetectFaceNum, param);
     if (ret != HSUCCEED) {
         delete ctx;
         *handle = nullptr;
@@ -146,6 +144,11 @@ HResult HF_CreateFaceContextFromResourceFileOptional(HPath resourceFile,HInt32 c
     }
 
     return ret;
+}
+
+HResult HF_InspireFaceLaunch(const char* resourcePath) {
+    std::string path(resourcePath);
+    return MODEL_HUB->Load(resourcePath);
 }
 
 HResult HF_FeatureHubDataDisable() {
