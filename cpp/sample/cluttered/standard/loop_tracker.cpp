@@ -3,7 +3,7 @@
 //
 #include <iostream>
 #include "track_module/face_track.h"
-#include "recognition_module/face_recognition.h"
+#include "inspireface/recognition_module/face_feature_extraction.h"
 #include "log.h"
 
 using namespace inspire;
@@ -15,7 +15,7 @@ int main() {
 //    FaceRecognition recognition(archive, true);
 
     auto ret = track.Configuration(archive);
-    LOGD("ret=%d", ret);
+    INSPIRE_LOGD("ret=%d", ret);
 
     auto image = cv::imread("test_res/data/bulk/kun.jpg");
     for (int i = 0; i < 10000000; ++i) {

@@ -3,11 +3,11 @@
 //
 #include <iostream>
 #include "track_module/face_track.h"
-#include "recognition_module/face_recognition.h"
+#include "inspireface/feature_hub/face_recognition.h"
 #include "log.h"
 #include "track_module/face_track.h"
 #include "pipeline_module/face_pipeline.h"
-#include "recognition_module/face_recognition.h"
+#include "inspireface/feature_hub/face_recognition.h"
 #include "middleware/inference_helper/customized/rknn_adapter.h"
 
 using namespace inspire;

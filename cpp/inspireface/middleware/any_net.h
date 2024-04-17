@@ -75,7 +75,7 @@ public:
         }
         auto ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);
         if (ret != InferenceHelper::kRetOk) {
-            LOGE("NN Initialize fail");
+            INSPIRE_LOGE("NN Initialize fail");
             return ret;
         }
 
@@ -149,11 +149,11 @@ public:
 
 //        LOGD("ppPreProcess");
         if (m_nn_inference_->PreProcess(m_input_tensor_info_list_) != InferenceHelper::kRetOk) {
-            LOGD("PreProcess error");
+            INSPIRE_LOGD("PreProcess error");
         }
 //        LOGD("PreProcess");
         if (m_nn_inference_->Process(m_output_tensor_info_list_) != InferenceHelper::kRetOk) {
-            LOGD("Process error");
+            INSPIRE_LOGD("Process error");
         }
 //        LOGD("Process");
         for (int i = 0; i < m_output_tensor_info_list_.size(); ++i) {

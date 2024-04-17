@@ -20,6 +20,7 @@
 #include "opencv2/opencv.hpp"
 #include <iomanip>
 #include "test_tools.h"
+#include <random>
 
 using namespace indicators;
 
@@ -104,7 +105,7 @@ inline bool ImportLFWFunneledValidData(HContextHandle handle, FaceImageDataList&
         identity.customId = i;
         identity.tag = newTagName;
         identity.feature = &feature;
-        ret = HF_FeaturesGroupInsertFeature(handle, identity);
+        ret = HF_FeatureHubInsertFeature(identity);
         if (ret != HSUCCEED) {
             std::cerr << "Error insert feature: " << std::to_string(ret)  << " , " << item.second << std::endl;
             return false;
@@ -222,7 +223,7 @@ inline bool FindMostSimilarScoreFromTwoPic(HContextHandle handle, const std::str
             return false;
         }
         HInt32 featureNum;
-        HF_GetFeatureLength(handle, &featureNum);
+        HF_GetFeatureLength(&featureNum);
         for (int j = 0; j < multipleFaceData.detectedNum; ++j) {
             std::vector<float> feature(featureNum, 0.0f);
             ret = HF_FaceFeatureExtractCpy(handle, img, multipleFaceData.tokens[j], feature.data());
@@ -252,7 +253,7 @@ inline bool FindMostSimilarScoreFromTwoPic(HContextHandle handle, const std::str
             faceFeature2.size = feat2.size();
             faceFeature2.data = feat2.data();
 
-            HF_FaceComparison1v1(handle, faceFeature1, faceFeature2, &comp);
+            HF_FaceComparison1v1(faceFeature1, faceFeature2, &comp);
             if (comp > mostSimilar) {
                 mostSimilar = comp;
             }
@@ -328,5 +329,70 @@ inline std::pair<float, float> FindBestThreshold(const std::vector<float>& simil
 
     return {best_threshold, best_accuracy};
 }
+
+/** Generate random eigenvectors of the specified length */
+inline std::vector<float> GenerateRandomFeature(size_t length) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(-1.0, 1.0);
+
+    std::vector<float> featureVector(length);
+    float norm = 0.0;
+
+    for (float &value : featureVector) {
+        value = dis(gen);
+        norm += value * value;
+    }
+
+    norm = std::sqrt(norm);
+
+    if (norm > 0) {
+        for (float &value : featureVector) {
+            value /= norm;
+        }
+    }
+
+    return featureVector;
+}
+
+inline std::vector<float> SimulateSimilarVector(const std::vector<float>& original) {
+    std::vector<float> similar(original.size());
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<float> dis(0.0, 0.02);
+
+    for (size_t i = 0; i < original.size(); ++i) {
+        similar[i] = original[i] + dis(gen);
+    }
+
+    float norm = 0.0f;
+    for (auto& value : similar) {
+        norm += value * value;
+    }
+    norm = std::sqrt(norm);
+    if (norm > 0) {
+        for (auto& value : similar) {
+            value /= norm;
+        }
+    }
+
+    return similar;
+}
+
+inline std::vector<int> GenerateRandomNumbers(int n, int min, int max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(min, max);
+
+    std::vector<int> numbers;
+    numbers.reserve(n);
+
+    for (int i = 0; i < n; ++i) {
+        numbers.push_back(distrib(gen));
+    }
+
+    return numbers;
+}
+
 
 #endif //HYPERFACEREPO_TEST_HELP_H

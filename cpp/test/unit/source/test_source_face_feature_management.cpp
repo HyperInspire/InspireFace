@@ -6,6 +6,7 @@
 #include "inspireface/face_context.h"
 #include "herror.h"
 #include "../test_helper/test_help.h"
+#include "feature_hub/feature_hub.h"
 
 using namespace inspire;
 
@@ -22,7 +23,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         auto ret = ctx.Configuration(GET_MODEL_FILE(), DetectMode::DETECT_MODE_IMAGE, 1, param);
         REQUIRE(ret == HSUCCEED);
 
-        ctx.FaceRecognitionModule()->PrintFeatureMatrixInfo();
+        FEATURE_HUB->PrintFeatureMatrixInfo();
 
         // Know the location of 'kunkun' in advance
         int32_t KunkunIndex = 795;
@@ -56,17 +57,17 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
 
         for (int i = 0; i < featureMatrix.size(); ++i) {
             auto &feat = featureMatrix[i];
-            auto ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feat, i, tagNames[i], i);
+            auto ret = FEATURE_HUB->RegisterFaceFeature(feat, i, tagNames[i], i);
             CHECK(ret == HSUCCEED);
         }
 
         std::cout << std::endl;
-        REQUIRE(ctx.FaceRecognitionModule()->GetFaceFeatureCount() == 3000);
+        REQUIRE(FEATURE_HUB->GetFaceFeatureCount() == 3000);
         spdlog::trace("All 3000 Faces embedded vector are loaded");
 
         // Prepare a face photo to search through the library
         SearchResult searchResult;
-        ret = ctx.FaceRecognitionModule()->SearchFaceFeature(feature, searchResult, 0.5f);
+        ret = FEATURE_HUB->SearchFaceFeature(feature, searchResult, 0.5f);
         REQUIRE(ret == HSUCCEED);
         CHECK(searchResult.index != -1);
         CHECK(searchResult.index == KunkunIndex);
@@ -75,15 +76,15 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         spdlog::info("Find Kunkun -> Location ID: {}, Confidence: {}, Tag: {}", searchResult.index, searchResult.score, searchResult.tag.c_str());
         // Save "Kunkun"'s library features and so on
         Embedded KunkunFeature;
-        ret = ctx.FaceRecognitionModule()->GetFaceFeature(KunkunIndex, KunkunFeature);
+        ret = FEATURE_HUB->GetFaceFeature(KunkunIndex, KunkunFeature);
         REQUIRE(ret == HSUCCEED);
 
         // The features of "Kunkun" library corresponding to those found above are deleted from the face library
-        ret = ctx.FaceRecognitionModule()->DeleteFaceFeature(searchResult.index);
+        ret = FEATURE_HUB->DeleteFaceFeature(searchResult.index);
         CHECK(ret == HSUCCEED);
         // In search once
         SearchResult secondSearchResult;
-        ret = ctx.FaceRecognitionModule()->SearchFaceFeature(feature, secondSearchResult, 0.5f);
+        ret = FEATURE_HUB->SearchFaceFeature(feature, secondSearchResult, 0.5f);
         REQUIRE(ret == HSUCCEED);
         CHECK(secondSearchResult.index == -1);
         spdlog::info("Kunkun被删除了无法找到: {}, {}", secondSearchResult.index, secondSearchResult.tag);
@@ -91,12 +92,12 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         // Just take a random place and change the eigenvector for that place and put "Kunkun" back in there
         auto newIndex = 2888;
         // Try inserting an unused location first
-        ret = ctx.FaceRecognitionModule()->UpdateFaceFeature(KunkunFeature, 3001, "Chicken", 3001);
+        ret = FEATURE_HUB->UpdateFaceFeature(KunkunFeature, 3001, "Chicken", 3001);
         REQUIRE(ret == HERR_CTX_REC_BLOCK_UPDATE_FAILURE);
-        ret = ctx.FaceRecognitionModule()->UpdateFaceFeature(KunkunFeature, newIndex, "Chicken", 3001);
+        ret = FEATURE_HUB->UpdateFaceFeature(KunkunFeature, newIndex, "Chicken", 3001);
         REQUIRE(ret == HSUCCEED);
         SearchResult thirdlySearchResult;
-        ret = ctx.FaceRecognitionModule()->SearchFaceFeature(feature, thirdlySearchResult, 0.5f);
+        ret = FEATURE_HUB->SearchFaceFeature(feature, thirdlySearchResult, 0.5f);
         REQUIRE(ret == HSUCCEED);
         CHECK(thirdlySearchResult.index != -1);
         CHECK(thirdlySearchResult.index == newIndex);
@@ -116,7 +117,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         auto ret = ctx.Configuration(GET_DATA("model_zip/Pikachu-t1"), DetectMode::DETECT_MODE_IMAGE, 1, param);
         REQUIRE(ret == HSUCCEED);
 
-        ctx.FaceRecognitionModule()->PrintFeatureMatrixInfo();
+        FEATURE_HUB->PrintFeatureMatrixInfo();
 
         // Import face feature vectors in batches
         String mat_path = GET_DATA("test_faceset/test_faces_A1.npy");
@@ -131,12 +132,12 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
 
         for (int i = 0; i < featureMatrix.size(); ++i) {
             auto &feat = featureMatrix[i];
-            auto ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feat, i, tagNames[i], i);
+            auto ret = FEATURE_HUB->RegisterFaceFeature(feat, i, tagNames[i], i);
             CHECK(ret == HSUCCEED);
         }
 
         std::cout << std::endl;
-        REQUIRE(ctx.FaceRecognitionModule()->GetFaceFeatureCount() == 3000);
+        REQUIRE(FEATURE_HUB->GetFaceFeatureCount() == 3000);
         spdlog::trace("3000个特征向量全部载入");
 
         // Prepare a picture of a face
@@ -158,7 +159,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
 
         // Insert the face further back
         auto regIndex = 4000;
-        ret = ctx.FaceRecognitionModule()->RegisterFaceFeature(feature, regIndex, "test", 4000);
+        ret = FEATURE_HUB->RegisterFaceFeature(feature, regIndex, "test", 4000);
         REQUIRE(ret == HSUCCEED);
 
         const auto loop = 1000;
@@ -170,7 +171,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
             // Prepare a face photo to look it up from the library
             SearchResult searchResult;
             auto timeStart = (double) cv::getTickCount();
-            ret = ctx.FaceRecognitionModule()->SearchFaceFeature(feature, searchResult, 0.5f);
+            ret = FEATURE_HUB->SearchFaceFeature(feature, searchResult, 0.5f);
             double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
             REQUIRE(ret == HSUCCEED);
             CHECK(searchResult.index == regIndex);
