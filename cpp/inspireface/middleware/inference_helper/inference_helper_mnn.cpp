@@ -38,6 +38,8 @@ limitations under the License.
 #define PRINT(...)   INFERENCE_HELPER_LOG_PRINT(TAG, __VA_ARGS__)
 #define PRINT_E(...) INFERENCE_HELPER_LOG_PRINT_E(TAG, __VA_ARGS__)
 
+using namespace inspire;
+
 /*** Function ***/
 InferenceHelperMnn::InferenceHelperMnn()
 {
@@ -157,7 +159,7 @@ int32_t InferenceHelperMnn::Initialize(char* model_buffer, int model_size, std::
 
     MNN::ScheduleConfig scheduleConfig;
     if (special_backend_ == kMnnCuda) {
-        LOGD("Enable CUDA");
+        INSPIRE_LOGD("Enable CUDA");
         scheduleConfig.type = MNN_FORWARD_CUDA;
     } else {
         scheduleConfig.type = MNN_FORWARD_CPU;
@@ -229,7 +231,7 @@ int32_t InferenceHelperMnn::PreProcess(const std::vector<InputTensorInfo>& input
         auto input_tensor = net_->getSessionInput(session_, input_tensor_info.name.c_str());
         if (input_tensor == nullptr) {
             PRINT_E("Invalid input name (%s)\n", input_tensor_info.name.c_str());
-            LOGD("Invalid input name (%s)\n", input_tensor_info.name.c_str());
+            INSPIRE_LOGE("Invalid input name (%s)\n", input_tensor_info.name.c_str());
             return kRetErr;
         }
         if (input_tensor_info.data_type == InputTensorInfo::kDataTypeImage) {

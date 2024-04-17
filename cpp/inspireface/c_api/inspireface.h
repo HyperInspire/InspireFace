@@ -24,6 +24,7 @@
 extern "C" {
 #endif
 
+#define HF_ENABLE_NONE                      0x00000000  ///< Flag to enable no features.
 #define HF_ENABLE_FACE_RECOGNITION          0x00000002  ///< Flag to enable face recognition feature.
 #define HF_ENABLE_LIVENESS                  0x00000004  ///< Flag to enable RGB liveness detection feature.
 #define HF_ENABLE_IR_LIVENESS               0x00000008  ///< Flag to enable IR (Infrared) liveness detection feature.
@@ -71,8 +72,6 @@ typedef struct HF_ImageData {
     HF_ImageFormat format;      ///< Format of the image, indicating the data stream format to be parsed.
     HF_Rotation rotation;       ///< Rotation angle of the image.
 } HF_ImageData, *Ptr_HF_ImageData;
-
-
 
 
 /**
@@ -166,27 +165,6 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFileOptional(
 );
 
 /**
- * @brief Struct for database configuration.
- *
- * This struct holds the configuration settings for using a database in the face recognition context.
- */
-typedef struct HF_DatabaseConfiguration {
-    HInt32 enableUseDb;                 ///< Flag to enable or disable the use of the database.
-    HString dbPath;                     ///< Path to the database file.
-} HF_DatabaseConfiguration;
-
-
-/**
- * @brief Persist face context data using the provided database configuration.
- *
- * @param ctxHandle Handle to the face context.
- * @param configuration Database configuration details.
- * @return HResult indicating the success or failure of the operation.
- */
-HYPER_CAPI_EXPORT extern HResult
-HF_FaceContextDataPersistence(HContextHandle ctxHandle, HF_DatabaseConfiguration configuration);
-
-/**
  * @brief Release the face context.
  *
  * @param handle Handle to the face context to be released.
@@ -230,7 +208,8 @@ typedef struct HF_MultipleFaceData {
 } HF_MultipleFaceData, *Ptr_HF_MultipleFaceData;
 
 /**
- * @brief Set the track preview size in the face context.
+ * @brief Set the track preview size in the face context, it works with face detection and tracking algorithms.
+ * Default preview size is 192(px).
  *
  * @param ctxHandle Handle to the face context.
  * @param previewSize The size of the preview for tracking.
@@ -246,6 +225,15 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetTrackPreviewSize(HContextHandl
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceTrackMode(HContextHandle ctxHandle, HF_DetectMode detectMode);
+
+/**
+ * @brief Set the face detect threshold in the face context.
+ *
+ * @param ctxHandle Handle to the face context.
+ * @param detectMode The mode of the detection mode for tracking.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceDetectThreshold(HContextHandle ctxHandle, HFloat threshold);
 
 /**
  * @brief Run face tracking in the face context.
@@ -304,6 +292,75 @@ typedef struct HF_FaceFeature {
 } HF_FaceFeature, *Ptr_HF_FaceFeature;
 
 /**
+ * @brief Extract a face feature from a given face.
+ *
+ * @param ctxHandle Handle to the face context.
+ * @param streamHandle Handle to the data buffer representing the camera stream component.
+ * @param singleFace Basic token representing a single face.
+ * @param feature Pointer to the extracted face feature.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult
+HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature);
+
+/**
+ * @brief Extract a face feature from a given face and copy it to the provided feature buffer.
+ *
+ * @param ctxHandle Handle to the face context.
+ * @param streamHandle Handle to the data buffer representing the camera stream component.
+ * @param singleFace Basic token representing a single face.
+ * @param feature Pointer to the buffer where the extracted feature will be copied.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult
+HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, HPFloat feature);
+
+/************************************************************************
+* Feature Hub
+************************************************************************/
+
+/**
+ * @brief Select the search mode in the process of face recognition search,
+ * and different modes will affect the execution efficiency and results
+ * */
+typedef enum HF_SearchMode {
+    HF_SEARCH_MODE_EAGER = 0,     // Eager mode: Stops when a vector meets the threshold.
+    HF_SEARCH_MODE_EXHAUSTIVE,    // Exhaustive mode: Searches until the best match is found.
+} HF_SearchMode;
+
+/**
+ * @brief Struct for database configuration.
+ *
+ * This struct holds the configuration settings for using a database in the face recognition context.
+ */
+typedef struct HF_FeatureHubConfiguration {
+    HInt32 featureBlockNum;             ///< The order of magnitude of face feature database is N * 512, and 20 is recommended by default
+    HInt32 enablePersistence;           ///< Flag to enable or disable the use of the database.
+    HString dbPath;                     ///< Path to the database file.
+    float searchThreshold;              ///< Threshold for face search
+    HF_SearchMode searchMode;           ///< Mode of face search
+} HF_FeatureHubConfiguration;
+
+
+/**
+ * @brief A lightweight face feature vector management.
+ * @details FeatureHub is a built-in global lightweight face feature vector management functionality provided in the InspireFace-SDK.
+ * It supports basic face feature search, deletion, and modification functions, and offers two optional data storage modes:
+ * an in-memory model and a persistence model. If you have simple storage needs, you can enable it.
+ *
+ * @param configuration FeatureHub configuration details.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HF_FeatureHubDataEnable(HF_FeatureHubConfiguration configuration);
+
+/**
+ * @brief Disable the global FeatureHub feature, and you can enable it again if needed.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HF_FeatureHubDataDisable();
+
+
+/**
  * @brief Struct representing the identity of a face feature.
  *
  * This struct associates a custom identifier and a tag with a specific face feature.
@@ -320,37 +377,10 @@ typedef struct HF_FaceFeatureIdentity {
  * This function sets the threshold for face recognition, which determines the sensitivity
  * of the recognition process. A lower threshold may yield more matches but with less confidence.
  *
- * @param ctxHandle Handle to the face context.
  * @param threshold The threshold value to set for face recognition (default is 0.48, suitable for access control scenarios).
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceRecognitionThresholdSetting(HContextHandle ctxHandle, float threshold);
-
-/**
- * @brief Extract a face feature from a given face.
- *
- * @param ctxHandle Handle to the face context.
- * @param streamHandle Handle to the data buffer representing the camera stream component.
- * @param singleFace Basic token representing a single face.
- * @param feature Pointer to the extracted face feature.
- * @return HResult indicating the success or failure of the operation.
- */
-HYPER_CAPI_EXPORT extern HResult
-HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace,
-                      Ptr_HF_FaceFeature feature);
-
-/**
- * @brief Extract a face feature from a given face and copy it to the provided feature buffer.
- *
- * @param ctxHandle Handle to the face context.
- * @param streamHandle Handle to the data buffer representing the camera stream component.
- * @param singleFace Basic token representing a single face.
- * @param feature Pointer to the buffer where the extracted feature will be copied.
- * @return HResult indicating the success or failure of the operation.
- */
-HYPER_CAPI_EXPORT extern HResult
-HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace,
-                         HPFloat feature);
+HYPER_CAPI_EXPORT extern HResult HF_FeatureHubFaceSearchThresholdSetting(float threshold);
 
 /**
  * @brief Perform a one-to-one comparison of two face features.
@@ -361,88 +391,74 @@ HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF
  * @param result Pointer to the floating-point value where the comparison result will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult
-HF_FaceComparison1v1(HContextHandle ctxHandle, HF_FaceFeature feature1, HF_FaceFeature feature2, HPFloat result);
+HYPER_CAPI_EXPORT extern HResult HF_FaceComparison1v1(HF_FaceFeature feature1, HF_FaceFeature feature2, HPFloat result);
 
 /**
  * @brief Get the length of the face feature.
  *
- * @param ctxHandle Handle to the face context.
  * @param num Pointer to an integer where the length of the feature will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_GetFeatureLength(HContextHandle ctxHandle, HPInt32 num);
+HYPER_CAPI_EXPORT extern HResult HF_GetFeatureLength(HPInt32 num);
 
 
 /**
  * @brief Insert a face feature identity into the features group.
  *
- * @param ctxHandle Handle to the face context.
  * @param featureIdentity The face feature identity to be inserted.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult
-HF_FeaturesGroupInsertFeature(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity);
+HYPER_CAPI_EXPORT extern HResult HF_FeatureHubInsertFeature(HF_FaceFeatureIdentity featureIdentity);
 
 /**
  * @brief Search for the most similar face feature in the features group.
  *
- * @param ctxHandle Handle to the face context.
  * @param searchFeature The face feature to be searched.
  * @param confidence Pointer to a floating-point value where the confidence level of the match will be stored.
  * @param mostSimilar Pointer to the most similar face feature identity found.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult
-HF_FeaturesGroupFeatureSearch(HContextHandle ctxHandle, HF_FaceFeature searchFeature, HPFloat confidence,
-                              Ptr_HF_FaceFeatureIdentity mostSimilar);
+HYPER_CAPI_EXPORT extern HResult HF_FeatureHubFaceSearch(HF_FaceFeature searchFeature, HPFloat confidence, Ptr_HF_FaceFeatureIdentity mostSimilar);
 
 /**
  * @brief Remove a face feature from the features group based on custom ID.
  *
- * @param ctxHandle Handle to the face context.
  * @param customId The custom ID of the feature to be removed.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FeaturesGroupFeatureRemove(HContextHandle ctxHandle, HInt32 customId);
+HYPER_CAPI_EXPORT extern HResult HF_FeatureHubFaceRemove(HInt32 customId);
 
 /**
  * @brief Update a face feature identity in the features group.
  *
- * @param ctxHandle Handle to the face context.
  * @param featureIdentity The face feature identity to be updated.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult
-HF_FeaturesGroupFeatureUpdate(HContextHandle ctxHandle, HF_FaceFeatureIdentity featureIdentity);
+HYPER_CAPI_EXPORT extern HResult HF_FeatureHubFaceUpdate(HF_FaceFeatureIdentity featureIdentity);
 
 /**
  * @brief Retrieve a face feature identity from the features group based on custom ID.
  *
- * @param ctxHandle Handle to the face context.
  * @param customId The custom ID of the feature.
  * @param identity Pointer to the face feature identity to be retrieved.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult
-HF_FeaturesGroupGetFeatureIdentity(HContextHandle ctxHandle, HInt32 customId, Ptr_HF_FaceFeatureIdentity identity);
+HYPER_CAPI_EXPORT extern HResult HF_FeatureHubGetFaceIdentity(HInt32 customId, Ptr_HF_FaceFeatureIdentity identity);
 
 /**
  * @brief Get the count of face features in the features group.
  *
- * @param ctxHandle Handle to the face context.
  * @param count Pointer to an integer where the count of features will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FeatureGroupGetCount(HContextHandle ctxHandle, HInt32 *count);
+HYPER_CAPI_EXPORT extern HResult HF_FeatureHubGetFaceCount(HInt32 *count);
 
 /**
  * @brief View the face database table.
  *
- * @param ctxHandle Handle to the face context.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_ViewFaceDBTable(HContextHandle ctxHandle);
+HYPER_CAPI_EXPORT extern HResult HF_FeatureHubViewDBTable();
 
 /************************************************************************
 * Face Pipeline
@@ -563,6 +579,28 @@ typedef struct HF_InspireFaceVersion {
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HF_QueryInspireFaceVersion(Ptr_HF_InspireFaceVersion version);
+
+/**
+ * @brief SDK built-in log level mode
+ * */
+typedef enum HF_LogLevel {
+    HF_LOG_NONE = 0,   // No logging, disables all log output
+    HF_LOG_DEBUG,      // Debug level for detailed system information mostly useful for developers
+    HF_LOG_INFO,       // Information level for general system information about operational status
+    HF_LOG_WARN,       // Warning level for non-critical issues that might need attention
+    HF_LOG_ERROR,      // Error level for error events that might still allow the application to continue running
+    HF_LOG_FATAL       // Fatal level for severe error events that will presumably lead the application to abort
+} HF_LogLevel;
+
+/**
+ * @brief Set the log level built into the SDK.The default is HF LOG DEBUG
+ * */
+HYPER_CAPI_EXPORT extern HResult HF_SetLogLevel(HF_LogLevel level);
+
+/**
+ * @brief Disable the log function. Like HF_SetLogLevel(HF_LOG_NONE)
+ * */
+HYPER_CAPI_EXPORT extern HResult HF_LogDisable();
 
 /********************************DEBUG Utils****************************************/
 
