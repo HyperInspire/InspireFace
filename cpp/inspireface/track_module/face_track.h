@@ -50,7 +50,7 @@ public:
      * @brief Sets the preview size for tracking.
      * @param preview_size Size of the preview for tracking.
      */
-    void SetTrackPreviewSize(const int preview_size = 192);
+    void SetTrackPreviewSize(int preview_size = 192);
 
 private:
 
@@ -122,6 +122,7 @@ private:
      */
     int InitFacePoseModel(InspireModel& model);
 
+
 public:
 
     /**
@@ -129,6 +130,11 @@ public:
      * @return double Total time used in tracking.
      */
     double GetTrackTotalUseTime() const;
+
+    /**
+     * @brief Fix detect threshold
+     * */
+    void SetDetectThreshold(float value);
 
 public:
 

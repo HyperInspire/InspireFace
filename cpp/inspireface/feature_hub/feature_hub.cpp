@@ -23,14 +23,14 @@ std::shared_ptr<FeatureHub> FeatureHub::GetInstance() {
 
 int32_t FeatureHub::DisableHub() {
     if (!m_enable_) {
-        LOGW("FeatureHub is already disabled.");
+        INSPIRE_LOGW("FeatureHub is already disabled.");
         return HERR_CTX_DB_DISABLE_REPETITION;
     }
     // Close the database if it starts
     if (m_db_) {
         int ret = m_db_->CloseDatabase();
         if (ret != HSUCCEED) {
-            LOGE("Failed to close the database: %d", ret);
+            INSPIRE_LOGE("Failed to close the database: %d", ret);
             return ret;
         }
         m_db_.reset();
@@ -52,23 +52,23 @@ int32_t FeatureHub::DisableHub() {
 int32_t FeatureHub::EnableHub(const DatabaseConfiguration &configuration, MatrixCore core) {
     int32_t ret;
     if (m_enable_) {
-        LOGW("You have enabled the FeatureHub feature. It is not valid to do so again");
+        INSPIRE_LOGW("You have enabled the FeatureHub feature. It is not valid to do so again");
         return HERR_CTX_DB_ENABLE_REPETITION;
     }
     // Config
     m_db_configuration_ = configuration;
     m_recognition_threshold_ = m_db_configuration_.recognition_threshold;
     if (m_recognition_threshold_ < -1.0f || m_recognition_threshold_ > 1.0f) {
-        LOGW("The search threshold entered does not fit the required range (-1.0f, 1.0f) and has been set to 0.5 by default");
+        INSPIRE_LOGW("The search threshold entered does not fit the required range (-1.0f, 1.0f) and has been set to 0.5 by default");
         m_recognition_threshold_ = 0.5f;
     }
     m_search_mode_ = m_db_configuration_.search_mode;
     if (m_db_configuration_.feature_block_num <= 0) {
         m_db_configuration_.feature_block_num = 10;
-        LOGW("The number of feature blocks cannot be 0, but has been set to the default number of 10, that is, the maximum number of stored faces is supported: 5120");
+        INSPIRE_LOGW("The number of feature blocks cannot be 0, but has been set to the default number of 10, that is, the maximum number of stored faces is supported: 5120");
     } else if (m_db_configuration_.feature_block_num > 25) {
         m_db_configuration_.feature_block_num = 25;
-        LOGW("The number of feature blocks cannot exceed 25, which has been set to the maximum value, that is, the maximum number of stored faces supported: 12800");
+        INSPIRE_LOGW("The number of feature blocks cannot exceed 25, which has been set to the maximum value, that is, the maximum number of stored faces supported: 12800");
     }
     // Allocate memory for the feature matrix
     for (int i = 0; i < m_db_configuration_.feature_block_num; ++i) {
@@ -85,7 +85,7 @@ int32_t FeatureHub::EnableHub(const DatabaseConfiguration &configuration, Matrix
             ret = m_db_->OpenDatabase(m_db_configuration_.db_path);
         }
         if (ret != HSUCCEED) {
-            LOGE("An error occurred while opening the database: %d", ret);
+            INSPIRE_LOGE("An error occurred while opening the database: %d", ret);
             return ret;
         }
 
@@ -96,14 +96,14 @@ int32_t FeatureHub::EnableHub(const DatabaseConfiguration &configuration, Matrix
                 for (auto const &info: infos) {
                     ret = InsertFaceFeature(info.feature, info.tag, info.customId);
                     if (ret != HSUCCEED) {
-                        LOGE("ID: %d, Inserting error: %d", info.customId, ret);
+                        INSPIRE_LOGE("ID: %d, Inserting error: %d", info.customId, ret);
                         return ret;
                     }
                 }
             }
             m_enable_ = true;
         } else {
-            LOGE("Failed to get the vector from the database.");
+            INSPIRE_LOGE("Failed to get the vector from the database.");
             return ret;
         }
     } else {
@@ -318,7 +318,7 @@ int32_t FeatureHub::FindFeatureIndexByCustomId(int32_t customId) {
 
 int32_t FeatureHub::SearchFaceFeature(const Embedded &queryFeature, SearchResult &searchResult) {
     if (!m_enable_) {
-        LOGE("FeatureHub is disabled, please enable it before it can be served");
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_CTX_DB_DISABLE;
     }
     m_search_face_feature_cache_.clear();
@@ -344,7 +344,7 @@ int32_t FeatureHub::SearchFaceFeature(const Embedded &queryFeature, SearchResult
 int32_t FeatureHub::FaceFeatureInsertFromCustomId(const std::vector<float> &feature, const std::string &tag,
                                                    int32_t customId) {
     if (!m_enable_) {
-        LOGE("FeatureHub is disabled, please enable it before it can be served");
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_CTX_DB_DISABLE;
     }
     auto index = FindFeatureIndexByCustomId(customId);
@@ -366,7 +366,7 @@ int32_t FeatureHub::FaceFeatureInsertFromCustomId(const std::vector<float> &feat
 
 int32_t FeatureHub::FaceFeatureRemoveFromCustomId(int32_t customId) {
     if (!m_enable_) {
-        LOGE("FeatureHub is disabled, please enable it before it can be served");
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_CTX_DB_DISABLE;
     }
     auto index = FindFeatureIndexByCustomId(customId);
@@ -384,7 +384,7 @@ int32_t FeatureHub::FaceFeatureRemoveFromCustomId(int32_t customId) {
 int32_t FeatureHub::FaceFeatureUpdateFromCustomId(const std::vector<float> &feature, const std::string &tag,
                                                    int32_t customId) {
     if (!m_enable_) {
-        LOGE("FeatureHub is disabled, please enable it before it can be served");
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_CTX_DB_DISABLE;
     }
     auto index = FindFeatureIndexByCustomId(customId);
@@ -405,7 +405,7 @@ int32_t FeatureHub::FaceFeatureUpdateFromCustomId(const std::vector<float> &feat
 
 int32_t FeatureHub::GetFaceFeatureFromCustomId(int32_t customId) {
     if (!m_enable_) {
-        LOGE("FeatureHub is disabled, please enable it before it can be served");
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_CTX_DB_DISABLE;
     }
     auto index = FindFeatureIndexByCustomId(customId);
@@ -429,7 +429,7 @@ int32_t FeatureHub::GetFaceFeatureFromCustomId(int32_t customId) {
 
 int32_t FeatureHub::ViewDBTable() {
     if (!m_enable_) {
-        LOGE("FeatureHub is disabled, please enable it before it can be served");
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_CTX_DB_DISABLE;
     }
     auto ret = m_db_->ViewTotal();

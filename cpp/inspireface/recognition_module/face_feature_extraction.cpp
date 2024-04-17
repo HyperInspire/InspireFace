@@ -15,11 +15,11 @@ FeatureExtraction::FeatureExtraction(InspireArchive &archive, bool enable_recogn
         InspireModel model;
         m_status_code_ = archive.LoadModel("feature", model);
         if (m_status_code_ != SARC_SUCCESS) {
-            LOGE("Load rec model error.");
+            INSPIRE_LOGE("Load rec model error.");
         }
         m_status_code_ = InitExtractInteraction(model);
         if (m_status_code_ != 0) {
-            LOGE("FaceRecognition error.");
+            INSPIRE_LOGE("FaceRecognition error.");
         }
     }
 
@@ -36,7 +36,7 @@ int32_t FeatureExtraction::InitExtractInteraction(InspireModel &model) {
         return HSUCCEED;
 
     } catch (const std::runtime_error& e) {
-        LOGE("%s", e.what());
+        INSPIRE_LOGE("%s", e.what());
         return HERR_CTX_FACE_REC_OPTION_ERROR;
     }
 }

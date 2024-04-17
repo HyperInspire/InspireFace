@@ -86,6 +86,11 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     return HSUCCEED;
 }
 
+int32_t FaceContext::SetFaceDetectThreshold(float value) {
+    m_face_track_->SetDetectThreshold(value);
+    return HSUCCEED;
+}
+
 FaceObjectList& FaceContext::GetTrackingFaceList() {
     return m_face_track_->trackingFace;
 }

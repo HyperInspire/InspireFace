@@ -8,6 +8,8 @@
 #include "inspireface/feature_hub/simd.h"
 //#include <Eigen/Dense>
 
+using namespace inspire;
+
 int main() {
 
     int N = 512;
@@ -30,7 +32,7 @@ int main() {
         cv::gemm(mat, one, 1, cv::Mat(), 0, cosineSimilarities);
 
         double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
-        LOGD("Matrix COST: %f", cost);
+        INSPIRE_LOGD("Matrix COST: %f", cost);
 
     }
 
@@ -59,7 +61,7 @@ int main() {
         }
 
         double cost = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
-        LOGD("Vector COST: %f", cost);
+        INSPIRE_LOGD("Vector COST: %f", cost);
     }
 
 //    {

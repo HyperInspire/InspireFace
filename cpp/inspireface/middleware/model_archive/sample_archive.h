@@ -43,14 +43,14 @@ public:
         m_tar_ = std::make_shared<mtar_t>();
         m_load_file_status_ = mtar_open(m_tar_.get(), archiveFile.c_str(), "r");
         if (m_load_file_status_ != MTAR_ESUCCESS) {
-            LOGE("Invalid archive file: %d", m_load_file_status_);
+            INSPIRE_LOGE("Invalid archive file: %d", m_load_file_status_);
             m_tar_.reset();
             return m_load_file_status_;
         }
         mtar_header_t h;
         m_load_file_status_ = mtar_read_header(m_tar_.get(), &h);
         if (m_load_file_status_ != MTAR_ESUCCESS) {
-            LOGE("Error reading root from archive.");
+            INSPIRE_LOGE("Error reading root from archive.");
             return m_load_file_status_;
         }
 //        m_file_archive_root_ = std::string(h.name);
@@ -58,7 +58,7 @@ public:
         while ( (mtar_read_header(m_tar_.get(), &h)) != MTAR_ENULLRECORD ) {
             m_load_file_status_ = mtar_next(m_tar_.get());
             if (m_load_file_status_ != MTAR_ESUCCESS) {
-                LOGE("Failed to scan the file");
+                INSPIRE_LOGE("Failed to scan the file");
                 return m_load_file_status_;
             }
             m_subfiles_names_.emplace_back(h.name);
@@ -73,7 +73,7 @@ public:
             auto fullFilename = m_subfiles_names_[index];
             auto ret = lazyReadFile(fullFilename);
             if (ret != MTAR_ESUCCESS) {
-                LOGE("Failed to load file");
+                INSPIRE_LOGE("Failed to load file");
             }
             return m_file_content_cache_map_[fullFilename];
         }
@@ -127,10 +127,10 @@ protected:
                 m_file_content_cache_map_[filename] = std::move(content); // Load and store the file contents
                 return MTAR_ESUCCESS;
             } else {
-                LOGE("Failed to load file: %d", ret);
+                INSPIRE_LOGE("Failed to load file: %d", ret);
             }
         } else {
-            LOGE("Failed to find file: %d", ret);
+            INSPIRE_LOGE("Failed to find file: %d", ret);
         }
 
         return SARC_LOAD_FILE_FAIL;

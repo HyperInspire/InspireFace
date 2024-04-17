@@ -3,6 +3,10 @@
 //
 #include "log.h"
 
+namespace inspire {
+
 // Static Logger initialization
 LogManager* LogManager::instance = nullptr;
 std::mutex LogManager::mutex;
+
+}   // namespace inspire

@@ -24,6 +24,7 @@
 extern "C" {
 #endif
 
+#define HF_ENABLE_NONE                      0x00000000  ///< Flag to enable no features.
 #define HF_ENABLE_FACE_RECOGNITION          0x00000002  ///< Flag to enable face recognition feature.
 #define HF_ENABLE_LIVENESS                  0x00000004  ///< Flag to enable RGB liveness detection feature.
 #define HF_ENABLE_IR_LIVENESS               0x00000008  ///< Flag to enable IR (Infrared) liveness detection feature.
@@ -71,8 +72,6 @@ typedef struct HF_ImageData {
     HF_ImageFormat format;      ///< Format of the image, indicating the data stream format to be parsed.
     HF_Rotation rotation;       ///< Rotation angle of the image.
 } HF_ImageData, *Ptr_HF_ImageData;
-
-
 
 
 /**
@@ -209,7 +208,8 @@ typedef struct HF_MultipleFaceData {
 } HF_MultipleFaceData, *Ptr_HF_MultipleFaceData;
 
 /**
- * @brief Set the track preview size in the face context.
+ * @brief Set the track preview size in the face context, it works with face detection and tracking algorithms.
+ * Default preview size is 192(px).
  *
  * @param ctxHandle Handle to the face context.
  * @param previewSize The size of the preview for tracking.
@@ -225,6 +225,15 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetTrackPreviewSize(HContextHandl
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceTrackMode(HContextHandle ctxHandle, HF_DetectMode detectMode);
+
+/**
+ * @brief Set the face detect threshold in the face context.
+ *
+ * @param ctxHandle Handle to the face context.
+ * @param detectMode The mode of the detection mode for tracking.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceDetectThreshold(HContextHandle ctxHandle, HFloat threshold);
 
 /**
  * @brief Run face tracking in the face context.
@@ -310,6 +319,10 @@ HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF
 * Feature Hub
 ************************************************************************/
 
+/**
+ * @brief Select the search mode in the process of face recognition search,
+ * and different modes will affect the execution efficiency and results
+ * */
 typedef enum HF_SearchMode {
     HF_SEARCH_MODE_EAGER = 0,     // Eager mode: Stops when a vector meets the threshold.
     HF_SEARCH_MODE_EXHAUSTIVE,    // Exhaustive mode: Searches until the best match is found.
@@ -321,7 +334,7 @@ typedef enum HF_SearchMode {
  * This struct holds the configuration settings for using a database in the face recognition context.
  */
 typedef struct HF_FeatureHubConfiguration {
-    HInt32 featureblockNum;             ///< The order of magnitude of face feature database is N * 512, and 20 is recommended by default
+    HInt32 featureBlockNum;             ///< The order of magnitude of face feature database is N * 512, and 20 is recommended by default
     HInt32 enablePersistence;           ///< Flag to enable or disable the use of the database.
     HString dbPath;                     ///< Path to the database file.
     float searchThreshold;              ///< Threshold for face search
@@ -566,6 +579,28 @@ typedef struct HF_InspireFaceVersion {
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HF_QueryInspireFaceVersion(Ptr_HF_InspireFaceVersion version);
+
+/**
+ * @brief SDK built-in log level mode
+ * */
+typedef enum HF_LogLevel {
+    HF_LOG_NONE = 0,   // No logging, disables all log output
+    HF_LOG_DEBUG,      // Debug level for detailed system information mostly useful for developers
+    HF_LOG_INFO,       // Information level for general system information about operational status
+    HF_LOG_WARN,       // Warning level for non-critical issues that might need attention
+    HF_LOG_ERROR,      // Error level for error events that might still allow the application to continue running
+    HF_LOG_FATAL       // Fatal level for severe error events that will presumably lead the application to abort
+} HF_LogLevel;
+
+/**
+ * @brief Set the log level built into the SDK.The default is HF LOG DEBUG
+ * */
+HYPER_CAPI_EXPORT extern HResult HF_SetLogLevel(HF_LogLevel level);
+
+/**
+ * @brief Disable the log function. Like HF_SetLogLevel(HF_LOG_NONE)
+ * */
+HYPER_CAPI_EXPORT extern HResult HF_LogDisable();
 
 /********************************DEBUG Utils****************************************/
 
