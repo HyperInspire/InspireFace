@@ -23,17 +23,20 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HContextHandle ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
-        HF_DatabaseConfiguration configuration = {0};
+        HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
         HString dbPathStr = new char[dbPath.size() + 1];
         std::strcpy(dbPathStr, dbPath.c_str());
-        configuration.enableUseDb = 1;
+        configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
+        configuration.featureBlockNum = 20;
+        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+        configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
         }
-        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        ret = HF_FeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
@@ -64,12 +67,12 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         identity.feature = &feature;
         identity.tag = "chicken";
         identity.customId = 1234;
-        ret = HF_FeaturesGroupInsertFeature(ctxHandle, identity);
+        ret = HF_FeatureHubInsertFeature(identity);
         REQUIRE(ret == HSUCCEED);
 
         // Check number
         HInt32 num;
-        ret = HF_FeatureGroupGetCount(ctxHandle, &num);
+        ret = HF_FeatureHubGetFaceCount(&num);
         REQUIRE(ret == HSUCCEED);
         CHECK(num == 1);
 
@@ -81,7 +84,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         updatedIdentity.feature = identity.feature;
         updatedIdentity.customId = identity.customId;
         updatedIdentity.tag = "iKun";
-        ret = HF_FeaturesGroupFeatureUpdate(ctxHandle, updatedIdentity);
+        ret = HF_FeatureHubFaceUpdate(updatedIdentity);
         REQUIRE(ret == HSUCCEED);
 
 //        ret = HF_ViewFaceDBTable(ctxHandle);
@@ -92,24 +95,24 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         nonIdentity.customId = 234;
         nonIdentity.tag = "no";
         nonIdentity.feature = &feature;
-        ret = HF_FeaturesGroupFeatureUpdate(ctxHandle, nonIdentity);
+        ret = HF_FeatureHubFaceUpdate(nonIdentity);
         REQUIRE(ret != HSUCCEED);
 
 //        ret = HF_ViewFaceDBTable(ctxHandle);
 //        REQUIRE(ret == HSUCCEED);
 
         // Trying to delete an identity that doesn't exist
-        ret = HF_FeaturesGroupFeatureRemove(ctxHandle, nonIdentity.customId);
+        ret = HF_FeatureHubFaceRemove(nonIdentity.customId);
         REQUIRE(ret != HSUCCEED);
 //        ret = HF_ViewFaceDBTable(ctxHandle);
 //        REQUIRE(ret == HSUCCEED);
 
 
         // Delete kunkun
-        ret = HF_FeaturesGroupFeatureRemove(ctxHandle, identity.customId);
+        ret = HF_FeatureHubFaceRemove(identity.customId);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_FeatureGroupGetCount(ctxHandle, &num);
+        ret = HF_FeatureHubGetFaceCount(&num);
         REQUIRE(ret == HSUCCEED);
         CHECK(num == 0);
 
@@ -118,6 +121,9 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         // Finish
         ret = HF_ReleaseFaceContext(ctxHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HF_FeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
         delete []dbPathStr;
     }
@@ -133,17 +139,20 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HContextHandle ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
-        HF_DatabaseConfiguration configuration = {0};
+        HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
         HString dbPathStr = new char[dbPath.size() + 1];
         std::strcpy(dbPathStr, dbPath.c_str());
-        configuration.enableUseDb = 1;
+        configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
+        configuration.featureBlockNum = 20;
+        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+        configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
         }
-        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        ret = HF_FeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
         auto lfwDir = getLFWFunneledDir();
@@ -152,7 +161,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
-        ret = HF_FeatureGroupGetCount(ctxHandle, &count);
+        ret = HF_FeatureHubGetFaceCount(&count);
         REQUIRE(ret == HSUCCEED);
         CHECK(count == numOfNeedImport);
 
@@ -172,6 +181,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
     SECTION("Faces feature CURD") {
 #ifdef ENABLE_USE_LFW_DATA
+        // This section needs to be connected to the "Import a large faces data" section before it can be executed
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
@@ -181,14 +191,17 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HContextHandle ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
-        HF_DatabaseConfiguration configuration = {0};
-        auto dbPath = GET_SAVE_DATA(".test");
-        HString dbPathStr = new char[dbPath.size() + 1];
-        std::strcpy(dbPathStr, dbPath.c_str());
-        configuration.enableUseDb = 1;
-        configuration.dbPath = dbPathStr;
-        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
-        REQUIRE(ret == HSUCCEED);
+//        HF_FaceHubConfiguration configuration = {0};
+//        auto dbPath = GET_SAVE_DATA(".test");
+//        HString dbPathStr = new char[dbPath.size() + 1];
+//        std::strcpy(dbPathStr, dbPath.c_str());
+//        configuration.enablePersistence = 1;
+//        configuration.dbPath = dbPathStr;
+//        configuration.featureBlockNum = 20;
+//        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+//        configuration.searchThreshold = 0.48f;
+//        ret = HF_FaceHubDataEnable(configuration);
+//        REQUIRE(ret == HSUCCEED);
 
         // Face track
         cv::Mat dstImage = cv::imread(GET_DATA("data/bulk/Nathalie_Baye_0002.jpg"));
@@ -216,16 +229,16 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         // Search for a face
         HFloat confidence;
         HF_FaceFeatureIdentity searchedIdentity = {0};
-        ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedIdentity);
+        ret = HF_FeatureHubFaceSearch(feature, &confidence, &searchedIdentity);
         REQUIRE(ret == HSUCCEED);
         CHECK(searchedIdentity.customId == 898);
         CHECK(std::string(searchedIdentity.tag) == "Nathalie_Baye");
 
         // Delete kunkun and search
-        ret = HF_FeaturesGroupFeatureRemove(ctxHandle, searchedIdentity.customId);
+        ret = HF_FeatureHubFaceRemove(searchedIdentity.customId);
         REQUIRE(ret == HSUCCEED);
         // Search again
-        ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedIdentity);
+        ret = HF_FeatureHubFaceSearch(feature, &confidence, &searchedIdentity);
 //        spdlog::info("{}", confidence);
         REQUIRE(ret == HSUCCEED);
         CHECK(searchedIdentity.customId == -1);
@@ -235,7 +248,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         againIdentity.customId = 898;
         againIdentity.tag = "Cover";
         againIdentity.feature = &feature;
-        ret = HF_FeaturesGroupInsertFeature(ctxHandle, againIdentity);
+        ret = HF_FeatureHubInsertFeature(againIdentity);
         REQUIRE(ret == HSUCCEED);
 
 //        ret = HF_ViewFaceDBTable(ctxHandle);
@@ -243,7 +256,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         // Search again
         HF_FaceFeatureIdentity searchedAgainIdentity = {0};
-        ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedAgainIdentity);
+        ret = HF_FeatureHubFaceSearch(feature, &confidence, &searchedAgainIdentity);
         REQUIRE(ret == HSUCCEED);
         CHECK(searchedAgainIdentity.customId == 898);
 
@@ -276,7 +289,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         updateIdentity.customId = updateId;
         updateIdentity.tag = "ZY";
         updateIdentity.feature = &featureZy;
-        ret = HF_FeaturesGroupFeatureUpdate(ctxHandle, updateIdentity);
+        ret = HF_FeatureHubFaceUpdate(updateIdentity);
         REQUIRE(ret == HSUCCEED);
 
 //        ret = HF_ViewFaceDBTable(ctxHandle);
@@ -309,11 +322,13 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         // Search
         HFloat confidenceQuery;
         HF_FaceFeatureIdentity searchedIdentityQuery = {0};
-        ret = HF_FeaturesGroupFeatureSearch(ctxHandle, featureZyQuery, &confidenceQuery, &searchedIdentityQuery);
+        ret = HF_FeatureHubFaceSearch(featureZyQuery, &confidenceQuery, &searchedIdentityQuery);
         REQUIRE(ret == HSUCCEED);
         CHECK(searchedIdentityQuery.customId == updateId);
 
-        delete []dbPathStr;
+        ret = HF_FeatureHubDataDisable();
+        REQUIRE(ret == HSUCCEED);
+//        delete []dbPathStr;
 
 #else
         TEST_PRINT("The test case that uses LFW is not enabled, so it will be skipped.");
@@ -334,17 +349,20 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HContextHandle ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
-        HF_DatabaseConfiguration configuration = {0};
+        HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
         HString dbPathStr = new char[dbPath.size() + 1];
         std::strcpy(dbPathStr, dbPath.c_str());
-        configuration.enableUseDb = 1;
+        configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
+        configuration.featureBlockNum = 20;
+        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+        configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
         }
-        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        ret = HF_FeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
         auto lfwDir = getLFWFunneledDir();
@@ -353,7 +371,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
-        ret = HF_FeatureGroupGetCount(ctxHandle, &count);
+        ret = HF_FeatureHubGetFaceCount(&count);
         REQUIRE(ret == HSUCCEED);
         CHECK(count == numOfNeedImport);
 
@@ -385,7 +403,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HF_FaceFeatureIdentity searchedIdentity = {0};
         auto start = (double) cv::getTickCount();
         for (int i = 0; i < loop; ++i) {
-            ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedIdentity);
+            ret = HF_FeatureHubFaceSearch(feature, &confidence, &searchedIdentity);
         }
         auto cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
 
@@ -401,6 +419,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_ReleaseFaceContext(ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
+        ret = HF_FeatureHubDataDisable();
+        REQUIRE(ret == HSUCCEED);
         delete []dbPathStr;
 #else
         TEST_PRINT("Skip face search benchmark test, you need to enable both lfw and benchmark test.");
@@ -420,17 +440,20 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HContextHandle ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
-        HF_DatabaseConfiguration configuration = {0};
+        HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
         HString dbPathStr = new char[dbPath.size() + 1];
         std::strcpy(dbPathStr, dbPath.c_str());
-        configuration.enableUseDb = 1;
+        configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
+        configuration.featureBlockNum = 20;
+        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+        configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
         }
-        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        ret = HF_FeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
         auto lfwDir = getLFWFunneledDir();
@@ -438,7 +461,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
-        ret = HF_FeatureGroupGetCount(ctxHandle, &count);
+        ret = HF_FeatureHubGetFaceCount(&count);
         REQUIRE(ret == HSUCCEED);
         CHECK(count == numOfNeedImport);
 
@@ -470,7 +493,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HF_FaceFeatureIdentity searchedIdentity = {0};
         auto start = (double) cv::getTickCount();
         for (int i = 0; i < loop; ++i) {
-            ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedIdentity);
+            ret = HF_FeatureHubFaceSearch(feature, &confidence, &searchedIdentity);
         }
         auto cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
 
@@ -486,6 +509,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_ReleaseFaceContext(ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
+        ret = HF_FeatureHubDataDisable();
+        REQUIRE(ret == HSUCCEED);
         delete []dbPathStr;
 #else
         TEST_PRINT("Skip face search benchmark test, you need to enable both lfw and benchmark test.");
@@ -505,17 +530,20 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HContextHandle ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
-        HF_DatabaseConfiguration configuration = {0};
+        HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
         HString dbPathStr = new char[dbPath.size() + 1];
         std::strcpy(dbPathStr, dbPath.c_str());
-        configuration.enableUseDb = 1;
+        configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
+        configuration.featureBlockNum = 20;
+        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+        configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
         }
-        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        ret = HF_FeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
         auto lfwDir = getLFWFunneledDir();
@@ -524,7 +552,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
-        ret = HF_FeatureGroupGetCount(ctxHandle, &count);
+        ret = HF_FeatureHubGetFaceCount(&count);
         REQUIRE(ret == HSUCCEED);
         CHECK(count == numOfNeedImport);
 
@@ -557,7 +585,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         updateIdentity.customId = updateId;
         updateIdentity.tag = "ZY";
         updateIdentity.feature = &featureZy;
-        ret = HF_FeaturesGroupFeatureUpdate(ctxHandle, updateIdentity);
+        ret = HF_FeatureHubFaceUpdate(updateIdentity);
         REQUIRE(ret == HSUCCEED);
 
         HF_ReleaseImageStream(imgHandleZy);
@@ -590,7 +618,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HF_FaceFeatureIdentity searchedIdentity = {0};
         auto start = (double) cv::getTickCount();
         for (int i = 0; i < loop; ++i) {
-            ret = HF_FeaturesGroupFeatureSearch(ctxHandle, feature, &confidence, &searchedIdentity);
+            ret = HF_FeatureHubFaceSearch(feature, &confidence, &searchedIdentity);
         }
         auto cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
 
@@ -607,6 +635,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_ReleaseFaceContext(ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
+        ret = HF_FeatureHubDataDisable();
+        REQUIRE(ret == HSUCCEED);
         delete []dbPathStr;
 #else
         TEST_PRINT("Skip face search benchmark test, you need to enable both lfw and benchmark test.");
@@ -625,17 +655,20 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HContextHandle ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
-        HF_DatabaseConfiguration configuration = {0};
+        HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
         HString dbPathStr = new char[dbPath.size() + 1];
         std::strcpy(dbPathStr, dbPath.c_str());
-        configuration.enableUseDb = 1;
+        configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
+        configuration.featureBlockNum = 20;
+        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+        configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
         }
-        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        ret = HF_FeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
         cv::Mat zyImage = cv::imread(GET_DATA("data/bulk/woman.png"));
@@ -656,7 +689,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(multipleFaceDataZy.detectedNum > 0);
 
         HInt32 featureNum;
-        HF_GetFeatureLength(ctxHandle, &featureNum);
+        HF_GetFeatureLength(&featureNum);
 
         // Extract face feature
         HFloat featureCacheZy[featureNum];
@@ -694,7 +727,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         auto start = (double) cv::getTickCount();
         for (int i = 0; i < loop; ++i) {
             HFloat compRes;
-            ret = HF_FaceComparison1v1(ctxHandle, featureZy, featureZyQuery, &compRes);
+            ret = HF_FaceComparison1v1(featureZy, featureZyQuery, &compRes);
         }
         auto cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
         REQUIRE(ret == HSUCCEED);
@@ -708,6 +741,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         // Finish
         ret = HF_ReleaseFaceContext(ctxHandle);
+        REQUIRE(ret == HSUCCEED);
+        ret = HF_FeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
         delete []dbPathStr;
 #else
@@ -727,17 +762,20 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HContextHandle ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
-        HF_DatabaseConfiguration configuration = {0};
+        HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
         HString dbPathStr = new char[dbPath.size() + 1];
         std::strcpy(dbPathStr, dbPath.c_str());
-        configuration.enableUseDb = 1;
+        configuration.enablePersistence = 1;
         configuration.dbPath = dbPathStr;
+        configuration.featureBlockNum = 20;
+        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+        configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
         }
-        ret = HF_FaceContextDataPersistence(ctxHandle, configuration);
+        ret = HF_FeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
         // Face track
@@ -774,6 +812,8 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HF_ReleaseImageStream(imgHandle);
         // Finish
         ret = HF_ReleaseFaceContext(ctxHandle);
+        REQUIRE(ret == HSUCCEED);
+        ret = HF_FeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
         delete []dbPathStr;
 #else

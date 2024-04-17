@@ -35,7 +35,7 @@ int video_test(FaceTrack &ctx, int cam_id) {
 
         ctx.UpdateStream(stream, false);
 
-        LOGD("Track Cost: %f", ctx.GetTrackTotalUseTime());
+        INSPIRE_LOGD("Track Cost: %f", ctx.GetTrackTotalUseTime());
 
         auto const &faces = ctx.trackingFace;
         for (auto const &face: faces) {
@@ -105,7 +105,7 @@ void video_file_test(FaceTrack& ctx, const std::string& video_filename) {
         stream.SetRotationMode(ROTATION_0);
 
         ctx.UpdateStream(stream, false);
-        LOGD("Track Cost: %f", ctx.GetTrackTotalUseTime());
+        INSPIRE_LOGD("Track Cost: %f", ctx.GetTrackTotalUseTime());
 
         auto const &faces = ctx.trackingFace;
         for (auto const &face: faces) {
@@ -156,13 +156,13 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    SET_LOG_LEVEL(LogLevel::LOG_NONE);
+    INSPIRE_SET_LOG_LEVEL(LogLevel::LOG_NONE);
 
     const std::string source = argv[1];
     const std::string input = argv[2];
 
     const std::string folder = "test_res/model_zip/Pikachu";
-    LOGD("%s", folder.c_str());
+    INSPIRE_LOGD("%s", folder.c_str());
 //    ModelLoader loader;
 //    loader.Reset(folder);
 
@@ -170,7 +170,7 @@ int main(int argc, char** argv) {
     archive.ReLoad(folder);
     std::cout << archive.QueryStatus() << std::endl;
     if (archive.QueryStatus() != SARC_SUCCESS) {
-        LOGE("error archive");
+        INSPIRE_LOGE("error archive");
         return -1;
     }
 

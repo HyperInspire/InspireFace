@@ -5,7 +5,7 @@
 #ifndef HYPERFACEREPO_FEATUREBLOCKNONE_H
 #define HYPERFACEREPO_FEATUREBLOCKNONE_H
 
-#include "recognition_module/features_block/feature_block.h"
+#include "feature_hub/features_block/feature_block.h"
 
 namespace inspire {
 

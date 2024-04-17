@@ -64,7 +64,10 @@ public:
 
     void SetLandmark(const std::vector<cv::Point2f> &lmk, bool update_rect = true,
                      bool update_matrix = true) {
-        assert(lmk.size() == landmark_.size());
+        if (lmk.size() != landmark_.size()) {
+            INSPIRE_LOGW("The SetLandmark function displays an exception indicating that the lmk number does not match");
+            return;
+        }
         std::copy(lmk.begin(), lmk.end(), landmark_.begin());
         DynamicSmoothParamUpdate(landmark_, landmark_smooth_aux_, 106 * 2, 0.06);
 

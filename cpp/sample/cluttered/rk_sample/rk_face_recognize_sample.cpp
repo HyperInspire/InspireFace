@@ -6,8 +6,8 @@
 #include "opencv2/opencv.hpp"
 
 #include "inspireface/middleware/costman.h"
-#include "inspireface/recognition_module/face_recognition.h"
-#include "inspireface/recognition_module/simd.h"
+#include "inspireface/feature_hub/face_recognition.h"
+#include "inspireface/feature_hub/simd.h"
 #include "inspireface/middleware/model_archive/inspire_archive.h"
 
 using namespace inspire;

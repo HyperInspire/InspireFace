@@ -167,8 +167,8 @@ void FeatureBlockOpenCV::PrintMatrixSize() {
 }
 
 void FeatureBlockOpenCV::PrintMatrix() {
-    LOGD("Num of Features: %d", m_feature_matrix_.cols);
-    LOGD("Feature length: %d", m_feature_matrix_.rows);
+    INSPIRE_LOGD("Num of Features: %d", m_feature_matrix_.cols);
+    INSPIRE_LOGD("Feature length: %d", m_feature_matrix_.rows);
 }
 
 int32_t FeatureBlockOpenCV::GetFeature(int row, std::vector<float> &feature) {

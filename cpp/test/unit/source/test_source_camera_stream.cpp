@@ -51,7 +51,7 @@ TEST_CASE("test_CameraStream", "[camera_stream") {
     SECTION("DecodingNV21Image") {
         FaceContext ctx;
         CustomPipelineParameter param;
-        auto ret = ctx.Configuration(GET_DATA("model_zip/Pikachu-t1"), DetectMode::DETECT_MODE_IMAGE, 1, param);
+        auto ret = ctx.Configuration(GET_DATA("model_zip/Pikachu"), DetectMode::DETECT_MODE_IMAGE, 1, param);
         REQUIRE(ret == HSUCCEED);
 
         int32_t width = 402;

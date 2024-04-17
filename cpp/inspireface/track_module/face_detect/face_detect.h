@@ -60,6 +60,12 @@ private:
      */
     void _decode(const std::vector<float> &cls_pred, const std::vector<float> &box_pred, const std::vector<float>& lmk_pred, int stride, std::vector<FaceLoc> &results);
 
+public:
+    /** @brief Set non-maximum suppression threshold */
+    void SetNmsThreshold(float mNmsThreshold);
+    /** @brief Set face classification threshold */
+    void SetClsThreshold(float mClsThreshold);
+
 private:
     float m_nms_threshold_; ///< Threshold for non-maximum suppression.
     float m_cls_threshold_; ///< Threshold for classification score.

@@ -4,10 +4,10 @@
 
 #include "feature_block.h"
 #include "log.h"
-#include "recognition_module/features_block/implement/feature_block_none.h"
+#include "feature_hub/features_block/implement/feature_block_none.h"
 
 #ifdef FEATURE_BLOCK_ENABLE_OPENCV
-#include "recognition_module/features_block/implement/feature_block_opencv.h"
+#include "feature_hub/features_block/implement/feature_block_opencv.h"
 #endif
 
 namespace inspire {
@@ -27,7 +27,7 @@ FeatureBlock *FeatureBlock::Create(const MatrixCore crop_type, int32_t features_
             break;
 #endif
         case MC_NONE:
-            LOGD("Not Implement");
+            INSPIRE_LOGD("Not Implement");
             break;
     }
 
@@ -39,7 +39,7 @@ FeatureBlock *FeatureBlock::Create(const MatrixCore crop_type, int32_t features_
         p->m_tag_list_.resize(features_max, "None");
         p->m_custom_id_list_.resize(features_max, -1);
     } else {
-        LOGE("Create FeatureBlock error.");
+        INSPIRE_LOGE("Create FeatureBlock error.");
     }
 
     return p;

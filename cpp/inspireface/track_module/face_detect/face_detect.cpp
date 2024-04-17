@@ -146,7 +146,15 @@ void FaceDetect::_decode(const std::vector<float> &cls_pred, const std::vector<f
     }
 }
 
-bool SortBoxSize(const FaceLoc &a, const FaceLoc &b) {
+    void FaceDetect::SetNmsThreshold(float mNmsThreshold) {
+        m_nms_threshold_ = mNmsThreshold;
+    }
+
+    void FaceDetect::SetClsThreshold(float mClsThreshold) {
+        m_cls_threshold_ = mClsThreshold;
+    }
+
+    bool SortBoxSize(const FaceLoc &a, const FaceLoc &b) {
     int sq_a = (a.y2 - a.y1) * (a.x2 - a.x1);
     int sq_b = (b.y2 - b.y1) * (b.x2 - b.x1);
     return sq_a > sq_b;

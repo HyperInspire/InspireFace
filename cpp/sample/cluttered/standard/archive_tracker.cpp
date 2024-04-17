@@ -3,7 +3,7 @@
 //
 #include <iostream>
 #include "track_module/face_track.h"
-#include "recognition_module/face_recognition.h"
+#include "inspireface/recognition_module/face_feature_extraction.h"
 #include "log.h"
 
 using namespace inspire;
@@ -16,7 +16,7 @@ int main() {
 //    FaceRecognition recognition(archive, true);
 
     auto ret = track.Configuration(archive);
-    LOGD("ret=%d", ret);
+    INSPIRE_LOGD("ret=%d", ret);
     if (ret != 0) {
         return -1;
     }

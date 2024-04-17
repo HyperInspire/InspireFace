@@ -29,7 +29,11 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
     m_face_track_->Configuration(m_archive_);
     SetDetectMode(m_detect_mode_);
 
-    m_face_recognition_ = std::make_shared<FaceRecognition>(m_archive_, m_parameter_.enable_recognition);
+    m_face_recognition_ = std::make_shared<FeatureExtraction>(m_archive_, m_parameter_.enable_recognition);
+    if (m_face_recognition_->QueryStatus() != HSUCCEED) {
+        return m_face_recognition_->QueryStatus();
+    }
+
     m_face_pipeline_ = std::make_shared<FacePipeline>(
             m_archive_,
             param.enable_liveness,
@@ -39,21 +43,19 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
             param.enable_interaction_liveness
     );
 
-    m_face_feature_ptr_cache_ = std::make_shared<FaceFeatureEntity>();
-
     return HSUCCEED;
 }
 
 
 int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
-    std::vector<ByteArray>().swap(m_detect_cache_);
-    std::vector<FaceBasicData>().swap(m_face_basic_data_cache_);
-    std::vector<FaceRect>().swap(m_face_rects_cache_);
-    std::vector<int32_t>().swap(m_track_id_cache_);
-    std::vector<FacePoseQualityResult>().swap(m_quality_results_cache_);
-    std::vector<float>().swap(m_roll_results_cache_);
-    std::vector<float>().swap(m_yaw_results_cache_);
-    std::vector<float>().swap(m_pitch_results_cache_);
+    m_detect_cache_.clear();
+    m_face_basic_data_cache_.clear();
+    m_face_rects_cache_.clear();
+    m_track_id_cache_.clear();
+    m_quality_results_cache_.clear();
+    m_roll_results_cache_.clear();
+    m_yaw_results_cache_.clear();
+    m_pitch_results_cache_.clear();
     if (m_face_track_ == nullptr) {
         return HERR_CTX_TRACKER_FAILURE;
     }
@@ -84,11 +86,16 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     return HSUCCEED;
 }
 
+int32_t FaceContext::SetFaceDetectThreshold(float value) {
+    m_face_track_->SetDetectThreshold(value);
+    return HSUCCEED;
+}
+
 FaceObjectList& FaceContext::GetTrackingFaceList() {
     return m_face_track_->trackingFace;
 }
 
-const std::shared_ptr<FaceRecognition>& FaceContext::FaceRecognitionModule() {
+const std::shared_ptr<FeatureExtraction>& FaceContext::FaceRecognitionModule() {
     return m_face_recognition_;
 }
 
@@ -183,22 +190,10 @@ const std::vector<float>& FaceContext::GetRgbLivenessResultsCache() const {
     return m_rgb_liveness_results_cache_;
 }
 
+
 const Embedded& FaceContext::GetFaceFeatureCache() const {
     return m_face_feature_cache_;
 }
-
-const Embedded& FaceContext::GetSearchFaceFeatureCache() const {
-    return m_search_face_feature_cache_;
-}
-
-char *FaceContext::GetStringCache() {
-    return m_string_cache_;
-}
-
-const std::shared_ptr<FaceFeaturePtr>& FaceContext::GetFaceFeaturePtrCache() const {
-    return m_face_feature_ptr_cache_;
-}
-
 
 int32_t FaceContext::FaceFeatureExtract(CameraStream &image, FaceBasicData& data) {
     int32_t ret;
@@ -207,138 +202,17 @@ int32_t FaceContext::FaceFeatureExtract(CameraStream &image, FaceBasicData& data
     if (ret != HSUCCEED) {
         return ret;
     }
-    Embedded().swap(m_face_feature_cache_);
+    m_face_feature_cache_.clear();
     ret = m_face_recognition_->FaceExtract(image, face, m_face_feature_cache_);
 
     return ret;
 }
 
-int32_t FaceContext::SearchFaceFeature(const Embedded &queryFeature, SearchResult &searchResult) {
-    Embedded().swap(m_search_face_feature_cache_);
-    std::memset(m_string_cache_, 0, sizeof(m_string_cache_)); // 初始化为0
-    auto ret = m_face_recognition_->SearchFaceFeature(queryFeature, searchResult, m_recognition_threshold_, m_search_most_similar_);
-    if (ret == HSUCCEED) {
-        if (searchResult.index != -1) {
-            ret = m_face_recognition_->GetFaceFeature(searchResult.index, m_search_face_feature_cache_);
-        }
-        m_face_feature_ptr_cache_->data = m_search_face_feature_cache_.data();
-        m_face_feature_ptr_cache_->dataSize = m_search_face_feature_cache_.size();
-        // Ensure that buffer overflows do not occur
-        size_t copy_length = std::min(searchResult.tag.size(), sizeof(m_string_cache_) - 1);
-        std::strncpy(m_string_cache_, searchResult.tag.c_str(), copy_length);
-        // Make sure the string ends with a null character
-        m_string_cache_[copy_length] = '\0';
-    }
-
-    return ret;
-}
-
-int32_t FaceContext::FaceFeatureInsertFromCustomId(const std::vector<float> &feature, const std::string &tag,
-                                                   int32_t customId) {
-    auto index = m_face_recognition_->FindFeatureIndexByCustomId(customId);
-    if (index != -1) {
-        return HERR_CTX_REC_ID_ALREADY_EXIST;
-    }
-    auto ret = m_face_recognition_->InsertFaceFeature(feature, tag, customId);
-    if (ret == HSUCCEED && m_db_ != nullptr) {
-        // operational database
-        FaceFeatureInfo item = {0};
-        item.customId = customId;
-        item.tag = tag;
-        item.feature = feature;
-        ret = m_db_->InsertFeature(item);
-    }
-
-    return ret;
-}
-
-int32_t FaceContext::FaceFeatureRemoveFromCustomId(int32_t customId) {
-    auto index = m_face_recognition_->FindFeatureIndexByCustomId(customId);
-    if (index == -1) {
-        return HERR_CTX_REC_INVALID_INDEX;
-    }
-    auto ret = m_face_recognition_->DeleteFaceFeature(index);
-    if (ret == HSUCCEED && m_db_ != nullptr) {
-        ret = m_db_->DeleteFeature(customId);
-    }
-
-    return ret;
-}
-
-int32_t FaceContext::FaceFeatureUpdateFromCustomId(const std::vector<float> &feature, const std::string &tag,
-                                                   int32_t customId) {
-    auto index = m_face_recognition_->FindFeatureIndexByCustomId(customId);
-    if (index == -1) {
-        return HERR_CTX_REC_INVALID_INDEX;
-    }
-    auto ret = m_face_recognition_->UpdateFaceFeature(feature, index, tag, customId);
-    if (ret == HSUCCEED && m_db_ != nullptr) {
-        FaceFeatureInfo item = {0};
-        item.customId = customId;
-        item.tag = tag;
-        item.feature = feature;
-        ret = m_db_->UpdateFeature(item);
-    }
-
-    return ret;
-}
-
-int32_t FaceContext::GetFaceFeatureFromCustomId(int32_t customId) {
-    auto index = m_face_recognition_->FindFeatureIndexByCustomId(customId);
-    if (index == -1) {
-        return HERR_CTX_REC_INVALID_INDEX;
-    }
-    std::string tag;
-    FEATURE_STATE status;
-    auto ret = m_face_recognition_->GetFaceEntity(index, m_search_face_feature_cache_, tag, status);
-    m_face_feature_ptr_cache_->data = m_search_face_feature_cache_.data();
-    m_face_feature_ptr_cache_->dataSize = m_search_face_feature_cache_.size();
-    // Ensure that buffer overflows do not occur
-    size_t copy_length = std::min(tag.size(), sizeof(m_string_cache_) - 1);
-    std::strncpy(m_string_cache_, tag.c_str(), copy_length);
-    // Make sure the string ends with a null character
-    m_string_cache_[copy_length] = '\0';
-    LOGD("heihei: %s", tag.c_str());
-
-    return ret;
-}
 
 const CustomPipelineParameter &FaceContext::getMParameter() const {
     return m_parameter_;
 }
 
-int32_t FaceContext::DataPersistenceConfiguration(DatabaseConfiguration configuration) {
-    int32_t ret = HSUCCEED;
-    m_db_configuration_ = std::move(configuration);
-    if (m_db_configuration_.enable_use_db) {
-        m_db_ = std::make_shared<SQLiteFaceManage>();
-        if (IsDirectory(m_db_configuration_.db_path)){
-            std::string dbFile = m_db_configuration_.db_path + "/" + DB_FILE_NAME;
-            ret = m_db_->OpenDatabase(dbFile);
-        } else {
-            ret = m_db_->OpenDatabase(m_db_configuration_.db_path);
-        }
-
-        std::vector<FaceFeatureInfo> infos;
-        ret = m_db_->GetTotalFeatures(infos);
-        if (ret == HSUCCEED) {
-            for (auto &info: infos) {
-                ret = m_face_recognition_->InsertFaceFeature(info.feature, info.tag, info.customId);
-                if (ret != HSUCCEED) {
-                    LOGE("ID: %d, Inserting error: %d", info.customId, ret);
-                    return ret;
-                }
-            }
-        }
-
-    }
-    return ret;
-}
-
-int32_t FaceContext::ViewDBTable() {
-    auto ret = m_db_->ViewTotal();
-    return ret;
-}
 
 int32_t FaceContext::FaceQualityDetect(FaceBasicData& data, float &result) {
     int32_t ret;
@@ -358,11 +232,6 @@ int32_t FaceContext::FaceQualityDetect(FaceBasicData& data, float &result) {
     return ret;
 }
 
-
-int32_t FaceContext::SetRecognitionThreshold(float threshold) {
-    m_recognition_threshold_ = threshold;
-    return HSUCCEED;
-}
 
 int32_t FaceContext::SetDetectMode(DetectMode mode) {
     m_detect_mode_ = mode;
