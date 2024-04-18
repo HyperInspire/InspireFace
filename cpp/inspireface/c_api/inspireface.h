@@ -120,7 +120,7 @@ HYPER_CAPI_EXPORT extern HResult HF_LaunchInspireFace(HPath resourcePath);
  * in the face recognition context, such as face recognition, liveness detection,
  * mask detection, age and gender prediction, etc.
  */
-typedef struct HF_ContextCustomParameter {
+typedef struct HF_SessionCustomParameter {
     HInt32 enable_recognition;               ///< Enable face recognition feature.
     HInt32 enable_liveness;                  ///< Enable RGB liveness detection feature.
     HInt32 enable_ir_liveness;               ///< Enable IR liveness detection feature.
@@ -129,7 +129,7 @@ typedef struct HF_ContextCustomParameter {
     HInt32 enable_gender;                    ///< Enable gender prediction feature.
     HInt32 enable_face_quality;              ///< Enable face quality detection feature.
     HInt32 enable_interaction_liveness;      ///< Enable interaction for liveness detection feature.
-} HF_ContextCustomParameter, *Ptr_HF_ContextCustomParameter;
+} HF_SessionCustomParameter, *PHF_SessionCustomParameter;
 
 
 /**
@@ -141,23 +141,23 @@ typedef enum HF_DetectMode {
 } HF_DetectMode;
 
 /**
- * @brief Create a face context from a resource file.
+ * @brief Create a session from a resource file.
  *
- * @param parameter Custom parameters for face context.
+ * @param parameter Custom parameters for session.
  * @param detectMode Detection mode to be used.
  * @param maxDetectFaceNum Maximum number of faces to detect.
  * @param handle Pointer to the context handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
-        HF_ContextCustomParameter parameter,
+HYPER_CAPI_EXPORT extern HResult HF_CreateInspireFaceSession(
+        HF_SessionCustomParameter parameter,
         HF_DetectMode detectMode,
         HInt32 maxDetectFaceNum,
         HFSession *handle
 );
 
 /**
- * @brief Create a face context from a resource file with additional options.
+ * @brief Create a session from a resource file with additional options.
  *
  * @param customOption Custom option for additional configuration.
  * @param detectMode Detection mode to be used.
@@ -165,7 +165,7 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
  * @param handle Pointer to the context handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFileOptional(
+HYPER_CAPI_EXPORT extern HResult HF_CreateInspireFaceSessionOptional(
         HInt32 customOption,
         HF_DetectMode detectMode,
         HInt32 maxDetectFaceNum,
@@ -173,12 +173,12 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFileOptional(
 );
 
 /**
- * @brief Release the face context.
+ * @brief Release the session.
  *
- * @param handle Handle to the face context to be released.
+ * @param handle Handle to the session to be released.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_ReleaseFaceContext(HFSession handle);
+HYPER_CAPI_EXPORT extern HResult HF_ReleaseInspireFaceSession(HFSession handle);
 
 /**
  * @brief Struct representing a basic token for face data.
@@ -188,7 +188,7 @@ HYPER_CAPI_EXPORT extern HResult HF_ReleaseFaceContext(HFSession handle);
 typedef struct HF_FaceBasicToken {
     HInt32 size;            ///< Size of the token.
     HPVoid data;            ///< Pointer to the token data.
-} HF_FaceBasicToken, *Ptr_HF_FaceBasicToken;
+} HF_FaceBasicToken, *PHF_FaceBasicToken;
 
 /**
  * @brief Struct for face Euler angles.
@@ -212,47 +212,46 @@ typedef struct HF_MultipleFaceData {
     HFaceRect *rects;                               ///< Array of bounding rectangles for each face.
     HInt32 *trackIds;                               ///< Array of track IDs for each face.
     HF_FaceEulerAngle angles;                       ///< Euler angles for each face.
-    Ptr_HF_FaceBasicToken tokens;                   ///< Tokens associated with each face.
-} HF_MultipleFaceData, *Ptr_HF_MultipleFaceData;
+    PHF_FaceBasicToken tokens;                   ///< Tokens associated with each face.
+} HF_MultipleFaceData, *PHF_MultipleFaceData;
 
 /**
- * @brief Set the track preview size in the face context, it works with face detection and tracking algorithms.
+ * @brief Set the track preview size in the session, it works with face detection and tracking algorithms.
  * Default preview size is 192(px).
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param previewSize The size of the preview for tracking.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetTrackPreviewSize(HFSession ctxHandle, HInt32 previewSize);
+HYPER_CAPI_EXPORT extern HResult HF_SessionSetTrackPreviewSize(HFSession session, HInt32 previewSize);
 
 /**
- * @brief Set the face track mode in the face context.
+ * @brief Set the face track mode in the session.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param detectMode The mode of the detection mode for tracking.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceTrackMode(HFSession ctxHandle, HF_DetectMode detectMode);
+HYPER_CAPI_EXPORT extern HResult HF_SessionSetFaceTrackMode(HFSession session, HF_DetectMode detectMode);
 
 /**
- * @brief Set the face detect threshold in the face context.
+ * @brief Set the face detect threshold in the session.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param detectMode The mode of the detection mode for tracking.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceDetectThreshold(HFSession ctxHandle, HFloat threshold);
+HYPER_CAPI_EXPORT extern HResult HF_SessionSetFaceDetectThreshold(HFSession session, HFloat threshold);
 
 /**
- * @brief Run face tracking in the face context.
+ * @brief Run face tracking in the session.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param streamHandle Handle to the data buffer representing the camera stream component.
  * @param results Pointer to the structure where the results will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult
-HF_FaceContextRunFaceTrack(HFSession ctxHandle, HFImageStream streamHandle, Ptr_HF_MultipleFaceData results);
+HYPER_CAPI_EXPORT extern HResult HF_ExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHF_MultipleFaceData results);
 
 /**
  * @brief Copies the data from a HF_FaceBasicToken to a specified buffer.
@@ -302,26 +301,26 @@ typedef struct HF_FaceFeature {
 /**
  * @brief Extract a face feature from a given face.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param streamHandle Handle to the data buffer representing the camera stream component.
  * @param singleFace Basic token representing a single face.
  * @param feature Pointer to the extracted face feature.
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_FaceFeatureExtract(HFSession ctxHandle, HFImageStream streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature);
+HF_FaceFeatureExtract(HFSession session, HFImageStream streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature);
 
 /**
  * @brief Extract a face feature from a given face and copy it to the provided feature buffer.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param streamHandle Handle to the data buffer representing the camera stream component.
  * @param singleFace Basic token representing a single face.
  * @param feature Pointer to the buffer where the extracted feature will be copied.
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_FaceFeatureExtractCpy(HFSession ctxHandle, HFImageStream streamHandle, HF_FaceBasicToken singleFace, HPFloat feature);
+HF_FaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HF_FaceBasicToken singleFace, HPFloat feature);
 
 /************************************************************************
 * Feature Hub
@@ -393,7 +392,7 @@ HYPER_CAPI_EXPORT extern HResult HF_FeatureHubFaceSearchThresholdSetting(float t
 /**
  * @brief Perform a one-to-one comparison of two face features.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param feature1 The first face feature for comparison.
  * @param feature2 The second face feature for comparison.
  * @param result Pointer to the floating-point value where the comparison result will be stored.
@@ -478,15 +477,15 @@ HYPER_CAPI_EXPORT extern HResult HF_FeatureHubViewDBTable();
  * This function processes multiple faces detected in an image or video frame, applying
  * various face recognition and analysis features as specified in the parameters.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param streamHandle Handle to the data buffer representing the camera stream component.
  * @param faces Pointer to the structure containing data of multiple detected faces.
  * @param parameter Custom parameters for processing the faces.
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_MultipleFacePipelineProcess(HFSession ctxHandle, HFImageStream streamHandle, Ptr_HF_MultipleFaceData faces,
-                               HF_ContextCustomParameter parameter);
+HF_MultipleFacePipelineProcess(HFSession session, HFImageStream streamHandle, PHF_MultipleFaceData faces,
+                               HF_SessionCustomParameter parameter);
 
 /**
  * @brief Process multiple faces in a pipeline with an optional custom option.
@@ -494,15 +493,15 @@ HF_MultipleFacePipelineProcess(HFSession ctxHandle, HFImageStream streamHandle, 
  * Similar to HF_MultipleFacePipelineProcess, but allows for additional custom options
  * to modify the face processing behavior.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param streamHandle Handle to the data buffer representing the camera stream component.
  * @param faces Pointer to the structure containing data of multiple detected faces.
  * @param customOption An integer representing a custom option for processing.
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_MultipleFacePipelineProcessOptional(HFSession ctxHandle, HFImageStream streamHandle,
-                                       Ptr_HF_MultipleFaceData faces, HInt32 customOption);
+HF_MultipleFacePipelineProcessOptional(HFSession session, HFImageStream streamHandle,
+                                       PHF_MultipleFaceData faces, HInt32 customOption);
 
 /**
  * @brief Struct representing RGB liveness confidence.
@@ -513,7 +512,7 @@ HF_MultipleFacePipelineProcessOptional(HFSession ctxHandle, HFImageStream stream
 typedef struct HF_RGBLivenessConfidence {
     HInt32 num;        ///< Number of faces detected.
     HPFloat confidence; ///< Confidence level of RGB liveness detection for each face.
-} HF_RGBLivenessConfidence, *Ptr_HF_RGBLivenessConfidence;
+} HF_RGBLivenessConfidence, *PHF_RGBLivenessConfidence;
 
 /**
  * @brief Get the RGB liveness confidence.
@@ -521,12 +520,12 @@ typedef struct HF_RGBLivenessConfidence {
  * This function retrieves the confidence level of RGB liveness detection for faces detected
  * in the current context.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param confidence Pointer to the structure where RGB liveness confidence data will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_GetRGBLivenessConfidence(HFSession ctxHandle, Ptr_HF_RGBLivenessConfidence confidence);
+HF_GetRGBLivenessConfidence(HFSession session, PHF_RGBLivenessConfidence confidence);
 
 /**
  * @brief Struct representing face mask confidence.
@@ -537,7 +536,7 @@ HF_GetRGBLivenessConfidence(HFSession ctxHandle, Ptr_HF_RGBLivenessConfidence co
 typedef struct HF_FaceMaskConfidence {
     HInt32 num;         ///< Number of faces detected.
     HPFloat confidence; ///< Confidence level of mask detection for each face.
-} HF_FaceMaskConfidence, *Ptr_HF_FaceMaskConfidence;
+} HF_FaceMaskConfidence, *PHF_FaceMaskConfidence;
 
 /**
  * @brief Get the face mask confidence.
@@ -545,25 +544,47 @@ typedef struct HF_FaceMaskConfidence {
  * This function retrieves the confidence level of mask detection for faces detected
  * in the current context.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param confidence Pointer to the structure where face mask confidence data will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult
-HF_GetFaceMaskConfidence(HFSession ctxHandle, Ptr_HF_FaceMaskConfidence confidence);
+HYPER_CAPI_EXPORT extern HResult HF_GetFaceMaskConfidence(HFSession session, PHF_FaceMaskConfidence confidence);
+
+/**
+ * @brief Struct representing face quality predict confidence.
+ *
+ * This struct holds the number of faces and the confidence level of face quality predict
+ * for each face.
+ */
+typedef struct HF_FaceQualityConfidence {
+    HInt32 num;         ///< Number of faces detected.
+    HPFloat confidence; ///< Confidence level of face quality predict for each face.
+} HF_FaceQualityConfidence, *PHF_FaceQualityConfidence;
+
+/**
+ * @brief Get the face quality predict confidence.
+ *
+ * This function retrieves the confidence level of face quality predict for faces detected
+ * in the current context.
+ *
+ * @param session Handle to the session.
+ * @param confidence Pointer to the structure where face mask confidence data will be stored.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HF_GetFaceQualityConfidence(HFSession session, PHF_FaceQualityConfidence confidence);
 
 /**
  * @brief Detect the quality of a face in an image.
  *
  * This function assesses the quality of a detected face, such as its clarity and visibility.
  *
- * @param ctxHandle Handle to the face context.
+ * @param session Handle to the session.
  * @param singleFace A token representing a single face.
  * @param confidence Pointer to a floating-point value where the quality confidence will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_FaceQualityDetect(HFSession ctxHandle, HF_FaceBasicToken singleFace, HFloat *confidence);
+HF_FaceQualityDetect(HFSession session, HF_FaceBasicToken singleFace, HFloat *confidence);
 
 /************************************************************************
 * System Function
@@ -576,7 +597,7 @@ typedef struct HF_InspireFaceVersion {
     int major;     ///< Major version number.
     int minor;     ///< Minor version number.
     int patch;     ///< Patch version number.
-} HF_InspireFaceVersion, *Ptr_HF_InspireFaceVersion;
+} HF_InspireFaceVersion, *PHF_InspireFaceVersion;
 
 /**
  * @brief Function to query the version information of the InspireFace library.
@@ -586,7 +607,7 @@ typedef struct HF_InspireFaceVersion {
  * @param version Pointer to the structure where the version information will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_QueryInspireFaceVersion(Ptr_HF_InspireFaceVersion version);
+HYPER_CAPI_EXPORT extern HResult HF_QueryInspireFaceVersion(PHF_InspireFaceVersion version);
 
 /**
  * @brief SDK built-in log level mode

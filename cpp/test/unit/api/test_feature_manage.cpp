@@ -15,13 +15,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
     SECTION("Face feature management basic functions") {
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HFSession ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
         HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -53,13 +51,13 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
         // Extract face feature
         HF_FaceFeature feature = {0};
-        ret = HF_FaceFeatureExtract(ctxHandle, imgHandle, multipleFaceData.tokens[0], &feature);
+        ret = HF_FaceFeatureExtract(session, imgHandle, multipleFaceData.tokens[0], &feature);
         REQUIRE(ret == HSUCCEED);
 
         // Insert data into feature management
@@ -76,7 +74,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(ret == HSUCCEED);
         CHECK(num == 1);
 
-//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        ret = HF_ViewFaceDBTable(session);
 //        REQUIRE(ret == HSUCCEED);
 
         // Update Face info
@@ -87,7 +85,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_FeatureHubFaceUpdate(updatedIdentity);
         REQUIRE(ret == HSUCCEED);
 
-//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        ret = HF_ViewFaceDBTable(session);
 //        REQUIRE(ret == HSUCCEED);
 
         // Trying to update an identity that doesn't exist
@@ -98,13 +96,13 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_FeatureHubFaceUpdate(nonIdentity);
         REQUIRE(ret != HSUCCEED);
 
-//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        ret = HF_ViewFaceDBTable(session);
 //        REQUIRE(ret == HSUCCEED);
 
         // Trying to delete an identity that doesn't exist
         ret = HF_FeatureHubFaceRemove(nonIdentity.customId);
         REQUIRE(ret != HSUCCEED);
-//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        ret = HF_ViewFaceDBTable(session);
 //        REQUIRE(ret == HSUCCEED);
 
 
@@ -116,11 +114,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(ret == HSUCCEED);
         CHECK(num == 0);
 
-//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        ret = HF_ViewFaceDBTable(session);
 //        REQUIRE(ret == HSUCCEED);
 
         // Finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HF_ReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
         ret = HF_FeatureHubDataDisable();
@@ -133,11 +131,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
         HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -158,18 +156,18 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         auto lfwDir = getLFWFunneledDir();
         auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
         size_t numOfNeedImport = 1000;
-        auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
+        auto importStatus = ImportLFWFunneledValidData(session, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
         ret = HF_FeatureHubGetFaceCount(&count);
         REQUIRE(ret == HSUCCEED);
         CHECK(count == numOfNeedImport);
 
-//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        ret = HF_ViewFaceDBTable(session);
 //        REQUIRE(ret == HSUCCEED);
 
         // Finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HF_ReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
         delete []dbPathStr;
@@ -183,13 +181,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 #ifdef ENABLE_USE_LFW_DATA
         // This section needs to be connected to the "Import a large faces data" section before it can be executed
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
 //        HF_FaceHubConfiguration configuration = {0};
 //        auto dbPath = GET_SAVE_DATA(".test");
@@ -211,19 +207,19 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageData.width = dstImage.cols;
         imageData.format = STREAM_BGR;
         imageData.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandle;
+        HFImageStream imgHandle;
         ret = HF_CreateImageStream(&imageData, &imgHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
         // Extract face feature
         HF_FaceFeature feature = {0};
-        ret = HF_FaceFeatureExtract(ctxHandle, imgHandle, multipleFaceData.tokens[0], &feature);
+        ret = HF_FaceFeatureExtract(session, imgHandle, multipleFaceData.tokens[0], &feature);
         REQUIRE(ret == HSUCCEED);
 
         // Search for a face
@@ -251,7 +247,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_FeatureHubInsertFeature(againIdentity);
         REQUIRE(ret == HSUCCEED);
 
-//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        ret = HF_ViewFaceDBTable(session);
 //        REQUIRE(ret == HSUCCEED);
 
         // Search again
@@ -269,19 +265,19 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageDataZy.width = zyImage.cols;
         imageDataZy.format = STREAM_BGR;
         imageDataZy.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandleZy;
+        HFImageStream imgHandleZy;
         ret = HF_CreateImageStream(&imageDataZy, &imgHandleZy);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceDataZy = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandleZy, &multipleFaceDataZy);
+        ret = HF_ExecuteFaceTrack(session, imgHandleZy, &multipleFaceDataZy);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceDataZy.detectedNum > 0);
 
         // Extract face feature
         HF_FaceFeature featureZy = {0};
-        ret = HF_FaceFeatureExtract(ctxHandle, imgHandleZy, multipleFaceDataZy.tokens[0], &featureZy);
+        ret = HF_FaceFeatureExtract(session, imgHandleZy, multipleFaceDataZy.tokens[0], &featureZy);
         REQUIRE(ret == HSUCCEED);
 
         // Update id: 11297
@@ -292,7 +288,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HF_FeatureHubFaceUpdate(updateIdentity);
         REQUIRE(ret == HSUCCEED);
 
-//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        ret = HF_ViewFaceDBTable(session);
 //        REQUIRE(ret == HSUCCEED);
 
 //
@@ -304,19 +300,19 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageDataZyQuery.width = zyImageQuery.cols;
         imageDataZyQuery.format = STREAM_BGR;
         imageDataZyQuery.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandleZyQuery;
+        HFImageStream imgHandleZyQuery;
         ret = HF_CreateImageStream(&imageDataZyQuery, &imgHandleZyQuery);
         REQUIRE(ret == HSUCCEED);
 //
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceDataZyQuery = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandleZyQuery, &multipleFaceDataZyQuery);
+        ret = HF_ExecuteFaceTrack(session, imgHandleZyQuery, &multipleFaceDataZyQuery);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceDataZyQuery.detectedNum > 0);
 //
         // Extract face feature
         HF_FaceFeature featureZyQuery = {0};
-        ret = HF_FaceFeatureExtract(ctxHandle, imgHandleZyQuery, multipleFaceDataZyQuery.tokens[0], &featureZyQuery);
+        ret = HF_FaceFeatureExtract(session, imgHandleZyQuery, multipleFaceDataZyQuery.tokens[0], &featureZyQuery);
         REQUIRE(ret == HSUCCEED);
 
         // Search
@@ -341,13 +337,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         size_t loop = 1000;
         size_t numOfNeedImport = 1000;
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
         HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -368,7 +362,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         auto lfwDir = getLFWFunneledDir();
         auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
 //        TEST_PRINT("{}", dataList.size());
-        auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
+        auto importStatus = ImportLFWFunneledValidData(session, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
         ret = HF_FeatureHubGetFaceCount(&count);
@@ -383,19 +377,19 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageData.width = dstImage.cols;
         imageData.format = STREAM_BGR;
         imageData.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandle;
+        HFImageStream imgHandle;
         ret = HF_CreateImageStream(&imageData, &imgHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
         // Extract face feature
         HF_FaceFeature feature = {0};
-        ret = HF_FaceFeatureExtract(ctxHandle, imgHandle, multipleFaceData.tokens[0], &feature);
+        ret = HF_FaceFeatureExtract(session, imgHandle, multipleFaceData.tokens[0], &feature);
         REQUIRE(ret == HSUCCEED);
 
         // Search for a face
@@ -416,7 +410,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         BenchmarkRecord record(getBenchmarkRecordFile());
         record.insertBenchmarkData("Search Face from 1k", loop, cost, cost / loop);
         // Finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HF_ReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
         ret = HF_FeatureHubDataDisable();
@@ -434,11 +428,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
         HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -458,7 +452,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         auto lfwDir = getLFWFunneledDir();
         auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
-        auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
+        auto importStatus = ImportLFWFunneledValidData(session, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
         ret = HF_FeatureHubGetFaceCount(&count);
@@ -473,19 +467,19 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageData.width = dstImage.cols;
         imageData.format = STREAM_BGR;
         imageData.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandle;
+        HFImageStream imgHandle;
         ret = HF_CreateImageStream(&imageData, &imgHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
         // Extract face feature
         HF_FaceFeature feature = {0};
-        ret = HF_FaceFeatureExtract(ctxHandle, imgHandle, multipleFaceData.tokens[0], &feature);
+        ret = HF_FaceFeatureExtract(session, imgHandle, multipleFaceData.tokens[0], &feature);
         REQUIRE(ret == HSUCCEED);
 
         // Search for a face
@@ -506,7 +500,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         BenchmarkRecord record(getBenchmarkRecordFile());
         record.insertBenchmarkData("Search Face from 5k", loop, cost, cost / loop);
         // Finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HF_ReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
         ret = HF_FeatureHubDataDisable();
@@ -524,11 +518,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
         HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -549,7 +543,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         auto lfwDir = getLFWFunneledDir();
         auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
 //        TEST_PRINT("{}", dataList.size());
-        auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
+        auto importStatus = ImportLFWFunneledValidData(session, dataList, numOfNeedImport);
         REQUIRE(importStatus);
         HInt32 count;
         ret = HF_FeatureHubGetFaceCount(&count);
@@ -565,19 +559,19 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageDataZy.width = zyImage.cols;
         imageDataZy.format = STREAM_BGR;
         imageDataZy.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandleZy;
+        HFImageStream imgHandleZy;
         ret = HF_CreateImageStream(&imageDataZy, &imgHandleZy);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceDataZy = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandleZy, &multipleFaceDataZy);
+        ret = HF_ExecuteFaceTrack(session, imgHandleZy, &multipleFaceDataZy);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceDataZy.detectedNum > 0);
 
         // Extract face feature
         HF_FaceFeature featureZy = {0};
-        ret = HF_FaceFeatureExtract(ctxHandle, imgHandleZy, multipleFaceDataZy.tokens[0], &featureZy);
+        ret = HF_FaceFeatureExtract(session, imgHandleZy, multipleFaceDataZy.tokens[0], &featureZy);
         REQUIRE(ret == HSUCCEED);
 
         // Update id: 11297
@@ -598,19 +592,19 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageData.width = dstImage.cols;
         imageData.format = STREAM_BGR;
         imageData.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandle;
+        HFImageStream imgHandle;
         ret = HF_CreateImageStream(&imageData, &imgHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
         // Extract face feature
         HF_FaceFeature feature = {0};
-        ret = HF_FaceFeatureExtract(ctxHandle, imgHandle, multipleFaceData.tokens[0], &feature);
+        ret = HF_FaceFeatureExtract(session, imgHandle, multipleFaceData.tokens[0], &feature);
         REQUIRE(ret == HSUCCEED);
 
         // Search for a face
@@ -632,7 +626,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         record.insertBenchmarkData("Search Face from 10k", loop, cost, cost / loop);
 
         // Finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HF_ReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
         ret = HF_FeatureHubDataDisable();
@@ -649,11 +643,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
         HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -678,13 +672,13 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageDataZy.width = zyImage.cols;
         imageDataZy.format = STREAM_BGR;
         imageDataZy.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandleZy;
+        HFImageStream imgHandleZy;
         ret = HF_CreateImageStream(&imageDataZy, &imgHandleZy);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceDataZy = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandleZy, &multipleFaceDataZy);
+        ret = HF_ExecuteFaceTrack(session, imgHandleZy, &multipleFaceDataZy);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceDataZy.detectedNum > 0);
 
@@ -693,7 +687,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         // Extract face feature
         HFloat featureCacheZy[featureNum];
-        ret = HF_FaceFeatureExtractCpy(ctxHandle, imgHandleZy, multipleFaceDataZy.tokens[0], featureCacheZy);
+        ret = HF_FaceFeatureExtractCpy(session, imgHandleZy, multipleFaceDataZy.tokens[0], featureCacheZy);
         HF_FaceFeature featureZy = {0};
         featureZy.size = featureNum;
         featureZy.data = featureCacheZy;
@@ -706,19 +700,19 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageDataZyQuery.width = zyImageQuery.cols;
         imageDataZyQuery.format = STREAM_BGR;
         imageDataZyQuery.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandleZyQuery;
+        HFImageStream imgHandleZyQuery;
         ret = HF_CreateImageStream(&imageDataZyQuery, &imgHandleZyQuery);
         REQUIRE(ret == HSUCCEED);
 //
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceDataZyQuery = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandleZyQuery, &multipleFaceDataZyQuery);
+        ret = HF_ExecuteFaceTrack(session, imgHandleZyQuery, &multipleFaceDataZyQuery);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceDataZyQuery.detectedNum > 0);
 //
         // Extract face feature
         HFloat featureCacheZyQuery[featureNum];
-        ret = HF_FaceFeatureExtractCpy(ctxHandle, imgHandleZyQuery, multipleFaceDataZyQuery.tokens[0], featureCacheZyQuery);
+        ret = HF_FaceFeatureExtractCpy(session, imgHandleZyQuery, multipleFaceDataZyQuery.tokens[0], featureCacheZyQuery);
         HF_FaceFeature featureZyQuery = {0};
         featureZyQuery.data = featureCacheZyQuery;
         featureZyQuery.size = featureNum;
@@ -740,7 +734,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HF_ReleaseImageStream(imgHandleZyQuery);
 
         // Finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HF_ReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
         ret = HF_FeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -756,11 +750,11 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
         HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -786,13 +780,13 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageData.width = dstImage.cols;
         imageData.format = STREAM_BGR;
         imageData.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandle;
+        HFImageStream imgHandle;
         ret = HF_CreateImageStream(&imageData, &imgHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
@@ -800,7 +794,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HF_FaceFeature feature = {0};
         auto start = (double) cv::getTickCount();
         for (int i = 0; i < loop; ++i) {
-            ret = HF_FaceFeatureExtract(ctxHandle, imgHandle, multipleFaceData.tokens[0], &feature);
+            ret = HF_FaceFeatureExtract(session, imgHandle, multipleFaceData.tokens[0], &feature);
         }
         auto cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
         REQUIRE(ret == HSUCCEED);
@@ -811,7 +805,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         HF_ReleaseImageStream(imgHandle);
         // Finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HF_ReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
         ret = HF_FeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);

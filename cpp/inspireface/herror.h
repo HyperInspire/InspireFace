@@ -19,6 +19,7 @@
 #define HERR_INVALID_FACE_LIST          	(HERR_BASIC_BASE+32)			// Invalid face feature list
 #define HERR_INVALID_BUFFER_SIZE          	(HERR_BASIC_BASE+33)			// Invalid copy token
 #define HERR_INVALID_IMAGE_STREAM_PARAM      (HERR_BASIC_BASE+34)			// Invalid image param
+#define HERR_INVALID_SERIALIZATION_FAILED    (HERR_BASIC_BASE+35)			// Invalid face serialization failed
 
 #define HERR_CTX_BASE				        0X500					         // Context error types
 #define HERR_CTX_FUNCTION_UNUSABLE           (HERR_CTX_BASE+2)               // Function not usable
