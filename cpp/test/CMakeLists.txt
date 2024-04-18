@@ -33,6 +33,8 @@ if (ENABLE_RKNN)
     set(DEPEND rknn_api dl)
 endif ()
 
+include_directories(${SRC_DIR})
+
 # =======================Common File Configuration===========================
 set(TEST_COMMON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/settings/test_settings.cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/settings)

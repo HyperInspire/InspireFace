@@ -58,6 +58,7 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     m_roll_results_cache_.clear();
     m_yaw_results_cache_.clear();
     m_pitch_results_cache_.clear();
+    m_quality_score_results_cache_.clear();
     if (m_face_track_ == nullptr) {
         return HERR_CTX_TRACKER_FAILURE;
     }
@@ -67,14 +68,24 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
         HyperFaceData data = FaceObjectToHyperFaceData(face, i);
         ByteArray byteArray;
         auto ret = SerializeHyperFaceData(data, byteArray);
+        if (ret != HSUCCEED) {
+            return HERR_INVALID_SERIALIZATION_FAILED;
+        }
         m_detect_cache_.push_back(byteArray);
-        assert(ret == HSUCCEED);
         m_track_id_cache_.push_back(face.GetTrackingId());
         m_face_rects_cache_.push_back(data.rect);
         m_quality_results_cache_.push_back(face.high_result);
         m_roll_results_cache_.push_back(face.high_result.roll);
         m_yaw_results_cache_.push_back(face.high_result.yaw);
         m_pitch_results_cache_.push_back(face.high_result.pitch);
+        // Process quality scores
+        float avg = 0.0f;
+        for (int j = 0; j < 5; ++j) {
+            avg += data.quality[j];
+        }
+        avg /= 5.0f;
+        float quality_score = 1.0f - avg;    // reversal
+        m_quality_score_results_cache_.push_back(quality_score);
     }
     // ptr face_basic
     m_face_basic_data_cache_.resize(m_face_track_->trackingFace.size());
@@ -83,6 +94,7 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
         basic.dataSize = m_detect_cache_[i].size();
         basic.data = m_detect_cache_[i].data();
     }
+
 
 //    LOGD("Track COST: %f", m_face_track_->GetTrackTotalUseTime());
     return HSUCCEED;
@@ -191,6 +203,10 @@ const std::vector<float>& FaceContext::GetMaskResultsCache() const {
 
 const std::vector<float>& FaceContext::GetRgbLivenessResultsCache() const {
     return m_rgb_liveness_results_cache_;
+}
+
+const std::vector<float>& FaceContext::GetFaceQualityScoresResultsCache() const {
+    return m_quality_score_results_cache_;
 }
 
 

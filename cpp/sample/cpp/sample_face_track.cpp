@@ -33,8 +33,8 @@ int main(int argc, char* argv[]) {
     // Maximum number of faces detected
     HInt32 maxDetectNum = 5;
     // Handle of the current face SDK algorithm context
-    HFSession ctxHandle = {0};
-    ret = HF_CreateFaceContextFromResourceFileOptional(option, detMode, maxDetectNum, &ctxHandle);
+    HFSession session = {0};
+    ret = HF_CreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
     if (ret != HSUCCEED) {
         std::cout << "Create FaceContext error: " << ret << std::endl;
         return ret;
@@ -64,9 +64,9 @@ int main(int argc, char* argv[]) {
 
     // Execute HF_FaceContextRunFaceTrack captures face information in an image
     HF_MultipleFaceData multipleFaceData = {0};
-    ret = HF_FaceContextRunFaceTrack(ctxHandle, imageHandle, &multipleFaceData);
+    ret = HF_ExecuteFaceTrack(session, imageHandle, &multipleFaceData);
     if (ret != HSUCCEED) {
-        std::cout << "Execute HF_FaceContextRunFaceTrack error: " << ret << std::endl;
+        std::cout << "Execute HF_ExecuteFaceTrack error: " << ret << std::endl;
         return ret;
     }
     // Print the number of faces detected
@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
     // Select the pipeline function that you want to execute, provided that it is already enabled when FaceContext is created!
     auto pipelineOption = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     // In this loop, all faces are processed
-    ret = HF_MultipleFacePipelineProcessOptional(ctxHandle, imageHandle, &multipleFaceData, pipelineOption);
+    ret = HF_MultipleFacePipelineProcessOptional(session, imageHandle, &multipleFaceData, pipelineOption);
     if (ret != HSUCCEED) {
         std::cout << "Execute Pipeline error: " << ret << std::endl;
         return ret;
@@ -106,17 +106,26 @@ int main(int argc, char* argv[]) {
 
     // Get mask detection results from the pipeline cache
     HF_FaceMaskConfidence maskConfidence = {0};
-    ret = HF_GetFaceMaskConfidence(ctxHandle, &maskConfidence);
+    ret = HF_GetFaceMaskConfidence(session, &maskConfidence);
     if (ret != HSUCCEED) {
         std::cout << "Get mask detect result error: " << ret << std::endl;
         return -1;
     }
 
 
+    // Get face quality results from the pipeline cache
+    HF_FaceQualityConfidence qualityConfidence = {0};
+    ret = HF_GetFaceQualityConfidence(session, &qualityConfidence);
+    if (ret != HSUCCEED) {
+        std::cout << "Get face quality result error: " << ret << std::endl;
+        return -1;
+    }
+
     for (int index = 0; index < faceNum; ++index) {
         std::cout << "========================================" << std::endl;
         std::cout << "Process face index from pipeline: " << index << std::endl;
         std::cout << "Mask detect result: " << maskConfidence.confidence[index] << std::endl;
+        std::cout << "Quality predict result: " << qualityConfidence.confidence[index] << std::endl;
         // We set the threshold of wearing a mask as 0.85. If it exceeds the threshold, it will be judged as wearing a mask.
         // The threshold can be adjusted according to the scene
         if (maskConfidence.confidence[0] > 0.85) {
@@ -124,18 +133,10 @@ int main(int argc, char* argv[]) {
         } else {
             std::cout << "Non Mask" << std::endl;
         }
-        // Get face quality result from the pipeline cache
-        HFloat quality;
-        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[index], &quality);
-        if (ret != HSUCCEED) {
-            std::cout << "Get quality error" << std::endl;
-        }
-        std::cout << "Face quality: " << quality << std::endl;
-        //
     }
 
     // The memory must be freed at the end of the program
-    ret = HF_ReleaseFaceContext(ctxHandle);
+    ret = HF_ReleaseInspireFaceSession(session);
     if (ret != HSUCCEED) {
         printf("Release FaceContext error: %lu\n", ret);
         return ret;

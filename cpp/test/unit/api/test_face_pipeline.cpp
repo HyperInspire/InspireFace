@@ -13,13 +13,11 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
     SECTION("rgb liveness detect") {
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_liveness = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HFSession ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
@@ -30,14 +28,14 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, img1Handle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, img1Handle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
-        ret = HF_MultipleFacePipelineProcess(ctxHandle, img1Handle, &multipleFaceData, parameter);
+        ret = HF_MultipleFacePipelineProcess(session, img1Handle, &multipleFaceData, parameter);
         REQUIRE(ret == HSUCCEED);
         HF_RGBLivenessConfidence confidence;
-        ret = HF_GetRGBLivenessConfidence(ctxHandle, &confidence);
+        ret = HF_GetRGBLivenessConfidence(session, &confidence);
         TEST_PRINT("{}", confidence.confidence[0]);
         REQUIRE(ret == HSUCCEED);
         CHECK(confidence.num > 0);
@@ -52,11 +50,11 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         auto img2 = cv::imread(GET_DATA("images/rgb_fake.jpg"));
         ret = CVImageToImageStream(img2, img2Handle);
         REQUIRE(ret == HSUCCEED);
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, img2Handle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, img2Handle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
-        ret = HF_MultipleFacePipelineProcess(ctxHandle, img2Handle, &multipleFaceData, parameter);
+        ret = HF_MultipleFacePipelineProcess(session, img2Handle, &multipleFaceData, parameter);
         REQUIRE(ret == HSUCCEED);
-        ret = HF_GetRGBLivenessConfidence(ctxHandle, &confidence);
+        ret = HF_GetRGBLivenessConfidence(session, &confidence);
         REQUIRE(ret == HSUCCEED);
         CHECK(confidence.num > 0);
         CHECK(confidence.confidence[0] < 0.9);
@@ -66,8 +64,8 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         img2Handle = nullptr;
 
 
-        ret = HF_ReleaseFaceContext(ctxHandle);
-        ctxHandle = nullptr;
+        ret = HF_ReleaseInspireFaceSession(session);
+        session = nullptr;
         REQUIRE(ret == HSUCCEED);
 
     }
@@ -75,13 +73,11 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
     SECTION("face mask detect") {
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_mask_detect = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HFSession ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
@@ -92,14 +88,14 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, img1Handle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, img1Handle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
-        ret = HF_MultipleFacePipelineProcess(ctxHandle, img1Handle, &multipleFaceData, parameter);
+        ret = HF_MultipleFacePipelineProcess(session, img1Handle, &multipleFaceData, parameter);
         REQUIRE(ret == HSUCCEED);
         HF_FaceMaskConfidence confidence;
-        ret = HF_GetFaceMaskConfidence(ctxHandle, &confidence);
+        ret = HF_GetFaceMaskConfidence(session, &confidence);
         REQUIRE(ret == HSUCCEED);
         CHECK(confidence.num > 0);
         CHECK(confidence.confidence[0] > 0.9);
@@ -114,18 +110,18 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         auto img2 = cv::imread(GET_DATA("images/face_sample.png"));
         ret = CVImageToImageStream(img2, img2Handle);
         REQUIRE(ret == HSUCCEED);
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, img2Handle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, img2Handle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
-        ret = HF_MultipleFacePipelineProcess(ctxHandle, img2Handle, &multipleFaceData, parameter);
+        ret = HF_MultipleFacePipelineProcess(session, img2Handle, &multipleFaceData, parameter);
         REQUIRE(ret == HSUCCEED);
-        ret = HF_GetFaceMaskConfidence(ctxHandle, &confidence);
+        ret = HF_GetFaceMaskConfidence(session, &confidence);
         REQUIRE(ret == HSUCCEED);
 //        spdlog::info("mask {}", confidence.confidence[0]);
         CHECK(confidence.num > 0);
         CHECK(confidence.confidence[0] < 0.1);
 
 //        HFloat quality;
-//        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[0], &quality);
+//        ret = HF_FaceQualityDetect(session, multipleFaceData.tokens[0], &quality);
 //        REQUIRE(ret == HSUCCEED);
 //        spdlog::info("quality: {}", quality);
 
@@ -134,8 +130,8 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         img2Handle = nullptr;
 
 
-        ret = HF_ReleaseFaceContext(ctxHandle);
-        ctxHandle = nullptr;
+        ret = HF_ReleaseInspireFaceSession(session);
+        session = nullptr;
         REQUIRE(ret == HSUCCEED);
     }
 
@@ -145,8 +141,8 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         HPath path = modelPath.c_str();
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HInt32 option = HF_ENABLE_QUALITY;
-        HFSession ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFileOptional(option, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSessionOptional(option, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
@@ -157,15 +153,15 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // Extract basic face information from photos
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, superiorHandle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, superiorHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
-        ret = HF_MultipleFacePipelineProcessOptional(ctxHandle, superiorHandle, &multipleFaceData, option);
+        ret = HF_MultipleFacePipelineProcessOptional(session, superiorHandle, &multipleFaceData, option);
         REQUIRE(ret == HSUCCEED);
 
         HFloat quality;
-        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[0], &quality);
+        ret = HF_FaceQualityDetect(session, multipleFaceData.tokens[0], &quality);
         REQUIRE(ret == HSUCCEED);
         CHECK(quality > 0.85);
 
@@ -176,17 +172,22 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, blurHandle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(session, blurHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
-        ret = HF_MultipleFacePipelineProcessOptional(ctxHandle, blurHandle, &multipleFaceData, option);
+        ret = HF_MultipleFacePipelineProcessOptional(session, blurHandle, &multipleFaceData, option);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[0], &quality);
+        ret = HF_FaceQualityDetect(session, multipleFaceData.tokens[0], &quality);
         REQUIRE(ret == HSUCCEED);
         CHECK(quality < 0.85);
 
+        ret = HF_ReleaseImageStream(blurHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HF_ReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
 
     }
 
