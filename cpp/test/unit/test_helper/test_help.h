@@ -45,7 +45,7 @@ inline FaceImageDataList LoadLFWFunneledValidData(const std::string &dir, const 
     return list;
 }
 
-inline bool ImportLFWFunneledValidData(HContextHandle handle, FaceImageDataList& data, size_t importNum) {
+inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data, size_t importNum) {
     auto dataSize = data.size();
     std::string title = "Import " + std::to_string(importNum) + " face data...";
     // Hide cursor
@@ -72,7 +72,7 @@ inline bool ImportLFWFunneledValidData(HContextHandle handle, FaceImageDataList&
         imageData.width = image.cols;
         imageData.format = STREAM_BGR;
         imageData.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandle;
+        HFImageStream imgHandle;
         auto ret = HF_CreateImageStream(&imageData, &imgHandle);
         if (ret != HSUCCEED || image.empty()) {
             std::cerr << "Error image: " << std::to_string(ret)  << " , " << item.second << std::endl;
@@ -202,12 +202,12 @@ inline std::vector<std::string> generateFilenames(const std::string& templateStr
     return filenames;
 }
 
-inline bool FindMostSimilarScoreFromTwoPic(HContextHandle handle, const std::string& img1, const std::string& img2, float& mostSimilar){
+inline bool FindMostSimilarScoreFromTwoPic(HFSession handle, const std::string& img1, const std::string& img2, float& mostSimilar){
     mostSimilar = -1.0f;
     std::vector<std::vector<std::vector<float>>> features(2);
     std::vector<std::string> images = {img1, img2};
     for (int i = 0; i < 2; ++i) {
-        HImageHandle img;
+        HFImageStream img;
 //        auto ret = ReadImageToImageStream(images[i].c_str(), img);
         auto cvMat = cv::imread(images[i]);
         auto ret = CVImageToImageStream(cvMat, img);

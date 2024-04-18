@@ -21,13 +21,13 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HPath path = modelPath.c_str();
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
+        HFSession ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         spdlog::error("error ret :{}", ret);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
-        HImageHandle imgHandle;
+        HFImageStream imgHandle;
         auto image = cv::imread(GET_DATA("data/bulk/kun.jpg"));
         ret = CVImageToImageStream(image, imgHandle);
         REQUIRE(ret == HSUCCEED);
@@ -57,7 +57,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         REQUIRE(ret == HSUCCEED);
 
         // Prepare non-face images
-        HImageHandle viewHandle;
+        HFImageStream viewHandle;
         auto view = cv::imread(GET_DATA("data/bulk/view.jpg"));
         ret = CVImageToImageStream(view, viewHandle);
         REQUIRE(ret == HSUCCEED);
@@ -79,7 +79,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HPath path = modelPath.c_str();
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_VIDEO;
-        HContextHandle ctxHandle;
+        HFSession ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
@@ -89,7 +89,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         auto count_loss = 0;
         for (int i = 0; i < filenames.size(); ++i) {
             auto filename = filenames[i];
-            HImageHandle imgHandle;
+            HFImageStream imgHandle;
             auto image = cv::imread(GET_DATA("video_frames/" + filename));
             ret = CVImageToImageStream(image, imgHandle);
             REQUIRE(ret == HSUCCEED);
@@ -130,7 +130,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HPath path = modelPath.c_str();
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
+        HFSession ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
@@ -138,7 +138,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_MultipleFaceData multipleFaceData = {0};
 
         // Left side face
-        HImageHandle leftHandle;
+        HFImageStream leftHandle;
         auto left = cv::imread(GET_DATA("data/pose/left_face.jpeg"));
         ret = CVImageToImageStream(left, leftHandle);
         REQUIRE(ret == HSUCCEED);
@@ -158,7 +158,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_ReleaseImageStream(leftHandle);
 
         // Right-handed rotation
-        HImageHandle rightHandle;
+        HFImageStream rightHandle;
         auto right = cv::imread(GET_DATA("data/pose/right_face.png"));
         ret = CVImageToImageStream(right, rightHandle);
         REQUIRE(ret == HSUCCEED);
@@ -173,7 +173,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_ReleaseImageStream(rightHandle);
 
         // Rise head
-        HImageHandle riseHandle;
+        HFImageStream riseHandle;
         auto rise = cv::imread(GET_DATA("data/pose/rise_face.jpeg"));
         ret = CVImageToImageStream(rise, riseHandle);
         REQUIRE(ret == HSUCCEED);
@@ -186,7 +186,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_ReleaseImageStream(riseHandle);
 
         // Lower head
-        HImageHandle lowerHandle;
+        HFImageStream lowerHandle;
         auto lower = cv::imread(GET_DATA("data/pose/lower_face.jpeg"));
         ret = CVImageToImageStream(lower, lowerHandle);
         REQUIRE(ret == HSUCCEED);
@@ -199,7 +199,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_ReleaseImageStream(lowerHandle);
 
         // Roll head
-        HImageHandle leftWryneckHandle;
+        HFImageStream leftWryneckHandle;
         auto leftWryneck = cv::imread(GET_DATA("data/pose/left_wryneck.png"));
         ret = CVImageToImageStream(leftWryneck, leftWryneckHandle);
         REQUIRE(ret == HSUCCEED);
@@ -212,7 +212,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_ReleaseImageStream(leftWryneckHandle);
 
         // Roll head
-        HImageHandle rightWryneckHandle;
+        HFImageStream rightWryneckHandle;
         auto rightWryneck = cv::imread(GET_DATA("data/pose/right_wryneck.png"));
         ret = CVImageToImageStream(rightWryneck, rightWryneckHandle);
         REQUIRE(ret == HSUCCEED);

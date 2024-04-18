@@ -20,7 +20,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HF_ContextCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
+        HFSession ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
         HF_FeatureHubConfiguration configuration = {0};
@@ -47,7 +47,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         imageData.width = kunImage.cols;
         imageData.format = STREAM_BGR;
         imageData.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandle;
+        HFImageStream imgHandle;
         ret = HF_CreateImageStream(&imageData, &imgHandle);
         REQUIRE(ret == HSUCCEED);
 

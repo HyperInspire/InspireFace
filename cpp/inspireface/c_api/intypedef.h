@@ -6,8 +6,8 @@
 #define HYPERFACEREPO_INTYPEDEF_H
 
 typedef void*               HPVoid;                           ///< Pointer to Void.
-typedef void*               HImageHandle;                     ///< Handle for image.
-typedef void*               HContextHandle;                   ///< Handle for context.
+typedef void*               HFImageStream;                   ///< Handle for image.
+typedef void*               HFSession;                       ///< Handle for context.
 typedef long                HLong;                            ///< Long integer.
 typedef float                HFloat;                          ///< Single-precision floating point.
 typedef float*               HPFloat;                         ///< Pointer to Single-precision floating point.
