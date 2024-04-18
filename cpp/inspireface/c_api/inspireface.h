@@ -83,7 +83,7 @@ typedef struct HF_ImageData {
  * @param handle Pointer to the stream handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HImageHandle *handle);
+HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HFImageStream *handle);
 
 
 /**
@@ -94,7 +94,7 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HIm
  * @param streamHandle Pointer to the DataBuffer handle representing the camera stream component.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(HImageHandle streamHandle);
+HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(HFImageStream streamHandle);
 
 /************************************************************************
 * Resource Function
@@ -153,7 +153,7 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFile(
         HF_ContextCustomParameter parameter,
         HF_DetectMode detectMode,
         HInt32 maxDetectFaceNum,
-        HContextHandle *handle
+        HFSession *handle
 );
 
 /**
@@ -169,7 +169,7 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFileOptional(
         HInt32 customOption,
         HF_DetectMode detectMode,
         HInt32 maxDetectFaceNum,
-        HContextHandle *handle
+        HFSession *handle
 );
 
 /**
@@ -178,7 +178,7 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateFaceContextFromResourceFileOptional(
  * @param handle Handle to the face context to be released.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_ReleaseFaceContext(HContextHandle handle);
+HYPER_CAPI_EXPORT extern HResult HF_ReleaseFaceContext(HFSession handle);
 
 /**
  * @brief Struct representing a basic token for face data.
@@ -223,7 +223,7 @@ typedef struct HF_MultipleFaceData {
  * @param previewSize The size of the preview for tracking.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetTrackPreviewSize(HContextHandle ctxHandle, HInt32 previewSize);
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetTrackPreviewSize(HFSession ctxHandle, HInt32 previewSize);
 
 /**
  * @brief Set the face track mode in the face context.
@@ -232,7 +232,7 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetTrackPreviewSize(HContextHandl
  * @param detectMode The mode of the detection mode for tracking.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceTrackMode(HContextHandle ctxHandle, HF_DetectMode detectMode);
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceTrackMode(HFSession ctxHandle, HF_DetectMode detectMode);
 
 /**
  * @brief Set the face detect threshold in the face context.
@@ -241,7 +241,7 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceTrackMode(HContextHandle c
  * @param detectMode The mode of the detection mode for tracking.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceDetectThreshold(HContextHandle ctxHandle, HFloat threshold);
+HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceDetectThreshold(HFSession ctxHandle, HFloat threshold);
 
 /**
  * @brief Run face tracking in the face context.
@@ -252,7 +252,7 @@ HYPER_CAPI_EXPORT extern HResult HF_FaceContextSetFaceDetectThreshold(HContextHa
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData results);
+HF_FaceContextRunFaceTrack(HFSession ctxHandle, HFImageStream streamHandle, Ptr_HF_MultipleFaceData results);
 
 /**
  * @brief Copies the data from a HF_FaceBasicToken to a specified buffer.
@@ -309,7 +309,7 @@ typedef struct HF_FaceFeature {
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature);
+HF_FaceFeatureExtract(HFSession ctxHandle, HFImageStream streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature);
 
 /**
  * @brief Extract a face feature from a given face and copy it to the provided feature buffer.
@@ -321,7 +321,7 @@ HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_Fa
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, HPFloat feature);
+HF_FaceFeatureExtractCpy(HFSession ctxHandle, HFImageStream streamHandle, HF_FaceBasicToken singleFace, HPFloat feature);
 
 /************************************************************************
 * Feature Hub
@@ -485,7 +485,7 @@ HYPER_CAPI_EXPORT extern HResult HF_FeatureHubViewDBTable();
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_MultipleFacePipelineProcess(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData faces,
+HF_MultipleFacePipelineProcess(HFSession ctxHandle, HFImageStream streamHandle, Ptr_HF_MultipleFaceData faces,
                                HF_ContextCustomParameter parameter);
 
 /**
@@ -501,7 +501,7 @@ HF_MultipleFacePipelineProcess(HContextHandle ctxHandle, HImageHandle streamHand
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageHandle streamHandle,
+HF_MultipleFacePipelineProcessOptional(HFSession ctxHandle, HFImageStream streamHandle,
                                        Ptr_HF_MultipleFaceData faces, HInt32 customOption);
 
 /**
@@ -526,7 +526,7 @@ typedef struct HF_RGBLivenessConfidence {
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLivenessConfidence confidence);
+HF_GetRGBLivenessConfidence(HFSession ctxHandle, Ptr_HF_RGBLivenessConfidence confidence);
 
 /**
  * @brief Struct representing face mask confidence.
@@ -550,7 +550,7 @@ typedef struct HF_FaceMaskConfidence {
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_GetFaceMaskConfidence(HContextHandle ctxHandle, Ptr_HF_FaceMaskConfidence confidence);
+HF_GetFaceMaskConfidence(HFSession ctxHandle, Ptr_HF_FaceMaskConfidence confidence);
 
 /**
  * @brief Detect the quality of a face in an image.
@@ -563,7 +563,7 @@ HF_GetFaceMaskConfidence(HContextHandle ctxHandle, Ptr_HF_FaceMaskConfidence con
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult
-HF_FaceQualityDetect(HContextHandle ctxHandle, HF_FaceBasicToken singleFace, HFloat *confidence);
+HF_FaceQualityDetect(HFSession ctxHandle, HF_FaceBasicToken singleFace, HFloat *confidence);
 
 /************************************************************************
 * System Function
@@ -621,7 +621,7 @@ HYPER_CAPI_EXPORT extern HResult HF_LogDisable();
  *
  * @param streamHandle Handle to the data buffer representing the camera stream component.
  */
-HYPER_CAPI_EXPORT extern void HF_DeBugImageStreamImShow(HImageHandle streamHandle);
+HYPER_CAPI_EXPORT extern void HF_DeBugImageStreamImShow(HFImageStream streamHandle);
 
 
 #ifdef __cplusplus

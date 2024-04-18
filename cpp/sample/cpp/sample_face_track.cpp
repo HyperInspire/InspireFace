@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     // Maximum number of faces detected
     HInt32 maxDetectNum = 5;
     // Handle of the current face SDK algorithm context
-    HContextHandle ctxHandle = {0};
+    HFSession ctxHandle = {0};
     ret = HF_CreateFaceContextFromResourceFileOptional(option, detMode, maxDetectNum, &ctxHandle);
     if (ret != HSUCCEED) {
         std::cout << "Create FaceContext error: " << ret << std::endl;
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
     imageParam.format = STREAM_BGR;      // Data source format
 
     // Create an image data stream
-    HImageHandle imageHandle = {0};
+    HFImageStream imageHandle = {0};
     ret = HF_CreateImageStream(&imageParam, &imageHandle);
     if (ret != HSUCCEED) {
         std::cout << "Create ImageStream error: " << ret << std::endl;
