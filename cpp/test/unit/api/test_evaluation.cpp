@@ -23,7 +23,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 5, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 5, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
         float mostSim = -1.0f;
@@ -63,7 +63,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 5, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 5, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
         std::vector<int> labels;
         std::vector<float> confidences;

@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 
     HResult ret;
     // The resource file must be loaded before it can be used
-    ret = HF_InspireFaceLaunch(packPath);
+    ret = HF_LaunchInspireFace(packPath);
     if (ret != HSUCCEED) {
         std::cout << "Load Resource error: " << ret << std::endl;
         return ret;
