@@ -22,7 +22,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         spdlog::error("error ret :{}", ret);
         REQUIRE(ret == HSUCCEED);
 
@@ -80,7 +80,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_VIDEO;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
         auto expectedId = 1;
@@ -131,7 +131,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
@@ -239,7 +239,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Prepare an image

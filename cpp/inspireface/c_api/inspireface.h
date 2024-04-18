@@ -107,7 +107,7 @@ HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(HImageHandle streamHandle
  * @param resourcePath Initializes the path to the resource file that needs to be loaded
  * @return HResult indicating the success or failure of the operation.
  * */
-HYPER_CAPI_EXPORT extern HResult HF_InspireFaceLaunch(const char* resourcePath);
+HYPER_CAPI_EXPORT extern HResult HF_LaunchInspireFace(HPath resourcePath);
 
 /************************************************************************
 * FaceContext
