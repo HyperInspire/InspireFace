@@ -9,6 +9,7 @@
 #include "settings/test_settings.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include "spdlog/spdlog.h"
+#include "inspireface/c_api/inspireface.h"
 
 int init_test_logger() {
     std::string name("TEST");
@@ -81,6 +82,13 @@ int main(int argc, char* argv[]) {
     } else {
         TEST_PRINT("Using default global Pack: {}", TEST_MODEL_FILE);
     }
+
+    auto ret = HF_LaunchInspireFace(pack.c_str());
+    if (ret != HSUCCEED) {
+        spdlog::error("An error occurred while starting InspireFace: {}", ret);
+        return ret;
+    }
+
 
     return session.run();
 }

@@ -146,7 +146,7 @@ HResult HF_CreateFaceContextFromResourceFileOptional(HInt32 customOption, HF_Det
     return ret;
 }
 
-HResult HF_InspireFaceLaunch(const char* resourcePath) {
+HResult HF_LaunchInspireFace(HPath resourcePath) {
     std::string path(resourcePath);
     return MODEL_HUB->Load(resourcePath);
 }

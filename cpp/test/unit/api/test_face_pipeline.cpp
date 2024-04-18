@@ -19,7 +19,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         parameter.enable_liveness = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
@@ -81,7 +81,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         parameter.enable_mask_detect = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
@@ -146,7 +146,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HInt32 option = HF_ENABLE_QUALITY;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFileOptional(path, option, detMode, 3, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFileOptional(option, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
