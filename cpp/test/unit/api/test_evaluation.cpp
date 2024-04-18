@@ -22,7 +22,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         HF_ContextCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
+        HFSession ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 5, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 

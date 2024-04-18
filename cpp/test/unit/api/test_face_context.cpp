@@ -17,7 +17,7 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
         HPath path = modelPath.c_str();
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
+        HFSession ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
         ret = HF_ReleaseFaceContext(ctxHandle);
@@ -29,7 +29,7 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
         HPath path = "test_res/model_zip/abc";     // Use error path
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
+        HFSession ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         CHECK(ret != HSUCCEED);
     }

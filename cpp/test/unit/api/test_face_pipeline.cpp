@@ -18,12 +18,12 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         HF_ContextCustomParameter parameter = {0};
         parameter.enable_liveness = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
+        HFSession ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
-        HImageHandle img1Handle;
+        HFImageStream img1Handle;
         auto img1 = cv::imread(GET_DATA("images/image_T1.jpeg"));
         ret = CVImageToImageStream(img1, img1Handle);
         REQUIRE(ret == HSUCCEED);
@@ -48,7 +48,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         img1Handle = nullptr;
 
         // fake face
-        HImageHandle img2Handle;
+        HFImageStream img2Handle;
         auto img2 = cv::imread(GET_DATA("images/rgb_fake.jpg"));
         ret = CVImageToImageStream(img2, img2Handle);
         REQUIRE(ret == HSUCCEED);
@@ -80,12 +80,12 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         HF_ContextCustomParameter parameter = {0};
         parameter.enable_mask_detect = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
+        HFSession ctxHandle;
         ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
-        HImageHandle img1Handle;
+        HFImageStream img1Handle;
         auto img1 = cv::imread(GET_DATA("images/mask2.jpg"));
         ret = CVImageToImageStream(img1, img1Handle);
         REQUIRE(ret == HSUCCEED);
@@ -110,7 +110,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
 
         // no mask face
-        HImageHandle img2Handle;
+        HFImageStream img2Handle;
         auto img2 = cv::imread(GET_DATA("images/face_sample.png"));
         ret = CVImageToImageStream(img2, img2Handle);
         REQUIRE(ret == HSUCCEED);
@@ -145,12 +145,12 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         HPath path = modelPath.c_str();
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HInt32 option = HF_ENABLE_QUALITY;
-        HContextHandle ctxHandle;
+        HFSession ctxHandle;
         ret = HF_CreateFaceContextFromResourceFileOptional(option, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
-        HImageHandle superiorHandle;
+        HFImageStream superiorHandle;
         auto superior = cv::imread(GET_DATA("images/yifei.jpg"));
         ret = CVImageToImageStream(superior, superiorHandle);
         REQUIRE(ret == HSUCCEED);
@@ -170,7 +170,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         CHECK(quality > 0.85);
 
         // blur image
-        HImageHandle blurHandle;
+        HFImageStream blurHandle;
         auto blur = cv::imread(GET_DATA("images/blur.jpg"));
         ret = CVImageToImageStream(blur, blurHandle);
         REQUIRE(ret == HSUCCEED);

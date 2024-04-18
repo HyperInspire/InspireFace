@@ -11,7 +11,7 @@
 
 using namespace inspire;
 
-HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HImageHandle* handle) {
+HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HFImageStream* handle) {
     if (data == nullptr || handle == nullptr) {
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
@@ -34,12 +34,12 @@ HYPER_CAPI_EXPORT extern HResult HF_CreateImageStream(Ptr_HF_ImageData data, HIm
     }
     stream->impl.SetDataBuffer(data->data, data->height, data->width);
 
-    *handle = (HImageHandle)stream;
+    *handle = (HFImageStream)stream;
     return HSUCCEED;
 }
 
 
-HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(HImageHandle streamHandle) {
+HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(HFImageStream streamHandle) {
     if (streamHandle == nullptr) {
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
@@ -48,7 +48,7 @@ HYPER_CAPI_EXPORT extern HResult HF_ReleaseImageStream(HImageHandle streamHandle
 }
 
 
-void HF_DeBugImageStreamImShow(HImageHandle streamHandle) {
+void HF_DeBugImageStreamImShow(HFImageStream streamHandle) {
     if (streamHandle == nullptr) {
         INSPIRE_LOGE("Handle error");
     }
@@ -67,7 +67,7 @@ void HF_DeBugImageStreamImShow(HImageHandle streamHandle) {
 }
 
 
-HResult HF_ReleaseFaceContext(HContextHandle handle) {
+HResult HF_ReleaseFaceContext(HFSession handle) {
     if (handle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -76,7 +76,7 @@ HResult HF_ReleaseFaceContext(HContextHandle handle) {
 }
 
 
-HResult HF_CreateFaceContextFromResourceFile(HF_ContextCustomParameter parameter, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
+HResult HF_CreateFaceContextFromResourceFile(HF_ContextCustomParameter parameter, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HFSession *handle) {
     inspire::ContextCustomParameter param;
     param.enable_mask_detect = parameter.enable_mask_detect;
     param.enable_age = parameter.enable_age;
@@ -104,7 +104,7 @@ HResult HF_CreateFaceContextFromResourceFile(HF_ContextCustomParameter parameter
     return ret;
 }
 
-HResult HF_CreateFaceContextFromResourceFileOptional(HInt32 customOption, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HContextHandle *handle) {
+HResult HF_CreateFaceContextFromResourceFileOptional(HInt32 customOption, HF_DetectMode detectMode, HInt32 maxDetectFaceNum, HFSession *handle) {
     inspire::ContextCustomParameter param;
     if (customOption & HF_ENABLE_FACE_RECOGNITION) {
         param.enable_recognition = true;
@@ -167,7 +167,7 @@ HResult HF_FeatureHubDataEnable(HF_FeatureHubConfiguration configuration) {
     return ret;
 }
 
-HResult HF_FaceContextSetTrackPreviewSize(HContextHandle ctxHandle, HInt32 previewSize) {
+HResult HF_FaceContextSetTrackPreviewSize(HFSession ctxHandle, HInt32 previewSize) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -178,7 +178,7 @@ HResult HF_FaceContextSetTrackPreviewSize(HContextHandle ctxHandle, HInt32 previ
     return ctx->impl.SetTrackPreviewSize(previewSize);
 }
 
-HResult HF_FaceContextSetFaceTrackMode(HContextHandle ctxHandle, HF_DetectMode detectMode) {
+HResult HF_FaceContextSetFaceTrackMode(HFSession ctxHandle, HF_DetectMode detectMode) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -193,7 +193,7 @@ HResult HF_FaceContextSetFaceTrackMode(HContextHandle ctxHandle, HF_DetectMode d
     return ctx->impl.SetDetectMode(detMode);
 }
 
-HResult HF_FaceContextSetFaceDetectThreshold(HContextHandle ctxHandle, HFloat threshold) {
+HResult HF_FaceContextSetFaceDetectThreshold(HFSession ctxHandle, HFloat threshold) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -204,7 +204,7 @@ HResult HF_FaceContextSetFaceDetectThreshold(HContextHandle ctxHandle, HFloat th
     return ctx->impl.SetFaceDetectThreshold(threshold);
 }
 
-HResult HF_FaceContextRunFaceTrack(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData results) {
+HResult HF_FaceContextRunFaceTrack(HFSession ctxHandle, HFImageStream streamHandle, Ptr_HF_MultipleFaceData results) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -249,7 +249,7 @@ HResult HF_FeatureHubFaceSearchThresholdSetting(float threshold) {
     return HSUCCEED;
 }
 
-HResult HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature) {
+HResult HF_FaceFeatureExtract(HFSession ctxHandle, HFImageStream streamHandle, HF_FaceBasicToken singleFace, Ptr_HF_FaceFeature feature) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -278,7 +278,7 @@ HResult HF_FaceFeatureExtract(HContextHandle ctxHandle, HImageHandle streamHandl
 }
 
 
-HResult HF_FaceFeatureExtractCpy(HContextHandle ctxHandle, HImageHandle streamHandle, HF_FaceBasicToken singleFace, HPFloat feature) {
+HResult HF_FaceFeatureExtractCpy(HFSession ctxHandle, HFImageStream streamHandle, HF_FaceBasicToken singleFace, HPFloat feature) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -406,7 +406,7 @@ HResult HF_FeatureHubGetFaceIdentity(HInt32 customId, Ptr_HF_FaceFeatureIdentity
     return ret;
 }
 
-HResult HF_MultipleFacePipelineProcess(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData faces, HF_ContextCustomParameter parameter) {
+HResult HF_MultipleFacePipelineProcess(HFSession ctxHandle, HFImageStream streamHandle, Ptr_HF_MultipleFaceData faces, HF_ContextCustomParameter parameter) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -451,7 +451,7 @@ HResult HF_MultipleFacePipelineProcess(HContextHandle ctxHandle, HImageHandle st
 
 }
 
-HResult HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageHandle streamHandle, Ptr_HF_MultipleFaceData faces, HInt32 customOption) {
+HResult HF_MultipleFacePipelineProcessOptional(HFSession ctxHandle, HFImageStream streamHandle, Ptr_HF_MultipleFaceData faces, HInt32 customOption) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -514,7 +514,7 @@ HResult HF_MultipleFacePipelineProcessOptional(HContextHandle ctxHandle, HImageH
 
 }
 
-HResult HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLivenessConfidence confidence) {
+HResult HF_GetRGBLivenessConfidence(HFSession ctxHandle, Ptr_HF_RGBLivenessConfidence confidence) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -529,7 +529,7 @@ HResult HF_GetRGBLivenessConfidence(HContextHandle ctxHandle, Ptr_HF_RGBLiveness
     return HSUCCEED;
 }
 
-HResult HF_GetFaceMaskConfidence(HContextHandle ctxHandle, Ptr_HF_FaceMaskConfidence confidence) {
+HResult HF_GetFaceMaskConfidence(HFSession ctxHandle, Ptr_HF_FaceMaskConfidence confidence) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -544,7 +544,7 @@ HResult HF_GetFaceMaskConfidence(HContextHandle ctxHandle, Ptr_HF_FaceMaskConfid
     return HSUCCEED;
 }
 
-HResult HF_FaceQualityDetect(HContextHandle ctxHandle, HF_FaceBasicToken singleFace, HFloat *confidence) {
+HResult HF_FaceQualityDetect(HFSession ctxHandle, HF_FaceBasicToken singleFace, HFloat *confidence) {
     if (ctxHandle == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
