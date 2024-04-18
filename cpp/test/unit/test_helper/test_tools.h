@@ -11,7 +11,7 @@
 #include <cstdint> // For uint8_t
 
 // Bad function
-inline HResult ReadImageToImageStream(const char *path, HImageHandle &handle, HF_ImageFormat format = STREAM_BGR,
+inline HResult ReadImageToImageStream(const char *path, HFImageStream &handle, HF_ImageFormat format = STREAM_BGR,
                                       HF_Rotation rot = CAMERA_ROTATION_0) {
     cv::Mat image = cv::imread(path);
     if (image.empty()) {
@@ -29,8 +29,8 @@ inline HResult ReadImageToImageStream(const char *path, HImageHandle &handle, HF
     return ret;
 }
 
-inline HResult CVImageToImageStream(const cv::Mat& image, HImageHandle &handle, HF_ImageFormat format = STREAM_BGR,
-                                      HF_Rotation rot = CAMERA_ROTATION_0) {
+inline HResult CVImageToImageStream(const cv::Mat& image, HFImageStream &handle, HF_ImageFormat format = STREAM_BGR,
+                                    HF_Rotation rot = CAMERA_ROTATION_0) {
     if (image.empty()) {
         return -1;
     }
