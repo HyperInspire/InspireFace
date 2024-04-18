@@ -12,13 +12,13 @@ void non_file_test() {
     HPath path = "test_res/model_zip/abc";     // Use error path
     HF_ContextCustomParameter parameter = {0};
     HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-    HContextHandle ctxHandle;
-    ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+    HContextHandle session;
+    ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &session);
     if (ret != 0) {
         std::cout << "错误的" << std::endl;
     }
 
-    HF_ReleaseFaceContext(ctxHandle);
+    HF_ReleaseFaceContext(session);
 }
 
 void camera_test() {

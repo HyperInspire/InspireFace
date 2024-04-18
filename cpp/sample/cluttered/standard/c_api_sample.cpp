@@ -31,8 +31,8 @@ int compare() {
     parameter.enable_recognition = 1;
     parameter.enable_face_quality = 1;
     HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // Selecting the image mode is always detection
-    HContextHandle ctxHandle;
-    ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+    HContextHandle session;
+    ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &session);
     if (ret != HSUCCEED) {
         INSPIRE_LOGD("An error occurred while creating ctx: %ld", ret);
     }
@@ -67,7 +67,7 @@ int compare() {
         }
 
         HF_MultipleFaceData multipleFaceData = {0};
-        HF_FaceContextRunFaceTrack(ctxHandle, imageSteamHandle, &multipleFaceData);
+        HF_FaceContextRunFaceTrack(session, imageSteamHandle, &multipleFaceData);
         INSPIRE_LOGD("检测到人脸数量: %d", multipleFaceData.detectedNum);
 
         for (int i = 0; i < multipleFaceData.detectedNum; ++i) {
@@ -81,7 +81,7 @@ int compare() {
 //        cv::waitKey(0);
 #endif
 
-        ret = HF_FaceFeatureExtractCpy(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], featuresCache[i]);
+        ret = HF_FaceFeatureExtractCpy(session, imageSteamHandle, multipleFaceData.tokens[0], featuresCache[i]);
 
         std::cout << "wtg" << std::endl;
         if (ret != HSUCCEED) {
@@ -108,8 +108,8 @@ int compare() {
         token.data = buffer;
 
         HFloat quality;
-//        ret = HF_FaceQualityDetect(ctxHandle, multipleFaceData.tokens[0], &quality);
-        ret = HF_FaceQualityDetect(ctxHandle, token, &quality);
+//        ret = HF_FaceQualityDetect(session, multipleFaceData.tokens[0], &quality);
+        ret = HF_FaceQualityDetect(session, token, &quality);
         INSPIRE_LOGD("RET : %d", ret);
         INSPIRE_LOGD("Q: %f", quality);
 
@@ -137,7 +137,7 @@ int compare() {
     }
     INSPIRE_LOGD("相似度: %f", compResult);
 
-    ret = HF_ReleaseFaceContext(ctxHandle);
+    ret = HF_ReleaseFaceContext(session);
     if (ret != HSUCCEED) {
         INSPIRE_LOGD("Release error");
     }
@@ -154,9 +154,9 @@ int search() {
     parameter.enable_mask_detect = 1;
     parameter.enable_recognition = 1;
     HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // 选择图像模式 即总是检测
-    HContextHandle ctxHandle;
+    HContextHandle session;
     // 创建ctx
-    ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+    ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &session);
     if (ret != HSUCCEED) {
         INSPIRE_LOGD("An error occurred while creating ctx: %ld", ret);
     }
@@ -196,7 +196,7 @@ int search() {
         }
 
         HF_MultipleFaceData multipleFaceData = {0};
-        HF_FaceContextRunFaceTrack(ctxHandle, imageSteamHandle, &multipleFaceData);
+        HF_FaceContextRunFaceTrack(session, imageSteamHandle, &multipleFaceData);
 
         if (multipleFaceData.detectedNum <= 0) {
             INSPIRE_LOGE("%s 未检测到人脸", name.c_str());
@@ -204,7 +204,7 @@ int search() {
         }
 
         HF_FaceFeature feature = {0};
-        ret = HF_FaceFeatureExtract(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], &feature);
+        ret = HF_FaceFeatureExtract(session, imageSteamHandle, multipleFaceData.tokens[0], &feature);
         if (ret != HSUCCEED) {
             INSPIRE_LOGE("特征提取出错: %ld", ret);
             return -1;
@@ -226,7 +226,7 @@ int search() {
 
 
 //        // 在插入一次测试一下重复操作问题
-//        ret = HF_FeaturesGroupInsertFeature(ctxHandle, identity);
+//        ret = HF_FeaturesGroupInsertFeature(session, identity);
 //        if (ret != HSUCCEED) {
 //            LOGE("不能重复id插入: %ld", ret);
 //        }
@@ -258,7 +258,7 @@ int search() {
         return -1;
     }
     HF_MultipleFaceData multipleFaceData = {0};
-    HF_FaceContextRunFaceTrack(ctxHandle, imageSteamHandle, &multipleFaceData);
+    HF_FaceContextRunFaceTrack(session, imageSteamHandle, &multipleFaceData);
 
     if (multipleFaceData.detectedNum <= 0) {
         INSPIRE_LOGE("未检测到人脸");
@@ -266,14 +266,14 @@ int search() {
     }
 
     HF_FaceFeature feature = {0};
-    ret = HF_FaceFeatureExtract(ctxHandle, imageSteamHandle, multipleFaceData.tokens[0], &feature);
+    ret = HF_FaceFeatureExtract(session, imageSteamHandle, multipleFaceData.tokens[0], &feature);
     if (ret != HSUCCEED) {
         INSPIRE_LOGE("特征提取出错: %ld", ret);
         return -1;
     }
 
     // 删除测试
-//    ret = HF_FaceContextFeatureRemove(ctxHandle, 3);
+//    ret = HF_FaceContextFeatureRemove(session, 3);
 //    if (ret != HSUCCEED) {
 //        LOGE("删除失败: %ld", ret);
 //    }
@@ -309,14 +309,14 @@ int search() {
 
 
     // Face Pipeline
-    ret = HF_MultipleFacePipelineProcess(ctxHandle, imageSteamHandle, &multipleFaceData, parameter);
+    ret = HF_MultipleFacePipelineProcess(session, imageSteamHandle, &multipleFaceData, parameter);
     if (ret != HSUCCEED) {
         INSPIRE_LOGE("pipeline执行失败: %ld", ret);
         return -1;
     }
 
     HF_RGBLivenessConfidence livenessConfidence = {0};
-    ret = HF_GetRGBLivenessConfidence(ctxHandle, &livenessConfidence);
+    ret = HF_GetRGBLivenessConfidence(session, &livenessConfidence);
     if (ret != HSUCCEED) {
         INSPIRE_LOGE("获取活体数据失败");
         return -1;
@@ -324,7 +324,7 @@ int search() {
     INSPIRE_LOGD("活体置信度: %f", livenessConfidence.confidence[0]);
 
     HF_FaceMaskConfidence maskConfidence = {0};
-    ret = HF_GetFaceMaskConfidence(ctxHandle, &maskConfidence);
+    ret = HF_GetFaceMaskConfidence(session, &maskConfidence);
     if (ret != HSUCCEED) {
         INSPIRE_LOGE("获取活体数据失败");
         return -1;

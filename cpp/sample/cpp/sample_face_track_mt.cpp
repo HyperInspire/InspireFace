@@ -6,13 +6,13 @@
 #include "inspireface/c_api/inspireface.h"
 #include <thread>
 
-void runFaceTrack(HFSession ctxHandle, HFImageStream imageHandle) {
+void runFaceTrack(HFSession session, HFImageStream imageHandle) {
     HF_MultipleFaceData multipleFaceData = {0};
-    auto ret = HF_FaceContextRunFaceTrack(ctxHandle, imageHandle, &multipleFaceData);
+    auto ret = HF_ExecuteFaceTrack(session, imageHandle, &multipleFaceData);
     if (ret != HSUCCEED) {
-        std::cout << "Thread " << std::this_thread::get_id() << " Execute HF_FaceContextRunFaceTrack error: " << ret << std::endl;
+        std::cout << "Thread " << std::this_thread::get_id() << " Execute HF_ExecuteFaceTrack error: " << ret << std::endl;
     } else {
-        std::cout << "Thread " << std::this_thread::get_id() << " successfully executed HF_FaceContextRunFaceTrack.\n";
+        std::cout << "Thread " << std::this_thread::get_id() << " successfully executed HF_ExecuteFaceTrack.\n";
     }
 }
 
@@ -43,9 +43,9 @@ int main(int argc, char* argv[]) {
     HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
     // Maximum number of faces detected
     HInt32 maxDetectNum = 5;
-    // Handle of the current face SDK algorithm context
-    HFSession ctxHandle = {0};
-    ret = HF_CreateFaceContextFromResourceFileOptional(option, detMode, maxDetectNum, &ctxHandle);
+    // Handle of the current face SDK algorithm session
+    HFSession session = {0};
+    ret = HF_CreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
     if (ret != HSUCCEED) {
         std::cout << "Create FaceContext error: " << ret << std::endl;
         return ret;
@@ -73,14 +73,14 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
-    // 创建并启动多个线程
-    const size_t numThreads = 5; // 定义想要的线程数
+    // Create and start multiple threads
+    const size_t numThreads = 10;
     std::vector<std::thread> threads;
     for (size_t i = 0; i < numThreads; ++i) {
-        threads.emplace_back(runFaceTrack, ctxHandle, imageHandle);
+        threads.emplace_back(runFaceTrack, session, imageHandle);
     }
 
-    // 等待所有线程完成
+    // Wait for all threads to complete
     for (auto& thread : threads) {
         if (thread.joinable()) {
             thread.join();
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
     }
 
     // The memory must be freed at the end of the program
-    ret = HF_ReleaseFaceContext(ctxHandle);
+    ret = HF_ReleaseInspireFaceSession(session);
     if (ret != HSUCCEED) {
         printf("Release FaceContext error: %lu\n", ret);
         return ret;

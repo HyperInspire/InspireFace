@@ -7,9 +7,9 @@
 
 #include "face_context.h"
 
-typedef struct HF_FaceContext {
+typedef struct HF_FaceAlgorithmSession {
     inspire::FaceContext impl; ///< Implementation of the face context.
-} HF_FaceContext; ///< Handle for managing face context.
+} HF_FaceAlgorithmSession; ///< Handle for managing face context.
 
 typedef struct HF_CameraStream {
     inspire::CameraStream impl; ///< Implementation of the camera stream.
