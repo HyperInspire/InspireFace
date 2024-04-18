@@ -18,7 +18,7 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         REQUIRE(ret == HSUCCEED);
         ret = HF_ReleaseFaceContext(ctxHandle);
         REQUIRE(ret == HSUCCEED);
@@ -30,7 +30,7 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
         HF_ContextCustomParameter parameter = {0};
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
         HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
         CHECK(ret != HSUCCEED);
     }
 
