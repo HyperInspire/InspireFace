@@ -13,13 +13,11 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
     SECTION("Load lfw funneled data") {
 #ifdef ENABLE_USE_LFW_DATA
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HF_SessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(parameter, detMode, 3, &ctxHandle);
+        HFSession session;
+        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
         HF_FeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -40,7 +38,7 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
         auto lfwDir = getLFWFunneledDir();
         auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
         size_t numOfNeedImport = 100;
-        auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
+        auto importStatus = ImportLFWFunneledValidData(session, dataList, numOfNeedImport);
         HF_FeatureHubViewDBTable();
         REQUIRE(importStatus);
         HInt32 count;
@@ -48,11 +46,11 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
         REQUIRE(ret == HSUCCEED);
         CHECK(count == numOfNeedImport);
 
-//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        ret = HF_ViewFaceDBTable(session);
 //        REQUIRE(ret == HSUCCEED);
 
         // Finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HF_ReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
         ret = HF_FeatureHubDataDisable();

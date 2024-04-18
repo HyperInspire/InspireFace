@@ -10,6 +10,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include "spdlog/spdlog.h"
 #include "inspireface/c_api/inspireface.h"
+#include "unit/test_helper/simple_csv_writer.h"
 
 int init_test_logger() {
     std::string name("TEST");
@@ -49,6 +50,7 @@ int main(int argc, char* argv[]) {
     init_test_logger();
     init_test_benchmark_record();
     init_test_evaluation_record();
+    TEST_PRINT_OUTPUT(true);
 
     Catch::Session session;
     // Pack file name and test directory
@@ -83,7 +85,7 @@ int main(int argc, char* argv[]) {
         TEST_PRINT("Using default global Pack: {}", TEST_MODEL_FILE);
     }
 
-    auto ret = HF_LaunchInspireFace(pack.c_str());
+    auto ret = HF_LaunchInspireFace(GET_MODEL_FILE().c_str());
     if (ret != HSUCCEED) {
         spdlog::error("An error occurred while starting InspireFace: {}", ret);
         return ret;

@@ -80,7 +80,7 @@ inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data
         }
         // Face tracked
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(handle, imgHandle, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(handle, imgHandle, &multipleFaceData);
 
         if (ret != HSUCCEED) {
             std::cerr << "Error Track: " << std::to_string(ret)  << " , " << item.second << std::endl;
@@ -216,7 +216,7 @@ inline bool FindMostSimilarScoreFromTwoPic(HFSession handle, const std::string& 
             return false;
         }
         HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(handle, img, &multipleFaceData);
+        ret = HF_ExecuteFaceTrack(handle, img, &multipleFaceData);
         if (ret != 0) {
             std::cerr << "Error track: " << ret << std::endl;
             HF_ReleaseImageStream(img);

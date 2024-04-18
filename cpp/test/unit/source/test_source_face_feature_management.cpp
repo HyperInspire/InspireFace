@@ -114,7 +114,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         FaceContext ctx;
         CustomPipelineParameter param;
         param.enable_recognition = true;
-        auto ret = ctx.Configuration(GET_DATA("model_zip/Pikachu-t1"), DetectMode::DETECT_MODE_IMAGE, 1, param);
+        auto ret = ctx.Configuration(DetectMode::DETECT_MODE_IMAGE, 1, param);
         REQUIRE(ret == HSUCCEED);
 
         FEATURE_HUB->PrintFeatureMatrixInfo();

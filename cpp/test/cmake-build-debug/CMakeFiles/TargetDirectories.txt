@@ -1,0 +1,4 @@
+/Users/tunm/work/InspireFace/cpp/test/cmake-build-debug/CMakeFiles/TestSource.dir
+/Users/tunm/work/InspireFace/cpp/test/cmake-build-debug/CMakeFiles/TestAPI.dir
+/Users/tunm/work/InspireFace/cpp/test/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/tunm/work/InspireFace/cpp/test/cmake-build-debug/CMakeFiles/rebuild_cache.dir
