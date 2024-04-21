@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
         TEST_PRINT("Using default global Pack: {}", TEST_MODEL_FILE);
     }
 
-    auto ret = HF_LaunchInspireFace(GET_MODEL_FILE().c_str());
+    auto ret = HFLaunchInspireFace(GET_MODEL_FILE().c_str());
     if (ret != HSUCCEED) {
         spdlog::error("An error occurred while starting InspireFace: {}", ret);
         return ret;
