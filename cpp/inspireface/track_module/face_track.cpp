@@ -332,7 +332,7 @@ int FaceTrack::Configuration(inspire::InspireArchive &archive) {
     auto ret = archive.LoadModel("face_detect", detModel);
     if (ret != SARC_SUCCESS) {
         INSPIRE_LOGE("Load %s error: %d", "face_detect", ret);
-        return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
+        return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
     }
     InitDetectModel(detModel);
 
@@ -341,7 +341,7 @@ int FaceTrack::Configuration(inspire::InspireArchive &archive) {
     ret = archive.LoadModel("landmark", lmkModel);
     if (ret != SARC_SUCCESS) {
         INSPIRE_LOGE("Load %s error: %d", "landmark", ret);
-        return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
+        return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
     }
     InitLandmarkModel(lmkModel);
 
@@ -350,7 +350,7 @@ int FaceTrack::Configuration(inspire::InspireArchive &archive) {
     ret = archive.LoadModel("refine_net", rnetModel);
     if (ret != SARC_SUCCESS) {
         INSPIRE_LOGE("Load %s error: %d", "refine_net", ret);
-        return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
+        return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
     }
     InitRNetModel(rnetModel);
 
@@ -359,7 +359,7 @@ int FaceTrack::Configuration(inspire::InspireArchive &archive) {
     ret = archive.LoadModel("pose_quality", pquModel);
     if (ret != SARC_SUCCESS) {
         INSPIRE_LOGE("Load %s error: %d", "pose_quality", ret);
-        return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
+        return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
     }
     InitFacePoseModel(pquModel);
 
@@ -370,7 +370,7 @@ int FaceTrack::InitLandmarkModel(InspireModel &model) {
     m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
     auto ret = m_landmark_predictor_->loadData(model, model.modelType);
     if (ret != InferenceHelper::kRetOk) {
-        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+        return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
 }
@@ -380,7 +380,7 @@ int FaceTrack::InitDetectModel(InspireModel &model) {
     m_face_detector_ = std::make_shared<FaceDetect>(input_size[0]);
     auto ret = m_face_detector_->loadData(model, model.modelType);
     if (ret != InferenceHelper::kRetOk) {
-        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+        return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
 }
@@ -389,7 +389,7 @@ int FaceTrack::InitRNetModel(InspireModel &model) {
     m_refine_net_ = std::make_shared<RNet>();
     auto ret = m_refine_net_->loadData(model, model.modelType);
     if (ret != InferenceHelper::kRetOk) {
-        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+        return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
 }
@@ -398,7 +398,7 @@ int FaceTrack::InitFacePoseModel(InspireModel &model) {
     m_face_quality_ = std::make_shared<FacePoseQuality>();
     auto ret = m_face_quality_->loadData(model, model.modelType);
     if (ret != InferenceHelper::kRetOk) {
-        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+        return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
 }

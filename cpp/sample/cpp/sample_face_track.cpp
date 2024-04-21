@@ -20,21 +20,21 @@ int main(int argc, char* argv[]) {
 
     HResult ret;
     // The resource file must be loaded before it can be used
-    ret = HF_LaunchInspireFace(packPath);
+    ret = HFLaunchInspireFace(packPath);
     if (ret != HSUCCEED) {
         std::cout << "Load Resource error: " << ret << std::endl;
         return ret;
     }
 
     // Enable the functions in the pipeline: mask detection, live detection, and face quality detection
-    HInt32 option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
+    HOption option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     // Non-video or frame sequence mode uses IMAGE-MODE, which is always face detection without tracking
-    HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
+    HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
     // Maximum number of faces detected
     HInt32 maxDetectNum = 5;
     // Handle of the current face SDK algorithm context
     HFSession session = {0};
-    ret = HF_CreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
+    ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
     if (ret != HSUCCEED) {
         std::cout << "Create FaceContext error: " << ret << std::endl;
         return ret;
@@ -47,26 +47,26 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     // Prepare an image parameter structure for configuration
-    HF_ImageData imageParam = {0};
+    HFImageData imageParam = {0};
     imageParam.data = image.data;       // Data buffer
     imageParam.width = image.cols;      // Target view width
     imageParam.height = image.rows;      // Target view width
-    imageParam.rotation = CAMERA_ROTATION_0;      // Data source rotate
-    imageParam.format = STREAM_BGR;      // Data source format
+    imageParam.rotation = HF_CAMERA_ROTATION_0;      // Data source rotate
+    imageParam.format = HF_STREAM_BGR;      // Data source format
 
     // Create an image data stream
     HFImageStream imageHandle = {0};
-    ret = HF_CreateImageStream(&imageParam, &imageHandle);
+    ret = HFCreateImageStream(&imageParam, &imageHandle);
     if (ret != HSUCCEED) {
         std::cout << "Create ImageStream error: " << ret << std::endl;
         return ret;
     }
 
     // Execute HF_FaceContextRunFaceTrack captures face information in an image
-    HF_MultipleFaceData multipleFaceData = {0};
-    ret = HF_ExecuteFaceTrack(session, imageHandle, &multipleFaceData);
+    HFMultipleFaceData multipleFaceData = {0};
+    ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
     if (ret != HSUCCEED) {
-        std::cout << "Execute HF_ExecuteFaceTrack error: " << ret << std::endl;
+        std::cout << "Execute HFExecuteFaceTrack error: " << ret << std::endl;
         return ret;
     }
     // Print the number of faces detected
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
         std::cout << "========================================" << std::endl;
         std::cout << "Process face index: " << index << std::endl;
         // Use OpenCV's Rect to receive face bounding boxes
-        cv::Rect rect = cv::Rect(multipleFaceData.rects[index].x, multipleFaceData.rects[index].y,
+        auto rect = cv::Rect(multipleFaceData.rects[index].x, multipleFaceData.rects[index].y,
                                  multipleFaceData.rects[index].width, multipleFaceData.rects[index].height);
         cv::rectangle(draw, rect, cv::Scalar(0, 100, 255), 1);
 
@@ -98,15 +98,15 @@ int main(int argc, char* argv[]) {
     // Select the pipeline function that you want to execute, provided that it is already enabled when FaceContext is created!
     auto pipelineOption = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     // In this loop, all faces are processed
-    ret = HF_MultipleFacePipelineProcessOptional(session, imageHandle, &multipleFaceData, pipelineOption);
+    ret = HFMultipleFacePipelineProcessOptional(session, imageHandle, &multipleFaceData, pipelineOption);
     if (ret != HSUCCEED) {
         std::cout << "Execute Pipeline error: " << ret << std::endl;
         return ret;
     }
 
     // Get mask detection results from the pipeline cache
-    HF_FaceMaskConfidence maskConfidence = {0};
-    ret = HF_GetFaceMaskConfidence(session, &maskConfidence);
+    HFFaceMaskConfidence maskConfidence = {0};
+    ret = HFGetFaceMaskConfidence(session, &maskConfidence);
     if (ret != HSUCCEED) {
         std::cout << "Get mask detect result error: " << ret << std::endl;
         return -1;
@@ -114,8 +114,8 @@ int main(int argc, char* argv[]) {
 
 
     // Get face quality results from the pipeline cache
-    HF_FaceQualityConfidence qualityConfidence = {0};
-    ret = HF_GetFaceQualityConfidence(session, &qualityConfidence);
+    HFFaceQualityConfidence qualityConfidence = {0};
+    ret = HFGetFaceQualityConfidence(session, &qualityConfidence);
     if (ret != HSUCCEED) {
         std::cout << "Get face quality result error: " << ret << std::endl;
         return -1;
@@ -128,19 +128,25 @@ int main(int argc, char* argv[]) {
         std::cout << "Quality predict result: " << qualityConfidence.confidence[index] << std::endl;
         // We set the threshold of wearing a mask as 0.85. If it exceeds the threshold, it will be judged as wearing a mask.
         // The threshold can be adjusted according to the scene
-        if (maskConfidence.confidence[0] > 0.85) {
+        if (maskConfidence.confidence[index] > 0.85) {
             std::cout << "Mask" << std::endl;
         } else {
             std::cout << "Non Mask" << std::endl;
         }
+
     }
 
-    // The memory must be freed at the end of the program
-    ret = HF_ReleaseInspireFaceSession(session);
+    ret = HFReleaseImageStream(imageHandle);
     if (ret != HSUCCEED) {
-        printf("Release FaceContext error: %lu\n", ret);
+        printf("Release image stream error: %lu\n", ret);
+    }
+    // The memory must be freed at the end of the program
+    ret = HFReleaseInspireFaceSession(session);
+    if (ret != HSUCCEED) {
+        printf("Release session error: %lu\n", ret);
         return ret;
     }
+
 
     return 0;
 }

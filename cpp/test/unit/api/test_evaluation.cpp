@@ -17,11 +17,11 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
 
     SECTION("Test compare tools") {
         HResult ret;
-        HF_SessionCustomParameter parameter = {0};
+        HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HF_CreateInspireFaceSession(parameter, detMode, 5, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 5, &session);
         REQUIRE(ret == HSUCCEED);
 
         float mostSim = -1.0f;
@@ -47,7 +47,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         TEST_PRINT("kun v other :{}", mostSim);
 
         // finish
-        ret = HF_ReleaseInspireFaceSession(session);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
     }
 
@@ -57,11 +57,11 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
-        HF_SessionCustomParameter parameter = {0};
+        HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HF_CreateInspireFaceSession(parameter, detMode, 5, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 5, &session);
         REQUIRE(ret == HSUCCEED);
         std::vector<int> labels;
         std::vector<float> confidences;
@@ -131,7 +131,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         EvaluationRecord record(getEvaluationRecordFile());
         record.insertEvaluationData(TEST_MODEL_FILE, "LFW", result.second, result.first);
         // finish
-        ret = HF_ReleaseInspireFaceSession(session);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 #endif
     }
