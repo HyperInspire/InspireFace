@@ -31,11 +31,11 @@ int32_t ModelHub::Load(const std::string &path) {
             m_load_ = true;
             return HSUCCEED;
         } else {
-            return HERR_CTX_ARCHIVE_LOAD_MODEL_FAILURE;
+            return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
         }
     } else {
         INSPIRE_LOGE("Do not reload the model.");
-        return HERR_CTX_ARCHIVE_REPETITION_LOAD;
+        return HERR_ARCHIVE_REPETITION_LOAD;
     }
 }
 

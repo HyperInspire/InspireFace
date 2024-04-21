@@ -93,7 +93,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         auto newIndex = 2888;
         // Try inserting an unused location first
         ret = FEATURE_HUB->UpdateFaceFeature(KunkunFeature, 3001, "Chicken", 3001);
-        REQUIRE(ret == HERR_CTX_REC_BLOCK_UPDATE_FAILURE);
+        REQUIRE(ret == HERR_SESS_REC_BLOCK_UPDATE_FAILURE);
         ret = FEATURE_HUB->UpdateFaceFeature(KunkunFeature, newIndex, "Chicken", 3001);
         REQUIRE(ret == HSUCCEED);
         SearchResult thirdlySearchResult;
