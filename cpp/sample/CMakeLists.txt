@@ -26,6 +26,21 @@ set_target_properties(MTFaceTrackSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
+# Examples of face recognition
+add_executable(FaceRecognitionSample cpp/sample_face_recognition.cpp)
+target_link_libraries(FaceRecognitionSample InspireFace)
+set_target_properties(FaceRecognitionSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+
+# Examples of face recognition
+add_executable(FaceComparisonSample cpp/sample_face_comparison.cpp)
+target_link_libraries(FaceComparisonSample InspireFace)
+set_target_properties(FaceComparisonSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
 
 # Platform watershed
 if (BUILD_LINUX_ARM7 OR BUILD_LINUX_AARCH64)

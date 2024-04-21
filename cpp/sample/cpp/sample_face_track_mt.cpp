@@ -7,12 +7,12 @@
 #include <thread>
 
 void runFaceTrack(HFSession session, HFImageStream imageHandle) {
-    HF_MultipleFaceData multipleFaceData = {0};
-    auto ret = HF_ExecuteFaceTrack(session, imageHandle, &multipleFaceData);
+    HFMultipleFaceData multipleFaceData = {0};
+    auto ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
     if (ret != HSUCCEED) {
-        std::cout << "Thread " << std::this_thread::get_id() << " Execute HF_ExecuteFaceTrack error: " << ret << std::endl;
+        std::cout << "Thread " << std::this_thread::get_id() << " Execute HFExecuteFaceTrack error: " << ret << std::endl;
     } else {
-        std::cout << "Thread " << std::this_thread::get_id() << " successfully executed HF_ExecuteFaceTrack.\n";
+        std::cout << "Thread " << std::this_thread::get_id() << " successfully executed HFExecuteFaceTrack.\n";
     }
 }
 
@@ -31,21 +31,21 @@ int main(int argc, char* argv[]) {
 
     HResult ret;
     // The resource file must be loaded before it can be used
-    ret = HF_LaunchInspireFace(packPath);
+    ret = HFLaunchInspireFace(packPath);
     if (ret != HSUCCEED) {
         std::cout << "Load Resource error: " << ret << std::endl;
         return ret;
     }
 
     // Enable the functions in the pipeline: mask detection, live detection, and face quality detection
-    HInt32 option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
+    HOption option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     // Non-video or frame sequence mode uses IMAGE-MODE, which is always face detection without tracking
-    HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
+    HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
     // Maximum number of faces detected
     HInt32 maxDetectNum = 5;
     // Handle of the current face SDK algorithm session
     HFSession session = {0};
-    ret = HF_CreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
+    ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
     if (ret != HSUCCEED) {
         std::cout << "Create FaceContext error: " << ret << std::endl;
         return ret;
@@ -58,16 +58,16 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     // Prepare an image parameter structure for configuration
-    HF_ImageData imageParam = {0};
+    HFImageData imageParam = {0};
     imageParam.data = image.data;       // Data buffer
     imageParam.width = image.cols;      // Target view width
     imageParam.height = image.rows;      // Target view width
-    imageParam.rotation = CAMERA_ROTATION_0;      // Data source rotate
-    imageParam.format = STREAM_BGR;      // Data source format
+    imageParam.rotation = HF_CAMERA_ROTATION_0;      // Data source rotate
+    imageParam.format = HF_STREAM_BGR;      // Data source format
 
     // Create an image data stream
     HFImageStream imageHandle = {0};
-    ret = HF_CreateImageStream(&imageParam, &imageHandle);
+    ret = HFCreateImageStream(&imageParam, &imageHandle);
     if (ret != HSUCCEED) {
         std::cout << "Create ImageStream error: " << ret << std::endl;
         return ret;
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
     }
 
     // The memory must be freed at the end of the program
-    ret = HF_ReleaseInspireFaceSession(session);
+    ret = HFReleaseInspireFaceSession(session);
     if (ret != HSUCCEED) {
         printf("Release FaceContext error: %lu\n", ret);
         return ret;

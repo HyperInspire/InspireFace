@@ -31,13 +31,13 @@ int32_t FeatureExtraction::InitExtractInteraction(InspireModel &model) {
         m_extract_ = std::make_shared<Extract>();
         auto ret = m_extract_->loadData(model, model.modelType);
         if (ret != InferenceHelper::kRetOk) {
-            return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+            return HERR_ARCHIVE_LOAD_FAILURE;
         }
         return HSUCCEED;
 
     } catch (const std::runtime_error& e) {
         INSPIRE_LOGE("%s", e.what());
-        return HERR_CTX_FACE_REC_OPTION_ERROR;
+        return HERR_SESS_FACE_REC_OPTION_ERROR;
     }
 }
 
@@ -47,7 +47,7 @@ int32_t FeatureExtraction::QueryStatus() const {
 
 int32_t FeatureExtraction::FaceExtract(CameraStream &image, const HyperFaceData &face, Embedded &embedded) {
     if (m_extract_ == nullptr) {
-        return HERR_CTX_REC_EXTRACT_FAILURE;
+        return HERR_SESS_REC_EXTRACT_FAILURE;
     }
 
     std::vector<cv::Point2f> pointsFive;
@@ -66,7 +66,7 @@ int32_t FeatureExtraction::FaceExtract(CameraStream &image, const HyperFaceData 
 
 int32_t FeatureExtraction::FaceExtract(CameraStream &image, const FaceObject &face, Embedded &embedded) {
     if (m_extract_ == nullptr) {
-        return HERR_CTX_REC_EXTRACT_FAILURE;
+        return HERR_SESS_REC_EXTRACT_FAILURE;
     }
 
     auto lmk = face.landmark_;

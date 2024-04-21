@@ -20,10 +20,10 @@ int32_t FaceContext::Configuration(DetectMode detect_mode, int32_t max_detect_fa
     m_max_detect_face_ = max_detect_face;
     m_parameter_ = param;
     if (!MODEL_HUB->isMLoad()) {
-        return HERR_CTX_ARCHIVE_NOT_LOAD;
+        return HERR_ARCHIVE_NOT_LOAD;
     }
     if (MODEL_HUB->getMArchive().QueryStatus() != SARC_SUCCESS) {
-        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+        return HERR_ARCHIVE_LOAD_FAILURE;
     }
 
     m_face_track_ = std::make_shared<FaceTrack>(m_max_detect_face_);
@@ -60,7 +60,7 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     m_pitch_results_cache_.clear();
     m_quality_score_results_cache_.clear();
     if (m_face_track_ == nullptr) {
-        return HERR_CTX_TRACKER_FAILURE;
+        return HERR_SESS_TRACKER_FAILURE;
     }
     m_face_track_->UpdateStream(image, m_always_detect_);
     for (int i = 0; i < m_face_track_->trackingFace.size(); ++i) {

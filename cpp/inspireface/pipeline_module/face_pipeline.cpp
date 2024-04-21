@@ -78,7 +78,7 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
     switch (proc) {
         case PROCESS_MASK: {
             if (m_mask_predict_ == nullptr) {
-                return HERR_CTX_PIPELINE_FAILURE;       // uninitialized
+                return HERR_SESS_PIPELINE_FAILURE;       // uninitialized
             }
             std::vector<cv::Point2f> pointsFive;
             for (const auto &p: face.keyPoints) {
@@ -102,7 +102,7 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
         }
         case PROCESS_RGB_LIVENESS: {
             if (m_rgb_anti_spoofing_ == nullptr) {
-                return HERR_CTX_PIPELINE_FAILURE;       // uninitialized
+                return HERR_SESS_PIPELINE_FAILURE;       // uninitialized
             }
 //            auto trans27 = getTransformMatrixSafas(pointsFive);
 //            trans27.convertTo(trans27, CV_64F);
@@ -121,13 +121,13 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
         }
         case PROCESS_AGE: {
             if (m_age_predict_ == nullptr) {
-                return HERR_CTX_PIPELINE_FAILURE;       // uninitialized
+                return HERR_SESS_PIPELINE_FAILURE;       // uninitialized
             }
             break;
         }
         case PROCESS_GENDER: {
             if (m_gender_predict_ == nullptr) {
-                return HERR_CTX_PIPELINE_FAILURE;       // uninitialized
+                return HERR_SESS_PIPELINE_FAILURE;       // uninitialized
             }
             break;
         }
@@ -188,7 +188,7 @@ int32_t FacePipeline::InitMaskPredict(InspireModel &model) {
     m_mask_predict_ = std::make_shared<MaskPredict>();
     auto ret = m_mask_predict_->loadData(model, model.modelType);
     if (ret != InferenceHelper::kRetOk) {
-        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+        return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
 }
@@ -198,7 +198,7 @@ int32_t FacePipeline::InitRBGAntiSpoofing(InspireModel &model) {
     m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofing>(input_size[0]);
     auto ret = m_rgb_anti_spoofing_->loadData(model, model.modelType);
     if (ret != InferenceHelper::kRetOk) {
-        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+        return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
 }

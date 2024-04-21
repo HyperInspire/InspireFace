@@ -42,7 +42,7 @@ TEST_CASE("test_FaceRecognition", "[face_rec]") {
         REQUIRE(faces.size() > 0);
         Embedded feature;
         ret = ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
-        CHECK(ret == HERR_CTX_REC_EXTRACT_FAILURE);
+        CHECK(ret == HERR_SESS_REC_EXTRACT_FAILURE);
     }
 
     SECTION("FaceRecognition1v1") {

@@ -13,12 +13,12 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
 
     SECTION("Test the new context positive process") {
         HResult ret;
-        HF_SessionCustomParameter parameter = {0};
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HF_CreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
-        ret = HF_ReleaseInspireFaceSession(session);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
     }
 
