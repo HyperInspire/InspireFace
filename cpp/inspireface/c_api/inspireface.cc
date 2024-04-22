@@ -7,7 +7,7 @@
 #include "inspireface_internal.h"
 #include "information.h"
 #include "feature_hub/feature_hub.h"
-#include "model_hub/model_hub.h"
+#include "Initialization_module/launch.h"
 
 using namespace inspire;
 
@@ -148,7 +148,7 @@ HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode de
 
 HResult HFLaunchInspireFace(HPath resourcePath) {
     std::string path(resourcePath);
-    return MODEL_HUB->Load(resourcePath);
+    return INSPIRE_LAUNCH->Load(resourcePath);
 }
 
 HResult HFFeatureHubDataDisable() {
