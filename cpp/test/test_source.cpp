@@ -8,7 +8,7 @@
 #include "settings/test_settings.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include "spdlog/spdlog.h"
-#include "model_hub/model_hub.h"
+#include "Initialization_module/launch.h"
 
 
 #define ENABLE_DRAW_SPLIT_LINE 1               // Whether dividers are printed during the test
@@ -31,7 +31,7 @@ int init_test_logger() {
 int main(int argc, char* argv[]) {
     init_test_logger();
 
-    auto ret = MODEL_HUB->Load("test_res/model_zip/Pikachu");
+    auto ret = INSPIRE_LAUNCH->Load("test_res/model_zip/Pikachu");
     if (ret != 0) {
         std::cerr << "Load error" << std::endl;
         return -1;

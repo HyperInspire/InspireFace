@@ -3,7 +3,7 @@
 //
 
 #include "face_context.h"
-#include "model_hub/model_hub.h"
+#include "Initialization_module/launch.h"
 #include <utility>
 #include "log.h"
 #include "herror.h"
@@ -19,24 +19,24 @@ int32_t FaceContext::Configuration(DetectMode detect_mode, int32_t max_detect_fa
     m_detect_mode_ = detect_mode;
     m_max_detect_face_ = max_detect_face;
     m_parameter_ = param;
-    if (!MODEL_HUB->isMLoad()) {
+    if (!INSPIRE_LAUNCH->isMLoad()) {
         return HERR_ARCHIVE_NOT_LOAD;
     }
-    if (MODEL_HUB->getMArchive().QueryStatus() != SARC_SUCCESS) {
+    if (INSPIRE_LAUNCH->getMArchive().QueryStatus() != SARC_SUCCESS) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
 
     m_face_track_ = std::make_shared<FaceTrack>(m_max_detect_face_);
-    m_face_track_->Configuration(MODEL_HUB->getMArchive());
+    m_face_track_->Configuration(INSPIRE_LAUNCH->getMArchive());
     SetDetectMode(m_detect_mode_);
 
-    m_face_recognition_ = std::make_shared<FeatureExtraction>(MODEL_HUB->getMArchive(), m_parameter_.enable_recognition);
+    m_face_recognition_ = std::make_shared<FeatureExtraction>(INSPIRE_LAUNCH->getMArchive(), m_parameter_.enable_recognition);
     if (m_face_recognition_->QueryStatus() != HSUCCEED) {
         return m_face_recognition_->QueryStatus();
     }
 
     m_face_pipeline_ = std::make_shared<FacePipeline>(
-            MODEL_HUB->getMArchive(),
+            INSPIRE_LAUNCH->getMArchive(),
             param.enable_liveness,
             param.enable_mask_detect,
             param.enable_age,
