@@ -3,19 +3,26 @@ package "InspireFace SDK" {
     [face_context] as FC
 
     package "Algorithm Modules" {
-        package "track_module" as TrackModule {
+        package "Track Module" as TrackModule {
             [face_detect] as FD
             [face_pose] as FP
             [face_track] as FT
             [landmark] as LM
+            FT --> FD : uses
+            FT --> LM : uses
+            FT --> FP : uses
         }
 
-        package "recognition_module" as RecognitionModule {
+        package "Recognition Module" as RecognitionModule {
             [feature_extract] as FE
             [alignment] as AL
         }
 
-        [pipeline_module] as PipelineModule
+        package "Pipeline Module" as PipelineModule {
+                    [mask_predict] as MA
+                    [face_liveness] as FL
+                    [face_quality] as QU
+                }
     }
 
     package "AnyNet" as AnyNet {
@@ -28,7 +35,7 @@ package "InspireFace SDK" {
         ANY -down-> OCV_DNN : supports
     }
 
-    package "FeatureHub" {
+    package "FeatureHub" as FHM{
         package "Feature Blocks" {
             [None Engine] as NE
             [OpenCV Engine] as OCV
@@ -39,7 +46,7 @@ package "InspireFace SDK" {
             FB -up-> EIG : implements
         }
 
-        package "Persistence Module" {
+        package "Persistence Module" as PM{
             [SQLite Engine] as SQL
             [Persistence] as PS
             PS -right-> SQL : uses
@@ -47,13 +54,13 @@ package "InspireFace SDK" {
 
         [feature_hub] as FH
         FH -down-> FB : includes
-        FH -down-> PS : includes
+        FH -down-> PM : includes
     }
 
-    package "Model Hub" {
+    package "Initialization Module" {
         [inspire_archive] as IA
         [resource_decode] as RD
-        [model_hub] as MH
+        [Launch] as MH
         MH -down-> IA : contains
         MH -down-> RD : contains
     }
