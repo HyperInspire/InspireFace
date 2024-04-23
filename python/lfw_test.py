@@ -14,18 +14,18 @@ def draw_face_boxes(image, faces: List[FaceInformation]):
 
 
 def read_pairs(pairs_filename):
-    """读取pairs.txt文件并返回图像对的列表"""
+    """Read the pairs.txt file and return a list of image pairs"""
     pairs = []
     with open(pairs_filename, 'r') as f:
-        for line in f.readlines()[1:]:  # 跳过第一行
+        for line in f.readlines()[1:]:  # Skip the first line
             pair = line.strip().split()
             pairs.append(pair)
     return pairs
 
 
 def test_lfw(lfw_dir, pairs, quick, cache_file="lfw_cache.npy", visual=True):
-    """加载并显示图像对，同时打印它们是否应该匹配，并计算准确率"""
-    # 检查缓存文件是否存在
+    """Load and display image pairs, while printing whether they should match, and calculate accuracy"""
+    # Check whether the cache file exists
     if os.path.exists(cache_file):
         print("Loading results from cache")
         cache = np.load(cache_file, allow_pickle=True)
@@ -37,19 +37,19 @@ def test_lfw(lfw_dir, pairs, quick, cache_file="lfw_cache.npy", visual=True):
 
         for pair in tqdm.tqdm(pairs):
             if len(pair) == 3:
-                # 匹配对
+                # matching pair
                 person, img_num1, img_num2 = pair
                 img_path1 = os.path.join(lfw_dir, person, f"{person}_{img_num1.zfill(4)}.jpg")
                 img_path2 = os.path.join(lfw_dir, person, f"{person}_{img_num2.zfill(4)}.jpg")
                 match = True
             else:
-                # 不匹配对
+                # Mismatched pair
                 person1, img_num1, person2, img_num2 = pair
                 img_path1 = os.path.join(lfw_dir, person1, f"{person1}_{img_num1.zfill(4)}.jpg")
                 img_path2 = os.path.join(lfw_dir, person2, f"{person2}_{img_num2.zfill(4)}.jpg")
                 match = False
 
-            # 加载图像
+            # Load image
             img1 = cv2.imread(img_path1)
             img2 = cv2.imread(img_path2)
 
@@ -57,23 +57,22 @@ def test_lfw(lfw_dir, pairs, quick, cache_file="lfw_cache.npy", visual=True):
                 logging.warning("not detect face")
                 continue
 
-            # 记录余弦相似度和标签
+            # Record cosine similarity and label
             cosine_similarity = quick.comp()
             similarities.append(cosine_similarity)
             labels.append(match)
 
-            # 如果visual为True，则进行可视化
+            # If visual is True, visualize
             if visual:
                 draw_face_boxes(img1, quick.faces_set_1)
                 draw_face_boxes(img2, quick.faces_set_2)
 
-                # 显示图像
+                # display image
                 cv2.imshow(f"Image 1 (Match: {match})", img1)
                 cv2.imshow(f"Image 2 (Match: {match})", img2)
                 print(f"Should match: {match}, Cosine Similarity: {cosine_similarity}")
 
-                # 等待键盘输入
-                if cv2.waitKey(0) & 0xFF == ord('q'):  # 按q退出
+                if cv2.waitKey(0) & 0xFF == ord('q'):
                     break
 
             if visual:
@@ -84,7 +83,7 @@ def test_lfw(lfw_dir, pairs, quick, cache_file="lfw_cache.npy", visual=True):
         # 保存结果到缓存文件
         np.save(cache_file, [similarities, labels])
 
-    # 查找最佳阈值
+    # Find the optimal threshold
     best_threshold, best_accuracy = find_best_threshold(similarities, labels)
     print(f"Best Threshold: {best_threshold:.2f}, Best Accuracy: {best_accuracy:.3f}")
 
@@ -104,11 +103,11 @@ def find_best_threshold(similarities, labels):
 
 
 if __name__ == "__main__":
-    lfw_dir = "/Users/tunm/datasets/lfw_funneled"  # 修改为你的LFW_funneled文件夹路径
-    pairs_filename = "/Users/tunm/datasets/lfw_funneled/pairs.txt"  # 修改为你的pairs.txt文件路径
+    lfw_dir = "/Users/tunm/datasets/lfw_funneled"  # Change the path to your LFW funneled folder
+    pairs_filename = "/Users/tunm/datasets/lfw_funneled/pairs.txt"  # Change to your pairs.txt file path
 
     path = "/Users/tunm/work/HyperFace/test_res/model_zip/Optimus-t1"
     quick = QuickComparison(path)
 
     pairs = read_pairs(pairs_filename)
-    test_lfw(lfw_dir, pairs, quick, visual=False)  # 可以将visual设置为False来关闭可视化
+    test_lfw(lfw_dir, pairs, quick, visual=False)  # You can turn off visualization by setting visual to False
