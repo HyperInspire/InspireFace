@@ -88,7 +88,7 @@ else()
 endif()
 
 # sqlite3
-set(SOURCE_FILES ${SOURCE_FILES} ${THIRD_PARTY_DIR}/sqlite/sqlite3.c)        # Add C_API file
+set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/sqlite/sqlite3.c)        # Add C_API file
 
 if (ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknn_api dl)
@@ -98,9 +98,9 @@ if (ENABLE_RKNN)
 endif()
 
 # cpp yaml
-file(GLOB_RECURSE CPP_YAML_SRC ${THIRD_PARTY_DIR}/cpp_yaml/src/*.cpp)
+file(GLOB_RECURSE CPP_YAML_SRC ${CMAKE_CURRENT_SOURCE_DIR}/middleware/cpp_yaml/src/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CPP_YAML_SRC})
-set(CPP_YAML_INCLUDE ${THIRD_PARTY_DIR}/cpp_yaml/include)
+set(CPP_YAML_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/middleware/cpp_yaml/include)
 
 # archive
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/microtar/microtar.c)
@@ -128,9 +128,6 @@ if (BUILD_LINUX_ARM7)
     set(NEED_INCLUDE ${NEED_INCLUDE} ${OpenCV_STATIC_INCLUDE_DIR})
 endif ()
 
-# add sqlite3 header
-set(NEED_INCLUDE ${NEED_INCLUDE} ${THIRD_PARTY_DIR}/sqlite/)
-
 # add cpp yaml header
 set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE})
 
@@ -146,6 +143,10 @@ target_include_directories(InspireFace PUBLIC
 if (NOT ANDROID)
     message("ld: ${LINK_THIRD_LIBS}")
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
+
+    set_target_properties(InspireFace PROPERTIES
+            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/libs/
+            )
 else()
-    # xxx
+
 endif()
