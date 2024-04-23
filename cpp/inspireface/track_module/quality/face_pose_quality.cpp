@@ -3,7 +3,7 @@
 //
 
 #include "face_pose_quality.h"
-#include "utils.h"
+#include "middleware/utils.h"
 
 namespace inspire {
 
