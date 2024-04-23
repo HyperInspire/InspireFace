@@ -38,17 +38,17 @@ class QuickComparison(object):
 
     def comp(self) -> float:
         """
-        逐个交叉对比，保留分数最大的值进行返回，调用self.recognition.face_comparison1v1(info1, info2)
-        :return: 最大的匹配分数
+        Cross-compare one by one, keep the value with the highest score and return it, calling self.recognition.face_comparison1v1(info1, info2)
+        :return: Maximum matching score
         """
-        max_score = 0.0  # 初始化最大分数为0
+        max_score = 0.0  # The maximum initial fraction is 0
 
-        # 遍历faces_set_1中的每个人脸与faces_set_2中的每个人脸进行比较
+        # Each face in faces_set_1 is traversed and compared with each face in faces_set_2
         for face1 in self.faces_set_1:
             for face2 in self.faces_set_2:
-                # 使用self.recognition.face_comparison1v1(info1, info2)进行人脸比较
+                # Use self.recognition.face_comparison1v1(info1, info2) Compare faces
                 score = self.recognition.face_comparison1v1(face1, face2)
-                # 更新最大分数
+                # Update maximum score
                 if score > max_score:
                     max_score = score
 

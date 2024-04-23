@@ -19,7 +19,7 @@ std::string basename(const std::string& path) {
 
 int compare() {
     HResult ret;
-    // 初始化context
+    // Initialize context
 #ifdef ENABLE_RKNN
     HPath path = "test_res/model_zip/Gundam_RV1109";
 #else
@@ -43,7 +43,7 @@ int compare() {
     };
     HInt32 featureNum;
     HF_GetFeatureLength(&featureNum);
-    INSPIRE_LOGD("特征长度: %d", featureNum);
+    INSPIRE_LOGD("Feature length: %d", featureNum);
     HFloat featuresCache[names.size()][featureNum];     // Store the cached vector
 
     for (int i = 0; i < names.size(); ++i) {
@@ -68,7 +68,7 @@ int compare() {
 
         HF_MultipleFaceData multipleFaceData = {0};
         HF_FaceContextRunFaceTrack(session, imageSteamHandle, &multipleFaceData);
-        INSPIRE_LOGD("检测到人脸数量: %d", multipleFaceData.detectedNum);
+        INSPIRE_LOGD("Number of faces detected: %d", multipleFaceData.detectedNum);
 
         for (int i = 0; i < multipleFaceData.detectedNum; ++i) {
             cv::Rect rect = cv::Rect(multipleFaceData.rects[i].x, multipleFaceData.rects[i].y, multipleFaceData.rects[i].width, multipleFaceData.rects[i].height);
@@ -132,10 +132,10 @@ int compare() {
     compFeature2.data = featuresCache[1];
     ret = HF_FaceComparison1v1(compFeature1, compFeature2, &compResult);
     if (ret != HSUCCEED) {
-        INSPIRE_LOGE("对比失败: %d", ret);
+        INSPIRE_LOGE("Contrast failure: %d", ret);
         return -1;
     }
-    INSPIRE_LOGD("相似度: %f", compResult);
+    INSPIRE_LOGD("similarity: %f", compResult);
 
     ret = HF_ReleaseFaceContext(session);
     if (ret != HSUCCEED) {
@@ -153,29 +153,23 @@ int search() {
     parameter.enable_liveness = 1;
     parameter.enable_mask_detect = 1;
     parameter.enable_recognition = 1;
-    HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;   // 选择图像模式 即总是检测
+    HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
     HContextHandle session;
-    // 创建ctx
     ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &session);
     if (ret != HSUCCEED) {
         INSPIRE_LOGD("An error occurred while creating ctx: %ld", ret);
     }
-    // 配置数据库持久化(如果有需要的话)
     HF_FeatureHubConfiguration databaseConfiguration = {0};
     databaseConfiguration.enablePersistence = 1;
     databaseConfiguration.dbPath = "./";
     ret = HF_FeatureHubDataEnable(databaseConfiguration);
     if (ret != HSUCCEED) {
-        INSPIRE_LOGE("数据库配置失败: %ld", ret);
+        INSPIRE_LOGE("Database configuration failure: %ld", ret);
         return -1;
     }
 
     std::vector<std::string> files_list = {
-            "/Users/tunm/Downloads/face_rec/胡歌/胡歌1.jpg",
-            "/Users/tunm/Downloads/face_rec/刘浩存/刘浩存1.jpg",
-            "/Users/tunm/Downloads/face_rec/刘亦菲/刘亦菲1.jpg",
-            "/Users/tunm/Downloads/face_rec/刘奕君/刘奕君1.jpg",
-            "/Users/tunm/Downloads/face_rec/伍佰/伍佰1.jpg",
+
     };
 
     for (int i = 0; i < files_list.size(); ++i) {
@@ -199,14 +193,14 @@ int search() {
         HF_FaceContextRunFaceTrack(session, imageSteamHandle, &multipleFaceData);
 
         if (multipleFaceData.detectedNum <= 0) {
-            INSPIRE_LOGE("%s 未检测到人脸", name.c_str());
+            INSPIRE_LOGE("%s No face detected", name.c_str());
             return -1;
         }
 
         HF_FaceFeature feature = {0};
         ret = HF_FaceFeatureExtract(session, imageSteamHandle, multipleFaceData.tokens[0], &feature);
         if (ret != HSUCCEED) {
-            INSPIRE_LOGE("特征提取出错: %ld", ret);
+            INSPIRE_LOGE("Feature extraction error: %ld", ret);
             return -1;
         }
 
@@ -242,7 +236,6 @@ int search() {
         }
     }
 
-    // 准备一个图像进行搜索
     cv::Mat image = cv::imread("test_res/images/kun.jpg");
     HF_ImageData imageData = {0};
     imageData.data = image.data;
@@ -261,25 +254,23 @@ int search() {
     HF_FaceContextRunFaceTrack(session, imageSteamHandle, &multipleFaceData);
 
     if (multipleFaceData.detectedNum <= 0) {
-        INSPIRE_LOGE("未检测到人脸");
+        INSPIRE_LOGE("No face detected");
         return -1;
     }
 
     HF_FaceFeature feature = {0};
     ret = HF_FaceFeatureExtract(session, imageSteamHandle, multipleFaceData.tokens[0], &feature);
     if (ret != HSUCCEED) {
-        INSPIRE_LOGE("特征提取出错: %ld", ret);
+        INSPIRE_LOGE("Feature extraction error: %ld", ret);
         return -1;
     }
 
-    // 删除测试
 //    ret = HF_FaceContextFeatureRemove(session, 3);
 //    if (ret != HSUCCEED) {
-//        LOGE("删除失败: %ld", ret);
+//        LOGE("delete failed: %ld", ret);
 //    }
 
-    // 修改测试
-    std::string newName = "老六";
+    std::string newName = "Six";
     char *newTagName = new char[newName.size() + 1];
     std::strcpy(newTagName, newName.c_str());
     HF_FaceFeatureIdentity updateIdentity = {0};
@@ -288,7 +279,7 @@ int search() {
     updateIdentity.feature = &feature;
     ret = HF_FeatureHubFaceUpdate(updateIdentity);
     if (ret != HSUCCEED) {
-        INSPIRE_LOGE("更新失败: %ld", ret);
+        INSPIRE_LOGE("Update failure: %ld", ret);
     }
     delete[] newTagName;
 
@@ -299,44 +290,44 @@ int search() {
     HFloat confidence;
     ret = HF_FeatureHubFaceSearch(feature, &confidence, &searchIdentity);
     if (ret != HSUCCEED) {
-        INSPIRE_LOGE("搜索失败: %ld", ret);
+        INSPIRE_LOGE("Search failure: %ld", ret);
         return -1;
     }
 
-    INSPIRE_LOGD("搜索置信度: %f", confidence);
-    INSPIRE_LOGD("匹配到的tag: %s", searchIdentity.tag);
-    INSPIRE_LOGD("匹配到的customId: %d", searchIdentity.customId);
+    INSPIRE_LOGD("Search for confidence: %f", confidence);
+    INSPIRE_LOGD("The matched tag: %s", searchIdentity.tag);
+    INSPIRE_LOGD("The matched customId: %d", searchIdentity.customId);
 
 
     // Face Pipeline
     ret = HF_MultipleFacePipelineProcess(session, imageSteamHandle, &multipleFaceData, parameter);
     if (ret != HSUCCEED) {
-        INSPIRE_LOGE("pipeline执行失败: %ld", ret);
+        INSPIRE_LOGE("pipeline execution failed: %ld", ret);
         return -1;
     }
 
     HF_RGBLivenessConfidence livenessConfidence = {0};
     ret = HF_GetRGBLivenessConfidence(session, &livenessConfidence);
     if (ret != HSUCCEED) {
-        INSPIRE_LOGE("获取活体数据失败");
+        INSPIRE_LOGE("Failed to obtain live data");
         return -1;
     }
-    INSPIRE_LOGD("活体置信度: %f", livenessConfidence.confidence[0]);
+    INSPIRE_LOGD("Failed to obtain live data: %f", livenessConfidence.confidence[0]);
 
     HF_FaceMaskConfidence maskConfidence = {0};
     ret = HF_GetFaceMaskConfidence(session, &maskConfidence);
     if (ret != HSUCCEED) {
-        INSPIRE_LOGE("获取活体数据失败");
+        INSPIRE_LOGE("Failed to obtain live data");
         return -1;
     }
-    INSPIRE_LOGD("口罩佩戴置信度: %f", maskConfidence.confidence[0]);
+    INSPIRE_LOGD("Mask wearing confidence: %f", maskConfidence.confidence[0]);
 
     HInt32 faceNum;
     ret = HF_FeatureHubGetFaceCount(&faceNum);
     if (ret != HSUCCEED) {
-        INSPIRE_LOGE("获取失败");
+        INSPIRE_LOGE("fail to get");
     }
-    INSPIRE_LOGD("人脸特征数量: %d", faceNum);
+    INSPIRE_LOGD("Number of facial features: %d", faceNum);
 
     HF_FeatureHubViewDBTable();
 
@@ -344,7 +335,7 @@ int search() {
     HF_FaceFeatureIdentity identity;
     ret = HF_FeatureHubGetFaceIdentity(100, &identity);
     if (ret != HSUCCEED) {
-        INSPIRE_LOGE("获取特征失败");
+        INSPIRE_LOGE("Feature acquisition failure");
     }
 
     ret = HF_ReleaseImageStream(imageSteamHandle);

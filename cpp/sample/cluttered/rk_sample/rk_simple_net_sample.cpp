@@ -43,7 +43,7 @@ void test_rnet() {
 
         Timer timer;
         auto score = (*m_rnet_)(image);
-        LOGD("RNET耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("RNETcost: %f", timer.GetCostTimeUpdate());
         LOGD("has face: %f", score);
     }
 
@@ -53,7 +53,7 @@ void test_rnet() {
 
         Timer timer;
         auto score = (*m_rnet_)(image);
-        LOGD("耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("cost: %f", timer.GetCostTimeUpdate());
         LOGD("non face: %f", score);
     }
 
@@ -85,7 +85,7 @@ void test_mask() {
 
         Timer timer;
         auto score = (*m_mask_predict_)(image);
-        LOGD("耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("cost: %f", timer.GetCostTimeUpdate());
         LOGD("mask: %f", score);
     }
 
@@ -95,7 +95,7 @@ void test_mask() {
 
         Timer timer;
         auto score = (*m_mask_predict_)(image);
-        LOGD("耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("cost: %f", timer.GetCostTimeUpdate());
         LOGD("maskless: %f", score);
     }
 
@@ -131,7 +131,7 @@ void test_quality() {
 
             Timer timer;
             auto pose_res = (*m_face_quality_)(image);
-            LOGD("质量耗时: %f", timer.GetCostTimeUpdate());
+            LOGD("质量cost: %f", timer.GetCostTimeUpdate());
 
             for (auto &p: pose_res.lmk) {
                 cv::circle(image, p, 0, cv::Scalar(0, 0, 255), 2);
@@ -174,7 +174,7 @@ void test_landmark_mnn() {
     Timer timer;
     for (int i = 0; i < 50; ++i) {
         lmk = (*m_landmark_predictor_)(image);
-        LOGD("耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("cost: %f", timer.GetCostTimeUpdate());
     }
 
     for (int i = 0; i < FaceLandmark::NUM_OF_LANDMARK; ++i) {
@@ -216,7 +216,7 @@ void test_landmark() {
     Timer timer;
     for (int i = 0; i < 50; ++i) {
         lmk = (*m_landmark_predictor_)(image);
-        LOGD("LMK耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("LMKcost: %f", timer.GetCostTimeUpdate());
     }
 
     for (int i = 0; i < FaceLandmark::NUM_OF_LANDMARK; ++i) {

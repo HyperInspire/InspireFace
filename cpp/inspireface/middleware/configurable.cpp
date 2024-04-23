@@ -24,8 +24,8 @@ std::vector<std::string> Configurable::getNameList() const {
 }
 
 Configurable &Configurable::operator=(const Configurable &other) {
-    if (this != &other) { // 检查自赋值
-        m_configuration = other.m_configuration; // 使用 nlohmann::json 的赋值运算符进行深拷贝
+    if (this != &other) { // Check the self-assignment
+        m_configuration = other.m_configuration; // Deep copy using the assignment operator of nlohmann::json
     }
     return *this;
 }
