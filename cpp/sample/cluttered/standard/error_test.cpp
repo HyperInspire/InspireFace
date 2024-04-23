@@ -15,7 +15,7 @@ void non_file_test() {
     HContextHandle session;
     ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &session);
     if (ret != 0) {
-        std::cout << "错误的" << std::endl;
+        std::cout << "wrong" << std::endl;
     }
 
     HF_ReleaseFaceContext(session);

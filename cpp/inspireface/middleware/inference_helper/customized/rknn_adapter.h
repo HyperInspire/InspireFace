@@ -133,9 +133,9 @@ inline unsigned char *load_model_(const char *filename, int *model_size) {
  * @ingroup NeuralNetwork
  */
 enum Status {
-    SUCCESS = 0,                ///< 执行成功
-    ERROR_SHAPE_MATCH = 1,      ///< 执行错误，tensor的形状不匹配
-    ERROR_DATA_ORDER = 2        ///< 执行错误，tensor数据排序错误
+    SUCCESS = 0,                ///< Executed successfully
+    ERROR_SHAPE_MATCH = 1,      ///< Execution error. tensor shapes don't match
+    ERROR_DATA_ORDER = 2        ///< Execution error, tensor data sorting error
 };
 
 /**
@@ -327,10 +327,10 @@ public:
     }
 
     /**
-     * @brief 获取输出层的数据（UINT8）
-     * @details 返回推理结束后输出层UInt8格式的数据，需要先执行推理才能获取
-     * @param index 输出层索引
-     * @return 返回输出数据的指针
+     * @brief Get the output layer data (UINT8)
+     * @details Returns the output layer UInt8 format data after inference, which can only be obtained by inference first
+     * @param index Output level index
+     * @return Returns a pointer to the output data
      */
     u_int8_t *GetOutputDataU8(const int index) {
         return (uint8_t *) (output_tensors_[index].buf);

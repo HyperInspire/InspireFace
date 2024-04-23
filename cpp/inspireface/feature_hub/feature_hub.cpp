@@ -288,7 +288,7 @@ int32_t FeatureHub::UpdateFaceFeature(const std::vector<float> &feature, int fea
     int blockIndex = featureIndex / NUM_OF_FEATURES_IN_BLOCK; // The FeatureBlock where the computation is located
     int rowIndex = featureIndex % NUM_OF_FEATURES_IN_BLOCK;   // Calculate the line number in the FeatureBlock
 
-    // 调用适当的FeatureBlock的注册函数
+    // Call the appropriate FeatureBlock registration function
     int32_t result = m_feature_matrix_list_[blockIndex]->UpdateFeature(rowIndex, feature, tag, customId);
 
     return result;
