@@ -211,7 +211,7 @@ def batch_import_lfw_faces(lfw_path, engine: isf.InspireFaceEngine, num_of_faces
 class QuickComparison(object):
 
     def __init__(self, path: str):
-        param = isf.EngineCustomParameter()
+        param = isf.SessionCustomParameter()
         param.enable_recognition = True
         self.engine = isf.InspireFaceEngine(path, param=param)
         self.tracker = isf.FaceTrackerModule(self.engine)

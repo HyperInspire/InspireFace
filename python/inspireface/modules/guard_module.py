@@ -27,16 +27,16 @@ class FaceGuardModule(object):
             raise NotImplemented(error)
         tokens = [face.token for face in faces]
 
-        HF_FaceBasicToken_Array = HF_FaceBasicToken * len(tokens)
+        HF_FaceBasicToken_Array = HFFaceBasicToken * len(tokens)
         tokens_array = HF_FaceBasicToken_Array(*tokens)
-        tokens_ptr = cast(tokens_array, Ptr_HF_FaceBasicToken)
+        tokens_ptr = cast(tokens_array, PHFFaceBasicToken)
 
-        multi_faces = HF_MultipleFaceData()
+        multi_faces = HFMultipleFaceData()
         multi_faces.detectedNum = len(tokens)
         multi_faces.tokens = tokens_ptr
 
-        ret = HF_MultipleFacePipelineProcessOptional(self.engine.handle, stream.handle,
-                                                     Ptr_HF_MultipleFaceData(multi_faces), option)
+        ret = HFMultipleFacePipelineProcessOptional(self.engine.handle, stream.handle,
+                                                     PHFMultipleFaceData(multi_faces), option)
         if ret != 0:
             error = f"Execution pipeline error: {ret}"
             raise Exception(error)
@@ -49,8 +49,8 @@ class FaceGuardModule(object):
         if option & ENABLE_MASK_DETECT:
             if not self.engine.param.enable_mask_detect:
                 raise Exception("Mask detection is not enabled when creating engine")
-            mask_results = HF_FaceMaskConfidence()
-            ret = HF_GetFaceMaskConfidence(self.engine.handle, Ptr_HF_FaceMaskConfidence(mask_results))
+            mask_results = HFFaceMaskConfidence()
+            ret = HFGetFaceMaskConfidence(self.engine.handle, PHFFaceMaskConfidence(mask_results))
             if ret != 0:
                 error = f"Get mask result error: {ret}"
                 raise Exception(error)
@@ -60,8 +60,8 @@ class FaceGuardModule(object):
         if option & ENABLE_LIVENESS:
             if not self.engine.param.enable_liveness:
                 raise Exception("RGB Liveness detection is not enabled when creating engine")
-            liveness_results = HF_RGBLivenessConfidence()
-            ret = HF_GetRGBLivenessConfidence(self.engine.handle, Ptr_HF_RGBLivenessConfidence(liveness_results))
+            liveness_results = HFRGBLivenessConfidence()
+            ret = HFGetRGBLivenessConfidence(self.engine.handle, PHFRGBLivenessConfidence(liveness_results))
 
             if ret != 0:
                 error = f"Get liveness result error: {ret}"
@@ -74,7 +74,7 @@ class FaceGuardModule(object):
                 raise Exception("Face quality detection is not enabled when creating engine")
             for idx in range(len(tokens)):
                 quality = HFloat()
-                ret = HF_FaceQualityDetect(self.engine.handle, faces[idx].token, HPFloat(quality))
+                ret = HFFaceQualityDetect(self.engine.handle, faces[idx].token, HPFloat(quality))
                 if ret != 0:
                     error = f"Get quality result error: {ret}"
                     raise Exception(error)

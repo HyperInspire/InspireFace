@@ -11,7 +11,7 @@ class EngineCase(unittest.TestCase):
         pass
 
     def test_create_engine(self):
-        option_param = isf.EngineCustomParameter()
+        option_param = isf.SessionCustomParameter()
         max_num_of_tracked_faces = 3
         engine = isf.create_engine(bundle_file=TEST_MODEL_PATH,
                                    param=option_param,
@@ -21,7 +21,7 @@ class EngineCase(unittest.TestCase):
         self.assertEqual(True, engine.check())
 
     def test_release_engine(self):
-        option_param = isf.EngineCustomParameter()
+        option_param = isf.SessionCustomParameter()
         max_num_of_tracked_faces = 3
         engine = isf.create_engine(bundle_file=TEST_MODEL_PATH,
                                    param=option_param,
@@ -43,7 +43,7 @@ class CameraStreamCase(unittest.TestCase):
 
     def test_stream_rotation(self) -> None:
         # Prepare material
-        engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=isf.EngineCustomParameter(), )
+        engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=isf.SessionCustomParameter(), )
         self.assertEqual(True, engine.check(), "Failed to create engine.")
         # Use tracker module
         tracker = isf.FaceTrackerModule(engine)

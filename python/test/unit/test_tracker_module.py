@@ -9,7 +9,7 @@ class FaceTrackerCase(unittest.TestCase):
     def setUp(self) -> None:
         # Prepare material
         track_mode = isf.DETECT_MODE_IMAGE  # Use video mode
-        self.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=isf.EngineCustomParameter(),
+        self.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=isf.SessionCustomParameter(),
                                         detect_mode=track_mode)
         self.assertEqual(True, self.engine.check(), "Failed to create engine.")
 
@@ -127,7 +127,7 @@ class FaceTrackerBenchmarkCase(unittest.TestCase):
         self.assertIsNotNone(self.image)
         # Prepare material
         track_mode = isf.DETECT_MODE_VIDEO  # Use video mode
-        self.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=isf.EngineCustomParameter(),
+        self.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=isf.SessionCustomParameter(),
                                         detect_mode=track_mode)
         self.assertEqual(True, self.engine.check(), "Failed to create engine.")
         # Use tracker module

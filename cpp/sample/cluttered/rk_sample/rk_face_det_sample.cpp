@@ -12,7 +12,7 @@
 using namespace inspire;
 
 int main() {
-    auto detModel = "test_res/model_zip/Gundam_RV1109";
+    auto detModel = "test_res/pack/Gundam_RV1109";
     InspireArchive inspireArchive;
     auto ret = inspireArchive.ReLoad(detModel);
     if (ret != SARC_SUCCESS) {

@@ -9,7 +9,7 @@
 void non_file_test() {
 
     HResult ret;
-    HPath path = "test_res/model_zip/abc";     // Use error path
+    HPath path = "test_res/pack/abc";     // Use error path
     HF_ContextCustomParameter parameter = {0};
     HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
     HContextHandle session;
