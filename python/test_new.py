@@ -2,7 +2,7 @@ import cv2
 from inspireface.modules import inspire_face as isf
 
 ret = isf.launch_inspireface("/Users/tunm/work/InspireFace/test_res/pack/Pikachu")
-assert ret == 0
+assert ret
 
 config = isf.FeatureHubConfiguration(
     feature_block_num=10,
@@ -24,4 +24,4 @@ result = session.face_detection(stream)
 
 if len(result) > 0:
     feature = session.face_feature_extract(image, result[0])
-    print(feature)
+    print(isf.feature_comparison(feature, feature))
