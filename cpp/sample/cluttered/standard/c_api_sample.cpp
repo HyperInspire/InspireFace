@@ -21,9 +21,9 @@ int compare() {
     HResult ret;
     // Initialize context
 #ifdef ENABLE_RKNN
-    HPath path = "test_res/model_zip/Gundam_RV1109";
+    HPath path = "test_res/pack/Gundam_RV1109";
 #else
-    HPath path = "test_res/model_zip/Pikachu";
+    HPath path = "test_res/pack/Pikachu";
 #endif
     HF_ContextCustomParameter parameter = {0};
     parameter.enable_liveness = 1;
@@ -148,7 +148,7 @@ int compare() {
 int search() {
     HResult ret;
     // 初始化context
-    HString path = "test_res/model_zip/Pikachu";
+    HString path = "test_res/pack/Pikachu";
     HF_ContextCustomParameter parameter = {0};
     parameter.enable_liveness = 1;
     parameter.enable_mask_detect = 1;

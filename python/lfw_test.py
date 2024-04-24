@@ -106,7 +106,7 @@ if __name__ == "__main__":
     lfw_dir = "/Users/tunm/datasets/lfw_funneled"  # Change the path to your LFW funneled folder
     pairs_filename = "/Users/tunm/datasets/lfw_funneled/pairs.txt"  # Change to your pairs.txt file path
 
-    path = "/Users/tunm/work/HyperFace/test_res/model_zip/Optimus-t1"
+    path = "/Users/tunm/work/HyperFace/test_res/pack/Optimus-t1"
     quick = QuickComparison(path)
 
     pairs = read_pairs(pairs_filename)

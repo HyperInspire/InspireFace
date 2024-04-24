@@ -528,7 +528,7 @@ HResult HFGetRGBLivenessConfidence(HFSession session, PHFRGBLivenessConfidence c
     return HSUCCEED;
 }
 
-HResult HFGetFaceMaskConfidence(HFSession session, PHF_FaceMaskConfidence confidence) {
+HResult HFGetFaceMaskConfidence(HFSession session, PHFFaceMaskConfidence confidence) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }

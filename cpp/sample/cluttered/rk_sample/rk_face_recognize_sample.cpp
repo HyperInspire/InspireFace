@@ -79,7 +79,7 @@ void rec_function() {
 
 int main() {
     loader = std::make_shared<InspireArchive>();
-    loader->ReLoad("test_res/model_zip/Gundam_RV1109");
+    loader->ReLoad("test_res/pack/Gundam_RV1109");
 
 
 

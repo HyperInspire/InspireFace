@@ -15,7 +15,7 @@ class FaceRecognitionBaseCase(unittest.TestCase):
     def setUp(self) -> None:
         # Prepare material
         track_mode = isf.DETECT_MODE_IMAGE
-        param = isf.EngineCustomParameter()
+        param = isf.SessionCustomParameter()
         param.enable_recognition = True
         self.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=param,
                                         detect_mode=track_mode)
@@ -94,7 +94,7 @@ class FaceRecognitionCRUDMemoryCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         track_mode = isf.DETECT_MODE_IMAGE
-        param = isf.EngineCustomParameter()
+        param = isf.SessionCustomParameter()
         param.enable_recognition = True
         cls.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=param,
                                        detect_mode=track_mode)
@@ -193,7 +193,7 @@ class FaceRecognitionFeatureExtractCase(unittest.TestCase):
         self.assertIsNotNone(self.stream)
         # Prepare material
         track_mode = isf.DETECT_MODE_IMAGE
-        param = isf.EngineCustomParameter()
+        param = isf.SessionCustomParameter()
         param.enable_recognition = True
         self.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=param,
                                         detect_mode=track_mode)
@@ -252,7 +252,7 @@ class FaceRecognitionSearchCase(unittest.TestCase):
 
         num = len(cls.inventory_level_list)
         track_mode = isf.DETECT_MODE_IMAGE
-        param = isf.EngineCustomParameter()
+        param = isf.SessionCustomParameter()
         param.enable_recognition = True
         cls.inventory_level = [isf.create_engine(bundle_file=TEST_MODEL_PATH, param=param,
                                                  detect_mode=track_mode) for _ in range(num)]
@@ -271,7 +271,7 @@ class FaceRecognitionSearchCase(unittest.TestCase):
     def setUp(self) -> None:
         # Prepare material
         track_mode = isf.DETECT_MODE_IMAGE
-        param = isf.EngineCustomParameter()
+        param = isf.SessionCustomParameter()
         param.enable_recognition = True
         self.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=param,
                                         detect_mode=track_mode)

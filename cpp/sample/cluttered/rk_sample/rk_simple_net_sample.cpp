@@ -276,7 +276,7 @@ int test_liveness_ctx() {
     CustomPipelineParameter parameter;
     parameter.enable_liveness = true;
     FaceContext ctx;
-    ctx.Configuration("test_res/model_zip/Gundam_RV1109", inspire::DETECT_MODE_IMAGE, 3, parameter);
+    ctx.Configuration("test_res/pack/Gundam_RV1109", inspire::DETECT_MODE_IMAGE, 3, parameter);
     std::vector<std::string> names = {
             "test_res/images/test_data/real.jpg",
             "test_res/images/test_data/fake.jpg",
@@ -298,7 +298,7 @@ int test_liveness_ctx() {
 }
 
 int main() {
-    loader.ReLoad("test_res/model_zip/Gundam_RV1109");
+    loader.ReLoad("test_res/pack/Gundam_RV1109");
 
 //    test_rnet();
 
