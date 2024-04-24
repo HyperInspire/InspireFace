@@ -12,7 +12,7 @@
  | 10 | HERR_INVALID_BUFFER_SIZE | 34 | Invalid copy token | 
  | 11 | HERR_INVALID_IMAGE_STREAM_PARAM | 35 | Invalid image param | 
  | 12 | HERR_INVALID_SERIALIZATION_FAILED | 36 | Invalid face serialization failed | 
- | 13 | HERR_SESS_BASE | 1280 | Context error types | 
+ | 13 | HERR_SESS_BASE | 1280 | Session error types | 
  | 14 | HERR_SESS_FUNCTION_UNUSABLE | 1282 | Function not usable | 
  | 15 | HERR_SESS_TRACKER_FAILURE | 1283 | Tracker module not initialized | 
  | 16 | HERR_SESS_INVALID_RESOURCE | 1290 | Invalid static resource | 
@@ -46,4 +46,4 @@
  | 44 | HERR_ARCHIVE_LOAD_MODEL_FAILURE | 1361 | Model load failure | 
  | 45 | HERR_ARCHIVE_FILE_FORMAT_ERROR | 1362 | The archive format is incorrect | 
  | 46 | HERR_ARCHIVE_REPETITION_LOAD | 1363 | Do not reload the model | 
- | 47 | HERR_ARCHIVE_NOT_LOAD | 1364 | Do not reload the model | 
+ | 47 | HERR_ARCHIVE_NOT_LOAD | 1364 | Model not loaded | 
