@@ -57,6 +57,8 @@ class ImageStream(object):
     def handle(self):
         return self._handle
 
+# == Session API ==
+
 class FaceInformation:
 
     def __init__(self,
@@ -200,7 +202,6 @@ class InspireFaceSession(object):
 
         return feature
 
-
     def _get_faces_boundary_boxes(self) -> List:
         num_of_faces = self.multiple_faces.detectedNum
         rects_ptr = self.multiple_faces.rects
@@ -230,12 +231,15 @@ class InspireFaceSession(object):
         return tokens
 
 
+# == Global API ==
 
-
-def launch_inspireface(resorece_path: str) -> int:
+def launch_inspireface(resorece_path: str) -> bool:
     path_c = String(bytes(resorece_path, encoding="utf8"))
     ret = HFLaunchInspireFace(path_c)
-    return ret
+    if ret != 0:
+        logger.error(f"Launch InspireFace failure: {ret}")
+        return False
+    return True
 
 @dataclass
 class FeatureHubConfiguration:
@@ -254,7 +258,28 @@ class FeatureHubConfiguration:
             searchMode=self.search_mode
         )
 
-def feature_hub_enable(config: FeatureHubConfiguration) -> int:
+def feature_hub_enable(config: FeatureHubConfiguration) -> bool:
     ret = HFFeatureHubDataEnable(config._c_struct())
-    return ret
+    if ret != 0:
+        logger.error(f"FeatureHub enable failure: {ret}")
+        return False
+    return True
 
+
+def feature_comparison(feature1: np.ndarray, feature2: np.ndarray) ->float:
+    faces = [feature1, feature2]
+    feats = list()
+    for face in faces:
+        feature = HFFaceFeature()
+        data_ptr = face.ctypes.data_as(HPFloat)
+        feature.size = HInt32(face.size)
+        feature.data = data_ptr
+        feats.append(feature)
+
+    comparison_result = HFloat()
+    ret = HFFaceComparison(feats[0], feats[1], HPFloat(comparison_result))
+    if ret != 0:
+        logger.error(f"Comparison error: {ret}")
+        return -1.0
+
+    return comparison_result.value
