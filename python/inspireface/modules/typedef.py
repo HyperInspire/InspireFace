@@ -15,13 +15,13 @@ ENABLE_INTERACTION = HF_ENABLE_INTERACTION
 DETECT_MODE_IMAGE = HF_DETECT_MODE_IMAGE
 DETECT_MODE_VIDEO = HF_DETECT_MODE_VIDEO
 
-ROTATION_0 = CAMERA_ROTATION_0
-ROTATION_90 = CAMERA_ROTATION_90
-ROTATION_180 = CAMERA_ROTATION_180
-ROTATION_270 = CAMERA_ROTATION_270
+ROTATION_0 = HF_CAMERA_ROTATION_0
+ROTATION_90 = HF_CAMERA_ROTATION_90
+ROTATION_180 = HF_CAMERA_ROTATION_180
+ROTATION_270 = HF_CAMERA_ROTATION_270
 
 @dataclass
-class EngineCustomParameter:
+class SessionCustomParameter:
     enable_recognition = False
     enable_liveness = False
     enable_ir_liveness = False
@@ -32,7 +32,7 @@ class EngineCustomParameter:
     enable_interaction_liveness = False
 
     def dump(self):
-        custom_param = HF_ContextCustomParameter(
+        custom_param = HFSessionCustomParameter(
             enable_recognition=int(self.enable_recognition),
             enable_liveness=int(self.enable_liveness),
             enable_ir_liveness=int(self.enable_ir_liveness),
@@ -47,14 +47,20 @@ class EngineCustomParameter:
 
 
 @dataclass
-class DatabaseConfiguration:
+class FeatureHubConfiguration:
+    feature_block_num: int
     enable_use_db: bool
     db_path: str
+    search_threshold: float
+    search_mode: HF_SEARCH_MODE_EAGER
 
     def to_ctypes(self):
-        return HF_DatabaseConfiguration(
+        return HFFeatureHubConfiguration(
             enableUseDb=int(self.enable_use_db),
-            dbPath=String(bytes(self.db_path, encoding="utf8"))
+            dbPath=String(bytes(self.db_path, encoding="utf8")),
+            featureBlockNum=self.feature_block_num,
+            searchThreshold=self.search_threshold,
+            searchMode=self.search_mode
         )
 
 
@@ -67,7 +73,7 @@ class FaceInformation:
                  roll: float,
                  yaw: float,
                  pitch: float,
-                 _token: HF_FaceBasicToken,
+                 _token: HFFaceBasicToken,
                  _feature: np.array = None):
         self.track_id = track_id
         self.top_left = top_left
@@ -80,14 +86,14 @@ class FaceInformation:
 
         # copy token
         token_size = HInt32()
-        HF_GetFaceBasicTokenSize(HPInt32(token_size))
+        HFGetFaceBasicTokenSize(HPInt32(token_size))
         buffer_size = token_size.value
         self.buffer = create_string_buffer(buffer_size)
-        ret = HF_CopyFaceBasicToken(_token, self.buffer, token_size)
+        ret = HFCopyFaceBasicToken(_token, self.buffer, token_size)
         if ret != 0:
             raise Exception("Failed to copy face basic token")
 
-        self._token = HF_FaceBasicToken()
+        self._token = HFFaceBasicToken()
         self._token.size = buffer_size
         self._token.data = cast(addressof(self.buffer), c_void_p)
 
@@ -122,7 +128,7 @@ class FaceIdentity(object):
         self.tag = tag
 
     @staticmethod
-    def from_ctypes(raw_identity: HF_FaceFeatureIdentity):
+    def from_ctypes(raw_identity: HFFaceFeatureIdentity):
         feature_size = raw_identity.feature.contents.size
         feature_data_ptr = raw_identity.feature.contents.data
         feature_data = np.ctypeslib.as_array(cast(feature_data_ptr, HPFloat), (feature_size,))
@@ -132,14 +138,14 @@ class FaceIdentity(object):
         return FaceIdentity(data=feature_data, custom_id=custom_id, tag=tag)
 
     def to_ctypes(self):
-        feature = HF_FaceFeature()
+        feature = HFFaceFeature()
         data_ptr = self.feature.ctypes.data_as(HPFloat)
         feature.size = HInt32(self.feature.size)
         feature.data = data_ptr
-        return HF_FaceFeatureIdentity(
+        return HFFaceFeatureIdentity(
             customId=self.custom_id,
             tag=String(bytes(self.tag, encoding="utf8")),
-            feature=Ptr_HF_FaceFeature(feature)
+            feature=PHFFaceFeature(feature)
         )
 
 

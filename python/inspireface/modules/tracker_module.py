@@ -53,14 +53,14 @@ class FaceTrackerModule(object):
             return []
 
     def set_track_mode(self, mode: int):
-        ret = HF_FaceContextSetFaceTrackMode(self.engine.handle, mode)
+        ret = HFExecuteFaceTrack(self.engine.handle, mode)
         if ret != 0:
             raise Exception("Select track mode error.")
 
     def track_from_stream(self, stream: CameraStream) -> int:
-        self.multiple_faces = HF_MultipleFaceData()
-        ret = HF_FaceContextRunFaceTrack(self.engine.handle, stream.handle,
-                                         Ptr_HF_MultipleFaceData(self.multiple_faces))
+        self.multiple_faces = HFMultipleFaceData()
+        ret = HFExecuteFaceTrack(self.engine.handle, stream.handle,
+                                         PHFMultipleFaceData(self.multiple_faces))
         if ret != 0:
             raise Exception("An error occurred tracking faces")
 
@@ -71,7 +71,7 @@ class FaceTrackerModule(object):
         return self.track_from_stream(stream)
 
     def set_track_preview_size(self, size=192):
-        HF_FaceContextSetTrackPreviewSize(self.engine.handle, size)
+        HFSessionSetTrackPreviewSize(self.engine.handle, size)
 
     def get_faces_boundary_boxes(self) -> List:
         num_of_faces = self.multiple_faces.detectedNum
@@ -94,7 +94,7 @@ class FaceTrackerModule(object):
 
         return angles
 
-    def get_faces_tokens(self) -> List[HF_FaceBasicToken]:
+    def get_faces_tokens(self) -> List[HFFaceBasicToken]:
         num_of_faces = self.multiple_faces.detectedNum
         tokens_ptr = self.multiple_faces.tokens
         tokens = [tokens_ptr[i] for i in range(num_of_faces)]

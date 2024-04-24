@@ -46,7 +46,7 @@ typedef enum HFImageFormat {
     HF_STREAM_BGRA = 3,            ///< Image in BGR format with alpha channel.
     HF_STREAM_YUV_NV12 = 4,        ///< Image in YUV NV12 format.
     HF_STREAM_YUV_NV21 = 5,        ///< Image in YUV NV21 format.
-} HF_ImageFormat;
+} HFImageFormat;
 
 
 /**
@@ -58,7 +58,7 @@ typedef enum HFRotation {
     HF_CAMERA_ROTATION_90 = 1,     ///< 90 degree rotation.
     HF_CAMERA_ROTATION_180 = 2,    ///< 180 degree rotation.
     HF_CAMERA_ROTATION_270 = 3,    ///< 270 degree rotation.
-} HF_Rotation;
+} HFRotation;
 
 
 /**
@@ -536,7 +536,7 @@ HFGetRGBLivenessConfidence(HFSession session, PHFRGBLivenessConfidence confidenc
 typedef struct HFFaceMaskConfidence {
     HInt32 num;         ///< Number of faces detected.
     HPFloat confidence; ///< Confidence level of mask detection for each face.
-} HFFaceMaskConfidence, *PHF_FaceMaskConfidence;
+} HFFaceMaskConfidence, *PHFFaceMaskConfidence;
 
 /**
  * @brief Get the face mask confidence.
@@ -548,7 +548,7 @@ typedef struct HFFaceMaskConfidence {
  * @param confidence Pointer to the structure where face mask confidence data will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFGetFaceMaskConfidence(HFSession session, PHF_FaceMaskConfidence confidence);
+HYPER_CAPI_EXPORT extern HResult HFGetFaceMaskConfidence(HFSession session, PHFFaceMaskConfidence confidence);
 
 /**
  * @brief Struct representing face quality predict confidence.

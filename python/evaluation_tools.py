@@ -1,14 +1,14 @@
 import cv2
 import numpy as np
 
-from inspireface.modules.base import InspireFaceEngine, EngineCustomParameter, FaceTrackerModule, \
+from inspireface.modules.base import InspireFaceEngine, SessionCustomParameter, FaceTrackerModule, \
     FaceRecognitionModule
 
 
 class QuickComparison(object):
 
     def __init__(self, path: str, threshold: float = 0.48):
-        param = EngineCustomParameter()
+        param = SessionCustomParameter()
         param.enable_recognition = True
         self.engine = InspireFaceEngine(path, param=param)
         self.tracker = FaceTrackerModule(self.engine)
@@ -59,7 +59,7 @@ class QuickComparison(object):
 
 
 if __name__ == "__main__":
-    path = "/Users/tunm/work/HyperFace/test_res/model_zip/Pikachu-t1"
+    path = "/Users/tunm/work/HyperFace/test_res/pack/Pikachu-t1"
     quick = QuickComparison(path, threshold=0.47)
     image1 = cv2.imread("/Users/tunm/Downloads/lfw_funneled/Eliane_Karp/Eliane_Karp_0001.jpg")
     image2 = cv2.imread("/Users/tunm/Downloads/lfw_funneled/Eliane_Karp/Eliane_Karp_0002.jpg")

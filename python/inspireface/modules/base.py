@@ -1,7 +1,7 @@
 import numpy as np
 from loguru import logger
 from .typedef import *
-
+from .core.native import *
 
 def to_dict(func):
     def wrapper(*args, **kwargs):
@@ -28,7 +28,7 @@ def get_dict(struct):
 class CameraStream(object):
 
     @staticmethod
-    def load_from_cv_image(image: np.ndarray, stream_format=STREAM_BGR, rotation=CAMERA_ROTATION_0):
+    def load_from_cv_image(image: np.ndarray, stream_format=HF_STREAM_BGR, rotation=HF_CAMERA_ROTATION_0):
         h, w, c = image.shape
         if c != 3 and c != 4:
             raise Exception("Thr channel must be 3 or 4.")
@@ -50,14 +50,14 @@ class CameraStream(object):
             data_ptr = ctypes.cast(data.ctypes.data, ctypes.POINTER(ctypes.c_uint8))
         else:
             data_ptr = ctypes.cast(data, ctypes.POINTER(ctypes.c_uint8))
-        image_struct = HF_ImageData()
+        image_struct = HFImageData()
         image_struct.data = data_ptr
         image_struct.width = width
         image_struct.height = height
         image_struct.format = self.data_format
         image_struct.rotation = self.rotate
-        self._handle = HImageHandle()
-        ret = HF_CreateImageStream(Ptr_HF_ImageData(image_struct), self._handle)
+        self._handle = HFImageStream()
+        ret = HFCreateImageStream(PHFImageData(image_struct), self._handle)
         if ret != 0:
             raise Exception("Error")
 
@@ -85,7 +85,7 @@ class CameraStream(object):
 
     def release(self):
         if self._handle is not None:
-            ret = HF_ReleaseImageStream(self._handle)
+            ret = HFReleaseImageStream(self._handle)
             if ret != 0:
                 raise Exception("Error")
 
@@ -93,7 +93,7 @@ class CameraStream(object):
         self.release()
 
     def debug_show(self):
-        HF_DeBugImageStreamImShow(self._handle)
+        HFDeBugImageStreamImShow(self._handle)
 
     @property
     def handle(self):
@@ -102,26 +102,20 @@ class CameraStream(object):
 
 class InspireFaceEngine(object):
 
-    def __init__(self, bundle_file: str,
-                 param: EngineCustomParameter,
-                 db_configuration: DatabaseConfiguration = None,
+    def __init__(self,
+                 param: SessionCustomParameter,
                  detect_mode: int = HF_DETECT_MODE_IMAGE,
                  max_detect_num: int = 10):
-        bundle_path = String(bytes(bundle_file, encoding="utf8"))
-        self._handle = HContextHandle()
+        self._handle = HFSession()
         self.param = param
-        ret = HF_CreateFaceContextFromResourceFile(bundle_path, param.dump(), detect_mode, max_detect_num, self._handle)
+        ret = HFCreateInspireFaceSession(param.dump(), detect_mode, max_detect_num, self._handle)
         if ret != 0:
             raise Exception(f"Create engine error: {ret}")
 
-        if db_configuration is not None:
-            ret = HF_FaceContextDataPersistence(self._handle, db_configuration.to_ctypes())
-            if ret != 0:
-                raise Exception(f"Failed to configure database: {ret}")
 
     def release(self):
         if self._handle is not None:
-            ret = HF_ReleaseFaceContext(self._handle)
+            ret = HFReleaseImageStream(self._handle)
             self._handle = None
             if ret != 0:
                 raise Exception(f"Release engine error: {ret}")
@@ -138,8 +132,8 @@ class InspireFaceEngine(object):
 
     @staticmethod
     def version() -> str:
-        version = HF_InspireFaceVersion()
-        ret = HF_QueryInspireFaceVersion(Ptr_HF_InspireFaceVersion(version))
+        version = HFInspireFaceVersion()
+        ret = HFQueryInspireFaceVersion(PHFInspireFaceVersion(version))
         if ret != 0:
             raise Exception(f"The version number cannot be obtained. Check whether the configuration is correct: {ret}")
 
