@@ -19,7 +19,7 @@ int main() {
             "test_res/images/test_data/1.jpg",
             "test_res/images/test_data/2.jpg",
     };
-    InspireArchive loader("test_res/model_zip/test_zip_rec");
+    InspireArchive loader("test_res/pack/test_zip_rec");
     {
         InspireModel model;
         loader.LoadModel("feature", model);

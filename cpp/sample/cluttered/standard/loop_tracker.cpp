@@ -9,7 +9,7 @@
 using namespace inspire;
 
 int main() {
-    InspireArchive archive("test_res/model_zip/Pikachu");
+    InspireArchive archive("test_res/pack/Pikachu");
 
     FaceTrack track;
 //    FaceRecognition recognition(archive, true);

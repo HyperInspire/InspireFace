@@ -8,7 +8,7 @@ if __name__ == '__main__':
     face_image_2 = cv2.imread("/Users/tunm/work/HyperFace/test_res/images/face_comp.jpeg")
     stream2 = isf.CameraStream.load_from_cv_image(face_image_2)
 
-    param = isf.EngineCustomParameter()
+    param = isf.SessionCustomParameter()
     param.enable_recognition = True
     param.enable_liveness = True
     param.enable_mask_detect = True
@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     db_config = isf.DatabaseConfiguration(enable_use_db=True, db_path="./")
 
-    engine = isf.create_engine("/Users/tunm/work/HyperFace/test_res/model_zip/Pikachu-t1", param=param,
+    engine = isf.create_engine("/Users/tunm/work/HyperFace/test_res/pack/Pikachu-t1", param=param,
                            db_configuration=db_config)
     tracker = isf.FaceTrackerModule(engine)
     recognition = isf.FaceRecognitionModule(engine)

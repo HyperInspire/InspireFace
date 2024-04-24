@@ -10,7 +10,7 @@ using namespace inspire;
 
 int main(int argc, char** argv) {
     InspireArchive loader;
-    loader.ReLoad("resource/model_zip/Pikachu");
+    loader.ReLoad("resource/pack/Pikachu");
 
     Configurable param;
     param.set<std::string>("input_layer", "data");

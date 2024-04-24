@@ -38,7 +38,7 @@ CURRENT_PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 MAIN_PROJECT_PATH = os.path.dirname(CURRENT_PROJECT_PATH)
 
 # Model zip path
-MODEL_ZIP_PATH = os.path.join(MAIN_PROJECT_PATH, "test_res/model_zip/")
+MODEL_ZIP_PATH = os.path.join(MAIN_PROJECT_PATH, "test_res/pack/")
 
 # Testing model full path
 TEST_MODEL_PATH = os.path.join(MODEL_ZIP_PATH, TEST_MODEL_NAME)
