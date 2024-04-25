@@ -244,6 +244,9 @@ public:
      */
     int32_t SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold, bool mostSimilar=true);
 
+    // TODO
+    int32_t SearchFaceFeatureTopK(const std::vector<float>& queryFeature, std::vector<SearchResult> &searchResultList, float threshold);
+
     /**
      * @brief Inserts a facial feature into the feature block.
      *
@@ -299,6 +302,8 @@ private:
     Embedded m_getter_face_feature_cache_;                         ///< Cache for face feature data used in search operations
     std::shared_ptr<FaceFeaturePtr> m_face_feature_ptr_cache_;     ///< Shared pointer to cache of face feature pointers
     char m_string_cache_[256];                                     ///< Cache for temporary string storage
+
+    std::vector<SearchResult> m_search_top_k_cache_;               ///< TODO
 
 private:
     std::vector<std::shared_ptr<FeatureBlock>> m_feature_matrix_list_; ///< List of feature blocks.
