@@ -1,5 +1,6 @@
 import os
 import sys
+import inspireface as ifac
 
 # ++ OPTIONAL ++
 
@@ -17,8 +18,8 @@ ENABLE_SEARCH_BENCHMARK_TEST = True
 ENABLE_LFW_PRECISION_TEST = True
 
 # Testing model name
-TEST_MODEL_NAME = "Pikachu-t1"
-# TEST_MODEL_NAME = "Megatron-t1"
+TEST_MODEL_NAME = "Pikachu"
+# TEST_MODEL_NAME = "Megatron"
 
 # Testing length of face feature
 TEST_MODEL_FACE_FEATURE_LENGTH = 512
@@ -63,3 +64,5 @@ LFW_FUNNELED_DIR_PATH = "/Users/tunm/datasets/lfw_funneled/"
 LFW_PREDICT_DATA_CACHE_PATH = os.path.join(TMP_FOLDER, "LFW_PRED.npy")
 
 assert os.path.exists(LFW_FUNNELED_DIR_PATH), "'LFW_FUNNELED_DIR_PATH' is not found."
+
+ifac.launch(TEST_MODEL_PATH)
