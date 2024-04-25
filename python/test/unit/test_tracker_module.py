@@ -32,7 +32,7 @@ class FaceTrackerCase(unittest.TestCase):
         self.assertEqual(len(self.engine.face_detection(any_image)), 0)
 
     def test_face_pose(self):
-        self.engine.set_track_mode(isf.HF_DETECT_MODE_IMAGE)
+        self.engine.set_track_mode(ifac.HF_DETECT_MODE_IMAGE)
 
         # Test yaw (shake one's head)
         left_face = cv2.imread(get_test_data("pose/left_face.jpeg"))
@@ -83,7 +83,7 @@ class FaceTrackerCase(unittest.TestCase):
         self.assertEqual(True, right_face_roll > 30)
 
     def test_face_track_from_video(self):
-        self.engine.set_track_mode(isf.HF_DETECT_MODE_VIDEO)
+        self.engine.set_track_mode(ifac.HF_DETECT_MODE_VIDEO)
 
         # Read a video file
         video_gen = read_video_generator(get_test_data("video/810_1684206192.mp4"))
@@ -117,7 +117,7 @@ class FaceTrackerBenchmarkCase(unittest.TestCase):
         self.assertIsNotNone(self.image)
         # Prepare material
         track_mode = ifac.HF_DETECT_MODE_VIDEO  # Use video mode
-        self.engine = ifac.InspireFaceSession(isf.HF_ENABLE_NONE, track_mode, )
+        self.engine = ifac.InspireFaceSession(ifac.HF_ENABLE_NONE, track_mode, )
         # Prepare video data
         self.video_gen = read_video_generator(get_test_data("video/810_1684206192.mp4"))
 

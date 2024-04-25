@@ -34,7 +34,7 @@ int32_t Launch::Load(const std::string &path) {
             return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
         }
     } else {
-        INSPIRE_LOGE("Do not reload the model.");
+        INSPIRE_LOGW("Do not reload the model.");
         return HERR_ARCHIVE_REPETITION_LOAD;
     }
 }
