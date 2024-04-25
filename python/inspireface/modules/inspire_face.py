@@ -5,6 +5,7 @@ from typing import Tuple, List
 from dataclasses import dataclass
 from loguru import logger
 
+
 class ImageStream(object):
 
     @staticmethod
@@ -57,22 +58,21 @@ class ImageStream(object):
     def handle(self):
         return self._handle
 
+
 # == Session API ==
 
 class FaceInformation:
 
     def __init__(self,
                  track_id: int,
-                 top_left: Tuple,
-                 bottom_right: Tuple,
+                 location: Tuple,
                  roll: float,
                  yaw: float,
                  pitch: float,
                  _token: HFFaceBasicToken,
                  _feature: np.array = None):
         self.track_id = track_id
-        self.top_left = top_left
-        self.bottom_right = bottom_right
+        self.location = location
         self.roll = roll
         self.yaw = yaw
         self.pitch = pitch
@@ -84,7 +84,7 @@ class FaceInformation:
         self.buffer = create_string_buffer(buffer_size)
         ret = HFCopyFaceBasicToken(_token, self.buffer, token_size)
         if ret != 0:
-            raise Exception("Failed to copy face basic token")
+            logger.error("Failed to copy face basic token")
 
         self._token = HFFaceBasicToken()
         self._token.size = buffer_size
@@ -102,7 +102,6 @@ class SessionCustomParameter:
     enable_face_quality = False
     enable_interaction_liveness = False
 
-
     def _c_struct(self):
         custom_param = HFSessionCustomParameter(
             enable_recognition=int(self.enable_recognition),
@@ -117,15 +116,23 @@ class SessionCustomParameter:
 
         return custom_param
 
+
 class InspireFaceSession(object):
 
-    def __init__(self, param: SessionCustomParameter, detect_mode: int = HF_DETECT_MODE_IMAGE, max_detect_num: int = 10):
+    def __init__(self, param, detect_mode: int = HF_DETECT_MODE_IMAGE,
+                 max_detect_num: int = 10):
         self.multiple_faces = None
         self._sess = HFSession()
         self.param = param
-        ret = HFCreateInspireFaceSession(param._c_struct(), detect_mode, max_detect_num, self._sess)
+        if isinstance(self.param, SessionCustomParameter):
+            ret = HFCreateInspireFaceSession(self.param._c_struct(), detect_mode, max_detect_num, self._sess)
+        elif isinstance(self.param, int):
+            ret = HFCreateInspireFaceSessionOptional(self.param, detect_mode, max_detect_num, self._sess)
+        else:
+            raise NotImplemented("")
         if ret != 0:
-            raise Exception(f"Create session error: {ret}")
+            st = f"Create session error: {ret}"
+            raise Exception(st)
 
     def face_detection(self, image) -> List[FaceInformation]:
         if isinstance(image, np.ndarray):
@@ -158,8 +165,7 @@ class InspireFaceSession(object):
                 _token = tokens[idx]
 
                 info = FaceInformation(
-                    top_left=top_left,
-                    bottom_right=bottom_right,
+                    location=(top_left[0], top_left[1], bottom_right[0], bottom_right[1]),
                     roll=roll,
                     yaw=yaw,
                     pitch=pitch,
@@ -182,7 +188,7 @@ class InspireFaceSession(object):
         if ret != 0:
             logger.error(f"set track preview size error: {ret}")
 
-    def face_feature_extract(self, image, face_information: FaceInformation) :
+    def face_feature_extract(self, image, face_information: FaceInformation):
         if isinstance(image, np.ndarray):
             stream = ImageStream.load_from_cv_image(image)
         elif isinstance(image, ImageStream):
@@ -192,9 +198,10 @@ class InspireFaceSession(object):
         feature_length = HInt32()
         HFGetFeatureLength(byref(feature_length))
 
-        feature = np.zeros((feature_length.value, ), dtype=np.float32)
+        feature = np.zeros((feature_length.value,), dtype=np.float32)
 
-        ret = HFFaceFeatureExtractCpy(self._sess, stream.handle, face_information._token, feature.ctypes.data_as(ctypes.POINTER(HFloat)))
+        ret = HFFaceFeatureExtractCpy(self._sess, stream.handle, face_information._token,
+                                      feature.ctypes.data_as(ctypes.POINTER(HFloat)))
 
         if ret != 0:
             logger.error(f"face feature extract error: {ret}")
@@ -233,13 +240,14 @@ class InspireFaceSession(object):
 
 # == Global API ==
 
-def launch_inspireface(resorece_path: str) -> bool:
-    path_c = String(bytes(resorece_path, encoding="utf8"))
+def launch(resource_path: str) -> bool:
+    path_c = String(bytes(resource_path, encoding="utf8"))
     ret = HFLaunchInspireFace(path_c)
     if ret != 0:
         logger.error(f"Launch InspireFace failure: {ret}")
         return False
     return True
+
 
 @dataclass
 class FeatureHubConfiguration:
@@ -258,6 +266,7 @@ class FeatureHubConfiguration:
             searchMode=self.search_mode
         )
 
+
 def feature_hub_enable(config: FeatureHubConfiguration) -> bool:
     ret = HFFeatureHubDataEnable(config._c_struct())
     if ret != 0:
@@ -266,7 +275,15 @@ def feature_hub_enable(config: FeatureHubConfiguration) -> bool:
     return True
 
 
-def feature_comparison(feature1: np.ndarray, feature2: np.ndarray) ->float:
+def feature_hub_disable() -> bool:
+    ret = HFFeatureHubDataDisable()
+    if ret != 0:
+        logger.error(f"FeatureHub disable failure: {ret}")
+        return False
+    return True
+
+
+def feature_comparison(feature1: np.ndarray, feature2: np.ndarray) -> float:
     faces = [feature1, feature2]
     feats = list()
     for face in faces:
@@ -282,4 +299,70 @@ def feature_comparison(feature1: np.ndarray, feature2: np.ndarray) ->float:
         logger.error(f"Comparison error: {ret}")
         return -1.0
 
-    return comparison_result.value
+    return float(comparison_result.value)
+
+
+class FaceIdentity(object):
+
+    def __init__(self, data: np.ndarray, custom_id: int, tag: str):
+        self.feature = data
+        self.custom_id = custom_id
+        self.tag = tag
+
+    @staticmethod
+    def from_ctypes(raw_identity: HFFaceFeatureIdentity):
+        feature_size = raw_identity.feature.contents.size
+        feature_data_ptr = raw_identity.feature.contents.data
+        feature_data = np.ctypeslib.as_array(cast(feature_data_ptr, HPFloat), (feature_size,))
+        custom_id = raw_identity.customId
+        tag = raw_identity.tag.data.decode('utf-8')
+
+        return FaceIdentity(data=feature_data, custom_id=custom_id, tag=tag)
+
+    def _c_struct(self):
+        feature = HFFaceFeature()
+        data_ptr = self.feature.ctypes.data_as(HPFloat)
+        feature.size = HInt32(self.feature.size)
+        feature.data = data_ptr
+        return HFFaceFeatureIdentity(
+            customId=self.custom_id,
+            tag=String(bytes(self.tag, encoding="utf8")),
+            feature=PHFFaceFeature(feature)
+        )
+
+
+def feature_hub_set_search_threshold(threshold: float):
+    HFFeatureHubFaceSearchThresholdSetting(threshold)
+
+
+def feature_hub_face_insert(face_identity: FaceIdentity) -> bool:
+    ret = HFFeatureHubInsertFeature(face_identity._c_struct())
+    if ret != 0:
+        logger.error(f"Failed to insert face feature data into FeatureHub")
+        return False
+    return True
+
+
+@dataclass
+class SearchResult:
+    confidence: float
+    similar_identity: FaceIdentity
+
+
+def feature_hub_face_search(data: np.ndarray) -> SearchResult:
+    feature = HFFaceFeature(size=HInt32(data.size), data=data.ctypes.data_as(HPFloat))
+    confidence = HFloat()
+    most_similar = HFFaceFeatureIdentity()
+    ret = HFFeatureHubFaceSearch(feature, HPFloat(confidence), PHFFaceFeatureIdentity(most_similar))
+    if ret != 0:
+        logger.error(f"Failed to search face: {ret}")
+        return SearchResult(confidence=-1, similar_identity=FaceIdentity(np.zeros(0), most_similar.customId, "None"))
+    if most_similar.customId != -1:
+        search_identity = FaceIdentity.from_ctypes(most_similar)
+        search_result = SearchResult(confidence=confidence.value, similar_identity=search_identity, )
+    else:
+        none = FaceIdentity(np.zeros(0), most_similar.customId, "None")
+        search_result = SearchResult(confidence=confidence.value, similar_identity=none, )
+
+    return search_result
+
