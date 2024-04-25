@@ -46,7 +46,7 @@ class ImageStream(object):
         if self._handle is not None:
             ret = HFReleaseImageStream(self._handle)
             if ret != 0:
-                raise Exception("Error")
+                logger.error(f"Release ImageStream error: {ret}")
 
     def __del__(self):
         self.release()
@@ -60,6 +60,13 @@ class ImageStream(object):
 
 
 # == Session API ==
+
+@dataclass
+class FaceExtended:
+    rgb_liveness_confidence: float
+    mask_confidence: float
+    quality_confidence: float
+
 
 class FaceInformation:
 
@@ -135,12 +142,7 @@ class InspireFaceSession(object):
             raise Exception(st)
 
     def face_detection(self, image) -> List[FaceInformation]:
-        if isinstance(image, np.ndarray):
-            stream = ImageStream.load_from_cv_image(image)
-        elif isinstance(image, ImageStream):
-            stream = image
-        else:
-            raise NotImplemented("Place check input type.")
+        stream = self._get_image_stream(image)
         self.multiple_faces = HFMultipleFaceData()
         ret = HFExecuteFaceTrack(self._sess, stream.handle,
                                  PHFMultipleFaceData(self.multiple_faces))
@@ -179,7 +181,7 @@ class InspireFaceSession(object):
             return []
 
     def set_track_mode(self, mode: int):
-        ret = HFExecuteFaceTrack(self._sess, mode)
+        ret = HFSessionSetFaceTrackMode(self._sess, mode)
         if ret != 0:
             logger.error(f"set track model error: {ret}")
 
@@ -188,13 +190,33 @@ class InspireFaceSession(object):
         if ret != 0:
             logger.error(f"set track preview size error: {ret}")
 
+
+    def face_pipeline(self, image, faces: List[FaceInformation], exec_param) -> List[FaceExtended]:
+        stream = self._get_image_stream(image)
+        fn, pm, flag = self._get_processing_function_and_param(exec_param)
+        tokens = [face._token for face in faces]
+        tokens_array = (HFFaceBasicToken * len(tokens))(*tokens)
+        tokens_ptr = cast(tokens_array, PHFFaceBasicToken)
+
+        multi_faces = HFMultipleFaceData()
+        multi_faces.detectedNum = len(tokens)
+        multi_faces.tokens = tokens_ptr
+        ret = fn(self._sess, stream.handle, PHFMultipleFaceData(multi_faces), pm)
+
+        if ret != 0:
+            logger.error(f"face pipeline error: {ret}")
+            return []
+
+        extends = [FaceExtended(-1.0, -1.0, -1.0) for _ in range(len(faces))]
+        self._update_mask_confidence(exec_param, flag, extends)
+        self._update_rgb_liveness_confidence(exec_param, flag, extends)
+        self._update_face_quality_confidence(exec_param, flag, extends)
+
+        return extends
+
+
     def face_feature_extract(self, image, face_information: FaceInformation):
-        if isinstance(image, np.ndarray):
-            stream = ImageStream.load_from_cv_image(image)
-        elif isinstance(image, ImageStream):
-            stream = image
-        else:
-            raise NotImplemented("Place check input type.")
+        stream = self._get_image_stream(image)
         feature_length = HInt32()
         HFGetFeatureLength(byref(feature_length))
 
@@ -208,6 +230,58 @@ class InspireFaceSession(object):
             return None
 
         return feature
+
+
+    @staticmethod
+    def _get_image_stream(image):
+        if isinstance(image, np.ndarray):
+            return ImageStream.load_from_cv_image(image)
+        elif isinstance(image, ImageStream):
+            return image
+        else:
+            raise NotImplemented("Place check input type.")
+
+    @staticmethod
+    def _get_processing_function_and_param(exec_param):
+        if isinstance(exec_param, SessionCustomParameter):
+            return HFMultipleFacePipelineProcess, exec_param._c_struct(), "object"
+        elif isinstance(exec_param, int):
+            return HFMultipleFacePipelineProcessOptional, exec_param, "bitmask"
+        else:
+            raise NotImplemented("Unsupported parameter type")
+
+    def _update_mask_confidence(self, exec_param, flag, extends):
+        if (flag == "object" and exec_param.enable_mask_detect) or (
+                flag == "bitmask" and exec_param & HF_ENABLE_MASK_DETECT):
+            mask_results = HFFaceMaskConfidence()
+            ret = HFGetFaceMaskConfidence(self._sess, PHFFaceMaskConfidence(mask_results))
+            if ret == 0:
+                for i in range(mask_results.num):
+                    extends[i].mask_confidence = mask_results.confidence[i]
+            else:
+                logger.error(f"Get mask result error: {ret}")
+
+    def _update_rgb_liveness_confidence(self, exec_param, flag, extends: List[FaceExtended]):
+        if (flag == "object" and exec_param.enable_liveness) or (
+                flag == "bitmask" and exec_param & HF_ENABLE_LIVENESS):
+            liveness_results = HFRGBLivenessConfidence()
+            ret = HFGetRGBLivenessConfidence(self._sess, PHFRGBLivenessConfidence(liveness_results))
+            if ret == 0:
+                for i in range(liveness_results.num):
+                    extends[i].rgb_liveness_confidence = liveness_results.confidence[i]
+            else:
+                logger.error(f"Get rgb liveness result error: {ret}")
+
+    def _update_face_quality_confidence(self, exec_param, flag, extends: List[FaceExtended]):
+        if (flag == "object" and exec_param.enable_face_quality) or (
+                flag == "bitmask" and exec_param & HF_ENABLE_QUALITY):
+            quality_results = HFFaceQualityConfidence()
+            ret = HFGetFaceQualityConfidence(self._sess, PHFFaceQualityConfidence(quality_results))
+            if ret == 0:
+                for i in range(quality_results.num):
+                    extends[i].quality_confidence = quality_results.confidence[i]
+            else:
+                logger.error(f"Get quality result error: {ret}")
 
     def _get_faces_boundary_boxes(self) -> List:
         num_of_faces = self.multiple_faces.detectedNum
@@ -365,4 +439,52 @@ def feature_hub_face_search(data: np.ndarray) -> SearchResult:
         search_result = SearchResult(confidence=confidence.value, similar_identity=none, )
 
     return search_result
+
+
+def feature_hub_face_update(face_identity: FaceIdentity) -> bool:
+    ret = HFFeatureHubFaceUpdate(face_identity._c_struct())
+    if ret != 0:
+        logger.error(f"Failed to update face feature data to FeatureHub")
+        return False
+    return True
+
+
+def feature_hub_face_remove(custom_id: int) -> bool:
+    ret = HFFeatureHubFaceRemove(custom_id)
+    if ret != 0:
+        logger.error(f"Failed to update face feature data to FeatureHub")
+        return False
+    return True
+
+
+def feature_hub_get_face_identity(custom_id: int):
+    identify = HFFaceFeatureIdentity()
+    ret = HFFeatureHubGetFaceIdentity(custom_id, PHFFaceFeatureIdentity(identify))
+    if ret != 0:
+        logger.error("Get face identity errors from FeatureHub")
+        return None
+
+    return FaceIdentity.from_ctypes(identify)
+
+
+def feature_hub_get_face_count() -> int:
+    count = HInt32()
+    ret = HFFeatureHubGetFaceCount(HPInt32(count))
+    if ret != 0:
+        logger.error(f"Failed to get count: {ret}")
+
+    return int(count.value)
+
+
+def view_table_in_terminal():
+    ret = HFFeatureHubViewDBTable()
+    if ret != 0:
+        logger.error(f"Failed to view DB: {ret}")
+
+
+def version() -> str:
+    ver = HFInspireFaceVersion()
+    HFQueryInspireFaceVersion(PHFInspireFaceVersion(ver))
+    st = f"{ver.major}.{ver.minor}.{ver.patch}"
+    return st
 
