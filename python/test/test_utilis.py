@@ -1,5 +1,5 @@
 from test.test_settings import *
-import inspireface as isf
+import inspireface as ifac
 import numpy as np
 import time
 from functools import wraps
@@ -12,7 +12,7 @@ from unittest import skipUnless as optional
 
 def title(name: str = None):
     print("--" * 35)
-    print(f" InspireFace Version: {isf.__version__}")
+    print(f" InspireFace Version: {ifac.__version__}")
     if name is not None:
         print(f" {name}")
     print("--" * 35)
@@ -179,84 +179,81 @@ def lfw_generator(directory_path):
                     yield image, name
 
 
-# def batch_import_lfw_faces(lfw_path, engine: isf.InspireFaceEngine, num_of_faces: int):
-#     tracker = isf.FaceTrackerModule(engine)
-#     tracker.set_track_mode(isf.DETECT_MODE_IMAGE)
-#     recognition = isf.FaceRecognitionModule(engine)
-#     generator = lfw_generator(lfw_path)
-#     registered_faces = 0
-#
-#     # With the tqdm wrapper generator, unknown totals are used with total=None, and tqdm will run in unknown total mode
-#     for image, name in tqdm(generator, total=num_of_faces, desc="Registering faces"):
-#         # 执行人脸检测
-#         faces_info = tracker.execute(image)
-#         if len(faces_info) == 0:
-#             continue
-#
-#         # Extract features from the first face detected
-#         first_face_info = faces_info[0]
-#         recognition.extract_feature(image, first_face_info)
-#
-#         # The extracted features are used for face registration
-#         if first_face_info._feature is not None:
-#             face_identity = isf.FaceIdentity(data=first_face_info, tag=name, custom_id=registered_faces)
-#             recognition.face_register(face_identity)
-#             registered_faces += 1
-#             if registered_faces >= num_of_faces:
-#                 break
-#
-#     print(f"Completed. Total faces registered: {registered_faces}")
+def batch_import_lfw_faces(lfw_path, engine: ifac.InspireFaceSession, num_of_faces: int):
+    engine.set_track_mode(ifac.HF_DETECT_MODE_IMAGE)
+    generator = lfw_generator(lfw_path)
+    registered_faces = 0
+
+    # With the tqdm wrapper generator, unknown totals are used with total=None, and tqdm will run in unknown total mode
+    for image, name in tqdm(generator, total=num_of_faces, desc="Registering faces"):
+        # 执行人脸检测
+        faces_info = engine.face_detection(image)
+        if len(faces_info) == 0:
+            continue
+
+        # Extract features from the first face detected
+        first_face_info = faces_info[0]
+        feature = engine.face_feature_extract(image, first_face_info)
+
+        # The extracted features are used for face registration
+        if feature is not None:
+            face_identity = ifac.FaceIdentity(data=feature, tag=name, custom_id=registered_faces)
+            ifac.feature_hub_face_insert(face_identity)
+            registered_faces += 1
+            if registered_faces >= num_of_faces:
+                break
+
+    print(f"Completed. Total faces registered: {registered_faces}")
 
 
-# class QuickComparison(object):
-#
-#     def __init__(self, path: str):
-#         param = isf.SessionCustomParameter()
-#         param.enable_recognition = True
-#         self.engine = isf.InspireFaceEngine(path, param=param)
-#         self.tracker = isf.FaceTrackerModule(self.engine)
-#         self.recognition = isf.FaceRecognitionModule(self.engine)
-#         self.faces_set_1 = None
-#         self.faces_set_2 = None
-#
-#     def setup(self, image1: np.ndarray, image2: np.ndarray) -> bool:
-#         images = [image1, image2]
-#         self.faces_set_1 = list()
-#         self.faces_set_2 = list()
-#         for idx, img in enumerate(images):
-#             results = self.tracker.execute(img)
-#             if len(results) > 0:
-#                 for info in results:
-#                     self.recognition.extract_feature(img, info)
-#             else:
-#                 return False
-#
-#             if idx == 0:
-#                 self.faces_set_1 = results
-#             else:
-#                 self.faces_set_2 = results
-#
-#         return True
-#
-#     def comp(self) -> float:
-#         """
-#         Cross-compare one by one, keep the value with the highest score and return it, calling self.recognition.face_comparison1v1(info1, info2)
-#         :return: Maximum matching score
-#         """
-#         max_score = 0.0
-#
-#         # Each face in faces_set_1 is traversed and compared with each face in faces_set_2
-#         for face1 in self.faces_set_1:
-#             for face2 in self.faces_set_2:
-#                 # Use self.recognition.face_comparison1v1(info1, info2) to compare faces
-#                 score = self.recognition.face_comparison1v1(face1, face2)
-#                 if score > max_score:
-#                     max_score = score
-#
-#         return max_score
-#
-#     def match(self, threshold) -> bool:
-#         return self.comp() > threshold
+class QuickComparison(object):
+
+    def __init__(self):
+        param = ifac.SessionCustomParameter()
+        param.enable_recognition = True
+        self.engine = ifac.InspireFaceSession(param)
+        self.faces_set_1 = None
+        self.faces_set_2 = None
+
+    def setup(self, image1: np.ndarray, image2: np.ndarray) -> bool:
+        images = [image1, image2]
+        self.faces_set_1 = list()
+        self.faces_set_2 = list()
+        for idx, img in enumerate(images):
+            results = self.engine.face_detection(img)
+            vector_list = list()
+            if len(results) > 0:
+                for info in results:
+                    feature = self.engine.face_feature_extract(img, info)
+                    vector_list.append(feature)
+            else:
+                return False
+
+            if idx == 0:
+                self.faces_set_1 = vector_list
+            else:
+                self.faces_set_2 = vector_list
+
+        return True
+
+    def comp(self) -> float:
+        """
+        Cross-compare one by one, keep the value with the highest score and return it, calling self.recognition.face_comparison1v1(info1, info2)
+        :return: Maximum matching score
+        """
+        max_score = 0.0
+
+        # Each face in faces_set_1 is traversed and compared with each face in faces_set_2
+        for face1 in self.faces_set_1:
+            for face2 in self.faces_set_2:
+                score = ifac.feature_comparison(face1, face2)
+                if score > max_score:
+                    max_score = score
+
+        return max_score
+
+    def match(self, threshold) -> bool:
+        return self.comp() > threshold
 
 
 def find_best_threshold(similarities, labels):

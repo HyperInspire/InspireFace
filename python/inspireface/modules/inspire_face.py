@@ -318,8 +318,12 @@ def launch(resource_path: str) -> bool:
     path_c = String(bytes(resource_path, encoding="utf8"))
     ret = HFLaunchInspireFace(path_c)
     if ret != 0:
-        logger.error(f"Launch InspireFace failure: {ret}")
-        return False
+        if ret == 1363:
+            logger.warning("Duplicate loading was found")
+            return True
+        else:
+            logger.error(f"Launch InspireFace failure: {ret}")
+            return False
     return True
 
 
@@ -487,4 +491,10 @@ def version() -> str:
     HFQueryInspireFaceVersion(PHFInspireFaceVersion(ver))
     st = f"{ver.major}.{ver.minor}.{ver.patch}"
     return st
+
+def set_logging_level(level: int) -> None:
+    HFSetLogLevel(level)
+
+def disable_logging() -> None:
+    HFLogDisable()
 
