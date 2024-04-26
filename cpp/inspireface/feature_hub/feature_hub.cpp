@@ -358,6 +358,7 @@ int32_t FeatureHub::FindFeatureIndexByCustomId(int32_t customId) {
 
 
 int32_t FeatureHub::SearchFaceFeature(const Embedded &queryFeature, SearchResult &searchResult) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
@@ -383,6 +384,7 @@ int32_t FeatureHub::SearchFaceFeature(const Embedded &queryFeature, SearchResult
 }
 
 int32_t FeatureHub::SearchFaceFeatureTopK(const Embedded& queryFeature, size_t topK) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
@@ -403,6 +405,7 @@ int32_t FeatureHub::SearchFaceFeatureTopK(const Embedded& queryFeature, size_t t
 
 int32_t FeatureHub::FaceFeatureInsertFromCustomId(const std::vector<float> &feature, const std::string &tag,
                                                    int32_t customId) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
@@ -425,6 +428,7 @@ int32_t FeatureHub::FaceFeatureInsertFromCustomId(const std::vector<float> &feat
 }
 
 int32_t FeatureHub::FaceFeatureRemoveFromCustomId(int32_t customId) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
@@ -443,6 +447,7 @@ int32_t FeatureHub::FaceFeatureRemoveFromCustomId(int32_t customId) {
 
 int32_t FeatureHub::FaceFeatureUpdateFromCustomId(const std::vector<float> &feature, const std::string &tag,
                                                    int32_t customId) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
@@ -464,6 +469,7 @@ int32_t FeatureHub::FaceFeatureUpdateFromCustomId(const std::vector<float> &feat
 }
 
 int32_t FeatureHub::GetFaceFeatureFromCustomId(int32_t customId) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;

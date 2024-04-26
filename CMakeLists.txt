@@ -8,6 +8,13 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+endif()
+
 set(TARGET_PLATFORM "drawin-x86" CACHE STRING "Target platform")
 
 # OpenCV dependency configuration
