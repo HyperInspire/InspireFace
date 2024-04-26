@@ -158,7 +158,6 @@ public:
      */
     void SetRecognitionSearchMode(SearchMode mode);
 
-
     /**
      * @brief Computes the cosine similarity between two feature vectors.
      *
@@ -342,6 +341,8 @@ private:
     std::shared_ptr<SQLiteFaceManage> m_db_;                       ///< Shared pointer to the SQLiteFaceManage object
 
     bool m_enable_{false};                                         ///< Running status
+
+    std::mutex m_res_mtx_;                                         ///< Mutex for thread safety.
 
 };
 
