@@ -35,6 +35,94 @@ TEST_CASE("test_FeatureHubBase", "[FeatureHub][BasicFunction]") {
         delete []dbPathStr;
     }
 
+    SECTION("FeatureHub search top-k") {
+        HResult ret;
+        HFFeatureHubConfiguration configuration = {0};
+        auto dbPath = GET_SAVE_DATA(".test");
+        HString dbPathStr = new char[dbPath.size() + 1];
+        std::strcpy(dbPathStr, dbPath.c_str());
+        configuration.enablePersistence = 1;
+        configuration.dbPath = dbPathStr;
+        configuration.featureBlockNum = 20;
+        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+        configuration.searchThreshold = 0.48f;
+        // Delete the previous data before testing
+        if (std::remove(configuration.dbPath) != 0) {
+            spdlog::trace("Error deleting file");
+        }
+        ret = HFFeatureHubDataEnable(configuration);
+        REQUIRE(ret == HSUCCEED);
+
+        std::vector<std::vector<HFloat>> baseFeatures;
+        size_t genSizeOfBase = 2000;
+        HInt32 featureLength;
+        HFGetFeatureLength(&featureLength);
+        REQUIRE(featureLength > 0);
+        for (int i = 0; i < genSizeOfBase; ++i) {
+            auto feat = GenerateRandomFeature(featureLength);
+            baseFeatures.push_back(feat);
+            auto name = std::to_string(i);
+            // Establish a security buffer
+            std::vector<char> nameBuffer(name.begin(), name.end());
+            nameBuffer.push_back('\0');
+            // Construct face feature
+            HFFaceFeature feature = {0};
+            feature.size = feat.size();
+            feature.data = feat.data();
+            HFFaceFeatureIdentity identity = {0};
+            identity.feature = &feature;
+            identity.customId = i;
+            identity.tag = nameBuffer.data();
+            ret = HFFeatureHubInsertFeature(identity);
+            REQUIRE(ret == HSUCCEED);
+        }
+        HInt32 totalFace;
+        ret = HFFeatureHubGetFaceCount(&totalFace);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(totalFace == genSizeOfBase);
+
+        // 2000 data was imported
+        HInt32 targetId = 523;
+        auto targetFeature = baseFeatures[targetId];
+
+        std::vector<std::vector<HFloat>> similarVectors;
+        std::vector<HInt32> coverIds = {2, 300, 524, 789, 1024, 1995};
+        for (int i = 0; i < coverIds.size(); ++i) {
+            auto feat = SimulateSimilarVector(targetFeature);
+            // Construct face feature
+            HFFaceFeature feature = {0};
+            feature.size = feat.size();
+            feature.data = feat.data();
+            HFFaceFeatureIdentity identity = {0};
+            identity.feature = &feature;
+            identity.customId = coverIds[i];
+            identity.tag = "HOLD";
+            ret = HFFeatureHubFaceUpdate(identity);
+            REQUIRE(ret == HSUCCEED);
+        }
+
+        // Generate a new similar feature for search
+        auto topK = 10;
+        auto searchFeat = SimulateSimilarVector(targetFeature);
+        HFFaceFeature searchFeature = {0};
+        searchFeature.size = searchFeat.size();
+        searchFeature.data = searchFeat.data();
+        HFSearchTopKResults results = {0};
+        ret = HFFeatureHubFaceSearchTopK(searchFeature, topK, &results);
+        REQUIRE(ret == HSUCCEED);
+
+        coverIds.push_back(targetId);
+
+        REQUIRE(coverIds.size() == results.size);
+        for (int i = 0; i < results.size; ++i) {
+            REQUIRE(std::find(coverIds.begin(), coverIds.end(), results.customIds[i]) != coverIds.end());
+        }
+
+        ret = HFFeatureHubDataDisable();
+        REQUIRE(ret == HSUCCEED);
+
+        delete []dbPathStr;
+    }
 
     SECTION("Repeat the enable and disable tests") {
         HResult ret;

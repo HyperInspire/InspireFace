@@ -34,6 +34,13 @@ public:
     int32_t SearchNearest(const std::vector<float>& queryFeature, SearchResult &searchResult) override;
 
     /**
+     * @brief Search the first k features in a block that are closest to a given query feature.
+     * @param topK Maximum number of similarities
+     * @param searchResults outputs
+     * */
+    int32_t SearchTopKNearest(const std::vector<float>& queryFeature, size_t topK, std::vector<SearchResult> &searchResults) override;
+
+    /**
      * @brief Retrieves a feature from the feature block.
      * @param row Index of the feature to retrieve.
      * @param feature Vector to store the retrieved feature.

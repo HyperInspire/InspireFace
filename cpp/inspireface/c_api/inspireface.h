@@ -375,8 +375,17 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubDataDisable();
 typedef struct HFFaceFeatureIdentity {
     HInt32 customId;             ///< Custom identifier for the face feature.
     HString tag;                 ///< Tag associated with the face feature.
-    PHFFaceFeature feature;  ///< Pointer to the face feature.
+    PHFFaceFeature feature;      ///< Pointer to the face feature.
 } HFFaceFeatureIdentity, *PHFFaceFeatureIdentity;
+
+/**
+ * Search structure for top-k mode
+ * */
+typedef struct HFSearchTopKResults {
+    HInt32 size;            ///< The number of faces searched
+    HPFloat confidence;      ///< Search confidence(it has already been filtered once by the threshold)
+    HPInt32 customIds;      ///< fACE customIds
+} HFSearchTopKResults, *PHFSearchTopKResults;
 
 /**
  * @brief Set the face recognition search threshold.
@@ -426,6 +435,16 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceSearch(HFFaceFeature searchFeature, HPFloat confidence, PHFFaceFeatureIdentity mostSimilar);
+
+/**
+ * @brief Search for the most similar k facial features in the feature group
+ *
+ * @param searchFeature The face feature to be searched.
+ * @param confidence topK Maximum number of searches
+ * @param PHFSearchTopKResults Output search result
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceSearchTopK(HFFaceFeature searchFeature, HInt32 topK, PHFSearchTopKResults results);
 
 /**
  * @brief Remove a face feature from the features group based on custom ID.
