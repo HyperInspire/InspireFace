@@ -5,6 +5,8 @@
 #include "feature_hub.h"
 #include "simd.h"
 #include "herror.h"
+#include <thread>
+
 
 namespace inspire {
 
@@ -220,6 +222,45 @@ int32_t FeatureHub::SearchFaceFeature(const std::vector<float>& queryFeature, Se
     return HSUCCEED; // No matching feature found but not an error
 }
 
+
+
+int32_t FeatureHub::SearchFaceFeatureTopK(const std::vector<float>& queryFeature, std::vector<SearchResult> &searchResultList, size_t maxTopK, float threshold) {
+    if (queryFeature.size() != NUM_OF_FEATURES_IN_BLOCK) {
+        return HERR_SESS_REC_FEAT_SIZE_ERR;
+    }
+
+    std::vector<SearchResult> tempResultList;
+    searchResultList.clear();
+
+    for (int blockIndex = 0; blockIndex < m_feature_matrix_list_.size(); ++blockIndex) {
+        if (m_feature_matrix_list_[blockIndex]->GetUsedCount() == 0) {
+            continue;
+        }
+
+        tempResultList.clear();
+        int32_t result = m_feature_matrix_list_[blockIndex]->SearchTopKNearest(queryFeature, maxTopK, tempResultList);
+        if (result != HSUCCEED) {
+            return result;
+        }
+
+        for (const SearchResult& result : tempResultList) {
+            if (result.score >= threshold) {
+                searchResultList.push_back(result);
+            }
+        }
+    }
+
+    std::sort(searchResultList.begin(), searchResultList.end(), [](const SearchResult& a, const SearchResult& b) {
+        return a.score > b.score;
+    });
+
+    if (searchResultList.size() > maxTopK) {
+        searchResultList.resize(maxTopK);
+    }
+
+    return HSUCCEED;
+}
+
 int32_t FeatureHub::DeleteFaceFeature(int featureIndex) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
         return HERR_SESS_REC_INVALID_INDEX; // Invalid feature index number
@@ -341,6 +382,25 @@ int32_t FeatureHub::SearchFaceFeature(const Embedded &queryFeature, SearchResult
     return ret;
 }
 
+int32_t FeatureHub::SearchFaceFeatureTopK(const Embedded& queryFeature, size_t topK) {
+    if (!m_enable_) {
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
+        return HERR_FT_HUB_DISABLE;
+    }
+    m_top_k_confidence_.clear();
+    m_top_k_custom_ids_cache_.clear();
+    auto ret = SearchFaceFeatureTopK(queryFeature, m_search_top_k_cache_, topK, m_recognition_threshold_);
+    if (ret == HSUCCEED) {
+        for (int i = 0; i < m_search_top_k_cache_.size(); ++i) {
+            auto &item = m_search_top_k_cache_[i];
+            m_top_k_custom_ids_cache_.push_back(item.customId);
+            m_top_k_confidence_.push_back(item.score);
+        }
+    }
+
+    return ret;
+}
+
 int32_t FeatureHub::FaceFeatureInsertFromCustomId(const std::vector<float> &feature, const std::string &tag,
                                                    int32_t customId) {
     if (!m_enable_) {
@@ -456,6 +516,14 @@ char *FeatureHub::GetStringCache() {
 
 const std::shared_ptr<FaceFeaturePtr>& FeatureHub::GetFaceFeaturePtrCache() const {
     return m_face_feature_ptr_cache_;
+}
+
+std::vector<float> &FeatureHub::GetTopKConfidence() {
+    return m_top_k_confidence_;
+}
+
+std::vector<int32_t> &FeatureHub::GetTopKCustomIdsCache() {
+    return m_top_k_custom_ids_cache_;
 }
 
 

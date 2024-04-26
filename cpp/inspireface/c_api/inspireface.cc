@@ -369,6 +369,25 @@ HResult HFFeatureHubFaceSearch(HFFaceFeature searchFeature, HPFloat confidence, 
     return ret;
 }
 
+HResult HFFeatureHubFaceSearchTopK(HFFaceFeature searchFeature, HInt32 topK, PHFSearchTopKResults results) {
+    if (searchFeature.data == nullptr) {
+        return HERR_INVALID_FACE_FEATURE;
+    }
+    std::vector<float> feat;
+    feat.reserve(searchFeature.size);
+    for (int i = 0; i < searchFeature.size; ++i) {
+        feat.push_back(searchFeature.data[i]);
+    }
+    HInt32 ret = FEATURE_HUB->SearchFaceFeatureTopK(feat, topK);
+    if (ret == HSUCCEED) {
+        results->size = FEATURE_HUB->GetTopKConfidence().size();
+        results->confidence = FEATURE_HUB->GetTopKConfidence().data();
+        results->customIds = FEATURE_HUB->GetTopKCustomIdsCache().data();
+    }
+
+    return ret;
+}
+
 HResult HFFeatureHubFaceRemove(HInt32 customId) {
     auto ret = FEATURE_HUB->FaceFeatureRemoveFromCustomId(customId);
     return ret;
