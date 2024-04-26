@@ -162,6 +162,63 @@ int32_t FeatureBlockOpenCV::SearchNearest(const std::vector<float>& queryFeature
     return HSUCCEED;
 }
 
+
+int32_t FeatureBlockOpenCV::SearchTopKNearest(const std::vector<float> &queryFeature, size_t topK, std::vector<SearchResult> &searchResults) {
+    std::lock_guard<std::mutex> lock(m_mtx_);
+
+    if (queryFeature.size() != m_feature_length_) {
+        return HERR_SESS_REC_FEAT_SIZE_ERR;
+    }
+
+    if (GetUsedCount() == 0) {
+        return HSUCCEED;
+    }
+
+    cv::Mat queryMat(queryFeature.size(), 1, CV_32FC1, (void*)queryFeature.data());
+
+    // Calculate the cosine similarity matrix
+    cv::Mat cosineSimilarities;
+    cv::gemm(m_feature_matrix_, queryMat, 1, cv::Mat(), 0, cosineSimilarities);
+    // Asserts that cosineSimilarities are the vector of m_features_max_ x 1
+    assert(cosineSimilarities.rows == m_features_max_ && cosineSimilarities.cols == 1);
+
+    // Used to store similarity scores and their indexes
+    std::vector<std::pair<float, int>> similarityScores;
+
+    for (int i = 0; i < m_features_max_; ++i) {
+        // Check whether the status is IDLE
+        if (m_feature_state_[i] == FEATURE_STATE::IDLE) {
+            continue; // Skip the eigenvector of IDLE state
+        }
+
+        // Gets the similarity score for line i
+        float similarityScore = cosineSimilarities.at<float>(i, 0);
+
+        // Adds the similarity score and index to the vector as a pair
+        similarityScores.push_back(std::make_pair(similarityScore, i));
+    }
+
+    searchResults.clear();
+    if (similarityScores.size() < topK) {
+        topK = similarityScores.size();
+    }
+    std::partial_sort(similarityScores.begin(), similarityScores.begin() + topK, similarityScores.end(),
+                      [](const std::pair<float, int>& a, const std::pair<float, int>& b) {
+                          return a.first > b.first;
+                      });
+
+    for (size_t i = 0; i < topK; i++) {
+        SearchResult result;
+        result.score = similarityScores[i].first;
+        result.index = similarityScores[i].second;
+        result.tag = m_tag_list_[result.index];
+        result.customId = m_custom_id_list_[result.index];
+        searchResults.push_back(result);
+    }
+
+    return HSUCCEED;
+}
+
 void FeatureBlockOpenCV::PrintMatrixSize() {
     std::cout << m_feature_matrix_.size << std::endl;
 }
@@ -183,6 +240,7 @@ int32_t FeatureBlockOpenCV::GetFeature(int row, std::vector<float> &feature) {
 
     return HSUCCEED;
 }
+
 
 
 }   // namespace hyper
