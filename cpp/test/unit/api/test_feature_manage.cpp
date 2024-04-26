@@ -123,7 +123,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
-        delete []dbPathStr;
+        delete[]dbPathStr;
     }
 
     SECTION("Import a large faces data") {
@@ -170,7 +170,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
-        delete []dbPathStr;
+        delete[]dbPathStr;
 
 #else
         TEST_PRINT("The test case that uses LFW is not enabled, so it will be skipped.");
@@ -187,17 +187,6 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
-//        HF_FaceHubConfiguration configuration = {0};
-//        auto dbPath = GET_SAVE_DATA(".test");
-//        HString dbPathStr = new char[dbPath.size() + 1];
-//        std::strcpy(dbPathStr, dbPath.c_str());
-//        configuration.enablePersistence = 1;
-//        configuration.dbPath = dbPathStr;
-//        configuration.featureBlockNum = 20;
-//        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
-//        configuration.searchThreshold = 0.48f;
-//        ret = HF_FaceHubDataEnable(configuration);
-//        REQUIRE(ret == HSUCCEED);
 
         // Face track
         cv::Mat dstImage = cv::imread(GET_DATA("data/bulk/Nathalie_Baye_0002.jpg"));
@@ -330,6 +319,10 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         TEST_PRINT("The test case that uses LFW is not enabled, so it will be skipped.");
 #endif
     }
+
+}
+
+TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
 
     // Test the search time at 1k, 5k and 10k of the face library (the target face is at the back).
     SECTION("Search face benchmark from 1k") {
