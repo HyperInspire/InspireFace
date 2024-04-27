@@ -34,6 +34,10 @@ public:
      */
     explicit AnyNet(std::string name):m_name_(std::move(name)) {}
 
+    ~AnyNet() {
+        m_nn_inference_->Finalize();
+    }
+
      /**
      * @brief Loads parameters and initializes the model for inference.
      * @param param Parameters for network configuration.

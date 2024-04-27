@@ -74,9 +74,6 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(ret == HSUCCEED);
         CHECK(num == 1);
 
-//        ret = HF_ViewFaceDBTable(session);
-//        REQUIRE(ret == HSUCCEED);
-
         // Update Face info
         HFFaceFeatureIdentity updatedIdentity = {0};
         updatedIdentity.feature = identity.feature;
@@ -84,9 +81,6 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         updatedIdentity.tag = "iKun";
         ret = HFFeatureHubFaceUpdate(updatedIdentity);
         REQUIRE(ret == HSUCCEED);
-
-//        ret = HF_ViewFaceDBTable(session);
-//        REQUIRE(ret == HSUCCEED);
 
         // Trying to update an identity that doesn't exist
         HFFaceFeatureIdentity nonIdentity = {0};
@@ -96,15 +90,9 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HFFeatureHubFaceUpdate(nonIdentity);
         REQUIRE(ret != HSUCCEED);
 
-//        ret = HF_ViewFaceDBTable(session);
-//        REQUIRE(ret == HSUCCEED);
-
         // Trying to delete an identity that doesn't exist
         ret = HFFeatureHubFaceRemove(nonIdentity.customId);
         REQUIRE(ret != HSUCCEED);
-//        ret = HF_ViewFaceDBTable(session);
-//        REQUIRE(ret == HSUCCEED);
-
 
         // Delete kunkun
         ret = HFFeatureHubFaceRemove(identity.customId);
@@ -114,11 +102,13 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(ret == HSUCCEED);
         CHECK(num == 0);
 
-//        ret = HF_ViewFaceDBTable(session);
-//        REQUIRE(ret == HSUCCEED);
 
         // Finish
         ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
+
+
+        ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
 
         ret = HFFeatureHubDataDisable();
@@ -129,8 +119,6 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
     SECTION("Import a large faces data") {
 #ifdef ENABLE_USE_LFW_DATA
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
@@ -163,8 +151,6 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(ret == HSUCCEED);
         CHECK(count == numOfNeedImport);
 
-//        ret = HF_ViewFaceDBTable(session);
-//        REQUIRE(ret == HSUCCEED);
 
         // Finish
         ret = HFReleaseInspireFaceSession(session);
@@ -211,6 +197,9 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HFFaceFeatureExtract(session, imgHandle, multipleFaceData.tokens[0], &feature);
         REQUIRE(ret == HSUCCEED);
 
+        ret = HFReleaseImageStream(imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
         // Search for a face
         HFloat confidence;
         HFFaceFeatureIdentity searchedIdentity = {0};
@@ -236,8 +225,6 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HFFeatureHubInsertFeature(againIdentity);
         REQUIRE(ret == HSUCCEED);
 
-//        ret = HF_ViewFaceDBTable(session);
-//        REQUIRE(ret == HSUCCEED);
 
         // Search again
         HFFaceFeatureIdentity searchedAgainIdentity = {0};
@@ -267,6 +254,9 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         // Extract face feature
         HFFaceFeature featureZy = {0};
         ret = HFFaceFeatureExtract(session, imgHandleZy, multipleFaceDataZy.tokens[0], &featureZy);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HFReleaseImageStream(imgHandleZy);
         REQUIRE(ret == HSUCCEED);
 
         // Update id: 11297
@@ -304,6 +294,9 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HFFaceFeatureExtract(session, imgHandleZyQuery, multipleFaceDataZyQuery.tokens[0], &featureZyQuery);
         REQUIRE(ret == HSUCCEED);
 
+        ret = HFReleaseImageStream(imgHandleZyQuery);
+        REQUIRE(ret == HSUCCEED);
+
         // Search
         HFloat confidenceQuery;
         HFFaceFeatureIdentity searchedIdentityQuery = {0};
@@ -313,7 +306,9 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
-//        delete []dbPathStr;
+
+        ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
 
 #else
         TEST_PRINT("The test case that uses LFW is not enabled, so it will be skipped.");
@@ -406,6 +401,10 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
+
+        ret = HFReleaseImageStream(imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
         delete []dbPathStr;
@@ -494,6 +493,9 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         record.insertBenchmarkData("Search Face from 5k", loop, cost, cost / loop);
         // Finish
         ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
 
         ret = HFFeatureHubDataDisable();
@@ -620,6 +622,10 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
 
         // Finish
         ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
+
+
+        ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
 
         ret = HFFeatureHubDataDisable();

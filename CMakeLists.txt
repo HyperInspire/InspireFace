@@ -10,9 +10,26 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
-if (CMAKE_BUILD_TYPE MATCHES Debug)
-    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
-    add_link_options(-fsanitize=address)
+# Check that the SANITIZE compile option is enabled
+set(SANITIZE_ADDRESS OFF CACHE BOOL "Enable AddressSanitizer")
+set(SANITIZE_LEAK OFF CACHE BOOL "Enable LeakSanitizer")
+
+if (SANITIZE_ADDRESS AND SANITIZE_LEAK)
+    message(FATAL_ERROR "Cannot enable both AddressSanitizer and LeakSanitizer.")
+endif()
+
+# Enable AddressSanitizer
+if(SANITIZE_ADDRESS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+endif()
+
+# Enable LeakSanitizer
+if(SANITIZE_LEAK)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=leak")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=leak")
 endif()
 
 set(TARGET_PLATFORM "drawin-x86" CACHE STRING "Target platform")
