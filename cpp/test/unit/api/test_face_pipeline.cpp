@@ -120,11 +120,6 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         CHECK(confidence.num > 0);
         CHECK(confidence.confidence[0] < 0.1);
 
-//        HFloat quality;
-//        ret = HF_FaceQualityDetect(session, multipleFaceData.tokens[0], &quality);
-//        REQUIRE(ret == HSUCCEED);
-//        spdlog::info("quality: {}", quality);
-
         ret = HFReleaseImageStream(img2Handle);
         REQUIRE(ret == HSUCCEED);
         img2Handle = nullptr;
@@ -137,8 +132,6 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
     SECTION("face quality") {
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HInt32 option = HF_ENABLE_QUALITY;
         HFSession session;
@@ -183,11 +176,15 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         REQUIRE(ret == HSUCCEED);
         CHECK(quality < 0.85);
 
+        ret = HFReleaseImageStream(superiorHandle);
+        REQUIRE(ret == HSUCCEED);
+
         ret = HFReleaseImageStream(blurHandle);
         REQUIRE(ret == HSUCCEED);
 
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
+
 
     }
 

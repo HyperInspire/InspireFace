@@ -9,8 +9,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    char *s = new char[2048];
-
     auto packPath = argv[1]; // Path to the resource pack
 
     std::string testDir = "test_res/"; // Directory containing test resources
