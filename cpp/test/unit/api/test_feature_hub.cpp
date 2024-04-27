@@ -158,6 +158,8 @@ TEST_CASE("test_FeatureHubBase", "[FeatureHub][BasicFunction]") {
         ret = HFFeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
+        // TODO
+
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
 
@@ -229,6 +231,8 @@ TEST_CASE("test_ConcurrencyInsertion", "[FeatureHub][Concurrency]") {
 
     ret = HFFeatureHubDataDisable();
     REQUIRE(ret == HSUCCEED);
+
+    delete []dbPathStr;
 }
 
 
@@ -306,6 +310,8 @@ TEST_CASE("test_ConcurrencyRemove", "[FeatureHub][Concurrency]") {
 
     ret = HFFeatureHubDataDisable();
     REQUIRE(ret == HSUCCEED);
+
+    delete []dbPathStr;
 
 }
 
@@ -442,6 +448,9 @@ TEST_CASE("test_ConcurrencySearch", "[FeatureHub][Concurrency]") {
 
     ret = HFFeatureHubDataDisable();
     REQUIRE(ret == HSUCCEED);
+
+
+    delete []dbPathStr;
 }
 
 
@@ -502,5 +511,7 @@ TEST_CASE("test_FeatureCache", "[FeatureHub][Concurrency]") {
 
     ret = HFFeatureHubDataDisable();
     REQUIRE(ret == HSUCCEED);
+
+    delete []dbPathStr;
 
 }
