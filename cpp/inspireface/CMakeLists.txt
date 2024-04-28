@@ -65,7 +65,7 @@ if (NOT ANDROID)
     elseif(DEFINED MNN_STATIC_PATH)
         message("Using static MNN from specified path: ${MNN_STATIC_PATH}")
         set(MNN_INCLUDE_DIRS "${MNN_STATIC_PATH}/include")
-        set(MNN_LIBS "${MNN_STATIC_PATH}/lib")
+        set(MNN_LIBS "${MNN_STATIC_PATH}/lib/libMNN.a")
     else ()
         # Default or fallback case for MNN setup
         message("Default or fallback case for MNN setup")
