@@ -54,20 +54,25 @@ if (NOT ANDROID)
             set(MNN_LIBS ${mnn_BINARY_DIR}/libMNN.a)
         endif ()
 
-    else ()
-        # MNN Third party dependence
-        if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
-            message("Global MNN CUDA device inference")
-            add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
-            set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
-            link_directories(${LINUX_MNN_CUDA}/lib)
-            set(MNN_LIBS MNN)
+    elseif (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+        # Use MNN Cuda
+        message("Global MNN CUDA device inference")
+        add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
+        set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
+        link_directories(${LINUX_MNN_CUDA}/lib)
+        set(MNN_LIBS MNN)
 
-        else()
-            set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
-            set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
-        endif ()
+    elseif(DEFINED MNN_STATIC_PATH)
+        message("Using static MNN from specified path: ${MNN_STATIC_PATH}")
+        set(MNN_INCLUDE_DIRS "${MNN_STATIC_PATH}/include")
+        set(MNN_LIBS "${MNN_STATIC_PATH}/lib")
+    else ()
+        # Default or fallback case for MNN setup
+        message("Default or fallback case for MNN setup")
+        set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
+        set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
     endif ()
+
 endif()
 
 
