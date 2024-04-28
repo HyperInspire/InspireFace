@@ -80,8 +80,6 @@ if (ENABLE_RKNN)
     message("Enable RKNN Inference: ${RK_DEVICE_TYPE}")
     set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/include)
     set(RKNN_API_LIB ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
-    message(RKNN_API_LIB="${RKNN_API_LIB}")
-    message(RKNN_API_INCLUDE_DIRS="${RKNN_API_INCLUDE_DIRS}")
     link_directories(${RKNN_API_LIB})
 endif()
 
@@ -111,8 +109,6 @@ set(CPP_YAML_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/middleware/cpp_yaml/include)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/microtar/microtar.c)
 
 # MNN
-message(MNN_INCLUDE_DIRS=${MNN_INCLUDE_DIRS})
-message(MNN_LIBS=${MNN_LIBS})
 link_directories(${MNN_LIBS})
 
 if(BUILD_SHARED_LIBS)
@@ -146,12 +142,27 @@ target_include_directories(InspireFace PUBLIC
 )
 
 if (NOT ANDROID)
-    message("ld: ${LINK_THIRD_LIBS}")
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
 
     set_target_properties(InspireFace PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/libs/
-            )
+    )
 else()
 
 endif()
+
+# Print Message
+message(STATUS "[InspireFace Core]:")
+message(STATUS "\t Version: ${INSPIRE_FACE_VERSION_MAJOR}.${INSPIRE_FACE_VERSION_MINOR}.${INSPIRE_FACE_VERSION_PATCH}")
+message(STATUS "\t LINUX_FETCH_MNN: ${LINUX_FETCH_MNN}")
+message(STATUS "\t MNN_INCLUDE_DIRS: ${MNN_INCLUDE_DIRS}")
+message(STATUS "\t MNN_LIBS: ${MNN_LIBS}")
+message(STATUS "\t ENABLE_RKNN: ${ENABLE_RKNN}")
+if (ENABLE_RKNN)
+    message(STATUS "\t RKNN_API_INCLUDE_DIRS: ${RKNN_API_INCLUDE_DIRS}")
+    message(STATUS "\t RKNN_API_LIB: ${RKNN_API_LIB}")
+endif ()
+message(STATUS "\t BUILD_SHARED_LIBS: ${BUILD_SHARED_LIBS}")
+if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+    message(STATUS "\t GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA: ${GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA}")
+endif ()
