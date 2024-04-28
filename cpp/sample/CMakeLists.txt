@@ -11,6 +11,11 @@ endif()
 
 include_directories(${SRC_DIR})
 
+add_executable(Leak cpp/leak.cpp)
+target_link_libraries(Leak InspireFace)
+set_target_properties(Leak PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
 # Examples of face detection and tracking
 add_executable(FaceTrackSample cpp/sample_face_track.cpp)
 target_link_libraries(FaceTrackSample InspireFace)
