@@ -13,7 +13,7 @@ int main() {
     FaceContext ctx;
     CustomPipelineParameter param;
     int32_t ret = ctx.Configuration(
-            "test_res/model_zip/Gundam_RV1109",
+            "test_res/pack/Gundam_RV1109",
             DetectMode::DETECT_MODE_VIDEO,
             3,
             param);

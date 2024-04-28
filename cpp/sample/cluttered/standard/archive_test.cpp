@@ -14,7 +14,7 @@ using namespace inspire;
 
 int main() {
     InspireArchive archive;
-    auto ret = archive.ReLoad("test_res/model_zip/Gundam_RV1109");
+    auto ret = archive.ReLoad("test_res/pack/Gundam_RV1109");
     LOGD("ReLoad %d", ret);
 //    InspireModel model;
 //    ret = archive.LoadModel("mask_detect", model);

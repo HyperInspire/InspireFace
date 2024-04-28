@@ -31,7 +31,7 @@ int32_t SQLiteFaceManage::OpenDatabase(const std::string &dbPath) {
     sqlite3* rawDb;
     if (sqlite3_open(dbPath.c_str(), &rawDb) != SQLITE_OK) {
         // Handle error
-        return HERR_CTX_DB_OPEN_ERROR;
+        return HERR_FT_HUB_OPEN_ERROR;
     }
 
     m_db_ = std::shared_ptr<sqlite3>(rawDb, SQLiteDeleter());
@@ -42,7 +42,7 @@ int32_t SQLiteFaceManage::OpenDatabase(const std::string &dbPath) {
 
     if (sqlite3_prepare_v2(m_db_.get(), checkTableSQL, -1, &stmt, nullptr) != SQLITE_OK) {
         INSPIRE_LOGE("Error checking for table existence: %s", sqlite3_errmsg(m_db_.get()));
-        return HERR_CTX_DB_CHECK_TABLE_ERROR;  // Assuming you have this error code
+        return HERR_FT_HUB_CHECK_TABLE_ERROR;  // Assuming you have this error code
     }
 
     int result = sqlite3_step(stmt);
@@ -60,7 +60,7 @@ int32_t SQLiteFaceManage::OpenDatabase(const std::string &dbPath) {
 int32_t SQLiteFaceManage::CloseDatabase() {
     if (!m_db_) {
 //        LOGE("Attempted to close an already closed or uninitialized database.");
-        return HERR_CTX_DB_NOT_OPENED;
+        return HERR_FT_HUB_NOT_OPENED;
     }
 
     // Reset the shared_ptr. This will decrease its reference count.
@@ -76,7 +76,7 @@ int32_t SQLiteFaceManage::CloseDatabase() {
 int32_t SQLiteFaceManage::CreateTable() {
     if (!m_db_) {
         INSPIRE_LOGE("Database is not opened. Please open the database first.");
-        return HERR_CTX_DB_NOT_OPENED;  // Example error code for unopened database
+        return HERR_FT_HUB_NOT_OPENED;  // Example error code for unopened database
     }
 
     const char* createTableSQL = R"(
@@ -103,7 +103,7 @@ int32_t SQLiteFaceManage::CreateTable() {
 int32_t SQLiteFaceManage::InsertFeature(const FaceFeatureInfo& info) {
     if (!m_db_) {
         INSPIRE_LOGE("Database is not opened. Please open the database first.");
-        return HERR_CTX_DB_NOT_OPENED;  // Example error code for unopened database
+        return HERR_FT_HUB_NOT_OPENED;  // Example error code for unopened database
     }
 
     const char* insertSQL = "INSERT INTO FaceFeatures (customId, tag, feature) VALUES (?, ?, ?)";
@@ -124,7 +124,7 @@ int32_t SQLiteFaceManage::InsertFeature(const FaceFeatureInfo& info) {
     if (result != SQLITE_DONE) {
         INSPIRE_LOGE("Error inserting new feature: %s" , sqlite3_errmsg(m_db_.get()));
         sqlite3_finalize(stmt);
-        return HERR_CTX_DB_INSERT_FAILURE;
+        return HERR_FT_HUB_INSERT_FAILURE;
     }
 
     // Clean up the statement
@@ -137,7 +137,7 @@ int32_t SQLiteFaceManage::InsertFeature(const FaceFeatureInfo& info) {
 int32_t SQLiteFaceManage::GetFeature(int32_t customId, FaceFeatureInfo& outInfo) {
     if (!m_db_) {
         INSPIRE_LOGE("Database is not opened. Please open the database first.");
-        return HERR_CTX_DB_NOT_OPENED;
+        return HERR_FT_HUB_NOT_OPENED;
     }
 
     const char* selectSQL = "SELECT customId, tag, feature FROM FaceFeatures WHERE customId = ?";
@@ -146,7 +146,7 @@ int32_t SQLiteFaceManage::GetFeature(int32_t customId, FaceFeatureInfo& outInfo)
     int result = sqlite3_prepare_v2(m_db_.get(), selectSQL, -1, &stmt, nullptr);
     if (result != SQLITE_OK) {
         INSPIRE_LOGE("Error preparing the SQL statement: %s", sqlite3_errmsg(m_db_.get()));
-        return HERR_CTX_DB_PREPARING_FAILURE;
+        return HERR_FT_HUB_PREPARING_FAILURE;
     }
 
     // Bind the customId to the prepared statement
@@ -165,11 +165,11 @@ int32_t SQLiteFaceManage::GetFeature(int32_t customId, FaceFeatureInfo& outInfo)
     } else if (result == SQLITE_DONE) {
         INSPIRE_LOGE("No feature found with customId: %d", customId);
         sqlite3_finalize(stmt);
-        return HERR_CTX_DB_NO_RECORD_FOUND;  // Assuming you have an error code for record not found
+        return HERR_FT_HUB_NO_RECORD_FOUND;  // Assuming you have an error code for record not found
     } else {
         INSPIRE_LOGE("Error executing the SQL statement: %s", sqlite3_errmsg(m_db_.get()));
         sqlite3_finalize(stmt);
-        return HERR_CTX_DB_EXECUTING_FAILURE;
+        return HERR_FT_HUB_EXECUTING_FAILURE;
     }
 
     // Clean up the statement
@@ -182,7 +182,7 @@ int32_t SQLiteFaceManage::GetFeature(int32_t customId, FaceFeatureInfo& outInfo)
 int32_t SQLiteFaceManage::DeleteFeature(int32_t customId) {
     if (!m_db_) {
         INSPIRE_LOGE("Database is not opened. Please open the database first.");
-        return HERR_CTX_DB_NOT_OPENED;
+        return HERR_FT_HUB_NOT_OPENED;
     }
 
     const char* deleteSQL = "DELETE FROM FaceFeatures WHERE customId = ?";
@@ -191,7 +191,7 @@ int32_t SQLiteFaceManage::DeleteFeature(int32_t customId) {
     int result = sqlite3_prepare_v2(m_db_.get(), deleteSQL, -1, &stmt, nullptr);
     if (result != SQLITE_OK) {
         INSPIRE_LOGE("Error preparing the SQL statement: %s", sqlite3_errmsg(m_db_.get()));
-        return HERR_CTX_DB_PREPARING_FAILURE;
+        return HERR_FT_HUB_PREPARING_FAILURE;
     }
 
     // Bind the customId to the prepared statement
@@ -201,14 +201,14 @@ int32_t SQLiteFaceManage::DeleteFeature(int32_t customId) {
     if (result != SQLITE_DONE) {
         INSPIRE_LOGE("Error deleting feature with customId: %d, Error: %s", customId, sqlite3_errmsg(m_db_.get()));
         sqlite3_finalize(stmt);
-        return HERR_CTX_DB_EXECUTING_FAILURE;
+        return HERR_FT_HUB_EXECUTING_FAILURE;
     }
 
     int changes = sqlite3_changes(m_db_.get());
     if (changes == 0) {
         INSPIRE_LOGE("No feature found with customId: %d. Nothing was deleted.", customId);
         sqlite3_finalize(stmt);
-        return HERR_CTX_DB_NO_RECORD_FOUND;  // Assuming you have an error code for record not found
+        return HERR_FT_HUB_NO_RECORD_FOUND;  // Assuming you have an error code for record not found
     }
 
     // Clean up the statement
@@ -221,7 +221,7 @@ int32_t SQLiteFaceManage::DeleteFeature(int32_t customId) {
 int32_t SQLiteFaceManage::UpdateFeature(const FaceFeatureInfo& info) {
     if (!m_db_) {
         INSPIRE_LOGE("Database is not opened. Please open the database first.");
-        return HERR_CTX_DB_NOT_OPENED;
+        return HERR_FT_HUB_NOT_OPENED;
     }
 
     const char* updateSQL = "UPDATE FaceFeatures SET tag = ?, feature = ? WHERE customId = ?";
@@ -230,7 +230,7 @@ int32_t SQLiteFaceManage::UpdateFeature(const FaceFeatureInfo& info) {
     int result = sqlite3_prepare_v2(m_db_.get(), updateSQL, -1, &stmt, nullptr);
     if (result != SQLITE_OK) {
         INSPIRE_LOGE("Error preparing the SQL statement: %s", sqlite3_errmsg(m_db_.get()));
-        return HERR_CTX_DB_PREPARING_FAILURE;
+        return HERR_FT_HUB_PREPARING_FAILURE;
     }
 
     // Binding values
@@ -249,7 +249,7 @@ int32_t SQLiteFaceManage::UpdateFeature(const FaceFeatureInfo& info) {
     if (changes == 0) {
         INSPIRE_LOGE("No feature found with customId: %d. Nothing was updated.", info.customId);
         sqlite3_finalize(stmt);
-        return HERR_CTX_DB_NO_RECORD_FOUND;  // Assuming you have an error code for record not found
+        return HERR_FT_HUB_NO_RECORD_FOUND;  // Assuming you have an error code for record not found
     }
 
     // Clean up the statement
@@ -262,7 +262,7 @@ int32_t SQLiteFaceManage::UpdateFeature(const FaceFeatureInfo& info) {
 int32_t SQLiteFaceManage::ViewTotal() {
     if (!m_db_) {
         INSPIRE_LOGE("Database is not opened. Please open the database first.");
-        return HERR_CTX_DB_NOT_OPENED;
+        return HERR_FT_HUB_NOT_OPENED;
     }
 
     const char* selectSQL = "SELECT customId, tag FROM FaceFeatures";
@@ -290,7 +290,7 @@ int32_t SQLiteFaceManage::ViewTotal() {
     if (result != SQLITE_DONE) {
         INSPIRE_LOGE("Error executing the SQL statement: %s", sqlite3_errmsg(m_db_.get()));
         sqlite3_finalize(stmt);
-        return HERR_CTX_DB_PREPARING_FAILURE;
+        return HERR_FT_HUB_PREPARING_FAILURE;
     }
 
     // Clean up the statement
@@ -303,7 +303,7 @@ int32_t SQLiteFaceManage::ViewTotal() {
 int32_t SQLiteFaceManage::GetTotalFeatures(std::vector<FaceFeatureInfo>& infoList) {
     if (!m_db_) {
         INSPIRE_LOGE("Database is not opened. Please open the database first.");
-        return HERR_CTX_DB_NOT_OPENED;
+        return HERR_FT_HUB_NOT_OPENED;
     }
 
     const char* selectSQL = "SELECT customId, tag, feature FROM FaceFeatures";
@@ -312,7 +312,7 @@ int32_t SQLiteFaceManage::GetTotalFeatures(std::vector<FaceFeatureInfo>& infoLis
     int result = sqlite3_prepare_v2(m_db_.get(), selectSQL, -1, &stmt, nullptr);
     if (result != SQLITE_OK) {
         INSPIRE_LOGE("Error preparing the SQL statement: %s", sqlite3_errmsg(m_db_.get()));
-        return HERR_CTX_DB_PREPARING_FAILURE;
+        return HERR_FT_HUB_PREPARING_FAILURE;
     }
 
     while ((result = sqlite3_step(stmt)) == SQLITE_ROW) {
@@ -332,7 +332,7 @@ int32_t SQLiteFaceManage::GetTotalFeatures(std::vector<FaceFeatureInfo>& infoLis
     if (result != SQLITE_DONE) {
         INSPIRE_LOGE("Error executing the SQL statement: %s", sqlite3_errmsg(m_db_.get()));
         sqlite3_finalize(stmt);
-        return HERR_CTX_DB_EXECUTING_FAILURE;
+        return HERR_FT_HUB_EXECUTING_FAILURE;
     }
 
     // Clean up the statement

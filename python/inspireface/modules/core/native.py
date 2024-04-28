@@ -875,29 +875,31 @@ _libs[_LIBRARY_FILENAME] = load_library(_LIBRARY_FILENAME)
 
 # No modules
 
-HPVoid = POINTER(None)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 8
+HPVoid = POINTER(None)# inspireface/c_api/intypedef.h: 8
 
-HImageHandle = POINTER(None)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 9
+HFImageStream = POINTER(None)# inspireface/c_api/intypedef.h: 9
 
-HContextHandle = POINTER(None)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 10
+HFSession = POINTER(None)# inspireface/c_api/intypedef.h: 10
 
-HFloat = c_float# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 12
+HFloat = c_float# inspireface/c_api/intypedef.h: 12
 
-HPFloat = POINTER(c_float)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 13
+HPFloat = POINTER(c_float)# inspireface/c_api/intypedef.h: 13
 
-HInt32 = c_int# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 16
+HInt32 = c_int# inspireface/c_api/intypedef.h: 16
 
-HPInt32 = POINTER(c_int)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 17
+HOption = c_int# inspireface/c_api/intypedef.h: 17
 
-HResult = c_long# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 18
+HPInt32 = POINTER(c_int)# inspireface/c_api/intypedef.h: 18
 
-HString = String# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 19
+HResult = c_long# inspireface/c_api/intypedef.h: 19
 
-HPath = String# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 20
+HString = String# inspireface/c_api/intypedef.h: 20
 
-HPBuffer = String# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 22
+HPath = String# inspireface/c_api/intypedef.h: 21
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 31
+HPBuffer = String# inspireface/c_api/intypedef.h: 23
+
+# inspireface/c_api/intypedef.h: 32
 class struct_HFaceRect(Structure):
     pass
 
@@ -914,76 +916,82 @@ struct_HFaceRect._fields_ = [
     ('height', HInt32),
 ]
 
-HFaceRect = struct_HFaceRect# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/intypedef.h: 31
+HFaceRect = struct_HFaceRect# inspireface/c_api/intypedef.h: 32
 
-enum_HF_ImageFormat = c_int# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 48
+enum_HFImageFormat = c_int# inspireface/c_api/inspireface.h: 49
 
-STREAM_RGB = 0# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 48
+HF_STREAM_RGB = 0# inspireface/c_api/inspireface.h: 49
 
-STREAM_BGR = 1# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 48
+HF_STREAM_BGR = 1# inspireface/c_api/inspireface.h: 49
 
-STREAM_RGBA = 2# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 48
+HF_STREAM_RGBA = 2# inspireface/c_api/inspireface.h: 49
 
-STREAM_BGRA = 3# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 48
+HF_STREAM_BGRA = 3# inspireface/c_api/inspireface.h: 49
 
-STREAM_YUV_NV12 = 4# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 48
+HF_STREAM_YUV_NV12 = 4# inspireface/c_api/inspireface.h: 49
 
-STREAM_YUV_NV21 = 5# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 48
+HF_STREAM_YUV_NV21 = 5# inspireface/c_api/inspireface.h: 49
 
-HF_ImageFormat = enum_HF_ImageFormat# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 48
+HFImageFormat = enum_HFImageFormat# inspireface/c_api/inspireface.h: 49
 
-enum_HF_Rotation = c_int# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 60
+enum_HFRotation = c_int# inspireface/c_api/inspireface.h: 61
 
-CAMERA_ROTATION_0 = 0# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 60
+HF_CAMERA_ROTATION_0 = 0# inspireface/c_api/inspireface.h: 61
 
-CAMERA_ROTATION_90 = 1# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 60
+HF_CAMERA_ROTATION_90 = 1# inspireface/c_api/inspireface.h: 61
 
-CAMERA_ROTATION_180 = 2# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 60
+HF_CAMERA_ROTATION_180 = 2# inspireface/c_api/inspireface.h: 61
 
-CAMERA_ROTATION_270 = 3# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 60
+HF_CAMERA_ROTATION_270 = 3# inspireface/c_api/inspireface.h: 61
 
-HF_Rotation = enum_HF_Rotation# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 60
+HFRotation = enum_HFRotation# inspireface/c_api/inspireface.h: 61
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 73
-class struct_HF_ImageData(Structure):
+# inspireface/c_api/inspireface.h: 74
+class struct_HFImageData(Structure):
     pass
 
-struct_HF_ImageData.__slots__ = [
+struct_HFImageData.__slots__ = [
     'data',
     'width',
     'height',
     'format',
     'rotation',
 ]
-struct_HF_ImageData._fields_ = [
+struct_HFImageData._fields_ = [
     ('data', POINTER(c_uint8)),
     ('width', HInt32),
     ('height', HInt32),
-    ('format', HF_ImageFormat),
-    ('rotation', HF_Rotation),
+    ('format', HFImageFormat),
+    ('rotation', HFRotation),
 ]
 
-HF_ImageData = struct_HF_ImageData# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 73
+HFImageData = struct_HFImageData# inspireface/c_api/inspireface.h: 74
 
-Ptr_HF_ImageData = POINTER(struct_HF_ImageData)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 73
+PHFImageData = POINTER(struct_HFImageData)# inspireface/c_api/inspireface.h: 74
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 87
-if _libs[_LIBRARY_FILENAME].has("HF_CreateImageStream", "cdecl"):
-    HF_CreateImageStream = _libs[_LIBRARY_FILENAME].get("HF_CreateImageStream", "cdecl")
-    HF_CreateImageStream.argtypes = [Ptr_HF_ImageData, POINTER(HImageHandle)]
-    HF_CreateImageStream.restype = HResult
+# inspireface/c_api/inspireface.h: 86
+if _libs[_LIBRARY_FILENAME].has("HFCreateImageStream", "cdecl"):
+    HFCreateImageStream = _libs[_LIBRARY_FILENAME].get("HFCreateImageStream", "cdecl")
+    HFCreateImageStream.argtypes = [PHFImageData, POINTER(HFImageStream)]
+    HFCreateImageStream.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 98
-if _libs[_LIBRARY_FILENAME].has("HF_ReleaseImageStream", "cdecl"):
-    HF_ReleaseImageStream = _libs[_LIBRARY_FILENAME].get("HF_ReleaseImageStream", "cdecl")
-    HF_ReleaseImageStream.argtypes = [HImageHandle]
-    HF_ReleaseImageStream.restype = HResult
+# inspireface/c_api/inspireface.h: 97
+if _libs[_LIBRARY_FILENAME].has("HFReleaseImageStream", "cdecl"):
+    HFReleaseImageStream = _libs[_LIBRARY_FILENAME].get("HFReleaseImageStream", "cdecl")
+    HFReleaseImageStream.argtypes = [HFImageStream]
+    HFReleaseImageStream.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 121
-class struct_HF_ContextCustomParameter(Structure):
+# inspireface/c_api/inspireface.h: 110
+if _libs[_LIBRARY_FILENAME].has("HFLaunchInspireFace", "cdecl"):
+    HFLaunchInspireFace = _libs[_LIBRARY_FILENAME].get("HFLaunchInspireFace", "cdecl")
+    HFLaunchInspireFace.argtypes = [HPath]
+    HFLaunchInspireFace.restype = HResult
+
+# inspireface/c_api/inspireface.h: 132
+class struct_HFSessionCustomParameter(Structure):
     pass
 
-struct_HF_ContextCustomParameter.__slots__ = [
+struct_HFSessionCustomParameter.__slots__ = [
     'enable_recognition',
     'enable_liveness',
     'enable_ir_liveness',
@@ -993,7 +1001,7 @@ struct_HF_ContextCustomParameter.__slots__ = [
     'enable_face_quality',
     'enable_interaction_liveness',
 ]
-struct_HF_ContextCustomParameter._fields_ = [
+struct_HFSessionCustomParameter._fields_ = [
     ('enable_recognition', HInt32),
     ('enable_liveness', HInt32),
     ('enable_ir_liveness', HInt32),
@@ -1004,416 +1012,501 @@ struct_HF_ContextCustomParameter._fields_ = [
     ('enable_interaction_liveness', HInt32),
 ]
 
-HF_ContextCustomParameter = struct_HF_ContextCustomParameter# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 121
+HFSessionCustomParameter = struct_HFSessionCustomParameter# inspireface/c_api/inspireface.h: 132
 
-Ptr_HF_ContextCustomParameter = POINTER(struct_HF_ContextCustomParameter)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 121
+PHFSessionCustomParameter = POINTER(struct_HFSessionCustomParameter)# inspireface/c_api/inspireface.h: 132
 
-enum_HF_DetectMode = c_int# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 130
+enum_HFDetectMode = c_int# inspireface/c_api/inspireface.h: 141
 
-HF_DETECT_MODE_IMAGE = 0# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 130
+HF_DETECT_MODE_IMAGE = 0# inspireface/c_api/inspireface.h: 141
 
-HF_DETECT_MODE_VIDEO = (HF_DETECT_MODE_IMAGE + 1)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 130
+HF_DETECT_MODE_VIDEO = (HF_DETECT_MODE_IMAGE + 1)# inspireface/c_api/inspireface.h: 141
 
-HF_DetectMode = enum_HF_DetectMode# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 130
+HFDetectMode = enum_HFDetectMode# inspireface/c_api/inspireface.h: 141
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 142
-if _libs[_LIBRARY_FILENAME].has("HF_CreateFaceContextFromResourceFile", "cdecl"):
-    HF_CreateFaceContextFromResourceFile = _libs[_LIBRARY_FILENAME].get("HF_CreateFaceContextFromResourceFile", "cdecl")
-    HF_CreateFaceContextFromResourceFile.argtypes = [HPath, HF_ContextCustomParameter, HF_DetectMode, HInt32, POINTER(HContextHandle)]
-    HF_CreateFaceContextFromResourceFile.restype = HResult
+# inspireface/c_api/inspireface.h: 152
+if _libs[_LIBRARY_FILENAME].has("HFCreateInspireFaceSession", "cdecl"):
+    HFCreateInspireFaceSession = _libs[_LIBRARY_FILENAME].get("HFCreateInspireFaceSession", "cdecl")
+    HFCreateInspireFaceSession.argtypes = [HFSessionCustomParameter, HFDetectMode, HInt32, POINTER(HFSession)]
+    HFCreateInspireFaceSession.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 160
-if _libs[_LIBRARY_FILENAME].has("HF_CreateFaceContextFromResourceFileOptional", "cdecl"):
-    HF_CreateFaceContextFromResourceFileOptional = _libs[_LIBRARY_FILENAME].get("HF_CreateFaceContextFromResourceFileOptional", "cdecl")
-    HF_CreateFaceContextFromResourceFileOptional.argtypes = [HPath, HInt32, HF_DetectMode, HInt32, POINTER(HContextHandle)]
-    HF_CreateFaceContextFromResourceFileOptional.restype = HResult
+# inspireface/c_api/inspireface.h: 168
+if _libs[_LIBRARY_FILENAME].has("HFCreateInspireFaceSessionOptional", "cdecl"):
+    HFCreateInspireFaceSessionOptional = _libs[_LIBRARY_FILENAME].get("HFCreateInspireFaceSessionOptional", "cdecl")
+    HFCreateInspireFaceSessionOptional.argtypes = [HOption, HFDetectMode, HInt32, POINTER(HFSession)]
+    HFCreateInspireFaceSessionOptional.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 176
-class struct_HF_DatabaseConfiguration(Structure):
+# inspireface/c_api/inspireface.h: 181
+if _libs[_LIBRARY_FILENAME].has("HFReleaseInspireFaceSession", "cdecl"):
+    HFReleaseInspireFaceSession = _libs[_LIBRARY_FILENAME].get("HFReleaseInspireFaceSession", "cdecl")
+    HFReleaseInspireFaceSession.argtypes = [HFSession]
+    HFReleaseInspireFaceSession.restype = HResult
+
+# inspireface/c_api/inspireface.h: 191
+class struct_HFFaceBasicToken(Structure):
     pass
 
-struct_HF_DatabaseConfiguration.__slots__ = [
-    'enableUseDb',
-    'dbPath',
-]
-struct_HF_DatabaseConfiguration._fields_ = [
-    ('enableUseDb', HInt32),
-    ('dbPath', HString),
-]
-
-HF_DatabaseConfiguration = struct_HF_DatabaseConfiguration# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 176
-
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 187
-if _libs[_LIBRARY_FILENAME].has("HF_FaceContextDataPersistence", "cdecl"):
-    HF_FaceContextDataPersistence = _libs[_LIBRARY_FILENAME].get("HF_FaceContextDataPersistence", "cdecl")
-    HF_FaceContextDataPersistence.argtypes = [HContextHandle, HF_DatabaseConfiguration]
-    HF_FaceContextDataPersistence.restype = HResult
-
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 195
-if _libs[_LIBRARY_FILENAME].has("HF_ReleaseFaceContext", "cdecl"):
-    HF_ReleaseFaceContext = _libs[_LIBRARY_FILENAME].get("HF_ReleaseFaceContext", "cdecl")
-    HF_ReleaseFaceContext.argtypes = [HContextHandle]
-    HF_ReleaseFaceContext.restype = HResult
-
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 205
-class struct_HF_FaceBasicToken(Structure):
-    pass
-
-struct_HF_FaceBasicToken.__slots__ = [
+struct_HFFaceBasicToken.__slots__ = [
     'size',
     'data',
 ]
-struct_HF_FaceBasicToken._fields_ = [
+struct_HFFaceBasicToken._fields_ = [
     ('size', HInt32),
     ('data', HPVoid),
 ]
 
-HF_FaceBasicToken = struct_HF_FaceBasicToken# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 205
+HFFaceBasicToken = struct_HFFaceBasicToken# inspireface/c_api/inspireface.h: 191
 
-Ptr_HF_FaceBasicToken = POINTER(struct_HF_FaceBasicToken)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 205
+PHFFaceBasicToken = POINTER(struct_HFFaceBasicToken)# inspireface/c_api/inspireface.h: 191
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 216
-class struct_HF_FaceEulerAngle(Structure):
+# inspireface/c_api/inspireface.h: 202
+class struct_HFFaceEulerAngle(Structure):
     pass
 
-struct_HF_FaceEulerAngle.__slots__ = [
+struct_HFFaceEulerAngle.__slots__ = [
     'roll',
     'yaw',
     'pitch',
 ]
-struct_HF_FaceEulerAngle._fields_ = [
+struct_HFFaceEulerAngle._fields_ = [
     ('roll', POINTER(HFloat)),
     ('yaw', POINTER(HFloat)),
     ('pitch', POINTER(HFloat)),
 ]
 
-HF_FaceEulerAngle = struct_HF_FaceEulerAngle# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 216
+HFFaceEulerAngle = struct_HFFaceEulerAngle# inspireface/c_api/inspireface.h: 202
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 230
-class struct_HF_MultipleFaceData(Structure):
+# inspireface/c_api/inspireface.h: 216
+class struct_HFMultipleFaceData(Structure):
     pass
 
-struct_HF_MultipleFaceData.__slots__ = [
+struct_HFMultipleFaceData.__slots__ = [
     'detectedNum',
     'rects',
     'trackIds',
     'angles',
     'tokens',
 ]
-struct_HF_MultipleFaceData._fields_ = [
+struct_HFMultipleFaceData._fields_ = [
     ('detectedNum', HInt32),
     ('rects', POINTER(HFaceRect)),
     ('trackIds', POINTER(HInt32)),
-    ('angles', HF_FaceEulerAngle),
-    ('tokens', Ptr_HF_FaceBasicToken),
+    ('angles', HFFaceEulerAngle),
+    ('tokens', PHFFaceBasicToken),
 ]
 
-HF_MultipleFaceData = struct_HF_MultipleFaceData# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 230
+HFMultipleFaceData = struct_HFMultipleFaceData# inspireface/c_api/inspireface.h: 216
 
-Ptr_HF_MultipleFaceData = POINTER(struct_HF_MultipleFaceData)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 230
+PHFMultipleFaceData = POINTER(struct_HFMultipleFaceData)# inspireface/c_api/inspireface.h: 216
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 239
-if _libs[_LIBRARY_FILENAME].has("HF_FaceContextSetTrackPreviewSize", "cdecl"):
-    HF_FaceContextSetTrackPreviewSize = _libs[_LIBRARY_FILENAME].get("HF_FaceContextSetTrackPreviewSize", "cdecl")
-    HF_FaceContextSetTrackPreviewSize.argtypes = [HContextHandle, HInt32]
-    HF_FaceContextSetTrackPreviewSize.restype = HResult
+# inspireface/c_api/inspireface.h: 226
+if _libs[_LIBRARY_FILENAME].has("HFSessionSetTrackPreviewSize", "cdecl"):
+    HFSessionSetTrackPreviewSize = _libs[_LIBRARY_FILENAME].get("HFSessionSetTrackPreviewSize", "cdecl")
+    HFSessionSetTrackPreviewSize.argtypes = [HFSession, HInt32]
+    HFSessionSetTrackPreviewSize.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 248
-if _libs[_LIBRARY_FILENAME].has("HF_FaceContextSetFaceTrackMode", "cdecl"):
-    HF_FaceContextSetFaceTrackMode = _libs[_LIBRARY_FILENAME].get("HF_FaceContextSetFaceTrackMode", "cdecl")
-    HF_FaceContextSetFaceTrackMode.argtypes = [HContextHandle, HF_DetectMode]
-    HF_FaceContextSetFaceTrackMode.restype = HResult
+# inspireface/c_api/inspireface.h: 235
+if _libs[_LIBRARY_FILENAME].has("HFSessionSetFaceTrackMode", "cdecl"):
+    HFSessionSetFaceTrackMode = _libs[_LIBRARY_FILENAME].get("HFSessionSetFaceTrackMode", "cdecl")
+    HFSessionSetFaceTrackMode.argtypes = [HFSession, HFDetectMode]
+    HFSessionSetFaceTrackMode.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 259
-if _libs[_LIBRARY_FILENAME].has("HF_FaceContextRunFaceTrack", "cdecl"):
-    HF_FaceContextRunFaceTrack = _libs[_LIBRARY_FILENAME].get("HF_FaceContextRunFaceTrack", "cdecl")
-    HF_FaceContextRunFaceTrack.argtypes = [HContextHandle, HImageHandle, Ptr_HF_MultipleFaceData]
-    HF_FaceContextRunFaceTrack.restype = HResult
+# inspireface/c_api/inspireface.h: 244
+if _libs[_LIBRARY_FILENAME].has("HFSessionSetFaceDetectThreshold", "cdecl"):
+    HFSessionSetFaceDetectThreshold = _libs[_LIBRARY_FILENAME].get("HFSessionSetFaceDetectThreshold", "cdecl")
+    HFSessionSetFaceDetectThreshold.argtypes = [HFSession, HFloat]
+    HFSessionSetFaceDetectThreshold.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 276
-if _libs[_LIBRARY_FILENAME].has("HF_CopyFaceBasicToken", "cdecl"):
-    HF_CopyFaceBasicToken = _libs[_LIBRARY_FILENAME].get("HF_CopyFaceBasicToken", "cdecl")
-    HF_CopyFaceBasicToken.argtypes = [HF_FaceBasicToken, HPBuffer, HInt32]
-    HF_CopyFaceBasicToken.restype = HResult
+# inspireface/c_api/inspireface.h: 254
+if _libs[_LIBRARY_FILENAME].has("HFExecuteFaceTrack", "cdecl"):
+    HFExecuteFaceTrack = _libs[_LIBRARY_FILENAME].get("HFExecuteFaceTrack", "cdecl")
+    HFExecuteFaceTrack.argtypes = [HFSession, HFImageStream, PHFMultipleFaceData]
+    HFExecuteFaceTrack.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 290
-if _libs[_LIBRARY_FILENAME].has("HF_GetFaceBasicTokenSize", "cdecl"):
-    HF_GetFaceBasicTokenSize = _libs[_LIBRARY_FILENAME].get("HF_GetFaceBasicTokenSize", "cdecl")
-    HF_GetFaceBasicTokenSize.argtypes = [HPInt32]
-    HF_GetFaceBasicTokenSize.restype = HResult
+# inspireface/c_api/inspireface.h: 271
+if _libs[_LIBRARY_FILENAME].has("HFCopyFaceBasicToken", "cdecl"):
+    HFCopyFaceBasicToken = _libs[_LIBRARY_FILENAME].get("HFCopyFaceBasicToken", "cdecl")
+    HFCopyFaceBasicToken.argtypes = [HFFaceBasicToken, HPBuffer, HInt32]
+    HFCopyFaceBasicToken.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 304
-class struct_HF_FaceFeature(Structure):
+# inspireface/c_api/inspireface.h: 285
+if _libs[_LIBRARY_FILENAME].has("HFGetFaceBasicTokenSize", "cdecl"):
+    HFGetFaceBasicTokenSize = _libs[_LIBRARY_FILENAME].get("HFGetFaceBasicTokenSize", "cdecl")
+    HFGetFaceBasicTokenSize.argtypes = [HPInt32]
+    HFGetFaceBasicTokenSize.restype = HResult
+
+# inspireface/c_api/inspireface.h: 299
+class struct_HFFaceFeature(Structure):
     pass
 
-struct_HF_FaceFeature.__slots__ = [
+struct_HFFaceFeature.__slots__ = [
     'size',
     'data',
 ]
-struct_HF_FaceFeature._fields_ = [
+struct_HFFaceFeature._fields_ = [
     ('size', HInt32),
     ('data', HPFloat),
 ]
 
-HF_FaceFeature = struct_HF_FaceFeature# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 304
+HFFaceFeature = struct_HFFaceFeature# inspireface/c_api/inspireface.h: 299
 
-Ptr_HF_FaceFeature = POINTER(struct_HF_FaceFeature)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 304
+PHFFaceFeature = POINTER(struct_HFFaceFeature)# inspireface/c_api/inspireface.h: 299
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 315
-class struct_HF_FaceFeatureIdentity(Structure):
+# inspireface/c_api/inspireface.h: 311
+if _libs[_LIBRARY_FILENAME].has("HFFaceFeatureExtract", "cdecl"):
+    HFFaceFeatureExtract = _libs[_LIBRARY_FILENAME].get("HFFaceFeatureExtract", "cdecl")
+    HFFaceFeatureExtract.argtypes = [HFSession, HFImageStream, HFFaceBasicToken, PHFFaceFeature]
+    HFFaceFeatureExtract.restype = HResult
+
+# inspireface/c_api/inspireface.h: 323
+if _libs[_LIBRARY_FILENAME].has("HFFaceFeatureExtractCpy", "cdecl"):
+    HFFaceFeatureExtractCpy = _libs[_LIBRARY_FILENAME].get("HFFaceFeatureExtractCpy", "cdecl")
+    HFFaceFeatureExtractCpy.argtypes = [HFSession, HFImageStream, HFFaceBasicToken, HPFloat]
+    HFFaceFeatureExtractCpy.restype = HResult
+
+enum_HFSearchMode = c_int# inspireface/c_api/inspireface.h: 336
+
+HF_SEARCH_MODE_EAGER = 0# inspireface/c_api/inspireface.h: 336
+
+HF_SEARCH_MODE_EXHAUSTIVE = (HF_SEARCH_MODE_EAGER + 1)# inspireface/c_api/inspireface.h: 336
+
+HFSearchMode = enum_HFSearchMode# inspireface/c_api/inspireface.h: 336
+
+# inspireface/c_api/inspireface.h: 349
+class struct_HFFeatureHubConfiguration(Structure):
     pass
 
-struct_HF_FaceFeatureIdentity.__slots__ = [
+struct_HFFeatureHubConfiguration.__slots__ = [
+    'featureBlockNum',
+    'enablePersistence',
+    'dbPath',
+    'searchThreshold',
+    'searchMode',
+]
+struct_HFFeatureHubConfiguration._fields_ = [
+    ('featureBlockNum', HInt32),
+    ('enablePersistence', HInt32),
+    ('dbPath', HString),
+    ('searchThreshold', c_float),
+    ('searchMode', HFSearchMode),
+]
+
+HFFeatureHubConfiguration = struct_HFFeatureHubConfiguration# inspireface/c_api/inspireface.h: 349
+
+# inspireface/c_api/inspireface.h: 361
+if _libs[_LIBRARY_FILENAME].has("HFFeatureHubDataEnable", "cdecl"):
+    HFFeatureHubDataEnable = _libs[_LIBRARY_FILENAME].get("HFFeatureHubDataEnable", "cdecl")
+    HFFeatureHubDataEnable.argtypes = [HFFeatureHubConfiguration]
+    HFFeatureHubDataEnable.restype = HResult
+
+# inspireface/c_api/inspireface.h: 367
+if _libs[_LIBRARY_FILENAME].has("HFFeatureHubDataDisable", "cdecl"):
+    HFFeatureHubDataDisable = _libs[_LIBRARY_FILENAME].get("HFFeatureHubDataDisable", "cdecl")
+    HFFeatureHubDataDisable.argtypes = []
+    HFFeatureHubDataDisable.restype = HResult
+
+# inspireface/c_api/inspireface.h: 379
+class struct_HFFaceFeatureIdentity(Structure):
+    pass
+
+struct_HFFaceFeatureIdentity.__slots__ = [
     'customId',
     'tag',
     'feature',
 ]
-struct_HF_FaceFeatureIdentity._fields_ = [
+struct_HFFaceFeatureIdentity._fields_ = [
     ('customId', HInt32),
     ('tag', HString),
-    ('feature', Ptr_HF_FaceFeature),
+    ('feature', PHFFaceFeature),
 ]
 
-HF_FaceFeatureIdentity = struct_HF_FaceFeatureIdentity# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 315
+HFFaceFeatureIdentity = struct_HFFaceFeatureIdentity# inspireface/c_api/inspireface.h: 379
 
-Ptr_HF_FaceFeatureIdentity = POINTER(struct_HF_FaceFeatureIdentity)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 315
+PHFFaceFeatureIdentity = POINTER(struct_HFFaceFeatureIdentity)# inspireface/c_api/inspireface.h: 379
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 327
-if _libs[_LIBRARY_FILENAME].has("HF_FaceRecognitionThresholdSetting", "cdecl"):
-    HF_FaceRecognitionThresholdSetting = _libs[_LIBRARY_FILENAME].get("HF_FaceRecognitionThresholdSetting", "cdecl")
-    HF_FaceRecognitionThresholdSetting.argtypes = [HContextHandle, c_float]
-    HF_FaceRecognitionThresholdSetting.restype = HResult
+# inspireface/c_api/inspireface.h: 390
+if _libs[_LIBRARY_FILENAME].has("HFFeatureHubFaceSearchThresholdSetting", "cdecl"):
+    HFFeatureHubFaceSearchThresholdSetting = _libs[_LIBRARY_FILENAME].get("HFFeatureHubFaceSearchThresholdSetting", "cdecl")
+    HFFeatureHubFaceSearchThresholdSetting.argtypes = [c_float]
+    HFFeatureHubFaceSearchThresholdSetting.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 339
-if _libs[_LIBRARY_FILENAME].has("HF_FaceFeatureExtract", "cdecl"):
-    HF_FaceFeatureExtract = _libs[_LIBRARY_FILENAME].get("HF_FaceFeatureExtract", "cdecl")
-    HF_FaceFeatureExtract.argtypes = [HContextHandle, HImageHandle, HF_FaceBasicToken, Ptr_HF_FaceFeature]
-    HF_FaceFeatureExtract.restype = HResult
+# inspireface/c_api/inspireface.h: 401
+if _libs[_LIBRARY_FILENAME].has("HFFaceComparison", "cdecl"):
+    HFFaceComparison = _libs[_LIBRARY_FILENAME].get("HFFaceComparison", "cdecl")
+    HFFaceComparison.argtypes = [HFFaceFeature, HFFaceFeature, HPFloat]
+    HFFaceComparison.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 352
-if _libs[_LIBRARY_FILENAME].has("HF_FaceFeatureExtractCpy", "cdecl"):
-    HF_FaceFeatureExtractCpy = _libs[_LIBRARY_FILENAME].get("HF_FaceFeatureExtractCpy", "cdecl")
-    HF_FaceFeatureExtractCpy.argtypes = [HContextHandle, HImageHandle, HF_FaceBasicToken, HPFloat]
-    HF_FaceFeatureExtractCpy.restype = HResult
+# inspireface/c_api/inspireface.h: 409
+if _libs[_LIBRARY_FILENAME].has("HFGetFeatureLength", "cdecl"):
+    HFGetFeatureLength = _libs[_LIBRARY_FILENAME].get("HFGetFeatureLength", "cdecl")
+    HFGetFeatureLength.argtypes = [HPInt32]
+    HFGetFeatureLength.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 365
-if _libs[_LIBRARY_FILENAME].has("HF_FaceComparison1v1", "cdecl"):
-    HF_FaceComparison1v1 = _libs[_LIBRARY_FILENAME].get("HF_FaceComparison1v1", "cdecl")
-    HF_FaceComparison1v1.argtypes = [HContextHandle, HF_FaceFeature, HF_FaceFeature, HPFloat]
-    HF_FaceComparison1v1.restype = HResult
+# inspireface/c_api/inspireface.h: 418
+if _libs[_LIBRARY_FILENAME].has("HFFeatureHubInsertFeature", "cdecl"):
+    HFFeatureHubInsertFeature = _libs[_LIBRARY_FILENAME].get("HFFeatureHubInsertFeature", "cdecl")
+    HFFeatureHubInsertFeature.argtypes = [HFFaceFeatureIdentity]
+    HFFeatureHubInsertFeature.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 374
-if _libs[_LIBRARY_FILENAME].has("HF_GetFeatureLength", "cdecl"):
-    HF_GetFeatureLength = _libs[_LIBRARY_FILENAME].get("HF_GetFeatureLength", "cdecl")
-    HF_GetFeatureLength.argtypes = [HContextHandle, HPInt32]
-    HF_GetFeatureLength.restype = HResult
+# inspireface/c_api/inspireface.h: 428
+if _libs[_LIBRARY_FILENAME].has("HFFeatureHubFaceSearch", "cdecl"):
+    HFFeatureHubFaceSearch = _libs[_LIBRARY_FILENAME].get("HFFeatureHubFaceSearch", "cdecl")
+    HFFeatureHubFaceSearch.argtypes = [HFFaceFeature, HPFloat, PHFFaceFeatureIdentity]
+    HFFeatureHubFaceSearch.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 385
-if _libs[_LIBRARY_FILENAME].has("HF_FeaturesGroupInsertFeature", "cdecl"):
-    HF_FeaturesGroupInsertFeature = _libs[_LIBRARY_FILENAME].get("HF_FeaturesGroupInsertFeature", "cdecl")
-    HF_FeaturesGroupInsertFeature.argtypes = [HContextHandle, HF_FaceFeatureIdentity]
-    HF_FeaturesGroupInsertFeature.restype = HResult
+# inspireface/c_api/inspireface.h: 436
+if _libs[_LIBRARY_FILENAME].has("HFFeatureHubFaceRemove", "cdecl"):
+    HFFeatureHubFaceRemove = _libs[_LIBRARY_FILENAME].get("HFFeatureHubFaceRemove", "cdecl")
+    HFFeatureHubFaceRemove.argtypes = [HInt32]
+    HFFeatureHubFaceRemove.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 397
-if _libs[_LIBRARY_FILENAME].has("HF_FeaturesGroupFeatureSearch", "cdecl"):
-    HF_FeaturesGroupFeatureSearch = _libs[_LIBRARY_FILENAME].get("HF_FeaturesGroupFeatureSearch", "cdecl")
-    HF_FeaturesGroupFeatureSearch.argtypes = [HContextHandle, HF_FaceFeature, HPFloat, Ptr_HF_FaceFeatureIdentity]
-    HF_FeaturesGroupFeatureSearch.restype = HResult
+# inspireface/c_api/inspireface.h: 444
+if _libs[_LIBRARY_FILENAME].has("HFFeatureHubFaceUpdate", "cdecl"):
+    HFFeatureHubFaceUpdate = _libs[_LIBRARY_FILENAME].get("HFFeatureHubFaceUpdate", "cdecl")
+    HFFeatureHubFaceUpdate.argtypes = [HFFaceFeatureIdentity]
+    HFFeatureHubFaceUpdate.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 407
-if _libs[_LIBRARY_FILENAME].has("HF_FeaturesGroupFeatureRemove", "cdecl"):
-    HF_FeaturesGroupFeatureRemove = _libs[_LIBRARY_FILENAME].get("HF_FeaturesGroupFeatureRemove", "cdecl")
-    HF_FeaturesGroupFeatureRemove.argtypes = [HContextHandle, HInt32]
-    HF_FeaturesGroupFeatureRemove.restype = HResult
+# inspireface/c_api/inspireface.h: 453
+if _libs[_LIBRARY_FILENAME].has("HFFeatureHubGetFaceIdentity", "cdecl"):
+    HFFeatureHubGetFaceIdentity = _libs[_LIBRARY_FILENAME].get("HFFeatureHubGetFaceIdentity", "cdecl")
+    HFFeatureHubGetFaceIdentity.argtypes = [HInt32, PHFFaceFeatureIdentity]
+    HFFeatureHubGetFaceIdentity.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 417
-if _libs[_LIBRARY_FILENAME].has("HF_FeaturesGroupFeatureUpdate", "cdecl"):
-    HF_FeaturesGroupFeatureUpdate = _libs[_LIBRARY_FILENAME].get("HF_FeaturesGroupFeatureUpdate", "cdecl")
-    HF_FeaturesGroupFeatureUpdate.argtypes = [HContextHandle, HF_FaceFeatureIdentity]
-    HF_FeaturesGroupFeatureUpdate.restype = HResult
+# inspireface/c_api/inspireface.h: 461
+if _libs[_LIBRARY_FILENAME].has("HFFeatureHubGetFaceCount", "cdecl"):
+    HFFeatureHubGetFaceCount = _libs[_LIBRARY_FILENAME].get("HFFeatureHubGetFaceCount", "cdecl")
+    HFFeatureHubGetFaceCount.argtypes = [POINTER(HInt32)]
+    HFFeatureHubGetFaceCount.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 428
-if _libs[_LIBRARY_FILENAME].has("HF_FeaturesGroupGetFeatureIdentity", "cdecl"):
-    HF_FeaturesGroupGetFeatureIdentity = _libs[_LIBRARY_FILENAME].get("HF_FeaturesGroupGetFeatureIdentity", "cdecl")
-    HF_FeaturesGroupGetFeatureIdentity.argtypes = [HContextHandle, HInt32, Ptr_HF_FaceFeatureIdentity]
-    HF_FeaturesGroupGetFeatureIdentity.restype = HResult
+# inspireface/c_api/inspireface.h: 468
+if _libs[_LIBRARY_FILENAME].has("HFFeatureHubViewDBTable", "cdecl"):
+    HFFeatureHubViewDBTable = _libs[_LIBRARY_FILENAME].get("HFFeatureHubViewDBTable", "cdecl")
+    HFFeatureHubViewDBTable.argtypes = []
+    HFFeatureHubViewDBTable.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 437
-if _libs[_LIBRARY_FILENAME].has("HF_FeatureGroupGetCount", "cdecl"):
-    HF_FeatureGroupGetCount = _libs[_LIBRARY_FILENAME].get("HF_FeatureGroupGetCount", "cdecl")
-    HF_FeatureGroupGetCount.argtypes = [HContextHandle, POINTER(HInt32)]
-    HF_FeatureGroupGetCount.restype = HResult
+# inspireface/c_api/inspireface.h: 487
+if _libs[_LIBRARY_FILENAME].has("HFMultipleFacePipelineProcess", "cdecl"):
+    HFMultipleFacePipelineProcess = _libs[_LIBRARY_FILENAME].get("HFMultipleFacePipelineProcess", "cdecl")
+    HFMultipleFacePipelineProcess.argtypes = [HFSession, HFImageStream, PHFMultipleFaceData, HFSessionCustomParameter]
+    HFMultipleFacePipelineProcess.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 445
-if _libs[_LIBRARY_FILENAME].has("HF_ViewFaceDBTable", "cdecl"):
-    HF_ViewFaceDBTable = _libs[_LIBRARY_FILENAME].get("HF_ViewFaceDBTable", "cdecl")
-    HF_ViewFaceDBTable.argtypes = [HContextHandle]
-    HF_ViewFaceDBTable.restype = HResult
+# inspireface/c_api/inspireface.h: 503
+if _libs[_LIBRARY_FILENAME].has("HFMultipleFacePipelineProcessOptional", "cdecl"):
+    HFMultipleFacePipelineProcessOptional = _libs[_LIBRARY_FILENAME].get("HFMultipleFacePipelineProcessOptional", "cdecl")
+    HFMultipleFacePipelineProcessOptional.argtypes = [HFSession, HFImageStream, PHFMultipleFaceData, HInt32]
+    HFMultipleFacePipelineProcessOptional.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 464
-if _libs[_LIBRARY_FILENAME].has("HF_MultipleFacePipelineProcess", "cdecl"):
-    HF_MultipleFacePipelineProcess = _libs[_LIBRARY_FILENAME].get("HF_MultipleFacePipelineProcess", "cdecl")
-    HF_MultipleFacePipelineProcess.argtypes = [HContextHandle, HImageHandle, Ptr_HF_MultipleFaceData, HF_ContextCustomParameter]
-    HF_MultipleFacePipelineProcess.restype = HResult
-
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 480
-if _libs[_LIBRARY_FILENAME].has("HF_MultipleFacePipelineProcessOptional", "cdecl"):
-    HF_MultipleFacePipelineProcessOptional = _libs[_LIBRARY_FILENAME].get("HF_MultipleFacePipelineProcessOptional", "cdecl")
-    HF_MultipleFacePipelineProcessOptional.argtypes = [HContextHandle, HImageHandle, Ptr_HF_MultipleFaceData, HInt32]
-    HF_MultipleFacePipelineProcessOptional.restype = HResult
-
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 492
-class struct_HF_RGBLivenessConfidence(Structure):
+# inspireface/c_api/inspireface.h: 515
+class struct_HFRGBLivenessConfidence(Structure):
     pass
 
-struct_HF_RGBLivenessConfidence.__slots__ = [
+struct_HFRGBLivenessConfidence.__slots__ = [
     'num',
     'confidence',
 ]
-struct_HF_RGBLivenessConfidence._fields_ = [
+struct_HFRGBLivenessConfidence._fields_ = [
     ('num', HInt32),
     ('confidence', HPFloat),
 ]
 
-HF_RGBLivenessConfidence = struct_HF_RGBLivenessConfidence# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 492
+HFRGBLivenessConfidence = struct_HFRGBLivenessConfidence# inspireface/c_api/inspireface.h: 515
 
-Ptr_HF_RGBLivenessConfidence = POINTER(struct_HF_RGBLivenessConfidence)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 492
+PHFRGBLivenessConfidence = POINTER(struct_HFRGBLivenessConfidence)# inspireface/c_api/inspireface.h: 515
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 505
-if _libs[_LIBRARY_FILENAME].has("HF_GetRGBLivenessConfidence", "cdecl"):
-    HF_GetRGBLivenessConfidence = _libs[_LIBRARY_FILENAME].get("HF_GetRGBLivenessConfidence", "cdecl")
-    HF_GetRGBLivenessConfidence.argtypes = [HContextHandle, Ptr_HF_RGBLivenessConfidence]
-    HF_GetRGBLivenessConfidence.restype = HResult
+# inspireface/c_api/inspireface.h: 528
+if _libs[_LIBRARY_FILENAME].has("HFGetRGBLivenessConfidence", "cdecl"):
+    HFGetRGBLivenessConfidence = _libs[_LIBRARY_FILENAME].get("HFGetRGBLivenessConfidence", "cdecl")
+    HFGetRGBLivenessConfidence.argtypes = [HFSession, PHFRGBLivenessConfidence]
+    HFGetRGBLivenessConfidence.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 516
-class struct_HF_FaceMaskConfidence(Structure):
+# inspireface/c_api/inspireface.h: 539
+class struct_HFFaceMaskConfidence(Structure):
     pass
 
-struct_HF_FaceMaskConfidence.__slots__ = [
+struct_HFFaceMaskConfidence.__slots__ = [
     'num',
     'confidence',
 ]
-struct_HF_FaceMaskConfidence._fields_ = [
+struct_HFFaceMaskConfidence._fields_ = [
     ('num', HInt32),
     ('confidence', HPFloat),
 ]
 
-HF_FaceMaskConfidence = struct_HF_FaceMaskConfidence# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 516
+HFFaceMaskConfidence = struct_HFFaceMaskConfidence# inspireface/c_api/inspireface.h: 539
 
-Ptr_HF_FaceMaskConfidence = POINTER(struct_HF_FaceMaskConfidence)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 516
+PHFFaceMaskConfidence = POINTER(struct_HFFaceMaskConfidence)# inspireface/c_api/inspireface.h: 539
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 529
-if _libs[_LIBRARY_FILENAME].has("HF_GetFaceMaskConfidence", "cdecl"):
-    HF_GetFaceMaskConfidence = _libs[_LIBRARY_FILENAME].get("HF_GetFaceMaskConfidence", "cdecl")
-    HF_GetFaceMaskConfidence.argtypes = [HContextHandle, Ptr_HF_FaceMaskConfidence]
-    HF_GetFaceMaskConfidence.restype = HResult
+# inspireface/c_api/inspireface.h: 551
+if _libs[_LIBRARY_FILENAME].has("HFGetFaceMaskConfidence", "cdecl"):
+    HFGetFaceMaskConfidence = _libs[_LIBRARY_FILENAME].get("HFGetFaceMaskConfidence", "cdecl")
+    HFGetFaceMaskConfidence.argtypes = [HFSession, PHFFaceMaskConfidence]
+    HFGetFaceMaskConfidence.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 542
-if _libs[_LIBRARY_FILENAME].has("HF_FaceQualityDetect", "cdecl"):
-    HF_FaceQualityDetect = _libs[_LIBRARY_FILENAME].get("HF_FaceQualityDetect", "cdecl")
-    HF_FaceQualityDetect.argtypes = [HContextHandle, HF_FaceBasicToken, POINTER(HFloat)]
-    HF_FaceQualityDetect.restype = HResult
-
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 555
-class struct_HF_InspireFaceVersion(Structure):
+# inspireface/c_api/inspireface.h: 562
+class struct_HFFaceQualityConfidence(Structure):
     pass
 
-struct_HF_InspireFaceVersion.__slots__ = [
+struct_HFFaceQualityConfidence.__slots__ = [
+    'num',
+    'confidence',
+]
+struct_HFFaceQualityConfidence._fields_ = [
+    ('num', HInt32),
+    ('confidence', HPFloat),
+]
+
+HFFaceQualityConfidence = struct_HFFaceQualityConfidence# inspireface/c_api/inspireface.h: 562
+
+PHFFaceQualityConfidence = POINTER(struct_HFFaceQualityConfidence)# inspireface/c_api/inspireface.h: 562
+
+# inspireface/c_api/inspireface.h: 574
+if _libs[_LIBRARY_FILENAME].has("HFGetFaceQualityConfidence", "cdecl"):
+    HFGetFaceQualityConfidence = _libs[_LIBRARY_FILENAME].get("HFGetFaceQualityConfidence", "cdecl")
+    HFGetFaceQualityConfidence.argtypes = [HFSession, PHFFaceQualityConfidence]
+    HFGetFaceQualityConfidence.restype = HResult
+
+# inspireface/c_api/inspireface.h: 586
+if _libs[_LIBRARY_FILENAME].has("HFFaceQualityDetect", "cdecl"):
+    HFFaceQualityDetect = _libs[_LIBRARY_FILENAME].get("HFFaceQualityDetect", "cdecl")
+    HFFaceQualityDetect.argtypes = [HFSession, HFFaceBasicToken, POINTER(HFloat)]
+    HFFaceQualityDetect.restype = HResult
+
+# inspireface/c_api/inspireface.h: 599
+class struct_HFInspireFaceVersion(Structure):
+    pass
+
+struct_HFInspireFaceVersion.__slots__ = [
     'major',
     'minor',
     'patch',
 ]
-struct_HF_InspireFaceVersion._fields_ = [
+struct_HFInspireFaceVersion._fields_ = [
     ('major', c_int),
     ('minor', c_int),
     ('patch', c_int),
 ]
 
-HF_InspireFaceVersion = struct_HF_InspireFaceVersion# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 555
+HFInspireFaceVersion = struct_HFInspireFaceVersion# inspireface/c_api/inspireface.h: 599
 
-Ptr_HF_InspireFaceVersion = POINTER(struct_HF_InspireFaceVersion)# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 555
+PHFInspireFaceVersion = POINTER(struct_HFInspireFaceVersion)# inspireface/c_api/inspireface.h: 599
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 565
-if _libs[_LIBRARY_FILENAME].has("HF_QueryInspireFaceVersion", "cdecl"):
-    HF_QueryInspireFaceVersion = _libs[_LIBRARY_FILENAME].get("HF_QueryInspireFaceVersion", "cdecl")
-    HF_QueryInspireFaceVersion.argtypes = [Ptr_HF_InspireFaceVersion]
-    HF_QueryInspireFaceVersion.restype = HResult
+# inspireface/c_api/inspireface.h: 609
+if _libs[_LIBRARY_FILENAME].has("HFQueryInspireFaceVersion", "cdecl"):
+    HFQueryInspireFaceVersion = _libs[_LIBRARY_FILENAME].get("HFQueryInspireFaceVersion", "cdecl")
+    HFQueryInspireFaceVersion.argtypes = [PHFInspireFaceVersion]
+    HFQueryInspireFaceVersion.restype = HResult
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 578
-if _libs[_LIBRARY_FILENAME].has("HF_DeBugImageStreamImShow", "cdecl"):
-    HF_DeBugImageStreamImShow = _libs[_LIBRARY_FILENAME].get("HF_DeBugImageStreamImShow", "cdecl")
-    HF_DeBugImageStreamImShow.argtypes = [HImageHandle]
-    HF_DeBugImageStreamImShow.restype = None
+enum_HFLogLevel = c_int# inspireface/c_api/inspireface.h: 621
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 27
+HF_LOG_NONE = 0# inspireface/c_api/inspireface.h: 621
+
+HF_LOG_DEBUG = (HF_LOG_NONE + 1)# inspireface/c_api/inspireface.h: 621
+
+HF_LOG_INFO = (HF_LOG_DEBUG + 1)# inspireface/c_api/inspireface.h: 621
+
+HF_LOG_WARN = (HF_LOG_INFO + 1)# inspireface/c_api/inspireface.h: 621
+
+HF_LOG_ERROR = (HF_LOG_WARN + 1)# inspireface/c_api/inspireface.h: 621
+
+HF_LOG_FATAL = (HF_LOG_ERROR + 1)# inspireface/c_api/inspireface.h: 621
+
+HFLogLevel = enum_HFLogLevel# inspireface/c_api/inspireface.h: 621
+
+# inspireface/c_api/inspireface.h: 626
+if _libs[_LIBRARY_FILENAME].has("HFSetLogLevel", "cdecl"):
+    HFSetLogLevel = _libs[_LIBRARY_FILENAME].get("HFSetLogLevel", "cdecl")
+    HFSetLogLevel.argtypes = [HFLogLevel]
+    HFSetLogLevel.restype = HResult
+
+# inspireface/c_api/inspireface.h: 631
+if _libs[_LIBRARY_FILENAME].has("HFLogDisable", "cdecl"):
+    HFLogDisable = _libs[_LIBRARY_FILENAME].get("HFLogDisable", "cdecl")
+    HFLogDisable.argtypes = []
+    HFLogDisable.restype = HResult
+
+# inspireface/c_api/inspireface.h: 644
+if _libs[_LIBRARY_FILENAME].has("HFDeBugImageStreamImShow", "cdecl"):
+    HFDeBugImageStreamImShow = _libs[_LIBRARY_FILENAME].get("HFDeBugImageStreamImShow", "cdecl")
+    HFDeBugImageStreamImShow.argtypes = [HFImageStream]
+    HFDeBugImageStreamImShow.restype = None
+
+# inspireface/c_api/inspireface.h: 27
+try:
+    HF_ENABLE_NONE = 0
+except:
+    pass
+
+# inspireface/c_api/inspireface.h: 28
 try:
     HF_ENABLE_FACE_RECOGNITION = 2
 except:
     pass
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 28
+# inspireface/c_api/inspireface.h: 29
 try:
     HF_ENABLE_LIVENESS = 4
 except:
     pass
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 29
+# inspireface/c_api/inspireface.h: 30
 try:
     HF_ENABLE_IR_LIVENESS = 8
 except:
     pass
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 30
+# inspireface/c_api/inspireface.h: 31
 try:
     HF_ENABLE_MASK_DETECT = 16
 except:
     pass
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 31
+# inspireface/c_api/inspireface.h: 32
 try:
     HF_ENABLE_AGE_PREDICT = 32
 except:
     pass
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 32
+# inspireface/c_api/inspireface.h: 33
 try:
     HF_ENABLE_GENDER_PREDICT = 64
 except:
     pass
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 33
+# inspireface/c_api/inspireface.h: 34
 try:
     HF_ENABLE_QUALITY = 128
 except:
     pass
 
-# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 34
+# inspireface/c_api/inspireface.h: 35
 try:
     HF_ENABLE_INTERACTION = 256
 except:
     pass
 
-HF_ImageData = struct_HF_ImageData# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 73
+HFImageData = struct_HFImageData# inspireface/c_api/inspireface.h: 74
 
-HF_ContextCustomParameter = struct_HF_ContextCustomParameter# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 121
+HFSessionCustomParameter = struct_HFSessionCustomParameter# inspireface/c_api/inspireface.h: 132
 
-HF_DatabaseConfiguration = struct_HF_DatabaseConfiguration# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 176
+HFFaceBasicToken = struct_HFFaceBasicToken# inspireface/c_api/inspireface.h: 191
 
-HF_FaceBasicToken = struct_HF_FaceBasicToken# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 205
+HFFaceEulerAngle = struct_HFFaceEulerAngle# inspireface/c_api/inspireface.h: 202
 
-HF_FaceEulerAngle = struct_HF_FaceEulerAngle# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 216
+HFMultipleFaceData = struct_HFMultipleFaceData# inspireface/c_api/inspireface.h: 216
 
-HF_MultipleFaceData = struct_HF_MultipleFaceData# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 230
+HFFaceFeature = struct_HFFaceFeature# inspireface/c_api/inspireface.h: 299
 
-HF_FaceFeature = struct_HF_FaceFeature# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 304
+HFFeatureHubConfiguration = struct_HFFeatureHubConfiguration# inspireface/c_api/inspireface.h: 349
 
-HF_FaceFeatureIdentity = struct_HF_FaceFeatureIdentity# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 315
+HFFaceFeatureIdentity = struct_HFFaceFeatureIdentity# inspireface/c_api/inspireface.h: 379
 
-HF_RGBLivenessConfidence = struct_HF_RGBLivenessConfidence# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 492
+HFRGBLivenessConfidence = struct_HFRGBLivenessConfidence# inspireface/c_api/inspireface.h: 515
 
-HF_FaceMaskConfidence = struct_HF_FaceMaskConfidence# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 516
+HFFaceMaskConfidence = struct_HFFaceMaskConfidence# inspireface/c_api/inspireface.h: 539
 
-HF_InspireFaceVersion = struct_HF_InspireFaceVersion# /Users/tunm/work/HyperFace/cpp/inspireface/c_api/inspireface.h: 555
+HFFaceQualityConfidence = struct_HFFaceQualityConfidence# inspireface/c_api/inspireface.h: 562
+
+HFInspireFaceVersion = struct_HFInspireFaceVersion# inspireface/c_api/inspireface.h: 599
 
 # No inserted files
 

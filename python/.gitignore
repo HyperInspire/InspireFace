@@ -184,4 +184,5 @@ results/
 ./git
 .gitignore
 utils/*_config_*.json
-
+*.so
+*.dylib

@@ -3,39 +3,40 @@
 //
 
 #include "face_context.h"
-
+#include "Initialization_module/launch.h"
 #include <utility>
 #include "log.h"
 #include "herror.h"
-#include "utils.h"
+#include "middleware/utils.h"
 
 namespace inspire {
 
 
 FaceContext::FaceContext() = default;
 
-int32_t FaceContext::Configuration(const String &model_file_path, DetectMode detect_mode, int32_t max_detect_face,
+int32_t FaceContext::Configuration(DetectMode detect_mode, int32_t max_detect_face,
                                    CustomPipelineParameter param) {
     m_detect_mode_ = detect_mode;
     m_max_detect_face_ = max_detect_face;
     m_parameter_ = param;
-
-    m_archive_.ReLoad(model_file_path);
-    if (m_archive_.QueryStatus() != SARC_SUCCESS) {
-        return HERR_CTX_ARCHIVE_LOAD_FAILURE;
+    if (!INSPIRE_LAUNCH->isMLoad()) {
+        return HERR_ARCHIVE_NOT_LOAD;
+    }
+    if (INSPIRE_LAUNCH->getMArchive().QueryStatus() != SARC_SUCCESS) {
+        return HERR_ARCHIVE_LOAD_FAILURE;
     }
 
     m_face_track_ = std::make_shared<FaceTrack>(m_max_detect_face_);
-    m_face_track_->Configuration(m_archive_);
+    m_face_track_->Configuration(INSPIRE_LAUNCH->getMArchive());
     SetDetectMode(m_detect_mode_);
 
-    m_face_recognition_ = std::make_shared<FeatureExtraction>(m_archive_, m_parameter_.enable_recognition);
+    m_face_recognition_ = std::make_shared<FeatureExtraction>(INSPIRE_LAUNCH->getMArchive(), m_parameter_.enable_recognition);
     if (m_face_recognition_->QueryStatus() != HSUCCEED) {
         return m_face_recognition_->QueryStatus();
     }
 
     m_face_pipeline_ = std::make_shared<FacePipeline>(
-            m_archive_,
+            INSPIRE_LAUNCH->getMArchive(),
             param.enable_liveness,
             param.enable_mask_detect,
             param.enable_age,
@@ -48,6 +49,7 @@ int32_t FaceContext::Configuration(const String &model_file_path, DetectMode det
 
 
 int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
+    std::lock_guard<std::mutex> lock(m_mtx_);
     m_detect_cache_.clear();
     m_face_basic_data_cache_.clear();
     m_face_rects_cache_.clear();
@@ -56,8 +58,9 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     m_roll_results_cache_.clear();
     m_yaw_results_cache_.clear();
     m_pitch_results_cache_.clear();
+    m_quality_score_results_cache_.clear();
     if (m_face_track_ == nullptr) {
-        return HERR_CTX_TRACKER_FAILURE;
+        return HERR_SESS_TRACKER_FAILURE;
     }
     m_face_track_->UpdateStream(image, m_always_detect_);
     for (int i = 0; i < m_face_track_->trackingFace.size(); ++i) {
@@ -65,14 +68,24 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
         HyperFaceData data = FaceObjectToHyperFaceData(face, i);
         ByteArray byteArray;
         auto ret = SerializeHyperFaceData(data, byteArray);
+        if (ret != HSUCCEED) {
+            return HERR_INVALID_SERIALIZATION_FAILED;
+        }
         m_detect_cache_.push_back(byteArray);
-        assert(ret == HSUCCEED);
         m_track_id_cache_.push_back(face.GetTrackingId());
         m_face_rects_cache_.push_back(data.rect);
         m_quality_results_cache_.push_back(face.high_result);
         m_roll_results_cache_.push_back(face.high_result.roll);
         m_yaw_results_cache_.push_back(face.high_result.yaw);
         m_pitch_results_cache_.push_back(face.high_result.pitch);
+        // Process quality scores
+        float avg = 0.0f;
+        for (int j = 0; j < 5; ++j) {
+            avg += data.quality[j];
+        }
+        avg /= 5.0f;
+        float quality_score = 1.0f - avg;    // reversal
+        m_quality_score_results_cache_.push_back(quality_score);
     }
     // ptr face_basic
     m_face_basic_data_cache_.resize(m_face_track_->trackingFace.size());
@@ -81,6 +94,7 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
         basic.dataSize = m_detect_cache_[i].size();
         basic.data = m_detect_cache_[i].data();
     }
+
 
 //    LOGD("Track COST: %f", m_face_track_->GetTrackTotalUseTime());
     return HSUCCEED;
@@ -109,6 +123,7 @@ const int32_t FaceContext::GetNumberOfFacesCurrentlyDetected() const {
 }
 
 int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFaceData> &faces, const CustomPipelineParameter &param) {
+    std::lock_guard<std::mutex> lock(m_mtx_);
     m_mask_results_cache_.resize(faces.size(), -1.0f);
     m_rgb_liveness_results_cache_.resize(faces.size(), -1.0f);
     for (int i = 0; i < faces.size(); ++i) {
@@ -190,12 +205,17 @@ const std::vector<float>& FaceContext::GetRgbLivenessResultsCache() const {
     return m_rgb_liveness_results_cache_;
 }
 
+const std::vector<float>& FaceContext::GetFaceQualityScoresResultsCache() const {
+    return m_quality_score_results_cache_;
+}
+
 
 const Embedded& FaceContext::GetFaceFeatureCache() const {
     return m_face_feature_cache_;
 }
 
 int32_t FaceContext::FaceFeatureExtract(CameraStream &image, FaceBasicData& data) {
+    std::lock_guard<std::mutex> lock(m_mtx_);
     int32_t ret;
     HyperFaceData face = {0};
     ret = DeserializeHyperFaceData((char* )data.data, data.dataSize, face);

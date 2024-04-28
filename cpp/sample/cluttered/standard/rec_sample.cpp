@@ -37,7 +37,7 @@ int comparison1v1(FaceContext &ctx) {
     Embedded feature_2;
 
     {
-        auto image = cv::imread("/Users/tunm/Downloads/face_rec/刘亦菲/刘亦菲2.jpg");
+        auto image = cv::imread("");
         cv::Mat rot90;
         TestUtils::rotate(image, rot90, ROTATION_90);
 
@@ -56,7 +56,7 @@ int comparison1v1(FaceContext &ctx) {
     }
 
     {
-        auto image = cv::imread("/Users/tunm/Downloads/face_rec/伍佰/伍佰1.jpg");
+        auto image = cv::imread("");
         CameraStream stream;
         stream.SetDataFormat(BGR);
         stream.SetRotationMode(ROTATION_0);
@@ -85,11 +85,6 @@ int search(FaceContext &ctx) {
 //    block.reset(FeatureBlock::Create(hyper::MC_OPENCV));
 
     std::vector<String> files_list = {
-            "/Users/tunm/Downloads/face_rec/胡歌/胡歌1.jpg",
-            "/Users/tunm/Downloads/face_rec/刘浩存/刘浩存1.jpg",
-            "/Users/tunm/Downloads/face_rec/刘亦菲/刘亦菲1.jpg",
-            "/Users/tunm/Downloads/face_rec/刘奕君/刘奕君1.jpg",
-            "/Users/tunm/Downloads/face_rec/伍佰/伍佰1.jpg",
     };
     for (int i = 0; i < files_list.size(); ++i) {
         auto image = cv::imread(files_list[i]);
@@ -121,7 +116,7 @@ int search(FaceContext &ctx) {
     // Update or insert a face
     {
         Embedded feature;
-        auto image = cv::imread("/Users/tunm/Downloads/face_rec/刘奕君/刘奕君3.jpg");
+        auto image = cv::imread("");
         CameraStream stream;
         stream.SetDataFormat(BGR);
         stream.SetRotationMode(ROTATION_0);
@@ -141,7 +136,7 @@ int search(FaceContext &ctx) {
     // Prepare an image to search
     {
         Embedded feature;
-        auto image = cv::imread("/Users/tunm/Downloads/face_rec/刘奕君/刘奕君2.jpg");
+        auto image = cv::imread("");
         CameraStream stream;
         stream.SetDataFormat(BGR);
         stream.SetRotationMode(ROTATION_0);
@@ -170,15 +165,14 @@ int main(int argc, char** argv) {
     FaceContext ctx;
     CustomPipelineParameter param;
     param.enable_recognition = true;
-    int32_t ret = ctx.Configuration("test_res/model_zip/Pikachu", DetectMode::DETECT_MODE_IMAGE, 1, param);
+    int32_t ret = ctx.Configuration("test_res/pack/Pikachu", DetectMode::DETECT_MODE_IMAGE, 1, param);
     if (ret != 0) {
         INSPIRE_LOGE("Initialization error");
         return -1;
     }
-    // 1v1对比
+    
     comparison1v1(ctx);
 
-    // 搜索
 //    search(ctx);
 
     return 0;
