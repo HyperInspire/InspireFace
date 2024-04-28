@@ -17,31 +17,29 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
 
     SECTION("Test compare tools") {
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 5, &ctxHandle);
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 5, &session);
         REQUIRE(ret == HSUCCEED);
 
         float mostSim = -1.0f;
-        auto succ = FindMostSimilarScoreFromTwoPic(ctxHandle,
+        auto succ = FindMostSimilarScoreFromTwoPic(session,
                                                    GET_DATA("data/bulk/jntm.jpg"),
                                                    GET_DATA("data/bulk/kun.jpg"),
                                                    mostSim);
         CHECK(succ);
         TEST_PRINT("kun v kun :{}", mostSim);
 
-        succ = FindMostSimilarScoreFromTwoPic(ctxHandle,
+        succ = FindMostSimilarScoreFromTwoPic(session,
                                               GET_DATA("data/bulk/jntm.jpg"),
                                               GET_DATA("data/bulk/Rob_Lowe_0001.jpg"),
                                               mostSim);
         CHECK(succ);
         TEST_PRINT("kun v other :{}", mostSim);
 
-        succ = FindMostSimilarScoreFromTwoPic(ctxHandle,
+        succ = FindMostSimilarScoreFromTwoPic(session,
                                               GET_DATA("data/bulk/kun.jpg"),
                                               GET_DATA("data/bulk/view.jpg"),
                                               mostSim);
@@ -49,7 +47,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         TEST_PRINT("kun v other :{}", mostSim);
 
         // finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
     }
 
@@ -59,11 +57,11 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 5, &ctxHandle);
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 5, &session);
         REQUIRE(ret == HSUCCEED);
         std::vector<int> labels;
         std::vector<float> confidences;
@@ -110,7 +108,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
             }
 
             float mostSim;
-            auto succ = FindMostSimilarScoreFromTwoPic(ctxHandle, imgPath1, imgPath2, mostSim);
+            auto succ = FindMostSimilarScoreFromTwoPic(session, imgPath1, imgPath2, mostSim);
             if (!succ) {
                 continue;
             }
@@ -133,7 +131,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         EvaluationRecord record(getEvaluationRecordFile());
         record.insertEvaluationData(TEST_MODEL_FILE, "LFW", result.second, result.first);
         // finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 #endif
     }

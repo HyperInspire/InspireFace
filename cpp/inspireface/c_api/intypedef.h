@@ -6,14 +6,15 @@
 #define HYPERFACEREPO_INTYPEDEF_H
 
 typedef void*               HPVoid;                           ///< Pointer to Void.
-typedef void*               HImageHandle;                     ///< Handle for image.
-typedef void*               HContextHandle;                   ///< Handle for context.
+typedef void*               HFImageStream;                   ///< Handle for image.
+typedef void*               HFSession;                       ///< Handle for context.
 typedef long                HLong;                            ///< Long integer.
 typedef float                HFloat;                          ///< Single-precision floating point.
 typedef float*               HPFloat;                         ///< Pointer to Single-precision floating point.
 typedef double              HDouble;                          ///< Double-precision floating point.
 typedef	unsigned char		HUInt8;                           ///< Unsigned 8-bit integer.
 typedef signed int			HInt32;                           ///< Signed 32-bit integer.
+typedef signed int			HOption;                          ///< Signed 32-bit integer option.
 typedef signed int*			HPInt32;                          ///< Pointer to signed 32-bit integer.
 typedef long                HResult;                          ///< Result code.
 typedef char*               HString;                          ///< String.

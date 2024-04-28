@@ -10,7 +10,7 @@ using namespace inspire;
 
 int main() {
     InspireArchive archive;
-    archive.ReLoad("test_res/model_zip/Gundam_RV1109");
+    archive.ReLoad("test_res/pack/Gundam_RV1109");
 
     FaceTrack track;
 //    FaceRecognition recognition(archive, true);

@@ -77,7 +77,7 @@ public:
      * @param param Custom parameters for the face pipeline.
      * @return int32_t Returns 0 on success, non-zero for any error.
      */
-    int32_t Configuration(const String& model_file_path, DetectMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param);
+    int32_t Configuration(DetectMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param);
 
     /**
      * @brief Performs face detection and tracking on a given image stream.
@@ -86,6 +86,11 @@ public:
      */// Method for face detection and tracking
     int32_t FaceDetectAndTrack(CameraStream &image);
 
+    /**
+     * @brief Set the threshold of face detection function, which only acts on the detection model
+     * @param value threshold value
+     * @return int32_t Returns the number of faces detected and tracked.
+     * */
     int32_t SetFaceDetectThreshold(float value);
 
     /**
@@ -221,6 +226,12 @@ public:
     const std::vector<float>& GetRgbLivenessResultsCache() const;
 
     /**
+     * @brief Gets the cache of face quality predict results.
+     * @return A const reference to a vector containing face quality predict results.
+     */
+    const std::vector<float>& GetFaceQualityScoresResultsCache() const;
+
+    /**
      * @brief Gets the cache of the current face features.
      * @return A const reference to the Embedded object containing current face feature data.
      */
@@ -250,9 +261,11 @@ private:
     std::vector<FacePoseQualityResult> m_quality_results_cache_;   ///< Cache for face pose quality results
     std::vector<float> m_mask_results_cache_;                       ///< Cache for mask detection results
     std::vector<float> m_rgb_liveness_results_cache_;               ///< Cache for RGB liveness detection results
+    std::vector<float> m_quality_score_results_cache_;               ///< Cache for RGB face quality score results
     Embedded m_face_feature_cache_;                                ///< Cache for current face feature data
 
-    InspireArchive m_archive_;                                     ///< Model Archive
+    std::mutex m_mtx_;                                             ///< Mutex for thread safety.
+
 };
 
 }   // namespace hyper

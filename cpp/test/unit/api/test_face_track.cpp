@@ -17,24 +17,22 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
 
     SECTION("Face detection from image") {
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
         spdlog::error("error ret :{}", ret);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
-        HImageHandle imgHandle;
+        HFImageStream imgHandle;
         auto image = cv::imread(GET_DATA("data/bulk/kun.jpg"));
         ret = CVImageToImageStream(image, imgHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
-        HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+        HFMultipleFaceData multipleFaceData = {0};
+        ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
 
@@ -53,22 +51,22 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         // The iou is allowed to have an error of 10%
         CHECK(iou == Approx(1.0f).epsilon(0.1));
 
-        ret = HF_ReleaseImageStream(imgHandle);
+        ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
 
         // Prepare non-face images
-        HImageHandle viewHandle;
+        HFImageStream viewHandle;
         auto view = cv::imread(GET_DATA("data/bulk/view.jpg"));
         ret = CVImageToImageStream(view, viewHandle);
         REQUIRE(ret == HSUCCEED);
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, viewHandle, &multipleFaceData);
+        ret = HFExecuteFaceTrack(session, viewHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 0);
 
-        ret = HF_ReleaseImageStream(viewHandle);
+        ret = HFReleaseImageStream(viewHandle);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
     }
@@ -77,10 +75,10 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
-        HF_DetectMode detMode = HF_DETECT_MODE_VIDEO;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_VIDEO;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
 
         auto expectedId = 1;
@@ -89,13 +87,13 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         auto count_loss = 0;
         for (int i = 0; i < filenames.size(); ++i) {
             auto filename = filenames[i];
-            HImageHandle imgHandle;
+            HFImageStream imgHandle;
             auto image = cv::imread(GET_DATA("video_frames/" + filename));
             ret = CVImageToImageStream(image, imgHandle);
             REQUIRE(ret == HSUCCEED);
 
-            HF_MultipleFaceData multipleFaceData = {0};
-            ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+            HFMultipleFaceData multipleFaceData = {0};
+            ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
             REQUIRE(ret == HSUCCEED);
 //            CHECK(multipleFaceData.detectedNum == 1);
             if (multipleFaceData.detectedNum != 1) {
@@ -113,14 +111,14 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
                 count_loss++;
             }
 
-            ret = HF_ReleaseImageStream(imgHandle);
+            ret = HFReleaseImageStream(imgHandle);
             REQUIRE(ret == HSUCCEED);
         }
         float loss = (float )count_loss / filenames.size();
         // The face track loss is allowed to have an error of 5%
 //        CHECK(loss == Approx(0.0f).epsilon(0.05));
 
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
     }
 
@@ -128,22 +126,22 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HResult ret;
         std::string modelPath = GET_MODEL_FILE();
         HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
-        HF_MultipleFaceData multipleFaceData = {0};
+        HFMultipleFaceData multipleFaceData = {0};
 
         // Left side face
-        HImageHandle leftHandle;
+        HFImageStream leftHandle;
         auto left = cv::imread(GET_DATA("data/pose/left_face.jpeg"));
         ret = CVImageToImageStream(left, leftHandle);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, leftHandle, &multipleFaceData);
+        ret = HFExecuteFaceTrack(session, leftHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
 
@@ -155,77 +153,77 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         checked = (yaw > -90 && yaw < -10);
         CHECK(checked);
 
-        HF_ReleaseImageStream(leftHandle);
+        HFReleaseImageStream(leftHandle);
 
         // Right-handed rotation
-        HImageHandle rightHandle;
+        HFImageStream rightHandle;
         auto right = cv::imread(GET_DATA("data/pose/right_face.png"));
         ret = CVImageToImageStream(right, rightHandle);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, rightHandle, &multipleFaceData);
+        ret = HFExecuteFaceTrack(session, rightHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
         yaw = multipleFaceData.angles.yaw[0];
         checked = (yaw > 10 && yaw < 90);
         CHECK(checked);
 
-        HF_ReleaseImageStream(rightHandle);
+        HFReleaseImageStream(rightHandle);
 
         // Rise head
-        HImageHandle riseHandle;
+        HFImageStream riseHandle;
         auto rise = cv::imread(GET_DATA("data/pose/rise_face.jpeg"));
         ret = CVImageToImageStream(rise, riseHandle);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, riseHandle, &multipleFaceData);
+        ret = HFExecuteFaceTrack(session, riseHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
         pitch = multipleFaceData.angles.pitch[0];
         CHECK(pitch > 5);
-        HF_ReleaseImageStream(riseHandle);
+        HFReleaseImageStream(riseHandle);
 
         // Lower head
-        HImageHandle lowerHandle;
+        HFImageStream lowerHandle;
         auto lower = cv::imread(GET_DATA("data/pose/lower_face.jpeg"));
         ret = CVImageToImageStream(lower, lowerHandle);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, lowerHandle, &multipleFaceData);
+        ret = HFExecuteFaceTrack(session, lowerHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
         pitch = multipleFaceData.angles.pitch[0];
         CHECK(pitch < -10);
-        HF_ReleaseImageStream(lowerHandle);
+        HFReleaseImageStream(lowerHandle);
 
         // Roll head
-        HImageHandle leftWryneckHandle;
+        HFImageStream leftWryneckHandle;
         auto leftWryneck = cv::imread(GET_DATA("data/pose/left_wryneck.png"));
         ret = CVImageToImageStream(leftWryneck, leftWryneckHandle);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, leftWryneckHandle, &multipleFaceData);
+        ret = HFExecuteFaceTrack(session, leftWryneckHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
         roll = multipleFaceData.angles.roll[0];
         CHECK(roll < -30);
-        HF_ReleaseImageStream(leftWryneckHandle);
+        HFReleaseImageStream(leftWryneckHandle);
 
         // Roll head
-        HImageHandle rightWryneckHandle;
+        HFImageStream rightWryneckHandle;
         auto rightWryneck = cv::imread(GET_DATA("data/pose/right_wryneck.png"));
         ret = CVImageToImageStream(rightWryneck, rightWryneckHandle);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_FaceContextRunFaceTrack(ctxHandle, rightWryneckHandle, &multipleFaceData);
+        ret = HFExecuteFaceTrack(session, rightWryneckHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
         roll = multipleFaceData.angles.roll[0];
         CHECK(roll > 30);
-        HF_ReleaseImageStream(rightWryneckHandle);
+        HFReleaseImageStream(rightWryneckHandle);
 
         //  finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
     }
@@ -234,28 +232,26 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
 #ifdef ENABLE_BENCHMARK
         int loop = 1000;
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
 
         // Prepare an image
-        HImageHandle imgHandle;
+        HFImageStream imgHandle;
         auto image = cv::imread(GET_DATA("data/bulk/kun.jpg"));
         ret = CVImageToImageStream(image, imgHandle);
         REQUIRE(ret == HSUCCEED);
         BenchmarkRecord record(getBenchmarkRecordFile());
 
         // Case: Execute the benchmark using the IMAGE mode
-        ret = HF_FaceContextSetFaceTrackMode(ctxHandle, HF_DETECT_MODE_IMAGE);
+        ret = HFSessionSetFaceTrackMode(session, HF_DETECT_MODE_IMAGE);
         REQUIRE(ret == HSUCCEED);
-        HF_MultipleFaceData multipleFaceData = {0};
+        HFMultipleFaceData multipleFaceData = {0};
         auto start = (double) cv::getTickCount();
         for (int i = 0; i < loop; ++i) {
-            ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+            ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         }
         auto cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
         REQUIRE(ret == HSUCCEED);
@@ -264,12 +260,12 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         record.insertBenchmarkData("Face Detect", loop, cost, cost / loop);
 
         // Case: Execute the benchmark using the VIDEO mode(Track)
-        ret = HF_FaceContextSetFaceTrackMode(ctxHandle, HF_DETECT_MODE_VIDEO);
+        ret = HFSessionSetFaceTrackMode(session, HF_DETECT_MODE_VIDEO);
         REQUIRE(ret == HSUCCEED);
         multipleFaceData = {0};
         start = (double) cv::getTickCount();
         for (int i = 0; i < loop; ++i) {
-            ret = HF_FaceContextRunFaceTrack(ctxHandle, imgHandle, &multipleFaceData);
+            ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         }
         cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
         REQUIRE(ret == HSUCCEED);
@@ -277,10 +273,10 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         TEST_PRINT("<Benchmark> Face Track -> Loop: {}, Total Time: {:.5f}ms, Average Time: {:.5f}ms", loop, cost, cost / loop);
         record.insertBenchmarkData("Face Track", loop, cost, cost / loop);
 
-        ret = HF_ReleaseImageStream(imgHandle);
+        ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 #else
         TEST_PRINT("Skip the face detection benchmark test. To run it, you need to turn on the benchmark test.");

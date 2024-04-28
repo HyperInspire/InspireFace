@@ -45,7 +45,7 @@ inline FaceImageDataList LoadLFWFunneledValidData(const std::string &dir, const 
     return list;
 }
 
-inline bool ImportLFWFunneledValidData(HContextHandle handle, FaceImageDataList& data, size_t importNum) {
+inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data, size_t importNum) {
     auto dataSize = data.size();
     std::string title = "Import " + std::to_string(importNum) + " face data...";
     // Hide cursor
@@ -66,21 +66,21 @@ inline bool ImportLFWFunneledValidData(HContextHandle handle, FaceImageDataList&
         // Data processing
         auto item = data[index];
         cv::Mat image = cv::imread(item.second);
-        HF_ImageData imageData = {0};
+        HFImageData imageData = {0};
         imageData.data = image.data;
         imageData.height = image.rows;
         imageData.width = image.cols;
-        imageData.format = STREAM_BGR;
-        imageData.rotation = CAMERA_ROTATION_0;
-        HImageHandle imgHandle;
-        auto ret = HF_CreateImageStream(&imageData, &imgHandle);
+        imageData.format = HF_STREAM_BGR;
+        imageData.rotation = HF_CAMERA_ROTATION_0;
+        HFImageStream imgHandle;
+        auto ret = HFCreateImageStream(&imageData, &imgHandle);
         if (ret != HSUCCEED || image.empty()) {
             std::cerr << "Error image: " << std::to_string(ret)  << " , " << item.second << std::endl;
             return false;
         }
         // Face tracked
-        HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(handle, imgHandle, &multipleFaceData);
+        HFMultipleFaceData multipleFaceData = {0};
+        ret = HFExecuteFaceTrack(handle, imgHandle, &multipleFaceData);
 
         if (ret != HSUCCEED) {
             std::cerr << "Error Track: " << std::to_string(ret)  << " , " << item.second << std::endl;
@@ -93,26 +93,26 @@ inline bool ImportLFWFunneledValidData(HContextHandle handle, FaceImageDataList&
         }
 
         // Extract face feature
-        HF_FaceFeature feature = {0};
-        ret = HF_FaceFeatureExtract(handle, imgHandle, multipleFaceData.tokens[0], &feature);
+        HFFaceFeature feature = {0};
+        ret = HFFaceFeatureExtract(handle, imgHandle, multipleFaceData.tokens[0], &feature);
         if (ret != HSUCCEED) {
             std::cerr << "Error extract: " << std::to_string(ret)  << " , " << item.second << std::endl;
             return false;
         }
         char *newTagName = new char[item.first.size() + 1];
         std::strcpy(newTagName, item.first.c_str());
-        HF_FaceFeatureIdentity identity = {0};
+        HFFaceFeatureIdentity identity = {0};
         identity.customId = i;
         identity.tag = newTagName;
         identity.feature = &feature;
-        ret = HF_FeatureHubInsertFeature(identity);
+        ret = HFFeatureHubInsertFeature(identity);
         if (ret != HSUCCEED) {
             std::cerr << "Error insert feature: " << std::to_string(ret)  << " , " << item.second << std::endl;
             return false;
         }
 
         delete[] newTagName;
-        HF_ReleaseImageStream(imgHandle);
+        HFReleaseImageStream(imgHandle);
         // Update progress
         progress = 100.0f * (float)(i + 1) / importNum;
     }
@@ -202,12 +202,12 @@ inline std::vector<std::string> generateFilenames(const std::string& templateStr
     return filenames;
 }
 
-inline bool FindMostSimilarScoreFromTwoPic(HContextHandle handle, const std::string& img1, const std::string& img2, float& mostSimilar){
+inline bool FindMostSimilarScoreFromTwoPic(HFSession handle, const std::string& img1, const std::string& img2, float& mostSimilar){
     mostSimilar = -1.0f;
     std::vector<std::vector<std::vector<float>>> features(2);
     std::vector<std::string> images = {img1, img2};
     for (int i = 0; i < 2; ++i) {
-        HImageHandle img;
+        HFImageStream img;
 //        auto ret = ReadImageToImageStream(images[i].c_str(), img);
         auto cvMat = cv::imread(images[i]);
         auto ret = CVImageToImageStream(cvMat, img);
@@ -215,26 +215,26 @@ inline bool FindMostSimilarScoreFromTwoPic(HContextHandle handle, const std::str
             std::cerr << "Image is not found: " << ret << std::endl;
             return false;
         }
-        HF_MultipleFaceData multipleFaceData = {0};
-        ret = HF_FaceContextRunFaceTrack(handle, img, &multipleFaceData);
+        HFMultipleFaceData multipleFaceData = {0};
+        ret = HFExecuteFaceTrack(handle, img, &multipleFaceData);
         if (ret != 0) {
             std::cerr << "Error track: " << ret << std::endl;
-            HF_ReleaseImageStream(img);
+            HFReleaseImageStream(img);
             return false;
         }
         HInt32 featureNum;
-        HF_GetFeatureLength(&featureNum);
+        HFGetFeatureLength(&featureNum);
         for (int j = 0; j < multipleFaceData.detectedNum; ++j) {
             std::vector<float> feature(featureNum, 0.0f);
-            ret = HF_FaceFeatureExtractCpy(handle, img, multipleFaceData.tokens[j], feature.data());
+            ret = HFFaceFeatureExtractCpy(handle, img, multipleFaceData.tokens[j], feature.data());
             if (ret != 0) {
                 std::cerr << "Error extract: " << ret << std::endl;
-                HF_ReleaseImageStream(img);
+                HFReleaseImageStream(img);
                 return false;
             }
             features[i].push_back(feature);
         }
-        HF_ReleaseImageStream(img);
+        HFReleaseImageStream(img);
     }
 
     if (features[0].empty() || features[1].empty()) {
@@ -246,14 +246,14 @@ inline bool FindMostSimilarScoreFromTwoPic(HContextHandle handle, const std::str
     for (auto &feat1: features1) {
         for (auto &feat2: features2) {
             float comp;
-            HF_FaceFeature faceFeature1 = {0};
+            HFFaceFeature faceFeature1 = {0};
             faceFeature1.size = feat1.size();
             faceFeature1.data = feat1.data();
-            HF_FaceFeature faceFeature2 = {0};
+            HFFaceFeature faceFeature2 = {0};
             faceFeature2.size = feat2.size();
             faceFeature2.data = feat2.data();
 
-            HF_FaceComparison1v1(faceFeature1, faceFeature2, &comp);
+            HFFaceComparison(faceFeature1, faceFeature2, &comp);
             if (comp > mostSimilar) {
                 mostSimilar = comp;
             }
