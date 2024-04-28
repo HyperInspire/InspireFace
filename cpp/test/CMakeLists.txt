@@ -6,6 +6,8 @@ option(ENABLE_BENCHMARK "Enable the benchmark test cases." ON)
 option(ENABLE_USE_LFW_DATA "Enable test cases for LFW data sets." ON)
 option(ENABLE_TEST_EVALUATION "Enable evaluation function test cases." ON)
 
+set(TEST_THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rd)
+
 if (ENABLE_BENCHMARK)
     add_definitions("-DENABLE_BENCHMARK")
 endif ()
@@ -14,7 +16,7 @@ if (ENABLE_USE_LFW_DATA)
     add_definitions("-DENABLE_USE_LFW_DATA")
 endif ()
 
-if (ENABLE_USE_LFW_DATA)
+if (ENABLE_TEST_EVALUATION)
     add_definitions("-DENABLE_TEST_EVALUATION")
 endif ()
 
@@ -33,6 +35,8 @@ if (ENABLE_RKNN)
     set(DEPEND rknn_api dl)
 endif ()
 
+include_directories(${SRC_DIR})
+
 # =======================Common File Configuration===========================
 set(TEST_COMMON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/settings/test_settings.cpp)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/settings)
@@ -43,11 +47,11 @@ add_executable(TestSource ${CMAKE_CURRENT_SOURCE_DIR}/test_source.cpp ${INTERNAL
 target_link_libraries(TestSource InspireFace ${DEPEND})
 target_include_directories(TestSource PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/
-        ${THIRD_PARTY_DIR}/spdlog
-        ${THIRD_PARTY_DIR}/catch2
-        ${THIRD_PARTY_DIR}/cnpy
-        ${THIRD_PARTY_DIR}/indicators
-        ${THIRD_PARTY_DIR}/limonp
+        ${TEST_THIRD_PARTY_DIR}/spdlog
+        ${TEST_THIRD_PARTY_DIR}/catch2
+        ${TEST_THIRD_PARTY_DIR}/cnpy
+        ${TEST_THIRD_PARTY_DIR}/indicators
+        ${TEST_THIRD_PARTY_DIR}/limonp
         ${SRC_DIR}
 )
 
@@ -57,18 +61,25 @@ set_target_properties(TestSource PROPERTIES
 
 # =======================External API Testing===========================
 file(GLOB_RECURSE TEST_INTERNAL_FILES unit/api/*.cpp)
-add_executable(TestAPI ${CMAKE_CURRENT_SOURCE_DIR}/test_api.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES}
+add_executable(Test ${CMAKE_CURRENT_SOURCE_DIR}/test.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES}
         unit/api/test_evaluation.cpp)
-target_link_libraries(TestAPI InspireFace ${DEPEND})
-target_include_directories(TestAPI PUBLIC
+target_link_libraries(Test InspireFace ${DEPEND})
+target_include_directories(Test PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/
-        ${THIRD_PARTY_DIR}/spdlog
-        ${THIRD_PARTY_DIR}/catch2
-        ${THIRD_PARTY_DIR}/cnpy
-        ${THIRD_PARTY_DIR}/indicators
-        ${THIRD_PARTY_DIR}/limonp
+        ${TEST_THIRD_PARTY_DIR}/spdlog
+        ${TEST_THIRD_PARTY_DIR}/catch2
+        ${TEST_THIRD_PARTY_DIR}/cnpy
+        ${TEST_THIRD_PARTY_DIR}/indicators
+        ${TEST_THIRD_PARTY_DIR}/limonp
         ${SRC_DIR}
         )
 
-set_target_properties(TestAPI PROPERTIES
+set_target_properties(Test PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test/")
+
+
+# Print Message
+message(STATUS "[InspireFace Test]:")
+message(STATUS "\t ENABLE_BENCHMARK: ${ENABLE_BENCHMARK}")
+message(STATUS "\t ENABLE_USE_LFW_DATA: ${ENABLE_USE_LFW_DATA}")
+message(STATUS "\t ENABLE_TEST_EVALUATION: ${ENABLE_TEST_EVALUATION}")

@@ -1,5 +1,5 @@
 from test.test_settings import *
-import inspireface as isf
+import inspireface as ifac
 import numpy as np
 import time
 from functools import wraps
@@ -12,7 +12,7 @@ from unittest import skipUnless as optional
 
 def title(name: str = None):
     print("--" * 35)
-    print(f" InspireFace Version: {isf.__version__}")
+    print(f" InspireFace Version: {ifac.__version__}")
     if name is not None:
         print(f" {name}")
     print("--" * 35)
@@ -33,8 +33,8 @@ def calculate_overlap(box1, box2):
     - The overlap ratio, 0 if the rectangles do not overlap.
     """
     # Unpack rectangle coordinates
-    (x1_box1, y1_box1), (x2_box1, y2_box1) = box1
-    (x1_box2, y1_box2), (x2_box2, y2_box2) = box2
+    x1_box1, y1_box1, x2_box1, y2_box1 = box1
+    x1_box2, y1_box2, x2_box2, y2_box2 = box2
 
     # Calculate the coordinates of the intersection rectangle
     x_overlap = max(0, min(x2_box1, x2_box2) - max(x1_box1, x1_box2))
@@ -129,7 +129,7 @@ def benchmark(test_name, loop):
     def benchmark_decorator(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
-            # 在测试对象上设置loop属性
+            # Set the loop property on the test object
             setattr(self, 'loop', loop)
 
             start_time = time.time()
@@ -140,7 +140,7 @@ def benchmark(test_name, loop):
                 cost_total = end_time - start_time
                 self.__class__.benchmark_results.append((test_name, loop, cost_total))
 
-            # 测试完成后，删除loop属性，防止影响其他测试
+            # After the test is complete, delete the loop property to prevent other tests from being affected
             delattr(self, 'loop')
             return result
 
@@ -168,9 +168,9 @@ def lfw_generator(directory_path):
     while True:
         for root, dirs, files in os.walk(directory_path):
             for file_name in files:
-                # 确保只处理以'0001.jpg'结尾的JPG图片
+                # Be sure to only process JPG images that end in '0001.jpg'
                 if file_name.endswith('0001.jpg'):
-                    # 提取人名为目录名的最后一部分
+                    # Extract the name of the person as the last part of the directory name
                     name = os.path.basename(root)
                     image_path = os.path.join(root, file_name)
                     image = cv2.imread(image_path)
@@ -179,28 +179,26 @@ def lfw_generator(directory_path):
                     yield image, name
 
 
-def batch_import_lfw_faces(lfw_path, engine: isf.InspireFaceEngine, num_of_faces: int):
-    tracker = isf.FaceTrackerModule(engine)
-    tracker.set_track_mode(isf.DETECT_MODE_IMAGE)
-    recognition = isf.FaceRecognitionModule(engine)
+def batch_import_lfw_faces(lfw_path, engine: ifac.InspireFaceSession, num_of_faces: int):
+    engine.set_track_mode(ifac.HF_DETECT_MODE_IMAGE)
     generator = lfw_generator(lfw_path)
     registered_faces = 0
 
-    # 使用tqdm包装生成器，未知的总数使用total=None，tqdm将以未知总量模式运行
+    # With the tqdm wrapper generator, unknown totals are used with total=None, and tqdm will run in unknown total mode
     for image, name in tqdm(generator, total=num_of_faces, desc="Registering faces"):
         # 执行人脸检测
-        faces_info = tracker.execute(image)
+        faces_info = engine.face_detection(image)
         if len(faces_info) == 0:
             continue
 
-        # 从检测到的第一个人脸提取特征
+        # Extract features from the first face detected
         first_face_info = faces_info[0]
-        recognition.extract_feature(image, first_face_info)
+        feature = engine.face_feature_extract(image, first_face_info)
 
-        # 使用提取的特征进行人脸注册
-        if first_face_info._feature is not None:
-            face_identity = isf.FaceIdentity(data=first_face_info, tag=name, custom_id=registered_faces)
-            recognition.face_register(face_identity)
+        # The extracted features are used for face registration
+        if feature is not None:
+            face_identity = ifac.FaceIdentity(data=feature, tag=name, custom_id=registered_faces)
+            ifac.feature_hub_face_insert(face_identity)
             registered_faces += 1
             if registered_faces >= num_of_faces:
                 break
@@ -210,12 +208,10 @@ def batch_import_lfw_faces(lfw_path, engine: isf.InspireFaceEngine, num_of_faces
 
 class QuickComparison(object):
 
-    def __init__(self, path: str):
-        param = isf.EngineCustomParameter()
+    def __init__(self):
+        param = ifac.SessionCustomParameter()
         param.enable_recognition = True
-        self.engine = isf.InspireFaceEngine(path, param=param)
-        self.tracker = isf.FaceTrackerModule(self.engine)
-        self.recognition = isf.FaceRecognitionModule(self.engine)
+        self.engine = ifac.InspireFaceSession(param)
         self.faces_set_1 = None
         self.faces_set_2 = None
 
@@ -224,33 +220,33 @@ class QuickComparison(object):
         self.faces_set_1 = list()
         self.faces_set_2 = list()
         for idx, img in enumerate(images):
-            results = self.tracker.execute(img)
+            results = self.engine.face_detection(img)
+            vector_list = list()
             if len(results) > 0:
                 for info in results:
-                    self.recognition.extract_feature(img, info)
+                    feature = self.engine.face_feature_extract(img, info)
+                    vector_list.append(feature)
             else:
                 return False
 
             if idx == 0:
-                self.faces_set_1 = results
+                self.faces_set_1 = vector_list
             else:
-                self.faces_set_2 = results
+                self.faces_set_2 = vector_list
 
         return True
 
     def comp(self) -> float:
         """
-        逐个交叉对比，保留分数最大的值进行返回，调用self.recognition.face_comparison1v1(info1, info2)
-        :return: 最大的匹配分数
+        Cross-compare one by one, keep the value with the highest score and return it, calling self.recognition.face_comparison1v1(info1, info2)
+        :return: Maximum matching score
         """
-        max_score = 0.0  # 初始化最大分数为0
+        max_score = 0.0
 
-        # 遍历faces_set_1中的每个人脸与faces_set_2中的每个人脸进行比较
+        # Each face in faces_set_1 is traversed and compared with each face in faces_set_2
         for face1 in self.faces_set_1:
             for face2 in self.faces_set_2:
-                # 使用self.recognition.face_comparison1v1(info1, info2)进行人脸比较
-                score = self.recognition.face_comparison1v1(face1, face2)
-                # 更新最大分数
+                score = ifac.feature_comparison(face1, face2)
                 if score > max_score:
                     max_score = score
 
@@ -275,10 +271,10 @@ def find_best_threshold(similarities, labels):
 
 
 def read_pairs(pairs_filename):
-    """读取pairs.txt文件并返回图像对的列表"""
+    """Read the pairs.txt file and return a list of image pairs"""
     pairs = []
     with open(pairs_filename, 'r') as f:
-        for line in f.readlines()[1:]:  # 跳过第一行
+        for line in f.readlines()[1:]:
             pair = line.strip().split()
             pairs.append(pair)
     return pairs

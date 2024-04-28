@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     CustomPipelineParameter param;
     param.enable_liveness = true;
     param.enable_face_quality = true;
-    int32_t ret = ctx.Configuration("test_res/model_zip/Pikachu", DetectMode::DETECT_MODE_IMAGE, 1, param);
+    int32_t ret = ctx.Configuration("test_res/pack/Pikachu", DetectMode::DETECT_MODE_IMAGE, 1, param);
     if (ret != 0) {
         INSPIRE_LOGE("Initialization error");
         return -1;

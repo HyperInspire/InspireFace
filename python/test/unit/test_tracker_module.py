@@ -1,6 +1,6 @@
 import unittest
 from test import *
-import inspireface as isf
+import inspireface as ifac
 import cv2
 
 
@@ -8,44 +8,36 @@ class FaceTrackerCase(unittest.TestCase):
 
     def setUp(self) -> None:
         # Prepare material
-        track_mode = isf.DETECT_MODE_IMAGE  # Use video mode
-        self.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=isf.EngineCustomParameter(),
+        track_mode = ifac.HF_DETECT_MODE_IMAGE  # Use video mode
+        self.engine = ifac.InspireFaceSession(param=ifac.SessionCustomParameter(),
                                         detect_mode=track_mode)
-        self.assertEqual(True, self.engine.check(), "Failed to create engine.")
 
     def test_face_detection_from_image(self):
-        # Create a tracker
-        tracker = isf.FaceTrackerModule(self.engine)
-        tracker.set_track_mode(mode=isf.DETECT_MODE_IMAGE)
-        # Prepare a image
         image = cv2.imread(get_test_data("bulk/kun.jpg"))
         self.assertIsNotNone(image)
 
         # Detection
-        faces = tracker.execute(image)
+        faces = self.engine.face_detection(image)
         # "kun.jpg" has only one face
         self.assertEqual(len(faces), 1)
         face = faces[0]
-        box = (face.top_left, face.bottom_right)
-        expect_box = ((98, 146), (233, 272))
+        expect_box = (98, 146, 233, 272)
         # Calculate the location of the detected box and the expected box
-        iou = calculate_overlap(box, expect_box)
+        iou = calculate_overlap(face.location, expect_box)
         self.assertAlmostEqual(iou, 1.0, places=3)
 
         # Prepare non-face images
         any_image = cv2.imread(get_test_data("bulk/view.jpg"))
         self.assertIsNotNone(any_image)
-        self.assertEqual(len(tracker.execute(any_image)), 0)
+        self.assertEqual(len(self.engine.face_detection(any_image)), 0)
 
     def test_face_pose(self):
-        # Create a tracker
-        tracker = isf.FaceTrackerModule(self.engine)
-        tracker.set_track_mode(mode=isf.DETECT_MODE_IMAGE)
+        self.engine.set_track_mode(ifac.HF_DETECT_MODE_IMAGE)
 
         # Test yaw (shake one's head)
         left_face = cv2.imread(get_test_data("pose/left_face.jpeg"))
         self.assertIsNotNone(left_face)
-        faces = tracker.execute(left_face)
+        faces = self.engine.face_detection(left_face)
         self.assertEqual(len(faces), 1)
         left_face_yaw = faces[0].yaw
         # The expected value is not completely accurate, it is only a rough estimate
@@ -54,7 +46,7 @@ class FaceTrackerCase(unittest.TestCase):
 
         right_face = cv2.imread(get_test_data("pose/right_face.png"))
         self.assertIsNotNone(right_face)
-        faces = tracker.execute(right_face)
+        faces = self.engine.face_detection(right_face)
         self.assertEqual(len(faces), 1)
         right_face_yaw = faces[0].yaw
         expect_right_shake_range = (10, 90)
@@ -63,14 +55,14 @@ class FaceTrackerCase(unittest.TestCase):
         # Test pitch (nod head)
         rise_face = cv2.imread(get_test_data("pose/rise_face.jpeg"))
         self.assertIsNotNone(rise_face)
-        faces = tracker.execute(rise_face)
+        faces = self.engine.face_detection(rise_face)
         self.assertEqual(len(faces), 1)
         left_face_pitch = faces[0].pitch
         self.assertEqual(True, left_face_pitch > 5)
 
         lower_face = cv2.imread(get_test_data("pose/lower_face.jpeg"))
         self.assertIsNotNone(lower_face)
-        faces = tracker.execute(lower_face)
+        faces = self.engine.face_detection(lower_face)
         self.assertEqual(len(faces), 1)
         lower_face_pitch = faces[0].pitch
         self.assertEqual(True, lower_face_pitch < -10)
@@ -78,26 +70,24 @@ class FaceTrackerCase(unittest.TestCase):
         # Test roll (wryneck head)
         left_wryneck_face = cv2.imread(get_test_data("pose/left_wryneck.png"))
         self.assertIsNotNone(left_wryneck_face)
-        faces = tracker.execute(left_wryneck_face)
+        faces = self.engine.face_detection(left_wryneck_face)
         self.assertEqual(len(faces), 1)
         left_face_roll = faces[0].roll
         self.assertEqual(True, left_face_roll < -30)
 
         right_wryneck_face = cv2.imread(get_test_data("pose/right_wryneck.png"))
         self.assertIsNotNone(right_wryneck_face)
-        faces = tracker.execute(right_wryneck_face)
+        faces = self.engine.face_detection(right_wryneck_face)
         self.assertEqual(len(faces), 1)
         right_face_roll = faces[0].roll
         self.assertEqual(True, right_face_roll > 30)
 
     def test_face_track_from_video(self):
-        # Create a tracker
-        tracker = isf.FaceTrackerModule(self.engine)
-        tracker.set_track_mode(mode=isf.DETECT_MODE_VIDEO)
+        self.engine.set_track_mode(ifac.HF_DETECT_MODE_VIDEO)
 
         # Read a video file
         video_gen = read_video_generator(get_test_data("video/810_1684206192.mp4"))
-        results = [tracker.execute(frame) for frame in video_gen]
+        results = [self.engine.face_detection(frame) for frame in video_gen]
         num_of_frame = len(results)
         num_of_track_loss = len([faces for faces in results if not faces])
         total_track_ids = [faces[0].track_id for faces in results if faces]
@@ -126,34 +116,29 @@ class FaceTrackerBenchmarkCase(unittest.TestCase):
         self.image = cv2.imread(get_test_data("bulk/kun.jpg"))
         self.assertIsNotNone(self.image)
         # Prepare material
-        track_mode = isf.DETECT_MODE_VIDEO  # Use video mode
-        self.engine = isf.create_engine(bundle_file=TEST_MODEL_PATH, param=isf.EngineCustomParameter(),
-                                        detect_mode=track_mode)
-        self.assertEqual(True, self.engine.check(), "Failed to create engine.")
-        # Use tracker module
-        self.tracker = isf.FaceTrackerModule(self.engine)
-        self.assertIsNotNone(self.tracker)
+        track_mode = ifac.HF_DETECT_MODE_VIDEO  # Use video mode
+        self.engine = ifac.InspireFaceSession(ifac.HF_ENABLE_NONE, track_mode, )
         # Prepare video data
         self.video_gen = read_video_generator(get_test_data("video/810_1684206192.mp4"))
 
     @benchmark(test_name="Face Detect", loop=1000)
     def test_benchmark_face_detect(self):
-        self.tracker.set_track_mode(isf.DETECT_MODE_IMAGE)
+        self.engine.set_track_mode(ifac.HF_DETECT_MODE_IMAGE)
         for _ in range(self.loop):
-            faces = self.tracker.execute(self.image)
+            faces = self.engine.face_detection(self.image)
             self.assertEqual(len(faces), 1, "No face detected may have an error, please check.")
 
     @benchmark(test_name="Face Track", loop=1000)
     def test_benchmark_face_track(self):
-        self.tracker.set_track_mode(isf.DETECT_MODE_VIDEO)
+        self.engine.set_track_mode(ifac.HF_DETECT_MODE_IMAGE)
         for _ in range(self.loop):
-            faces = self.tracker.execute(self.image)
+            faces = self.engine.face_detection(self.image)
             self.assertEqual(len(faces), 1, "No face detected may have an error, please check.")
 
     @benchmark(test_name="Face Track(Video)", loop=345)
     def test_benchmark_face_track_video(self):
         for frame in self.video_gen:
-            faces = self.tracker.execute(frame)
+            faces = self.engine.face_detection(frame)
             self.assertEqual(len(faces), 1, "No face detected may have an error, please check.")
 
     @classmethod

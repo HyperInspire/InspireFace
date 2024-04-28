@@ -11,10 +11,44 @@ endif()
 
 include_directories(${SRC_DIR})
 
+add_executable(Leak cpp/leak.cpp)
+target_link_libraries(Leak InspireFace)
+set_target_properties(Leak PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
 # Examples of face detection and tracking
 add_executable(FaceTrackSample cpp/sample_face_track.cpp)
 target_link_libraries(FaceTrackSample InspireFace)
 set_target_properties(FaceTrackSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+
+# Examples of face detection and tracking
+add_executable(MTFaceTrackSample cpp/sample_face_track_mt.cpp)
+target_link_libraries(MTFaceTrackSample InspireFace)
+set_target_properties(MTFaceTrackSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+# Examples of face recognition
+add_executable(FaceRecognitionSample cpp/sample_face_recognition.cpp)
+target_link_libraries(FaceRecognitionSample InspireFace)
+set_target_properties(FaceRecognitionSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+add_executable(FaceSearchSample cpp/sample_face_search.cpp)
+target_link_libraries(FaceSearchSample InspireFace)
+set_target_properties(FaceSearchSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+
+# Examples of face recognition
+add_executable(FaceComparisonSample cpp/sample_face_comparison.cpp)
+target_link_libraries(FaceComparisonSample InspireFace)
+set_target_properties(FaceComparisonSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
@@ -192,3 +226,7 @@ if (BUILD_SAMPLE_CLUTTERED)
             )
 endif ()
 
+
+# Print Message
+message(STATUS "[InspireFace Sample]:")
+message(STATUS "\t BUILD_SAMPLE_CLUTTERED: ${BUILD_SAMPLE_CLUTTERED}")

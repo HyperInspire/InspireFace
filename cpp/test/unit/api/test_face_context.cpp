@@ -13,25 +13,13 @@ TEST_CASE("test_FeatureContext", "[face_context]") {
 
     SECTION("Test the new context positive process") {
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
-    }
-
-    SECTION("Test the new context egative processn") {
-        HResult ret;
-        HPath path = "test_res/model_zip/abc";     // Use error path
-        HF_ContextCustomParameter parameter = {0};
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
-        CHECK(ret != HSUCCEED);
     }
 
 

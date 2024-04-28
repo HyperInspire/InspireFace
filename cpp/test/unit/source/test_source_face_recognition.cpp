@@ -19,7 +19,7 @@ TEST_CASE("test_FaceRecognition", "[face_rec]") {
         FaceContext ctx;
         CustomPipelineParameter param;
         param.enable_recognition = true;
-        auto ret = ctx.Configuration(GET_MODEL_FILE(), DetectMode::DETECT_MODE_IMAGE, 1, param);
+        auto ret = ctx.Configuration(DetectMode::DETECT_MODE_IMAGE, 1, param);
         REQUIRE(ret == HSUCCEED);
     }
 
@@ -27,7 +27,7 @@ TEST_CASE("test_FaceRecognition", "[face_rec]") {
         FaceContext ctx;
         CustomPipelineParameter param;
         param.enable_recognition = false;       // Disable the face recognition function
-        auto ret = ctx.Configuration(GET_MODEL_FILE(), DetectMode::DETECT_MODE_IMAGE, 1, param);
+        auto ret = ctx.Configuration(DetectMode::DETECT_MODE_IMAGE, 1, param);
         REQUIRE(ret == HSUCCEED);
 
         auto image = cv::imread(GET_DATA("images/cxk.jpg"));
@@ -42,14 +42,14 @@ TEST_CASE("test_FaceRecognition", "[face_rec]") {
         REQUIRE(faces.size() > 0);
         Embedded feature;
         ret = ctx.FaceRecognitionModule()->FaceExtract(stream, faces[0], feature);
-        CHECK(ret == HERR_CTX_REC_EXTRACT_FAILURE);
+        CHECK(ret == HERR_SESS_REC_EXTRACT_FAILURE);
     }
 
     SECTION("FaceRecognition1v1") {
         FaceContext ctx;
         CustomPipelineParameter param;
         param.enable_recognition = true;
-        auto ret = ctx.Configuration(GET_MODEL_FILE(), DetectMode::DETECT_MODE_IMAGE, 1, param);
+        auto ret = ctx.Configuration(DetectMode::DETECT_MODE_IMAGE, 1, param);
         REQUIRE(ret == HSUCCEED);
 
         std::vector<std::string> list = {

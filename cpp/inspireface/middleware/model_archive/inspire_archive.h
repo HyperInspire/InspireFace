@@ -32,7 +32,7 @@ public:
         }
     }
 
-    int32 ReLoad(const std::string& archiveFile) {
+    int32_t ReLoad(const std::string& archiveFile) {
         auto ret = Reset(archiveFile);
         if (ret != SARC_SUCCESS) {
             return ret;

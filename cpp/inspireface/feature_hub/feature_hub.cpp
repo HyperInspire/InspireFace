@@ -5,6 +5,8 @@
 #include "feature_hub.h"
 #include "simd.h"
 #include "herror.h"
+#include <thread>
+
 
 namespace inspire {
 
@@ -24,7 +26,7 @@ std::shared_ptr<FeatureHub> FeatureHub::GetInstance() {
 int32_t FeatureHub::DisableHub() {
     if (!m_enable_) {
         INSPIRE_LOGW("FeatureHub is already disabled.");
-        return HERR_CTX_DB_DISABLE_REPETITION;
+        return HERR_FT_HUB_DISABLE_REPETITION;
     }
     // Close the database if it starts
     if (m_db_) {
@@ -53,7 +55,7 @@ int32_t FeatureHub::EnableHub(const DatabaseConfiguration &configuration, Matrix
     int32_t ret;
     if (m_enable_) {
         INSPIRE_LOGW("You have enabled the FeatureHub feature. It is not valid to do so again");
-        return HERR_CTX_DB_ENABLE_REPETITION;
+        return HERR_FT_HUB_ENABLE_REPETITION;
     }
     // Config
     m_db_configuration_ = configuration;
@@ -117,7 +119,7 @@ int32_t FeatureHub::EnableHub(const DatabaseConfiguration &configuration, Matrix
 
 int32_t FeatureHub::CosineSimilarity(const std::vector<float>& v1, const std::vector<float>& v2, float &res) {
     if (v1.size() != v2.size() || v1.empty()) {
-        return HERR_CTX_REC_CONTRAST_FEAT_ERR; // The similarity cannot be calculated if the vector lengths are not equal
+        return HERR_SESS_REC_CONTRAST_FEAT_ERR; // The similarity cannot be calculated if the vector lengths are not equal
     }
     // Calculate the cosine similarity
     res = simd_dot(v1.data(), v2.data(), v1.size());
@@ -135,7 +137,7 @@ int32_t FeatureHub::CosineSimilarity(const float *v1, const float *v2, int32_t s
 
 int32_t FeatureHub::RegisterFaceFeature(const std::vector<float>& feature, int featureIndex, const std::string &tag, int32_t customId) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
-        return HERR_CTX_REC_INVALID_INDEX; // Invalid feature index number
+        return HERR_SESS_REC_INVALID_INDEX; // Invalid feature index number
     }
 
     // Compute which FeatureBlock and which row the feature vector should be stored in
@@ -153,7 +155,7 @@ int32_t FeatureHub::InsertFaceFeature(const std::vector<float>& feature, const s
     for (int i = 0; i < m_feature_matrix_list_.size(); ++i) {
         auto &block = m_feature_matrix_list_[i];
         ret = block->AddFeature(feature, tag, customId);
-        if (ret != HERR_CTX_REC_BLOCK_FULL) {
+        if (ret != HERR_SESS_REC_BLOCK_FULL) {
             break;
         }
     }
@@ -163,7 +165,7 @@ int32_t FeatureHub::InsertFaceFeature(const std::vector<float>& feature, const s
 
 int32_t FeatureHub::SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold, bool mostSimilar) {
     if (queryFeature.size() != NUM_OF_FEATURES_IN_BLOCK) {
-        return HERR_CTX_REC_FEAT_SIZE_ERR; // Query feature size does not match expectations
+        return HERR_SESS_REC_FEAT_SIZE_ERR; // Query feature size does not match expectations
     }
 
     bool found = false; // Whether matching features are found
@@ -220,9 +222,48 @@ int32_t FeatureHub::SearchFaceFeature(const std::vector<float>& queryFeature, Se
     return HSUCCEED; // No matching feature found but not an error
 }
 
+
+
+int32_t FeatureHub::SearchFaceFeatureTopK(const std::vector<float>& queryFeature, std::vector<SearchResult> &searchResultList, size_t maxTopK, float threshold) {
+    if (queryFeature.size() != NUM_OF_FEATURES_IN_BLOCK) {
+        return HERR_SESS_REC_FEAT_SIZE_ERR;
+    }
+
+    std::vector<SearchResult> tempResultList;
+    searchResultList.clear();
+
+    for (int blockIndex = 0; blockIndex < m_feature_matrix_list_.size(); ++blockIndex) {
+        if (m_feature_matrix_list_[blockIndex]->GetUsedCount() == 0) {
+            continue;
+        }
+
+        tempResultList.clear();
+        int32_t result = m_feature_matrix_list_[blockIndex]->SearchTopKNearest(queryFeature, maxTopK, tempResultList);
+        if (result != HSUCCEED) {
+            return result;
+        }
+
+        for (const SearchResult& result : tempResultList) {
+            if (result.score >= threshold) {
+                searchResultList.push_back(result);
+            }
+        }
+    }
+
+    std::sort(searchResultList.begin(), searchResultList.end(), [](const SearchResult& a, const SearchResult& b) {
+        return a.score > b.score;
+    });
+
+    if (searchResultList.size() > maxTopK) {
+        searchResultList.resize(maxTopK);
+    }
+
+    return HSUCCEED;
+}
+
 int32_t FeatureHub::DeleteFaceFeature(int featureIndex) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
-        return HERR_CTX_REC_INVALID_INDEX; // Invalid feature index number
+        return HERR_SESS_REC_INVALID_INDEX; // Invalid feature index number
     }
 
     // Calculate which FeatureBlock and which row the feature vector should be removed in
@@ -237,7 +278,7 @@ int32_t FeatureHub::DeleteFaceFeature(int featureIndex) {
 
 int32_t FeatureHub::GetFaceFeature(int featureIndex, Embedded &feature) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
-        return HERR_CTX_REC_INVALID_INDEX; // Invalid feature index number
+        return HERR_SESS_REC_INVALID_INDEX; // Invalid feature index number
     }
     // Calculate which FeatureBlock and which row the feature vector should be removed in
     int blockIndex = featureIndex / NUM_OF_FEATURES_IN_BLOCK; // The FeatureBlock where the computation is located
@@ -250,7 +291,7 @@ int32_t FeatureHub::GetFaceFeature(int featureIndex, Embedded &feature) {
 
 int32_t FeatureHub::GetFaceEntity(int featureIndex, Embedded &feature, std::string& tag, FEATURE_STATE& status) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
-        return HERR_CTX_REC_INVALID_INDEX; // Invalid feature index number
+        return HERR_SESS_REC_INVALID_INDEX; // Invalid feature index number
     }
     // Calculate which FeatureBlock and which row the feature vector should be removed in
     int blockIndex = featureIndex / NUM_OF_FEATURES_IN_BLOCK; // The FeatureBlock where the computation is located
@@ -281,14 +322,14 @@ int32_t FeatureHub::GetFeatureNum() const {
 
 int32_t FeatureHub::UpdateFaceFeature(const std::vector<float> &feature, int featureIndex, const std::string &tag, int32_t customId) {
     if (featureIndex < 0 || featureIndex >= m_feature_matrix_list_.size() * NUM_OF_FEATURES_IN_BLOCK) {
-        return HERR_CTX_REC_INVALID_INDEX; // Invalid feature index number
+        return HERR_SESS_REC_INVALID_INDEX; // Invalid feature index number
     }
 
     // Calculate which FeatureBlock and which row the feature vector should be removed in
     int blockIndex = featureIndex / NUM_OF_FEATURES_IN_BLOCK; // The FeatureBlock where the computation is located
     int rowIndex = featureIndex % NUM_OF_FEATURES_IN_BLOCK;   // Calculate the line number in the FeatureBlock
 
-    // 调用适当的FeatureBlock的注册函数
+    // Call the appropriate FeatureBlock registration function
     int32_t result = m_feature_matrix_list_[blockIndex]->UpdateFeature(rowIndex, feature, tag, customId);
 
     return result;
@@ -317,9 +358,10 @@ int32_t FeatureHub::FindFeatureIndexByCustomId(int32_t customId) {
 
 
 int32_t FeatureHub::SearchFaceFeature(const Embedded &queryFeature, SearchResult &searchResult) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
-        return HERR_CTX_DB_DISABLE;
+        return HERR_FT_HUB_DISABLE;
     }
     m_search_face_feature_cache_.clear();
     std::memset(m_string_cache_, 0, sizeof(m_string_cache_)); // Initial Zero
@@ -341,15 +383,36 @@ int32_t FeatureHub::SearchFaceFeature(const Embedded &queryFeature, SearchResult
     return ret;
 }
 
-int32_t FeatureHub::FaceFeatureInsertFromCustomId(const std::vector<float> &feature, const std::string &tag,
-                                                   int32_t customId) {
+int32_t FeatureHub::SearchFaceFeatureTopK(const Embedded& queryFeature, size_t topK) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
-        return HERR_CTX_DB_DISABLE;
+        return HERR_FT_HUB_DISABLE;
+    }
+    m_top_k_confidence_.clear();
+    m_top_k_custom_ids_cache_.clear();
+    auto ret = SearchFaceFeatureTopK(queryFeature, m_search_top_k_cache_, topK, m_recognition_threshold_);
+    if (ret == HSUCCEED) {
+        for (int i = 0; i < m_search_top_k_cache_.size(); ++i) {
+            auto &item = m_search_top_k_cache_[i];
+            m_top_k_custom_ids_cache_.push_back(item.customId);
+            m_top_k_confidence_.push_back(item.score);
+        }
+    }
+
+    return ret;
+}
+
+int32_t FeatureHub::FaceFeatureInsertFromCustomId(const std::vector<float> &feature, const std::string &tag,
+                                                   int32_t customId) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!m_enable_) {
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
+        return HERR_FT_HUB_DISABLE;
     }
     auto index = FindFeatureIndexByCustomId(customId);
     if (index != -1) {
-        return HERR_CTX_REC_ID_ALREADY_EXIST;
+        return HERR_SESS_REC_ID_ALREADY_EXIST;
     }
     auto ret = InsertFaceFeature(feature, tag, customId);
     if (ret == HSUCCEED && m_db_ != nullptr) {
@@ -365,13 +428,14 @@ int32_t FeatureHub::FaceFeatureInsertFromCustomId(const std::vector<float> &feat
 }
 
 int32_t FeatureHub::FaceFeatureRemoveFromCustomId(int32_t customId) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
-        return HERR_CTX_DB_DISABLE;
+        return HERR_FT_HUB_DISABLE;
     }
     auto index = FindFeatureIndexByCustomId(customId);
     if (index == -1) {
-        return HERR_CTX_REC_INVALID_INDEX;
+        return HERR_SESS_REC_INVALID_INDEX;
     }
     auto ret = DeleteFaceFeature(index);
     if (ret == HSUCCEED && m_db_ != nullptr) {
@@ -383,13 +447,14 @@ int32_t FeatureHub::FaceFeatureRemoveFromCustomId(int32_t customId) {
 
 int32_t FeatureHub::FaceFeatureUpdateFromCustomId(const std::vector<float> &feature, const std::string &tag,
                                                    int32_t customId) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
-        return HERR_CTX_DB_DISABLE;
+        return HERR_FT_HUB_DISABLE;
     }
     auto index = FindFeatureIndexByCustomId(customId);
     if (index == -1) {
-        return HERR_CTX_REC_INVALID_INDEX;
+        return HERR_SESS_REC_INVALID_INDEX;
     }
     auto ret = UpdateFaceFeature(feature, index, tag, customId);
     if (ret == HSUCCEED && m_db_ != nullptr) {
@@ -404,13 +469,14 @@ int32_t FeatureHub::FaceFeatureUpdateFromCustomId(const std::vector<float> &feat
 }
 
 int32_t FeatureHub::GetFaceFeatureFromCustomId(int32_t customId) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
-        return HERR_CTX_DB_DISABLE;
+        return HERR_FT_HUB_DISABLE;
     }
     auto index = FindFeatureIndexByCustomId(customId);
     if (index == -1) {
-        return HERR_CTX_REC_INVALID_INDEX;
+        return HERR_SESS_REC_INVALID_INDEX;
     }
     m_getter_face_feature_cache_.clear();
     std::string tag;
@@ -430,7 +496,7 @@ int32_t FeatureHub::GetFaceFeatureFromCustomId(int32_t customId) {
 int32_t FeatureHub::ViewDBTable() {
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
-        return HERR_CTX_DB_DISABLE;
+        return HERR_FT_HUB_DISABLE;
     }
     auto ret = m_db_->ViewTotal();
     return ret;
@@ -456,6 +522,14 @@ char *FeatureHub::GetStringCache() {
 
 const std::shared_ptr<FaceFeaturePtr>& FeatureHub::GetFaceFeaturePtrCache() const {
     return m_face_feature_ptr_cache_;
+}
+
+std::vector<float> &FeatureHub::GetTopKConfidence() {
+    return m_top_k_confidence_;
+}
+
+std::vector<int32_t> &FeatureHub::GetTopKCustomIdsCache() {
+    return m_top_k_custom_ids_cache_;
 }
 
 

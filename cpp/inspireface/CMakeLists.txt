@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 # Current version
 set(INSPIRE_FACE_VERSION_MAJOR 0)
-set(INSPIRE_FACE_VERSION_MINOR 3)
+set(INSPIRE_FACE_VERSION_MINOR 5)
 set(INSPIRE_FACE_VERSION_PATCH 0)
 # Converts the version number to a string
 string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
@@ -54,20 +54,25 @@ if (NOT ANDROID)
             set(MNN_LIBS ${mnn_BINARY_DIR}/libMNN.a)
         endif ()
 
-    else ()
-        # MNN Third party dependence
-        if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
-            message("Global MNN CUDA device inference")
-            add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
-            set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
-            link_directories(${LINUX_MNN_CUDA}/lib)
-            set(MNN_LIBS MNN)
+    elseif (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+        # Use MNN Cuda
+        message("Global MNN CUDA device inference")
+        add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
+        set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
+        link_directories(${LINUX_MNN_CUDA}/lib)
+        set(MNN_LIBS MNN)
 
-        else()
-            set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
-            set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
-        endif ()
+    elseif(DEFINED MNN_STATIC_PATH)
+        message("Using static MNN from specified path: ${MNN_STATIC_PATH}")
+        set(MNN_INCLUDE_DIRS "${MNN_STATIC_PATH}/include")
+        set(MNN_LIBS "${MNN_STATIC_PATH}/lib/libMNN.a")
+    else ()
+        # Default or fallback case for MNN setup
+        message("Default or fallback case for MNN setup")
+        set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
+        set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
     endif ()
+
 endif()
 
 
@@ -75,8 +80,6 @@ if (ENABLE_RKNN)
     message("Enable RKNN Inference: ${RK_DEVICE_TYPE}")
     set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/include)
     set(RKNN_API_LIB ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
-    message(RKNN_API_LIB="${RKNN_API_LIB}")
-    message(RKNN_API_INCLUDE_DIRS="${RKNN_API_INCLUDE_DIRS}")
     link_directories(${RKNN_API_LIB})
 endif()
 
@@ -88,7 +91,7 @@ else()
 endif()
 
 # sqlite3
-set(SOURCE_FILES ${SOURCE_FILES} ${THIRD_PARTY_DIR}/sqlite/sqlite3.c)        # Add C_API file
+set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/sqlite/sqlite3.c)        # Add C_API file
 
 if (ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknn_api dl)
@@ -98,16 +101,14 @@ if (ENABLE_RKNN)
 endif()
 
 # cpp yaml
-file(GLOB_RECURSE CPP_YAML_SRC ${THIRD_PARTY_DIR}/cpp_yaml/src/*.cpp)
+file(GLOB_RECURSE CPP_YAML_SRC ${CMAKE_CURRENT_SOURCE_DIR}/middleware/cpp_yaml/src/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CPP_YAML_SRC})
-set(CPP_YAML_INCLUDE ${THIRD_PARTY_DIR}/cpp_yaml/include)
+set(CPP_YAML_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/middleware/cpp_yaml/include)
 
 # archive
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/microtar/microtar.c)
 
 # MNN
-message(MNN_INCLUDE_DIRS=${MNN_INCLUDE_DIRS})
-message(MNN_LIBS=${MNN_LIBS})
 link_directories(${MNN_LIBS})
 
 if(BUILD_SHARED_LIBS)
@@ -128,9 +129,6 @@ if (BUILD_LINUX_ARM7)
     set(NEED_INCLUDE ${NEED_INCLUDE} ${OpenCV_STATIC_INCLUDE_DIR})
 endif ()
 
-# add sqlite3 header
-set(NEED_INCLUDE ${NEED_INCLUDE} ${THIRD_PARTY_DIR}/sqlite/)
-
 # add cpp yaml header
 set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE})
 
@@ -144,8 +142,27 @@ target_include_directories(InspireFace PUBLIC
 )
 
 if (NOT ANDROID)
-    message("ld: ${LINK_THIRD_LIBS}")
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
+
+    set_target_properties(InspireFace PROPERTIES
+            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/libs/
+    )
 else()
-    # xxx
+
 endif()
+
+# Print Message
+message(STATUS "[InspireFace Core]:")
+message(STATUS "\t Version: ${INSPIRE_FACE_VERSION_MAJOR}.${INSPIRE_FACE_VERSION_MINOR}.${INSPIRE_FACE_VERSION_PATCH}")
+message(STATUS "\t LINUX_FETCH_MNN: ${LINUX_FETCH_MNN}")
+message(STATUS "\t MNN_INCLUDE_DIRS: ${MNN_INCLUDE_DIRS}")
+message(STATUS "\t MNN_LIBS: ${MNN_LIBS}")
+message(STATUS "\t ENABLE_RKNN: ${ENABLE_RKNN}")
+if (ENABLE_RKNN)
+    message(STATUS "\t RKNN_API_INCLUDE_DIRS: ${RKNN_API_INCLUDE_DIRS}")
+    message(STATUS "\t RKNN_API_LIB: ${RKNN_API_LIB}")
+endif ()
+message(STATUS "\t BUILD_SHARED_LIBS: ${BUILD_SHARED_LIBS}")
+if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+    message(STATUS "\t GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA: ${GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA}")
+endif ()
