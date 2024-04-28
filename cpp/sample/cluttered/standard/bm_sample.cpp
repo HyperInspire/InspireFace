@@ -37,21 +37,18 @@ int main() {
     }
 
     {
-        // 设置随机数种子
         std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-        // 创建一个使用 std::vector<std::vector<float>> 表示的矩阵，并填充随机数
         std::vector<std::vector<float>> matrix(N, std::vector<float>(vectorSize));
         for (int i = 0; i < N; ++i) {
             for (int j = 0; j < vectorSize; ++j) {
-                matrix[i][j] = static_cast<float>(std::rand()) / RAND_MAX; // 生成随机浮点数
+                matrix[i][j] = static_cast<float>(std::rand()) / RAND_MAX;
             }
         }
 
-        // 创建一个使用 std::vector<float> 表示的向量，并填充随机数
         std::vector<float> vectorOne(vectorSize);
         for (int i = 0; i < vectorSize; ++i) {
-            vectorOne[i] = static_cast<float>(std::rand()) / RAND_MAX; // 生成随机浮点数
+            vectorOne[i] = static_cast<float>(std::rand()) / RAND_MAX;
         }
 
         auto timeStart = (double) cv::getTickCount();
@@ -66,7 +63,6 @@ int main() {
 
 //    {
 //        Eigen::initParallel();
-//        // 创建一个 Nx512 的矩阵，并填充随机数
 //        Eigen::MatrixXf mat(N, vectorSize);
 //        mat = Eigen::MatrixXf::Random(N, vectorSize);
 //

@@ -5,6 +5,7 @@
 #ifndef MODELLOADERTAR_CPP_MICROTAR_H
 #define MODELLOADERTAR_CPP_MICROTAR_H
 
+#include "memory"
 #include <unordered_map>
 #include <vector>
 #include <iostream>

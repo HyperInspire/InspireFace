@@ -8,6 +8,28 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
+# Check that the SANITIZE compile option is enabled
+set(SANITIZE_ADDRESS OFF CACHE BOOL "Enable AddressSanitizer")
+set(SANITIZE_LEAK OFF CACHE BOOL "Enable LeakSanitizer")
+
+if (SANITIZE_ADDRESS AND SANITIZE_LEAK)
+    message(FATAL_ERROR "Cannot enable both AddressSanitizer and LeakSanitizer.")
+endif()
+
+# Enable AddressSanitizer
+if(SANITIZE_ADDRESS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+endif()
+
+# Enable LeakSanitizer
+if(SANITIZE_LEAK)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=leak")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=leak")
+endif()
+
 set(TARGET_PLATFORM "drawin-x86" CACHE STRING "Target platform")
 
 # OpenCV dependency configuration
@@ -66,7 +88,6 @@ set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
 
 # OpenCV Configuration
-
 string(REPLACE "." ";" VERSION_LIST ${MOBILE_OPENCV_VERSION})
 list(GET VERSION_LIST 0 VERSION_MAJOR)
 if (APPLE)
@@ -87,7 +108,7 @@ else()
         #        set(OpenCV_STATIC_INCLUDE_DIR ${PATH_3RDPARTY}/opencv/opencv-linux-armhf/include/)
         if (RK_DEVICE_TYPE STREQUAL "RV1109RV1126")
             # In special cases, specialize for that version
-            message(STATUS "The OpenCV that builds the RV1109RV1126 version depends on is specialized!")
+            message("The OpenCV that builds the RV1109RV1126 version depends on is specialized!")
             set(OpenCV_DIR ${THIRD_PARTY_DIR}/opencv/3.4.5/opencv-linux-armhf/share/OpenCV)
             set(OpenCV_STATIC_INCLUDE_DIR ${PATH_3RDPARTY}/opencv/3.4.5/opencv-linux-armhf/include/)
             set(PLAT linux-arm7)
@@ -125,3 +146,21 @@ endif ()
 if (BUILD_WITH_TEST)
     add_subdirectory(cpp/test)  # Add a child project: Unit-Test
 endif ()
+
+# Print Message
+message(STATUS "[InspireFace Project Global]:")
+message(STATUS "\t CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
+message(STATUS "\t CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+message(STATUS "\t SANITIZE_ADDRESS: ${SANITIZE_ADDRESS}")
+message(STATUS "\t SANITIZE_LEAK: ${SANITIZE_LEAK}")
+message(STATUS "\t USE_MOBILE_OPENCV_IN_LOCAL: ${USE_MOBILE_OPENCV_IN_LOCAL}")
+message(STATUS "\t OpenCV_DIR: ${OpenCV_DIR}")
+message(STATUS "\t ENABLE_RKNN: ${ENABLE_RKNN}")
+if (ENABLE_RKNN)
+    message(STATUS "\t RKNPU_MAJOR: ${RKNPU_MAJOR}")
+    message(STATUS "\t RK_DEVICE_TYPE: ${RK_DEVICE_TYPE}")
+endif ()
+message(STATUS "\t BUILD_LINUX_ARM7: ${BUILD_LINUX_ARM7}")
+message(STATUS "\t BUILD_LINUX_AARCH64: ${BUILD_LINUX_AARCH64}")
+message(STATUS "\t BUILD_WITH_TEST: ${BUILD_WITH_TEST}")
+message(STATUS "\t BUILD_WITH_SAMPLE: ${BUILD_WITH_SAMPLE}")

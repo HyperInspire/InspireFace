@@ -23,6 +23,13 @@
 
 namespace inspire {
 
+// Comparator function object to sort SearchResult by score (descending order)
+struct CompareByScore {
+    bool operator()(const SearchResult& a, const SearchResult& b) const {
+        return a.score > b.score;
+    }
+};
+
 typedef enum SearchMode {
     SEARCH_MODE_EAGER = 0,     // Eager mode: Stops when a vector meets the threshold.
     SEARCH_MODE_EXHAUSTIVE,    // Exhaustive mode: Searches until the best match is found.
@@ -95,6 +102,13 @@ public:
     int32_t SearchFaceFeature(const Embedded& queryFeature, SearchResult &searchResult);
 
     /**
+     * @brief Search the stored data for the top k facial features that are most similar.
+     * @param topK Maximum search
+     * @return int32_t Status code of the search operation.
+     */
+    int32_t SearchFaceFeatureTopK(const Embedded& queryFeature, size_t topK);
+
+    /**
      * @brief Inserts a face feature with a custom ID.
      * @param feature Vector of floats representing the face feature.
      * @param tag String tag associated with the feature.
@@ -143,7 +157,6 @@ public:
      * @param mode Search mode.
      */
     void SetRecognitionSearchMode(SearchMode mode);
-
 
     /**
      * @brief Computes the cosine similarity between two feature vectors.
@@ -204,6 +217,10 @@ public:
      */
     int32_t GetFaceFeatureCount();
 
+    std::vector<float> &GetTopKConfidence();
+
+    std::vector<int32_t> &GetTopKCustomIdsCache();
+
 public:
 
     /**
@@ -243,6 +260,16 @@ public:
      * @return int32_t Status code indicating success (0) or failure.
      */
     int32_t SearchFaceFeature(const std::vector<float>& queryFeature, SearchResult &searchResult, float threshold, bool mostSimilar=true);
+
+    /**
+     * Search for the top K face features that are most similar to a given query feature.
+     * @param queryFeature A vector of floats representing the feature to query against.
+     * @param searchResultList A reference to a vector where the top K search results will be stored.
+     * @param maxTopK The maximum number of top results to return.
+     * @param threshold A float representing the minimum similarity score threshold.
+     * @return int32_t Returns a status code (0 for success, non-zero for any errors).
+     */
+    int32_t SearchFaceFeatureTopK(const std::vector<float>& queryFeature, std::vector<SearchResult> &searchResultList, size_t maxTopK, float threshold);
 
     /**
      * @brief Inserts a facial feature into the feature block.
@@ -300,6 +327,10 @@ private:
     std::shared_ptr<FaceFeaturePtr> m_face_feature_ptr_cache_;     ///< Shared pointer to cache of face feature pointers
     char m_string_cache_[256];                                     ///< Cache for temporary string storage
 
+    std::vector<SearchResult> m_search_top_k_cache_;               ///<
+    std::vector<float> m_top_k_confidence_;
+    std::vector<int32_t> m_top_k_custom_ids_cache_;
+
 private:
     std::vector<std::shared_ptr<FeatureBlock>> m_feature_matrix_list_; ///< List of feature blocks.
 
@@ -310,6 +341,8 @@ private:
     std::shared_ptr<SQLiteFaceManage> m_db_;                       ///< Shared pointer to the SQLiteFaceManage object
 
     bool m_enable_{false};                                         ///< Running status
+
+    std::mutex m_res_mtx_;                                         ///< Mutex for thread safety.
 
 };
 

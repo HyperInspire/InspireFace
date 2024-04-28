@@ -11,37 +11,37 @@
 #include <cstdint> // For uint8_t
 
 // Bad function
-inline HResult ReadImageToImageStream(const char *path, HImageHandle &handle, HF_ImageFormat format = STREAM_BGR,
-                                      HF_Rotation rot = CAMERA_ROTATION_0) {
+inline HResult ReadImageToImageStream(const char *path, HFImageStream &handle, HFImageFormat format = HF_STREAM_BGR,
+                                      HFRotation rot = HF_CAMERA_ROTATION_0) {
     cv::Mat image = cv::imread(path);
     if (image.empty()) {
         return -1;
     }
-    HF_ImageData imageData = {0};
+    HFImageData imageData = {0};
     imageData.data = image.data;
     imageData.height = image.rows;
     imageData.width = image.cols;
     imageData.format = format;
     imageData.rotation = rot;
 
-    auto ret = HF_CreateImageStream(&imageData, &handle);
+    auto ret = HFCreateImageStream(&imageData, &handle);
 
     return ret;
 }
 
-inline HResult CVImageToImageStream(const cv::Mat& image, HImageHandle &handle, HF_ImageFormat format = STREAM_BGR,
-                                      HF_Rotation rot = CAMERA_ROTATION_0) {
+inline HResult CVImageToImageStream(const cv::Mat& image, HFImageStream &handle, HFImageFormat format = HF_STREAM_BGR,
+                                    HFRotation rot = HF_CAMERA_ROTATION_0) {
     if (image.empty()) {
         return -1;
     }
-    HF_ImageData imageData = {0};
+    HFImageData imageData = {0};
     imageData.data = image.data;
     imageData.height = image.rows;
     imageData.width = image.cols;
     imageData.format = format;
     imageData.rotation = rot;
 
-    auto ret = HF_CreateImageStream(&imageData, &handle);
+    auto ret = HFCreateImageStream(&imageData, &handle);
 
     return ret;
 }

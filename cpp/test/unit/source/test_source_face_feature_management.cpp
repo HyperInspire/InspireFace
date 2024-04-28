@@ -20,7 +20,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         FaceContext ctx;
         CustomPipelineParameter param;
         param.enable_recognition = true;
-        auto ret = ctx.Configuration(GET_MODEL_FILE(), DetectMode::DETECT_MODE_IMAGE, 1, param);
+        auto ret = ctx.Configuration(DetectMode::DETECT_MODE_IMAGE, 1, param);
         REQUIRE(ret == HSUCCEED);
 
         FEATURE_HUB->PrintFeatureMatrixInfo();
@@ -93,7 +93,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         auto newIndex = 2888;
         // Try inserting an unused location first
         ret = FEATURE_HUB->UpdateFaceFeature(KunkunFeature, 3001, "Chicken", 3001);
-        REQUIRE(ret == HERR_CTX_REC_BLOCK_UPDATE_FAILURE);
+        REQUIRE(ret == HERR_SESS_REC_BLOCK_UPDATE_FAILURE);
         ret = FEATURE_HUB->UpdateFaceFeature(KunkunFeature, newIndex, "Chicken", 3001);
         REQUIRE(ret == HSUCCEED);
         SearchResult thirdlySearchResult;
@@ -114,7 +114,7 @@ TEST_CASE("test_FaceFeatureManagement", "[face_feature]") {
         FaceContext ctx;
         CustomPipelineParameter param;
         param.enable_recognition = true;
-        auto ret = ctx.Configuration(GET_DATA("model_zip/Pikachu-t1"), DetectMode::DETECT_MODE_IMAGE, 1, param);
+        auto ret = ctx.Configuration(DetectMode::DETECT_MODE_IMAGE, 1, param);
         REQUIRE(ret == HSUCCEED);
 
         FEATURE_HUB->PrintFeatureMatrixInfo();

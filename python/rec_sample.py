@@ -6,13 +6,13 @@ import inspireface as isf
 print(isf.__version__)
 
 if __name__ == '__main__':
-    param = isf.EngineCustomParameter()
+    param = isf.SessionCustomParameter()
     param.enable_recognition = True
 
     # db_config = isf.DatabaseConfiguration(enable_use_db=True, db_path="./")
     db_config = None
 
-    engine = isf.create_engine("/Users/tunm/work/HyperFace/test_res/model_zip/Optimus-t1", param=param,
+    engine = isf.create_engine("/Users/tunm/work/HyperFace/test_res/pack/Optimus-t1", param=param,
                            db_configuration=db_config
 
    )

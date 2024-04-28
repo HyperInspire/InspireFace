@@ -13,15 +13,13 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
     SECTION("Load lfw funneled data") {
 #ifdef ENABLE_USE_LFW_DATA
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
-        HF_ContextCustomParameter parameter = {0};
+        HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HF_DetectMode detMode = HF_DETECT_MODE_IMAGE;
-        HContextHandle ctxHandle;
-        ret = HF_CreateFaceContextFromResourceFile(path, parameter, detMode, 3, &ctxHandle);
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
         REQUIRE(ret == HSUCCEED);
-        HF_FeatureHubConfiguration configuration = {0};
+        HFFeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
         HString dbPathStr = new char[dbPath.size() + 1];
         std::strcpy(dbPathStr, dbPath.c_str());
@@ -34,28 +32,28 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
         if (std::remove(configuration.dbPath) != 0) {
             spdlog::trace("Error deleting file");
         }
-        ret = HF_FeatureHubDataEnable(configuration);
+        ret = HFFeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
         auto lfwDir = getLFWFunneledDir();
         auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
         size_t numOfNeedImport = 100;
-        auto importStatus = ImportLFWFunneledValidData(ctxHandle, dataList, numOfNeedImport);
-        HF_FeatureHubViewDBTable();
+        auto importStatus = ImportLFWFunneledValidData(session, dataList, numOfNeedImport);
+        HFFeatureHubViewDBTable();
         REQUIRE(importStatus);
         HInt32 count;
-        ret = HF_FeatureHubGetFaceCount(&count);
+        ret = HFFeatureHubGetFaceCount(&count);
         REQUIRE(ret == HSUCCEED);
         CHECK(count == numOfNeedImport);
 
-//        ret = HF_ViewFaceDBTable(ctxHandle);
+//        ret = HF_ViewFaceDBTable(session);
 //        REQUIRE(ret == HSUCCEED);
 
         // Finish
-        ret = HF_ReleaseFaceContext(ctxHandle);
+        ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 
-        ret = HF_FeatureHubDataDisable();
+        ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
 
         delete []dbPathStr;

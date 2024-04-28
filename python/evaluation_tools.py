@@ -1,14 +1,14 @@
 import cv2
 import numpy as np
 
-from inspireface.modules.base import InspireFaceEngine, EngineCustomParameter, FaceTrackerModule, \
+from inspireface.modules.base import InspireFaceEngine, SessionCustomParameter, FaceTrackerModule, \
     FaceRecognitionModule
 
 
 class QuickComparison(object):
 
     def __init__(self, path: str, threshold: float = 0.48):
-        param = EngineCustomParameter()
+        param = SessionCustomParameter()
         param.enable_recognition = True
         self.engine = InspireFaceEngine(path, param=param)
         self.tracker = FaceTrackerModule(self.engine)
@@ -38,17 +38,17 @@ class QuickComparison(object):
 
     def comp(self) -> float:
         """
-        逐个交叉对比，保留分数最大的值进行返回，调用self.recognition.face_comparison1v1(info1, info2)
-        :return: 最大的匹配分数
+        Cross-compare one by one, keep the value with the highest score and return it, calling self.recognition.face_comparison1v1(info1, info2)
+        :return: Maximum matching score
         """
-        max_score = 0.0  # 初始化最大分数为0
+        max_score = 0.0  # The maximum initial fraction is 0
 
-        # 遍历faces_set_1中的每个人脸与faces_set_2中的每个人脸进行比较
+        # Each face in faces_set_1 is traversed and compared with each face in faces_set_2
         for face1 in self.faces_set_1:
             for face2 in self.faces_set_2:
-                # 使用self.recognition.face_comparison1v1(info1, info2)进行人脸比较
+                # Use self.recognition.face_comparison1v1(info1, info2) Compare faces
                 score = self.recognition.face_comparison1v1(face1, face2)
-                # 更新最大分数
+                # Update maximum score
                 if score > max_score:
                     max_score = score
 
@@ -59,7 +59,7 @@ class QuickComparison(object):
 
 
 if __name__ == "__main__":
-    path = "/Users/tunm/work/HyperFace/test_res/model_zip/Pikachu-t1"
+    path = "/Users/tunm/work/HyperFace/test_res/pack/Pikachu-t1"
     quick = QuickComparison(path, threshold=0.47)
     image1 = cv2.imread("/Users/tunm/Downloads/lfw_funneled/Eliane_Karp/Eliane_Karp_0001.jpg")
     image2 = cv2.imread("/Users/tunm/Downloads/lfw_funneled/Eliane_Karp/Eliane_Karp_0002.jpg")
