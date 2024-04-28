@@ -267,9 +267,6 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         ret = HFFeatureHubFaceUpdate(updateIdentity);
         REQUIRE(ret == HSUCCEED);
 
-//        ret = HF_ViewFaceDBTable(session);
-//        REQUIRE(ret == HSUCCEED);
-
 //
         // Prepare a zy query image
         cv::Mat zyImageQuery = cv::imread(GET_DATA("data/bulk/woman_search.jpeg"));
@@ -315,6 +312,150 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
 #endif
     }
 
+}
+
+TEST_CASE("test_SearchTopK", "[feature_search_top_k]") {
+    DRAW_SPLIT_LINE
+    TEST_PRINT_OUTPUT(true);
+
+    SECTION("Face feature management basic functions") {
+        HResult ret;
+        HFSessionCustomParameter parameter = {0};
+        parameter.enable_recognition = 1;
+        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        REQUIRE(ret == HSUCCEED);
+        HFFeatureHubConfiguration configuration = {0};
+        auto dbPath = GET_SAVE_DATA(".test");
+        HString dbPathStr = new char[dbPath.size() + 1];
+        std::strcpy(dbPathStr, dbPath.c_str());
+        configuration.enablePersistence = 1;
+        configuration.dbPath = dbPathStr;
+        configuration.featureBlockNum = 20;
+        configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
+        configuration.searchThreshold = 0.48f;
+        // Delete the previous data before testing
+        if (std::remove(configuration.dbPath) != 0) {
+            spdlog::trace("Error deleting file");
+        }
+        ret = HFFeatureHubDataEnable(configuration);
+        REQUIRE(ret == HSUCCEED);
+
+        // Import 1k faces
+        auto lfwDir = getLFWFunneledDir();
+        auto dataList = LoadLFWFunneledValidData(lfwDir, getTestLFWFunneledTxt());
+        size_t numOfNeedImport = 1000;
+        auto importStatus = ImportLFWFunneledValidData(session, dataList, numOfNeedImport);
+        REQUIRE(importStatus);
+        HInt32 count;
+        ret = HFFeatureHubGetFaceCount(&count);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(count == numOfNeedImport);
+
+        // Prepare multiple photos of a person
+        std::vector<std::string> photos = {
+                GET_DATA("data/RD/d1.jpeg"),
+                GET_DATA("data/RD/d2.jpeg"),
+                GET_DATA("data/RD/d3.jpeg"),
+                GET_DATA("data/RD/d4.jpeg"),
+        };
+        std::vector<std::string> tags = {
+                "d1", "d2", "d3", "d4",
+        };
+        std::vector<HInt32> updateIds = {
+                5, 163, 670, 971,
+        };
+        REQUIRE(photos.size() == tags.size());
+        REQUIRE(updateIds.size() == tags.size());
+
+        // Replace the face features in the photo with each target in FeatureHub
+        for (int i = 0; i < photos.size(); ++i) {
+            // Face track
+            cv::Mat dstImage = cv::imread(photos[i]);
+            HFImageData imageData = {0};
+            imageData.data = dstImage.data;
+            imageData.height = dstImage.rows;
+            imageData.width = dstImage.cols;
+            imageData.format = HF_STREAM_BGR;
+            imageData.rotation = HF_CAMERA_ROTATION_0;
+            HFImageStream imgHandle;
+            ret = HFCreateImageStream(&imageData, &imgHandle);
+            REQUIRE(ret == HSUCCEED);
+
+            // Extract basic face information from photos
+            HFMultipleFaceData multipleFaceData = {0};
+            ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+            REQUIRE(ret == HSUCCEED);
+            REQUIRE(multipleFaceData.detectedNum > 0);
+
+            // Extract face feature
+            HFFaceFeature feature = {0};
+            ret = HFFaceFeatureExtract(session, imgHandle, multipleFaceData.tokens[0], &feature);
+            REQUIRE(ret == HSUCCEED);
+
+            char* cstr = new char[tags[i].size() + 1]; // Dynamically allocate memory for the name
+            strcpy(cstr, tags[i].c_str()); // Copy the name into the allocated memory
+
+            // Create identity
+            HFFaceFeatureIdentity identity = {0};
+            identity.customId = updateIds[i];
+            identity.feature = &feature;
+            identity.tag = cstr;
+
+            // Update
+            ret = HFFeatureHubFaceUpdate(identity);
+            REQUIRE(ret == HSUCCEED);
+
+            ret = HFReleaseImageStream(imgHandle);
+            REQUIRE(ret == HSUCCEED);
+            delete[] cstr; // Clean up the dynamically allocated memory
+        }
+
+        // Prepare a target photo for a face top-k search
+        cv::Mat image = cv::imread(GET_DATA("data/RD/d5.jpeg"));
+        HFImageData imageData = {0};
+        imageData.data = image.data;
+        imageData.height = image.rows;
+        imageData.width = image.cols;
+        imageData.format = HF_STREAM_BGR;
+        imageData.rotation = HF_CAMERA_ROTATION_0;
+        HFImageStream imgHandle;
+        ret = HFCreateImageStream(&imageData, &imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        HFMultipleFaceData multipleFaceData = {0};
+        ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum > 0);
+
+        HFFaceFeature feature = {0};
+        ret = HFFaceFeatureExtract(session, imgHandle, multipleFaceData.tokens[0], &feature);
+        REQUIRE(ret == HSUCCEED);
+
+        // Run the top-k search
+        HFSearchTopKResults topk;
+        ret = HFFeatureHubFaceSearchTopK(feature, 10, &topk);
+        REQUIRE(ret == HSUCCEED);
+
+        // Check whether the top-k result is consistent with the expectation
+        CHECK(topk.size == photos.size());
+        for (int i = 0; i < topk.size; ++i) {
+            TEST_PRINT("Top-{} -> id: {}, {}", i + 1, topk.customIds[i], topk.confidence[i]);
+            CHECK(std::find(updateIds.begin(), updateIds.end(), topk.customIds[i]) != updateIds.end());
+        }
+
+        ret = HFReleaseImageStream(imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        // Finish
+        ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HFFeatureHubDataDisable();
+        REQUIRE(ret == HSUCCEED);
+        delete[]dbPathStr;
+    }
 }
 
 TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
