@@ -22,7 +22,7 @@ endif ()
 
 # OpenCV Configuration
 if(NOT APPLE)
-    message(STATUS OpenCV_DIR=${OpenCV_DIR})
+#    message(STATUS OpenCV_DIR=${OpenCV_DIR})
     find_package(OpenCV REQUIRED)
 endif()
 
@@ -79,7 +79,7 @@ set_target_properties(Test PROPERTIES
 
 
 # Print Message
-message(STATUS "[InspireFace Test]:")
+message(STATUS "InspireFace Test:")
 message(STATUS "\t ENABLE_BENCHMARK: ${ENABLE_BENCHMARK}")
 message(STATUS "\t ENABLE_USE_LFW_DATA: ${ENABLE_USE_LFW_DATA}")
 message(STATUS "\t ENABLE_TEST_EVALUATION: ${ENABLE_TEST_EVALUATION}")
