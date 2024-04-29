@@ -24,6 +24,10 @@ def case_face_tracker_from_video(resource_path, source, show):
     ret = ifac.launch(resource_path)
     assert ret, "Launch failure. Please ensure the resource path is correct."
 
+    # Optional features, loaded during session creation based on the modules specified.
+    opt = HF_ENABLE_NONE
+    session = ifac.InspireFaceSession(opt, HF_DETECT_MODE_VIDEO)    # Use video mode
+
     # Determine if the source is a digital webcam index or a video file path.
     try:
         source_index = int(source)  # Try to convert source to an integer.
@@ -45,6 +49,10 @@ def case_face_tracker_from_video(resource_path, source, show):
             break  # Exit loop if no more frames or error occurs.
 
         # Process frame here (e.g., face detection/tracking).
+        faces = session.face_detection(frame)
+        for idx, face in enumerate(faces):
+            x1, y1, x2, y2 = face.location
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
         if show:
             cv2.imshow("Face Tracker", frame)
