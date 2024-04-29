@@ -17,23 +17,23 @@
 #ifdef ANDROID
 // Android platform log macros
 const std::string TAG = "InspireFace";
-#define INSPIRE_LOGD(...) LogManager::getInstance()->logAndroid(LOG_DEBUG, TAG, __VA_ARGS__)
-#define INSPIRE_LOGI(...) LogManager::getInstance()->logAndroid(LOG_INFO, TAG, __VA_ARGS__)
-#define INSPIRE_LOGW(...) LogManager::getInstance()->logAndroid(LOG_WARN, TAG, __VA_ARGS__)
-#define INSPIRE_LOGE(...) LogManager::getInstance()->logAndroid(LOG_ERROR, TAG, __VA_ARGS__)
-#define INSPIRE_LOGF(...) LogManager::getInstance()->logAndroid(LOG_FATAL, TAG, __VA_ARGS__)
+#define INSPIRE_LOGD(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_DEBUG, TAG, __VA_ARGS__)
+#define INSPIRE_LOGI(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_INFO, TAG, __VA_ARGS__)
+#define INSPIRE_LOGW(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_WARN, TAG, __VA_ARGS__)
+#define INSPIRE_LOGE(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_ERROR, TAG, __VA_ARGS__)
+#define INSPIRE_LOGF(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_FATAL, TAG, __VA_ARGS__)
 #else
 // Standard platform log macros
-#define INSPIRE_LOGD(...) LogManager::getInstance()->logStandard(LOG_DEBUG, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
-#define INSPIRE_LOGI(...) LogManager::getInstance()->logStandard(LOG_INFO, "", "", -1, __VA_ARGS__)
-#define INSPIRE_LOGW(...) LogManager::getInstance()->logStandard(LOG_WARN, __FILENAME__, "", __LINE__, __VA_ARGS__)
-#define INSPIRE_LOGE(...) LogManager::getInstance()->logStandard(LOG_ERROR, __FILENAME__, "", __LINE__, __VA_ARGS__)
-#define INSPIRE_LOGF(...) LogManager::getInstance()->logStandard(LOG_FATAL, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define INSPIRE_LOGD(...) inspire::LogManager::getInstance()->logStandard(inspire::LOG_DEBUG, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define INSPIRE_LOGI(...) inspire::LogManager::getInstance()->logStandard(inspire::LOG_INFO, "", "", -1, __VA_ARGS__)
+#define INSPIRE_LOGW(...) inspire::LogManager::getInstance()->logStandard(inspire::LOG_WARN, __FILENAME__, "", __LINE__, __VA_ARGS__)
+#define INSPIRE_LOGE(...) inspire::LogManager::getInstance()->logStandard(inspire::LOG_ERROR, __FILENAME__, "", __LINE__, __VA_ARGS__)
+#define INSPIRE_LOGF(...) inspire::LogManager::getInstance()->logStandard(inspire::LOG_FATAL, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
 
 // Macro to set the global log level
-#define INSPIRE_SET_LOG_LEVEL(level) LogManager::getInstance()->setLogLevel(level)
+#define INSPIRE_SET_LOG_LEVEL(level) inspire::LogManager::getInstance()->setLogLevel(level)
 
 namespace inspire {
 

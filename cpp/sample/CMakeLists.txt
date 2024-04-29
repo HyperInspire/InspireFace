@@ -228,5 +228,5 @@ endif ()
 
 
 # Print Message
-message(STATUS "[InspireFace Sample]:")
+message(STATUS "InspireFace Sample:")
 message(STATUS "\t BUILD_SAMPLE_CLUTTERED: ${BUILD_SAMPLE_CLUTTERED}")

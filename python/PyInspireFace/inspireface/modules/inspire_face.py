@@ -445,6 +445,20 @@ def feature_hub_face_search(data: np.ndarray) -> SearchResult:
     return search_result
 
 
+def feature_hub_face_search_top_k(data: np.ndarray, top_k: int) -> List[Tuple]:
+    feature = HFFaceFeature(size=HInt32(data.size), data=data.ctypes.data_as(HPFloat))
+    results = HFSearchTopKResults()
+    ret = HFFeatureHubFaceSearchTopK(feature, top_k, PHFSearchTopKResults(results))
+    outputs = list()
+    if ret == 0:
+        num = results.size.value
+        for idx in range(num):
+            confidence = results.confidence[idx].value
+            customId = results.customIds[idx].value
+            outputs.append((confidence, customId))
+
+    return outputs
+
 def feature_hub_face_update(face_identity: FaceIdentity) -> bool:
     ret = HFFeatureHubFaceUpdate(face_identity._c_struct())
     if ret != 0:
