@@ -1,6 +1,7 @@
 import unittest
 from test import *
 import inspireface as ifac
+from inspireface.param import *
 import cv2
 
 
@@ -8,7 +9,7 @@ class FaceTrackerCase(unittest.TestCase):
 
     def setUp(self) -> None:
         # Prepare material
-        track_mode = ifac.HF_DETECT_MODE_IMAGE  # Use video mode
+        track_mode = HF_DETECT_MODE_IMAGE  # Use video mode
         self.engine = ifac.InspireFaceSession(param=ifac.SessionCustomParameter(),
                                         detect_mode=track_mode)
 
@@ -32,7 +33,7 @@ class FaceTrackerCase(unittest.TestCase):
         self.assertEqual(len(self.engine.face_detection(any_image)), 0)
 
     def test_face_pose(self):
-        self.engine.set_track_mode(ifac.HF_DETECT_MODE_IMAGE)
+        self.engine.set_track_mode(HF_DETECT_MODE_IMAGE)
 
         # Test yaw (shake one's head)
         left_face = cv2.imread(get_test_data("pose/left_face.jpeg"))
@@ -83,7 +84,7 @@ class FaceTrackerCase(unittest.TestCase):
         self.assertEqual(True, right_face_roll > 30)
 
     def test_face_track_from_video(self):
-        self.engine.set_track_mode(ifac.HF_DETECT_MODE_VIDEO)
+        self.engine.set_track_mode(HF_DETECT_MODE_VIDEO)
 
         # Read a video file
         video_gen = read_video_generator(get_test_data("video/810_1684206192.mp4"))
@@ -116,27 +117,28 @@ class FaceTrackerBenchmarkCase(unittest.TestCase):
         self.image = cv2.imread(get_test_data("bulk/kun.jpg"))
         self.assertIsNotNone(self.image)
         # Prepare material
-        track_mode = ifac.HF_DETECT_MODE_VIDEO  # Use video mode
-        self.engine = ifac.InspireFaceSession(ifac.HF_ENABLE_NONE, track_mode, )
+        track_mode = HF_DETECT_MODE_VIDEO  # Use video mode
+        self.engine = ifac.InspireFaceSession(HF_ENABLE_NONE, track_mode, )
         # Prepare video data
         self.video_gen = read_video_generator(get_test_data("video/810_1684206192.mp4"))
 
     @benchmark(test_name="Face Detect", loop=1000)
     def test_benchmark_face_detect(self):
-        self.engine.set_track_mode(ifac.HF_DETECT_MODE_IMAGE)
+        self.engine.set_track_mode(HF_DETECT_MODE_IMAGE)
         for _ in range(self.loop):
             faces = self.engine.face_detection(self.image)
             self.assertEqual(len(faces), 1, "No face detected may have an error, please check.")
 
     @benchmark(test_name="Face Track", loop=1000)
     def test_benchmark_face_track(self):
-        self.engine.set_track_mode(ifac.HF_DETECT_MODE_IMAGE)
+        self.engine.set_track_mode(HF_DETECT_MODE_VIDEO)
         for _ in range(self.loop):
             faces = self.engine.face_detection(self.image)
             self.assertEqual(len(faces), 1, "No face detected may have an error, please check.")
 
     @benchmark(test_name="Face Track(Video)", loop=345)
     def test_benchmark_face_track_video(self):
+        self.engine.set_track_mode(HF_DETECT_MODE_VIDEO)
         for frame in self.video_gen:
             faces = self.engine.face_detection(frame)
             self.assertEqual(len(faces), 1, "No face detected may have an error, please check.")

@@ -77,7 +77,6 @@ endif()
 
 
 if (ENABLE_RKNN)
-    message("Enable RKNN Inference: ${RK_DEVICE_TYPE}")
     set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/include)
     set(RKNN_API_LIB ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
     link_directories(${RKNN_API_LIB})
@@ -152,7 +151,7 @@ else()
 endif()
 
 # Print Message
-message(STATUS "[InspireFace Core]:")
+message(STATUS "InspireFace Core:")
 message(STATUS "\t Version: ${INSPIRE_FACE_VERSION_MAJOR}.${INSPIRE_FACE_VERSION_MINOR}.${INSPIRE_FACE_VERSION_PATCH}")
 message(STATUS "\t LINUX_FETCH_MNN: ${LINUX_FETCH_MNN}")
 message(STATUS "\t MNN_INCLUDE_DIRS: ${MNN_INCLUDE_DIRS}")

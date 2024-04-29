@@ -7,7 +7,7 @@ import cv2
 class LFWPrecisionTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.quick = QuickComparison(TEST_MODEL_PATH)
+        self.quick = QuickComparison()
 
     def test_lfw_precision(self):
         pairs_path = os.path.join(LFW_FUNNELED_DIR_PATH, 'pairs.txt')

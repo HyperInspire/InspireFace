@@ -1,5 +1,6 @@
 from test.test_settings import *
 import inspireface as ifac
+from inspireface.param import *
 import numpy as np
 import time
 from functools import wraps
@@ -75,16 +76,16 @@ def restore_rotated_box(original_width, original_height, box, rotation):
     else:
         width, height = original_width, original_height
 
-    (x1, y1), (x2, y2) = box
+    (x1, y1, x2, y2) = box
 
     if rotation == 0:  # No transformation needed for 0 degrees
         restored_box = box
     elif rotation == 1:  # 90 degrees rotation
-        restored_box = ((y1, width - x2), (y2, width - x1))
+        restored_box = (y1, width - x2, y2, width - x1)
     elif rotation == 2:  # 180 degrees rotation
-        restored_box = ((width - x2, height - y2), (width - x1, height - y1))
+        restored_box = (width - x2, height - y2, width - x1, height - y1)
     elif rotation == 3:  # 270 degrees rotation
-        restored_box = ((height - y2, x1), (height - y1, x2))
+        restored_box = (height - y2, x1, height - y1, x2)
     else:
         raise ValueError("Rotation must be 0, 1, 2, or 3 representing 0, 90, 180, 270 degrees.")
 
@@ -180,7 +181,7 @@ def lfw_generator(directory_path):
 
 
 def batch_import_lfw_faces(lfw_path, engine: ifac.InspireFaceSession, num_of_faces: int):
-    engine.set_track_mode(ifac.HF_DETECT_MODE_IMAGE)
+    engine.set_track_mode(HF_DETECT_MODE_IMAGE)
     generator = lfw_generator(lfw_path)
     registered_faces = 0
 
