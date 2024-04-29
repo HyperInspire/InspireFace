@@ -56,6 +56,7 @@ def case_face_detection_image(resource_path, image_path):
     cv2.imwrite(save_path, draw)
     print(f"\nSave annotated image to {save_path}")
 
+
 if __name__ == '__main__':
     os.makedirs("tmp", exist_ok=True)
     case_face_detection_image()
