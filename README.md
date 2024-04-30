@@ -1,21 +1,21 @@
 # InspireFace-SDK
-## Overview
+## 0. Overview
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
 
-## Preparation
-### Downloading 3rdparty Files
+## 1. Preparation
+### 1.1. Downloading 3rdparty Files
 You can download the third-party libraries necessary for the compilation process, **InspireFace-3rdparty**, from [Google Drive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) and extract them to any location on your disk.
 
-### Downloading Pack Files
+### 1.2. Downloading Pack Files
 You can download the pack files containing models and configurations needed for compilation from [Google Drive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) and extract them to any location.
 
-### Installing OpenCV
+### 1.3. Installing OpenCV
 If you intend to use the SDK locally or on a server, ensure that OpenCV is installed on the host device beforehand to enable successful linking during the compilation process. For cross-compilation targets like Android or ARM embedded boards, you can use the pre-compiled OpenCV libraries provided by **InspireFace-3rdparty**.
 
-### Installing MNN
+### 1.4. Installing MNN
 **InspireFace-3rdparty** includes pre-compiled MNN libraries tailored for various platforms. However, due to differences in underlying device libraries, you may need to compile the MNN library yourself if the provided versions do not match your hardware.
 
-### Requirements
+### 1.5. Requirements
 
 - CMake (version 3.10 or higher)
 - OpenCV (version 4.20 or higher)
@@ -35,10 +35,10 @@ If you intend to use the SDK locally or on a server, ensure that OpenCV is insta
 - RKNN
     - Adjust and select versions currently supported for specific requirements.
 
-## Compilation
+## 2. Compilation
 CMake parameters are used to control the various details of the compilation phase. Please select according to your actual requirements. [Parameter table](doc/CMake-Param.md).
 
-### Local Compilation
+### 2.1. Local Compilation
 Once **InspireFace-3rdparty** is prepared and OpenCV is installed, you can begin the compilation process. If you are using macOS or Linux, you can quickly compile using the shell scripts provided in the **command/** folder at the project root:
 ```bash
 cd InspireFace/
@@ -62,7 +62,7 @@ install
 - **libInspireFace.so**：Compiled dynamic linking library.
 - **inspireface.h**：Header file definition.
 - **herror.h**：Reference error number definition.
-### Cross Compilation
+### 2.2. Cross Compilation
 Cross compilation requires you to prepare the target platform's cross-compilation toolchain on the host machine in advance. Here, compiling for Rockchip's embedded devices RV1109/RV1126 is used as an example:
 ```bash
 # Set the path for the cross-compilation toolchain
@@ -71,7 +71,7 @@ export ARM_CROSS_COMPILE_TOOLCHAIN=YOUR_DIR/gcc-arm-8.3-2019.03-x86_64-arm-linux
 bash command/build_cross_rv1109rv1126_armhf.sh
 ```
 After the compilation is complete, you can find the compiled results in the **build/rv1109rv1126_armhf/install** directory.
-### Supported Platforms and Architectures
+### 2.3. Supported Platforms and Architectures
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
 
 | **No.** | **Operating System** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** | **Verification Device** | **Remarks** |
@@ -91,8 +91,8 @@ We have completed the adaptation and testing of the software across various oper
 - Pass unit tests on physical devices.
 - Meet all performance benchmarks in tests.
 
-## Example
-### C/C++ Sample
+## 3. Example
+### 3.1. C/C++ Sample
 To integrate InspireFace into a C/C++ project, you simply need to link the InspireFace library and include the appropriate header files. Below is a basic example demonstrating face detection:
 
 ```cpp
@@ -166,7 +166,7 @@ For more examples, you can refer to the **cpp/sample** sub-project located in th
 
 **Note**: For each error code feedback, you can click on this [link](doc/Error-Feedback-Codes.md) to view detailed explanations.
 
-### Python Native Sample
+### 3.2. Python Native Sample
 We provide a Python API that allows for more efficient use of the InspireFace library. After compiling the dynamic link library, you need to either symlink or copy it to the **example/PyInspireFace/inspireface/modules/core** directory within the root directory. You can then start testing by navigating to the **[example/PyInspireFace/](example/PyInspireFace)** directory. Your Python environment will need to have some dependencies installed:
 
 - python >= 3.7
@@ -223,7 +223,7 @@ In the project, more usage examples are provided:
 - sample_face_recognition.py: Facial recognition example
 - sample_face_track_from_video.py: Facial tracking from video stream example
 
-## Test
+## 4. Test
 In the project, there is a subproject called cpp/test. To compile it, you need to enable the BUILD_WITH_TEST switch, which will allow you to compile executable programs for testing.
 
 ```bash
@@ -254,7 +254,7 @@ During the process of building the test program using CMake, it will involve sel
 
 **Note**: If you want to view the benchmark test report, you can click on the [link](doc/Benchmark-Remark(Updating).md).
 
-## Function support
+## 5. Function support
 The following functionalities and technologies are currently supported.
 
 | Index | Function | Adaptation | Note |
@@ -271,7 +271,7 @@ The following functionalities and technologies are currently supported.
 | 10 | Cooperative Liveness Detection | - [ ] |  |
 
 
-## Models Pack List
+## 6. Models Pack List
 
 For different scenarios, we currently provide several Packs, each containing multiple models and configurations.
 
