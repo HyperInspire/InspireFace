@@ -28,7 +28,7 @@ If you intend to use the SDK locally or on a server, ensure that OpenCV is insta
             - Note that in some distributions, GCC (GNU C Compiler) and G++ (GNU C++ Compiler) are installed separately.
             - For instance, on Ubuntu, you need to install both gcc and g++
         - Recommended Clang version is 3.9 or higher
-    - arm-linux-gnueabihf (for RV1106/RV1126)
+    - arm-linux-gnueabihf (for RV1109/RV1126)
         - Prepare the cross-compilation toolchain in advance, such as gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
 - CUDA (version 10.1 or higher)
     - GPU-based inference requires installing NVIDIA's CUDA dependencies on the device.
