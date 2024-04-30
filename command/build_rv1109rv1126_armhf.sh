@@ -3,6 +3,7 @@ mkdir -p build/rv1109rv1126_armhf
 cd build/rv1109rv1126_armhf
 # export cross_compile_toolchain=/home/s4129/software/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
 cmake -DCMAKE_SYSTEM_NAME=Linux \
+  -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_SYSTEM_VERSION=1 \
   -DCMAKE_SYSTEM_PROCESSOR=armv7 \
   -DCMAKE_C_COMPILER=$ARM_CROSS_COMPILE_TOOLCHAIN/bin/arm-linux-gnueabihf-gcc \
@@ -16,6 +17,8 @@ cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DENABLE_BENCHMARK=ON \
   -DENABLE_USE_LFW_DATA=ON \
   -DENABLE_TEST_EVALUATION=ON \
-  -DBUILD_SHARED_LIBS=OFF ../..
+  -DBUILD_SHARED_LIBS=ON ../..
 
 make -j4
+make install
+

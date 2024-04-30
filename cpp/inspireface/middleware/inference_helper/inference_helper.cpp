@@ -203,7 +203,7 @@ InferenceHelper* InferenceHelper::Create(const InferenceHelper::HelperType helpe
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
     case kRknn:
-        PRINT("Use Rknn\n")
+//        PRINT("Use Rknn\n")
 //        p = new InferenceHelperRKNN();
         p = new InferenceHelperRknnAdapter();
         break;
