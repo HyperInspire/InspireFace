@@ -48,7 +48,6 @@ ln -s YOUR_DIR/InspireFace-3rdparty ./3rdparty
 bash command/build.sh
 ```
 After compilation, you can find the local file in the build directory, which contains the compilation results. The install directory structure is as follows:
-install文件夹如下：
 ```bash
 install
 └── InspireFace
