@@ -36,7 +36,7 @@ If you intend to use the SDK locally or on a server, ensure that OpenCV is insta
     - Adjust and select versions currently supported for specific requirements.
 
 ## 2. Compilation
-CMake parameters are used to control the various details of the compilation phase. Please select according to your actual requirements. [Parameter table](doc/CMake-Param.md).
+CMake option are used to control the various details of the compilation phase. Please select according to your actual requirements. [Parameter table](doc/CMake-Option.md).
 
 ### 2.1. Local Compilation
 Once **InspireFace-3rdparty** is prepared and OpenCV is installed, you can begin the compilation process. If you are using macOS or Linux, you can quickly compile using the shell scripts provided in the **command/** folder at the project root:

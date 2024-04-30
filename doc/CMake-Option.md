@@ -1,4 +1,4 @@
-# Overview of CMake Parameters for Compilation
+# Overview of CMake Option for Compilation
 
 Here are the translation details for the compilation parameters as per your requirement:
 
