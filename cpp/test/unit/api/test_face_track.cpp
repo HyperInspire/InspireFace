@@ -73,8 +73,6 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
 
     SECTION("Face tracking stability from frames") {
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
         HFSessionCustomParameter parameter = {0};
         HFDetectMode detMode = HF_DETECT_MODE_VIDEO;
         HFSession session;
@@ -124,8 +122,6 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
 
     SECTION("Head pose estimation") {
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
         HFSessionCustomParameter parameter = {0};
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
