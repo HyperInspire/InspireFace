@@ -8,6 +8,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
+# Set the THIRD_PARTY_DIR variable to allow it to be set externally from the command line, or use the default path if it is not set
+set(THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty" CACHE PATH "Path to the third-party libraries directory")
+
 # Check that the SANITIZE compile option is enabled
 set(SANITIZE_ADDRESS OFF CACHE BOOL "Enable AddressSanitizer")
 set(SANITIZE_LEAK OFF CACHE BOOL "Enable LeakSanitizer")
@@ -84,7 +87,6 @@ if (USE_MOBILE_OPENCV_IN_LOCAL)
     add_definitions(-DUSE_MOBILE_OPENCV_IN_LOCAL)
 endif ()
 
-set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
 
 # OpenCV Configuration
@@ -134,6 +136,9 @@ else()
     find_package(OpenCV REQUIRED)
 endif ()
 
+# Set install path
+set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
+
 add_subdirectory(cpp/inspireface)  # Add a child project: InspireFace Source
 get_property(InspireFace TARGET InspireFace PROPERTY InspireFace)
 
@@ -149,6 +154,7 @@ endif ()
 message(STATUS "InspireFace Project Global:")
 message(STATUS "\t CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "\t CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+message(STATUS "\t THIRD_PARTY_DIR: ${THIRD_PARTY_DIR}")
 message(STATUS "\t SANITIZE_ADDRESS: ${SANITIZE_ADDRESS}")
 message(STATUS "\t SANITIZE_LEAK: ${SANITIZE_LEAK}")
 message(STATUS "\t USE_MOBILE_OPENCV_IN_LOCAL: ${USE_MOBILE_OPENCV_IN_LOCAL}")
@@ -162,3 +168,4 @@ message(STATUS "\t BUILD_LINUX_ARM7: ${BUILD_LINUX_ARM7}")
 message(STATUS "\t BUILD_LINUX_AARCH64: ${BUILD_LINUX_AARCH64}")
 message(STATUS "\t BUILD_WITH_TEST: ${BUILD_WITH_TEST}")
 message(STATUS "\t BUILD_WITH_SAMPLE: ${BUILD_WITH_SAMPLE}")
+message(STATUS "\t CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
