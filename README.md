@@ -258,7 +258,7 @@ During the process of building the test program using CMake, it will involve sel
 The following functionalities and technologies are currently supported.
 
 | Index | Function | Adaptation | Note |
-| --- | --- | --- | --- |
+| -- | --- | --- | --- |
 | 1 | Face Detection | - [x] | SCRFD |
 | 2 | Facial Landmark Detection | - [x] | HyperLandmark |
 | 3 | Face Recognition | - [x] | ArcFace |
@@ -266,8 +266,9 @@ The following functionalities and technologies are currently supported.
 | 5 | Mask Detection | - [x] |  |
 | 6 | Silent Liveness Detection | - [x] | MiniVision |
 | 7 | Face Quality Detection | - [x] |  |
-| 8 | Age Prediction | - [ ] |  |
-| 9 | Cooperative Liveness Detection | - [ ] |  |
+| 8 | Face Pose Estimation | - [x] |  |
+| 9 | Age Prediction | - [ ] |  |
+| 10 | Cooperative Liveness Detection | - [ ] |  |
 
 
 ## Models Pack List
