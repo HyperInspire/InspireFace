@@ -51,24 +51,24 @@ int32_t InferenceHelperRknnAdapter::ParameterInitialization(std::vector<InputTen
 int32_t InferenceHelperRknnAdapter::Process(std::vector<OutputTensorInfo> &output_tensor_info_list) {
     if (output_tensor_info_list[0].tensor_type == TensorInfo::kTensorTypeFp32) {
         net_->setOutputsWantFloat(1);
-//        LOGD("WANT FLOAT!");
+//        INSPIRE_LOGD("WANT FLOAT!");
     }
 
     auto ret = net_->RunModel();
     if (ret != 0) {
-        LOGE("Run model error.");
+        INSPIRE_LOGE("Run model error.");
         return kRetErr;
     }
     auto outputs_size = net_->GetOutputsNum();
 
-//    LOGD("==================");
+//    INSPIRE_LOGD("==================");
 //    auto f = net_->GetOutputData(0);
 //    for (int i = 0; i < 512; ++i) {
 //        std::cout << f[i] << ", ";
 //    }
 //    std::cout << std::endl;
 //
-//    LOGD("==================");
+//    INSPIRE_LOGD("==================");
 
     assert(outputs_size == output_tensor_info_list.size());
 
@@ -80,12 +80,12 @@ int32_t InferenceHelperRknnAdapter::Process(std::vector<OutputTensorInfo> &outpu
         output_tensor.tensor_dims.clear();
         for (int i = 0; i < dim.size(); ++i) {
             output_tensor.tensor_dims.push_back((int)dim[i]);
-//            LOGE("dim: %d", dim[i]);
+//            INSPIRE_LOGE("dim: %d", dim[i]);
         }
 
     }
 
-
+    net_->ReleaseOutputs();
 
     return kRetOk;
 }
@@ -94,8 +94,8 @@ int32_t InferenceHelperRknnAdapter::PreProcess(const std::vector<InputTensorInfo
     for (int i = 0; i < input_tensor_info_list.size(); ++i) {
         auto &input_tensor_info = input_tensor_info_list[i];
 //        cv::Mat mat(input_tensor_info.GetHeight(), input_tensor_info.GetWidth(), CV_8UC3, input_tensor_info.data);
-//        LOGD("decode : %d", input_tensor_info.GetHeight());
-//        LOGD("decode : %d", input_tensor_info.GetWidth());
+//        INSPIRE_LOGD("decode : %d", input_tensor_info.GetHeight());
+//        INSPIRE_LOGD("decode : %d", input_tensor_info.GetWidth());
 //        cv::Mat bgr;
 //        cv::cvtColor(mat, bgr, cv::COLOR_RGB2BGR);
 //        cv::imwrite("dec.jpg", bgr);
@@ -104,18 +104,18 @@ int32_t InferenceHelperRknnAdapter::PreProcess(const std::vector<InputTensorInfo
             fmt = RKNN_TENSOR_NCHW;
         } else {
             fmt = RKNN_TENSOR_NHWC;
-//            LOGD("NHWC!");
+//            INSPIRE_LOGD("NHWC!");
         }
         rknn_tensor_type type = RKNN_TENSOR_UINT8;
         if (input_tensor_info.tensor_type == InputTensorInfo::TensorInfo::kTensorTypeFp32) {
             type = RKNN_TENSOR_FLOAT32;
         } else if (input_tensor_info.tensor_type == InputTensorInfo::TensorInfo::kTensorTypeUint8) {
             type = RKNN_TENSOR_UINT8;
-//            LOGD("UINT8!");
+//            INSPIRE_LOGD("UINT8!");
         }
         auto ret = net_->SetInputData(i, input_tensor_info.data, input_tensor_info.GetWidth(), input_tensor_info.GetHeight(), input_tensor_info.GetChannel(), type, fmt);
         if (ret != 0) {
-            LOGE("Set data error.");
+            INSPIRE_LOGE("Set data error.");
             return ret;
         }
     }
@@ -125,7 +125,7 @@ int32_t InferenceHelperRknnAdapter::PreProcess(const std::vector<InputTensorInfo
 int32_t
 InferenceHelperRknnAdapter::Initialize(const std::string &model_filename, std::vector<InputTensorInfo> &input_tensor_info_list,
                                        std::vector<OutputTensorInfo> &output_tensor_info_list) {
-    LOGE("NOT IMPL");
+    INSPIRE_LOGE("NOT IMPL");
 
     return 0;
 }
@@ -136,7 +136,7 @@ int32_t InferenceHelperRknnAdapter::Initialize(char *model_buffer, int model_siz
     net_ = std::make_shared<RKNNAdapter>();
     auto ret = net_->Initialize((unsigned char* )model_buffer, model_size);
     if (ret != 0) {
-        LOGE("Rknn init error.");
+        INSPIRE_LOGE("Rknn init error.");
         return kRetErr;
     }
     return ParameterInitialization(input_tensor_info_list, output_tensor_info_list);
