@@ -187,7 +187,6 @@ def batch_import_lfw_faces(lfw_path, engine: ifac.InspireFaceSession, num_of_fac
 
     # With the tqdm wrapper generator, unknown totals are used with total=None, and tqdm will run in unknown total mode
     for image, name in tqdm(generator, total=num_of_faces, desc="Registering faces"):
-        # 执行人脸检测
         faces_info = engine.face_detection(image)
         if len(faces_info) == 0:
             continue

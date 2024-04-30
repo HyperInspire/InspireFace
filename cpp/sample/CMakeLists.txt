@@ -5,7 +5,7 @@ option(BUILD_SAMPLE_CLUTTERED "Whether to compile the cluttered sample program (
 
 # OpenCV Configuration
 if(NOT APPLE)
-    message(STATUS OpenCV_DIR=${OpenCV_DIR})
+#    message(STATUS OpenCV_DIR=${OpenCV_DIR})
     find_package(OpenCV REQUIRED)
 endif()
 
@@ -243,3 +243,13 @@ endif ()
 # Print Message
 message(STATUS "InspireFace Sample:")
 message(STATUS "\t BUILD_SAMPLE_CLUTTERED: ${BUILD_SAMPLE_CLUTTERED}")
+
+# Install bin
+install(TARGETS Leak RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS FaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS FaceTrackSampleCost RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS MTFaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS FaceRecognitionSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS FaceSearchSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS FaceComparisonSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+
