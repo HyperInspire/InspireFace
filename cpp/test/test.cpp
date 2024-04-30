@@ -1,8 +1,6 @@
 //
 // Created by tunm on 2023/10/11.
 //
-
-
 #define CATCH_CONFIG_RUNNER
 
 #include <iostream>
@@ -91,6 +89,8 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
+    // Set log level
+    HFSetLogLevel(HF_LOG_ERROR);
 
     return session.run();
 }

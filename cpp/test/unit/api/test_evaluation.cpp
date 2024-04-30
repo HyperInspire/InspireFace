@@ -55,8 +55,6 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
     SECTION("Test LFW evaluation") {
 #ifdef ENABLE_TEST_EVALUATION
         HResult ret;
-        std::string modelPath = GET_MODEL_FILE();
-        HPath path = modelPath.c_str();
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
