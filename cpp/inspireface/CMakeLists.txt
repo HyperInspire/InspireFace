@@ -8,14 +8,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 # Current version
-set(INSPIRE_FACE_VERSION_MAJOR 0)
-set(INSPIRE_FACE_VERSION_MINOR 5)
+set(INSPIRE_FACE_VERSION_MAJOR 1)
+set(INSPIRE_FACE_VERSION_MINOR 0)
 set(INSPIRE_FACE_VERSION_PATCH 0)
 # Converts the version number to a string
 string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
 string(CONCAT INSPIRE_FACE_VERSION_MINOR_STR ${INSPIRE_FACE_VERSION_MINOR})
 string(CONCAT INSPIRE_FACE_VERSION_PATCH_STR ${INSPIRE_FACE_VERSION_PATCH})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/information.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/version.txt)
+
+
 
 option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
@@ -77,7 +80,6 @@ endif()
 
 
 if (ENABLE_RKNN)
-    message("Enable RKNN Inference: ${RK_DEVICE_TYPE}")
     set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/include)
     set(RKNN_API_LIB ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
     link_directories(${RKNN_API_LIB})
@@ -145,14 +147,15 @@ if (NOT ANDROID)
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
 
     set_target_properties(InspireFace PROPERTIES
-            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/libs/
+            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
+            ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
     )
 else()
 
 endif()
 
 # Print Message
-message(STATUS "[InspireFace Core]:")
+message(STATUS "InspireFace Core:")
 message(STATUS "\t Version: ${INSPIRE_FACE_VERSION_MAJOR}.${INSPIRE_FACE_VERSION_MINOR}.${INSPIRE_FACE_VERSION_PATCH}")
 message(STATUS "\t LINUX_FETCH_MNN: ${LINUX_FETCH_MNN}")
 message(STATUS "\t MNN_INCLUDE_DIRS: ${MNN_INCLUDE_DIRS}")
@@ -166,3 +169,23 @@ message(STATUS "\t BUILD_SHARED_LIBS: ${BUILD_SHARED_LIBS}")
 if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
     message(STATUS "\t GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA: ${GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA}")
 endif ()
+
+
+# Install lib
+install(TARGETS InspireFace
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib
+        )
+
+# Install header file
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/herror.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/version.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/)
+
+if (ENABLE_RKNN)
+    # Install rknn 3rd lib
+    install(FILES ${RKNN_API_LIB}/librknn_api.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+endif ()
+

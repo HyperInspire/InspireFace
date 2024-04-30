@@ -160,12 +160,14 @@ public:
         /* Create the neural network */
         int model_data_size = 0;
         model_data = load_model_(model_path, &model_data_size);
+        load_ = true;
         int ret = rknn_init(&rk_ctx_, model_data, model_data_size, 0);
-//        LOG_INFO("RKNN Init ok.");
+//        INSPIRE_LOG_INFO("RKNN Init ok.");
         if (ret < 0) {
-            LOGE("rknn_init fail! ret=%d", ret);
+            INSPIRE_LOGE("rknn_init fail! ret=%d", ret);
             return -1;
         }
+        run_ = true;
 
         return init_();
     }
@@ -180,13 +182,14 @@ public:
      */
     int Initialize(const unsigned char* model_data, const unsigned int model_size) {
         /* Create the neural network */
-        LOGD("The neural network is being initialized...");
+        INSPIRE_LOGD("The neural network is being initialized...");
         int ret = rknn_init(&rk_ctx_, (void *) model_data, model_size, 0);
 
         if (ret < 0) {
-            LOGE("rknn_init fail! ret=%d", ret);
+            INSPIRE_LOGE("rknn_init fail! ret=%d", ret);
             return -1;
         }
+        run_ = true;
 
         return init_();
     }
@@ -236,7 +239,7 @@ public:
      */
     Status SetInputData(const int index, const cv::Mat &data) {
         if (data.type() != CV_8UC3) {
-            LOGE("error: input data required CV_8UC3");
+            INSPIRE_LOGE("error: input data required CV_8UC3");
         }
         if (index < input_tensors_.size()) {
             input_tensors_[index].index = 0;
@@ -246,7 +249,7 @@ public:
             input_tensors_[index].buf = data.data;
             input_tensors_[index].pass_through = 0;
         } else {
-            LOGE("error: assert index < len");
+            INSPIRE_LOGE("error: assert index < len");
         }
         return SUCCESS;
     }
@@ -273,7 +276,7 @@ public:
             input_tensors_[index].buf = data;
             input_tensors_[index].pass_through = 0;
         } else {
-            LOGE("error: assert index < len");
+            INSPIRE_LOGE("error: assert index < len");
         }
         return SUCCESS;
     }
@@ -284,25 +287,25 @@ public:
      * @return Inference status result
      */
     int RunModel() {
-//        LOGD("set input");
+//        INSPIRE_LOGD("set input");
         int ret = rknn_inputs_set(rk_ctx_, rk_io_num_.n_input, input_tensors_.data());
         if (ret < 0)
-            LOGE("rknn_input fail! ret=%d", ret);
+            INSPIRE_LOGE("rknn_input fail! ret=%d", ret);
 
         for (int i = 0; i < rk_io_num_.n_output; i++) {
             output_tensors_[i].want_float = outputs_want_float_;
         }
 
-//        LOGD("rknn_run");
+//        INSPIRE_LOGD("rknn_run");
         ret = rknn_run(rk_ctx_, nullptr);
         if (ret < 0) {
-            LOGE("rknn_run fail! ret=%d", ret);
+            INSPIRE_LOGE("rknn_run fail! ret=%d", ret);
             return -1;
         }
 
         ret = rknn_outputs_get(rk_ctx_, rk_io_num_.n_output, output_tensors_.data(), NULL);
         if (ret < 0) {
-            LOGE("rknn_init fail! ret=%d", ret);
+            INSPIRE_LOGE("rknn_init fail! ret=%d", ret);
             exit(0);
         }
         return ret;
@@ -334,6 +337,11 @@ public:
      */
     u_int8_t *GetOutputDataU8(const int index) {
         return (uint8_t *) (output_tensors_[index].buf);
+    }
+
+    int32_t ReleaseOutputs() {
+        auto ret = rknn_outputs_release(rk_ctx_, rk_io_num_.n_output, output_tensors_.data());
+        return ret;
     }
 
     /**
@@ -390,9 +398,12 @@ public:
      * @details Release all resources in memory, typically called in the destructor
      */
     void Release() {
-        rknn_destroy(rk_ctx_);
-        if (model_data) {
-            free(model_data);
+        if (run_){
+            rknn_destroy(rk_ctx_);
+            if (load_) {
+                free(model_data);
+            }
+            run_ = false;
         }
     }
 
@@ -414,20 +425,20 @@ private:
         rknn_sdk_version version;
         int ret = rknn_query(rk_ctx_, RKNN_QUERY_SDK_VERSION, &version, sizeof(rknn_sdk_version));
         if (ret < 0) {
-            LOGE("rknn_init fail! ret=%d", ret);
+            INSPIRE_LOGE("rknn_init fail! ret=%d", ret);
             return -1;
         }
-        LOGD("sdk version: %s driver version: %s", version.api_version, version.drv_version);
+        INSPIRE_LOGD("sdk version: %s driver version: %s", version.api_version, version.drv_version);
 
         ret = rknn_query(rk_ctx_, RKNN_QUERY_IN_OUT_NUM, &rk_io_num_,
                          sizeof(rk_io_num_));
 
         if (ret != RKNN_SUCC) {
-            LOGE("rknn_query ctx fail! ret=%d", ret);
+            INSPIRE_LOGE("rknn_query ctx fail! ret=%d", ret);
             return -1;
         }
 
-        LOGD("models input num: %d, output num: %d", rk_io_num_.n_input, rk_io_num_.n_output);
+        INSPIRE_LOGD("models input num: %d, output num: %d", rk_io_num_.n_input, rk_io_num_.n_output);
 
 
 //        spdlog::trace("input tensors: ");
@@ -443,23 +454,23 @@ private:
             ret = rknn_query(rk_ctx_, RKNN_QUERY_INPUT_ATTR, &(input_attrs_[i]),
                              sizeof(rknn_tensor_attr));
 
-            LOGD("input node index %d", i);
+            INSPIRE_LOGD("input node index %d", i);
             int channel = 3;
             int width = 0;
             int height = 0;
             if (input_attrs_[i].fmt == RKNN_TENSOR_NCHW) {
-                LOGD("models is NCHW input fmt");
+                INSPIRE_LOGD("models is NCHW input fmt");
                 width = input_attrs_[i].dims[0];
                 height = input_attrs_[i].dims[1];
             } else {
-                LOGD("models is NHWC input fmt");
+                INSPIRE_LOGD("models is NHWC input fmt");
                 width = input_attrs_[i].dims[1];
                 height = input_attrs_[i].dims[2];
             }
-            LOGD("models input height=%d, width=%d, channel=%d", height, width, channel);
+            INSPIRE_LOGD("models input height=%d, width=%d, channel=%d", height, width, channel);
 //            print_tensor_attr_(input_attrs_);
             if (ret != RKNN_SUCC) {
-                LOGE("rknn_query fail! ret=%d", ret);
+                INSPIRE_LOGE("rknn_query fail! ret=%d", ret);
                 return -1;
             }
         }
@@ -474,7 +485,7 @@ private:
 
             if (output_attrs_[i].qnt_type != RKNN_TENSOR_QNT_AFFINE_ASYMMETRIC ||
                 output_attrs_[i].type != RKNN_TENSOR_UINT8) {
-                LOGW("The Demo required for a Affine asymmetric u8 quantized rknn models, but output quant type is %s, output "
+                INSPIRE_LOGW("The Demo required for a Affine asymmetric u8 quantized rknn models, but output quant type is %s, output "
                         "data type is %s",
                         get_qnt_type_string_(output_attrs_[i].qnt_type), get_type_string_(output_attrs_[i].type));
 //                return -1;
@@ -492,7 +503,7 @@ private:
 
 
             if (ret != RKNN_SUCC) {
-                LOGE("rknn_query fail! ret=%d", ret);
+                INSPIRE_LOGE("rknn_query fail! ret=%d", ret);
                 return -1;
             }
         }
@@ -517,6 +528,8 @@ private:
     bool run_status_;                   ///< Flag to indicate the execution status of the neural network.
 
     unsigned char *model_data;          ///< Pointer to the model's data stream.
+    bool load_;
+    bool run_;
 };
 
 
