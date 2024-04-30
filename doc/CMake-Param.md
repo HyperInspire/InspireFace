@@ -1,5 +1,7 @@
 # Overview of CMake Parameters for Compilation
 
+Here are the translation details for the compilation parameters as per your requirement:
+
 | **Parameter** | **Default Value** | **Description** |
 | --- | --- | --- |
 | THIRD_PARTY_DIR | 3rdparty | Path for required third-party libraries |
