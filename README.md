@@ -166,7 +166,7 @@ For more examples, you can refer to the **cpp/sample** sub-project located in th
 **Note**: For each error code feedback, you can click on this [link](doc/Error-Feedback-Codes.md) to view detailed explanations.
 
 ### 3.2. Python Native Sample
-We provide a Python API that allows for more efficient use of the InspireFace library. After compiling the dynamic link library, you need to either symlink or copy it to the **example/PyInspireFace/inspireface/modules/core** directory within the root directory. You can then start testing by navigating to the **[example/PyInspireFace/](example/PyInspireFace)** directory. Your Python environment will need to have some dependencies installed:
+We provide a Python API that allows for more efficient use of the InspireFace library. After compiling the dynamic link library, you need to either symlink or copy it to the **python/inspireface/modules/core** directory within the root directory. You can then start testing by navigating to the **[python/](python/)** directory. Your Python environment will need to have some dependencies installed:
 
 - python >= 3.7
 - opencv-python
@@ -176,9 +176,9 @@ We provide a Python API that allows for more efficient use of the InspireFace li
 - ctypes
 ```bash
 # Use a symbolic link
-ln -s YOUR_BUILD_DIR/install/InspireFace/lib/libInspireFace.so example/PyInspireFace/inspireface/modules/core
+ln -s YOUR_BUILD_DIR/install/InspireFace/lib/libInspireFace.so python/inspireface/modules/core
 # Navigate to the sub-project directory
-cd example/PyInspireFace
+cd python
 
 ```
 
