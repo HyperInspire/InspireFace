@@ -1,4 +1,4 @@
-# InspireFace-SDK
+# InspireFace
 ## 0. Overview
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
 
