@@ -1,0 +1,6 @@
+[submodule "inspireface-precompile"]
+	path = 3rdparty/inspireface-precompile
+	url = https://github.com/HyperInspire/inspireface-precompile.git
+[submodule "MNN"]
+	path = 3rdparty/MNN
+	url = https://github.com/alibaba/MNN.git
