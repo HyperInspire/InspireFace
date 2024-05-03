@@ -17,7 +17,6 @@ If you intend to use the SDK locally or on a server, ensure that OpenCV is insta
 
 ### 1.5. Requirements
 
-
 - CMake (version 3.10 or higher)
 - OpenCV (version 4.20 or higher)
     - Use the specific OpenCV-SDK supported by each target platform such as Android, iOS, and Linux.
