@@ -136,6 +136,33 @@ else()
     find_package(OpenCV REQUIRED)
 endif ()
 
+
+if (NOT ANDROID)
+
+    if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+        # Use MNN Cuda
+        message("Global MNN CUDA device inference")
+        add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
+        set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
+        link_directories(${LINUX_MNN_CUDA}/lib)
+        set(MNN_LIBS MNN)
+
+    elseif(DEFINED MNN_STATIC_PATH)
+        message("Using static MNN from specified path: ${MNN_STATIC_PATH}")
+        set(MNN_INCLUDE_DIRS "${MNN_STATIC_PATH}/include")
+        set(MNN_LIBS "${MNN_STATIC_PATH}/lib/libMNN.a")
+    else ()
+        # Default or fallback case for MNN setup
+        message("Default or fallback case for MNN setup")
+        set(MNN_BUILD_SHARED_LIBS OFF)
+        add_subdirectory(${THIRD_PARTY_DIR}/MNN)
+        set(MNN_INCLUDE_DIRS "${THIRD_PARTY_DIR}/MNN/include")
+        set(MNN_LIBS MNN)
+
+    endif ()
+
+endif()
+
 # Set install path
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
 
