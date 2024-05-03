@@ -30,58 +30,10 @@ if(NOT APPLE)
     find_package(OpenCV REQUIRED)
 endif()
 
-if (NOT ANDROID)
-
-    if (LINUX_FETCH_MNN)
-        # Include FetchContent module
-        include(FetchContent)
-        # Fetch MNN
-        message("Downloading MNN from https://github.com/alibaba/MNN.git, this may take a while.")
-        FetchContent_Declare(
-                mnn
-                GIT_REPOSITORY https://github.com/alibaba/MNN.git
-                GIT_TAG        2.7.0
-        )
-        set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-        set(MNN_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
-        set(MNN_BUILD_CONVERTER OFF CACHE BOOL "" FORCE)
-        if(GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
-            set(MNN_CUDA ON CACHE BOOL "" FORCE)
-        endif()
-
-        FetchContent_MakeAvailable(mnn)
-        set(MNN_INCLUDE_DIRS ${mnn_SOURCE_DIR}/include)
-        if (MNN_BUILD_SHARED_LIBS)
-            set(MNN_LIBS ${mnn_BINARY_DIR})
-        else()
-            set(MNN_LIBS ${mnn_BINARY_DIR}/libMNN.a)
-        endif ()
-
-    elseif (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
-        # Use MNN Cuda
-        message("Global MNN CUDA device inference")
-        add_definitions("-DGLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
-        set(MNN_INCLUDE_DIRS ${LINUX_MNN_CUDA}/include)
-        link_directories(${LINUX_MNN_CUDA}/lib)
-        set(MNN_LIBS MNN)
-
-    elseif(DEFINED MNN_STATIC_PATH)
-        message("Using static MNN from specified path: ${MNN_STATIC_PATH}")
-        set(MNN_INCLUDE_DIRS "${MNN_STATIC_PATH}/include")
-        set(MNN_LIBS "${MNN_STATIC_PATH}/lib/libMNN.a")
-    else ()
-        # Default or fallback case for MNN setup
-        message("Default or fallback case for MNN setup")
-        set(MNN_INCLUDE_DIRS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/include)
-        set(MNN_LIBS ${THIRD_PARTY_DIR}/MNN/${PLAT}-static/lib/libMNN.a)
-    endif ()
-
-endif()
-
 
 if (ENABLE_RKNN)
-    set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/include)
-    set(RKNN_API_LIB ${THIRD_PARTY_DIR}/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
+    set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/inspireface-precompile/rknn/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/include)
+    set(RKNN_API_LIB ${THIRD_PARTY_DIR}/inspireface-precompile/rknn/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
     link_directories(${RKNN_API_LIB})
 endif()
 
