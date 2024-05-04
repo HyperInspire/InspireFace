@@ -137,6 +137,7 @@ else()
 endif ()
 
 
+# MNN Config
 if (NOT ANDROID)
 
     if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
@@ -154,7 +155,9 @@ if (NOT ANDROID)
     else ()
         # Default or fallback case for MNN setup
         message("Default or fallback case for MNN setup")
-        set(MNN_BUILD_SHARED_LIBS OFF)
+        # MNN Options
+        set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "Build MNN as a shared library")
+
         add_subdirectory(${THIRD_PARTY_DIR}/MNN)
         set(MNN_INCLUDE_DIRS "${THIRD_PARTY_DIR}/MNN/include")
         set(MNN_LIBS MNN)
