@@ -20,7 +20,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.txt.in ${CMAKE_CURRENT_SOURCE
 
 
 
-option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
+option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
@@ -31,23 +31,19 @@ if(NOT APPLE)
 endif()
 
 
-if (ENABLE_RKNN)
-    set(RKNN_API_INCLUDE_DIRS ${THIRD_PARTY_DIR}/inspireface-precompile/rknn/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/include)
-    set(RKNN_API_LIB ${THIRD_PARTY_DIR}/inspireface-precompile/rknn/${RKNPU_MAJOR}/runtime/${RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
-    link_directories(${RKNN_API_LIB})
+if (ISF_ENABLE_RKNN)
+    set(ISF_RKNN_API_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/include)
+    set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
+    link_directories(${ISF_RKNN_API_LIB})
 endif()
 
 # OpenCV
-if(APPLE AND USE_MOBILE_OPENCV_IN_LOCAL)
-    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} "${OPENCV_FRAMEWORK}" ${MNN_LIBS} "${ACCELERATE_FRAMEWORK}")
-else()
-    set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
-endif()
+set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
 
 # sqlite3
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/sqlite/sqlite3.c)        # Add C_API file
 
-if (ENABLE_RKNN)
+if (ISF_ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknn_api dl)
     # InferenceHelp use RkNN
     add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN")
@@ -65,7 +61,7 @@ set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_ar
 # MNN
 link_directories(${MNN_LIBS})
 
-if(BUILD_SHARED_LIBS)
+if(ISF_BUILD_SHARED_LIBS)
     add_library(InspireFace SHARED ${SOURCE_FILES})
 else()
     add_library(InspireFace STATIC ${SOURCE_FILES})
@@ -76,10 +72,10 @@ target_compile_definitions(InspireFace PUBLIC FEATURE_BLOCK_ENABLE_OPENCV)
 
 # Include files
 set(NEED_INCLUDE . ${MNN_INCLUDE_DIRS})
-if (ENABLE_RKNN)
-    set(NEED_INCLUDE ${NEED_INCLUDE} ${RKNN_API_INCLUDE_DIRS})
+if (ISF_ENABLE_RKNN)
+    set(NEED_INCLUDE ${NEED_INCLUDE} ${ISF_RKNN_API_INCLUDE_DIRS})
 endif ()
-if (BUILD_LINUX_ARM7)
+if (ISF_BUILD_LINUX_ARM7)
     set(NEED_INCLUDE ${NEED_INCLUDE} ${OpenCV_STATIC_INCLUDE_DIR})
 endif ()
 
@@ -109,17 +105,16 @@ endif()
 # Print Message
 message(STATUS "InspireFace Core:")
 message(STATUS "\t Version: ${INSPIRE_FACE_VERSION_MAJOR}.${INSPIRE_FACE_VERSION_MINOR}.${INSPIRE_FACE_VERSION_PATCH}")
-message(STATUS "\t LINUX_FETCH_MNN: ${LINUX_FETCH_MNN}")
 message(STATUS "\t MNN_INCLUDE_DIRS: ${MNN_INCLUDE_DIRS}")
 message(STATUS "\t MNN_LIBS: ${MNN_LIBS}")
-message(STATUS "\t ENABLE_RKNN: ${ENABLE_RKNN}")
-if (ENABLE_RKNN)
-    message(STATUS "\t RKNN_API_INCLUDE_DIRS: ${RKNN_API_INCLUDE_DIRS}")
-    message(STATUS "\t RKNN_API_LIB: ${RKNN_API_LIB}")
+message(STATUS "\t ISF_BUILD_SHARED_LIBS: ${ISF_BUILD_SHARED_LIBS}")
+message(STATUS "\t ISF_ENABLE_RKNN: ${ISF_ENABLE_RKNN}")
+if (ISF_ENABLE_RKNN)
+    message(STATUS "\t ISF_RKNN_API_INCLUDE_DIRS: ${ISF_RKNN_API_INCLUDE_DIRS}")
+    message(STATUS "\t ISF_RKNN_API_LIB: ${ISF_RKNN_API_LIB}")
 endif ()
-message(STATUS "\t BUILD_SHARED_LIBS: ${BUILD_SHARED_LIBS}")
-if (GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
-    message(STATUS "\t GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA: ${GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA}")
+if (ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+    message(STATUS "\t ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA: ${ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA}")
 endif ()
 
 
@@ -136,8 +131,8 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/herror.h DESTINATION ${CMAKE_INSTALL_P
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/version.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/)
 
-if (ENABLE_RKNN)
+if (ISF_ENABLE_RKNN)
     # Install rknn 3rd lib
-    install(FILES ${RKNN_API_LIB}/librknn_api.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+    install(FILES ${ISF_RKNN_API_LIB}/librknn_api.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
 endif ()
 
