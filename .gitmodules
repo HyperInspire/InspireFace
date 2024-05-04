@@ -4,3 +4,6 @@
 [submodule "MNN"]
 	path = 3rdparty/MNN
 	url = https://github.com/alibaba/MNN.git
+[submodule "spdlog"]
+	path = 3rdparty/spdlog
+	url = https://github.com/gabime/spdlog.git
