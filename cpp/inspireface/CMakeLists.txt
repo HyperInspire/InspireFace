@@ -37,7 +37,6 @@ set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
 # sqlite3
 set(SOURCE_FILES ${SOURCE_FILES} ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite3.c)   # Add C_API file
 set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/)
-include_directories(${SQLITE_INCLUDE})
 
 if (ISF_ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknn_api dl)
@@ -76,7 +75,7 @@ if (ISF_BUILD_LINUX_ARM7)
 endif ()
 
 # add cpp yaml header
-set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE})
+set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE} ${SQLITE_INCLUDE})
 
 if(PLAT STREQUAL "linux")
     find_package(Threads REQUIRED)
