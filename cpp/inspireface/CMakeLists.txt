@@ -41,7 +41,9 @@ endif()
 set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
 
 # sqlite3
-set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/sqlite/sqlite3.c)        # Add C_API file
+set(SOURCE_FILES ${SOURCE_FILES} ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite3.c)   # Add C_API file
+set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/)
+include_directories(${SQLITE_INCLUDE})
 
 if (ISF_ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknn_api dl)
@@ -51,9 +53,9 @@ if (ISF_ENABLE_RKNN)
 endif()
 
 # cpp yaml
-file(GLOB_RECURSE CPP_YAML_SRC ${CMAKE_CURRENT_SOURCE_DIR}/middleware/cpp_yaml/src/*.cpp)
+file(GLOB_RECURSE CPP_YAML_SRC ${ISF_THIRD_PARTY_DIR}/yaml-cpp/src/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CPP_YAML_SRC})
-set(CPP_YAML_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/middleware/cpp_yaml/include)
+set(CPP_YAML_INCLUDE ${ISF_THIRD_PARTY_DIR}/yaml-cpp/include)
 
 # archive
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/microtar/microtar.c)
