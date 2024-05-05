@@ -77,8 +77,6 @@ option(ISF_BUILD_WITH_SAMPLE "Open Build Sample Exec." ON)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
 
 # OpenCV dependency configuration
-string(REPLACE "." ";" VERSION_LIST ${MOBILE_OPENCV_VERSION})
-list(GET VERSION_LIST 0 VERSION_MAJOR)
 if (APPLE)
     set(PLAT darwin)
     find_package(OpenCV REQUIRED)
