@@ -3,12 +3,6 @@ project(InspireFaceSample)
 
 option(ISF_BUILD_SAMPLE_CLUTTERED "Whether to compile the cluttered sample program (debug code during development)" OFF)
 
-# OpenCV Configuration
-if(NOT APPLE)
-#    message(STATUS OpenCV_DIR=${OpenCV_DIR})
-    find_package(OpenCV REQUIRED)
-endif()
-
 include_directories(${SRC_DIR})
 
 if (ISF_ENABLE_RKNN)

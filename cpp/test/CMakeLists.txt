@@ -18,13 +18,6 @@ if (ISF_ENABLE_TEST_EVALUATION)
     add_definitions("-DISF_ENABLE_TEST_EVALUATION")
 endif ()
 
-# OpenCV Configuration
-if(NOT APPLE)
-#    message(STATUS OpenCV_DIR=${OpenCV_DIR})
-    find_package(OpenCV REQUIRED)
-endif()
-
-
 if (ISF_ENABLE_RKNN)
     set(DEPEND rknn_api dl)
     set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
