@@ -23,7 +23,7 @@ You can download the pack files containing models and configurations needed for 
 If you intend to use the SDK locally or on a server, ensure that OpenCV is installed on the host device beforehand to enable successful linking during the compilation process. For cross-compilation targets like Android or ARM embedded boards, you can use the pre-compiled OpenCV libraries provided by **3rdparty/inspireface-precompile/opencv/**.
 
 ### 1.4. Installing MNN
-**inspireface-precompile** includes pre-compiled MNN libraries tailored for various platforms. However, due to differences in underlying device libraries, you may need to compile the MNN library yourself if the provided versions do not match your hardware.
+The '3rdparty' directory already includes the MNN library and specifies a particular version as the stable version. If you need to enable or disable additional configuration options during compilation, you can refer to the CMake Options provided by MNN. If you need to use your own precompiled version, feel free to replace it.
 
 ### 1.5. Requirements
 
