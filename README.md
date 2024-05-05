@@ -9,7 +9,7 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 After pulling the project to your local machine, you need to execute the command to fetch or update the submodules, retrieving the latest submodules online to your local environment.
 
-```bash
+```Bash
 # Go to the project root directory
 cd InspireFace/
 # Pull the submodule project
