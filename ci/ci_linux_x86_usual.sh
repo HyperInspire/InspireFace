@@ -7,8 +7,7 @@ DOWNLOAD_URL="https://github.com/tunmx/inspireface-store/raw/main/resource/test_
 ZIP_FILE="test_res-lite.zip"
 BUILD_DIRNAME="ci_ubuntu18"
 TEST_DIR="./build/${BUILD_DIRNAME}/test"
-TEST_EXECUTABLE="$(realpath ./build/${BUILD_DIRNAME}/test/Test)"
-FULL_TEST_DIR="$(realpath ${TARGET_DIR})"
+TEST_EXECUTABLE="./test/Test"
 
 # Check whether the directory exists
 if [ ! -d "$TARGET_DIR" ]; then
@@ -26,6 +25,8 @@ if [ ! -d "$TARGET_DIR" ]; then
 else
     echo "Directory '$TARGET_DIR' already exists. Skipping download."
 fi
+
+FULL_TEST_DIR="$(realpath ${TARGET_DIR})"
 
 mkdir -p build/${BUILD_DIRNAME}/
 # shellcheck disable=SC2164
