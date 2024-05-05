@@ -6,7 +6,15 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## 1. Preparation
 ### 1.1. Downloading 3rdparty Files
-The third-party dependency libraries of InspireFace are all stored in the 3rdparty directory. When cloning the project, you can use **--recurse-submodules** to fetch the submodules simultaneously or use **git submodule update --init --recursive** to synchronize the submodules.
+
+After pulling the project to your local machine, you need to execute the command to fetch or update the submodules, retrieving the latest submodules online to your local environment.
+
+```Bash
+# Go to the project root directory
+cd InspireFace/
+# Pull the submodule project
+git submodule update --init --recursive
+```
 
 ### 1.2. Downloading Pack Files
 You can download the pack files containing models and configurations needed for compilation from [Google Drive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) and extract them to any location.
