@@ -26,6 +26,11 @@ jobs:
           git submodule sync --recursive
           git submodule update --init --recursive
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libgtk2.0-dev libavcodec-dev libavformat-dev libjpeg-dev libswscale-dev
+
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
