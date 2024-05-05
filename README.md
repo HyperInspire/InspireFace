@@ -2,18 +2,20 @@
 ## 0. Overview
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
 
+Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=InspireFace) for commercial support, including obtaining and integrating higher accuracy models, as well as custom development.
+
 ## 1. Preparation
 ### 1.1. Downloading 3rdparty Files
-You can download the third-party libraries necessary for the compilation process, **InspireFace-3rdparty**, from [Google Drive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) and extract them to any location on your disk.
+The third-party dependency libraries of InspireFace are all stored in the 3rdparty directory. When cloning the project, you can use **--recurse-submodules** to fetch the submodules simultaneously or use **git submodule update --init --recursive** to synchronize the submodules.
 
 ### 1.2. Downloading Pack Files
 You can download the pack files containing models and configurations needed for compilation from [Google Drive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) and extract them to any location.
 
 ### 1.3. Installing OpenCV
-If you intend to use the SDK locally or on a server, ensure that OpenCV is installed on the host device beforehand to enable successful linking during the compilation process. For cross-compilation targets like Android or ARM embedded boards, you can use the pre-compiled OpenCV libraries provided by **InspireFace-3rdparty**.
+If you intend to use the SDK locally or on a server, ensure that OpenCV is installed on the host device beforehand to enable successful linking during the compilation process. For cross-compilation targets like Android or ARM embedded boards, you can use the pre-compiled OpenCV libraries provided by **3rdparty/inspireface-precompile/opencv/**.
 
 ### 1.4. Installing MNN
-**InspireFace-3rdparty** includes pre-compiled MNN libraries tailored for various platforms. However, due to differences in underlying device libraries, you may need to compile the MNN library yourself if the provided versions do not match your hardware.
+**inspireface-precompile** includes pre-compiled MNN libraries tailored for various platforms. However, due to differences in underlying device libraries, you may need to compile the MNN library yourself if the provided versions do not match your hardware.
 
 ### 1.5. Requirements
 
@@ -39,11 +41,9 @@ If you intend to use the SDK locally or on a server, ensure that OpenCV is insta
 CMake option are used to control the various details of the compilation phase. Please select according to your actual requirements. [Parameter table](doc/CMake-Option.md).
 
 ### 2.1. Local Compilation
-Once **InspireFace-3rdparty** is prepared and OpenCV is installed, you can begin the compilation process. If you are using macOS or Linux, you can quickly compile using the shell scripts provided in the **command/** folder at the project root:
+Make sure OpenCV is installed, you can begin the compilation process.  If you are using macOS or Linux, you can quickly compile using the shell scripts provided in the **command/** folder at the project root:
 ```bash
 cd InspireFace/
-# Default, but you can also modify the shell script's -DTHIRD_PARTY_DIR=....
-ln -s YOUR_DIR/InspireFace-3rdparty ./3rdparty
 # Execute the local compilation script
 bash command/build.sh
 ```
@@ -161,7 +161,7 @@ if (ret != HSUCCEED) {
     return ret;
 }
 ```
-For more examples, you can refer to the **cpp/sample** sub-project located in the root directory. You can compile these sample executables by enabling the **BUILD_WITH_SAMPLE** option during the compilation process.
+For more examples, you can refer to the **cpp/sample** sub-project located in the root directory. You can compile these sample executables by enabling the **ISF_BUILD_WITH_SAMPLE** option during the compilation process.
 
 **Note**: For each error code feedback, you can click on this [link](doc/Error-Feedback-Codes.md) to view detailed explanations.
 
@@ -223,10 +223,10 @@ In the project, more usage examples are provided:
 - sample_face_track_from_video.py: Facial tracking from video stream example
 
 ## 4. Test
-In the project, there is a subproject called cpp/test. To compile it, you need to enable the BUILD_WITH_TEST switch, which will allow you to compile executable programs for testing.
+In the project, there is a subproject called cpp/test. To compile it, you need to enable the ISF_BUILD_WITH_TEST switch, which will allow you to compile executable programs for testing.
 
 ```bash
-cmake -DBUILD_WITH_TEST=ON ..
+cmake -DISF_BUILD_WITH_TEST=ON ..
 ```
 If you need to run test cases, you will need to download the required [resource files](https://drive.google.com/file/d/1i4uC-dZTQxdVgn2rP0ZdfJTMkJIXgYY4/view?usp=sharing), which are **test_res** and **pack** respectively. Unzip the pack file into the test_res folder. The directory structure of test_res should be prepared as follows before testing:
 
