@@ -19,7 +19,7 @@ if [ ! -d "$TARGET_DIR" ]; then
     unzip "$ZIP_FILE"
 
     rm "$ZIP_FILE"
-    rm "__MACOSX"
+    rm -rf "__MACOSX"
 
     echo "Download and extraction complete."
 else
