@@ -6,3 +6,4 @@ test_zip_*
 test_res/*
 resource/*
 pack/*
+*.zip
