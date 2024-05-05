@@ -25,12 +25,6 @@ option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
 
-
-if(NOT APPLE)
-    find_package(OpenCV REQUIRED)
-endif()
-
-
 if (ISF_ENABLE_RKNN)
     set(ISF_RKNN_API_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/include)
     set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
@@ -43,7 +37,6 @@ set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
 # sqlite3
 set(SOURCE_FILES ${SOURCE_FILES} ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite3.c)   # Add C_API file
 set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/)
-include_directories(${SQLITE_INCLUDE})
 
 if (ISF_ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknn_api dl)
@@ -82,7 +75,7 @@ if (ISF_BUILD_LINUX_ARM7)
 endif ()
 
 # add cpp yaml header
-set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE})
+set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE} ${SQLITE_INCLUDE})
 
 if(PLAT STREQUAL "linux")
     find_package(Threads REQUIRED)
