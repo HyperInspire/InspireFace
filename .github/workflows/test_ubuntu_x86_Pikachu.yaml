@@ -1,38 +1,46 @@
-# This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
-# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+# This GitHub Actions workflow is designed for a CMake project running on a single platform (Ubuntu-x86).
+# For multi-platform testing, see the link provided.
+# Refer to: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
 name: Run Ubuntu-x86 Test Pikachu
 
+# Trigger this workflow on push or pull request to the "feature/sub" branch
 on:
   push:
-    branches: [ "feature/sub" ]
+    branches: ["feature/sub"]
   pull_request:
-    branches: [ "feature/sub" ]
+    branches: ["feature/sub"]
 
+# Define environment variables shared across jobs
 env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  # Set the CMake build type (e.g., Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
+# Jobs section defines all individual tasks for the CI workflow
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
-    # You can convert this to a matrix build if you need cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    # Specify that this job should run on the latest Ubuntu environment provided by GitHub
     runs-on: ubuntu-latest
 
+    # Define steps for this job
     steps:
+      # Step 1: Check out the code from the repository
       - uses: actions/checkout@v4
+
+      # Step 2: Update Git submodules recursively
       - name: Update submodules
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive
+          git submodule sync --recursive  # Ensure submodule paths are up-to-date
+          git submodule update --init --recursive  # Initialize and update all submodules
 
+      # Step 3: Install necessary dependencies for building the CMake project
       - name: Install dependencies
         run: |
-          sudo apt-get update
+          sudo apt-get update  # Update package lists
+          # Install build tools and required libraries for video processing
           sudo apt-get install -y build-essential libgtk-3-dev libavcodec-dev libavformat-dev libjpeg-dev libswscale-dev
 
+      # Step 4: Run a separate script for CMake configuration and building
       - name: Configure CMake
-        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+        # Execute a pre-existing script to handle CMake configuration and building
+        # The script is assumed to be located at `ci/ci_linux_x86_usual.sh`
         run: bash ci/ci_linux_x86_usual.sh
-
