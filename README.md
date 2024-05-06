@@ -57,8 +57,7 @@ bash command/build.sh
 ```
 After compilation, you can find the local file in the build directory, which contains the compilation results. The install directory structure is as follows:
 ```bash
-install
-└── InspireFace
+inspireface-linux
    ├── include
    │   ├── herror.h
    │   └── inspireface.h
@@ -77,7 +76,7 @@ export ARM_CROSS_COMPILE_TOOLCHAIN=YOUR_DIR/gcc-arm-8.3-2019.03-x86_64-arm-linux
 # Execute the cross-compilation script for RV1109/RV1126
 bash command/build_cross_rv1109rv1126_armhf.sh
 ```
-After the compilation is complete, you can find the compiled results in the **build/rv1109rv1126_armhf/install** directory.
+After the compilation is complete, you can find the compiled results in the **build/inspireface-linux-armv7-rv1109rv1126-armhf** directory.
 ### 2.3. Supported Platforms and Architectures
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
 
@@ -102,7 +101,17 @@ We have completed the adaptation and testing of the software across various oper
 
 We offer a method for rapid multi-platform compilation using Docker, provided that Docker is installed beforehand, and the appropriate commands are executed:
 ```Bash
-# 
+# Build x86 Ubuntu18.04
+docker-compose up build-ubuntu18
+
+# Build armv7 cross-compile
+build-cross-armv7-armhf
+
+# Build armv7 with support RV1109RV1126 device NPU cross-complie
+docker-compose up build-cross-rv1109rv1126-armhf
+
+# Build all
+docker-compose up
 ```
 
 ## 3. Example
