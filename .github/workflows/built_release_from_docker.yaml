@@ -26,26 +26,31 @@ jobs:
           git submodule sync --recursive  # Ensure submodule paths are up-to-date
           git submodule update --init --recursive  # Initialize and update all submodules
 
-      # Step 3: Build projects using Docker Compose
+      # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 4: Build projects using Docker Compose
       - name: Build SDKs with Docker Compose
         run: docker-compose up
 
-      # Step 4: Zip each SDK directory
+      # Step 5: Zip each SDK directory with the version number
       - name: Zip SDK Files
         run: |
-          zip -r inspireface-linux-armv7-armhf.zip build/inspireface-linux-armv7-armhf/
-          zip -r inspireface-linux-armv7-rv1109rv1126-armhf.zip build/inspireface-linux-armv7-rv1109rv1126-armhf/
-          zip -r inspireface-x86-linux-ubuntu18.zip build/inspireface-x86-linux-ubuntu18/
+          zip -r inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-armhf/
+          zip -r inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-rv1109rv1126-armhf/
+          zip -r inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip build/inspireface-linux-x86-ubuntu18/
 
-      # Step 5: Upload the zipped SDK files for the next job
+      # Step 6: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: sdk_files
           path: |
-            inspireface-linux-armv7-armhf.zip
-            inspireface-linux-armv7-rv1109rv1126-armhf.zip
-            inspireface-x86-linux-ubuntu18.zip
+            inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
+            inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
+            inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
 
   release:
     name: Release SDKs to GitHub
@@ -63,11 +68,11 @@ jobs:
         with:
           name: sdk_files
 
-      # Step 3: Create a GitHub Release and upload the SDK files
+      # Step 3: Create a GitHub Release and upload SDK files with the version number
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            inspireface-linux-armv7-armhf.zip
-            inspireface-linux-armv7-rv1109rv1126-armhf.zip
-            inspireface-x86-linux-ubuntu18.zip
+            inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
+            inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
+            inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
