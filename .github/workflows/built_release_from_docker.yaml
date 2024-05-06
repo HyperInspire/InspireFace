@@ -65,4 +65,4 @@ jobs:
             linux_rv1109rv1126_armhf.zip
             linux_ubuntu18.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
