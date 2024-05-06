@@ -23,24 +23,22 @@ move_install_files() {
     echo "Files from 'install' moved to $root_dir, and 'install' directory deleted."
 }
 
-
 SCRIPT_DIR=$(pwd)  # Project dir
 
-mkdir -p build/linux_cuda
+mkdir -p build/linux_ubuntu18/
 # shellcheck disable=SC2164
-cd build/linux_cuda
+cd build/linux_ubuntu18/
 
-cmake -DCMAKE_SYSTEM_NAME=Linux \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DISF_BUILD_WITH_SAMPLE=OFF \
+cmake -DCMAKE_BUILD_TYPE=Release \
+  -DISF_BUILD_WITH_SAMPLE=ON \
   -DISF_BUILD_WITH_TEST=OFF \
   -DISF_ENABLE_BENCHMARK=OFF \
   -DISF_ENABLE_USE_LFW_DATA=OFF \
   -DISF_ENABLE_TEST_EVALUATION=OFF \
-  -DISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA=ON \
-  -DISF_LINUX_MNN_CUDA=/home/tunm/software/MNN-2.7.0/build_cuda/install \
+  -DOpenCV_DIR=3rdparty/inspireface-precompile/opencv/4.5.1/opencv-ubuntu18-x86/lib/cmake/opencv4 \
   -DISF_BUILD_SHARED_LIBS=ON ${SCRIPT_DIR}
 
 make -j4
+make install
 
 move_install_files "$(pwd)"
