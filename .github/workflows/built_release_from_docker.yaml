@@ -1,47 +1,63 @@
 name: Build and Release SDKs
 
+# Trigger the workflow when pushing tags that match the pattern "v*"
 on:
   push:
     tags:
-      - "v*"  # 当推送符合 "v*" 模式的标签时触发
+      - "v*"
 
+# Set the global GitHub token environment variable
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
 jobs:
   build:
     name: Compile and Package SDKs
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Update Git submodules recursively
+      # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
           git submodule sync --recursive  # Ensure submodule paths are up-to-date
           git submodule update --init --recursive  # Initialize and update all submodules
 
-      # 使用 Docker Compose 构建项目
+      # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 4: Rename directories with the extracted version number
+      - name: Rename SDK Directories with Version
+        run: |
+          mv build/inspireface-linux-armv7-armhf build/inspireface-linux-armv7-armhf-${{ env.VERSION }}
+          mv build/inspireface-linux-armv7-rv1109rv1126-armhf build/inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}
+          mv build/inspireface-linux-ubuntu18 build/inspireface-linux-ubuntu18-${{ env.VERSION }}
+
+      # Step 5: Build projects using Docker Compose
       - name: Build SDKs with Docker Compose
         run: docker-compose up
 
-      # 压缩每个 SDK 目录
+      # Step 6: Zip each SDK directory with the version number
       - name: Zip SDK Files
         run: |
-          zip -r linux_armv7_armhf.zip build/linux_armv7_armhf/
-          zip -r linux_rv1109rv1126_armhf.zip build/linux_rv1109rv1126_armhf/
-          zip -r linux_ubuntu18.zip build/linux_ubuntu18/
+          zip -r inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-armhf-${{ env.VERSION }}
+          zip -r inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}
+          zip -r inspireface-linux-ubuntu18-${{ env.VERSION }}.zip build/inspireface-linux-ubuntu18-${{ env.VERSION }}
 
-      # 上传打包文件以供发布任务使用
+      # Step 7: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: sdk_files
           path: |
-            linux_armv7_armhf.zip
-            linux_rv1109rv1126_armhf.zip
-            linux_ubuntu18.zip
+            inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
+            inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
+            inspireface-linux-ubuntu18-${{ env.VERSION }}.zip
 
   release:
     name: Release SDKs to GitHub
@@ -49,20 +65,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository again
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # 下载上一个步骤上传的 SDK 文件
+      # Step 2: Download the previously uploaded SDK files
       - name: Download SDK Artifacts
         uses: actions/download-artifact@v2
         with:
           name: sdk_files
 
-      # 创建 GitHub Release 并上传 SDK 文件
+      # Step 3: Create a GitHub Release and upload SDK files with the version number
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            linux_armv7_armhf.zip
-            linux_rv1109rv1126_armhf.zip
-            linux_ubuntu18.zip
+            inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
+            inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
+            inspireface-linux-ubuntu18-${{ env.VERSION }}.zip
