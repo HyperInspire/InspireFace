@@ -23,7 +23,7 @@ move_install_files() {
     echo "Files from 'install' moved to $root_dir, and 'install' directory deleted."
 }
 
-BUILD_FOLDER_PATH="build/inspireface-linux-ubuntu18/"
+BUILD_FOLDER_PATH="build/inspireface-linux-x86-ubuntu18/"
 SCRIPT_DIR=$(pwd)  # Project dir
 
 mkdir -p ${BUILD_FOLDER_PATH}
