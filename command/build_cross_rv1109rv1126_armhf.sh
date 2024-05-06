@@ -24,10 +24,12 @@ move_install_files() {
 }
 
 SCRIPT_DIR=$(pwd)  # Project dir
+BUILD_FOLDER_PATH="build/inspireface-linux-armv7-rv1109rv1126-armhf"
 
-mkdir -p build/linux_rv1109rv1126_armhf
+mkdir -p ${BUILD_FOLDER_PATH}
 # shellcheck disable=SC2164
-cd build/linux_rv1109rv1126_armhf
+cd ${BUILD_FOLDER_PATH}
+
 # export cross_compile_toolchain=/home/jingyuyan/software/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
 cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DCMAKE_BUILD_TYPE=Release \

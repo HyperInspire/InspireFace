@@ -23,11 +23,12 @@ move_install_files() {
     echo "Files from 'install' moved to $root_dir, and 'install' directory deleted."
 }
 
+BUILD_FOLDER_PATH="build/inspireface-linux-ubuntu18/"
 SCRIPT_DIR=$(pwd)  # Project dir
 
-mkdir -p build/linux_ubuntu18/
+mkdir -p ${BUILD_FOLDER_PATH}
 # shellcheck disable=SC2164
-cd build/linux_ubuntu18/
+cd ${BUILD_FOLDER_PATH}
 
 cmake -DCMAKE_BUILD_TYPE=Release \
   -DISF_BUILD_WITH_SAMPLE=ON \
