@@ -23,12 +23,12 @@ move_install_files() {
     echo "Files from 'install' moved to $root_dir, and 'install' directory deleted."
 }
 
-
+BUILD_FOLDER_PATH="build/inspireface-linux-cuda"
 SCRIPT_DIR=$(pwd)  # Project dir
 
-mkdir -p build/linux_cuda
+mkdir -p ${BUILD_FOLDER_PATH}
 # shellcheck disable=SC2164
-cd build/linux_cuda
+cd ${BUILD_FOLDER_PATH}
 
 cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DCMAKE_BUILD_TYPE=Release \
