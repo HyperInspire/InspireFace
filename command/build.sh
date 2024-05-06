@@ -34,7 +34,7 @@ SCRIPT_DIR=$(pwd)  # Project dir
 case "$OS_NAME" in
     Darwin)
         # macOS system
-        BUILD_DIR="${BUILD_DIR}/macos"
+        BUILD_DIR="${BUILD_DIR}/inspireface-macos"
         ;;
     Linux)
         # Linux system, further identify the distribution if necessary
@@ -42,24 +42,24 @@ case "$OS_NAME" in
             . /etc/os-release
             case "$ID" in
                 ubuntu)
-                    BUILD_DIR="${BUILD_DIR}/linux_ubuntu"
+                    BUILD_DIR="${BUILD_DIR}/inspireface-linux-ubuntu"
                     ;;
                 centos)
-                    BUILD_DIR="${BUILD_DIR}/linux_centos"
+                    BUILD_DIR="${BUILD_DIR}/inspireface-linux-centos"
                     ;;
                 *)
                     # If an unknown Linux distribution, default to generic 'linux'
-                    BUILD_DIR="${BUILD_DIR}/linux"
+                    BUILD_DIR="${BUILD_DIR}/inspireface-linux"
                     ;;
             esac
         else
             # If unable to detect Linux distribution, default to 'linux'
-            BUILD_DIR="${BUILD_DIR}/linux"
+            BUILD_DIR="${BUILD_DIR}/inspireface-linux"
         fi
         ;;
     *)
         # If OS is not recognized, default to 'generic'
-        BUILD_DIR="${BUILD_DIR}/generic"
+        BUILD_DIR="${BUILD_DIR}/inspireface-generic"
         ;;
 esac
 
