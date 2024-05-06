@@ -23,24 +23,29 @@ move_install_files() {
     echo "Files from 'install' moved to $root_dir, and 'install' directory deleted."
 }
 
-
 SCRIPT_DIR=$(pwd)  # Project dir
 
-mkdir -p build/linux_cuda
+mkdir -p build/linux_armv7_armhf
 # shellcheck disable=SC2164
-cd build/linux_cuda
-
+cd build/linux_armv7_armhf
+# export cross_compile_toolchain=/home/jingyuyan/software/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
 cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_SYSTEM_VERSION=1 \
+  -DCMAKE_SYSTEM_PROCESSOR=armv7 \
+  -DCMAKE_C_COMPILER=$ARM_CROSS_COMPILE_TOOLCHAIN/bin/arm-linux-gnueabihf-gcc \
+  -DCMAKE_CXX_COMPILER=$ARM_CROSS_COMPILE_TOOLCHAIN/bin/arm-linux-gnueabihf-g++ \
+  -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -flax-vector-conversions" \
+  -DTARGET_PLATFORM=armlinux \
+  -DISF_BUILD_LINUX_ARM7=ON \
   -DISF_BUILD_WITH_SAMPLE=OFF \
   -DISF_BUILD_WITH_TEST=OFF \
   -DISF_ENABLE_BENCHMARK=OFF \
   -DISF_ENABLE_USE_LFW_DATA=OFF \
   -DISF_ENABLE_TEST_EVALUATION=OFF \
-  -DISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA=ON \
-  -DISF_LINUX_MNN_CUDA=/home/tunm/software/MNN-2.7.0/build_cuda/install \
   -DISF_BUILD_SHARED_LIBS=ON ${SCRIPT_DIR}
 
 make -j4
+make install
 
 move_install_files "$(pwd)"
