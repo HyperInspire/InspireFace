@@ -1,6 +1,6 @@
 # Use Ubuntu 18.04 as the base image
-# FROM ubuntu:18.04
-FROM skybro/ubuntu-cn:18
+FROM ubuntu:18.04
+# FROM skybro/ubuntu-cn:18
 
 ARG https_proxy
 ARG http_proxy
