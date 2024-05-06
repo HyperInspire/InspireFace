@@ -98,6 +98,13 @@ We have completed the adaptation and testing of the software across various oper
 - Pass unit tests on physical devices.
 - Meet all performance benchmarks in tests.
 
+#### 2.4. Multi-platform compilation using Docker
+
+We offer a method for rapid multi-platform compilation using Docker, provided that Docker is installed beforehand, and the appropriate commands are executed:
+```Bash
+# 
+```
+
 ## 3. Example
 ### 3.1. C/C++ Sample
 To integrate InspireFace into a C/C++ project, you simply need to link the InspireFace library and include the appropriate header files. Below is a basic example demonstrating face detection:
