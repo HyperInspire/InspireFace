@@ -31,16 +31,16 @@ jobs:
         id: extract_version
         run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
 
-      # Step 4: Rename directories with the extracted version number
+      # Step 4: Build projects using Docker Compose
+      - name: Build SDKs with Docker Compose
+        run: docker-compose up
+
+      # Step 5: Rename directories with the extracted version number
       - name: Rename SDK Directories with Version
         run: |
           mv build/inspireface-linux-armv7-armhf build/inspireface-linux-armv7-armhf-${{ env.VERSION }}
           mv build/inspireface-linux-armv7-rv1109rv1126-armhf build/inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}
           mv build/inspireface-linux-ubuntu18 build/inspireface-linux-ubuntu18-${{ env.VERSION }}
-
-      # Step 5: Build projects using Docker Compose
-      - name: Build SDKs with Docker Compose
-        run: docker-compose up
 
       # Step 6: Zip each SDK directory with the version number
       - name: Zip SDK Files
