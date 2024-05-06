@@ -5,6 +5,8 @@ on:
     tags:
       - "v*"  # 当推送符合 "v*" 模式的标签时触发
 
+env:
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 jobs:
   build:
     name: Compile and Package SDKs
@@ -64,5 +66,3 @@ jobs:
             linux_armv7_armhf.zip
             linux_rv1109rv1126_armhf.zip
             linux_ubuntu18.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
