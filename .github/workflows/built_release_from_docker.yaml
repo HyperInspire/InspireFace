@@ -68,7 +68,12 @@ jobs:
         with:
           name: sdk_files
 
-      # Step 3: Create a GitHub Release and upload SDK files with the version number
+      # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 4: Create a GitHub Release and upload SDK files with the version number
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
