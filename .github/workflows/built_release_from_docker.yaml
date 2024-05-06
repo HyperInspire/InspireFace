@@ -6,9 +6,6 @@ on:
     tags:
       - "v*"
 
-# Set the global GitHub token environment variable
-env:
-  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
 jobs:
   build:
@@ -38,9 +35,9 @@ jobs:
       # Step 5: Rename directories with the extracted version number
       - name: Rename SDK Directories with Version
         run: |
-          cp -r build/inspireface-linux-armv7-armhf build/inspireface-linux-armv7-armhf-${{ env.VERSION }}
-          cp -r build/inspireface-linux-armv7-rv1109rv1126-armhf build/inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}
-          cp -r build/inspireface-linux-x86-ubuntu18 build/inspireface-linux-x86-ubuntu18-${{ env.VERSION }}
+          mv build/inspireface-linux-armv7-armhf build/inspireface-linux-armv7-armhf-${{ env.VERSION }}
+          mv build/inspireface-linux-armv7-rv1109rv1126-armhf build/inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}
+          mv build/inspireface-linux-x86-ubuntu18 build/inspireface-linux-x86-ubuntu18-${{ env.VERSION }}
 
       # Step 6: Zip each SDK directory with the version number
       - name: Zip SDK Files
@@ -60,6 +57,9 @@ jobs:
             inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
 
   release:
+    # Set the global GitHub token environment variable
+    env:
+      GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
     name: Release SDKs to GitHub
     needs: build
     runs-on: ubuntu-latest
