@@ -2,6 +2,8 @@
 ## 0. Overview
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
 
+If you require further information on tracking development branches, CI/CD processes, or downloading pre-compiled libraries, please visit our [development repository](https://github.com/HyperInspire/InspireFace).
+
 Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=InspireFace) for commercial support, including obtaining and integrating higher accuracy models, as well as custom development.
 
 ## 1. Preparation
@@ -82,16 +84,16 @@ We have completed the adaptation and testing of the software across various oper
 
 | **No.** | **Operating System** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** | **Verification Device** | **Remarks** |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | **Linux** | ARMv7 | - | - [x] | - [x] | RV1126 |  |
-| 2 |  | ARMv8 | - | - [x] | - [x] | RK3399 |  |
-| 3 |  | x86/x86_64 | - | - [x] | - [x] |  |  |
-| 4 |  | ARMv7 | rv1109rv1126 | - [x] | - [x] | RV1126 | NPU |
-| 5 |  | x86/x86_64 | CUDA | - [x] | - [ ] ⚠️ | RTX3090 | Some issues in inference remain unresolved |
-| 6 | **macOS** | Intel x86 | - | - [x] | - [x] | MacBook Pro 16 |  |
-| 7 |  | Apple Silicon | - | - [ ] | - [ ] |  |  |
-| 8 | **iOS** | ARM | - | - [ ] | - [ ] |  |  |
-| 9 | **Android** | ARMv7 | - | - [ ] | - [ ] |  |  |
-| 10 |  | ARMv8 | - | - [ ] | - [ ] |  |  |
+| 1 | **Linux** | ARMv7 | - | ![https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build) | ![Static Badge](https://img.shields.io/badge/OFFLINE%20TEST-PASSING-blue) | RV1126 |  |
+| 2 |  | ARMv8 | - | ![Static Badge](https://img.shields.io/badge/OFFLINE%20BUILD-PASSING-green) | ![Static Badge](https://img.shields.io/badge/OFFLINE%20TEST-PASSING-blue) | RK3399 |  |
+| 3 |  | x86/x86_64 | - | ![https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build) | ![https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/test_ubuntu_x86_Pikachu.yaml?style=for-the-badge&label=Test&color=blue) |  |  |
+| 4 |  | ARMv7 | rv1109rv1126 | ![https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build) | ![Static Badge](https://img.shields.io/badge/OFFLINE%20TEST-PASSING-blue) | RV1126 | NPU |
+| 5 |  | x86/x86_64 | CUDA | ![Static Badge](https://img.shields.io/badge/OFFLINE%20BUILD-PASSING-green) |  | RTX3090 | Some issues in inference remain unresolved |
+| 6 | **macOS** | Intel x86 | - | ![Static Badge](https://img.shields.io/badge/OFFLINE%20BUILD-PASSING-green) | ![Static Badge](https://img.shields.io/badge/OFFLINE%20TEST-PASSING-blue) | MacBook Pro 16 |  |
+| 7 |  | Apple Silicon | - | ![Static Badge](https://img.shields.io/badge/OFFLINE%20BUILD-PASSING-green) | ![Static Badge](https://img.shields.io/badge/OFFLINE%20TEST-PASSING-blue) |  |  |
+| 8 | **iOS** | ARM | - |  |  |  |  |
+| 9 | **Android** | ARMv7 | - |  |  |  |  |
+| 10 |  | ARMv8 | - |  |  |  |  |
 
 - Complete compilation scripts and successful compilation.
 - Pass unit tests on physical devices.
@@ -266,7 +268,7 @@ test_res
 └── video_frames
 
 ```
-After compilation, you can find the executable program "Test" in **install/test**. The program accepts two optional parameters:
+After compilation, you can find the executable program "Test" in **YOUR_BUILD_FOLDER/test**. The program accepts two optional parameters:
 
 - **test_dir**：Path to the test resource files
 - **pack**：Name of the model to be tested
@@ -282,16 +284,16 @@ The following functionalities and technologies are currently supported.
 
 | Index | Function | Adaptation | Note |
 | -- | --- | --- | --- |
-| 1 | Face Detection | - [x] | SCRFD |
-| 2 | Facial Landmark Detection | - [x] | HyperLandmark |
-| 3 | Face Recognition | - [x] | ArcFace |
-| 4 | Face Tracking | - [x] |  |
-| 5 | Mask Detection | - [x] |  |
-| 6 | Silent Liveness Detection | - [x] | MiniVision |
-| 7 | Face Quality Detection | - [x] |  |
-| 8 | Face Pose Estimation | - [x] |  |
-| 9 | Age Prediction | - [ ] |  |
-| 10 | Cooperative Liveness Detection | - [ ] |  |
+| 1 | Face Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue) | SCRFD |
+| 2 | Facial Landmark Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue) | HyperLandmark |
+| 3 | Face Recognition | ![Static Badge](https://img.shields.io/badge/STABLE-blue) | ArcFace |
+| 4 | Face Tracking | ![Static Badge](https://img.shields.io/badge/STABLE-blue) |  |
+| 5 | Mask Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue) |  |
+| 6 | Silent Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue) | MiniVision |
+| 7 | Face Quality Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue) |  |
+| 8 | Face Pose Estimation | ![Static Badge](https://img.shields.io/badge/STABLE-blue) |  |
+| 9 | Age Prediction | ![Static Badge](https://img.shields.io/badge/PENDING-yellow) |  |
+| 10 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/PENDING-yellow) |  |
 
 
 ## 6. Models Pack List
