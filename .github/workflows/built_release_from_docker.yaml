@@ -4,7 +4,7 @@ name: Build and Release SDKs
 on:
   push:
     tags:
-      - "x*"
+      - "DONT_BUILD"
 
 # Set the global GitHub token environment variable
 env:
