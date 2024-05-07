@@ -281,7 +281,7 @@ During the process of building the test program using CMake, it will involve sel
 
 **Note**: If you want to view the benchmark test report, you can click on the [link](doc/Benchmark-Remark(Updating).md).
 
-## 5. Function support
+## 5. Function Support
 The following functionalities and technologies are currently supported.
 
 | Index | Function | Adaptation | Note |
