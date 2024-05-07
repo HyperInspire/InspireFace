@@ -82,18 +82,18 @@ After the compilation is complete, you can find the compiled results in the **bu
 ### 2.3. Supported Platforms and Architectures
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
 
-| **No.** | **Operating System** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** | **Verification Device** | **Remarks** |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | **Linux** | ARMv7 | - | ![https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build) | ![Static Badge](https://img.shields.io/badge/OFFLINE%20TEST-PASSING-blue) | RV1126 |  |
-| 2 |  | ARMv8 | - | ![Static Badge](https://img.shields.io/badge/OFFLINE%20BUILD-PASSING-green) | ![Static Badge](https://img.shields.io/badge/OFFLINE%20TEST-PASSING-blue) | RK3399 |  |
-| 3 |  | x86/x86_64 | - | ![https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build) | ![https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/test_ubuntu_x86_Pikachu.yaml?style=for-the-badge&label=Test&color=blue) |  |  |
-| 4 |  | ARMv7 | rv1109rv1126 | ![https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build) | ![Static Badge](https://img.shields.io/badge/OFFLINE%20TEST-PASSING-blue) | RV1126 | NPU |
-| 5 |  | x86/x86_64 | CUDA | ![Static Badge](https://img.shields.io/badge/OFFLINE%20BUILD-PASSING-green) |  | RTX3090 | Some issues in inference remain unresolved |
-| 6 | **macOS** | Intel x86 | - | ![Static Badge](https://img.shields.io/badge/OFFLINE%20BUILD-PASSING-green) | ![Static Badge](https://img.shields.io/badge/OFFLINE%20TEST-PASSING-blue) | MacBook Pro 16 |  |
-| 7 |  | Apple Silicon | - | ![Static Badge](https://img.shields.io/badge/OFFLINE%20BUILD-PASSING-green) | ![Static Badge](https://img.shields.io/badge/OFFLINE%20TEST-PASSING-blue) |  |  |
-| 8 | **iOS** | ARM | - |  |  |  |  |
-| 9 | **Android** | ARMv7 | - |  |  |  |  |
-| 10 |  | ARMv8 | - |  |  |  |  |
+| **No.** | **Operating System** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** |
+| ------- | -------------------- | --------------------- | -------------------------- | ----------- | ---------------- |
+| 1       | **Linux**            | ARMv7                 | -                          | ![https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue) |
+| 2       |                      | ARMv8                 | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue) |
+| 3       |                      | x86/x86_64            | -                          | ![https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build) | ![https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/test_ubuntu_x86_Pikachu.yaml?style=for-the-badge&label=Test&color=blue) |
+| 4       |                      | ARMv7                 | RV1109RV1126               | ![https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue) |
+| 5       |                      | x86/x86_64            | CUDA                      | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) |  |
+| 6       | **macOS**            | Intel x86             | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue) |
+| 7       |                      | Apple Silicon         | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue) |
+| 8       | **iOS**              | ARM                   | -                          |  |  |
+| 9       | **Android**          | ARMv7                 | -                          |  |  |
+| 10      |                      | ARMv8                 | -                          |  |  |
 
 - Complete compilation scripts and successful compilation.
 - Pass unit tests on physical devices.
