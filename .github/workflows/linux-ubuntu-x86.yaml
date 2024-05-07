@@ -51,9 +51,9 @@ jobs:
 
       # Step 5: Zip each SDK directory with the version number
       - name:
-          run: |
-            zip -r inspireface-linux-x86-ubuntu18.zip build/inspireface-linux-x86-ubuntu18
-            stat inspireface-linux-x86-ubuntu18.zip
+        run: |
+          zip -r inspireface-linux-x86-ubuntu18.zip build/inspireface-linux-x86-ubuntu18
+          stat inspireface-linux-x86-ubuntu18.zip
 
       # Step 6: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
