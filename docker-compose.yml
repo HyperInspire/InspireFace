@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.ubuntu18  # Use the Ubuntu18.04
+    environment:
+      - VERSION=${VERSION}
     working_dir: /workspace
     volumes:
       - .:/workspace  # Mount the project root directory to the container
@@ -12,6 +14,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.arm-linux-gnueabihf  # Use the arm-linux-gnueabihf tool chain
+    environment:
+      - VERSION=${VERSION}
     working_dir: /workspace
     volumes:
       - .:/workspace  # Mount the project root directory to the container
@@ -20,6 +24,8 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.arm-linux-gnueabihf  # Use the arm-linux-gnueabihf tool chain
+    environment:
+      - VERSION=${VERSION}
     working_dir: /workspace
     volumes:
       - .:/workspace  # Mount the project root directory to the container
