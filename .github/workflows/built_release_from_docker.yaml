@@ -33,14 +33,16 @@ jobs:
 
       # Step 4: Build projects using Docker Compose
       - name: Build SDKs with Docker Compose
-        run: docker-compose up
+        run: |
+          docker-compose up
+          ls build
 
       # Step 5: Zip each SDK directory with the version number
       - name: Zip SDK Files
         run: |
-          zip -r inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-armhf/
-          zip -r inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-rv1109rv1126-armhf/
-          zip -r inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip build/inspireface-linux-x86-ubuntu18/
+          zip -r inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-armhf-${{ env.VERSION }}/
+          zip -r inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}/
+          zip -r inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip build/inspireface-linux-x86-ubuntu18-${{ env.VERSION }}/
 
       # Step 6: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
