@@ -49,8 +49,8 @@ jobs:
           bash command/build_linux_ubuntu18.sh
           ls build
 
-      # Step 5: Zip each SDK directory with the version number
-      - name:
+      # Step 5: Zip SDK directory
+      - name: Zip SDK directory
         run: |
           zip -r inspireface-linux-x86-ubuntu18.zip build/inspireface-linux-x86-ubuntu18
           stat inspireface-linux-x86-ubuntu18.zip
