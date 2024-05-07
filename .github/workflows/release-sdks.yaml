@@ -147,7 +147,6 @@ jobs:
         with:
           files: |
             inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
-#            inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
             inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
 
 
