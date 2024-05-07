@@ -121,7 +121,7 @@ jobs:
             inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
 
   build_armv7_rv1109rv1126_armhf:
-    name: Compile Linux-armv7-rv1109rv1126-armhf
+    name: Compile Linux-Armv7-rv1109rv1126-armhf
     runs-on: ubuntu-latest
 
     steps:
@@ -179,7 +179,7 @@ jobs:
             inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
 
   build_linux_aarch64:
-    name: Compile and Package Linux-Aarch64
+    name: Compile Linux-Aarch64
     runs-on: ubuntu-latest
 
     steps:

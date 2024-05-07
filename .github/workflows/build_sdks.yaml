@@ -2,9 +2,9 @@ name: Build SDKs
 
 on:
   push:
-    branches: ["master-"]
+    branches: ["master"]
   pull_request:
-    branches: ["master-"]
+    branches: ["master"]
 
 # Set the global GitHub token environment variable
 env:
