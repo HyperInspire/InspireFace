@@ -23,8 +23,14 @@ move_install_files() {
     echo "Files from 'install' moved to $root_dir, and 'install' directory deleted."
 }
 
+if [ -n "$VERSION" ]; then
+    TAG="-$VERSION"
+else
+    TAG=""
+fi
+
 SCRIPT_DIR=$(pwd)  # Project dir
-BUILD_FOLDER_PATH="build/inspireface-linux-armv7-rv1109rv1126-armhf"
+BUILD_FOLDER_PATH="build/inspireface-linux-armv7-rv1109rv1126-armhf${TAG}"
 
 mkdir -p ${BUILD_FOLDER_PATH}
 # shellcheck disable=SC2164

@@ -23,7 +23,13 @@ move_install_files() {
     echo "Files from 'install' moved to $root_dir, and 'install' directory deleted."
 }
 
-BUILD_FOLDER_PATH="build/inspireface-linux-cuda"
+if [ -n "$VERSION" ]; then
+    TAG="-$VERSION"
+else
+    TAG=""
+fi
+
+BUILD_FOLDER_PATH="build/inspireface-linux-cuda${TAG}"
 SCRIPT_DIR=$(pwd)  # Project dir
 
 mkdir -p ${BUILD_FOLDER_PATH}
