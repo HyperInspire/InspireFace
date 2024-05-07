@@ -55,7 +55,7 @@ jobs:
           echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
 
       # Step 6: Start building the SDK
-      - name: Start Building the InspireFace-Linux-x86
+      - name: Start Building the InspireFace-Linux-armv7-rv1109rv1126
         run: |
           bash command/build_cross_rv1109rv1126_armhf.sh
           ls build
