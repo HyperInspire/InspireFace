@@ -110,58 +110,58 @@ jobs:
           path: |
             inspireface-linux-armv7-armhf.zip
 
-    build_armv7_rv1109rv1126_armhf:
-      name: Compile and Package Linux-armv7-rv1109rv1126-armhf
-      runs-on: ubuntu-latest
+  build_armv7_rv1109rv1126_armhf:
+    name: Compile and Package Linux-armv7-rv1109rv1126-armhf
+    runs-on: ubuntu-latest
 
-      steps:
-        # Step 1: Checkout the repository
-        - name: Checkout Repository
-          uses: actions/checkout@v4
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-        # Step 2: Synchronize and update submodules recursively
-        - name: Update submodules
-          run: |
-            git submodule sync --recursive  # Ensure submodule paths are up-to-date
-            git submodule update --init --recursive  # Initialize and update all submodules
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git submodule sync --recursive  # Ensure submodule paths are up-to-date
+          git submodule update --init --recursive  # Initialize and update all submodules
 
-        # Step 3: Install wget and xz-utils
-        - name: Install wget and xz-utils
-          run: |
-            sudo apt-get update
-            sudo apt-get install -y wget xz-utils
+      # Step 3: Install wget and xz-utils
+      - name: Install wget and xz-utils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget xz-utils
 
-        # Step 4: Download Toolchain
-        - name: Download and Extract Linaro Toolchain
-          run: |
-            mkdir -p /opt/linaro-toolchain
-            wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf.tar.xz | tar -xJ -C /opt/linaro-toolchain --strip-components=1
+      # Step 4: Download Toolchain
+      - name: Download and Extract Linaro Toolchain
+        run: |
+          mkdir -p /opt/linaro-toolchain
+          wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf.tar.xz | tar -xJ -C /opt/linaro-toolchain --strip-components=1
 
-        # Step 5: Install Toolchain
-        - name: Set environment variables
-          run: |
-            echo "ARM_CROSS_COMPILE_TOOLCHAIN=/opt/linaro-toolchain" >> $GITHUB_ENV
-            echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
+      # Step 5: Install Toolchain
+      - name: Set environment variables
+        run: |
+          echo "ARM_CROSS_COMPILE_TOOLCHAIN=/opt/linaro-toolchain" >> $GITHUB_ENV
+          echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
 
-        # Step 6: Start building the SDK
-        - name: Start Building the InspireFace-Linux-armv7-rv1109rv1126
-          run: |
-            bash command/build_cross_rv1109rv1126_armhf.sh
-            ls build
+      # Step 6: Start building the SDK
+      - name: Start Building the InspireFace-Linux-armv7-rv1109rv1126
+        run: |
+          bash command/build_cross_rv1109rv1126_armhf.sh
+          ls build
 
-        # Step 7: Zip SDK directory
-        - name: Zip SDK directory
-          run: |
-            zip -r inspireface-linux-armv7-rv1109rv1126-armhf.zip build/inspireface-linux-armv7-rv1109rv1126-armhf
-            stat inspireface-linux-armv7-rv1109rv1126-armhf.zip
+      # Step 7: Zip SDK directory
+      - name: Zip SDK directory
+        run: |
+          zip -r inspireface-linux-armv7-rv1109rv1126-armhf.zip build/inspireface-linux-armv7-rv1109rv1126-armhf
+          stat inspireface-linux-armv7-rv1109rv1126-armhf.zip
 
-        # Step 8: Upload the zipped SDK files for the next job
-        - name: Upload SDK Artifacts
-          uses: actions/upload-artifact@v2
-          with:
-            name: sdk_files
-            path: |
-              inspireface-linux-armv7-rv1109rv1126-armhf.zip
+      # Step 8: Upload the zipped SDK files for the next job
+      - name: Upload SDK Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: sdk_files
+          path: |
+            inspireface-linux-armv7-rv1109rv1126-armhf.zip
 
   build_linux_aarch64:
     name: Compile and Package Linux-Aarch64
