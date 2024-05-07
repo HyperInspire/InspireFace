@@ -17,7 +17,7 @@ env:
 jobs:
   release:
     name: Release SDKs to GitHub
-    needs: build
+#    needs: build
     runs-on: ubuntu-latest
 
     steps:
