@@ -1,20 +1,8 @@
 name: Build Linux-Ubuntu-aarch64
 
-# Trigger the workflow when pushing tags that match the pattern "v*"
-#on:
-#  push:
-#    tags:
-#      - "v*"
-
-#on:
-#  push:
-#    branches: ["master"]
-#  pull_request:
-#    branches: ["master"]
-
 on:
   push:
-    branches: ["feature/aarch64-"]
+    branches: ["feature/build_aarch64"]
 
 # Set the global GitHub token environment variable
 env:
@@ -59,17 +47,3 @@ jobs:
         run: |
           bash command/build_cross_aarch64.sh
           ls build
-
-      # Step 7: Zip SDK directory
-      - name: Zip SDK directory
-        run: |
-          zip -r inspireface-linux-aarch64.zip build/inspireface-linux-aarch64
-          stat inspireface-linux-aarch64.zip
-
-      # Step 8: Upload the zipped SDK files for the next job
-      - name: Upload SDK Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: sdk_files
-          path: |
-            inspireface-linux-aarch64.zip
