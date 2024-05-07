@@ -57,14 +57,14 @@ jobs:
       # Step 6: Start building the SDK
       - name: Start Building the InspireFace-Linux-x86
         run: |
-          bash command/build_cross_armv7_armhf.sh
+          bash command/linux-armv7-rv1109rv1126-armhf.yaml
           ls build
 
       # Step 7: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-armv7-armhf.zip build/inspireface-linux-armv7-armhf
-          stat inspireface-linux-armv7-armhf.zip
+          zip -r inspireface-linux-armv7-rv1109rv1126-armhf.zip build/inspireface-linux-armv7-armhf
+          stat inspireface-linux-armv7-rv1109rv1126-armhf.zip
 
       # Step 8: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
@@ -72,4 +72,4 @@ jobs:
         with:
           name: sdk_files
           path: |
-            inspireface-linux-armv7-armhf.zip
+            inspireface-linux-armv7-rv1109rv1126-armhf.zip
