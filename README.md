@@ -1,5 +1,7 @@
 # InspireFace
-## 0. Overview
+[![GitHub release](https://img.shields.io/github/v/release/HyperInspire/InspireFace.svg?style=for-the-badge&color=blue)](https://github.com/HyperInspire/InspireFace/releases/latest)
+[![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml)
+
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
 
 If you require further information on tracking development branches, CI/CD processes, or downloading pre-compiled libraries, please visit our [development repository](https://github.com/HyperInspire/InspireFace).
@@ -84,13 +86,13 @@ We have completed the adaptation and testing of the software across various oper
 
 | **No.** | **Operating System** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** |
 | ------- | -------------------- | --------------------- | -------------------------- | ----------- | ---------------- |
-| 1       | **Linux**            | ARMv7                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue) |
-| 2       |                      | ARMv8                 | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue) |
+| 1       | **Linux**            | ARMv7                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 2       |                      | ARMv8                 | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 3       |                      | x86/x86_64            | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml) | [![test](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/test_ubuntu_x86_Pikachu.yaml?style=for-the-badge&label=Test&color=blue)](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml) |
-| 4       |                      | ARMv7                 | RV1109RV1126               | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue) |
+| 4       |                      | ARMv7                 | RV1109RV1126               | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/built_release_from_docker.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 5       |                      | x86/x86_64            | CUDA                       | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) |  |
-| 6       | **macOS**            | Intel x86             | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue) |
-| 7       |                      | Apple Silicon         | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue) |
+| 6       | **macOS**            | Intel x86             | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 7       |                      | Apple Silicon         | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 8       | **iOS**              | ARM                   | -                          |  |  |
 | 9       | **Android**          | ARMv7                 | -                          |  |  |
 | 10      |                      | ARMv8                 | -                          |  |  |
@@ -279,21 +281,21 @@ During the process of building the test program using CMake, it will involve sel
 
 **Note**: If you want to view the benchmark test report, you can click on the [link](doc/Benchmark-Remark(Updating).md).
 
-## 5. Function support
+## 5. Function Support
 The following functionalities and technologies are currently supported.
 
 | Index | Function | Adaptation | Note |
 | -- | --- | --- | --- |
-| 1 | Face Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue) | SCRFD |
-| 2 | Facial Landmark Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue) | HyperLandmark |
-| 3 | Face Recognition | ![Static Badge](https://img.shields.io/badge/STABLE-blue) | ArcFace |
-| 4 | Face Tracking | ![Static Badge](https://img.shields.io/badge/STABLE-blue) |  |
-| 5 | Mask Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue) |  |
-| 6 | Silent Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue) | MiniVision |
-| 7 | Face Quality Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue) |  |
-| 8 | Face Pose Estimation | ![Static Badge](https://img.shields.io/badge/STABLE-blue) |  |
-| 9 | Age Prediction | ![Static Badge](https://img.shields.io/badge/PENDING-yellow) |  |
-| 10 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/PENDING-yellow) |  |
+| 1 | Face Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | SCRFD |
+| 2 | Facial Landmark Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | HyperLandmark |
+| 3 | Face Recognition | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | ArcFace |
+| 4 | Face Tracking | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
+| 5 | Mask Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
+| 6 | Silent Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | MiniVision |
+| 7 | Face Quality Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
+| 8 | Face Pose Estimation | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
+| 9 | Age Prediction | ![Static Badge](https://img.shields.io/badge/PENDING-yellow?style=for-the-badge) |  |
+| 10 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/PENDING-yellow?style=for-the-badge) |  |
 
 
 ## 6. Models Pack List
