@@ -18,8 +18,6 @@ string(CONCAT INSPIRE_FACE_VERSION_PATCH_STR ${INSPIRE_FACE_VERSION_PATCH})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/information.h)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/version.txt)
 
-
-
 option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
@@ -34,8 +32,8 @@ endif()
 # OpenCV
 set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
 
-# sqlite3
-set(SOURCE_FILES ${SOURCE_FILES} ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite3.c)   # Add C_API file
+# SQLite3
+set(SOURCE_FILES ${SOURCE_FILES} ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite3.c)   # Add SQLite3 C_API file
 set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/)
 
 if (ISF_ENABLE_RKNN)
@@ -70,7 +68,7 @@ set(NEED_INCLUDE . ${MNN_INCLUDE_DIRS})
 if (ISF_ENABLE_RKNN)
     set(NEED_INCLUDE ${NEED_INCLUDE} ${ISF_RKNN_API_INCLUDE_DIRS})
 endif ()
-if (ISF_BUILD_LINUX_ARM7)
+if (ISF_BUILD_LINUX_ARM7 OR ISF_BUILD_LINUX_AARCH64)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=neon")
     set(NEED_INCLUDE ${NEED_INCLUDE} ${OpenCV_STATIC_INCLUDE_DIR})
 endif ()
