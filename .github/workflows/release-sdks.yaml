@@ -238,7 +238,7 @@ jobs:
 
   release:
     name: Release SDKs to GitHub
-    needs: [ build_linux_x86, build_armv7_armhf ]
+    needs: [ build_linux_x86, build_armv7_armhf, build_armv7_rv1109rv1126_armhf, build_linux_aarch64]
     runs-on: ubuntu-latest
 
     steps:
