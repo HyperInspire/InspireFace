@@ -1,14 +1,14 @@
 name: Release SDKs
 
 # Trigger the workflow when pushing tags that match the pattern "v*"
-on:
-  push:
-    tags:
-      - "v*"
-
 #on:
 #  push:
-#    branches: ["feature/aarch64"]
+#    tags:
+#      - "v*"
+
+on:
+  push:
+    branches: ["feature/aarch64"]
 
 # Set the global GitHub token environment variable
 env:
