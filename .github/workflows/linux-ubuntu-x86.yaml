@@ -1,20 +1,8 @@
 name: Build Linux-Ubuntu-x86
 
-# Trigger the workflow when pushing tags that match the pattern "v*"
-#on:
-#  push:
-#    tags:
-#      - "v*"
-
-#on:
-#  push:
-#    branches: ["master"]
-#  pull_request:
-#    branches: ["master"]
-
 on:
   push:
-    branches: ["feature/aarch64-"]
+    branches: ["feature/build_x86"]
 
 # Set the global GitHub token environment variable
 env:
@@ -48,17 +36,3 @@ jobs:
         run: |
           bash command/build_linux_ubuntu18.sh
           ls build
-
-      # Step 5: Zip SDK directory
-      - name: Zip SDK directory
-        run: |
-          zip -r inspireface-linux-x86-ubuntu18.zip build/inspireface-linux-x86-ubuntu18
-          stat inspireface-linux-x86-ubuntu18.zip
-
-      # Step 6: Upload the zipped SDK files for the next job
-      - name: Upload SDK Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: sdk_files
-          path: |
-            inspireface-linux-x86-ubuntu18.zip
