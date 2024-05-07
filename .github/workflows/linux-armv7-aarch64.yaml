@@ -1,4 +1,4 @@
-name: Build Linux-Ubuntu-x86
+name: Build Linux-Ubuntu-aarch64
 
 # Trigger the workflow when pushing tags that match the pattern "v*"
 #on:
