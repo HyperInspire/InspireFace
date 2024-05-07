@@ -14,7 +14,7 @@ name: Build Linux-Ubuntu-armv7-armhf-rv1109rv1126
 
 on:
   push:
-    branches: ["feature/aarch64"]
+    branches: ["feature/aarch64-"]
 
 # Set the global GitHub token environment variable
 env:
