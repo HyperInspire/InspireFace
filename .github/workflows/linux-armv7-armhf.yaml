@@ -63,7 +63,7 @@ jobs:
       # Step 7: Zip each SDK directory with the version number
       - name:
         run: |
-          zip -r inspireface-linux-armv7-armhf.zip build/iinspireface-linux-armv7-armhf
+          zip -r inspireface-linux-armv7-armhf.zip build/inspireface-linux-armv7-armhf
           stat inspireface-linux-armv7-armhf.zip
 
       # Step 8: Upload the zipped SDK files for the next job
