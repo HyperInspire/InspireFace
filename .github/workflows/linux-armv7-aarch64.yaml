@@ -14,7 +14,7 @@ name: Build Linux-Ubuntu-x86
 
 on:
   push:
-    branches: ["feature/aarch64-"]
+    branches: ["feature/aarch64"]
 
 # Set the global GitHub token environment variable
 env:
@@ -46,7 +46,7 @@ jobs:
       - name: Download and Extract Linaro Toolchain
         run: |
           mkdir -p /opt/linaro-toolchain
-          wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf.tar.xz | tar -xJ -C /opt/linaro-toolchain --strip-components=1
+          wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/aarch64-linux-gnu/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu.tar.xz | tar -xJ -C /opt/linaro-toolchain --strip-components=1
 
       # Step 5: Install Toolchain
       - name: Set environment variables
@@ -55,16 +55,16 @@ jobs:
           echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
 
       # Step 6: Start building the SDK
-      - name: Start Building the InspireFace-Linux-armv7
+      - name: Start Building the InspireFace-Linux-aarch64
         run: |
-          bash command/build_cross_armv7_armhf.sh
+          bash command/build_cross_aarch64.sh
           ls build
 
       # Step 7: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-armv7-armhf.zip build/inspireface-linux-armv7-armhf
-          stat inspireface-linux-armv7-armhf.zip
+          zip -r inspireface-linux-aarch64.zip build/inspireface-linux-aarch64
+          stat inspireface-linux-aarch64.zip
 
       # Step 8: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
@@ -72,4 +72,4 @@ jobs:
         with:
           name: sdk_files
           path: |
-            inspireface-linux-armv7-armhf.zip
+            inspireface-linux-aarch64.zip
