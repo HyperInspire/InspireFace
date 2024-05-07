@@ -20,21 +20,21 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
-  steps:
-    # Step 1: Checkout the repository again
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+    steps:
+      # Step 1: Checkout the repository again
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    # Step 2: Download the previously uploaded SDK files
-    - name: Download SDK Artifacts
-      uses: actions/download-artifact@v2
-      with:
-        name: sdk_files
+      # Step 2: Download the previously uploaded SDK files
+      - name: Download SDK Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: sdk_files
 
-    # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
-    - name: Extract Version Number
-      id: extract_version
-      run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+      # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
 
-    - name: TT
-      run: ls
+      - name: TT
+        run: ls
