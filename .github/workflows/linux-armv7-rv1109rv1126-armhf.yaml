@@ -57,7 +57,7 @@ jobs:
       # Step 6: Start building the SDK
       - name: Start Building the InspireFace-Linux-x86
         run: |
-          bash command/linux-armv7-rv1109rv1126-armhf.yaml
+          bash command/build_cross_rv1109rv1126_armhf.sh
           ls build
 
       # Step 7: Zip SDK directory
