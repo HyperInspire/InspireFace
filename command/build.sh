@@ -23,6 +23,12 @@ move_install_files() {
     echo "Files from 'install' moved to $root_dir, and 'install' directory deleted."
 }
 
+if [ -n "$VERSION" ]; then
+    TAG="-$VERSION"
+else
+    TAG=""
+fi
+
 # Detect the operating system
 OS_NAME=$(uname)
 BUILD_DIR="build"
@@ -34,7 +40,7 @@ SCRIPT_DIR=$(pwd)  # Project dir
 case "$OS_NAME" in
     Darwin)
         # macOS system
-        BUILD_DIR="${BUILD_DIR}/inspireface-macos"
+        BUILD_DIR="${BUILD_DIR}/inspireface-macos${TAG}"
         ;;
     Linux)
         # Linux system, further identify the distribution if necessary
@@ -42,24 +48,24 @@ case "$OS_NAME" in
             . /etc/os-release
             case "$ID" in
                 ubuntu)
-                    BUILD_DIR="${BUILD_DIR}/inspireface-linux-ubuntu"
+                    BUILD_DIR="${BUILD_DIR}/inspireface-linux-ubuntu${TAG}"
                     ;;
                 centos)
-                    BUILD_DIR="${BUILD_DIR}/inspireface-linux-centos"
+                    BUILD_DIR="${BUILD_DIR}/inspireface-linux-centos${TAG}"
                     ;;
                 *)
                     # If an unknown Linux distribution, default to generic 'linux'
-                    BUILD_DIR="${BUILD_DIR}/inspireface-linux"
+                    BUILD_DIR="${BUILD_DIR}/inspireface-linux${TAG}"
                     ;;
             esac
         else
             # If unable to detect Linux distribution, default to 'linux'
-            BUILD_DIR="${BUILD_DIR}/inspireface-linux"
+            BUILD_DIR="${BUILD_DIR}/inspireface-linux${TAG}"
         fi
         ;;
     *)
         # If OS is not recognized, default to 'generic'
-        BUILD_DIR="${BUILD_DIR}/inspireface-generic"
+        BUILD_DIR="${BUILD_DIR}/inspireface-generic${TAG}"
         ;;
 esac
 
