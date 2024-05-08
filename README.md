@@ -14,6 +14,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 Clone the `3rdparty` repository from the remote repository into the root directory of the project. Note that this repository contains some submodules. When cloning, you should use the `--recurse-submodules` parameter, or after entering the directory, use `git submodule update --init --recursive` to fetch and synchronize the latest submodules:
 
 ```Bash
+# Must enter this directory
+cd InspireFace
 # Clone the repository and pull submodules
 git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
 ```
@@ -21,6 +23,8 @@ git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
 If you need to update the `3rdparty` repository to ensure it is current, or if you didn't use the `--recursive` parameter during the initial pull, you can run `git submodule update --init --recursive`:
 
 ```bash
+# Must enter this directory
+cd InspireFace
 # If you're not using recursive pull
 git clone https://github.com/HyperInspire/3rdparty.git
 
