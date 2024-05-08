@@ -50,7 +50,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          - git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
 
       # Step 3: Install wget and xz-utils
       - name: Install wget and xz-utils
@@ -88,7 +88,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          - git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
 
       # Step 3: Install wget and xz-utils
       - name: Install wget and xz-utils
@@ -126,7 +126,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          - git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
 
       # Step 3: Install wget and xz-utils
       - name: Install wget and xz-utils
