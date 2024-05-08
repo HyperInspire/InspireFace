@@ -23,8 +23,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git submodule sync --recursive  # Ensure submodule paths are up-to-date
-          git submodule update --init --recursive  # Initialize and update all submodules
+          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
 
       # Step 3: Install necessary dependencies for building the CMake project
       - name: Install Dependencies
