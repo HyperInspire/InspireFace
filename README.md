@@ -9,7 +9,7 @@ If you require further information on tracking development branches, CI/CD proce
 Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=InspireFace) for commercial support, including obtaining and integrating higher accuracy models, as well as custom development.
 
 ## 1. Preparation
-### 1.1. Pull 3rdparty
+### 1.1. Clone 3rdparty
 
 Clone the `3rdparty` repository from the remote repository into the root directory of the project. Note that this repository contains some submodules. When cloning, you should use the `--recurse-submodules` parameter, or after entering the directory, use `git submodule update --init --recursive` to fetch and synchronize the latest submodules:
 
