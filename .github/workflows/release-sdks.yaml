@@ -229,7 +229,7 @@ jobs:
             inspireface-linux-aarch64-${{ env.VERSION }}.zip
 
   build_android:
-    name: Compile and Package Android
+    name: Compile Android
     runs-on: ubuntu-latest
 
     steps:
