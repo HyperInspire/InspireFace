@@ -69,7 +69,7 @@ if (ISF_ENABLE_RKNN)
     set(NEED_INCLUDE ${NEED_INCLUDE} ${ISF_RKNN_API_INCLUDE_DIRS})
 endif ()
 
-if (ISF_BUILD_LINUX_ARM7)
+if (ISF_BUILD_LINUX_ARM7 OR ANDROID)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=neon")
 endif()
 
@@ -97,7 +97,12 @@ if (NOT ANDROID)
             ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
     )
 else()
+    target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS} jnigraphics log)
 
+    set_target_properties(InspireFace PROPERTIES
+            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
+            ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
+            )
 endif()
 
 # Print Message
