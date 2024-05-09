@@ -230,75 +230,75 @@ jobs:
 
   build_android:
     name: Compile and Package Android
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-      steps:
-        # Step 1: Checkout the repository
-        - name: Checkout Repository
-          uses: actions/checkout@v4
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-        # Step 2: Synchronize and update submodules recursively
-        - name: Update submodules
-          run: |
-            git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
 
-        # Step 3: Install dependencies
-        - name: Install Dependencies
-          run: |
-            sudo apt-get update
-            sudo apt-get install -y wget unzip xz-utils
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip xz-utils
 
-        # Step 4: Download and Extract Android NDK
-        - name: Download and Extract Android NDK
-          run: |
-            mkdir -p /opt/android-ndk-r19c
-            wget -qO /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-r19c-linux-x86_64.zip
-            unzip /tmp/android-ndk.zip -d /opt
-            rm /tmp/android-ndk.zip
+      # Step 4: Download and Extract Android NDK
+      - name: Download and Extract Android NDK
+        run: |
+          mkdir -p /opt/android-ndk-r19c
+          wget -qO /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-r19c-linux-x86_64.zip
+          unzip /tmp/android-ndk.zip -d /opt
+          rm /tmp/android-ndk.zip
 
-        # Step 5: Install Android NDK Environment Variables
-        - name: Set Android NDK Environment Variables
-          run: |
-            echo "ANDROID_NDK=/opt/android-ndk-r19c" >> $GITHUB_ENV
-            echo "PATH=/opt/android-ndk-r19c/bin:${PATH}" >> $GITHUB_ENV
+      # Step 5: Install Android NDK Environment Variables
+      - name: Set Android NDK Environment Variables
+        run: |
+          echo "ANDROID_NDK=/opt/android-ndk-r19c" >> $GITHUB_ENV
+          echo "PATH=/opt/android-ndk-r19c/bin:${PATH}" >> $GITHUB_ENV
 
-        # Step 6: Download and Extract OpenCV Android SDK
-        - name: Download and Extract OpenCV Android SDK
-          run: |
-            mkdir -p /opt/opencv-android-sdk
-            wget -qO /tmp/opencv-android-sdk.zip https://github.com/opencv/opencv/releases/download/4.5.1/opencv-4.5.1-android-sdk.zip
-            unzip /tmp/opencv-android-sdk.zip -d /opt/opencv-android-sdk
-            rm /tmp/opencv-android-sdk.zip
+      # Step 6: Download and Extract OpenCV Android SDK
+      - name: Download and Extract OpenCV Android SDK
+        run: |
+          mkdir -p /opt/opencv-android-sdk
+          wget -qO /tmp/opencv-android-sdk.zip https://github.com/opencv/opencv/releases/download/4.5.1/opencv-4.5.1-android-sdk.zip
+          unzip /tmp/opencv-android-sdk.zip -d /opt/opencv-android-sdk
+          rm /tmp/opencv-android-sdk.zip
 
-        # Step 7: Set OpenCV Environment Variables
-        - name: Set OpenCV Environment Variables
-          run: |
-            echo "OPENCV_DIR=/opt/opencv-android-sdk/OpenCV-android-sdk/sdk/native/jni" >> $GITHUB_ENV
+      # Step 7: Set OpenCV Environment Variables
+      - name: Set OpenCV Environment Variables
+        run: |
+          echo "OPENCV_DIR=/opt/opencv-android-sdk/OpenCV-android-sdk/sdk/native/jni" >> $GITHUB_ENV
 
-        # Step 8: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
-        - name: Extract Version Number
-          id: extract_version
-          run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+      # Step 8: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
 
-        # Step 9: Start building the SDK
-        - name: Start Building the InspireFace-Android
-          run: |
-            bash command/build_android.sh
-            ls build
+      # Step 9: Start building the SDK
+      - name: Start Building the InspireFace-Android
+        run: |
+          bash command/build_android.sh
+          ls build
 
-        # Step 10: Zip SDK directory
-        - name: Zip SDK directory
-          run: |
-            zip -r inspireface-android-${{ env.VERSION }}.zip build/inspireface-android-${{ env.VERSION }}
-            stat inspireface-android-${{ env.VERSION }}.zip
+      # Step 10: Zip SDK directory
+      - name: Zip SDK directory
+        run: |
+          zip -r inspireface-android-${{ env.VERSION }}.zip build/inspireface-android-${{ env.VERSION }}
+          stat inspireface-android-${{ env.VERSION }}.zip
 
-        # Step 11: Upload the zipped SDK files for the next job
-        - name: Upload SDK Artifacts
-          uses: actions/upload-artifact@v2
-          with:
-            name: sdk_files
-            path: |
-              inspireface-android-${{ env.VERSION }}.zip
+      # Step 11: Upload the zipped SDK files for the next job
+      - name: Upload SDK Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: sdk_files
+          path: |
+            inspireface-android-${{ env.VERSION }}.zip
 
   release:
     name: Release SDKs to GitHub
