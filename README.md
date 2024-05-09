@@ -109,8 +109,8 @@ We have completed the adaptation and testing of the software across various oper
 | 6       | **macOS**            | Intel x86             | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 7       |                      | Apple Silicon         | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 8       | **iOS**              | ARM                   | -                          |  |  |
-| 9       | **Android**          | ARMv7                 | -                          |  |  |
-| 10      |                      | ARMv8                 | -                          |  |  |
+| 9       | **Android**          | ARMv7                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |  |
+| 10      |                      | ARMv8                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |  |
 
 - Complete compilation scripts and successful compilation.
 - Pass unit tests on physical devices.
@@ -128,6 +128,9 @@ build-cross-armv7-armhf
 
 # Build armv7 with support RV1109RV1126 device NPU cross-complie
 docker-compose up build-cross-rv1109rv1126-armhf
+
+# Build Android with support arm64-v8a and armeabi-v7a
+docker-compose up build-cross-android
 
 # Build all
 docker-compose up
