@@ -116,34 +116,30 @@ else()
 endif ()
 
 
-# MNN Config
-if (NOT ANDROID)
+if (ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
+    # Use MNN Cuda
+    message("Global MNN CUDA device inference")
+    add_definitions("-DISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
+    set(MNN_INCLUDE_DIRS ${ISF_LINUX_MNN_CUDA}/include)
+    link_directories(${ISF_LINUX_MNN_CUDA}/lib)
+    set(MNN_LIBS MNN)
 
-    if (ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
-        # Use MNN Cuda
-        message("Global MNN CUDA device inference")
-        add_definitions("-DISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
-        set(MNN_INCLUDE_DIRS ${ISF_LINUX_MNN_CUDA}/include)
-        link_directories(${ISF_LINUX_MNN_CUDA}/lib)
-        set(MNN_LIBS MNN)
+elseif(DEFINED MNN_STATIC_PATH)
+    message("Using static MNN from specified path: ${MNN_STATIC_PATH}")
+    set(MNN_INCLUDE_DIRS "${MNN_STATIC_PATH}/include")
+    set(MNN_LIBS "${MNN_STATIC_PATH}/lib/libMNN.a")
+else ()
+    # Default or fallback case for MNN setup
+    message("Default or fallback case for MNN setup")
+    # MNN Options
+    set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "Build MNN as a shared library")
 
-    elseif(DEFINED MNN_STATIC_PATH)
-        message("Using static MNN from specified path: ${MNN_STATIC_PATH}")
-        set(MNN_INCLUDE_DIRS "${MNN_STATIC_PATH}/include")
-        set(MNN_LIBS "${MNN_STATIC_PATH}/lib/libMNN.a")
-    else ()
-        # Default or fallback case for MNN setup
-        message("Default or fallback case for MNN setup")
-        # MNN Options
-        set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "Build MNN as a shared library")
+    add_subdirectory(${ISF_THIRD_PARTY_DIR}/MNN EXCLUDE_FROM_ALL)
+    set(MNN_INCLUDE_DIRS "${ISF_THIRD_PARTY_DIR}/MNN/include")
+    set(MNN_LIBS MNN)
 
-        add_subdirectory(${ISF_THIRD_PARTY_DIR}/MNN EXCLUDE_FROM_ALL)
-        set(MNN_INCLUDE_DIRS "${ISF_THIRD_PARTY_DIR}/MNN/include")
-        set(MNN_LIBS MNN)
+endif ()
 
-    endif ()
-
-endif()
 
 # Set install path
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
