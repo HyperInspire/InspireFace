@@ -16,12 +16,13 @@
 
 #ifdef ANDROID
 // Android platform log macros
-const std::string TAG = "InspireFace";
-#define INSPIRE_LOGD(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_DEBUG, TAG, __VA_ARGS__)
-#define INSPIRE_LOGI(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_INFO, TAG, __VA_ARGS__)
-#define INSPIRE_LOGW(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_WARN, TAG, __VA_ARGS__)
-#define INSPIRE_LOGE(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_ERROR, TAG, __VA_ARGS__)
-#define INSPIRE_LOGF(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_FATAL, TAG, __VA_ARGS__)
+#include <android/log.h>
+#define INSPIRE_ANDROID_LOG_TAG "InspireFace"
+#define INSPIRE_LOGD(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_DEBUG, INSPIRE_ANDROID_LOG_TAG, __VA_ARGS__)
+#define INSPIRE_LOGI(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_INFO, INSPIRE_ANDROID_LOG_TAG, __VA_ARGS__)
+#define INSPIRE_LOGW(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_WARN, INSPIRE_ANDROID_LOG_TAG, __VA_ARGS__)
+#define INSPIRE_LOGE(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_ERROR, INSPIRE_ANDROID_LOG_TAG, __VA_ARGS__)
+#define INSPIRE_LOGF(...) inspire::LogManager::getInstance()->logAndroid(inspire::LOG_FATAL, INSPIRE_ANDROID_LOG_TAG, __VA_ARGS__)
 #else
 // Standard platform log macros
 #define INSPIRE_LOGD(...) inspire::LogManager::getInstance()->logStandard(inspire::LOG_DEBUG, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
@@ -83,7 +84,7 @@ public:
 #ifdef ANDROID
     // Method for logging on the Android platform
     void logAndroid(LogLevel level, const char* tag, const char* format, ...) const {
-        if (level < currentLevel) return;
+        if (currentLevel == LOG_NONE || level < currentLevel) return;
 
         int androidLevel;
         switch (level) {
