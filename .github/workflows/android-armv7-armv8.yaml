@@ -57,7 +57,7 @@ jobs:
           echo "OPENCV_DIR=/opt/opencv-android-sdk/OpenCV-android-sdk/sdk/native/jni" >> $GITHUB_ENV
 
       # Step 8: Start building the SDK
-      - name: Start Building the InspireFace-Linux-aarch64
+      - name: Start Building the InspireFace-Android
         run: |
-          bash command/build_cross_aarch64.sh
+          bash command/build_android.sh
           ls build
