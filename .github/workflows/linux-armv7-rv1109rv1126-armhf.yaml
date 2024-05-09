@@ -10,7 +10,7 @@ env:
 
 jobs:
   build:
-    name: Compile and Package SDKs
+    name: Compile Linux-armv7 rv1109rv1126
     runs-on: ubuntu-latest
 
     steps:
