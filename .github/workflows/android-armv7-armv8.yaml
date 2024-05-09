@@ -1,0 +1,63 @@
+name: Build Android-armv7-armv8
+
+on:
+  push:
+    branches: ["feature/build_android"]
+
+# Set the global GitHub token environment variable
+env:
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+jobs:
+  build:
+    name: Compile and Package SDKs
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip xz-utils
+
+      # Step 4: Download and Extract Android NDK
+      - name: Download and Extract Android NDK
+        run: |
+          mkdir -p /opt/android-ndk-r19c
+          wget -qO /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-r19c-linux-x86_64.zip
+          unzip /tmp/android-ndk.zip -d /opt
+          rm /tmp/android-ndk.zip
+
+      # Step 5: Install Android NDK Environment Variables
+      - name: Set Android NDK Environment Variables
+        run: |
+          echo "ANDROID_NDK=/opt/android-ndk-r19c" >> $GITHUB_ENV
+          echo "PATH=/opt/android-ndk-r19c/bin:${PATH}" >> $GITHUB_ENV
+
+      # Step 6: Download and Extract OpenCV Android SDK
+      - name: Download and Extract OpenCV Android SDK
+        run: |
+          mkdir -p /opt/opencv-android-sdk
+          wget -qO /tmp/opencv-android-sdk.zip https://github.com/opencv/opencv/releases/download/4.5.1/opencv-4.5.1-android-sdk.zip
+          unzip /tmp/opencv-android-sdk.zip -d /opt/opencv-android-sdk
+          rm /tmp/opencv-android-sdk.zip
+
+      # Step 7: Set OpenCV Environment Variables
+      - name: Set OpenCV Environment Variables
+        run: |
+          echo "OPENCV_DIR=/opt/opencv-android-sdk/OpenCV-android-sdk/sdk/native/jni" >> $GITHUB_ENV
+
+      # Step 8: Start building the SDK
+      - name: Start Building the InspireFace-Linux-aarch64
+        run: |
+          bash command/build_cross_aarch64.sh
+          ls build
