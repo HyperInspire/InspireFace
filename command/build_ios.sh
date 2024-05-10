@@ -72,5 +72,5 @@ cmake \
     -DENABLE_BITCODE=0 \
     ../..
 
-make -j2
+make -j1
 
