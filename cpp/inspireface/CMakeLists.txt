@@ -7,17 +7,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
-# Current version
-set(INSPIRE_FACE_VERSION_MAJOR 1)
-set(INSPIRE_FACE_VERSION_MINOR 0)
-set(INSPIRE_FACE_VERSION_PATCH 2)
-# Converts the version number to a string
-string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
-string(CONCAT INSPIRE_FACE_VERSION_MINOR_STR ${INSPIRE_FACE_VERSION_MINOR})
-string(CONCAT INSPIRE_FACE_VERSION_PATCH_STR ${INSPIRE_FACE_VERSION_PATCH})
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/information.h)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/version.txt)
-
 option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
@@ -89,15 +78,20 @@ target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
 )
 
-if (NOT ANDROID)
-    target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
+if (ANDROID)
+    target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS} jnigraphics log)
 
     set_target_properties(InspireFace PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
             ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
-    )
+            )
+elseif(IOS)
+    target_link_libraries(InspireFace
+            ${IOS_3RDPARTY}/MNN.framework
+            "-framework opencv2"
+            )
 else()
-    target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS} jnigraphics log)
+    target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
 
     set_target_properties(InspireFace PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
