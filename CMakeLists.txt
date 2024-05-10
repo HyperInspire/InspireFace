@@ -96,9 +96,13 @@ if (APPLE)
         set(CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE NO)
 
         link_directories(${IOS_3RDPARTY})
+        include_directories(${IOS_3RDPARTY}/opencv2.framework)
+
+        set(MNN_FRAMEWORK_PATH "${IOS_3RDPARTY}/MNN.framework")
+        include_directories("${MNN_FRAMEWORK_PATH}/")
 
         set(OpenCV_DIR "${IOS_3RDPARTY}/opencv2.framework")
-        find_package(OpenCV REQUIRED)
+#        find_package(OpenCV REQUIRED)
     else()
         message("Use apple device")
         set(PLAT darwin)
