@@ -9,3 +9,4 @@ pack/*
 *.zip
 3rdparty
 .macos_cache/
+*.framework
