@@ -299,6 +299,22 @@ During the process of building the test program using CMake, it will involve sel
 
 **Note**: If you want to view the benchmark test report, you can click on the [link](doc/Benchmark-Remark(Updating).md).
 
+### Quick Test
+
+If you need to perform a quick test, you can use the script we provide. This script will automatically download the test file `test_res` and build the test program to run the test. 
+
+*Note: If you need to enable more comprehensive tests, you can adjust the options in the script as needed.*
+
+```bash
+# If you are using Ubuntu, you can execute this.
+bash ci/quick_test_linux_x86_usual.sh
+
+# If you are using another system (including Ubuntu), you can execute this.
+bash ci/quick_test_local.sh
+```
+
+Every time code is committed, tests are run on GitHub Actions.
+
 ## 5. Function Support
 The following functionalities and technologies are currently supported.
 
