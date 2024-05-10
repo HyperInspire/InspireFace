@@ -1,14 +1,16 @@
 #!/bin/bash
 
+# !!!! Unfinished, it is a Failure !!!!
+
 # Define download URLs
 MNN_IOS_URL="https://github.com/alibaba/MNN/releases/download/2.8.1/mnn_2.8.1_ios_armv82_cpu_metal_coreml.zip"
 OPENCV_IOS_URL="https://github.com/opencv/opencv/releases/download/4.5.1/opencv-4.5.1-ios-framework.zip"
 
 # Set the cache directory
-macos_cache=".macos_cache/"
+MACOS_CACHE="$PWD/.macos_cache/"
 
 # Create the directory if it does not exist
-mkdir -p "${macos_cache}"
+mkdir -p "${MACOS_CACHE}"
 
 # Function to download and unzip a file if the required framework does not exist
 download_and_unzip() {
@@ -48,10 +50,10 @@ download_and_unzip() {
 }
 
 # Download and unzip MNN iOS package
-download_and_unzip "$MNN_IOS_URL" "$macos_cache" "MNN.framework"
+download_and_unzip "$MNN_IOS_URL" "$MACOS_CACHE" "MNN.framework"
 
 # Download and unzip OpenCV iOS package
-download_and_unzip "$OPENCV_IOS_URL" "$macos_cache" "opencv2.framework"
+download_and_unzip "$OPENCV_IOS_URL" "$MACOS_CACHE" "opencv2.framework"
 
 
 TOOLCHAIN=toolchain/ios.toolchain.cmake
@@ -63,11 +65,12 @@ mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
 cmake \
-    -DIOS_3RDPARTY=".macos_cache" \
+    -DIOS_3RDPARTY="${MACOS_CACHE}" \
     -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN} \
     -DCMAKE_OSX_ARCHITECTURES=arm64 \
     -DIOS_DEPLOYMENT_TARGET=9.0 \
     -DENABLE_BITCODE=0 \
     ../..
 
-#make -j2
+make -j2
+

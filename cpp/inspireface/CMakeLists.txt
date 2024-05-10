@@ -86,9 +86,16 @@ if (ANDROID)
             ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
             )
 elseif(IOS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ObjC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ObjC")
     target_link_libraries(InspireFace
-            ${IOS_3RDPARTY}/MNN.framework
             "-framework opencv2"
+            "-framework Metal"
+            "-framework CoreML"
+            "-framework Foundation"
+            "-framework CoreVideo"
+            "-framework CoreMedia"
+            ${MNN_FRAMEWORK_PATH}
             )
 else()
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
