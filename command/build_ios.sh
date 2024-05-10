@@ -56,7 +56,7 @@ download_and_unzip "$MNN_IOS_URL" "$MACOS_CACHE" "MNN.framework"
 download_and_unzip "$OPENCV_IOS_URL" "$MACOS_CACHE" "opencv2.framework"
 
 
-TOOLCHAIN=toolchain/ios.toolchain.cmake
+TOOLCHAIN="$PWD/toolchain/ios.toolchain.cmake"
 
 BUILD_DIR="build/inspireface-ios"
 
@@ -68,9 +68,14 @@ cmake \
     -DIOS_3RDPARTY="${MACOS_CACHE}" \
     -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN} \
     -DCMAKE_OSX_ARCHITECTURES=arm64 \
-    -DIOS_DEPLOYMENT_TARGET=9.0 \
     -DENABLE_BITCODE=0 \
+    -DIOS_DEPLOYMENT_TARGET=9.0 \
+    -DISF_BUILD_WITH_SAMPLE=OFF \
+    -DISF_BUILD_WITH_TEST=OFF \
+    -DISF_BUILD_SHARED_LIBS=OFF \
     ../..
 
-make -j1
+make -j8
+
+make install
 

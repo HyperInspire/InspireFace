@@ -84,9 +84,10 @@ if (ANDROID)
             ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
             )
 elseif(IOS)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ObjC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ObjC")
+#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ObjC")
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ObjC")
     target_link_libraries(InspireFace
+            "-fobjc-arc"
             "-framework opencv2"
             "-framework Metal"
             "-framework CoreML"
@@ -128,6 +129,8 @@ install(TARGETS InspireFace
 
 # Install header file
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/intypedef.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/herror.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
 
