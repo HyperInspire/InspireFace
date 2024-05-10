@@ -41,5 +41,5 @@ jobs:
       # Step 4: Run a separate script for CMake configuration and building
       - name: Download Dataset And Configure CMake
         # Execute a pre-existing script to handle CMake configuration and building
-        # The script is assumed to be located at `ci/ci_linux_x86_usual.sh`
-        run: bash ci/ci_linux_x86_usual.sh
+        # The script is assumed to be located at `ci/quick_test_linux_x86_usual.sh`
+        run: bash ci/quick_test_linux_x86_usual.sh

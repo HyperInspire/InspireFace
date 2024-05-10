@@ -22,7 +22,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // Get a face picture
         HFImageStream img1Handle;
-        auto img1 = cv::imread(GET_DATA("images/image_T1.jpeg"));
+        auto img1 = cv::imread(GET_DATA("data/bulk/image_T1.jpeg"));
         ret = CVImageToImageStream(img1, img1Handle);
         REQUIRE(ret == HSUCCEED);
 
@@ -47,7 +47,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // fake face
         HFImageStream img2Handle;
-        auto img2 = cv::imread(GET_DATA("images/rgb_fake.jpg"));
+        auto img2 = cv::imread(GET_DATA("data/bulk/rgb_fake.jpg"));
         ret = CVImageToImageStream(img2, img2Handle);
         REQUIRE(ret == HSUCCEED);
         ret = HFExecuteFaceTrack(session, img2Handle, &multipleFaceData);
@@ -82,7 +82,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // Get a face picture
         HFImageStream img1Handle;
-        auto img1 = cv::imread(GET_DATA("images/mask2.jpg"));
+        auto img1 = cv::imread(GET_DATA("data/bulk/mask2.jpg"));
         ret = CVImageToImageStream(img1, img1Handle);
         REQUIRE(ret == HSUCCEED);
 
@@ -107,7 +107,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // no mask face
         HFImageStream img2Handle;
-        auto img2 = cv::imread(GET_DATA("images/face_sample.png"));
+        auto img2 = cv::imread(GET_DATA("data/bulk/face_sample.png"));
         ret = CVImageToImageStream(img2, img2Handle);
         REQUIRE(ret == HSUCCEED);
         ret = HFExecuteFaceTrack(session, img2Handle, &multipleFaceData);
@@ -140,7 +140,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // Get a face picture
         HFImageStream superiorHandle;
-        auto superior = cv::imread(GET_DATA("images/yifei.jpg"));
+        auto superior = cv::imread(GET_DATA("data/bulk/yifei.jpg"));
         ret = CVImageToImageStream(superior, superiorHandle);
         REQUIRE(ret == HSUCCEED);
 
@@ -160,7 +160,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // blur image
         HFImageStream blurHandle;
-        auto blur = cv::imread(GET_DATA("images/blur.jpg"));
+        auto blur = cv::imread(GET_DATA("data/bulk/blur.jpg"));
         ret = CVImageToImageStream(blur, blurHandle);
         REQUIRE(ret == HSUCCEED);
 
