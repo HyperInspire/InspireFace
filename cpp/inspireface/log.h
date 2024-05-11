@@ -88,11 +88,11 @@ public:
 
         int androidLevel;
         switch (level) {
-            case LOG_DEBUG: androidLevel = ANDROID_LOG_DEBUG; break;
-            case LOG_INFO: androidLevel = ANDROID_LOG_INFO; break;
-            case LOG_WARN: androidLevel = ANDROID_LOG_WARN; break;
-            case LOG_ERROR: androidLevel = ANDROID_LOG_ERROR; break;
-            case LOG_FATAL: androidLevel = ANDROID_LOG_FATAL; break;
+            case ISF_LOG_DEBUG: androidLevel = ANDROID_LOG_DEBUG; break;
+            case ISF_LOG_INFO: androidLevel = ANDROID_LOG_INFO; break;
+            case ISF_LOG_WARN: androidLevel = ANDROID_LOG_WARN; break;
+            case ISF_LOG_ERROR: androidLevel = ANDROID_LOG_ERROR; break;
+            case ISF_LOG_FATAL: androidLevel = ANDROID_LOG_FATAL; break;
             default: androidLevel = ANDROID_LOG_DEFAULT;
         }
 
