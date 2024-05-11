@@ -1,12 +1,22 @@
-#cmake_minimum_required(VERSION 3.19)
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 project(InspireFace)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++14")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+
+# Current version
+set(INSPIRE_FACE_VERSION_MAJOR 1)
+set(INSPIRE_FACE_VERSION_MINOR 0)
+set(INSPIRE_FACE_VERSION_PATCH 3)
+
+# Converts the version number to a string
+string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
+string(CONCAT INSPIRE_FACE_VERSION_MINOR_STR ${INSPIRE_FACE_VERSION_MINOR})
+string(CONCAT INSPIRE_FACE_VERSION_PATCH_STR ${INSPIRE_FACE_VERSION_PATCH})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/information.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt)
 
 # Set the ISF_THIRD_PARTY_DIR variable to allow it to be set externally from the command line, or use the default path if it is not set
 set(ISF_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty" CACHE PATH "Path to the third-party libraries directory")
@@ -78,8 +88,24 @@ set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
 
 # OpenCV dependency configuration
 if (APPLE)
-    set(PLAT darwin)
-    find_package(OpenCV REQUIRED)
+    if (IOS)
+        message(IOS_3RDPARTY=${IOS_3RDPARTY})
+        set(CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO)
+        set(CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE NO)
+
+        link_directories(${IOS_3RDPARTY})
+        include_directories(${IOS_3RDPARTY}/opencv2.framework)
+
+        set(MNN_FRAMEWORK_PATH "${IOS_3RDPARTY}/MNN.framework")
+        include_directories("${MNN_FRAMEWORK_PATH}/")
+
+        set(OpenCV_DIR "${IOS_3RDPARTY}/opencv2.framework")
+#        find_package(OpenCV REQUIRED)
+    else()
+        message("Use apple device")
+        set(PLAT darwin)
+        find_package(OpenCV REQUIRED)
+    endif ()
 else()
     if (ISF_BUILD_LINUX_ARM7 OR ISF_BUILD_LINUX_AARCH64)
         add_definitions("-DDISABLE_GUI")
@@ -128,6 +154,8 @@ elseif(DEFINED MNN_STATIC_PATH)
     message("Using static MNN from specified path: ${MNN_STATIC_PATH}")
     set(MNN_INCLUDE_DIRS "${MNN_STATIC_PATH}/include")
     set(MNN_LIBS "${MNN_STATIC_PATH}/lib/libMNN.a")
+elseif(IOS)
+    message(Build iOS)
 else ()
     # Default or fallback case for MNN setup
     message("Default or fallback case for MNN setup")
