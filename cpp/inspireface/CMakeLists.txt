@@ -1,22 +1,9 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 project(InspireFaceSDK)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++14")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-
-# Current version
-set(INSPIRE_FACE_VERSION_MAJOR 1)
-set(INSPIRE_FACE_VERSION_MINOR 0)
-set(INSPIRE_FACE_VERSION_PATCH 2)
-# Converts the version number to a string
-string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
-string(CONCAT INSPIRE_FACE_VERSION_MINOR_STR ${INSPIRE_FACE_VERSION_MINOR})
-string(CONCAT INSPIRE_FACE_VERSION_PATCH_STR ${INSPIRE_FACE_VERSION_PATCH})
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/information.h)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/version.txt)
 
 option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
@@ -89,15 +76,28 @@ target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
 )
 
-if (NOT ANDROID)
-    target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
+if (ANDROID)
+    target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS} jnigraphics log)
 
     set_target_properties(InspireFace PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
             ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
-    )
+            )
+elseif(IOS)
+#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ObjC")
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ObjC")
+    target_link_libraries(InspireFace
+            "-fobjc-arc"
+            "-framework opencv2"
+            "-framework Metal"
+            "-framework CoreML"
+            "-framework Foundation"
+            "-framework CoreVideo"
+            "-framework CoreMedia"
+            ${MNN_FRAMEWORK_PATH}
+            )
 else()
-    target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS} jnigraphics log)
+    target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
 
     set_target_properties(InspireFace PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
@@ -129,6 +129,8 @@ install(TARGETS InspireFace
 
 # Install header file
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/intypedef.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/herror.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
 

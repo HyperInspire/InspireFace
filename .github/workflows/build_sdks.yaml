@@ -204,3 +204,23 @@ jobs:
         run: |
           bash command/build_android.sh
           ls build
+
+  build_ios:
+    name: Compile iOS-arm64
+    runs-on: macos-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+
+      # Step 3: Start building the SDK
+      - name: Start Building the InspireFace-iOS
+        run: |
+          bash command/build_ios.sh
+          ls build

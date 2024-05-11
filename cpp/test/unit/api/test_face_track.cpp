@@ -86,7 +86,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         for (int i = 0; i < filenames.size(); ++i) {
             auto filename = filenames[i];
             HFImageStream imgHandle;
-            auto image = cv::imread(GET_DATA("video_frames/" + filename));
+            auto image = cv::imread(GET_DATA("data/video_frames/" + filename));
             ret = CVImageToImageStream(image, imgHandle);
             REQUIRE(ret == HSUCCEED);
 
@@ -101,7 +101,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
             auto rect = multipleFaceData.rects[0];
             cv::Rect cvRect(rect.x, rect.y, rect.width, rect.height);
             cv::rectangle(image, cvRect, cv::Scalar(255, 0, 124), 2);
-            std::string save = GET_SAVE_DATA("video_frames") + "/" + std::to_string(i) + ".jpg";
+            std::string save = GET_SAVE_DATA("data/video_frames") + "/" + std::to_string(i) + ".jpg";
             cv::imwrite(save, image);
             auto id = multipleFaceData.trackIds[0];
 //            TEST_PRINT("{}", id);
