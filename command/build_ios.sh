@@ -1,6 +1,27 @@
 #!/bin/bash
 
-# !!!! Unfinished, it is a Failure !!!!
+# Reusable function to handle 'install' directory operations
+move_install_files() {
+    local root_dir="$1"
+    local install_dir="$root_dir/install"
+
+    # Step 1: Check if the 'install' directory exists
+    if [ ! -d "$install_dir" ]; then
+        echo "Error: 'install' directory does not exist in $root_dir"
+        exit 1
+    fi
+
+    # Step 2: Delete all other files/folders except 'install'
+    find "$root_dir" -mindepth 1 -maxdepth 1 -not -name "install" -exec rm -rf {} +
+
+    # Step 3: Move all files from 'install' to the root directory
+    mv "$install_dir"/* "$root_dir" 2>/dev/null
+
+    # Step 4: Remove the empty 'install' directory
+    rmdir "$install_dir"
+
+    echo "Files from 'install' moved to $root_dir, and 'install' directory deleted."
+}
 
 # Define download URLs
 MNN_IOS_URL="https://github.com/alibaba/MNN/releases/download/2.8.1/mnn_2.8.1_ios_armv82_cpu_metal_coreml.zip"
@@ -69,7 +90,7 @@ cmake \
     -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN} \
     -DCMAKE_OSX_ARCHITECTURES=arm64 \
     -DENABLE_BITCODE=0 \
-    -DIOS_DEPLOYMENT_TARGET=9.0 \
+    -DIOS_DEPLOYMENT_TARGET=11.0 \
     -DISF_BUILD_WITH_SAMPLE=OFF \
     -DISF_BUILD_WITH_TEST=OFF \
     -DISF_BUILD_SHARED_LIBS=OFF \
@@ -79,3 +100,51 @@ make -j8
 
 make install
 
+move_install_files "$(pwd)"
+
+# Set the framework name
+FRAMEWORK_NAME=InspireFace
+
+# Specify the version of the framework
+FRAMEWORK_VERSION=1.0.0
+
+# Root build directory
+BUILD_DIR="$(pwd)"
+
+BUILD_LIB_DIR="$BUILD_DIR/InspireFace"
+
+# Create the framework structure
+FRAMEWORK_DIR=$BUILD_DIR/$FRAMEWORK_NAME.framework
+mkdir -p $FRAMEWORK_DIR
+mkdir -p $FRAMEWORK_DIR/Headers
+mkdir -p $FRAMEWORK_DIR/Resources
+
+# Copy the static library to the framework directory
+cp $BUILD_LIB_DIR/lib/libInspireFace.a $FRAMEWORK_DIR/$FRAMEWORK_NAME
+
+# Copy header files to the framework's Headers directory
+cp $BUILD_LIB_DIR/include/*.h $FRAMEWORK_DIR/Headers/
+
+# Create Info.plist
+cat <<EOF >$FRAMEWORK_DIR/Resources/Info.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>$FRAMEWORK_NAME</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.example.$FRAMEWORK_NAME</string>
+    <key>CFBundleName</key>
+    <string>$FRAMEWORK_NAME</string>
+    <key>CFBundleVersion</key>
+    <string>$FRAMEWORK_VERSION</string>
+    <key>CFBundleShortVersionString</key>
+    <string>$FRAMEWORK_VERSION</string>
+    <key>CFBundlePackageType</key>
+    <string>FMWK</string>
+</dict>
+</plist>
+EOF
+
+echo "Framework $FRAMEWORK_NAME.framework has been created at $FRAMEWORK_DIR"
