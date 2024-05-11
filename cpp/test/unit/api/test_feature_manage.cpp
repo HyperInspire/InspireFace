@@ -38,7 +38,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
-        cv::Mat kunImage = cv::imread(GET_DATA("images/kun.jpg"));
+        cv::Mat kunImage = cv::imread(GET_DATA("data/bulk/kun.jpg"));
         HFImageData imageData = {0};
         imageData.data = kunImage.data;
         imageData.height = kunImage.rows;
