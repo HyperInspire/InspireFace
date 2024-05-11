@@ -76,10 +76,16 @@ download_and_unzip "$MNN_IOS_URL" "$MACOS_CACHE" "MNN.framework"
 # Download and unzip OpenCV iOS package
 download_and_unzip "$OPENCV_IOS_URL" "$MACOS_CACHE" "opencv2.framework"
 
+if [ -n "$VERSION" ]; then
+    TAG="-$VERSION"
+else
+    TAG=""
+fi
+
 
 TOOLCHAIN="$PWD/toolchain/ios.toolchain.cmake"
 
-BUILD_DIR="build/inspireface-ios"
+BUILD_DIR="build/inspireface-ios$TAG"
 
 mkdir -p "$BUILD_DIR"
 
