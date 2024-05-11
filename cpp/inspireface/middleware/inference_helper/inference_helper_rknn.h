@@ -4,6 +4,7 @@
 
 #ifndef RKNPU_PTOCR_INFERENCE_HELPER_RKNN_H
 #define RKNPU_PTOCR_INFERENCE_HELPER_RKNN_H
+#ifdef INFERENCE_HELPER_ENABLE_RKNN
 
 /* for general */
 #include <cstdint>
@@ -44,5 +45,5 @@ private:
 
 };
 
-
+#endif // INFERENCE_HELPER_ENABLE_RKNN
 #endif //RKNPU_PTOCR_INFERENCE_HELPER_RKNN_H
