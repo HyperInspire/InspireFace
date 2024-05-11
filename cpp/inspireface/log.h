@@ -84,7 +84,7 @@ public:
 #ifdef ANDROID
     // Method for logging on the Android platform
     void logAndroid(LogLevel level, const char* tag, const char* format, ...) const {
-        if (currentLevel == LOG_NONE || level < currentLevel) return;
+        if (currentLevel == ISF_LOG_NONE || level < currentLevel) return;
 
         int androidLevel;
         switch (level) {
