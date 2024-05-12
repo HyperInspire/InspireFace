@@ -33,7 +33,7 @@ jobs:
       - name: Download and Extract Android NDK
         run: |
           mkdir -p /opt/android-ndk-r19c
-          wget -qO /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-r19c-linux-x86_64.zip
+          wget -qO /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip
           unzip /tmp/android-ndk.zip -d /opt
           rm /tmp/android-ndk.zip
 
