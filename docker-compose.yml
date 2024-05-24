@@ -50,3 +50,13 @@ services:
     volumes:
       - .:/workspace  # Mount the project root directory to the container
     command: bash command/build_android.sh
+  build-cuda-ubuntu20:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.cuda.ubuntu20
+    environment:
+      - VERSION=${VERSION}
+    working_dir: /workspace
+    volumes:
+      - .:/workspace  # Mount the project root directory to the container
+    command: bash command/build_linux_cuda.sh
