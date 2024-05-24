@@ -141,6 +141,7 @@ else()
     find_package(OpenCV REQUIRED)
 endif ()
 
+set(ISF_LINUX_MNN_CUDA "" CACHE STRING "Path to CUDA directory")
 
 if (ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
     message("Global MNN CUDA device inference")
