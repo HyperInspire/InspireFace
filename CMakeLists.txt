@@ -156,7 +156,7 @@ if (ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
     else()
         message(ISF_LINUX_MNN_CUDA=${ISF_LINUX_MNN_CUDA})
         set(MNN_INCLUDE_DIRS ${ISF_LINUX_MNN_CUDA}/include)
-        link_directories(${ISF_LINUX_MNN_CUDA}/lib)
+        link_directories(${ISF_LINUX_MNN_CUDA}/)
         set(MNN_LIBS MNN)
     endif()
 
