@@ -43,9 +43,10 @@ cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DISF_ENABLE_BENCHMARK=OFF \
   -DISF_ENABLE_USE_LFW_DATA=OFF \
   -DISF_ENABLE_TEST_EVALUATION=OFF \
+  -DMNN_CUDA=ON \
   -DISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA=ON \
-  -DISF_LINUX_MNN_CUDA=/home/tunm/software/MNN-2.7.0/build_cuda/install \
-  -DISF_BUILD_SHARED_LIBS=ON ${SCRIPT_DIR}
+  -DOpenCV_DIR=3rdparty/inspireface-precompile/opencv/4.5.1/opencv-ubuntu18-x86/lib/cmake/opencv4 \
+  -DISF_LINUX_MNN_CUDA=/home/tunm/software/MNN-2.7.0/build_cuda/install ${SCRIPT_DIR}
 
 make -j4
 
