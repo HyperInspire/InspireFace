@@ -143,12 +143,20 @@ endif ()
 
 
 if (ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
-    # Use MNN Cuda
     message("Global MNN CUDA device inference")
     add_definitions("-DISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
-    set(MNN_INCLUDE_DIRS ${ISF_LINUX_MNN_CUDA}/include)
-    link_directories(${ISF_LINUX_MNN_CUDA}/lib)
-    set(MNN_LIBS MNN)
+    # Use MNN Cuda
+    if (NOT ${ISF_LINUX_MNN_CUDA} STREQUAL "")
+        # MNN Options
+        set(MNN_CUDA ON)
+        add_subdirectory(${ISF_THIRD_PARTY_DIR}/MNN EXCLUDE_FROM_ALL)
+        set(MNN_INCLUDE_DIRS "${ISF_THIRD_PARTY_DIR}/MNN/include")
+        set(MNN_LIBS MNN)
+    else()
+        set(MNN_INCLUDE_DIRS ${ISF_LINUX_MNN_CUDA}/include)
+        link_directories(${ISF_LINUX_MNN_CUDA}/lib)
+        set(MNN_LIBS MNN)
+    endif()
 
 elseif(DEFINED MNN_STATIC_PATH)
     message("Using static MNN from specified path: ${MNN_STATIC_PATH}")
