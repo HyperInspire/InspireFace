@@ -146,6 +146,7 @@ if (ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
     message("Global MNN CUDA device inference")
     add_definitions("-DISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
     # Use MNN Cuda
+    message(ISF_LINUX_MNN_CUDA=${ISF_LINUX_MNN_CUDA})
     if (NOT ${ISF_LINUX_MNN_CUDA} STREQUAL "")
         # MNN Options
         set(MNN_CUDA ON)
