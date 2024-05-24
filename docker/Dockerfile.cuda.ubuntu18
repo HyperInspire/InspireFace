@@ -1,6 +1,5 @@
 # Use Ubuntu 18.04 as the base image
-FROM ubuntu:18.04
-# FROM skybro/ubuntu-cn:18
+FROM nvidia/cuda:11.1.1-cudnn8-devel-ubuntu20.04
 
 ARG https_proxy
 ARG http_proxy
