@@ -373,7 +373,7 @@ int FaceTrack::Configuration(inspire::InspireArchive &archive) {
         INSPIRE_LOGE("Load %s error: %d", "pose_quality", ret);
         return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
     }
-    InitFacePoseModel(pquModel);
+//    InitFacePoseModel(pquModel);
 
     return 0;
 }
