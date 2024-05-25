@@ -12,12 +12,16 @@
 
 namespace inspire {
 
-FaceTrack::FaceTrack(int max_detected_faces, int detection_interval, int track_preview_size) :
+FaceTrack::FaceTrack(int max_detected_faces, int detection_interval, int track_preview_size, bool wide_range_detection_mode) :
                                                                         max_detected_faces_(max_detected_faces),
                                                                         detection_interval_(detection_interval),
-                                                                        track_preview_size_(track_preview_size){
+                                                                        track_preview_size_(track_preview_size),
+                                                                        m_wide_range_detection_mode_(wide_range_detection_mode){
     detection_index_ = -1;
     tracking_idx_ = 0;
+    if (wide_range_detection_mode) {
+        track_preview_size_ = m_wide_range_mode_px;
+    }
 }
 
 
@@ -77,7 +81,8 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
 //    LOGD("get affine crop ok");
     double time1 = (double) cv::getTickCount();
     crop = image.GetAffineRGBImage(affine, 112, 112);
-
+//    cv::imshow("w", crop);
+//    cv::waitKey(0);
     cv::Mat affine_inv;
     cv::invertAffineTransform(affine, affine_inv);
     double _diff =
@@ -221,6 +226,7 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
 //        Timer t_blacking;
         image.SetPreviewSize(track_preview_size_);
         cv::Mat image_detect = image.GetPreviewImage(true);
+
         nms();
         for (auto const &face: trackingFace) {
             cv::Rect m_mask_rect = face.GetRectSquare();
@@ -305,6 +311,12 @@ void FaceTrack::BlackingTrackingRegion(cv::Mat &image, cv::Rect &rect_mask) {
 
 void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
     std::vector<FaceLoc> boxes = (*m_face_detector_)(input);
+//    for (auto box: boxes) {
+//        cv::Rect r(cv::Point2f(box.x1, box.y1), cv::Point2f(box.x2, box.y2));
+//        cv::rectangle(input, r, cv::Scalar(255, 0, 0), 3);
+//    }
+//    cv::imshow("w", input);
+//    cv::waitKey(0);
     std::vector<cv::Rect> bbox;
     bbox.resize(boxes.size());
     for (int i = 0; i < boxes.size(); i++) {
@@ -376,9 +388,20 @@ int FaceTrack::InitLandmarkModel(InspireModel &model) {
 }
 
 int FaceTrack::InitDetectModel(InspireModel &model) {
-    auto input_size = model.Config().get<std::vector<int>>("input_size");
+    std::vector<int> input_size;
+    if (m_wide_range_detection_mode_) {
+        // Wide-Range mode temporary value
+        input_size = {m_wide_range_mode_px, m_wide_range_mode_px};
+        model.Config().set<std::vector<int>>("input_size", input_size);
+    } else {
+        input_size = model.Config().get<std::vector<int>>("input_size");
+    }
+    bool dym = false;
+    if (m_wide_range_detection_mode_) {
+        dym = true;
+    }
     m_face_detector_ = std::make_shared<FaceDetect>(input_size[0]);
-    auto ret = m_face_detector_->loadData(model, model.modelType);
+    auto ret = m_face_detector_->loadData(model, model.modelType, dym);
     if (ret != InferenceHelper::kRetOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
@@ -412,6 +435,10 @@ double FaceTrack::GetTrackTotalUseTime() const {
 }
 
 void FaceTrack::SetTrackPreviewSize(int preview_size) {
+    if (m_wide_range_detection_mode_) {
+        INSPIRE_LOGW("Changes to the PreviewSize are ignored in Wide-Range mode.");
+        return;
+    }
     track_preview_size_ = preview_size;
 }
 

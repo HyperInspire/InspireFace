@@ -26,9 +26,9 @@ int main(int argc, char* argv[]) {
     // Enable the functions in the pipeline: mask detection, live detection, and face quality detection
     HOption option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     // Video or frame sequence mode uses VIDEO-MODE, which is face detection with tracking
-    HFDetectMode detMode = HF_DETECT_MODE_VIDEO;
+    HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
     // Maximum number of faces detected
-    HInt32 maxDetectNum = 5;
+    HInt32 maxDetectNum = 50;
     // Handle of the current face SDK algorithm context
     HFSession session = {0};
     ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
@@ -36,6 +36,8 @@ int main(int argc, char* argv[]) {
         std::cout << "Create FaceContext error: " << ret << std::endl;
         return ret;
     }
+
+    HFSessionSetTrackPreviewSize(session, 640);
 
     // Open the video file
     cv::VideoCapture cap(videoPath);
@@ -105,6 +107,9 @@ int main(int argc, char* argv[]) {
                       << ", Yaw: " << multipleFaceData.angles.yaw[index]
                       << ", Pitch: " << multipleFaceData.angles.pitch[index] << std::endl;
         }
+
+        cv::imshow("w", draw);
+        cv::waitKey(1);
 
         // Write the frame into the file
         outputVideo.write(draw);
