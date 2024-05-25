@@ -78,8 +78,11 @@ int main(int argc, char* argv[]) {
         }
 
         // Execute HF_FaceContextRunFaceTrack captures face information in an image
+        double time = (double) cv::getTickCount();
         HFMultipleFaceData multipleFaceData = {0};
         ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
+        time = ((double) cv::getTickCount() - time) / cv::getTickFrequency();
+        std::cout << "use time：" << time << "秒\n";
         if (ret != HSUCCEED) {
             std::cout << "Execute HFExecuteFaceTrack error: " << ret << std::endl;
             return ret;
@@ -108,8 +111,8 @@ int main(int argc, char* argv[]) {
                       << ", Pitch: " << multipleFaceData.angles.pitch[index] << std::endl;
         }
 
-        cv::imshow("w", draw);
-        cv::waitKey(1);
+//        cv::imshow("w", draw);
+//        cv::waitKey(1);
 
         // Write the frame into the file
         outputVideo.write(draw);
