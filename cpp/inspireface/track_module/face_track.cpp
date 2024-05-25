@@ -437,9 +437,9 @@ double FaceTrack::GetTrackTotalUseTime() const {
 void FaceTrack::SetTrackPreviewSize(int preview_size) {
     if (m_wide_range_detection_mode_) {
         INSPIRE_LOGW("Changes to the PreviewSize are ignored in Wide-Range mode.");
-        return;
+    } else {
+        track_preview_size_ = preview_size;
     }
-    track_preview_size_ = preview_size;
 }
 
 
