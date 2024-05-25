@@ -156,19 +156,21 @@ int32_t InferenceHelperMnn::Initialize(char* model_buffer, int model_size, std::
         PRINT_E("Failed to load model model buffer\n");
         return kRetErr;
     }
-
     MNN::ScheduleConfig scheduleConfig;
+    scheduleConfig.numThread = num_threads_;    // it seems, setting 1 has better performance on Android
+    MNN::BackendConfig bnconfig;
+    bnconfig.power = MNN::BackendConfig::Power_High;
+    bnconfig.precision = MNN::BackendConfig::Precision_High;
     if (special_backend_ == kMnnCuda) {
         INSPIRE_LOGD("Enable CUDA");
         scheduleConfig.type = MNN_FORWARD_CUDA;
+        bnconfig.power = MNN::BackendConfig::Power_Normal;
+        bnconfig.precision = MNN::BackendConfig::Precision_Normal;
     } else {
         scheduleConfig.type = MNN_FORWARD_CPU;
     }
-    scheduleConfig.numThread = num_threads_;    // it seems, setting 1 has better performance on Android
-     MNN::BackendConfig bnconfig;
-     bnconfig.power = MNN::BackendConfig::Power_High;
-     bnconfig.precision = MNN::BackendConfig::Precision_High;
-     scheduleConfig.backendConfig = &bnconfig;
+    scheduleConfig.backendConfig = &bnconfig;
+
     session_ = net_->createSession(scheduleConfig);
 //    LOG_INFO("fuck");
 //    LOG_INFO("-INPUT: {}", net_->getSessionInputAll(session_).size());
