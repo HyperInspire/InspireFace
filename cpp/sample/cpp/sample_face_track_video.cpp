@@ -111,8 +111,8 @@ int main(int argc, char* argv[]) {
                       << ", Pitch: " << multipleFaceData.angles.pitch[index] << std::endl;
         }
 
-//        cv::imshow("w", draw);
-//        cv::waitKey(1);
+       cv::imshow("w", draw);
+       cv::waitKey(1);
 
         // Write the frame into the file
         outputVideo.write(draw);
