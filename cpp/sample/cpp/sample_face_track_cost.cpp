@@ -61,20 +61,22 @@ int main(int argc, char* argv[]) {
         std::cout << "Create ImageStream error: " << ret << std::endl;
         return ret;
     }
+    
+    for (int i = 0; i < 100; i++) {
+        auto current_time = (double) cv::getTickCount();
 
-    auto current_time = (double) cv::getTickCount();
+        // Execute HF_FaceContextRunFaceTrack captures face information in an image
+        HFMultipleFaceData multipleFaceData = {0};
+        ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
+        if (ret != HSUCCEED) {
+            std::cout << "Execute HFExecuteFaceTrack error: " << ret << std::endl;
+            return ret;
+        }
 
-    // Execute HF_FaceContextRunFaceTrack captures face information in an image
-    HFMultipleFaceData multipleFaceData = {0};
-    ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
-    if (ret != HSUCCEED) {
-        std::cout << "Execute HFExecuteFaceTrack error: " << ret << std::endl;
-        return ret;
+        auto cost = ((double) cv::getTickCount() - current_time) / cv::getTickFrequency() * 1000;
+
+        std::cout << "coes: " <<  cost << std::endl;
     }
-
-    auto cost = ((double) cv::getTickCount() - current_time) / cv::getTickFrequency() * 1000;
-
-    std::cout << "coes: " <<  cost << std::endl;
 
 
     ret = HFReleaseImageStream(imageHandle);
