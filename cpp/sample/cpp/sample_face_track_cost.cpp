@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     // Non-video or frame sequence mode uses IMAGE-MODE, which is always face detection without tracking
     HFDetectMode detMode = HF_DETECT_MODE_VIDEO;
     // Maximum number of faces detected
-    HInt32 maxDetectNum = 5;
+    HInt32 maxDetectNum = 50;
     // Handle of the current face SDK algorithm context
     HFSession session = {0};
     ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
