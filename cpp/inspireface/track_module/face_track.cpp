@@ -12,16 +12,13 @@
 
 namespace inspire {
 
-FaceTrack::FaceTrack(int max_detected_faces, int detection_interval, int track_preview_size, bool wide_range_detection_mode) :
+FaceTrack::FaceTrack(int max_detected_faces, int detection_interval, int track_preview_size, int dynamic_detection_input_level) :
                                                                         max_detected_faces_(max_detected_faces),
                                                                         detection_interval_(detection_interval),
                                                                         track_preview_size_(track_preview_size),
-                                                                        m_wide_range_detection_mode_(wide_range_detection_mode){
+                                                                        m_dynamic_detection_input_level_(dynamic_detection_input_level){
     detection_index_ = -1;
     tracking_idx_ = 0;
-    if (wide_range_detection_mode) {
-        track_preview_size_ = m_wide_range_mode_px;
-    }
 }
 
 
@@ -389,17 +386,19 @@ int FaceTrack::InitLandmarkModel(InspireModel &model) {
 
 int FaceTrack::InitDetectModel(InspireModel &model) {
     std::vector<int> input_size;
-    if (m_wide_range_detection_mode_) {
+    if (m_dynamic_detection_input_level_ != -1) {
+        if (m_dynamic_detection_input_level_ % 160 != 0 || m_dynamic_detection_input_level_ < 160) {
+            INSPIRE_LOGE("The input size '%d' for the custom detector is not valid.  \
+            Please use a multiple of 160 (minimum 160) for the input dimensions, such as 320 or 640.", m_dynamic_detection_input_level_);
+            return HERR_INVALID_DETECTION_INPUT;
+        }
         // Wide-Range mode temporary value
-        input_size = {m_wide_range_mode_px, m_wide_range_mode_px};
+        input_size = {m_dynamic_detection_input_level_, m_dynamic_detection_input_level_};
         model.Config().set<std::vector<int>>("input_size", input_size);
     } else {
         input_size = model.Config().get<std::vector<int>>("input_size");
     }
-    bool dym = false;
-    if (m_wide_range_detection_mode_) {
-        dym = true;
-    }
+    bool dym = true;
     m_face_detector_ = std::make_shared<FaceDetect>(input_size[0]);
     auto ret = m_face_detector_->loadData(model, model.modelType, dym);
     if (ret != InferenceHelper::kRetOk) {
@@ -435,11 +434,7 @@ double FaceTrack::GetTrackTotalUseTime() const {
 }
 
 void FaceTrack::SetTrackPreviewSize(int preview_size) {
-    if (m_wide_range_detection_mode_) {
-        INSPIRE_LOGW("Changes to the PreviewSize are ignored in Wide-Range mode.");
-    } else {
         track_preview_size_ = preview_size;
-    }
 }
 
 
