@@ -11,3 +11,4 @@ pack/*
 .macos_cache/
 *.framework
 .cache/*
+.vscode/*
