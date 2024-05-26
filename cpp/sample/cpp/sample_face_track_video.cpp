@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     // Enable the functions in the pipeline: mask detection, live detection, and face quality detection
     HOption option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     // Video or frame sequence mode uses VIDEO-MODE, which is face detection with tracking
-    HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+    HFDetectMode detMode = HF_DETECT_MODE_VIDEO;
     // Maximum number of faces detected
     HInt32 maxDetectNum = 50;
     // Handle of the current face SDK algorithm context
