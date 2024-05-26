@@ -67,6 +67,14 @@ set_target_properties(FaceComparisonSample PROPERTIES
 )
 
 
+# Examples of face recognition
+add_executable(FaceDetect cpp/face_detect.cpp)
+target_link_libraries(FaceDetect InspireFace ${ext})
+set_target_properties(FaceDetect PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+
 # Platform watershed
 if (ISF_BUILD_LINUX_ARM7 OR ISF_BUILD_LINUX_AARCH64)
     # Typically this is an embedded system or development board scenario where some GUI-related functions are not supported

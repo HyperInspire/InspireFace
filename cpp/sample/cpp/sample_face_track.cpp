@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
         // Use OpenCV's Rect to receive face bounding boxes
         auto rect = cv::Rect(multipleFaceData.rects[index].x, multipleFaceData.rects[index].y,
                                  multipleFaceData.rects[index].width, multipleFaceData.rects[index].height);
-        cv::rectangle(draw, rect, cv::Scalar(0, 100, 255), 1);
+        cv::rectangle(draw, rect, cv::Scalar(0, 100, 255), 4);
 
         // Print FaceID, In IMAGE-MODE it is changing, in VIDEO-MODE it is fixed, but it may be lost
         std::cout << "FaceID: " << multipleFaceData.trackIds[index] << std::endl;
