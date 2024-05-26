@@ -29,10 +29,9 @@ public:
      * @param max_detected_faces Maximum number of faces to be detected.
      * @param detection_interval Interval between detections to track faces.
      * @param track_preview_size Size of the preview for tracking.
-     * @param wide_range_detection_mode Enabling Wide-Range face capture mode will capture as many faces as possible under higher resolution images,
-     *  but it will affect the performance, and the input of the image will be forced to set to the original image processing.
+     * @param dynamic_detection_input_level Change the detector input size.
      */
-    explicit FaceTrack(int max_detected_faces = 1, int detection_interval = 20, int track_preview_size = 192, bool wide_range_detection_mode = true);
+    explicit FaceTrack(int max_detected_faces = 1, int detection_interval = 20, int track_preview_size = 192, int dynamic_detection_input_level = -1);
 
     /**
      * @brief Configures the face tracking with models.
@@ -158,9 +157,7 @@ private:
     std::shared_ptr<RNet> m_refine_net_;                   ///< Shared pointer to the RNet model.
     std::shared_ptr<FacePoseQuality> m_face_quality_;      ///< Shared pointer to the face pose quality assessor.
 
-    bool m_wide_range_detection_mode_;
-
-    int m_wide_range_mode_px = 640;
+    int m_dynamic_detection_input_level_ = -1;
 };
 
 }   // namespace hyper
