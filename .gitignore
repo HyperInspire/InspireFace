@@ -10,3 +10,4 @@ pack/*
 3rdparty
 .macos_cache/
 *.framework
+.cache/*
