@@ -27,6 +27,9 @@ FaceTrack::FaceTrack(DetectMode mode,
                     m_dynamic_detection_input_level_(dynamic_detection_input_level){
     detection_index_ = -1;
     tracking_idx_ = 0;
+    if (TbD_mode_fps < 0) {
+        TbD_mode_fps = 30;
+    }
     if (m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
         m_TbD_tracker_ = std::make_shared<BYTETracker>(TbD_mode_fps, 30);
     }

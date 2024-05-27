@@ -2,6 +2,7 @@
 // Created by Tunm-Air13 on 2023/9/7.
 //
 #pragma once
+#include <sys/_types/_int32_t.h>
 #ifndef HYPERFACEREPO_FACE_CONTEXT_H
 #define HYPERFACEREPO_FACE_CONTEXT_H
 
@@ -67,7 +68,11 @@ public:
      * @param param Custom parameters for the face pipeline.
      * @return int32_t Returns 0 on success, non-zero for any error.
      */
-    int32_t Configuration(DetectMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param, int32_t detect_level_px = -1);
+    int32_t Configuration(DetectMode detect_mode, 
+                        int32_t max_detect_face, 
+                        CustomPipelineParameter param, 
+                        int32_t detect_level_px = -1,
+                        int32_t track_by_detect_mode_fps = -1);
 
     /**
      * @brief Performs face detection and tracking on a given image stream.

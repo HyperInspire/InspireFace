@@ -20,7 +20,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 5, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 5, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
 
         float mostSim = -1.0f;
@@ -58,7 +58,7 @@ TEST_CASE("test_Evaluation", "[face_evaluation") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 5, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 5, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
         std::vector<int> labels;
         std::vector<float> confidences;

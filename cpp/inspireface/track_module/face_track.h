@@ -21,9 +21,9 @@ namespace inspire {
  * @brief Enumeration for different detection modes.
  */
 enum DetectMode {
-    DETECT_MODE_ALWAYS_DETECT = 0,      ///< Image detection mode: Always detect
-    DETECT_MODE_LIGHT_TRACK,            ///< Image detection mode: Light face track
-    DETECT_MODE_TRACK_BY_DETECT,        ///< Image detection mode: Tracking by detection
+    DETECT_MODE_ALWAYS_DETECT = 0,      ///< Detection mode: Always detect
+    DETECT_MODE_LIGHT_TRACK,            ///< Detection mode: Light face track
+    DETECT_MODE_TRACK_BY_DETECT,        ///< Detection mode: Tracking by detection
 
 };
 

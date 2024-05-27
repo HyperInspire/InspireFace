@@ -154,6 +154,8 @@ HYPER_CAPI_EXPORT extern HResult HFCreateInspireFaceSession(
         HFSessionCustomParameter parameter,
         HFDetectMode detectMode,
         HInt32 maxDetectFaceNum,
+        HInt32 detectPixelLevel,
+        HInt32 trackByDetectModeFPS,
         HFSession *handle
 );
 
@@ -170,6 +172,8 @@ HYPER_CAPI_EXPORT extern HResult HFCreateInspireFaceSessionOptional(
         HOption customOption,
         HFDetectMode detectMode,
         HInt32 maxDetectFaceNum,
+        HInt32 detectPixelLevel,
+        HInt32 trackByDetectModeFPS,
         HFSession *handle
 );
 
