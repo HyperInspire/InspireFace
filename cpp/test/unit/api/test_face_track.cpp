@@ -18,7 +18,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
     SECTION("Face detection from image") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         spdlog::error("error ret :{}", ret);
@@ -74,7 +74,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
     SECTION("Face tracking stability from frames") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
-        HFDetectMode detMode = HF_DETECT_MODE_VIDEO;
+        HFDetectMode detMode = HF_DETECT_MODE_LIGHT_TRACK;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -123,7 +123,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
     SECTION("Head pose estimation") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -229,7 +229,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         int loop = 1000;
         HResult ret;
         HFSessionCustomParameter parameter = {0};
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -242,7 +242,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         BenchmarkRecord record(getBenchmarkRecordFile());
 
         // Case: Execute the benchmark using the IMAGE mode
-        ret = HFSessionSetFaceTrackMode(session, HF_DETECT_MODE_IMAGE);
+        ret = HFSessionSetFaceTrackMode(session, HF_DETECT_MODE_ALWAYS_DETECT);
         REQUIRE(ret == HSUCCEED);
         HFMultipleFaceData multipleFaceData = {0};
         auto start = (double) cv::getTickCount();
@@ -256,7 +256,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         record.insertBenchmarkData("Face Detect", loop, cost, cost / loop);
 
         // Case: Execute the benchmark using the VIDEO mode(Track)
-        ret = HFSessionSetFaceTrackMode(session, HF_DETECT_MODE_VIDEO);
+        ret = HFSessionSetFaceTrackMode(session, HF_DETECT_MODE_LIGHT_TRACK);
         REQUIRE(ret == HSUCCEED);
         multipleFaceData = {0};
         start = (double) cv::getTickCount();
