@@ -7,6 +7,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIRS})
+
+message(EIGEN3_INCLUDE_DIRS=${EIGEN3_INCLUDE_DIRS})
+
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
 
@@ -17,7 +22,7 @@ if (ISF_ENABLE_RKNN)
 endif()
 
 # OpenCV
-set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
+set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS}  Eigen3::Eigen)
 
 # SQLite3
 set(SOURCE_FILES ${SOURCE_FILES} ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite3.c)   # Add SQLite3 C_API file
