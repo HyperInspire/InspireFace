@@ -28,16 +28,6 @@
 namespace inspire {
 
 /**
- * @enum DetectMode
- * @brief Enumeration for different detection modes.
- */
-enum DetectMode {
-    DETECT_MODE_IMAGE = 0,      ///< Image detection mode: Always detect
-    DETECT_MODE_VIDEO,          ///< Image detection mode: Face track
-
-};
-
-/**
  * @struct CustomPipelineParameter
  * @brief Structure to hold custom parameters for the face detection and processing pipeline.
  *

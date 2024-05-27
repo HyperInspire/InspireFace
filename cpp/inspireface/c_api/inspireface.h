@@ -136,8 +136,9 @@ typedef struct HFSessionCustomParameter {
  * @brief Enumeration for face detection modes.
  */
 typedef enum HFDetectMode {
-    HF_DETECT_MODE_IMAGE,   ///< Image detection mode, always detect.
-    HF_DETECT_MODE_VIDEO,   ///< Video detection mode, face tracking.
+    HF_DETECT_MODE_IMAGE,                   ///< Image detection mode, always detect.
+    HF_DETECT_MODE_VIDEO,                   ///< Video detection mode, face tracking.
+    HF_DETECT_MODE_TRACK_BY_DETECTION,      ///< Video detection mode, face tracking.
 } HFDetectMode;
 
 /**
