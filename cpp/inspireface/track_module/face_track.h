@@ -154,14 +154,15 @@ public:
     std::vector<FaceObject> trackingFace;                   ///< Vector of FaceObjects currently being tracked.
 
 private:
+    const int max_detected_faces_;                          ///< Maximum number of faces to detect.
     std::vector<FaceObject> candidate_faces_;               ///< Vector of candidate FaceObjects for tracking.
     int detection_index_;                                   ///< Current detection index.
     int detection_interval_;                                ///< Interval between detections.
     int tracking_idx_;                                      ///< Current tracking index.
     double det_use_time_;                                   ///< Time used for detection.
     double track_total_use_time_;                           ///< Total time used for tracking.
-    const int max_detected_faces_;                          ///< Maximum number of faces to detect.
     int track_preview_size_;                                ///< Size of the tracking preview.
+    int filter_minimum_face_px_size = 24;                   ///< Minimum face pixel allowed to be retained (take the edge with the smallest Rect).
 
 private:
 
@@ -169,14 +170,13 @@ private:
     std::shared_ptr<FaceLandmark> m_landmark_predictor_;   ///< Shared pointer to the landmark predictor.
     std::shared_ptr<RNet> m_refine_net_;                   ///< Shared pointer to the RNet model.
     std::shared_ptr<FacePoseQuality> m_face_quality_;      ///< Shared pointer to the face pose quality assessor.
+    std::shared_ptr<BYTETracker> m_TbD_tracker_;           ///< Shared pointer to the Bytetrack.
 
-    std::shared_ptr<BYTETracker> m_TbD_tracker_;
-
-    int m_dynamic_detection_input_level_ = -1;
+    int m_dynamic_detection_input_level_ = -1;             ///< Detector size class for dynamic input.
 
     DetectMode m_mode_;
 
-
+    
 };
 
 }   // namespace hyper
