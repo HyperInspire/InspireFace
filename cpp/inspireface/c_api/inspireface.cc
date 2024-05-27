@@ -87,7 +87,7 @@ HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectM
     param.enable_ir_liveness = parameter.enable_ir_liveness;
     param.enable_recognition = parameter.enable_recognition;
     inspire::DetectMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
-    if (detectMode == HF_DETECT_MODE_VIDEO) {
+    if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
         detMode = inspire::DETECT_MODE_LIGHT_TRACK;
     } else if (detectMode == HF_DETECT_MODE_TRACK_BY_DETECTION) {
         detMode = inspire::DETECT_MODE_TRACK_BY_DETECT;
@@ -133,7 +133,7 @@ HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode de
         param.enable_interaction_liveness = true;
     }
     inspire::DetectMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
-    if (detectMode == HF_DETECT_MODE_VIDEO) {
+    if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
         detMode = inspire::DETECT_MODE_LIGHT_TRACK;
     } else if (detectMode == HF_DETECT_MODE_TRACK_BY_DETECTION) {
         detMode = inspire::DETECT_MODE_TRACK_BY_DETECT;
@@ -192,7 +192,7 @@ HResult HFSessionSetFaceTrackMode(HFSession session, HFDetectMode detectMode) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
     inspire::DetectMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
-    if (detectMode == HF_DETECT_MODE_VIDEO) {
+    if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
         detMode = inspire::DETECT_MODE_LIGHT_TRACK;
     }
     return ctx->impl.SetDetectMode(detMode);

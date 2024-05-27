@@ -10,6 +10,7 @@
 #include <opencv2/opencv.hpp>
 #include "middleware/costman.h"
 #include "middleware/model_archive/inspire_archive.h"
+#include "middleware/utils.h"
 #include "herror.h"
 
 namespace inspire {
@@ -332,6 +333,10 @@ void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
             Object obj;
             const auto box = boxes[i];
             obj.rect = Rect_<float>(box.x1, box.y1, box.x2 - box.x1, box.y2 - box.y1);
+            if (!isShortestSideGreaterThan<float>(obj.rect, filter_minimum_face_px_size)) {
+                // Filter too small face detection box
+                continue;
+            }
             obj.label = 0; // assuming all detections are faces
             obj.prob = box.score;
             objects.push_back(obj);
@@ -350,6 +355,11 @@ void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
         for (int i = 0; i < boxes.size(); i++) {
             bbox[i] = cv::Rect(cv::Point(static_cast<int>(boxes[i].x1), static_cast<int>(boxes[i].y1)),
                             cv::Point(static_cast<int>(boxes[i].x2), static_cast<int>(boxes[i].y2)));
+
+            if (!isShortestSideGreaterThan<float>(bbox[i], filter_minimum_face_px_size)) {
+                // Filter too small face detection box
+                continue;
+            }
             tracking_idx_ = tracking_idx_ + 1;
             FaceObject faceinfo(tracking_idx_, bbox[i], FaceLandmark::NUM_OF_LANDMARK);
             faceinfo.detect_bbox_ = bbox[i];

@@ -6,10 +6,10 @@
 void drawMode(cv::Mat& frame, HFDetectMode mode) {
     std::string modeText;
     switch (mode) {
-        case HF_DETECT_MODE_IMAGE:
+        case HF_DETECT_MODE_ALWAYS_DETECT:
             modeText = "Mode: Image Detection";
             break;
-        case HF_DETECT_MODE_VIDEO:
+        case HF_DETECT_MODE_LIGHT_TRACK:
             modeText = "Mode: Video Detection";
             break;
         case HF_DETECT_MODE_TRACK_BY_DETECTION:
