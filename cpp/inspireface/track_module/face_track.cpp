@@ -12,13 +12,22 @@
 
 namespace inspire {
 
-FaceTrack::FaceTrack(int max_detected_faces, int detection_interval, int track_preview_size, int dynamic_detection_input_level) :
-                                                                        max_detected_faces_(max_detected_faces),
-                                                                        detection_interval_(detection_interval),
-                                                                        track_preview_size_(track_preview_size),
-                                                                        m_dynamic_detection_input_level_(dynamic_detection_input_level){
+FaceTrack::FaceTrack(DetectMode mode, 
+                    int max_detected_faces, 
+                    int detection_interval, 
+                    int track_preview_size, 
+                    int dynamic_detection_input_level,
+                    int TbD_mode_fps) :
+                    m_mode_(mode), 
+                    max_detected_faces_(max_detected_faces),
+                    detection_interval_(detection_interval),
+                    track_preview_size_(track_preview_size),
+                    m_dynamic_detection_input_level_(dynamic_detection_input_level){
     detection_index_ = -1;
     tracking_idx_ = 0;
+    if (m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
+        m_TbD_tracker_ = std::make_shared<BYTETracker>(TbD_mode_fps, 30);
+    }
 }
 
 
@@ -213,13 +222,13 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     return true;
 }
 
-void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
+void FaceTrack::UpdateStream(CameraStream &image) {
     auto timeStart = (double) cv::getTickCount();
     detection_index_ += 1;
-    if (is_detect)
+    if (m_mode_ == DETECT_MODE_ALWAYS_DETECT)
         trackingFace.clear();
 //    LOGD("%d, %d", detection_index_, detection_interval_);
-    if (detection_index_ % detection_interval_ == 0 || is_detect) {
+    if (detection_index_ % detection_interval_ == 0 || m_mode_ == DETECT_MODE_ALWAYS_DETECT || m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
 //        Timer t_blacking;
         image.SetPreviewSize(track_preview_size_);
         cv::Mat image_detect = image.GetPreviewImage(true);
@@ -243,26 +252,68 @@ void FaceTrack::UpdateStream(CameraStream &image, bool is_detect) {
         auto timeStart = (double) cv::getTickCount();
         DetectFace(image_detect, image.GetPreviewScale());
         det_use_time_ = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
-//        LOGD("detect track");
+        INSPIRE_LOGD("detect track");
     }
 
     if (!candidate_faces_.empty()) {
-//        LOGD("push track face");
         for (int i = 0; i < candidate_faces_.size(); i++) {
             trackingFace.push_back(candidate_faces_[i]);
         }
         candidate_faces_.clear();
     }
 
-//    Timer t_track;
-    for (std::vector<FaceObject>::iterator iter = trackingFace.begin();
-         iter != trackingFace.end();) {
-        if (!TrackFace(image, *iter)) {
-            iter = trackingFace.erase(iter);
-        } else {
-            iter++;
+
+    if (m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
+        std::vector<Object> objects;
+        for (const auto& face : trackingFace) {
+            Object obj;
+            obj.rect = Rect_<float>(face.detect_bbox_.x, face.detect_bbox_.y, face.detect_bbox_.width, face.detect_bbox_.height);
+            obj.label = 0; // assuming all detections are faces
+            obj.prob = face.confidence_;
+            objects.push_back(obj);
+        }
+        std::vector<STrack> output_stracks = m_TbD_tracker_->update(objects);
+
+        // DEBUG
+        cv::Mat image_detect = image.GetPreviewImage(true);
+
+        for (int i = 0; i < output_stracks.size(); i++) {
+            auto& face = output_stracks[i];
+            Scalar s = m_TbD_tracker_->get_color(face.track_id);
+            cv::Rect rect = cv::Rect_<float>(face.tlwh[0], face.tlwh[1], face.tlwh[2], face.tlwh[3]);
+            putText(image_detect, format("%d", face.track_id), Point(rect.x, rect.y - 5), 0, 0.6, Scalar(0, 0, 255), 2, LINE_AA);
+            rectangle(image_detect, rect, s, 2);
+        }
+        cv::imshow("debug", image_detect);
+        cv::waitKey(0);
+
+        std::vector<FaceObject> new_trackingFace;
+        for (const auto& strack : output_stracks) {
+            for (auto& face : trackingFace) {
+                if (face.GetTrackingId() == strack.track_id) {
+                    face.detect_bbox_ = cv::Rect_<float>(strack.tlwh[0], strack.tlwh[1], strack.tlwh[2], strack.tlwh[3]);
+                    face.confidence_ = strack.score;
+                    TrackFace(image, face); // 保持现有的 TrackFace 处理
+                    new_trackingFace.push_back(face);
+                    break;
+                }
+            }
+        }
+        trackingFace = new_trackingFace;
+        
+    } else {
+        
+        for (std::vector<FaceObject>::iterator iter = trackingFace.begin();
+            iter != trackingFace.end();) {
+            if (!TrackFace(image, *iter)) {
+                iter = trackingFace.erase(iter);
+            } else {
+                iter++;
+            }
         }
     }
+        
+    
 
 //    LOGD("Track Cost %f", t_track.GetCostTimeUpdate());
     track_total_use_time_ = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;

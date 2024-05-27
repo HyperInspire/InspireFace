@@ -11,8 +11,21 @@
 #include "middleware/camera_stream/camera_stream.h"
 #include "quality/face_pose_quality.h"
 #include "middleware/model_archive/inspire_archive.h"
+#include "tracker_optional/bytetrack/BYTETracker.h"
 
 namespace inspire {
+
+
+/**
+ * @enum DetectMode
+ * @brief Enumeration for different detection modes.
+ */
+enum DetectMode {
+    DETECT_MODE_ALWAYS_DETECT = 0,      ///< Image detection mode: Always detect
+    DETECT_MODE_LIGHT_TRACK,            ///< Image detection mode: Light face track
+    DETECT_MODE_TRACK_BY_DETECT,        ///< Image detection mode: Tracking by detection
+
+};
 
 /**
  * @class FaceTrack
@@ -31,7 +44,7 @@ public:
      * @param track_preview_size Size of the preview for tracking.
      * @param dynamic_detection_input_level Change the detector input size.
      */
-    explicit FaceTrack(int max_detected_faces = 1, int detection_interval = 20, int track_preview_size = 192, int dynamic_detection_input_level = -1);
+    explicit FaceTrack(DetectMode mode, int max_detected_faces = 1, int detection_interval = 20, int track_preview_size = 192, int dynamic_detection_input_level = -1, int TbD_mode_fps=30);
 
     /**
      * @brief Configures the face tracking with models.
@@ -45,7 +58,7 @@ public:
      * @param image Camera stream to process.
      * @param is_detect Flag to enable/disable face detection.
      */
-    void UpdateStream(CameraStream &image, bool is_detect);
+    void UpdateStream(CameraStream &image);
 
     /**
      * @brief Sets the preview size for tracking.
@@ -157,7 +170,13 @@ private:
     std::shared_ptr<RNet> m_refine_net_;                   ///< Shared pointer to the RNet model.
     std::shared_ptr<FacePoseQuality> m_face_quality_;      ///< Shared pointer to the face pose quality assessor.
 
+    std::shared_ptr<BYTETracker> m_TbD_tracker_;
+
     int m_dynamic_detection_input_level_ = -1;
+
+    DetectMode m_mode_;
+
+
 };
 
 }   // namespace hyper
