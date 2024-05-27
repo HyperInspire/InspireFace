@@ -2,6 +2,25 @@
 #include "opencv2/opencv.hpp"
 #include "inspireface/c_api/inspireface.h"
 
+void drawMode(cv::Mat& frame, HFDetectMode mode) {
+    std::string modeText;
+    switch (mode) {
+        case HF_DETECT_MODE_IMAGE:
+            modeText = "Mode: Image Detection";
+            break;
+        case HF_DETECT_MODE_VIDEO:
+            modeText = "Mode: Video Detection";
+            break;
+        case HF_DETECT_MODE_TRACK_BY_DETECTION:
+            modeText = "Mode: Track by Detection";
+            break;
+        default:
+            modeText = "Mode: Unknown";
+            break;
+    }
+    cv::putText(frame, modeText, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 2);
+}
+
 int main(int argc, char* argv[]) {
     // Check whether the number of parameters is correct
     if (argc != 3) {
@@ -26,7 +45,7 @@ int main(int argc, char* argv[]) {
     // Enable the functions in the pipeline: mask detection, live detection, and face quality detection
     HOption option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     // Video or frame sequence mode uses VIDEO-MODE, which is face detection with tracking
-    HFDetectMode detMode = HF_DETECT_MODE_VIDEO;
+    HFDetectMode detMode = HF_DETECT_MODE_TRACK_BY_DETECTION;
     // Maximum number of faces detected
     HInt32 maxDetectNum = 50;
     // Handle of the current face SDK algorithm context
@@ -94,25 +113,34 @@ int main(int argc, char* argv[]) {
 
         // Copy a new image to draw
         cv::Mat draw = frame.clone();
+
+        // Draw detection mode on the frame
+        drawMode(draw, detMode);
+
         for (int index = 0; index < faceNum; ++index) {
-            std::cout << "========================================" << std::endl;
-            std::cout << "Process face index: " << index << std::endl;
+            // std::cout << "========================================" << std::endl;
+            // std::cout << "Process face index: " << index << std::endl;
             // Use OpenCV's Rect to receive face bounding boxes
             auto rect = cv::Rect(multipleFaceData.rects[index].x, multipleFaceData.rects[index].y,
                                  multipleFaceData.rects[index].width, multipleFaceData.rects[index].height);
             cv::rectangle(draw, rect, cv::Scalar(0, 100, 255), 5);
 
             // Print FaceID, In VIDEO-MODE it is fixed, but it may be lost
-            std::cout << "FaceID: " << multipleFaceData.trackIds[index] << std::endl;
+            auto trackId = multipleFaceData.trackIds[index];
+            // std::cout << "FaceID: " << trackId << std::endl;
 
             // Print Head euler angle, It can often be used to judge the quality of a face by the Angle of the head
-            std::cout << "Roll: " << multipleFaceData.angles.roll[index]
-                      << ", Yaw: " << multipleFaceData.angles.yaw[index]
-                      << ", Pitch: " << multipleFaceData.angles.pitch[index] << std::endl;
+            // std::cout << "Roll: " << multipleFaceData.angles.roll[index]
+            //           << ", Yaw: " << multipleFaceData.angles.yaw[index]
+            //           << ", Pitch: " << multipleFaceData.angles.pitch[index] << std::endl;
+
+            // Add TrackID to the drawing
+            cv::putText(draw, "ID: " + std::to_string(trackId), cv::Point(rect.x, rect.y - 10),
+                        cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
         }
 
-       cv::imshow("w", draw);
-       cv::waitKey(1);
+        cv::imshow("w", draw);
+        cv::waitKey(1);
 
         // Write the frame into the file
         outputVideo.write(draw);
