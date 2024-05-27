@@ -5,6 +5,8 @@
 #include "face_track.h"
 #include "log.h"
 #include "landmark/mean_shape.h"
+#include <algorithm>
+#include <cstddef>
 #include <opencv2/opencv.hpp>
 #include "middleware/costman.h"
 #include "middleware/model_archive/inspire_archive.h"
@@ -150,7 +152,6 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
             face.setTransMatrix(trans_m);
             face.EnableTracking();
 //            LOGD("ready face TrackFace state %d  ", face.TrackingState());
-
         }
     }
 
@@ -225,7 +226,7 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
 void FaceTrack::UpdateStream(CameraStream &image) {
     auto timeStart = (double) cv::getTickCount();
     detection_index_ += 1;
-    if (m_mode_ == DETECT_MODE_ALWAYS_DETECT)
+    if (m_mode_ == DETECT_MODE_ALWAYS_DETECT || m_mode_ == DETECT_MODE_TRACK_BY_DETECT)
         trackingFace.clear();
 //    LOGD("%d, %d", detection_index_, detection_interval_);
     if (detection_index_ % detection_interval_ == 0 || m_mode_ == DETECT_MODE_ALWAYS_DETECT || m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
@@ -252,7 +253,6 @@ void FaceTrack::UpdateStream(CameraStream &image) {
         auto timeStart = (double) cv::getTickCount();
         DetectFace(image_detect, image.GetPreviewScale());
         det_use_time_ = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
-        INSPIRE_LOGD("detect track");
     }
 
     if (!candidate_faces_.empty()) {
@@ -262,57 +262,14 @@ void FaceTrack::UpdateStream(CameraStream &image) {
         candidate_faces_.clear();
     }
 
-
-    if (m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
-        std::vector<Object> objects;
-        for (const auto& face : trackingFace) {
-            Object obj;
-            obj.rect = Rect_<float>(face.detect_bbox_.x, face.detect_bbox_.y, face.detect_bbox_.width, face.detect_bbox_.height);
-            obj.label = 0; // assuming all detections are faces
-            obj.prob = face.confidence_;
-            objects.push_back(obj);
-        }
-        std::vector<STrack> output_stracks = m_TbD_tracker_->update(objects);
-
-        // DEBUG
-        cv::Mat image_detect = image.GetPreviewImage(true);
-
-        for (int i = 0; i < output_stracks.size(); i++) {
-            auto& face = output_stracks[i];
-            Scalar s = m_TbD_tracker_->get_color(face.track_id);
-            cv::Rect rect = cv::Rect_<float>(face.tlwh[0], face.tlwh[1], face.tlwh[2], face.tlwh[3]);
-            putText(image_detect, format("%d", face.track_id), Point(rect.x, rect.y - 5), 0, 0.6, Scalar(0, 0, 255), 2, LINE_AA);
-            rectangle(image_detect, rect, s, 2);
-        }
-        cv::imshow("debug", image_detect);
-        cv::waitKey(0);
-
-        std::vector<FaceObject> new_trackingFace;
-        for (const auto& strack : output_stracks) {
-            for (auto& face : trackingFace) {
-                if (face.GetTrackingId() == strack.track_id) {
-                    face.detect_bbox_ = cv::Rect_<float>(strack.tlwh[0], strack.tlwh[1], strack.tlwh[2], strack.tlwh[3]);
-                    face.confidence_ = strack.score;
-                    TrackFace(image, face); // 保持现有的 TrackFace 处理
-                    new_trackingFace.push_back(face);
-                    break;
-                }
-            }
-        }
-        trackingFace = new_trackingFace;
-        
-    } else {
-        
-        for (std::vector<FaceObject>::iterator iter = trackingFace.begin();
-            iter != trackingFace.end();) {
-            if (!TrackFace(image, *iter)) {
-                iter = trackingFace.erase(iter);
-            } else {
-                iter++;
-            }
+    for (std::vector<FaceObject>::iterator iter = trackingFace.begin();
+        iter != trackingFace.end();) {
+        if (!TrackFace(image, *iter)) {
+            iter = trackingFace.erase(iter);
+        } else {
+            iter++;
         }
     }
-        
     
 
 //    LOGD("Track Cost %f", t_track.GetCostTimeUpdate());
@@ -365,25 +322,47 @@ void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
 //    }
 //    cv::imshow("w", input);
 //    cv::waitKey(0);
-    std::vector<cv::Rect> bbox;
-    bbox.resize(boxes.size());
-    for (int i = 0; i < boxes.size(); i++) {
-        bbox[i] = cv::Rect(cv::Point(static_cast<int>(boxes[i].x1), static_cast<int>(boxes[i].y1)),
-                           cv::Point(static_cast<int>(boxes[i].x2), static_cast<int>(boxes[i].y2)));
-        tracking_idx_ = tracking_idx_ + 1;
-        FaceObject faceinfo(tracking_idx_, bbox[i], FaceLandmark::NUM_OF_LANDMARK);
-        faceinfo.detect_bbox_ = bbox[i];
-
-        // Control that the number of faces detected does not exceed the maximum limit
-        if (candidate_faces_.size() < max_detected_faces_) {
+    if (m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
+        std::vector<Object> objects;
+        auto num_of_effective = std::min(boxes.size(), (size_t )max_detected_faces_);
+        for (size_t i = 0; i < num_of_effective; i++) {
+            Object obj;
+            const auto box = boxes[i];
+            obj.rect = Rect_<float>(box.x1, box.y1, box.x2 - box.x1, box.y2 - box.y1);
+            obj.label = 0; // assuming all detections are faces
+            obj.prob = box.score;
+            objects.push_back(obj);
+        }
+        vector<STrack> output_stracks = m_TbD_tracker_->update(objects);
+        for (const auto &st_track : output_stracks) {
+            cv::Rect rect = cv::Rect_<float>(st_track.tlwh[0], st_track.tlwh[1], st_track.tlwh[2], st_track.tlwh[3]);
+            FaceObject faceinfo(st_track.track_id, rect, FaceLandmark::NUM_OF_LANDMARK);
+            faceinfo.detect_bbox_ = rect;
             candidate_faces_.push_back(faceinfo);
-        } else {
-            // If the maximum limit is exceeded, you can choose to discard the currently detected face or choose the face to discard according to the policy
-            // For example, face confidence can be compared and faces with lower confidence can be discarded
-            // Take the example of simply discarding the last face
-            candidate_faces_.pop_back();
+        }
+        
+    } else {
+        std::vector<cv::Rect> bbox;
+        bbox.resize(boxes.size());
+        for (int i = 0; i < boxes.size(); i++) {
+            bbox[i] = cv::Rect(cv::Point(static_cast<int>(boxes[i].x1), static_cast<int>(boxes[i].y1)),
+                            cv::Point(static_cast<int>(boxes[i].x2), static_cast<int>(boxes[i].y2)));
+            tracking_idx_ = tracking_idx_ + 1;
+            FaceObject faceinfo(tracking_idx_, bbox[i], FaceLandmark::NUM_OF_LANDMARK);
+            faceinfo.detect_bbox_ = bbox[i];
+
+            // Control that the number of faces detected does not exceed the maximum limit
+            if (candidate_faces_.size() < max_detected_faces_) {
+                candidate_faces_.push_back(faceinfo);
+            } else {
+                // If the maximum limit is exceeded, you can choose to discard the currently detected face or choose the face to discard according to the policy
+                // For example, face confidence can be compared and faces with lower confidence can be discarded
+                // Take the example of simply discarding the last face
+                candidate_faces_.pop_back();
+            }
         }
     }
+    
 }
 
 int FaceTrack::Configuration(inspire::InspireArchive &archive) {

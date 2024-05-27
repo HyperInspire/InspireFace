@@ -26,7 +26,7 @@ int32_t FaceContext::Configuration(DetectMode detect_mode, int32_t max_detect_fa
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
 
-    m_face_track_ = std::make_shared<FaceTrack>(m_detect_mode_, m_max_detect_face_, 20, 192, detect_level_px);
+    m_face_track_ = std::make_shared<FaceTrack>(m_detect_mode_, m_max_detect_face_, 20, 640, detect_level_px);
     m_face_track_->Configuration(INSPIRE_LAUNCH->getMArchive());
     // SetDetectMode(m_detect_mode_);
 
