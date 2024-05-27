@@ -2,7 +2,6 @@
 // Created by Tunm-Air13 on 2023/9/7.
 //
 #pragma once
-#include <sys/_types/_int32_t.h>
 #ifndef HYPERFACEREPO_FACE_CONTEXT_H
 #define HYPERFACEREPO_FACE_CONTEXT_H
 
