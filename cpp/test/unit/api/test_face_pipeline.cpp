@@ -15,7 +15,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
         parameter.enable_liveness = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -75,7 +75,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
         parameter.enable_mask_detect = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -132,7 +132,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
     SECTION("face quality") {
         HResult ret;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HInt32 option = HF_ENABLE_QUALITY;
         HFSession session;
         ret = HFCreateInspireFaceSessionOptional(option, detMode, 3, -1, -1, &session);

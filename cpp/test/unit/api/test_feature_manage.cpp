@@ -17,7 +17,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -121,7 +121,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -169,7 +169,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -323,7 +323,7 @@ TEST_CASE("test_SearchTopK", "[feature_search_top_k]") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -470,7 +470,7 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -565,7 +565,7 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         HPath path = modelPath.c_str();
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -658,7 +658,7 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         HPath path = modelPath.c_str();
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -787,7 +787,7 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         HPath path = modelPath.c_str();
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3,  -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
@@ -894,7 +894,7 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         HPath path = modelPath.c_str();
         HFSessionCustomParameter parameter = {0};
         parameter.enable_recognition = 1;
-        HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3,-1, -1, &session);
         REQUIRE(ret == HSUCCEED);
