@@ -19,7 +19,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
         HFFeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -123,7 +123,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
         HFFeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -171,7 +171,7 @@ TEST_CASE("test_FeatureManage", "[feature_manage]") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
 
         // Face track
@@ -325,7 +325,7 @@ TEST_CASE("test_SearchTopK", "[feature_search_top_k]") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
         HFFeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -472,7 +472,7 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
         HFFeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -567,7 +567,7 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
         HFFeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -660,7 +660,7 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
         HFFeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -789,7 +789,7 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3,  -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
         HFFeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");
@@ -896,7 +896,7 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
         parameter.enable_recognition = 1;
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3,-1, -1, &session);
         REQUIRE(ret == HSUCCEED);
         HFFeatureHubConfiguration configuration = {0};
         auto dbPath = GET_SAVE_DATA(".test");

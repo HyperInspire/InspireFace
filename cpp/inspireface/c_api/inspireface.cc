@@ -76,7 +76,7 @@ HResult HFReleaseInspireFaceSession(HFSession handle) {
 }
 
 
-HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectMode detectMode, HInt32 maxDetectFaceNum, HFSession *handle) {
+HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectMode detectMode, HInt32 maxDetectFaceNum, HInt32 detectPixelLevel, HInt32 trackByDetectModeFPS, HFSession *handle) {
     inspire::ContextCustomParameter param;
     param.enable_mask_detect = parameter.enable_mask_detect;
     param.enable_age = parameter.enable_age;
@@ -94,7 +94,7 @@ HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectM
     }
 
     HF_FaceAlgorithmSession *ctx = new HF_FaceAlgorithmSession();
-    auto ret = ctx->impl.Configuration(detMode, maxDetectFaceNum, param);
+    auto ret = ctx->impl.Configuration(detMode, maxDetectFaceNum, param, detectPixelLevel, trackByDetectModeFPS);
     if (ret != HSUCCEED) {
         delete ctx;
         *handle = nullptr;
@@ -106,7 +106,7 @@ HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectM
     return ret;
 }
 
-HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode detectMode, HInt32 maxDetectFaceNum, HFSession *handle) {
+HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode detectMode, HInt32 maxDetectFaceNum, HInt32 detectPixelLevel, HInt32 trackByDetectModeFPS, HFSession *handle) {
     inspire::ContextCustomParameter param;
     if (customOption & HF_ENABLE_FACE_RECOGNITION) {
         param.enable_recognition = true;
@@ -140,7 +140,7 @@ HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode de
     }
     
     HF_FaceAlgorithmSession *ctx = new HF_FaceAlgorithmSession();
-    auto ret = ctx->impl.Configuration(detMode, maxDetectFaceNum, param);
+    auto ret = ctx->impl.Configuration(detMode, maxDetectFaceNum, param, detectPixelLevel, trackByDetectModeFPS);
     if (ret != HSUCCEED) {
         delete ctx;
         *handle = nullptr;

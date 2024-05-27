@@ -20,7 +20,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HFSessionCustomParameter parameter = {0};
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         spdlog::error("error ret :{}", ret);
         REQUIRE(ret == HSUCCEED);
 
@@ -76,7 +76,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HFSessionCustomParameter parameter = {0};
         HFDetectMode detMode = HF_DETECT_MODE_VIDEO;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
 
         auto expectedId = 1;
@@ -125,7 +125,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HFSessionCustomParameter parameter = {0};
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
 
         // Extract basic face information from photos
@@ -231,7 +231,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HFSessionCustomParameter parameter = {0};
         HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
 
         // Prepare an image

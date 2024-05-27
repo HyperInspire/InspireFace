@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     HInt32 maxDetectNum = 5;
     // Handle of the current face SDK algorithm context
     HFSession session = {0};
-    ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
+    ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, -1, -1, &session);
     if (ret != HSUCCEED) {
         std::cout << "Create FaceContext error: " << ret << std::endl;
         return ret;
