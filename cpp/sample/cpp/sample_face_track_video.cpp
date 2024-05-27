@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
-//    HFSessionSetTrackPreviewSize(session, 640);
+    HFSessionSetTrackPreviewSize(session, 640);
 
     // Open the video file
     cv::VideoCapture cap(videoPath);
