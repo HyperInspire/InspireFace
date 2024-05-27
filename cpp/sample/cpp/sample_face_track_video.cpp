@@ -1,4 +1,5 @@
 #include <iostream>
+#include "c_api/intypedef.h"
 #include "opencv2/opencv.hpp"
 #include "inspireface/c_api/inspireface.h"
 
@@ -48,9 +49,13 @@ int main(int argc, char* argv[]) {
     HFDetectMode detMode = HF_DETECT_MODE_TRACK_BY_DETECTION;
     // Maximum number of faces detected
     HInt32 maxDetectNum = 50;
-    // Handle of the current face SDK algorithm context
+    // Face detection image input level
+    HInt32 detectPixelLevel = 640;
+    // fps in tracking-by-detection mode
+    HInt32 trackByDetectFps = 20;
     HFSession session = {0};
-    ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
+    // Handle of the current face SDK algorithm context
+    ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, detectPixelLevel, trackByDetectFps, &session);
     if (ret != HSUCCEED) {
         std::cout << "Create FaceContext error: " << ret << std::endl;
         return ret;
