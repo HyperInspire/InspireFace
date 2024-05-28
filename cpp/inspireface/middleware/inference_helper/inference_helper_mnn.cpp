@@ -175,7 +175,6 @@ int32_t InferenceHelperMnn::Initialize(char* model_buffer, int model_size, std::
     scheduleConfig.backendConfig = &bnconfig;
 
     session_ = net_->createSession(scheduleConfig);
-//    LOG_INFO("fuck");
 //    LOG_INFO("-INPUT: {}", net_->getSessionInputAll(session_).size());
 //    PRINT("-INPUT: %lu", net_->getSessionInputAll(session_).size());
 //    LOGD("-INPUT: %lu", net_->getSessionInputAll(session_).size());
