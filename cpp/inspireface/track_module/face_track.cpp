@@ -360,7 +360,13 @@ void FaceTrack::DetectFace(const cv::Mat &input, float scale) {
                 // Filter too small face detection box
                 continue;
             }
-            tracking_idx_ = tracking_idx_ + 1;
+            if (m_mode_ == DETECT_MODE_ALWAYS_DETECT) {
+                // Always detect mode without assigning an id
+                tracking_idx_ = -1;
+            } else {
+                tracking_idx_ = tracking_idx_ + 1;
+            }
+            
             FaceObject faceinfo(tracking_idx_, bbox[i], FaceLandmark::NUM_OF_LANDMARK);
             faceinfo.detect_bbox_ = bbox[i];
 
@@ -470,6 +476,10 @@ int FaceTrack::InitFacePoseModel(InspireModel &model) {
 
 void FaceTrack::SetDetectThreshold(float value) {
     m_face_detector_->SetClsThreshold(value);
+}
+
+void FaceTrack::SetMinimumFacePxSize(float value) {
+    filter_minimum_face_px_size = value;
 }
 
 double FaceTrack::GetTrackTotalUseTime() const {
