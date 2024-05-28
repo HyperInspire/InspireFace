@@ -183,6 +183,17 @@ HResult HFSessionSetTrackPreviewSize(HFSession session, HInt32 previewSize) {
     return ctx->impl.SetTrackPreviewSize(previewSize);
 }
 
+HResult HFSessionSetFilterMinimumFacePixelSize(HFSession session, HInt32 minSize) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession* ) session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetTrackFaceMinimumSize(minSize);
+}
+
 HResult HFSessionSetFaceTrackMode(HFSession session, HFDetectMode detectMode) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
