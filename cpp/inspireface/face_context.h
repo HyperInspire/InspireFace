@@ -150,6 +150,13 @@ public:
     int32_t SetTrackPreviewSize(int32_t preview_size);
 
     /**
+     * @brief Filter the minimum face pixel size.
+     * @param minSize The minimum pixel value.
+     * @return int32_t Status code of the operation.
+     */
+    int32_t SetTrackFaceMinimumSize(int32_t minSize);
+
+    /**
      * @brief Sets the mode for face detection.
      * @param mode You can select mode for track or detect.
      * @return int32_t Status code of the operation.

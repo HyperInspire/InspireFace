@@ -266,8 +266,13 @@ int32_t FaceContext::SetDetectMode(DetectMode mode) {
     return HSUCCEED;
 }
 
-    int32_t FaceContext::SetTrackPreviewSize(const int32_t preview_size) {
+int32_t FaceContext::SetTrackPreviewSize(const int32_t preview_size) {
     m_face_track_->SetTrackPreviewSize(preview_size);
+    return HSUCCEED;
+}
+
+int32_t FaceContext::SetTrackFaceMinimumSize(int32_t minSize) {
+    m_face_track_->SetMinimumFacePxSize(minSize);
     return HSUCCEED;
 }
 

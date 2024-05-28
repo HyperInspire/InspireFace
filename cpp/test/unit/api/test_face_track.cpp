@@ -241,8 +241,6 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         REQUIRE(ret == HSUCCEED);
         BenchmarkRecord record(getBenchmarkRecordFile());
 
-        // Case: Execute the benchmark using the IMAGE mode
-        ret = HFSessionSetFaceTrackMode(session, HF_DETECT_MODE_ALWAYS_DETECT);
         REQUIRE(ret == HSUCCEED);
         HFMultipleFaceData multipleFaceData = {0};
         auto start = (double) cv::getTickCount();
@@ -255,15 +253,41 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         TEST_PRINT("<Benchmark> Face Detect -> Loop: {}, Total Time: {:.5f}ms, Average Time: {:.5f}ms", loop, cost, cost / loop);
         record.insertBenchmarkData("Face Detect", loop, cost, cost / loop);
 
-        // Case: Execute the benchmark using the VIDEO mode(Track)
-        ret = HFSessionSetFaceTrackMode(session, HF_DETECT_MODE_LIGHT_TRACK);
+        ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
-        multipleFaceData = {0};
-        start = (double) cv::getTickCount();
+
+        ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
+#else
+        TEST_PRINT("Skip the face detection benchmark test. To run it, you need to turn on the benchmark test.");
+#endif
+    }
+
+    SECTION("Face light track benchmark") {
+#ifdef ISF_ENABLE_BENCHMARK
+        int loop = 1000;
+        HResult ret;
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_LIGHT_TRACK;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
+        REQUIRE(ret == HSUCCEED);
+
+        // Prepare an image
+        HFImageStream imgHandle;
+        auto image = cv::imread(GET_DATA("data/bulk/kun.jpg"));
+        ret = CVImageToImageStream(image, imgHandle);
+        REQUIRE(ret == HSUCCEED);
+        BenchmarkRecord record(getBenchmarkRecordFile());
+
+        // Case: Execute the benchmark using the VIDEO mode(Track)
+        REQUIRE(ret == HSUCCEED);
+        HFMultipleFaceData multipleFaceData = {0};
+        auto start = (double) cv::getTickCount();
         for (int i = 0; i < loop; ++i) {
             ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         }
-        cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
+        auto cost = ((double) cv::getTickCount() - start) / cv::getTickFrequency() * 1000;
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
         TEST_PRINT("<Benchmark> Face Track -> Loop: {}, Total Time: {:.5f}ms, Average Time: {:.5f}ms", loop, cost, cost / loop);
@@ -275,8 +299,9 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
 #else
-        TEST_PRINT("Skip the face detection benchmark test. To run it, you need to turn on the benchmark test.");
+        TEST_PRINT("Skip the face light track benchmark test. To run it, you need to turn on the benchmark test.");
 #endif
+
     }
 
 }

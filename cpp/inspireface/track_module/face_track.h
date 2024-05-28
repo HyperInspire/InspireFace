@@ -149,6 +149,11 @@ public:
      * */
     void SetDetectThreshold(float value);
 
+    /**
+     * @brief Fix detect threshold
+     * */
+    void SetMinimumFacePxSize(float value);
+
 public:
 
     std::vector<FaceObject> trackingFace;                   ///< Vector of FaceObjects currently being tracked.
