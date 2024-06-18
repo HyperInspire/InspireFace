@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <vector>
 
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
+
 #include <Eigen/Core>
 #include <Eigen/Dense>
 typedef Eigen::Matrix<float, 1, 4, Eigen::RowMajor> DETECTBOX;
@@ -34,3 +36,5 @@ typedef struct t {
 
 //linear_assignment:
 typedef Eigen::Matrix<float, -1, -1, Eigen::RowMajor> DYNAMICM;
+
+#endif

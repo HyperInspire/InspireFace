@@ -1,5 +1,7 @@
 #include "STrack.h"
 
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
+
 STrack::STrack(vector<float> tlwh_, float score)
 {
 	_tlwh.resize(4);
@@ -190,3 +192,5 @@ void STrack::multi_predict(vector<STrack*> &stracks, byte_kalman::KalmanFilter &
 		kalman_filter.predict(stracks[i]->mean, stracks[i]->covariance);
 	}
 }
+
+#endif

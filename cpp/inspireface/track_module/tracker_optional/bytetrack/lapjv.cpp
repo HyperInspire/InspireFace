@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
 #include "lapjv.h"
 
 /** Column-reduction and reduction transfer for a dense cost matrix.
@@ -341,3 +341,5 @@ int lapjv_internal(
 	FREE(free_rows);
 	return ret;
 }
+
+#endif
