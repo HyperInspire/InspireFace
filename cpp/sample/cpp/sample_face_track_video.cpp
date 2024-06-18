@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     // Maximum number of faces detected
     HInt32 maxDetectNum = 5;
     // Face detection image input level
-    HInt32 detectPixelLevel = 160;
+    HInt32 detectPixelLevel = 640;
     // fps in tracking-by-detection mode
     HInt32 trackByDetectFps = 20;
     HFSession session = {0};
