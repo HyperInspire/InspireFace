@@ -8,6 +8,10 @@ If you require further information on tracking development branches, CI/CD proce
 
 Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=InspireFace) for commercial support, including obtaining and integrating higher accuracy models, as well as custom development.
 
+##  Top News
+
+**`2024-06-18`** Added face detection feature with tracking-by-detection mode.
+
 ## 1. Preparation
 ### 1.1. Clone 3rdparty
 
@@ -157,7 +161,7 @@ HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
 HInt32 maxDetectNum = 5;
 // Handle of the current face SDK algorithm context
 HFSession session = {0};
-ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, &session);
+ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, -1, -1, &session);
 if (ret != HSUCCEED) {
     std::cout << "Create FaceContext error: " << ret << std::endl;
     return ret;
