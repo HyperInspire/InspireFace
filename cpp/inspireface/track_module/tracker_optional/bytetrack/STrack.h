@@ -1,5 +1,5 @@
 #pragma once
-
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
 #include <opencv2/opencv.hpp>
 #include "kalmanFilter.h"
 
@@ -48,3 +48,5 @@ public:
 private:
 	byte_kalman::KalmanFilter kalman_filter;
 };
+
+#endif

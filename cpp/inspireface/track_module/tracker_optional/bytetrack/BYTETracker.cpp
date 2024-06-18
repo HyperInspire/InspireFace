@@ -1,6 +1,8 @@
 #include "BYTETracker.h"
 #include <fstream>
 
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
+
 BYTETracker::BYTETracker(int frame_rate, int track_buffer)
 {
 	track_thresh = 0.5;
@@ -239,3 +241,5 @@ vector<STrack> BYTETracker::update(const vector<Object>& objects)
 	}
 	return output_stracks;
 }
+
+#endif
