@@ -1,5 +1,6 @@
 #ifndef LAPJV_H
 #define LAPJV_H
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
 
 #define LARGE 1000000
 
@@ -60,4 +61,5 @@ extern int_t lapjv_internal(
 	const uint_t n, cost_t *cost[],
 	int_t *x, int_t *y);
 
+#endif
 #endif // LAPJV_H

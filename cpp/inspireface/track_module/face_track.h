@@ -11,7 +11,9 @@
 #include "middleware/camera_stream/camera_stream.h"
 #include "quality/face_pose_quality.h"
 #include "middleware/model_archive/inspire_archive.h"
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
 #include "tracker_optional/bytetrack/BYTETracker.h"
+#endif
 
 namespace inspire {
 
@@ -175,11 +177,12 @@ private:
     std::shared_ptr<FaceLandmark> m_landmark_predictor_;   ///< Shared pointer to the landmark predictor.
     std::shared_ptr<RNet> m_refine_net_;                   ///< Shared pointer to the RNet model.
     std::shared_ptr<FacePoseQuality> m_face_quality_;      ///< Shared pointer to the face pose quality assessor.
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
     std::shared_ptr<BYTETracker> m_TbD_tracker_;           ///< Shared pointer to the Bytetrack.
-
+#endif
     int m_dynamic_detection_input_level_ = -1;             ///< Detector size class for dynamic input.
 
-    DetectMode m_mode_;
+    DetectMode m_mode_;                                    ///< Detect mode
 
     
 };

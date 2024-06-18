@@ -2,6 +2,8 @@
 
 #include "STrack.h"
 
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
+
 struct Object
 {
     cv::Rect_<float> rect;
@@ -47,3 +49,5 @@ private:
 	vector<STrack> removed_stracks;
 	byte_kalman::KalmanFilter kalman_filter;
 };
+
+#endif

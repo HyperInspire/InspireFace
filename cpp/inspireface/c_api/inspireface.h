@@ -138,7 +138,8 @@ typedef struct HFSessionCustomParameter {
 typedef enum HFDetectMode {
     HF_DETECT_MODE_ALWAYS_DETECT,            ///< Image detection mode, always detect, applicable to images.
     HF_DETECT_MODE_LIGHT_TRACK,              ///< Video detection mode, face tracking, applicable to video streaming, front camera.
-    HF_DETECT_MODE_TRACK_BY_DETECTION,       ///< Video detection mode, face tracking, applicable to high resolution, monitoring, capturing.
+    HF_DETECT_MODE_TRACK_BY_DETECTION,       ///< Video detection mode, face tracking, applicable to high resolution, monitoring, capturing 
+                                             //   (You need a specific option turned on at compile time to use it).
 } HFDetectMode;
 
 /**
@@ -224,8 +225,8 @@ typedef struct HFMultipleFaceData {
     HInt32 detectedNum;                             ///< Number of faces detected.
     HFaceRect *rects;                               ///< Array of bounding rectangles for each face.
     HInt32 *trackIds;                               ///< Array of track IDs for each face.
-    HFFaceEulerAngle angles;                       ///< Euler angles for each face.
-    PHFFaceBasicToken tokens;                   ///< Tokens associated with each face.
+    HFFaceEulerAngle angles;                        ///< Euler angles for each face.
+    PHFFaceBasicToken tokens;                       ///< Tokens associated with each face.
 } HFMultipleFaceData, *PHFMultipleFaceData;
 
 /**
