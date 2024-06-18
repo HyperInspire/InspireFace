@@ -1,4 +1,5 @@
 #include "kalmanFilter.h"
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
 #include <Eigen/Cholesky>
 
 namespace byte_kalman
@@ -150,3 +151,5 @@ namespace byte_kalman
 		return square_maha;
 	}
 }
+
+#endif

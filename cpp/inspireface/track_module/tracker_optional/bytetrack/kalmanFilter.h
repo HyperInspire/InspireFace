@@ -2,6 +2,7 @@
 
 #include "dataType.h"
 
+#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
 namespace byte_kalman
 {
 	class KalmanFilter
@@ -29,3 +30,5 @@ namespace byte_kalman
 		float _std_weight_velocity;
 	};
 }
+
+#endif
