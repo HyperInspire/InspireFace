@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 project(InspireFaceSDK)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
@@ -6,6 +6,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
+option(ISF_ENABLE_TRACKING_BY_DETECTION "Use the tracking-by-detection mode." OFF)
+
+if(ISF_ENABLE_TRACKING_BY_DETECTION)
+    add_definitions("-DISF_ENABLE_TRACKING_BY_DETECTION")
+    find_package(Eigen3 REQUIRED)
+    include_directories(${EIGEN3_INCLUDE_DIRS})
+endif()
+
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
@@ -18,6 +26,11 @@ endif()
 
 # OpenCV
 set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
+
+if(ISF_ENABLE_TRACKING_BY_DETECTION)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} Eigen3::Eigen)
+endif()
+
 
 # SQLite3
 set(SOURCE_FILES ${SOURCE_FILES} ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite3.c)   # Add SQLite3 C_API file
@@ -110,6 +123,10 @@ message(STATUS "InspireFace Core:")
 message(STATUS "\t Version: ${INSPIRE_FACE_VERSION_MAJOR}.${INSPIRE_FACE_VERSION_MINOR}.${INSPIRE_FACE_VERSION_PATCH}")
 message(STATUS "\t MNN_INCLUDE_DIRS: ${MNN_INCLUDE_DIRS}")
 message(STATUS "\t MNN_LIBS: ${MNN_LIBS}")
+message(STATUS "\t ENABLE_TRACKING_BY_DETECTION: ${ISF_ENABLE_TRACKING_BY_DETECTION}")
+if(ISF_ENABLE_TRACKING_BY_DETECTION)
+    message(STATUS "\t EIGEN3_PATH: ${EIGEN3_INCLUDE_DIRS}")  
+endif()
 message(STATUS "\t ISF_BUILD_SHARED_LIBS: ${ISF_BUILD_SHARED_LIBS}")
 message(STATUS "\t ISF_ENABLE_RKNN: ${ISF_ENABLE_RKNN}")
 if (ISF_ENABLE_RKNN)
