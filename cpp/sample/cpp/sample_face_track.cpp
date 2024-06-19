@@ -32,14 +32,19 @@ int main(int argc, char* argv[]) {
     HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
     // Maximum number of faces detected
     HInt32 maxDetectNum = 5;
+    // Face detection image input level
+    HInt32 detectPixelLevel = 640;
     // Handle of the current face SDK algorithm context
     HFSession session = {0};
-    ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, -1, -1, &session);
+    ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, detectPixelLevel, -1, &session);
     if (ret != HSUCCEED) {
         std::cout << "Create FaceContext error: " << ret << std::endl;
         return ret;
     }
 
+    HFSessionSetTrackPreviewSize(session, 640);
+    HFSessionSetFilterMinimumFacePixelSize(session, 32);
+    
     // Load a image
     cv::Mat image = cv::imread(sourcePath);
     if (image.empty()) {
