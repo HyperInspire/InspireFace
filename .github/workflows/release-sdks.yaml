@@ -251,16 +251,16 @@ jobs:
       # Step 4: Download and Extract Android NDK
       - name: Download and Extract Android NDK
         run: |
-          mkdir -p /opt/android-ndk-r19c
-          wget -qO /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-r19c-linux-x86_64.zip
+          mkdir -p /opt/android-ndk-r18b
+          wget -qO /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip
           unzip /tmp/android-ndk.zip -d /opt
           rm /tmp/android-ndk.zip
 
       # Step 5: Install Android NDK Environment Variables
       - name: Set Android NDK Environment Variables
         run: |
-          echo "ANDROID_NDK=/opt/android-ndk-r19c" >> $GITHUB_ENV
-          echo "PATH=/opt/android-ndk-r19c/bin:${PATH}" >> $GITHUB_ENV
+          echo "ANDROID_NDK=/opt/android-ndk-r18b" >> $GITHUB_ENV
+          echo "PATH=/opt/android-ndk-r18b/bin:${PATH}" >> $GITHUB_ENV
 
       # Step 6: Download and Extract OpenCV Android SDK
       - name: Download and Extract OpenCV Android SDK

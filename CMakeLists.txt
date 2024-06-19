@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 project(InspireFace)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -8,8 +8,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 # Current version
 set(INSPIRE_FACE_VERSION_MAJOR 1)
-set(INSPIRE_FACE_VERSION_MINOR 0)
-set(INSPIRE_FACE_VERSION_PATCH 3)
+set(INSPIRE_FACE_VERSION_MINOR 1)
+set(INSPIRE_FACE_VERSION_PATCH 0)
 
 # Converts the version number to a string
 string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
@@ -141,14 +141,24 @@ else()
     find_package(OpenCV REQUIRED)
 endif ()
 
+set(ISF_LINUX_MNN_CUDA "" CACHE STRING "Path to CUDA directory")
 
 if (ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
-    # Use MNN Cuda
     message("Global MNN CUDA device inference")
     add_definitions("-DISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA")
-    set(MNN_INCLUDE_DIRS ${ISF_LINUX_MNN_CUDA}/include)
-    link_directories(${ISF_LINUX_MNN_CUDA}/lib)
-    set(MNN_LIBS MNN)
+    # Use MNN Cuda
+    if (NOT DEFINED ISF_LINUX_MNN_CUDA)
+        # MNN Options
+        set(MNN_CUDA ON)
+        add_subdirectory(${ISF_THIRD_PARTY_DIR}/MNN EXCLUDE_FROM_ALL)
+        set(MNN_INCLUDE_DIRS "${ISF_THIRD_PARTY_DIR}/MNN/include")
+        set(MNN_LIBS MNN)
+    else()
+        message(ISF_LINUX_MNN_CUDA=${ISF_LINUX_MNN_CUDA})
+        set(MNN_INCLUDE_DIRS ${ISF_LINUX_MNN_CUDA}/include)
+        link_directories(${ISF_LINUX_MNN_CUDA}/)
+        set(MNN_LIBS MNN)
+    endif()
 
 elseif(DEFINED MNN_STATIC_PATH)
     message("Using static MNN from specified path: ${MNN_STATIC_PATH}")
