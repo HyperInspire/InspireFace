@@ -677,6 +677,11 @@ HYPER_CAPI_EXPORT extern HResult HFLogDisable();
 HYPER_CAPI_EXPORT extern void HFDeBugImageStreamImShow(HFImageStream streamHandle);
 
 
+HYPER_CAPI_EXPORT extern HResult HFDeBugImageStreamDecodeSave(HFImageStream streamHandle, HPath savePath);
+
+
+
+
 #ifdef __cplusplus
 }
 #endif
