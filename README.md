@@ -104,6 +104,17 @@ export ARM_CROSS_COMPILE_TOOLCHAIN=YOUR_DIR/gcc-arm-8.3-2019.03-x86_64-arm-linux
 bash command/build_cross_rv1109rv1126_armhf.sh
 ```
 After the compilation is complete, you can find the compiled results in the `build/inspireface-linux-armv7-rv1109rv1126-armhf` directory.
+
+### 2.3. iOS Compilation
+
+To compile for iOS, ensure you are using a Mac device. The script will automatically download third-party dependencies into the `.macos_cache` directory.
+
+```
+bash command/build_ios.sh
+```
+
+After the compilation is complete, `inspireface.framework` will be placed in the `build/inspireface-ios` directory.
+
 ### 2.3. Supported Platforms and Architectures
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
 
