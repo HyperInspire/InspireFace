@@ -115,7 +115,7 @@ bash command/build_ios.sh
 
 After the compilation is complete, `inspireface.framework` will be placed in the `build/inspireface-ios` directory.
 
-### 2.3. Supported Platforms and Architectures
+### 2.4. Supported Platforms and Architectures
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
 
 | **No.** | **Operating System** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** |
@@ -135,7 +135,7 @@ We have completed the adaptation and testing of the software across various oper
 - Pass unit tests on physical devices.
 - Meet all performance benchmarks in tests.
 
-#### 2.4. Multi-platform compilation using Docker
+### 2.5. Multi-platform compilation using Docker
 
 We offer a method for rapid multi-platform compilation using Docker, provided that Docker is installed beforehand, and the appropriate commands are executed:
 ```Bash
