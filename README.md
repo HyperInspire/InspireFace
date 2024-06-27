@@ -10,6 +10,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## ChangeLogs
 
+**`2024-06-27`** Verified iOS usability and fixed some bugs.
+
 **`2024-06-18`** Added face detection feature with tracking-by-detection mode.
 
 **`2024-06-01`** Adapted for accelerated inference on CUDA-enabled devices.
