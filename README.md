@@ -8,7 +8,9 @@ If you require further information on tracking development branches, CI/CD proce
 
 Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=InspireFace) for commercial support, including obtaining and integrating higher accuracy models, as well as custom development.
 
-## ChangeLogs
+## Change Logs
+
+**`2024-07-02`** Fixed several bugs in the face detector with multi-level input.
 
 **`2024-06-27`** Verified iOS usability and fixed some bugs.
 
@@ -69,6 +71,9 @@ The '3rdparty' directory already includes the MNN library and specifies a partic
         - Prepare the cross-compilation toolchain in advance, such as gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
 - CUDA (version 10.1 or higher)
     - GPU-based inference requires installing NVIDIA's CUDA dependencies on the device.
+- Eigen3
+    - If you need to use the tracking-by-detection feature, you must have Eigen3 installed in advance.
+
 - RKNN
     - Adjust and select versions currently supported for specific requirements.
 
@@ -357,7 +362,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 
 | Name | Supported Devices | Note | Link |
 | --- | --- | --- | --- |
-| Pikachu | CPU | Lightweight edge-side model | [GDrive](https://drive.google.com/file/d/1i4uC-dZTQxdVgn2rP0ZdfJTMkJIXgYY4/view?usp=drive_link) |
-| Megatron | CPU, GPU | Local or server-side model | [GDrive](https://drive.google.com/file/d/1i4uC-dZTQxdVgn2rP0ZdfJTMkJIXgYY4/view?usp=drive_link) |
-| Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | [GDrive](https://drive.google.com/file/d/1i4uC-dZTQxdVgn2rP0ZdfJTMkJIXgYY4/view?usp=drive_link) |
+| Pikachu | CPU | Lightweight edge-side model | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
+| Megatron | CPU, GPU | Local or server-side model | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
+| Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
 
