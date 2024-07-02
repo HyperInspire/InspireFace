@@ -44,7 +44,7 @@ using DatabaseConfiguration = struct DatabaseConfiguration {
     int feature_block_num = 20;
     bool enable_use_db = false;                    ///< Whether to enable data persistence.
     std::string db_path;                           ///< Path to the database file.
-    float recognition_threshold = 0.46f;           ///< Face search threshold
+    float recognition_threshold = 0.48f;           ///< Face search threshold
     SearchMode search_mode = SEARCH_MODE_EAGER;    ///< Search mode
 };
 
