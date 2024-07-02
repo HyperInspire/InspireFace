@@ -55,7 +55,7 @@ cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DISF_ENABLE_TEST_EVALUATION=OFF \
   -DISF_BUILD_SHARED_LIBS=ON ${SCRIPT_DIR}
 
-make -j4
+make -j1
 make install
 
 move_install_files "$(pwd)"
