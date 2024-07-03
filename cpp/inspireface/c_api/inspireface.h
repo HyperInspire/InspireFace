@@ -10,7 +10,7 @@
 #include "herror.h"
 
 #if defined(_WIN32)
-#ifdef HYPER_BUILD_SHARED_LIB
+#ifdef ISF_BUILD_SHARED_LIBS
 #define HYPER_CAPI_EXPORT __declspec(dllexport)
 #else
 #define HYPER_CAPI_EXPORT
@@ -297,6 +297,23 @@ HYPER_CAPI_EXPORT extern HResult HFCopyFaceBasicToken(HFFaceBasicToken token, HP
  *         if the operation was successful, or an error code if it failed.
  */
 HYPER_CAPI_EXPORT extern HResult HFGetFaceBasicTokenSize(HPInt32 bufferSize);
+
+/**
+ * @brief Retrieve the number of dense facial landmarks.
+ * @param num Number of dense facial landmarks
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFGetNumOfFaceDenseLandmark(HPInt32 num);
+
+/**
+ * @brief When you pass in a valid facial token, you can retrieve a set of dense facial landmarks. 
+ *          The memory for the dense landmarks must be allocated by you.
+ * @param singleFace Basic token representing a single face.
+ * @param landmarks Pre-allocated memory address of the array for 2D floating-point coordinates.
+ * @param num Number of landmark points
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, HPoint2f* landmarks, HInt32 num);
 
 /************************************************************************
 * Face Recognition
@@ -617,6 +634,18 @@ HYPER_CAPI_EXPORT extern HResult HFGetFaceQualityConfidence(HFSession session, P
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFFaceQualityDetect(HFSession session, HFFaceBasicToken singleFace, HFloat *confidence);
+
+
+/**
+ * @brief Some facial states in the face interaction module.
+ */
+typedef struct HFFaceIntereactionResult {
+    HInt32 num;                             ///< Number of faces detected.
+    HPFloat leftEyeStatusConfidence;        ///< Left eye state: confidence close to 1 means open, close to 0 means closed.
+    HPFloat rightEyeStatusConfidence;       ///< Right eye state: confidence close to 1 means open, close to 0 means closed.
+} HFFaceIntereactionResult, *PHFFaceIntereactionResult;
+
+HYPER_CAPI_EXPORT extern HResult HFGetFaceIntereactionResult(HFSession session, PHFFaceIntereactionResult result);
 
 /************************************************************************
 * System Function
