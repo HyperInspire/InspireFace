@@ -62,6 +62,8 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     m_yaw_results_cache_.clear();
     m_pitch_results_cache_.clear();
     m_quality_score_results_cache_.clear();
+    m_react_left_eye_results_cache_.clear();
+    m_react_right_eye_results_cache_.clear();
     if (m_face_track_ == nullptr) {
         return HERR_SESS_TRACKER_FAILURE;
     }
@@ -129,6 +131,8 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
     std::lock_guard<std::mutex> lock(m_mtx_);
     m_mask_results_cache_.resize(faces.size(), -1.0f);
     m_rgb_liveness_results_cache_.resize(faces.size(), -1.0f);
+    m_react_left_eye_results_cache_.resize(faces.size(), -1.0f);
+    m_react_right_eye_results_cache_.resize(faces.size(), -1.0f);
     for (int i = 0; i < faces.size(); ++i) {
         const auto &face = faces[i];
         // RGB Liveness Detect
@@ -160,6 +164,16 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
             if (ret != HSUCCEED) {
                 return ret;
             }
+        }
+        // Face interaction
+        if (param.enable_interaction_liveness) {
+            auto ret = m_face_pipeline_->Process(image, face, PROCESS_INTERACTION);
+            if (ret != HSUCCEED) {
+                return ret;
+            }
+            // Get eyes status
+            m_react_left_eye_results_cache_[i] = m_face_pipeline_->eyesStatusCache[0];
+            m_react_right_eye_results_cache_[i] = m_face_pipeline_->eyesStatusCache[1];
         }
 
     }
@@ -212,6 +226,13 @@ const std::vector<float>& FaceContext::GetFaceQualityScoresResultsCache() const 
     return m_quality_score_results_cache_;
 }
 
+const std::vector<float>& FaceContext::GetFaceInteractionLeftEyeStatusCache() const {
+    return m_react_left_eye_results_cache_;
+}
+
+const std::vector<float>& FaceContext::GetFaceInteractionRightEyeStatusCache() const {
+    return m_react_right_eye_results_cache_;
+}
 
 const Embedded& FaceContext::GetFaceFeatureCache() const {
     return m_face_feature_cache_;

@@ -281,6 +281,33 @@ HResult HFGetFaceBasicTokenSize(HPInt32 bufferSize) {
     return HSUCCEED;
 }
 
+HResult HFGetNumOfFaceDenseLandmark(HPInt32 num) {
+    *num = 106;
+    return HSUCCEED;
+}
+
+HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, HPoint2f* landmarks, HInt32 num) {
+    if (num != 106) {
+        return HERR_SESS_LANDMARK_NUM_NOT_MATCH;
+    }
+    inspire::FaceBasicData data;
+    data.dataSize = singleFace.size;
+    data.data = singleFace.data;
+    HyperFaceData face = {0};
+    HInt32 ret;
+    ret = DeserializeHyperFaceData((char* )data.data, data.dataSize, face);
+    if (ret != HSUCCEED) {
+        return ret;
+    }
+    for (size_t i = 0; i < num; i++)
+    {
+        landmarks[i].x = face.densityLandmark[i].x;
+        landmarks[i].y = face.densityLandmark[i].y;
+    }
+    
+    return HSUCCEED;
+}
+
 HResult HFFeatureHubFaceSearchThresholdSetting(float threshold) {
     FEATURE_HUB->SetRecognitionThreshold(threshold);
     return HSUCCEED;
@@ -549,7 +576,7 @@ HResult HFMultipleFacePipelineProcessOptional(HFSession session, HFImageStream s
     }
     if (customOption & HF_ENABLE_INTERACTION) {
         param.enable_interaction_liveness = true;
-    }
+    } 
 
 
     HResult ret;
@@ -631,6 +658,21 @@ HResult HFFaceQualityDetect(HFSession session, HFFaceBasicToken singleFace, HFlo
 
     return ret;
 
+}
+
+HResult HFGetFaceIntereactionResult(HFSession session, PHFFaceIntereactionResult result) {
+     if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession* ) session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    result->num = ctx->impl.GetFaceInteractionLeftEyeStatusCache().size();
+    result->leftEyeStatusConfidence = (HFloat* )ctx->impl.GetFaceInteractionLeftEyeStatusCache().data();
+    result->rightEyeStatusConfidence = (HFloat* )ctx->impl.GetFaceInteractionRightEyeStatusCache().data();
+
+    return HSUCCEED;
 }
 
 HResult HFFeatureHubGetFaceCount(HInt32* count) {

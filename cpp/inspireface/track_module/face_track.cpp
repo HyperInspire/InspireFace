@@ -174,7 +174,7 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
         // pose and quality - BUG
         auto rect = face.bbox_;
 //        std::cout << rect << std::endl;
-        auto affine_scale = FacePoseQuality::ComputeCropMatrix(rect);
+        auto affine_scale = ComputeCropMatrix(rect, FacePoseQuality::INPUT_WIDTH, FacePoseQuality::INPUT_HEIGHT);
         affine_scale.convertTo(affine_scale, CV_64F);
         auto pre_crop = image.GetAffineRGBImage(affine_scale, FacePoseQuality::INPUT_WIDTH,
                                                 FacePoseQuality::INPUT_HEIGHT);
