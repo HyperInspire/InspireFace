@@ -174,6 +174,28 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
             // Get eyes status
             m_react_left_eye_results_cache_[i] = m_face_pipeline_->eyesStatusCache[0];
             m_react_right_eye_results_cache_[i] = m_face_pipeline_->eyesStatusCache[1];
+            // Special handling:  ff it is a tracking state, it needs to be filtered
+            if (face.trackState > 0)
+            {   
+                auto idx = face.inGroupIndex;
+                if (idx < m_face_track_->trackingFace.size()) {
+                    auto& target = m_face_track_->trackingFace[idx];
+                    if (target.GetTrackingId() == face.trackId) {
+                        auto new_eye_left = EmaFilter(m_face_pipeline_->eyesStatusCache[0], target.left_eye_status_, 8, 0.2f);
+                        auto new_eye_right = EmaFilter(m_face_pipeline_->eyesStatusCache[1], target.right_eye_status_, 8, 0.2f);
+                        if (face.trackState > 1) {
+                            // The filtered value can be obtained only in the tracking state
+                            m_react_left_eye_results_cache_[i] = new_eye_left;
+                            m_react_right_eye_results_cache_[i] = new_eye_right;
+                        }
+                        
+                    } else {
+                        INSPIRE_LOGD("Serialized objects cannot connect to trace objects in memory, and there may be some problems");
+                    }
+                } else {
+                    INSPIRE_LOGW("The index of the trace object does not match the trace list in memory, and there may be some problems");
+                }
+            }
         }
 
     }
