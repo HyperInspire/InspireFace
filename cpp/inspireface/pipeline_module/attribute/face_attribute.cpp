@@ -18,6 +18,11 @@ std::vector<int> FaceAttributePredict::operator()(const Matrix& bgr_affine) {
     std::vector<float> &raceOut = outputs[0].second;
     std::vector<float> &genderOut = outputs[1].second;
     std::vector<float> &ageOut = outputs[2].second;
+
+    // for(int i = 0; i < raceOut.size(); i++) {
+    //     std::cout << raceOut[i] << ", ";
+    // }
+    // std::cout << std::endl;
     
     auto raceIdx = argmax(raceOut.begin(), raceOut.end());
     auto genderIdx = argmax(genderOut.begin(), genderOut.end());
