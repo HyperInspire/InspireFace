@@ -23,6 +23,7 @@ typedef enum FaceProcessFunction {
     PROCESS_RGB_LIVENESS,           ///< RGB liveness detection.
     PROCESS_AGE,                    ///< Age estimation.
     PROCESS_GENDER,                 ///< Gender prediction.
+    PROCESS_INTERACTION,            ///< Face interaction.
 } FaceProcessFunction;
 
 /**
@@ -102,12 +103,12 @@ private:
     int32_t InitRBGAntiSpoofing(InspireModel &model);
 
     /**
-     * @brief Initializes the LivenessInteraction model.
+     * @brief Initializes the Blink predict model.
      *
-     * @param model Pointer to the LivenessInteraction model.
+     * @param model Pointer to the Blink predict model.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t InitLivenessInteraction(InspireModel &model);
+    int32_t InitBlinkFromLivenessInteraction(InspireModel &model);
 
 private:
     const bool m_enable_liveness_ = false;                 ///< Whether RGB liveness detection is enabled.
@@ -120,11 +121,12 @@ private:
     std::shared_ptr<GenderPredict> m_gender_predict_;      ///< Pointer to GenderPredict instance.
     std::shared_ptr<MaskPredict> m_mask_predict_;          ///< Pointer to MaskPredict instance.
     std::shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_;   ///< Pointer to RBGAntiSpoofing instance.
-    std::shared_ptr<LivenessInteraction> m_liveness_interaction_spoofing_; ///< Pointer to LivenessInteraction instance.
+    std::shared_ptr<BlinkPredict> m_blink_predict_;         ///< Pointer to Blink predict instance.
 
 public:
     float faceMaskCache;    ///< Cache for face mask detection result.
     float faceLivenessCache; ///< Cache for face liveness detection result.
+    cv::Vec2f eyesStatusCache;  ///< Cache for blink predict result.
 };
 
 }
