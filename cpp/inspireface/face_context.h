@@ -233,6 +233,18 @@ public:
     const std::vector<float>& GetFaceQualityScoresResultsCache() const;
 
     /**
+     * @brief Gets the cache of left eye status predict results.
+     * @return A const reference to a vector containing eye status predict results.
+     */
+    const std::vector<float>& GetFaceInteractionLeftEyeStatusCache() const;
+
+    /**
+     * @brief Gets the cache of right eye status predict results.
+     * @return A const reference to a vector containing eye status predict results.
+     */
+    const std::vector<float>& GetFaceInteractionRightEyeStatusCache() const;
+
+    /**
      * @brief Gets the cache of the current face features.
      * @return A const reference to the Embedded object containing current face feature data.
      */
@@ -263,6 +275,8 @@ private:
     std::vector<float> m_mask_results_cache_;                       ///< Cache for mask detection results
     std::vector<float> m_rgb_liveness_results_cache_;               ///< Cache for RGB liveness detection results
     std::vector<float> m_quality_score_results_cache_;               ///< Cache for RGB face quality score results
+    std::vector<float> m_react_left_eye_results_cache_;               ///< Cache for Left eye state in face interaction
+    std::vector<float> m_react_right_eye_results_cache_;               ///< Cache for Right eye state in face interaction
     Embedded m_face_feature_cache_;                                ///< Cache for current face feature data
 
     std::mutex m_mtx_;                                             ///< Mutex for thread safety.
