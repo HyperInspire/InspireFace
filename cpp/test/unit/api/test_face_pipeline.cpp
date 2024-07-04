@@ -184,8 +184,120 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
-
-
     }
 
 }
+
+TEST_CASE("test_FaceReaction", "[face_reaction]") {
+    DRAW_SPLIT_LINE
+    TEST_PRINT_OUTPUT(true);
+
+    HResult ret;
+    HFSessionCustomParameter parameter = {0};
+    parameter.enable_interaction_liveness = 1;
+    parameter.enable_liveness = 1;
+    HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
+    HFSession session;
+    ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
+    REQUIRE(ret == HSUCCEED);
+
+    SECTION("open eyes") {
+        // Get a face picture
+        HFImageStream imgHandle;
+        auto img = cv::imread(GET_DATA("data/reaction/open_eyes.png"));
+        ret = CVImageToImageStream(img, imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        // Extract basic face information from photos
+        HFMultipleFaceData multipleFaceData = {0};
+        ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum > 0);
+
+        // Predict eyes status
+        ret = HFMultipleFacePipelineProcess(session, imgHandle, &multipleFaceData, parameter);
+        REQUIRE(ret == HSUCCEED);
+        
+        // Get results
+        HFFaceIntereactionResult result;
+        ret = HFGetFaceIntereactionResult(session, &result);
+        REQUIRE(multipleFaceData.detectedNum == result.num);
+        REQUIRE(ret == HSUCCEED);
+
+        // Check 
+        CHECK(result.leftEyeStatusConfidence[0] > 0.5f);
+        CHECK(result.rightEyeStatusConfidence[0] > 0.5f);
+
+        ret = HFReleaseImageStream(imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+    }
+
+    SECTION("close eyes") {
+        // Get a face picture
+        HFImageStream imgHandle;
+        auto img = cv::imread(GET_DATA("data/reaction/close_eyes.jpeg"));
+        ret = CVImageToImageStream(img, imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        // Extract basic face information from photos
+        HFMultipleFaceData multipleFaceData = {0};
+        ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum > 0);
+
+        // Predict eyes status
+        ret = HFMultipleFacePipelineProcess(session, imgHandle, &multipleFaceData, parameter);
+        REQUIRE(ret == HSUCCEED);
+        
+        // Get results
+        HFFaceIntereactionResult result;
+        ret = HFGetFaceIntereactionResult(session, &result);
+        REQUIRE(multipleFaceData.detectedNum == result.num);
+        REQUIRE(ret == HSUCCEED);
+
+        // Check 
+        CHECK(result.leftEyeStatusConfidence[0] < 0.5f);
+        CHECK(result.rightEyeStatusConfidence[0] < 0.5f);
+
+        ret = HFReleaseImageStream(imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+    }
+
+    SECTION("Close one eye and open the other") {
+        // Get a face picture
+        HFImageStream imgHandle;
+        auto img = cv::imread(GET_DATA("data/reaction/close_open_eyes.jpeg"));
+        ret = CVImageToImageStream(img, imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        // Extract basic face information from photos
+        HFMultipleFaceData multipleFaceData = {0};
+        ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(multipleFaceData.detectedNum > 0);
+
+        // Predict eyes status
+        ret = HFMultipleFacePipelineProcess(session, imgHandle, &multipleFaceData, parameter);
+        REQUIRE(ret == HSUCCEED);
+        
+        // Get results
+        HFFaceIntereactionResult result;
+        ret = HFGetFaceIntereactionResult(session, &result);
+        REQUIRE(multipleFaceData.detectedNum == result.num);
+        REQUIRE(ret == HSUCCEED);
+
+        // Check 
+        CHECK(result.leftEyeStatusConfidence[0] < 0.5f);
+        CHECK(result.rightEyeStatusConfidence[0] > 0.5f);
+
+        ret = HFReleaseImageStream(imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+    }
+
+    ret = HFReleaseInspireFaceSession(session);
+    REQUIRE(ret == HSUCCEED);
+
+}   
