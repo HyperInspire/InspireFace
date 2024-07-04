@@ -129,6 +129,15 @@ int main(int argc, char* argv[]) {
                 std::cout << "HFMultipleFacePipelineProcessOptional error: " << ret << std::endl;
                 return ret;
             }
+            HFFaceIntereactionResult result;
+            ret = HFGetFaceIntereactionResult(session, &result);
+             if (ret != HSUCCEED)
+            {   
+                std::cout << "HFGetFaceIntereactionResult error: " << ret << std::endl;
+                return ret;
+            }
+            std::cout << "Left eye status: " << result.leftEyeStatusConfidence[0] << std::endl;
+            std::cout << "Righ eye status: " << result.rightEyeStatusConfidence[0] << std::endl;
 
         }
         

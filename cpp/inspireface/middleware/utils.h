@@ -675,6 +675,25 @@ inline cv::Mat ComputeCropMatrix(const cv::Rect2f &rect, int width, int height) 
 }
 
 
+// Exponential Moving Average (EMA) filter function
+inline float EmaFilter(float currentProb, std::vector<float>& history, int max, float alpha = 0.2f) {
+    // Add current probability to history
+    history.push_back(currentProb);
+
+    // Trim history if it exceeds max size
+    if (history.size() > max) {
+        history.erase(history.begin(), history.begin() + (history.size() - max));
+    }
+
+    // Compute EMA
+    float ema = history[0];  // Initial value
+    for (size_t i = 1; i < history.size(); ++i) {
+        ema = alpha * history[i] + (1 - alpha) * ema;
+    }
+
+    return ema;
+}
+
 }   // namespace inspire
 
 #endif
