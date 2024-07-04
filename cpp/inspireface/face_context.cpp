@@ -42,8 +42,7 @@ int32_t FaceContext::Configuration(DetectMode detect_mode,
             INSPIRE_LAUNCH->getMArchive(),
             param.enable_liveness,
             param.enable_mask_detect,
-            param.enable_age,
-            param.enable_gender,
+            param.enable_face_attribute,
             param.enable_interaction_liveness
     );
 
@@ -64,6 +63,9 @@ int32_t FaceContext::FaceDetectAndTrack(CameraStream &image) {
     m_quality_score_results_cache_.clear();
     m_react_left_eye_results_cache_.clear();
     m_react_right_eye_results_cache_.clear();
+    m_quality_score_results_cache_.clear();
+    m_attribute_race_results_cache_.clear();
+    m_attribute_gender_results_cache_.clear();
     if (m_face_track_ == nullptr) {
         return HERR_SESS_TRACKER_FAILURE;
     }
@@ -133,6 +135,9 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
     m_rgb_liveness_results_cache_.resize(faces.size(), -1.0f);
     m_react_left_eye_results_cache_.resize(faces.size(), -1.0f);
     m_react_right_eye_results_cache_.resize(faces.size(), -1.0f);
+    m_attribute_race_results_cache_.resize(faces.size(), -1);
+    m_attribute_gender_results_cache_.resize(faces.size(), -1);
+    m_attribute_age_results_cache_.resize(faces.size(), -1);
     for (int i = 0; i < faces.size(); ++i) {
         const auto &face = faces[i];
         // RGB Liveness Detect
@@ -151,20 +156,17 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
             }
             m_mask_results_cache_[i] = m_face_pipeline_->faceMaskCache;
         }
-        // Age prediction
-        if (param.enable_age) {
-            auto ret = m_face_pipeline_->Process(image, face, PROCESS_AGE);
+        // Face attribute prediction
+        if (param.enable_face_attribute) {
+            auto ret = m_face_pipeline_->Process(image, face, PROCESS_ATTRIBUTE);
             if (ret != HSUCCEED) {
                 return ret;
             }
+            m_attribute_race_results_cache_[i] = m_face_pipeline_->faceAttributeCache[0];
+            m_attribute_gender_results_cache_[i] = m_face_pipeline_->faceAttributeCache[1];
+            m_attribute_age_results_cache_[i] = m_face_pipeline_->faceAttributeCache[2];
         }
-        // Gender prediction
-        if (param.enable_age) {
-            auto ret = m_face_pipeline_->Process(image, face, PROCESS_GENDER);
-            if (ret != HSUCCEED) {
-                return ret;
-            }
-        }
+
         // Face interaction
         if (param.enable_interaction_liveness) {
             auto ret = m_face_pipeline_->Process(image, face, PROCESS_INTERACTION);
@@ -258,6 +260,18 @@ const std::vector<float>& FaceContext::GetFaceInteractionRightEyeStatusCache() c
 
 const Embedded& FaceContext::GetFaceFeatureCache() const {
     return m_face_feature_cache_;
+}
+
+const std::vector<int>& FaceContext::GetFaceRaceResultsCache() const {
+    return m_attribute_race_results_cache_;
+}
+
+const std::vector<int>& FaceContext::GetFaceGenderResultsCache() const {
+    return m_attribute_gender_results_cache_;
+}
+
+const std::vector<int>& FaceContext::GetFaceAgeBracketResultsCache() const {
+    return m_attribute_age_results_cache_;
 }
 
 int32_t FaceContext::FaceFeatureExtract(CameraStream &image, FaceBasicData& data) {
