@@ -156,6 +156,7 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
                 auto eyeStatus = (*m_blink_predict_)(pre_crop);
                 eyesStatusCache[i] = eyeStatus;
             }
+
             break;
         }
         case PROCESS_AGE: {
