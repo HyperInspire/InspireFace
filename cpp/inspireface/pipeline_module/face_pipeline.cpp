@@ -12,28 +12,23 @@
 
 namespace inspire {
 
-FacePipeline::FacePipeline(InspireArchive &archive, bool enableLiveness, bool enableMaskDetect, bool enableAge,
-                           bool enableGender, bool enableInteractionLiveness)
+FacePipeline::FacePipeline(InspireArchive &archive, bool enableLiveness, bool enableMaskDetect, bool enableAttribute, 
+                    bool enableInteractionLiveness)
         : m_enable_liveness_(enableLiveness),
           m_enable_mask_detect_(enableMaskDetect),
-          m_enable_age_(enableAge),
-          m_enable_gender_(enableGender),
+          m_enable_attribute_(enableAttribute),
           m_enable_interaction_liveness_(enableInteractionLiveness) {
 
-    if (m_enable_age_) {
-        InspireModel ageModel;
-        auto ret = InitAgePredict(ageModel);
+    if (m_enable_attribute_) {
+        InspireModel attrModel;
+        auto ret = archive.LoadModel("face_attribute", attrModel);
+        if (ret != 0) {
+            INSPIRE_LOGE("Load Face attribute model: %d", ret);
+        }
+
+        ret = InitFaceAttributePredict(attrModel);
         if (ret != 0) {
             INSPIRE_LOGE("InitAgePredict error.");
-        }
-    }
-
-    // Initialize the gender prediction model (assuming Index is 0)
-    if (m_enable_gender_) {
-        InspireModel genderModel;
-        auto ret = InitGenderPredict(genderModel);
-        if (ret != 0) {
-            INSPIRE_LOGE("InitGenderPredict error.");
         }
     }
 
@@ -156,19 +151,21 @@ int32_t FacePipeline::Process(CameraStream &image, const HyperFaceData &face, Fa
                 auto eyeStatus = (*m_blink_predict_)(pre_crop);
                 eyesStatusCache[i] = eyeStatus;
             }
-
             break;
         }
-        case PROCESS_AGE: {
-            if (m_age_predict_ == nullptr) {
+        case PROCESS_ATTRIBUTE: {
+            if (m_attribute_predict_ == nullptr) {
                 return HERR_SESS_PIPELINE_FAILURE;       // uninitialized
             }
-            break;
-        }
-        case PROCESS_GENDER: {
-            if (m_gender_predict_ == nullptr) {
-                return HERR_SESS_PIPELINE_FAILURE;       // uninitialized
+            std::vector<cv::Point2f> pointsFive;
+            for (const auto &p: face.keyPoints) {
+                pointsFive.push_back(HPointToPoint2f(p));
             }
+            auto trans = getTransformMatrix112(pointsFive);
+            trans.convertTo(trans, CV_64F);
+            auto crop = image.GetAffineRGBImage(trans, 112, 112);
+            auto outputs = (*m_attribute_predict_)(crop);
+            faceAttributeCache = cv::Vec3i(outputs[0], outputs[1], outputs[2]);
             break;
         }
     }
@@ -213,16 +210,15 @@ int32_t FacePipeline::Process(CameraStream &image, FaceObject &face) {
     return HSUCCEED;
 }
 
-
-int32_t FacePipeline::InitAgePredict(InspireModel &) {
-
-    return 0;
+int32_t FacePipeline::InitFaceAttributePredict(InspireModel &model) {
+    m_attribute_predict_ = std::make_shared<FaceAttributePredict>();
+    auto ret = m_attribute_predict_->loadData(model, model.modelType);
+    if (ret != InferenceHelper::kRetOk) {
+        return HERR_ARCHIVE_LOAD_FAILURE;
+    }
+    return HSUCCEED;
 }
 
-
-int32_t FacePipeline::InitGenderPredict(InspireModel &model) {
-    return 0;
-}
 
 int32_t FacePipeline::InitMaskPredict(InspireModel &model) {
     m_mask_predict_ = std::make_shared<MaskPredict>();
