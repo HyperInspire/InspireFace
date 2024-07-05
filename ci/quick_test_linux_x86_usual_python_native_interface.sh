@@ -3,7 +3,7 @@
 # Exit immediately if any command exits with a non-zero status
 set -e
 
-ROOT_DIR="$pwd"
+ROOT_DIR="$(pwd)"
 TARGET_DIR="test_res"
 DOWNLOAD_URL="https://github.com/tunmx/inspireface-store/raw/main/resource/test_res-lite.zip"
 ZIP_FILE="test_res-lite.zip"
@@ -54,7 +54,6 @@ cmake -DCMAKE_BUILD_TYPE=Release \
 make -j4
 
 cd ${ROOT_DIR}
-echo "ssss=$pwd"
 cp build/${BUILD_DIRNAME}/lib/libInspireFace.so python/inspireface/modules/core/
 
 pip install opencv-python
