@@ -13,8 +13,6 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 **`2024-07-05`** Fixed some bugs in the python ctypes interface.
 
-**`2024-07-05`** Added face attribute prediction function.
-
 **`2024-07-03`** Add the blink detection algorithm of face interaction module.
 
 **`2024-07-02`** Fixed several bugs in the face detector with multi-level input.
