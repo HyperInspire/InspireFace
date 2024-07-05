@@ -70,7 +70,7 @@ def case_face_tracker_from_video(resource_path, source, show):
             # Apply rotation to the bounding box corners
             rect = ((center[0], center[1]), (size[0], size[1]), angle)
             box = cv2.boxPoints(rect)
-            box = np.int0(box)
+            box = box.astype(int)
 
             # Draw the rotated bounding box
             cv2.drawContours(frame, [box], 0, (100, 180, 29), 2)
