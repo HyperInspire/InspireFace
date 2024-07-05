@@ -52,6 +52,9 @@ def case_face_tracker_from_video(resource_path, source, show):
         faces = session.face_detection(frame)
         for idx, face in enumerate(faces):
             x1, y1, x2, y2 = face.location
+            lmk = session.get_face_dense_landmark(face)
+            for x, y in lmk.astype(int):
+                cv2.circle(frame, (x, y), 0, (200, 100, 0), 4)
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
         if show:
