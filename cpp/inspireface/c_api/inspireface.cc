@@ -100,13 +100,13 @@ HResult HFReleaseInspireFaceSession(HFSession handle) {
 HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectMode detectMode, HInt32 maxDetectFaceNum, HInt32 detectPixelLevel, HInt32 trackByDetectModeFPS, HFSession *handle) {
     inspire::ContextCustomParameter param;
     param.enable_mask_detect = parameter.enable_mask_detect;
-    param.enable_age = parameter.enable_age;
+    param.enable_face_attribute = parameter.enable_face_quality;
     param.enable_liveness = parameter.enable_liveness;
     param.enable_face_quality = parameter.enable_face_quality;
-    param.enable_gender = parameter.enable_gender;
     param.enable_interaction_liveness = parameter.enable_interaction_liveness;
     param.enable_ir_liveness = parameter.enable_ir_liveness;
     param.enable_recognition = parameter.enable_recognition;
+    param.enable_face_attribute = parameter.enable_face_attribute;
     inspire::DetectMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
     if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
         detMode = inspire::DETECT_MODE_LIGHT_TRACK;
@@ -138,11 +138,8 @@ HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode de
     if (customOption & HF_ENABLE_IR_LIVENESS) {
         param.enable_ir_liveness = true;
     }
-    if (customOption & HF_ENABLE_AGE_PREDICT) {
-        param.enable_age = true;
-    }
-    if (customOption & HF_ENABLE_GENDER_PREDICT) {
-        param.enable_gender = true;
+    if (customOption & HF_ENABLE_FACE_ATTRIBUTE) {
+        param.enable_face_attribute = true;
     }
     if (customOption & HF_ENABLE_MASK_DETECT) {
         param.enable_mask_detect = true;
@@ -508,13 +505,13 @@ HResult HFMultipleFacePipelineProcess(HFSession session, HFImageStream streamHan
     }
     inspire::ContextCustomParameter param;
     param.enable_mask_detect = parameter.enable_mask_detect;
-    param.enable_age = parameter.enable_age;
+    param.enable_face_attribute = parameter.enable_face_quality;
     param.enable_liveness = parameter.enable_liveness;
     param.enable_face_quality = parameter.enable_face_quality;
-    param.enable_gender = parameter.enable_gender;
     param.enable_interaction_liveness = parameter.enable_interaction_liveness;
     param.enable_ir_liveness = parameter.enable_ir_liveness;
     param.enable_recognition = parameter.enable_recognition;
+    param.enable_face_attribute = parameter.enable_face_attribute;
 
     HResult ret;
     std::vector<inspire::HyperFaceData> data;
@@ -562,11 +559,8 @@ HResult HFMultipleFacePipelineProcessOptional(HFSession session, HFImageStream s
     if (customOption & HF_ENABLE_IR_LIVENESS) {
         param.enable_ir_liveness = true;
     }
-    if (customOption & HF_ENABLE_AGE_PREDICT) {
-        param.enable_age = true;
-    }
-    if (customOption & HF_ENABLE_GENDER_PREDICT) {
-        param.enable_gender = true;
+    if (customOption & HF_ENABLE_FACE_ATTRIBUTE) {
+        param.enable_face_attribute = true;
     }
     if (customOption & HF_ENABLE_MASK_DETECT) {
         param.enable_mask_detect = true;
@@ -671,6 +665,23 @@ HResult HFGetFaceIntereactionResult(HFSession session, PHFFaceIntereactionResult
     result->num = ctx->impl.GetFaceInteractionLeftEyeStatusCache().size();
     result->leftEyeStatusConfidence = (HFloat* )ctx->impl.GetFaceInteractionLeftEyeStatusCache().data();
     result->rightEyeStatusConfidence = (HFloat* )ctx->impl.GetFaceInteractionRightEyeStatusCache().data();
+
+    return HSUCCEED;
+}
+
+HResult HFGetFaceAttributeResult(HFSession session, PHFFaceAttributeResult results) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession* ) session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+
+    results->num = ctx->impl.GetFaceAgeBracketResultsCache().size();
+    results->race = (HPInt32 )ctx->impl.GetFaceRaceResultsCache().data();
+    results->gender = (HPInt32 )ctx->impl.GetFaceGenderResultsCache().data();
+    results->ageBracket = (HPInt32 )ctx->impl.GetFaceAgeBracketResultsCache().data();
 
     return HSUCCEED;
 }
