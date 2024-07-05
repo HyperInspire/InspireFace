@@ -10,6 +10,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
+**`2024-07-03`**Add the blink detection algorithm of face interaction module.
+
 **`2024-07-02`** Fixed several bugs in the face detector with multi-level input.
 
 **`2024-06-27`** Verified iOS usability and fixed some bugs.
@@ -52,7 +54,7 @@ You can download the model package files containing models and configurations ne
 If you intend to use the SDK locally or on a server, ensure that OpenCV is installed on the host device beforehand to enable successful linking during the compilation process. For cross-compilation targets like Android or ARM embedded boards, you can use the pre-compiled OpenCV libraries provided by **3rdparty/inspireface-precompile/opencv/**.
 
 ### 1.4. Installing MNN
-The '3rdparty' directory already includes the MNN library and specifies a particular version as the stable version. If you need to enable or disable additional configuration options during compilation, you can refer to the CMake Options provided by MNN. If you need to use your own precompiled version, feel free to replace it.
+The '**3rdparty**' directory already includes the MNN library and specifies a particular version as the stable version. If you need to enable or disable additional configuration options during compilation, you can refer to the CMake Options provided by MNN. If you need to use your own precompiled version, feel free to replace it.
 
 ### 1.5. Requirements
 
@@ -298,14 +300,14 @@ In the project, there is a subproject called cpp/test. To compile it, you need t
 ```bash
 cmake -DISF_BUILD_WITH_TEST=ON ..
 ```
-If you need to run test cases, you will need to download the required [resource files](https://drive.google.com/file/d/1i4uC-dZTQxdVgn2rP0ZdfJTMkJIXgYY4/view?usp=sharing), which are **test_res** and **Model Package** respectively. Unzip the pack file into the test_res folder. The directory structure of test_res should be prepared as follows before testing:
+If you need to run test cases, you will need to download the required [resource files](https://drive.google.com/file/d/1i4uC-dZTQxdVgn2rP0ZdfJTMkJIXgYY4/view?usp=sharing): **test_res**. Unzip the test_res folder. The directory structure of test_res should be prepared as follows before testing:
 
 ```bash
 
 test_res
 ├── data
 ├── images
-├── pack		<- unzip pack.zip
+├── pack	<-- The model package files are here
 ├── save
 ├── valid_lfw_funneled.txt
 ├── video
@@ -352,13 +354,13 @@ The following functionalities and technologies are currently supported.
 | 6 | Silent Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | MiniVision |
 | 7 | Face Quality Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
 | 8 | Face Pose Estimation | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 9 | Age Prediction | ![Static Badge](https://img.shields.io/badge/PENDING-yellow?style=for-the-badge) |  |
-| 10 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/PENDING-yellow?style=for-the-badge) |  |
+| 9 | Face Attribute Prediction | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Age, Race, Gender |
+| 10 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/DEVELOP-green?style=for-the-badge) | Blink |
 
 
 ## 6. Models Package List
 
-For different scenarios, we currently provide several Packs, each containing multiple models and configurations.
+For different scenarios, we currently provide several Packs, each containing multiple models and configurations.The package file is placed in the **pack** subdirectory under the **test_res** directory.
 
 | Name | Supported Devices | Note | Link |
 | --- | --- | --- | --- |
