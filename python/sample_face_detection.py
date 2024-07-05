@@ -56,7 +56,7 @@ def case_face_detection_image(resource_path, image_path):
         # Apply rotation to the bounding box corners
         rect = ((center[0], center[1]), (size[0], size[1]), angle)
         box = cv2.boxPoints(rect)
-        box = np.int0(box)
+        box = box.astype(int)
 
         # Draw the rotated bounding box
         cv2.drawContours(draw, [box], 0, (100, 180, 29), 2)
