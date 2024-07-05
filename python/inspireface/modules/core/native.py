@@ -552,8 +552,8 @@ class LibraryLoader:
             # noinspection PyBroadException
             try:
                 return self.Lookup(path)
-            except Exception:  # pylint: disable=broad-except
-                pass
+            except Exception as err:  # pylint: disable=broad-except
+                print(err)
 
         raise ImportError("Could not load %s." % libname)
 
