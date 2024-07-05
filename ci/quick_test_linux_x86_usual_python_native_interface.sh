@@ -53,14 +53,19 @@ cmake -DCMAKE_BUILD_TYPE=Release \
 # Compile the project using 4 parallel jobs
 make -j4
 
+# Come back to project root dir
 cd ${ROOT_DIR}
+
+# Important: You must copy the compiled dynamic library to this path!
 cp build/${BUILD_DIRNAME}/lib/libInspireFace.so python/inspireface/modules/core/
 
+# Install dependency
 pip install opencv-python
 pip install click
 pip install loguru
 
 cd python/
 
+# Run sample
 python sample_face_detection.py ../test_res/pack/Pikachu ../test_res/data/bulk/woman.png
 
