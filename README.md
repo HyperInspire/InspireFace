@@ -10,7 +10,11 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
-**`2024-07-03`**Add the blink detection algorithm of face interaction module.
+**`2024-07-05`** Fixed some bugs in the python ctypes interface.
+
+**`2024-07-05`** Added face attribute prediction function.
+
+**`2024-07-03`** Add the blink detection algorithm of face interaction module.
 
 **`2024-07-02`** Fixed several bugs in the face detector with multi-level input.
 
@@ -364,7 +368,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 
 | Name | Supported Devices | Note | Link |
 | --- | --- | --- | --- |
-| Pikachu | CPU | Lightweight edge-side model | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
-| Megatron | CPU, GPU | Local or server-side model | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
+| Pikachu | CPU | Lightweight edge-side models | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
+| Megatron | CPU, GPU | Mobile and server models | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
 | Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
 

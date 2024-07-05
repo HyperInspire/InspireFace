@@ -3,6 +3,7 @@ import cv2
 import inspireface as ifac
 from inspireface.param import *
 import click
+import numpy as np
 
 race_tags = ["Black", "Asian", "Latino/Hispanic", "Middle Eastern", "White"]
 gender_tags = ["Female", "Male", ]
@@ -40,12 +41,30 @@ def case_face_detection_image(resource_path, image_path):
         print(f"idx: {idx}")
         # Print Euler angles of the face.
         print(f"roll: {face.roll}, yaw: {face.yaw}, pitch: {face.pitch}")
-        # Draw bounding box around the detected face.
+
+        # Get face bounding box
         x1, y1, x2, y2 = face.location
+
+        # Calculate center, size, and angle
+        center = ((x1 + x2) / 2, (y1 + y2) / 2)
+        size = (x2 - x1, y2 - y1)
+        angle = face.roll  # 这里使用 roll 角度
+
+        # Get rotation matrix
+        rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
+
+        # Apply rotation to the bounding box corners
+        rect = ((center[0], center[1]), (size[0], size[1]), angle)
+        box = cv2.boxPoints(rect)
+        box = np.int0(box)
+
+        # Draw the rotated bounding box
+        cv2.drawContours(draw, [box], 0, (100, 180, 29), 2)
+
+        # Draw landmarks
         lmk = session.get_face_dense_landmark(face)
         for x, y in lmk.astype(int):
-            cv2.circle(draw, (x, y), 0, (200, 100, 0), 4)
-        cv2.rectangle(draw, (x1, y1), (x2, y2), (0, 0, 255), 3)
+            cv2.circle(draw, (x, y), 0, (220, 100, 0), 2)
 
     # Features must be enabled during session creation to use them here.
     select_exec_func = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS | HF_ENABLE_INTERACTION | HF_ENABLE_FACE_ATTRIBUTE
