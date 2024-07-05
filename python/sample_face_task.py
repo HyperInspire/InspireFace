@@ -54,12 +54,6 @@ def case_face_detection_image(resource_path, image_path):
         width = (x2 - x1) * 1.1
         height = (y2 - y1) * 1.1
 
-        # Calculate new bounding box coordinates
-        x1_new = center_x - width / 2
-        y1_new = center_y - height / 2
-        x2_new = center_x + width / 2
-        y2_new = center_y + height / 2
-
         # Calculate center, size, and angle for the new bounding box
         center = (center_x, center_y)
         size = (width, height)
