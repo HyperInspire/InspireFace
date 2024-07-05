@@ -1,12 +1,12 @@
 # This GitHub Actions workflow is designed for a CMake project running on a single platform (Ubuntu-x86).
 # For multi-platform testing, see the link provided.
 # Refer to: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
-name: Run Ubuntu-x86 Test Pikachu from Python native
+name: Run Ubuntu-x86 Test Pikachu from Python Native
 
 # Trigger this workflow on push or pull request to the "feature/sub" branch
 on:
   push:
-    branches: ["dev/attribute"]
+    branches: ["master"]
   pull_request:
     branches: ["master"]
 
