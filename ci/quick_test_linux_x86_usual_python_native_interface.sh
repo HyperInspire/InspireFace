@@ -54,7 +54,7 @@ cmake -DCMAKE_BUILD_TYPE=Release \
 make -j4
 
 cd ${ROOT_DIR}
-echo "$pwd"
+echo "ssss=$pwd"
 cp build/${BUILD_DIRNAME}/lib/libInspireFace.so python/inspireface/modules/core/
 
 pip install opencv-python
