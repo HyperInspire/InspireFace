@@ -245,7 +245,7 @@ void FaceTrack::UpdateStream(CameraStream &image) {
         image.SetPreviewSize(track_preview_size_);
         cv::Mat image_detect = image.GetPreviewImage(true);
 
-        nms();
+        
         for (auto const &face: trackingFace) {
             cv::Rect m_mask_rect = face.GetRectSquare();
             std::vector<cv::Point2f> pts = Rect2Points(m_mask_rect);
@@ -282,7 +282,7 @@ void FaceTrack::UpdateStream(CameraStream &image) {
         }
     }
     
-
+    nms();
 //    LOGD("Track Cost %f", t_track.GetCostTimeUpdate());
     track_total_use_time_ = ((double) cv::getTickCount() - timeStart) / cv::getTickFrequency() * 1000;
 
