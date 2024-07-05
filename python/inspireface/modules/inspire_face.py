@@ -391,6 +391,7 @@ class InspireFaceSession(object):
         self._update_mask_confidence(exec_param, flag, extends)
         self._update_rgb_liveness_confidence(exec_param, flag, extends)
         self._update_face_quality_confidence(exec_param, flag, extends)
+        self._update_face_attribute_confidence(exec_param, flag, extends)
         self._update_face_interact_confidence(exec_param, flag, extends)
 
         return extends
@@ -475,7 +476,7 @@ class InspireFaceSession(object):
             else:
                 logger.error(f"Get rgb liveness result error: {ret}")
 
-    def _update_face_quality_confidence(self, exec_param, flag, extends: List[FaceExtended]):
+    def _update_face_attribute_confidence(self, exec_param, flag, extends: List[FaceExtended]):
         if (flag == "object" and exec_param.enable_face_attribute) or (
                 flag == "bitmask" and exec_param & HF_ENABLE_FACE_ATTRIBUTE):
             attribute_results = HFFaceAttributeResult()
@@ -488,7 +489,7 @@ class InspireFaceSession(object):
             else:
                 logger.error(f"Get face attribute result error: {ret}")
 
-    def _update_face_attribute_confidence(self, exec_param, flag, extends: List[FaceExtended]):
+    def _update_face_quality_confidence(self, exec_param, flag, extends: List[FaceExtended]):
         if (flag == "object" and exec_param.enable_face_quality) or (
                 flag == "bitmask" and exec_param & HF_ENABLE_QUALITY):
             quality_results = HFFaceQualityConfidence()

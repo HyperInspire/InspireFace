@@ -44,8 +44,8 @@ def case_face_detection_image(resource_path, image_path):
         x1, y1, x2, y2 = face.location
         lmk = session.get_face_dense_landmark(face)
         for x, y in lmk.astype(int):
-            cv2.circle(draw, (x, y), 0, (0, 255, 0), 2)
-        cv2.rectangle(draw, (x1, y1), (x2, y2), (0, 0, 255), 2)
+            cv2.circle(draw, (x, y), 0, (200, 100, 0), 4)
+        cv2.rectangle(draw, (x1, y1), (x2, y2), (0, 0, 255), 3)
 
     # Features must be enabled during session creation to use them here.
     select_exec_func = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS | HF_ENABLE_INTERACTION | HF_ENABLE_FACE_ATTRIBUTE
