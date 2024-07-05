@@ -58,6 +58,7 @@ cp build/${BUILD_DIRNAME}/lib/libInspireFace.so python/inspireface/modules/core/
 
 pip install opencv-python
 pip install click
+pip install loguru
 
 cd python/
 
