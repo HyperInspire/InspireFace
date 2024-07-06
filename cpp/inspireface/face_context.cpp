@@ -190,6 +190,7 @@ int32_t FaceContext::FacesProcess(CameraStream &image, const std::vector<HyperFa
                             m_react_left_eye_results_cache_[i] = new_eye_left;
                             m_react_right_eye_results_cache_[i] = new_eye_right;
                         }
+                        target.UpdateFaceAction();
                         
                     } else {
                         INSPIRE_LOGD("Serialized objects cannot connect to trace objects in memory, and there may be some problems");
