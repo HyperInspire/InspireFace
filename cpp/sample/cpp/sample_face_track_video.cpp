@@ -122,24 +122,24 @@ int main(int argc, char* argv[]) {
 
         // Draw detection mode on the frame
         drawMode(draw, detMode);
-        if (faceNum > 0) {
-            ret = HFMultipleFacePipelineProcessOptional(session, imageHandle, &multipleFaceData, option);
-            if (ret != HSUCCEED)
-            {   
-                std::cout << "HFMultipleFacePipelineProcessOptional error: " << ret << std::endl;
-                return ret;
-            }
-            HFFaceIntereactionResult result;
-            ret = HFGetFaceIntereactionResult(session, &result);
-             if (ret != HSUCCEED)
-            {   
-                std::cout << "HFGetFaceIntereactionResult error: " << ret << std::endl;
-                return ret;
-            }
-            std::cout << "Left eye status: " << result.leftEyeStatusConfidence[0] << std::endl;
-            std::cout << "Righ eye status: " << result.rightEyeStatusConfidence[0] << std::endl;
+        // if (faceNum > 0) {
+        //     ret = HFMultipleFacePipelineProcessOptional(session, imageHandle, &multipleFaceData, option);
+        //     if (ret != HSUCCEED)
+        //     {   
+        //         std::cout << "HFMultipleFacePipelineProcessOptional error: " << ret << std::endl;
+        //         return ret;
+        //     }
+        //     HFFaceIntereactionResult result;
+        //     ret = HFGetFaceIntereactionResult(session, &result);
+        //      if (ret != HSUCCEED)
+        //     {   
+        //         std::cout << "HFGetFaceIntereactionResult error: " << ret << std::endl;
+        //         return ret;
+        //     }
+        //     std::cout << "Left eye status: " << result.leftEyeStatusConfidence[0] << std::endl;
+        //     std::cout << "Righ eye status: " << result.rightEyeStatusConfidence[0] << std::endl;
 
-        }
+        // }
         
         for (int index = 0; index < faceNum; ++index) {
             // std::cout << "========================================" << std::endl;
