@@ -23,13 +23,10 @@ void drawMode(cv::Mat& frame, HFDetectMode mode) {
     }
     cv::putText(frame, modeText, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 2);
 }
-
-cv::Scalar generateColor(const std::string& id) {
-    std::size_t hashValue = std::hash<std::string>{}(id);
-    
-    int r = (hashValue & 0xFF0000) >> 16;
-    int g = (hashValue & 0x00FF00) >> 8;
-    int b = (hashValue & 0x0000FF);
+cv::Scalar generateColor(int id) {
+    int r = (id & 0xFF0000) >> 16;
+    int g = (id & 0x00FF00) >> 8;
+    int b = (id & 0x0000FF);
 
     return cv::Scalar(b, g, r);
 }
