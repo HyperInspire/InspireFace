@@ -230,7 +230,6 @@ bool FaceTrack::TrackFace(CameraStream &image, FaceObject &face) {
     }
 
     face.SetConfidence(score);
-    face.UpdateFaceAction();
     return true;
 }
 
