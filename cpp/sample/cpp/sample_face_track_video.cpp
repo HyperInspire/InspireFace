@@ -160,7 +160,7 @@ int main(int argc, char* argv[]) {
             // Use OpenCV's Rect to receive face bounding boxes
             auto rect = cv::Rect(multipleFaceData.rects[index].x, multipleFaceData.rects[index].y,
                                  multipleFaceData.rects[index].width, multipleFaceData.rects[index].height);
-            cv::rectangle(draw, rect, cv::Scalar(0, 100, 255), 5);
+            cv::rectangle(draw, rect, generateColor(trackId), 5);
 
             // Print FaceID, In VIDEO-MODE it is fixed, but it may be lost
             auto trackId = multipleFaceData.trackIds[index];
@@ -173,7 +173,7 @@ int main(int argc, char* argv[]) {
 
             // Add TrackID to the drawing
             cv::putText(draw, "ID: " + std::to_string(trackId), cv::Point(rect.x, rect.y - 10),
-                        cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
+                        cv::FONT_HERSHEY_SIMPLEX, 0.5, generateColor(trackId), 2);
 
             HInt32 numOfLmk;
             HFGetNumOfFaceDenseLandmark(&numOfLmk);
@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
             }
             for (size_t i = 0; i < numOfLmk; i++) {
                 cv::Point2f p(denseLandmarkPoints[i].x, denseLandmarkPoints[i].y);
-                cv::circle(draw, p, 0, (0, 0, 255), 2);
+                cv::circle(draw, p, 0, generateColor(trackId), 2);
             }
         }
         
