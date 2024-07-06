@@ -23,11 +23,14 @@ void drawMode(cv::Mat& frame, HFDetectMode mode) {
     }
     cv::putText(frame, modeText, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 2);
 }
-cv::Scalar generateColor(int id) {
-    int r = (id & 0xFF0000) >> 16;
-    int g = (id & 0x00FF00) >> 8;
-    int b = (id & 0x0000FF);
 
+cv::Scalar generateColor(int id) {
+    unsigned int hashValue = std::hash<int>{}(id);
+
+    int r = ((hashValue & 0xFF0000) >> 16) | 0x80;
+    int g = ((hashValue & 0x00FF00) >> 8) | 0x80;
+    int b = (hashValue & 0x0000FF) | 0x80;
+    
     return cv::Scalar(b, g, r);
 }
 
@@ -154,13 +157,14 @@ int main(int argc, char* argv[]) {
         for (int index = 0; index < faceNum; ++index) {
             // std::cout << "========================================" << std::endl;
             // std::cout << "Process face index: " << index << std::endl;
+            // Print FaceID, In VIDEO-MODE it is fixed, but it may be lost
+            auto trackId = multipleFaceData.trackIds[index];
+
             // Use OpenCV's Rect to receive face bounding boxes
             auto rect = cv::Rect(multipleFaceData.rects[index].x, multipleFaceData.rects[index].y,
                                  multipleFaceData.rects[index].width, multipleFaceData.rects[index].height);
             cv::rectangle(draw, rect, generateColor(trackId), 5);
 
-            // Print FaceID, In VIDEO-MODE it is fixed, but it may be lost
-            auto trackId = multipleFaceData.trackIds[index];
             // std::cout << "FaceID: " << trackId << std::endl;
 
             // Print Head euler angle, It can often be used to judge the quality of a face by the Angle of the head
