@@ -46,11 +46,11 @@ int main(int argc, char* argv[]) {
     // Enable the functions in the pipeline: mask detection, live detection, and face quality detection
     HOption option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_INTERACTION;
     // Video or frame sequence mode uses VIDEO-MODE, which is face detection with tracking
-    HFDetectMode detMode = HF_DETECT_MODE_LIGHT_TRACK;
+    HFDetectMode detMode = HF_DETECT_MODE_TRACK_BY_DETECTION
     // Maximum number of faces detected
     HInt32 maxDetectNum = 20;
     // Face detection image input level
-    HInt32 detectPixelLevel = 160;
+    HInt32 detectPixelLevel = 640;
     // fps in tracking-by-detection mode
     HInt32 trackByDetectFps = 20;
     HFSession session = {0};
