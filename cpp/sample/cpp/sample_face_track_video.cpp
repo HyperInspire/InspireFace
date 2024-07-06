@@ -25,13 +25,20 @@ void drawMode(cv::Mat& frame, HFDetectMode mode) {
 }
 
 cv::Scalar generateColor(int id) {
-    unsigned int hashValue = std::hash<int>{}(id);
+    int maxID = 50; // 根据需要调整
+    id = id % maxID;
 
-    int r = ((hashValue & 0xFF0000) >> 16) | 0x80;
-    int g = ((hashValue & 0x00FF00) >> 8) | 0x80;
-    int b = (hashValue & 0x0000FF) | 0x80;
-    
-    return cv::Scalar(b, g, r);
+    // 使用HSV颜色空间生成颜色
+    int hue = (id * 360 / maxID) % 360; 
+    int saturation = 255; 
+    int value = 200;
+
+    cv::Mat hsv(1, 1, CV_8UC3, cv::Scalar(hue, saturation, value));
+    cv::Mat rgb;
+    cv::cvtColor(hsv, rgb, cv::COLOR_HSV2BGR);
+
+    cv::Vec3b rgbColor = rgb.at<cv::Vec3b>(0, 0);
+    return cv::Scalar(rgbColor[0], rgbColor[1], rgbColor[2]);
 }
 
 
@@ -163,7 +170,7 @@ int main(int argc, char* argv[]) {
             // Use OpenCV's Rect to receive face bounding boxes
             auto rect = cv::Rect(multipleFaceData.rects[index].x, multipleFaceData.rects[index].y,
                                  multipleFaceData.rects[index].width, multipleFaceData.rects[index].height);
-            cv::rectangle(draw, rect, generateColor(trackId), 5);
+            cv::rectangle(draw, rect, generateColor(trackId), 3);
 
             // std::cout << "FaceID: " << trackId << std::endl;
 
@@ -186,7 +193,7 @@ int main(int argc, char* argv[]) {
             }
             for (size_t i = 0; i < numOfLmk; i++) {
                 cv::Point2f p(denseLandmarkPoints[i].x, denseLandmarkPoints[i].y);
-                cv::circle(draw, p, 0, generateColor(trackId), 2);
+                cv::circle(draw, p, 0, generateColor(trackId), 1);
             }
         }
         
