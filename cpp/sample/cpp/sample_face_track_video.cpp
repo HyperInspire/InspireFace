@@ -21,14 +21,13 @@ void drawMode(cv::Mat& frame, HFDetectMode mode) {
             modeText = "Mode: Unknown";
             break;
     }
-    cv::putText(frame, modeText, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 255, 255), 2);
+    cv::putText(frame, modeText, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(90, 100, 255), 2);
 }
 
 cv::Scalar generateColor(int id) {
-    int maxID = 50; // 根据需要调整
+    int maxID = 100;
     id = id % maxID;
 
-    // 使用HSV颜色空间生成颜色
     int hue = (id * 360 / maxID) % 360; 
     int saturation = 255; 
     int value = 200;
@@ -193,7 +192,7 @@ int main(int argc, char* argv[]) {
             }
             for (size_t i = 0; i < numOfLmk; i++) {
                 cv::Point2f p(denseLandmarkPoints[i].x, denseLandmarkPoints[i].y);
-                cv::circle(draw, p, 0, generateColor(trackId), 1);
+                cv::circle(draw, p, 0, generateColor(trackId), 2);
             }
         }
         
