@@ -500,9 +500,14 @@ HResult HFMultipleFacePipelineProcess(HFSession session, HFImageStream streamHan
     if (stream == nullptr) {
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
-    if (faces->detectedNum <= 0 || faces->tokens->data == nullptr) {
+    if (faces->tokens->data == nullptr) {
         return HERR_INVALID_FACE_LIST;
     }
+
+    if (faces->detectedNum == 0) {
+        return HSUCCEED;
+    }
+
     inspire::ContextCustomParameter param;
     param.enable_mask_detect = parameter.enable_mask_detect;
     param.enable_face_attribute = parameter.enable_face_quality;
@@ -545,8 +550,11 @@ HResult HFMultipleFacePipelineProcessOptional(HFSession session, HFImageStream s
     if (stream == nullptr) {
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
-    if (faces->detectedNum <= 0 || faces->tokens->data == nullptr) {
+    if (faces->tokens->data == nullptr) {
         return HERR_INVALID_FACE_LIST;
+    }
+    if (faces->detectedNum == 0) {
+        return HSUCCEED;
     }
 
     inspire::ContextCustomParameter param;
@@ -571,7 +579,6 @@ HResult HFMultipleFacePipelineProcessOptional(HFSession session, HFImageStream s
     if (customOption & HF_ENABLE_INTERACTION) {
         param.enable_interaction_liveness = true;
     } 
-
 
     HResult ret;
     std::vector<inspire::HyperFaceData> data;
@@ -654,8 +661,8 @@ HResult HFFaceQualityDetect(HFSession session, HFFaceBasicToken singleFace, HFlo
 
 }
 
-HResult HFGetFaceIntereactionResult(HFSession session, PHFFaceIntereactionResult result) {
-     if (session == nullptr) {
+HResult HFGetFaceIntereactionStateResult(HFSession session, PHFFaceIntereactionState result) {
+    if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
     HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession* ) session;
@@ -665,6 +672,24 @@ HResult HFGetFaceIntereactionResult(HFSession session, PHFFaceIntereactionResult
     result->num = ctx->impl.GetFaceInteractionLeftEyeStatusCache().size();
     result->leftEyeStatusConfidence = (HFloat* )ctx->impl.GetFaceInteractionLeftEyeStatusCache().data();
     result->rightEyeStatusConfidence = (HFloat* )ctx->impl.GetFaceInteractionRightEyeStatusCache().data();
+
+    return HSUCCEED;
+}
+
+HResult HFGetFaceIntereactionActionsResult(HFSession session, PHFFaceIntereactionsActions actions) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession* ) session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    actions->num = ctx->impl.GetFaceNormalAactionsResultCache().size();
+    actions->normal = (HInt32* )ctx->impl.GetFaceNormalAactionsResultCache().data();
+    actions->blink = (HInt32* )ctx->impl.GetFaceBlinkAactionsResultCache().data();
+    actions->shake = (HInt32* )ctx->impl.GetFaceShakeAactionsResultCache().data();
+    actions->headRiase = (HInt32* )ctx->impl.GetFaceRaiseHeadAactionsResultCache().data();
+    actions->jawOpen = (HInt32* )ctx->impl.GetFaceJawOpenAactionsResultCache().data();
 
     return HSUCCEED;
 }
