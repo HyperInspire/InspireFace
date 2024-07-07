@@ -12,11 +12,18 @@ namespace inspire {
 enum FACE_ACTION {
   NORMAL = 0,
   SHAKE = 0,
-  BROW_UP = 1,
-  BLINK = 2,
-  JAW_OPEN = 3,
-  HEAD_RISE = 4
+  BLINK = 1,
+  JAW_OPEN = 2,
+  RAISE_HEAD = 3
 };
+
+typedef struct FaceActions{
+    int normal = 0;
+    int shake = 0;
+    int blink = 0;
+    int jawOpen = 0;
+    int raiseHead = 0;
+} FaceActions;
 
 class INSPIRE_API FaceActionAnalyse {
 public:
@@ -48,11 +55,13 @@ public:
         index = 0;
     } 
 
-    void AnalysisFaceAction() {
+    FaceActions AnalysisFaceAction() {
+        FaceActions actionRecord;
         actions.clear();
         eye_state_list.clear();
         if (index < record_list.size()) {
             actions.push_back(NORMAL);
+            actionRecord.normal = 1;
         } else {
             for (int i = 0; i < record_list_eyes.size(); i++) {
                 const auto &eye = record_list_eyes[i];
@@ -70,6 +79,7 @@ public:
             float mouth_aspect_ratio = mouth_heightwise_d / mouth_widthwise_d;
             if (mouth_aspect_ratio > 0.3) {
                 actions.push_back(JAW_OPEN);
+                actionRecord.jawOpen = 1;
             }
 
             int counter_eye_open = 0;
@@ -85,6 +95,7 @@ public:
             if (counter_eye_close > 0 && counter_eye_open > 2 &&
                 record_list_euler[0][1] > -6 && record_list_euler[0][0] < 6) {
                 actions.push_back(BLINK);
+                actionRecord.blink = 1;
                 Reset();
             }
 
@@ -100,13 +111,20 @@ public:
             }
             if (counter_head_shake_left && counter_head_shake_right) {
                 actions.push_back(SHAKE);
+                actionRecord.shake = 1;
             }
 
-            if (record_list_euler[0][0] < -10) {
-                actions.push_back(HEAD_RISE);
+            if (record_list_euler[0][0] > 10) {
+                actions.push_back(RAISE_HEAD);
+                actionRecord.raiseHead = 1;
             }
 
         }
+        return actionRecord;
+    }
+
+    std::vector<FACE_ACTION> GetActions() const {
+        return actions;
     }
 
 private:
