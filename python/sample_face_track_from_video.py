@@ -1,3 +1,5 @@
+import time
+
 import click
 import cv2
 import inspireface as ifac
@@ -52,7 +54,7 @@ def case_face_tracker_from_video(resource_path, source, show, out):
 
     # Optional features, loaded during session creation based on the modules specified.
     opt = HF_ENABLE_NONE
-    session = ifac.InspireFaceSession(opt, HF_DETECT_MODE_TRACK_BY_DETECTION, max_detect_num=25, detect_pixel_level=640)    # Use video mode
+    session = ifac.InspireFaceSession(opt, HF_DETECT_MODE_LIGHT_TRACK, max_detect_num=25, detect_pixel_level=320)    # Use video mode
     session.set_filter_minimum_face_pixel_size(0)
     # Determine if the source is a digital webcam index or a video file path.
     try:
@@ -85,12 +87,8 @@ def case_face_tracker_from_video(resource_path, source, show, out):
 
         # Process frame here (e.g., face detection/tracking).
         faces = session.face_detection(frame)
-        for idx, face in enumerate(faces):
-            print(f"{'==' * 20}")
-            print(f"idx: {idx}")
-            # Print Euler angles of the face.
-            print(f"roll: {face.roll}, yaw: {face.yaw}, pitch: {face.pitch}")
 
+        for idx, face in enumerate(faces):
             # Get face bounding box
             x1, y1, x2, y2 = face.location
 
