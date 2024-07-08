@@ -109,6 +109,14 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseImageStream(HFImageStream streamHandle
  * */
 HYPER_CAPI_EXPORT extern HResult HFLaunchInspireFace(HPath resourcePath);
 
+/**
+ * @brief Terminate InspireFace SDK
+ * Terminate the InspireFace SDK, releasing all allocated resources. 
+ * This should be called at the end of your program to ensure proper cleanup.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFTerminateInspireFace();
+
 /************************************************************************
 * FaceContext
 ************************************************************************/
