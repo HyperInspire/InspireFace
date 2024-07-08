@@ -116,6 +116,44 @@ TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
 
 }
 
+TEST_CASE("test_FacePipelineRobustness", "[robustness]") {
+    DRAW_SPLIT_LINE
+    TEST_PRINT_OUTPUT(true);
+
+    SECTION("Exception") {
+        HResult ret;
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
+        REQUIRE(ret == HSUCCEED);
+
+        // Input exception data
+        HFImageStream nullHandle = {0};
+        HFMultipleFaceData nullfaces = {0};
+        ret = HFMultipleFacePipelineProcessOptional(session, nullHandle, &nullfaces, HF_ENABLE_NONE);
+        REQUIRE(ret == HERR_INVALID_IMAGE_STREAM_HANDLE);
+        
+        // Get a face picture
+        HFImageStream img1Handle;
+        auto img1 = cv::imread(GET_DATA("data/bulk/image_T1.jpeg"));
+        ret = CVImageToImageStream(img1, img1Handle);
+        REQUIRE(ret == HSUCCEED);
+
+        // Input correct Image and exception faces struct
+        ret = HFMultipleFacePipelineProcessOptional(session, img1Handle, &nullfaces, HF_ENABLE_NONE);
+        REQUIRE(ret == HSUCCEED);
+        
+
+        ret = HFReleaseImageStream(img1Handle);
+        REQUIRE(ret == HSUCCEED);
+        ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
+
+    }
+
+}
+
 TEST_CASE("test_FacePipeline", "[face_pipeline]") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
