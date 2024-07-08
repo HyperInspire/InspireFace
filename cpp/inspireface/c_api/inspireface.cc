@@ -501,16 +501,15 @@ HResult HFMultipleFacePipelineProcess(HFSession session, HFImageStream streamHan
     if (ctx == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
+    if (faces->detectedNum == 0) {
+        return HSUCCEED;
+    }
     HF_CameraStream *stream = (HF_CameraStream* ) streamHandle;
     if (stream == nullptr) {
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
-    if (faces->tokens->data == nullptr) {
+    if (faces == nullptr || faces->tokens == nullptr || faces->tokens->data == nullptr) {
         return HERR_INVALID_FACE_LIST;
-    }
-
-    if (faces->detectedNum == 0) {
-        return HSUCCEED;
     }
 
     inspire::ContextCustomParameter param;
@@ -548,6 +547,9 @@ HResult HFMultipleFacePipelineProcessOptional(HFSession session, HFImageStream s
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
     HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession* ) session;
+    if (faces->detectedNum == 0) {
+        return HSUCCEED;
+    }
     if (ctx == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -555,11 +557,8 @@ HResult HFMultipleFacePipelineProcessOptional(HFSession session, HFImageStream s
     if (stream == nullptr) {
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
-    if (faces->tokens->data == nullptr) {
+    if (faces == nullptr || faces->tokens == nullptr || faces->tokens->data == nullptr) {
         return HERR_INVALID_FACE_LIST;
-    }
-    if (faces->detectedNum == 0) {
-        return HSUCCEED;
     }
 
     inspire::ContextCustomParameter param;
