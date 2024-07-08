@@ -10,8 +10,6 @@ TEST_CASE("test_System", "[system]") {
 
     // The global TEST environment has been started, so this side needs to be temporarily closed before testing
     HFTerminateInspireFace();
-    // Restart and start InspireFace
-    std::cout << GET_RUNTIME_FULLPATH_NAME << std::endl;
     
     SECTION("Create a session test when it is not loaded") {
         HResult ret;
@@ -24,6 +22,7 @@ TEST_CASE("test_System", "[system]") {
         REQUIRE(ret == HERR_INVALID_CONTEXT_HANDLE);
     }
     
+    // Restart and start InspireFace
     auto ret = HFLaunchInspireFace(GET_RUNTIME_FULLPATH_NAME.c_str()); 
     REQUIRE(ret == HSUCCEED);
     
