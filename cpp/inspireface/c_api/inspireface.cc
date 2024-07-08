@@ -174,6 +174,11 @@ HResult HFLaunchInspireFace(HPath resourcePath) {
     return INSPIRE_LAUNCH->Load(resourcePath);
 }
 
+HResult HFTerminateInspireFace() {
+    INSPIRE_LAUNCH->Unload();
+    return HSUCCEED;
+}
+
 HResult HFFeatureHubDataDisable() {
     return FEATURE_HUB->DisableHub();
 }

@@ -84,12 +84,15 @@ int main(int argc, char* argv[]) {
         SET_PACK_NAME(pack);
         fullPath = GET_MODEL_FILE();
         TEST_PRINT("Updated global Pack to: {}", TEST_MODEL_FILE);
+        SET_RUNTIME_FULLPATH_NAME(fullPath);
     } else if (!packPath.empty()) {
         fullPath = packPath;
         TEST_PRINT("Updated global Pack File to: {}", packPath);
+        SET_RUNTIME_FULLPATH_NAME(packPath);
     } else {
         fullPath = GET_MODEL_FILE();
         TEST_PRINT("Using default global Pack: {}", TEST_MODEL_FILE);
+        SET_RUNTIME_FULLPATH_NAME(fullPath);
     }
 
     std::cout << fullPath << std::endl;
@@ -102,5 +105,7 @@ int main(int argc, char* argv[]) {
     // Set log level
     HFSetLogLevel(HF_LOG_INFO);
 
-    return session.run();
+    ret = session.run();
+    HFTerminateInspireFace();
+    return ret;
 }
