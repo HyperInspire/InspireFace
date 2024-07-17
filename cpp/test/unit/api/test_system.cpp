@@ -8,9 +8,10 @@ TEST_CASE("test_System", "[system]") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
 
-    // The global TEST environment has been started, so this side needs to be temporarily closed before testing
+    // The global TEST environment has been started, so this side needs to be temporarily closed
+    // before testing
     HFTerminateInspireFace();
-    
+
     SECTION("Create a session test when it is not loaded") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
@@ -21,11 +22,11 @@ TEST_CASE("test_System", "[system]") {
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HERR_INVALID_CONTEXT_HANDLE);
     }
-    
+
     // Restart and start InspireFace
-    auto ret = HFLaunchInspireFace(GET_RUNTIME_FULLPATH_NAME.c_str()); 
+    auto ret = HFLaunchInspireFace(GET_RUNTIME_FULLPATH_NAME.c_str());
     REQUIRE(ret == HSUCCEED);
-    
+
     SECTION("Create a session test when it is reloaded") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
@@ -36,5 +37,4 @@ TEST_CASE("test_System", "[system]") {
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
     }
-    
 }
