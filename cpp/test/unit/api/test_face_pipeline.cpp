@@ -152,6 +152,8 @@ TEST_CASE("test_FacePipelineRobustness", "[robustness]") {
         // Multiple release
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HERR_INVALID_CONTEXT_HANDLE);
+
+        HFDeBugShowResourceStatistics();
     }
 }
 
