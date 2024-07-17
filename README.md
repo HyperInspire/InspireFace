@@ -66,7 +66,7 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 ### 1.5. Requirements
 
 - CMake (version 3.10 or higher)
-- OpenCV (version 4.20 or higher)
+- OpenCV (version 3.5 or higher)
     - Use the specific OpenCV-SDK supported by each target platform such as Android, iOS, and Linux.
 - NDK (version 16 or higher, only required for Android)
 - MNN (version 1.4.0 or higher)
