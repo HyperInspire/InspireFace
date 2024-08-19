@@ -27,7 +27,7 @@ The benchmark tests will be continuously updated.
 | Face Extract(**MNet**) | 1000      | 573ms          | **0.57ms**       |
 | Face Extract(**R50**)  | 1000      | 3527ms         | **3.53ms**       |
 
-**Note: **The above data inference backend uses CoreML.
+**Note**: The above data inference backend uses CoreML.
 
 ## Pikachu
 ### Device: Macbook pro 16-inch, 2019 2.6 GHz Intel Core i7
