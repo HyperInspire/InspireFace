@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
         // Print Head euler angle, It can often be used to judge the quality of a face by the Angle
         // of the head
         std::cout << "Roll: " << multipleFaceData.angles.roll[index]
-                  << ", Yaw: " << multipleFaceData.angles.roll[index]
+                  << ", Yaw: " << multipleFaceData.angles.yaw[index]
                   << ", Pitch: " << multipleFaceData.angles.pitch[index] << std::endl;
 
         HInt32 numOfLmk;
