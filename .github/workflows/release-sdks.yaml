@@ -351,7 +351,7 @@ jobs:
 
       # Step 2: Download the previously uploaded SDK files
       - name: Download SDK Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: sdk_files
 
