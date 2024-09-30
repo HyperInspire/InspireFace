@@ -1,298 +1,378 @@
 name: Release SDKs
 
+# Trigger the workflow when pushing tags that match the pattern "v*"
 on:
   push:
     tags:
       - "v*"
 
+# Set the global GitHub token environment variable
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
 jobs:
-  prepare:
-    name: Prepare Release
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.extract_version.outputs.version }}
-    steps:
-      - name: Extract Version Number
-        id: extract_version
-        run: echo "version=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_OUTPUT
-
   build_linux_x86:
     name: Compile Linux-Ubuntu-x86
-    needs: prepare
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Cache Dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pip
-            ~/.cache/apt
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/requirements.txt') }}
+
+      # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
           git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+
+      # Step 3: Install necessary dependencies for building the CMake project
       - name: Install Dependencies
         run: |
-          sudo apt-get update
+          sudo apt-get update  # Update package lists
+          # Install build tools and required libraries for video processing
           sudo apt-get install -y build-essential libgtk-3-dev libavcodec-dev libavformat-dev libjpeg-dev libswscale-dev
-      - name: Build SDK
+
+      # Step 4: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 5: Start building the SDK
+      - name: Start Building the InspireFace-Linux-x86
         run: |
           bash command/build_linux_ubuntu18.sh
           ls build
+
+      # Step 6: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-x86-ubuntu18-${{ needs.prepare.outputs.version }}.zip build/inspireface-linux-x86-ubuntu18-${{ needs.prepare.outputs.version }}
-          stat inspireface-linux-x86-ubuntu18-${{ needs.prepare.outputs.version }}.zip
+          zip -r inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip build/inspireface-linux-x86-ubuntu18-${{ env.VERSION }}
+          stat inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
+
+      # Step 7: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: sdk_files_linux_x86
-          path: inspireface-linux-x86-ubuntu18-${{ needs.prepare.outputs.version }}.zip
+          path: |
+            inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
 
   build_armv7_armhf:
     name: Compile Linux-Armv7-armhf
-    needs: prepare
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Cache Toolchain
-        uses: actions/cache@v3
-        with:
-          path: /opt/linaro-toolchain
-          key: ${{ runner.os }}-linaro-toolchain-6.3.1
+
+      # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
           git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+
+      # Step 3: Install wget and xz-utils
       - name: Install wget and xz-utils
         run: |
           sudo apt-get update
           sudo apt-get install -y wget xz-utils
-      - name: Setup Toolchain
+
+      # Step 4: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 5: Download Toolchain
+      - name: Download and Extract Linaro Toolchain
         run: |
-          if [ ! -d "/opt/linaro-toolchain" ]; then
-            sudo mkdir -p /opt/linaro-toolchain
-            wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf.tar.xz | sudo tar -xJ -C /opt/linaro-toolchain --strip-components=1
-          fi
+          mkdir -p /opt/linaro-toolchain
+          wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf.tar.xz | tar -xJ -C /opt/linaro-toolchain --strip-components=1
+
+      # Step 6: Install Toolchain
       - name: Set environment variables
         run: |
           echo "ARM_CROSS_COMPILE_TOOLCHAIN=/opt/linaro-toolchain" >> $GITHUB_ENV
           echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
-      - name: Build SDK
+
+      # Step 7: Start building the SDK
+      - name: Start Building the InspireFace-Linux-armv7
         run: |
           bash command/build_cross_armv7_armhf.sh
           ls build
+
+      # Step 8: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-armv7-armhf-${{ needs.prepare.outputs.version }}.zip build/inspireface-linux-armv7-armhf-${{ needs.prepare.outputs.version }}
-          stat inspireface-linux-armv7-armhf-${{ needs.prepare.outputs.version }}.zip
+          zip -r inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-armhf-${{ env.VERSION }}
+          stat inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
+
+      # Step 9: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: sdk_files_armv7_armhf
-          path: inspireface-linux-armv7-armhf-${{ needs.prepare.outputs.version }}.zip
+          path: |
+            inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
 
   build_armv7_rv1109rv1126_armhf:
     name: Compile Linux-Armv7-rv1109rv1126-armhf
-    needs: prepare
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Cache Toolchain
-        uses: actions/cache@v3
-        with:
-          path: /opt/linaro-toolchain
-          key: ${{ runner.os }}-linaro-toolchain-6.3.1
+
+      # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
           git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+
+      # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 4: Install wget and xz-utils
       - name: Install wget and xz-utils
         run: |
           sudo apt-get update
           sudo apt-get install -y wget xz-utils
-      - name: Setup Toolchain
+
+      # Step 5: Download Toolchain
+      - name: Download and Extract Linaro Toolchain
         run: |
-          if [ ! -d "/opt/linaro-toolchain" ]; then
-            sudo mkdir -p /opt/linaro-toolchain
-            wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf.tar.xz | sudo tar -xJ -C /opt/linaro-toolchain --strip-components=1
-          fi
+          mkdir -p /opt/linaro-toolchain
+          wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf.tar.xz | tar -xJ -C /opt/linaro-toolchain --strip-components=1
+
+      # Step 6: Install Toolchain
       - name: Set environment variables
         run: |
           echo "ARM_CROSS_COMPILE_TOOLCHAIN=/opt/linaro-toolchain" >> $GITHUB_ENV
           echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
-      - name: Build SDK
+
+      # Step 7: Start building the SDK
+      - name: Start Building the InspireFace-Linux-armv7-rv1109rv1126
         run: |
           bash command/build_cross_rv1109rv1126_armhf.sh
           ls build
+
+      # Step 8: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-armv7-rv1109rv1126-armhf-${{ needs.prepare.outputs.version }}.zip build/inspireface-linux-armv7-rv1109rv1126-armhf-${{ needs.prepare.outputs.version }}
-          stat inspireface-linux-armv7-rv1109rv1126-armhf-${{ needs.prepare.outputs.version }}.zip
+          zip -r inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}
+          stat inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
+
+      # Step 9: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: sdk_files_armv7_rv1109rv1126_armhf
-          path: inspireface-linux-armv7-rv1109rv1126-armhf-${{ needs.prepare.outputs.version }}.zip
+          path: |
+            inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
 
   build_linux_aarch64:
     name: Compile Linux-Aarch64
-    needs: prepare
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Cache Toolchain
-        uses: actions/cache@v3
-        with:
-          path: /opt/linaro-toolchain
-          key: ${{ runner.os }}-linaro-toolchain-aarch64-6.3.1
+
+      # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
           git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+
+      # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 4: Install wget and xz-utils
       - name: Install wget and xz-utils
         run: |
           sudo apt-get update
           sudo apt-get install -y wget xz-utils
-      - name: Setup Toolchain
+
+      # Step 5: Download Toolchain
+      - name: Download and Extract Linaro Toolchain
         run: |
-          if [ ! -d "/opt/linaro-toolchain" ]; then
-            sudo mkdir -p /opt/linaro-toolchain
-            wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/aarch64-linux-gnu/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu.tar.xz | sudo tar -xJ -C /opt/linaro-toolchain --strip-components=1
-          fi
+          mkdir -p /opt/linaro-toolchain
+          wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/aarch64-linux-gnu/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu.tar.xz | tar -xJ -C /opt/linaro-toolchain --strip-components=1
+
+      # Step 6: Install Toolchain
       - name: Set environment variables
         run: |
           echo "ARM_CROSS_COMPILE_TOOLCHAIN=/opt/linaro-toolchain" >> $GITHUB_ENV
           echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
-      - name: Build SDK
+
+      # Step 7: Start building the SDK
+      - name: Start Building the InspireFace-Linux-aarch64
         run: |
           bash command/build_cross_aarch64.sh
           ls build
+
+      # Step 8: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-aarch64-${{ needs.prepare.outputs.version }}.zip build/inspireface-linux-aarch64-${{ needs.prepare.outputs.version }}
-          stat inspireface-linux-aarch64-${{ needs.prepare.outputs.version }}.zip
+          zip -r inspireface-linux-aarch64-${{ env.VERSION }}.zip build/inspireface-linux-aarch64-${{ env.VERSION }}
+          stat inspireface-linux-aarch64-${{ env.VERSION }}.zip
+
+      # Step 9: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: sdk_files_linux_aarch64
-          path: inspireface-linux-aarch64-${{ needs.prepare.outputs.version }}.zip
+          path: |
+            inspireface-linux-aarch64-${{ env.VERSION }}.zip
 
   build_android:
     name: Compile Android
-    needs: prepare
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
           git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+
+      # Step 3: Install dependencies
       - name: Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y wget unzip xz-utils
-      - name: Cache Android NDK
-        uses: actions/cache@v3
-        with:
-          path: /opt/android-ndk-r18b
-          key: ${{ runner.os }}-android-ndk-r18b
+
+      # Step 4: Download and Extract Android NDK
       - name: Download and Extract Android NDK
         run: |
-          if [ ! -d "/opt/android-ndk-r18b" ]; then
-            sudo mkdir -p /opt/android-ndk-r18b
-            wget -qO /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip
-            sudo unzip /tmp/android-ndk.zip -d /opt
-            rm /tmp/android-ndk.zip
-          fi
+          mkdir -p /opt/android-ndk-r18b
+          wget -qO /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip
+          unzip /tmp/android-ndk.zip -d /opt
+          rm /tmp/android-ndk.zip
+
+      # Step 5: Install Android NDK Environment Variables
       - name: Set Android NDK Environment Variables
         run: |
           echo "ANDROID_NDK=/opt/android-ndk-r18b" >> $GITHUB_ENV
           echo "PATH=/opt/android-ndk-r18b/bin:${PATH}" >> $GITHUB_ENV
-      - name: Cache OpenCV Android SDK
-        uses: actions/cache@v3
-        with:
-          path: /opt/opencv-android-sdk
-          key: ${{ runner.os }}-opencv-android-sdk-4.5.1
+
+      # Step 6: Download and Extract OpenCV Android SDK
       - name: Download and Extract OpenCV Android SDK
         run: |
-          if [ ! -d "/opt/opencv-android-sdk" ]; then
-            sudo mkdir -p /opt/opencv-android-sdk
-            wget -qO /tmp/opencv-android-sdk.zip https://github.com/opencv/opencv/releases/download/4.5.1/opencv-4.5.1-android-sdk.zip
-            sudo unzip /tmp/opencv-android-sdk.zip -d /opt/opencv-android-sdk
-            rm /tmp/opencv-android-sdk.zip
-          fi
+          mkdir -p /opt/opencv-android-sdk
+          wget -qO /tmp/opencv-android-sdk.zip https://github.com/opencv/opencv/releases/download/4.5.1/opencv-4.5.1-android-sdk.zip
+          unzip /tmp/opencv-android-sdk.zip -d /opt/opencv-android-sdk
+          rm /tmp/opencv-android-sdk.zip
+
+      # Step 7: Set OpenCV Environment Variables
       - name: Set OpenCV Environment Variables
         run: |
           echo "OPENCV_DIR=/opt/opencv-android-sdk/OpenCV-android-sdk/sdk/native/jni" >> $GITHUB_ENV
-      - name: Build SDK
+
+      # Step 8: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 9: Start building the SDK
+      - name: Start Building the InspireFace-Android
         run: |
           bash command/build_android.sh
           ls build
+
+      # Step 10: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-android-${{ needs.prepare.outputs.version }}.zip build/inspireface-android-${{ needs.prepare.outputs.version }}
-          stat inspireface-android-${{ needs.prepare.outputs.version }}.zip
+          zip -r inspireface-android-${{ env.VERSION }}.zip build/inspireface-android-${{ env.VERSION }}
+          stat inspireface-android-${{ env.VERSION }}.zip
+
+      # Step 11: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: sdk_files_android
-          path: inspireface-android-${{ needs.prepare.outputs.version }}.zip
+          path: |
+            inspireface-android-${{ env.VERSION }}.zip
 
   build_ios:
     name: Compile iOS-arm64
-    needs: prepare
     runs-on: macos-latest
+
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      # Step 2: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 3: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
           git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
-      - name: Build SDK
+
+      # Step 4: Start building the SDK
+      - name: Start Building the InspireFace-iOS
         run: |
           bash command/build_ios.sh
           ls build
+
+      # Step 5: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-ios-${{ needs.prepare.outputs.version }}.zip build/inspireface-ios-${{ needs.prepare.outputs.version }}
-          stat inspireface-ios-${{ needs.prepare.outputs.version }}.zip
+          zip -r inspireface-ios-${{ env.VERSION }}.zip build/inspireface-ios-${{ env.VERSION }}
+          stat inspireface-ios-${{ env.VERSION }}.zip
+
+      # Step 6: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: sdk_files_ios
-          path: inspireface-ios-${{ needs.prepare.outputs.version }}.zip
+          path: |
+            inspireface-ios-${{ env.VERSION }}.zip
 
   release:
     name: Release SDKs to GitHub
-    needs: [prepare, build_linux_x86, build_armv7_armhf, build_armv7_rv1109rv1126_armhf, build_linux_aarch64, build_android, build_ios]
+    needs: [ build_linux_x86, build_armv7_armhf, build_armv7_rv1109rv1126_armhf, build_linux_aarch64, build_android, build_ios]
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the repository again
       - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Download All SDK Artifacts
+        uses: actions/checkout@v2
+
+      # Step 2: Download the previously uploaded SDK files
+      - name: Download SDK Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./all_artifacts
+          name: sdk_files_linux_x86
+          name: sdk_files_armv7_armhf
+          name: sdk_files_armv7_rv1109rv1126_armhf
+          name: sdk_files_linux_aarch64
+          name: sdk_files_android
+          name: sdk_files_ios 
+
+      # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 4: Create a GitHub Release and upload SDK files with the version number
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./all_artifacts/**/*.zip
-          name: Release ${{ needs.prepare.outputs.version }}
-          body: |
-            Release of InspireFace SDK version ${{ needs.prepare.outputs.version }}
-            
-            This release includes SDKs for the following platforms:
-            - Linux x86 (Ubuntu 18.04)
-            - Linux ARMv7 (armhf)
-            - Linux ARMv7 (RV1109/RV1126)
-            - Linux AArch64
-            - Android
-            - iOS
-          draft: false
-          prerelease: false
+          files: |
+            inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
+            inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
+            inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
+            inspireface-linux-aarch64-${{ env.VERSION }}.zip
+            inspireface-android-${{ env.VERSION }}.zip
+            inspireface-ios-${{ env.VERSION }}.zip
