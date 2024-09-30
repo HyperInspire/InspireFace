@@ -353,26 +353,25 @@ jobs:
       - name: Download SDK Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: sdk_files_linux_x86
-          name: sdk_files_armv7_armhf
-          name: sdk_files_armv7_rv1109rv1126_armhf
-          name: sdk_files_linux_aarch64
-          name: sdk_files_android
-          name: sdk_files_ios 
+          path: sdk_artifacts
 
       # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
       - name: Extract Version Number
         id: extract_version
         run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
 
-      # Step 4: Create a GitHub Release and upload SDK files with the version number
+      # Step 4: List downloaded artifacts
+      - name: List downloaded artifacts
+        run: ls -R sdk_artifacts
+
+      # Step 5: Create a GitHub Release and upload SDK files with the version number
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
-            inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
-            inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
-            inspireface-linux-aarch64-${{ env.VERSION }}.zip
-            inspireface-android-${{ env.VERSION }}.zip
-            inspireface-ios-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_linux_x86/inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_armv7_armhf/inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_armv7_rv1109rv1126_armhf/inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_linux_aarch64/inspireface-linux-aarch64-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_android/inspireface-android-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_ios/inspireface-ios-${{ env.VERSION }}.zip
