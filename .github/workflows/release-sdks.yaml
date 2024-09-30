@@ -51,7 +51,7 @@ jobs:
 
       # Step 7: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: sdk_files
           path: |
@@ -108,7 +108,7 @@ jobs:
 
       # Step 9: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: sdk_files
           path: |
@@ -165,7 +165,7 @@ jobs:
 
       # Step 9: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: sdk_files
           path: |
@@ -222,7 +222,7 @@ jobs:
 
       # Step 9: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: sdk_files
           path: |
@@ -294,7 +294,7 @@ jobs:
 
       # Step 11: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: sdk_files
           path: |
@@ -333,7 +333,7 @@ jobs:
 
       # Step 6: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: sdk_files
           path: |
