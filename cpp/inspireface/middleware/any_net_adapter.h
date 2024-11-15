@@ -2,15 +2,14 @@
 // Created by tunm on 2023/5/6.
 //
 #pragma once
-#ifndef BIGGUYSMAIN_ANYNET_H
-#define BIGGUYSMAIN_ANYNET_H
+#ifndef INSPIREFACE_ANYNETADAPTER_H
+#define INSPIREFACE_ANYNETADAPTER_H
 
 #include <utility>
-
+#include <inspirecv/inspirecv.h>
 #include "../data_type.h"
 #include "inference_helper/inference_helper.h"
 #include "configurable.h"
-#include "opencv2/opencv.hpp"
 #include "../log.h"
 #include "model_archive/inspire_archive.h"
 
@@ -25,7 +24,7 @@ using AnyTensorOutputs = std::vector<std::pair<std::string, std::vector<float>>>
  * This class provides a general interface for different types of neural networks,
  * facilitating loading parameters, initializing models, and executing forward passes.
  */
-class INSPIRE_API AnyNet {
+class INSPIRE_API AnyNetAdapter {
     CONFIGURABLE_SUPPORT
 
 public:
@@ -33,9 +32,9 @@ public:
      * @brief Constructor for AnyNet.
      * @param name Name of the neural network.
      */
-    explicit AnyNet(std::string name) : m_name_(std::move(name)) {}
+    explicit AnyNetAdapter(std::string name) : m_name_(std::move(name)) {}
 
-    ~AnyNet() {
+    ~AnyNetAdapter() {
         m_nn_inference_->Finalize();
     }
 
@@ -66,10 +65,12 @@ public:
         pushData<int>(model.Config(), "data_type", InputTensorInfo::InputTensorInfo::kDataTypeImage);
         pushData<int>(model.Config(), "input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
         pushData<int>(model.Config(), "output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
+        pushData<int>(model.Config(), "infer_backend", 0);
         pushData<int>(model.Config(), "threads", 1);
 
         m_nn_inference_.reset(InferenceHelper::Create(m_infer_type_));
         m_nn_inference_->SetNumThreads(getData<int>("threads"));
+
 #if defined(ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA) && !defined(ISF_ENABLE_RKNN)
         INSPIRE_LOGW("You have forced the global use of MNN_CUDA as the neural network inference backend");
         m_nn_inference_->SetSpecialBackend(InferenceHelper::kMnnCuda);
@@ -95,9 +96,9 @@ public:
         m_input_image_size_ = {width, height};
         int channel = getData<int>("input_channel");
         if (getData<bool>("nchw")) {
-            input_tensor_info.tensor_dims = {1, channel, m_input_image_size_.height, m_input_image_size_.width};
+            input_tensor_info.tensor_dims = {1, channel, m_input_image_size_.GetHeight(), m_input_image_size_.GetWidth()};
         } else {
-            input_tensor_info.tensor_dims = {1, m_input_image_size_.height, m_input_image_size_.width, channel};
+            input_tensor_info.tensor_dims = {1, m_input_image_size_.GetHeight(), m_input_image_size_.GetWidth(), channel};
         }
 
         input_tensor_info.data_type = getData<int>("data_type");
@@ -132,23 +133,19 @@ public:
         return 0;
     }
 
-    /**
-     * @brief Performs a forward pass of the network with given input data.
-     * @param data The input matrix (image) to process.
-     * @param outputs Outputs of the network (tensor outputs).
-     */
-    void Forward(const Matrix &data, AnyTensorOutputs &outputs) {
+    void Forward(const inspirecv::Image &image, AnyTensorOutputs &outputs) {
         InputTensorInfo &input_tensor_info = getMInputTensorInfoList()[0];
         if (m_infer_type_ == InferenceHelper::kRknn) {
             // Start by simply implementing a temporary color shift on the outside
+            // TODO: 未实现
             if (getData<bool>("swap_color")) {
-                cv::cvtColor(data, m_cache_, cv::COLOR_BGR2RGB);
-                input_tensor_info.data = m_cache_.data;
+                // cv::cvtColor(data, m_cache_, cv::COLOR_BGR2RGB);
+                input_tensor_info.data = (uint8_t *)m_cache_.Data();
             } else {
-                input_tensor_info.data = data.data;
+                // input_tensor_info.data = data.data;
             }
         } else {
-            input_tensor_info.data = data.data;
+            input_tensor_info.data = (uint8_t *)image.Data();
         }
         Forward(outputs);
     }
@@ -174,7 +171,7 @@ public:
             outputs.push_back(std::make_pair(m_output_tensor_info_list_[i].name, output_score_raw_list));
         }
 
-        m_cache_.release();
+        m_cache_.Reset(0, 0, 0);
     }
 
 public:
@@ -198,7 +195,7 @@ public:
      * @brief Gets the size of the input image.
      * @return Size of the input image.
      */
-    cv::Size &getMInputImageSize() {
+    inspirecv::Size<int> &getMInputImageSize() {
         return m_input_image_size_;
     }
 
@@ -210,12 +207,12 @@ private:
     std::shared_ptr<InferenceHelper> m_nn_inference_;          ///< Shared pointer to the inference helper.
     std::vector<InputTensorInfo> m_input_tensor_info_list_;    ///< List of input tensor information.
     std::vector<OutputTensorInfo> m_output_tensor_info_list_;  ///< List of output tensor information.
-    cv::Size m_input_image_size_{};                            ///< Size of the input image.
-    cv::Mat m_cache_;                                          ///< Cached matrix for image data.
+    inspirecv::Size<int> m_input_image_size_{};                ///< Size of the input image.
+    inspirecv::Image m_cache_;                                 ///< Cached matrix for image data.
 };
 
 template <typename ImageT, typename TensorT>
-AnyTensorOutputs ForwardService(std::shared_ptr<AnyNet> net, const ImageT &input, std::function<void(const ImageT &, TensorT &)> transform) {
+AnyTensorOutputs ForwardService(std::shared_ptr<AnyNetAdapter> net, const ImageT &input, std::function<void(const ImageT &, TensorT &)> transform) {
     InputTensorInfo &input_tensor_info = net->getMInputTensorInfoList()[0];
     TensorT transform_tensor;
     transform(input, transform_tensor);
@@ -243,7 +240,7 @@ AnyTensorOutputs ForwardService(std::shared_ptr<AnyNet> net, const ImageT &input
  * can work with different types of images and tensors, as specified by the template parameters.
  */
 template <typename ImageT, typename TensorT, typename PreprocessCallbackT>
-AnyTensorOutputs ForwardService(std::shared_ptr<AnyNet> net, const ImageT &input, PreprocessCallbackT &callback,
+AnyTensorOutputs ForwardService(std::shared_ptr<AnyNetAdapter> net, const ImageT &input, PreprocessCallbackT &callback,
                                 std::function<void(const ImageT &, TensorT &, PreprocessCallbackT &)> transform) {
     InputTensorInfo &input_tensor_info = net->getMInputTensorInfoList()[0];
     TensorT transform_tensor;
@@ -258,4 +255,4 @@ AnyTensorOutputs ForwardService(std::shared_ptr<AnyNet> net, const ImageT &input
 
 }  // namespace inspire
 
-#endif  // BIGGUYSMAIN_ANYNET_H
+#endif  // INSPIREFACE_ANYNETADAPTER_H

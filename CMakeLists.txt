@@ -146,6 +146,11 @@ else()
     find_package(OpenCV REQUIRED)
 endif ()
 
+# InspireCV dependency configuration
+add_subdirectory(${ISF_THIRD_PARTY_DIR}/InspireCV EXCLUDE_FROM_ALL)
+set(INSPIRECV_INCLUDE_PATH "${ISF_THIRD_PARTY_DIR}/InspireCV/include")
+set(INSPIRECV_LIBS InspireCV)
+
 # If you need using CUDA-enabled MNN, you need to manually configure the pre-compiled CUDA-enabled MNN library path
 set(ISF_LINUX_MNN_CUDA "" CACHE STRING "Path to CUDA directory")
 
