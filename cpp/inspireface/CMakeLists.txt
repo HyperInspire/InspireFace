@@ -33,8 +33,13 @@ endif()
 
 
 # SQLite3
-set(SOURCE_FILES ${SOURCE_FILES} ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite3.c)   # Add SQLite3 C_API file
+set(SOURCE_FILES ${SOURCE_FILES} 
+        ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite3.c
+        ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite-vec.c
+)   # Add SQLite3 C_API file
 set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/)
+
+
 
 if (ISF_ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknn_api dl)
@@ -85,6 +90,10 @@ if(PLAT STREQUAL "linux")
     find_package(Threads REQUIRED)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${CMAKE_THREAD_LIBS_INIT} dl)
 endif()
+
+set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} inspirecv)
+set(NEED_INCLUDE ${NEED_INCLUDE} ${INSPIRECV_INCLUDE_PATH})
+message("INSPIRECV_INCLUDE_PATH: ${INSPIRECV_INCLUDE_PATH}")
 
 target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
