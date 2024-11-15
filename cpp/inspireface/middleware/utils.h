@@ -2,7 +2,7 @@
 #ifndef TRACKING_LIB_UTILS_H
 #define TRACKING_LIB_UTILS_H
 
-//#include "face_attribute.h"
+// #include "face_attribute.h"
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -14,10 +14,13 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #endif
+#include "opencv2/opencv.hpp"
+
+#include <inspirecv/inspirecv.h>
 
 namespace inspire {
 
-inline bool IsDirectory(const std::string& path) {
+inline bool IsDirectory(const std::string &path) {
 #ifdef _WIN32
     DWORD dwAttrib = GetFileAttributes(path.c_str());
     return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
@@ -31,23 +34,17 @@ inline bool IsDirectory(const std::string& path) {
 #endif
 }
 
-
-inline void EstimateHeadPose(const std::vector<cv::Point2f> &current_shape,
-                             cv::Vec3f &eav) {
+inline void EstimateHeadPose(const std::vector<cv::Point2f> &current_shape, cv::Vec3f &eav) {
     // head pose estimation by linear regression.
     static int HeadPosePointIndexs[] = {94, 59, 27, 20, 69, 45, 50};
     int *estimateHeadPosePointIndexs = HeadPosePointIndexs;
-    static float estimateHeadPose2dArray[] = {
-            0.139791, 27.4028, 7.02636, -2.48207, 9.59384, 6.03758, 1.27402,
-            10.4795, 6.20801, 1.17406, 29.1886, 1.67768, 0.306761, -103.832,
-            5.66238, 4.78663, 17.8726, -15.3623, -5.20016, 9.29488, -11.2495,
-            -25.1704, 10.8649, -29.4877, -5.62572, 9.0871, -12.0982, -5.19707,
-            -8.25251, 13.3965, -23.6643, -13.1348, 29.4322, 67.239, 0.666896,
-            1.84304, -2.83223, 4.56333, -15.885, -4.74948, -3.79454, 12.7986,
-            -16.1, 1.47175, 4.03941};
+    static float estimateHeadPose2dArray[] = {0.139791, 27.4028,  7.02636,  -2.48207, 9.59384,  6.03758,  1.27402,  10.4795,  6.20801,
+                                              1.17406,  29.1886,  1.67768,  0.306761, -103.832, 5.66238,  4.78663,  17.8726,  -15.3623,
+                                              -5.20016, 9.29488,  -11.2495, -25.1704, 10.8649,  -29.4877, -5.62572, 9.0871,   -12.0982,
+                                              -5.19707, -8.25251, 13.3965,  -23.6643, -13.1348, 29.4322,  67.239,   0.666896, 1.84304,
+                                              -2.83223, 4.56333,  -15.885,  -4.74948, -3.79454, 12.7986,  -16.1,    1.47175,  4.03941};
 
-    cv::Mat estimateHeadPoseMat =
-            cv::Mat(15, 3, CV_32FC1, estimateHeadPose2dArray);
+    cv::Mat estimateHeadPoseMat = cv::Mat(15, 3, CV_32FC1, estimateHeadPose2dArray);
     if (current_shape.empty())
         return;
     static const int samplePdim = 7;
@@ -69,10 +66,8 @@ inline void EstimateHeadPose(const std::vector<cv::Point2f> &current_shape,
     sumy = sumy / samplePdim;
     static cv::Mat tmp(1, 2 * samplePdim + 1, CV_32FC1);
     for (int i = 0; i < samplePdim; i++) {
-        tmp.at<float>(i) =
-                (current_shape[estimateHeadPosePointIndexs[i]].x - sumx) / dist;
-        tmp.at<float>(i + samplePdim) =
-                (current_shape[estimateHeadPosePointIndexs[i]].y - sumy) / dist;
+        tmp.at<float>(i) = (current_shape[estimateHeadPosePointIndexs[i]].x - sumx) / dist;
+        tmp.at<float>(i + samplePdim) = (current_shape[estimateHeadPosePointIndexs[i]].y - sumy) / dist;
     }
     tmp.at<float>(2 * samplePdim) = 1.0f;
     cv::Mat predict = tmp * estimateHeadPoseMat;
@@ -81,8 +76,7 @@ inline void EstimateHeadPose(const std::vector<cv::Point2f> &current_shape,
     eav[2] = predict.at<float>(2);
 }
 
-inline void MinRect(const std::vector<cv::Point2f> &landmarks, int length,
-                    float *rect) {
+inline void MinRect(const std::vector<cv::Point2f> &landmarks, int length, float *rect) {
     rect[0] = landmarks[0].x;
     rect[1] = landmarks[0].y;
     rect[2] = landmarks[0].x;
@@ -108,14 +102,13 @@ inline float PointDistance(const cv::Point2f &a, const cv::Point2f &b) {
 inline cv::Point2f MeanPoint(const std::vector<cv::Point2f> &points) {
     assert(points.size() > 0);
     cv::Point2f mean;
-    for (const auto &p: points)
+    for (const auto &p : points)
         mean += p;
     mean /= static_cast<int>(points.size());
     return mean;
 }
 
-inline void BestFitRect(const std::vector<cv::Point2f> &pre_landmarks, int size,
-                        std::vector<cv::Point2f> &src_fit) {
+inline void BestFitRect(const std::vector<cv::Point2f> &pre_landmarks, int size, std::vector<cv::Point2f> &src_fit) {
     src_fit.resize(pre_landmarks.size());
     std::vector<float> mean_shape_box = {56, 56, 92, 102};
     float rect[4];
@@ -128,18 +121,12 @@ inline void BestFitRect(const std::vector<cv::Point2f> &pre_landmarks, int size,
     float scaleHeight = mean_shape_box[3] / points_height;
     float scale = scaleHeight;
     for (int i = 0; i < size; i++) {
-        src_fit[i].x =
-                pre_landmarks[i].x * scale - points_centerx * scale + meanshape_centerx;
-        src_fit[i].y =
-                pre_landmarks[i].y * scale - points_centery * scale + meanshape_centery;
+        src_fit[i].x = pre_landmarks[i].x * scale - points_centerx * scale + meanshape_centerx;
+        src_fit[i].y = pre_landmarks[i].y * scale - points_centery * scale + meanshape_centery;
     }
 }
 
-inline void
-SimilarityTransformEstimate(const std::vector<cv::Point2f> &src_points,
-                            const std::vector<cv::Point2f> &dst_points,
-                            cv::Mat &matrix) {
-
+inline void SimilarityTransformEstimate(const std::vector<cv::Point2f> &src_points, const std::vector<cv::Point2f> &dst_points, cv::Mat &matrix) {
     assert(matrix.rows == 2);
     assert(matrix.cols == 3);
     // matrix.create(2,3,CV_64F);
@@ -185,10 +172,8 @@ SimilarityTransformEstimate(const std::vector<cv::Point2f> &src_points,
     }
 }
 
-inline void
-SimilarityTransformEstimate(const std::vector<cv::Point2f> &src_points,
-                            const std::vector<cv::Point2f> &dst_points,
-                            std::vector<float> &matrix) {
+inline void SimilarityTransformEstimate(const std::vector<cv::Point2f> &src_points, const std::vector<cv::Point2f> &dst_points,
+                                        std::vector<float> &matrix) {
     assert(src_points.size() == dst_points.size());
     cv::Point2f src_mean = MeanPoint(src_points);
     cv::Point2f dst_mean = MeanPoint(dst_points);
@@ -233,23 +218,17 @@ SimilarityTransformEstimate(const std::vector<cv::Point2f> &src_points,
 
 inline cv::Mat GetRectSquareAffine(cv::Rect rect, float win_size = 112) {
     assert(rect.height == rect.width);
-    std::vector<cv::Point2f> dst_pts = {
-            {0,        0},
-            {win_size, 0},
-            {win_size, win_size}};
+    std::vector<cv::Point2f> dst_pts = {{0, 0}, {win_size, 0}, {win_size, win_size}};
     float x1 = static_cast<float>(rect.x);
     float y1 = static_cast<float>(rect.y);
     float x2 = static_cast<float>(rect.x + rect.width);
     float y2 = static_cast<float>(rect.y + rect.height);
-    std::vector<cv::Point2f> src_pts = {{x1, y1},
-                                        {x2, y1},
-                                        {x2, y2}};
+    std::vector<cv::Point2f> src_pts = {{x1, y1}, {x2, y1}, {x2, y2}};
     cv::Mat m = cv::getAffineTransform(src_pts, dst_pts);
     return m;
 }
 
-inline cv::Mat SquareToSquare(cv::Rect src, cv::Rect dst,
-                              float win_size = 112) {
+inline cv::Mat SquareToSquare(cv::Rect src, cv::Rect dst, float win_size = 112) {
     float src_x1 = static_cast<float>(src.x);
     float src_y1 = static_cast<float>(src.y);
     float src_x2 = static_cast<float>(src.x + src.width);
@@ -260,21 +239,13 @@ inline cv::Mat SquareToSquare(cv::Rect src, cv::Rect dst,
     float dst_x2 = static_cast<float>(dst.x + dst.width);
     float dst_y2 = static_cast<float>(dst.y + dst.height);
 
-    std::vector<cv::Point2f> src_pts = {
-            {src_x1, src_y1},
-            {src_x2, src_y1},
-            {src_x2, src_y2}};
-    std::vector<cv::Point2f> dst_pts = {
-            {dst_x1, dst_y1},
-            {dst_x2, dst_y1},
-            {dst_x2, dst_y2}};
+    std::vector<cv::Point2f> src_pts = {{src_x1, src_y1}, {src_x2, src_y1}, {src_x2, src_y2}};
+    std::vector<cv::Point2f> dst_pts = {{dst_x1, dst_y1}, {dst_x2, dst_y1}, {dst_x2, dst_y2}};
     cv::Mat m = cv::getAffineTransform(src_pts, dst_pts);
     return m;
 }
 
-inline std::vector<cv::Point2f>
-ApplyTransformToPoints(const std::vector<cv::Point2f> &points,
-                       const cv::Mat &matrix) {
+inline std::vector<cv::Point2f> ApplyTransformToPoints(const std::vector<cv::Point2f> &points, const cv::Mat &matrix) {
     assert(matrix.rows == 2);
     assert(matrix.cols == 3);
     double m00 = matrix.at<double>(0, 0);
@@ -292,10 +263,7 @@ ApplyTransformToPoints(const std::vector<cv::Point2f> &points,
     return out_points;
 }
 
-inline std::vector<cv::Point2f>
-FixPointsMeanshape(std::vector<cv::Point2f> &points,
-                   const std::vector<cv::Point2f> &mean_shape) {
-
+inline std::vector<cv::Point2f> FixPointsMeanshape(std::vector<cv::Point2f> &points, const std::vector<cv::Point2f> &mean_shape) {
     cv::Rect bbox = cv::boundingRect(points);
     int R = std::max(bbox.height, bbox.width);
     int cx = bbox.x + bbox.width / 2;
@@ -346,10 +314,8 @@ inline cv::Rect ComputeSafeRect(const cv::Rect &region, int height, int width) {
     return safe_rect;
 }
 
-inline void Transform(const std::vector<cv::Point2f> &pre_landmarks,
-                      float *src_fit, const float *meanshape, const int size,
-                      std::vector<float> &rotation,
-                      std::vector<float> &rotation_inv) {
+inline void Transform(const std::vector<cv::Point2f> &pre_landmarks, float *src_fit, const float *meanshape, const int size,
+                      std::vector<float> &rotation, std::vector<float> &rotation_inv) {
     std::vector<float> src(size * 2);
     std::vector<float> dst(size * 2);
 
@@ -427,10 +393,7 @@ inline std::vector<cv::Point2f> Rect2Points(const cv::Rect rect) {
     float y1 = static_cast<float>(rect.y);
     float x2 = static_cast<float>(rect.x + rect.width);
     float y2 = static_cast<float>(rect.y + rect.height);
-    std::vector<cv::Point2f> src_pts = {{x1, y1},
-                                        {x2, y1},
-                                        {x2, y2},
-                                        {x1, y2}};
+    std::vector<cv::Point2f> src_pts = {{x1, y1}, {x2, y1}, {x2, y2}, {x1, y2}};
     return src_pts;
 }
 
@@ -439,24 +402,17 @@ inline std::vector<cv::Point2f> Rect2Points(const cv::Rect2f rect) {
     float y1 = rect.y;
     float x2 = rect.x + rect.width;
     float y2 = rect.y + rect.height;
-    std::vector<cv::Point2f> src_pts = {{x1, y1},
-                                        {x2, y1},
-                                        {x2, y2},
-                                        {x1, y2}};
+    std::vector<cv::Point2f> src_pts = {{x1, y1}, {x2, y1}, {x2, y2}, {x1, y2}};
     return src_pts;
 }
 
-inline cv::Mat ScaleAffineMatrix(const cv::Mat &affine, float scale,
-                                 int origin_width, int origin_height,
-                                 int new_width, int new_height) {
-    std::vector<cv::Point2f> origin_pts =
-            Rect2Points(cv::Rect(0, 0, origin_width, origin_height));
+inline cv::Mat ScaleAffineMatrix(const cv::Mat &affine, float scale, int origin_width, int origin_height, int new_width, int new_height) {
+    std::vector<cv::Point2f> origin_pts = Rect2Points(cv::Rect(0, 0, origin_width, origin_height));
     cv::Mat affine_inv;
     cv::invertAffineTransform(affine, affine_inv);
-    std::vector<cv::Point2f> screen_pts =
-            ApplyTransformToPoints(origin_pts, affine_inv);
+    std::vector<cv::Point2f> screen_pts = ApplyTransformToPoints(origin_pts, affine_inv);
     cv::Point2f center;
-    for (auto &one: screen_pts) {
+    for (auto &one : screen_pts) {
         center.x += one.x * 0.25f;
         center.y += one.y * 0.25f;
     }
@@ -473,15 +429,14 @@ inline cv::Mat ScaleAffineMatrix(const cv::Mat &affine, float scale,
     screen_pts[3].x = center.x + (screen_pts[3].x - center.x) * scale;
     screen_pts[3].y = center.y + (screen_pts[3].y - center.y) * scale;
 
-    std::vector<cv::Point2f> new_pts =
-            Rect2Points(cv::Rect(0, 0, new_width, new_height));
+    std::vector<cv::Point2f> new_pts = Rect2Points(cv::Rect(0, 0, new_width, new_height));
     screen_pts.pop_back();
     new_pts.pop_back();
     cv::Mat m = cv::getAffineTransform(screen_pts, new_pts);
     return m;
 }
 
-template<class ForwardIterator>
+template <class ForwardIterator>
 inline size_t argmax(ForwardIterator first, ForwardIterator last) {
     return std::distance(first, std::max_element(first, last));
 }
@@ -492,7 +447,7 @@ inline void RotPoints(std::vector<cv::Point2f> &pts, float angle) {
     float m12 = -sin(angle_rad);
     float m21 = sin(angle_rad);
     float m22 = cos(angle_rad);
-    for (auto &one: pts) {
+    for (auto &one : pts) {
         one.x = one.x * m11 + one.y * m12;
         one.y = one.x * m21 + one.y * m22;
     }
@@ -505,14 +460,12 @@ inline cv::Rect flipRectWidth(const cv::Rect &rect, const cv::Size &size) {
     int y2 = rect.y + rect.height;
     x1 = size.width - (rect.x + rect.width);
     x2 = size.width - rect.x;
-//    __android_log_print(ANDROID_LOG_ERROR, "flip: ", "[[%d, %d], [%d, %d]]",x1, y1, x2, y2);
-
+    //    __android_log_print(ANDROID_LOG_ERROR, "flip: ", "[[%d, %d], [%d, %d]]",x1, y1, x2, y2);
 
     return cv::Rect(cv::Point2f(x1, y1), cv::Point2f(x2, y2));
 }
 
-inline std::vector<cv::Point2f> RotatePoints(const std::vector<cv::Point2f>& points, float degree,
-                         const cv::Size &image_size) {
+inline std::vector<cv::Point2f> RotatePoints(const std::vector<cv::Point2f> &points, float degree, const cv::Size &image_size) {
     int width = image_size.width;
     int height = image_size.height;
     float radians = degree / 180 * CV_PI;
@@ -530,13 +483,12 @@ inline std::vector<cv::Point2f> RotatePoints(const std::vector<cv::Point2f>& poi
     }
     trans.convertTo(trans, CV_32F);
     cv::Mat mat_point3s(points.size(), 3, CV_32F, point3_array);
-//    std::cout << mat_point3s << std::endl;
+    //    std::cout << mat_point3s << std::endl;
     cv::Mat trans_result = mat_point3s * trans.t();
     return cv::Mat_<cv::Point2f>(trans_result);
 }
 
-inline cv::Mat RotateRect(cv::Rect &rect, std::vector<cv::Point2f> &dst,
-                          cv::Rect &trans_rect, float degree, const cv::Size &image_size) {
+inline cv::Mat RotateRect(cv::Rect &rect, std::vector<cv::Point2f> &dst, cv::Rect &trans_rect, float degree, const cv::Size &image_size) {
     int width = image_size.width;
     int height = image_size.height;
     float radians = degree / 180 * CV_PI;
@@ -550,10 +502,7 @@ inline cv::Mat RotateRect(cv::Rect &rect, std::vector<cv::Point2f> &dst,
     float ymin = rect.y;
     float xmax = rect.x + rect.width;
     float ymax = rect.y + rect.height;
-    float points[][3] = {{xmin, ymin, 1},
-                         {xmax, ymin, 1},
-                         {xmax, ymax, 1},
-                         {xmin, ymax, 1}};
+    float points[][3] = {{xmin, ymin, 1}, {xmax, ymin, 1}, {xmax, ymax, 1}, {xmin, ymax, 1}};
     trans.convertTo(trans, CV_32F);
     cv::Mat t_points(4, 3, CV_32F, points);
     cv::Mat trans_points = t_points * trans.t();
@@ -580,7 +529,7 @@ inline cv::Mat RotateRect(cv::Rect &rect, std::vector<cv::Point2f> &dst,
         }
     }
     trans_rect = cv::Rect(cv::Point2f(min_x, min_y), cv::Point2f(max_x, max_y));
-//    trans_rect = flipRectWidth(trans_rect, cv::Size(widthNew, heightNew));
+    //    trans_rect = flipRectWidth(trans_rect, cv::Size(widthNew, heightNew));
     return trans;
 }
 
@@ -634,14 +583,13 @@ inline cv::Rect GetNewBox(int src_w, int src_h, cv::Rect bbox, float scale) {
     }
 
     // Convert back to cv::Rect for output
-    cv::Rect new_bbox(static_cast<int>(left_top_x), static_cast<int>(left_top_y),
-                      static_cast<int>(right_bottom_x - left_top_x), static_cast<int>(right_bottom_y - left_top_y));
+    cv::Rect new_bbox(static_cast<int>(left_top_x), static_cast<int>(left_top_y), static_cast<int>(right_bottom_x - left_top_x),
+                      static_cast<int>(right_bottom_y - left_top_y));
     return new_bbox;
 }
 
-
-template<typename T>
-inline bool isShortestSideGreaterThan(const cv::Rect_<T>& rect, T value, float scale) {
+template <typename T>
+inline bool isShortestSideGreaterThan(const cv::Rect_<T> &rect, T value, float scale) {
     // Find the shortest edge
     T shortestSide = std::min(rect.width / scale, rect.height / scale);
     // Determines whether the shortest edge is greater than the given value
@@ -668,15 +616,14 @@ inline cv::Mat ComputeCropMatrix(const cv::Rect2f &rect, int width, int height) 
     cv::Rect2f padding_rect(x1, y1, x2 - x1, y2 - y1);
     std::vector<cv::Point2f> rect_pts = Rect2Points(padding_rect);
     rect_pts.erase(rect_pts.end() - 1);
-    std::vector<cv::Point2f> dst_pts = {{0, 0}, {(float )width, 0}, {(float )width, (float )height}};
+    std::vector<cv::Point2f> dst_pts = {{0, 0}, {(float)width, 0}, {(float)width, (float)height}};
     cv::Mat m = cv::getAffineTransform(rect_pts, dst_pts);
 
     return m;
 }
 
-
 // Exponential Moving Average (EMA) filter function
-inline float EmaFilter(float currentProb, std::vector<float>& history, int max, float alpha = 0.2f) {
+inline float EmaFilter(float currentProb, std::vector<float> &history, int max, float alpha = 0.2f) {
     // Add current probability to history
     history.push_back(currentProb);
 
@@ -694,6 +641,98 @@ inline float EmaFilter(float currentProb, std::vector<float>& history, int max, 
     return ema;
 }
 
-}   // namespace inspire
+// ==============================
+
+inline inspirecv::TransformMatrix SquareToSquare(inspirecv::Rect2f src, inspirecv::Rect2f dst, float win_size = 112) {
+    float src_x1 = static_cast<float>(src.GetX());
+    float src_y1 = static_cast<float>(src.GetY());
+    float src_x2 = static_cast<float>(src.GetX() + src.GetWidth());
+    float src_y2 = static_cast<float>(src.GetY() + src.GetHeight());
+
+    float dst_x1 = static_cast<float>(dst.GetX());
+    float dst_y1 = static_cast<float>(dst.GetY());
+    float dst_x2 = static_cast<float>(dst.GetX() + dst.GetWidth());
+    float dst_y2 = static_cast<float>(dst.GetY() + dst.GetHeight());
+
+    std::vector<inspirecv::Point2f> src_pts = {{src_x1, src_y1}, {src_x2, src_y1}, {src_x2, src_y2}, {src_x1, src_y2}};
+    std::vector<inspirecv::Point2f> dst_pts = {{dst_x1, dst_y1}, {dst_x2, dst_y1}, {dst_x2, dst_y2}, {dst_x1, dst_y2}};
+    inspirecv::TransformMatrix m = inspirecv::SimilarityTransformEstimate(src_pts, dst_pts);
+    return m;
+}
+
+inline std::vector<inspirecv::Point2f> FixPointsMeanshape(std::vector<inspirecv::Point2f> &points,
+                                                          const std::vector<inspirecv::Point2f> &mean_shape) {
+    inspirecv::Rect2f bbox = inspirecv::MinBoundingRect(points);
+    int R = std::max(bbox.GetHeight(), bbox.GetWidth());
+    int cx = bbox.GetX() + bbox.GetWidth() / 2;
+    int cy = bbox.GetY() + bbox.GetHeight() / 2;
+    inspirecv::Rect2f old(cx - R / 2, cy - R / 2, R, R);
+
+    inspirecv::Rect2f mean_shape_box = inspirecv::MinBoundingRect(mean_shape);
+    int m_R = std::max(mean_shape_box.GetHeight(), mean_shape_box.GetWidth());
+    int m_cx = mean_shape_box.GetX() + mean_shape_box.GetWidth() / 2;
+    int m_cy = mean_shape_box.GetY() + mean_shape_box.GetHeight() / 2;
+    inspirecv::Rect2f _new(m_cx - m_R / 2, m_cy - m_R / 2, m_R, m_R);
+    inspirecv::TransformMatrix affine = SquareToSquare(old, _new);
+    std::vector<inspirecv::Point2f> new_pts = ApplyTransformToPoints(points, affine);
+    return new_pts;
+}
+
+inline inspirecv::Rect2i GetNewBox(int src_w, int src_h, inspirecv::Rect2i bbox, float scale) {
+    // Convert cv::Rect to BoundingBox
+    BoundingBox box;
+    box.left_top_x = bbox.GetX();
+    box.left_top_y = bbox.GetY();
+    box.right_bottom_x = bbox.GetX() + bbox.GetWidth();
+    box.right_bottom_y = bbox.GetY() + bbox.GetHeight();
+
+    // Compute new bounding box
+    scale = std::min({static_cast<float>(src_h - 1) / bbox.GetHeight(), static_cast<float>(src_w - 1) / bbox.GetWidth(), scale});
+
+    float new_width = bbox.GetWidth() * scale;
+    float new_height = bbox.GetHeight() * scale;
+    float center_x = bbox.GetWidth() / 2.0f + bbox.GetX();
+    float center_y = bbox.GetHeight() / 2.0f + bbox.GetY();
+
+    float left_top_x = center_x - new_width / 2.0f;
+    float left_top_y = center_y - new_height / 2.0f;
+    float right_bottom_x = center_x + new_width / 2.0f;
+    float right_bottom_y = center_y + new_height / 2.0f;
+
+    if (left_top_x < 0) {
+        right_bottom_x -= left_top_x;
+        left_top_x = 0;
+    }
+
+    if (left_top_y < 0) {
+        right_bottom_y -= left_top_y;
+        left_top_y = 0;
+    }
+
+    if (right_bottom_x > src_w - 1) {
+        left_top_x -= right_bottom_x - src_w + 1;
+        right_bottom_x = src_w - 1;
+    }
+
+    if (right_bottom_y > src_h - 1) {
+        left_top_y -= right_bottom_y - src_h + 1;
+        right_bottom_y = src_h - 1;
+    }
+
+    // Convert back to cv::Rect for output
+    inspirecv::Rect2i new_bbox(static_cast<int>(left_top_x), static_cast<int>(left_top_y), static_cast<int>(right_bottom_x - left_top_x),
+                               static_cast<int>(right_bottom_y - left_top_y));
+    return new_bbox;
+}
+
+template <typename T>
+inline bool isShortestSideGreaterThan(const inspirecv::Rect<T> &rect, T value, float scale) {
+    // Find the shortest edge
+    T shortestSide = std::min(static_cast<float>(rect.GetWidth()) / scale, static_cast<float>(rect.GetHeight()) / scale);
+    // Determines whether the shortest edge is greater than the given value
+    return shortestSide > value;
+}
+
+}  // namespace inspire
 
 #endif

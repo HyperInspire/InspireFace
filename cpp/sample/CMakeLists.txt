@@ -78,6 +78,17 @@ set_target_properties(FaceDetect PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
+add_executable(NewFaceTrackerSample new/new_tracker_sample.cpp)
+target_link_libraries(NewFaceTrackerSample InspireFace ${ext})
+set_target_properties(NewFaceTrackerSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+add_executable(NewFaceTrackPipelineSample new/new_tracker_pipeline.cpp)
+target_link_libraries(NewFaceTrackPipelineSample InspireFace ${ext})
+set_target_properties(NewFaceTrackPipelineSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
 
 # Platform watershed
 if (ISF_BUILD_LINUX_ARM7 OR ISF_BUILD_LINUX_AARCH64)
