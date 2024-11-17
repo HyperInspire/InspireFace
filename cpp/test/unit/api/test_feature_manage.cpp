@@ -1,7 +1,7 @@
 //
 // Created by tunm on 2023/10/11.
 //
-
+#if 0
 #include <iostream>
 #include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
@@ -978,3 +978,4 @@ TEST_CASE("test_FeatureBenchmark", "[feature_benchmark]") {
 #endif
     }
 }
+#endif

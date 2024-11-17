@@ -2,12 +2,13 @@
 // Created by tunm on 2023/10/3.
 //
 
-#ifndef HYPERFACEREPO_INTYPEDEF_H
-#define HYPERFACEREPO_INTYPEDEF_H
+#ifndef INSPIREFACE_INTYPEDEF_H
+#define INSPIREFACE_INTYPEDEF_H
 
 typedef void*               HPVoid;                           ///< Pointer to Void.
 typedef void*               HFImageStream;                   ///< Handle for image.
 typedef void*               HFSession;                       ///< Handle for context.
+typedef void*               HFImageBitmap;                   ///< Handle for image bitmap.
 typedef long                HLong;                            ///< Long integer.
 typedef float                HFloat;                          ///< Single-precision floating point.
 typedef float*               HPFloat;                         ///< Pointer to Single-precision floating point.
@@ -36,4 +37,15 @@ typedef struct HPoint2f{
     HFloat y;          ///< Y-coordinate
 } HPoint2f;
 
-#endif //HYPERFACEREPO_INTYPEDEF_H
+typedef struct HPoint2i{
+    HInt32 x;          ///< X-coordinate
+    HInt32 y;          ///< Y-coordinate
+} HPoint2i;
+
+typedef struct HColor {
+    HFloat r;          ///< Red component
+    HFloat g;          ///< Green component
+    HFloat b;          ///< Blue component
+} HFColor;
+
+#endif //INSPIREFACE_INTYPEDEF_H

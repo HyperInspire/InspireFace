@@ -5,39 +5,22 @@
 #ifndef HYPERFACEREPO_TEST_TOOLS_H
 #define HYPERFACEREPO_TEST_TOOLS_H
 
-#include "opencv2/opencv.hpp"
 #include "inspireface/c_api/inspireface.h"
 #include <fstream>
 #include <cstdint> // For uint8_t
+#include <inspirecv/inspirecv.h>
 
-// Bad function
-inline HResult ReadImageToImageStream(const char *path, HFImageStream &handle, HFImageFormat format = HF_STREAM_BGR,
-                                      HFRotation rot = HF_CAMERA_ROTATION_0) {
-    cv::Mat image = cv::imread(path);
-    if (image.empty()) {
-        return -1;
-    }
-    HFImageData imageData = {0};
-    imageData.data = image.data;
-    imageData.height = image.rows;
-    imageData.width = image.cols;
-    imageData.format = format;
-    imageData.rotation = rot;
 
-    auto ret = HFCreateImageStream(&imageData, &handle);
 
-    return ret;
-}
-
-inline HResult CVImageToImageStream(const cv::Mat& image, HFImageStream &handle, HFImageFormat format = HF_STREAM_BGR,
+inline HResult CVImageToImageStream(const inspirecv::Image& image, HFImageStream &handle, HFImageFormat format = HF_STREAM_BGR,
                                     HFRotation rot = HF_CAMERA_ROTATION_0) {
-    if (image.empty()) {
+    if (image.Empty()) {
         return -1;
     }
     HFImageData imageData = {0};
-    imageData.data = image.data;
-    imageData.height = image.rows;
-    imageData.width = image.cols;
+    imageData.data = (uint8_t*)image.Data();
+    imageData.height = image.Height();
+    imageData.width = image.Width();
     imageData.format = format;
     imageData.rotation = rot;
 

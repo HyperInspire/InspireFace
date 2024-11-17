@@ -2,8 +2,8 @@
 // Created by Tunm-Air13 on 2023/9/11.
 //
 
-#ifndef HYPERFACEREPO_HERROR_H
-#define HYPERFACEREPO_HERROR_H
+#ifndef INSPIRE_FACE_HERROR_H
+#define INSPIRE_FACE_HERROR_H
 
 // [Anchor-Begin]
 
@@ -20,6 +20,8 @@
 #define HERR_INVALID_IMAGE_STREAM_PARAM (HERR_BASIC_BASE + 34)    // Invalid image param
 #define HERR_INVALID_SERIALIZATION_FAILED (HERR_BASIC_BASE + 35)  // Invalid face serialization failed
 #define HERR_INVALID_DETECTION_INPUT (HERR_BASIC_BASE + 36)       // Failed to modify detector input size
+#define HERR_INVALID_IMAGE_BITMAP_HANDLE    (HERR_BASIC_BASE+37)  // Invalid image bitmap handle
+
 
 #define HERR_SESS_BASE 0X500                                     // Session error types
 #define HERR_SESS_FUNCTION_UNUSABLE (HERR_SESS_BASE + 2)         // Function not usable
@@ -67,4 +69,4 @@
 
 // [Anchor-End]
 
-#endif  // HYPERFACEREPO_HERROR_H
+#endif  // INSPIRE_FACE_HERROR_H

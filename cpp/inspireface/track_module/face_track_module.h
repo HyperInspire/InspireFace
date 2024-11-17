@@ -5,11 +5,7 @@
 #ifndef INSPIRE_FACE_TRACK_MODULE_FACE_TRACK_MODULE_H
 #define INSPIRE_FACE_TRACK_MODULE_FACE_TRACK_MODULE_H
 #include <iostream>
-#ifdef ISF_ENABLE_APPLE_EXTENSION
-#include "face_detect/coreml_face_detect_adapt.h"
-#else
 #include "face_detect/face_detect_adapt.h"
-#endif
 #include "face_detect/rnet_adapt.h"
 #include "landmark/face_landmark_adapt.h"
 #include "common/face_info/face_object_internal.h"
@@ -171,11 +167,7 @@ private:
     int filter_minimum_face_px_size = 0;               ///< Minimum face pixel allowed to be retained (take the edge with the smallest Rect).
 
 private:
-#ifdef ISF_ENABLE_APPLE_EXTENSION
-    std::shared_ptr<CoreMLFaceDetectAdapt> m_face_detector_;  ///< Shared pointer to the face detector from CoreML.
-#else
     std::shared_ptr<FaceDetectAdapt> m_face_detector_;  ///< Shared pointer to the face detector.
-#endif
     std::shared_ptr<FaceLandmarkAdapt> m_landmark_predictor_;  ///< Shared pointer to the landmark predictor.
     std::shared_ptr<RNetAdapt> m_refine_net_;                  ///< Shared pointer to the RNet model.
 

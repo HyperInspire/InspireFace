@@ -3,8 +3,8 @@
 //
 #pragma once
 #include <vector>
-#ifndef HYPERFACEREPO_FACE_CONTEXT_H
-#define HYPERFACEREPO_FACE_CONTEXT_H
+#ifndef INSPIRE_FACE_CONTEXT_H
+#define INSPIRE_FACE_CONTEXT_H
 
 /**
  * @file face_context.h
@@ -210,7 +210,7 @@ public:
      * @brief Gets the cache of face pose quality results.
      * @return A const reference to a vector of FacePoseQualityResult objects.
      */
-    const std::vector<FacePoseQualityResult>& GetQualityResultsCache() const;
+    const std::vector<FacePoseQualityAdaptResult>& GetQualityResultsCache() const;
 
     /**
      * @brief Gets the cache of mask detection results.
@@ -301,6 +301,8 @@ public:
      * @return A const reference to a vector containing face detection confidence.
      */
     const std::vector<float>& GetDetConfidenceCache() const;
+    
+    const float GetFaceFeatureNormCache() const;
 
 private:
     // Private member variables
@@ -340,10 +342,11 @@ private:
     std::vector<int> m_attribute_gender_results_cache_;
     std::vector<int> m_attribute_age_results_cache_;
     Embedded m_face_feature_cache_;  ///< Cache for current face feature data
+    float m_face_feature_norm_;
 
     std::mutex m_mtx_;  ///< Mutex for thread safety.
 };
 
 }  // namespace inspire
 
-#endif  // HYPERFACEREPO_FACE_CONTEXT_H
+#endif  // INSPIRE_FACE_CONTEXT_H
