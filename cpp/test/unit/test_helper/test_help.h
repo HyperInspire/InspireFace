@@ -15,10 +15,11 @@
 #include <indicators/block_progress_bar.hpp>
 #include <indicators/cursor_control.hpp>
 #include "inspireface/c_api/inspireface.h"
-#include "opencv2/opencv.hpp"
+#include <inspirecv/inspirecv.h>
 #include <iomanip>
 #include "test_tools.h"
 #include <random>
+#include <fstream>
 
 using namespace indicators;
 
@@ -102,16 +103,16 @@ inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data
         size_t index = i % dataSize;
         // Data processing
         auto item = data[index];
-        cv::Mat image = cv::imread(item.second);
+        inspirecv::Image image = inspirecv::Image::Create(item.second);
         HFImageData imageData = {0};
-        imageData.data = image.data;
-        imageData.height = image.rows;
-        imageData.width = image.cols;
+        imageData.data = (uint8_t*)image.Data();
+        imageData.height = image.Height();
+        imageData.width = image.Width();
         imageData.format = HF_STREAM_BGR;
         imageData.rotation = HF_CAMERA_ROTATION_0;
         HFImageStream imgHandle;
         auto ret = HFCreateImageStream(&imageData, &imgHandle);
-        if (ret != HSUCCEED || image.empty()) {
+        if (ret != HSUCCEED || image.Empty()) {
             std::cerr << "Error image: " << std::to_string(ret)  << " , " << item.second << std::endl;
             return false;
         }
@@ -139,10 +140,11 @@ inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data
         char *newTagName = new char[item.first.size() + 1];
         std::strcpy(newTagName, item.first.c_str());
         HFFaceFeatureIdentity identity = {0};
-        identity.customId = i;
-        identity.tag = newTagName;
+        identity.id = i;
+        // identity.tag = newTagName;
         identity.feature = &feature;
-        ret = HFFeatureHubInsertFeature(identity);
+        HInt32 allocId;
+        ret = HFFeatureHubInsertFeature(identity, &allocId);
         if (ret != HSUCCEED) {
             std::cerr << "Error insert feature: " << std::to_string(ret)  << " , " << item.second << std::endl;
             return false;
@@ -199,7 +201,7 @@ inline bool FindMostSimilarScoreFromTwoPic(HFSession handle, const std::string& 
     for (int i = 0; i < 2; ++i) {
         HFImageStream img;
 //        auto ret = ReadImageToImageStream(images[i].c_str(), img);
-        auto cvMat = cv::imread(images[i]);
+        auto cvMat = inspirecv::Image::Create(images[i]);
         auto ret = CVImageToImageStream(cvMat, img);
         if (ret != 0) {
             std::cerr << "Image is not found: " << ret << std::endl;
@@ -216,13 +218,24 @@ inline bool FindMostSimilarScoreFromTwoPic(HFSession handle, const std::string& 
         HFGetFeatureLength(&featureNum);
         for (int j = 0; j < multipleFaceData.detectedNum; ++j) {
             std::vector<float> feature(featureNum, 0.0f);
-            ret = HFFaceFeatureExtractCpy(handle, img, multipleFaceData.tokens[j], feature.data());
+            float norm;
+            ret = HFFaceFeatureExtractCpy(handle, img, multipleFaceData.tokens[j], feature.data(), &norm);
             if (ret != 0) {
                 std::cerr << "Error extract: " << ret << std::endl;
                 HFReleaseImageStream(img);
                 return false;
             }
             features[i].push_back(feature);
+            float qu;
+            HFFaceQualityDetect(handle, multipleFaceData.tokens[j], &qu);
+            std::ofstream file("tem.csv", std::ios::app);
+
+            if (file.is_open()) {
+                file << qu << ",\n";
+                file.close();
+            } else {
+                std::cerr << "Failed to open file tem.csv" << std::endl;
+            }
         }
         HFReleaseImageStream(img);
     }
@@ -321,7 +334,7 @@ inline std::pair<float, float> FindBestThreshold(const std::vector<float>& simil
 }
 
 /** Generate random eigenvectors of the specified length */
-inline std::vector<float> GenerateRandomFeature(size_t length) {
+inline std::vector<float> GenerateRandomFeature(size_t length, bool normalize = true) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(-1.0, 1.0);
@@ -336,7 +349,7 @@ inline std::vector<float> GenerateRandomFeature(size_t length) {
 
     norm = std::sqrt(norm);
 
-    if (norm > 0) {
+    if (norm > 0 && normalize) {
         for (float &value : featureVector) {
             value /= norm;
         }
@@ -345,7 +358,7 @@ inline std::vector<float> GenerateRandomFeature(size_t length) {
     return featureVector;
 }
 
-inline std::vector<float> SimulateSimilarVector(const std::vector<float>& original) {
+inline std::vector<float> SimulateSimilarVector(const std::vector<float>& original, bool normalize = true) {
     std::vector<float> similar(original.size());
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -360,7 +373,7 @@ inline std::vector<float> SimulateSimilarVector(const std::vector<float>& origin
         norm += value * value;
     }
     norm = std::sqrt(norm);
-    if (norm > 0) {
+    if (norm > 0 && normalize) {
         for (auto& value : similar) {
             value /= norm;
         }
@@ -384,5 +397,14 @@ inline std::vector<int> GenerateRandomNumbers(int n, int min, int max) {
     return numbers;
 }
 
+inline std::string ReplaceFileExtension(const std::string& filePath, const std::string& newExtension) {
+    size_t lastDotPos = filePath.find_last_of(".");
+    if (lastDotPos == std::string::npos) {
+        // If the 'dot' is not found, return to the original path
+        return filePath;
+    }
+    
+    return filePath.substr(0, lastDotPos) + newExtension;
+}
 
 #endif //HYPERFACEREPO_TEST_HELP_H

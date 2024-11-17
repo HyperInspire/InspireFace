@@ -2,8 +2,8 @@
 // Created by tunm on 2023/8/29.
 //
 #pragma once
-#ifndef HYPERFACEREPO_MEAN_SHAPE_H
-#define HYPERFACEREPO_MEAN_SHAPE_H
+#ifndef INSPIREFACE_MEAN_SHAPE_H
+#define INSPIREFACE_MEAN_SHAPE_H
 
 static const float mean_shape[212] = {
         57.32878,   105.83315, 29.624239,  20.165985,  67.11997,   68.87743,
@@ -43,4 +43,4 @@ static const float mean_shape[212] = {
         11.011357,  67.08702,  58.06053,   68.5939,    73.52952,   19.782192,
         78.52056,   20.81598};
 
-#endif //HYPERFACEREPO_MEAN_SHAPE_H
+#endif //INSPIREFACE_MEAN_SHAPE_H

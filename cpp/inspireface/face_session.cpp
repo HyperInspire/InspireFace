@@ -219,116 +219,120 @@ const std::vector<ByteArray>& FaceSession::GetDetectCache() const {
     return m_detect_cache_;
 }
 
-const std::vector<FaceBasicData>& FaceContext::GetFaceBasicDataCache() const {
+const std::vector<FaceBasicData>& FaceSession::GetFaceBasicDataCache() const {
     return m_face_basic_data_cache_;
 }
 
-const std::vector<FaceRect>& FaceContext::GetFaceRectsCache() const {
+const std::vector<FaceRect>& FaceSession::GetFaceRectsCache() const {
     return m_face_rects_cache_;
 }
 
-const std::vector<int32_t>& FaceContext::GetTrackIDCache() const {
+const std::vector<int32_t>& FaceSession::GetTrackIDCache() const {
     return m_track_id_cache_;
 }
 
-const std::vector<float>& FaceContext::GetRollResultsCache() const {
+const std::vector<float>& FaceSession::GetRollResultsCache() const {
     return m_roll_results_cache_;
 }
 
-const std::vector<float>& FaceContext::GetYawResultsCache() const {
+const std::vector<float>& FaceSession::GetYawResultsCache() const {
     return m_yaw_results_cache_;
 }
 
-const std::vector<float>& FaceContext::GetPitchResultsCache() const {
+const std::vector<float>& FaceSession::GetPitchResultsCache() const {
     return m_pitch_results_cache_;
 }
 
-const std::vector<FacePoseQualityResult>& FaceContext::GetQualityResultsCache() const {
+const std::vector<FacePoseQualityAdaptResult>& FaceSession::GetQualityResultsCache() const {
     return m_quality_results_cache_;
 }
 
-const std::vector<float>& FaceContext::GetMaskResultsCache() const {
+const std::vector<float>& FaceSession::GetMaskResultsCache() const {
     return m_mask_results_cache_;
 }
 
-const std::vector<float>& FaceContext::GetRgbLivenessResultsCache() const {
+const std::vector<float>& FaceSession::GetRgbLivenessResultsCache() const {
     return m_rgb_liveness_results_cache_;
 }
 
-const std::vector<float>& FaceContext::GetFaceQualityScoresResultsCache() const {
+const std::vector<float>& FaceSession::GetFaceQualityScoresResultsCache() const {
     return m_quality_score_results_cache_;
 }
 
-const std::vector<float>& FaceContext::GetFaceInteractionLeftEyeStatusCache() const {
+const std::vector<float>& FaceSession::GetFaceInteractionLeftEyeStatusCache() const {
     return m_react_left_eye_results_cache_;
 }
 
-const std::vector<float>& FaceContext::GetFaceInteractionRightEyeStatusCache() const {
+const std::vector<float>& FaceSession::GetFaceInteractionRightEyeStatusCache() const {
     return m_react_right_eye_results_cache_;
 }
 
-const Embedded& FaceContext::GetFaceFeatureCache() const {
+const Embedded& FaceSession::GetFaceFeatureCache() const {
     return m_face_feature_cache_;
 }
 
-const std::vector<float>& FaceContext::GetDetConfidenceCache() const {
+const std::vector<float>& FaceSession::GetDetConfidenceCache() const {
     return m_det_confidence_cache_;
 }
 
-const std::vector<int>& FaceContext::GetFaceRaceResultsCache() const {
+const float FaceSession::GetFaceFeatureNormCache() const {
+    return m_face_feature_norm_;
+}
+
+const std::vector<int>& FaceSession::GetFaceRaceResultsCache() const {
     return m_attribute_race_results_cache_;
 }
 
-const std::vector<int>& FaceContext::GetFaceGenderResultsCache() const {
+const std::vector<int>& FaceSession::GetFaceGenderResultsCache() const {
     return m_attribute_gender_results_cache_;
 }
 
-const std::vector<int>& FaceContext::GetFaceAgeBracketResultsCache() const {
+const std::vector<int>& FaceSession::GetFaceAgeBracketResultsCache() const {
     return m_attribute_age_results_cache_;
 }
 
-const std::vector<int>& FaceContext::GetFaceNormalAactionsResultCache() const {
+const std::vector<int>& FaceSession::GetFaceNormalAactionsResultCache() const {
     return m_action_normal_results_cache_;
 }
 
-const std::vector<int>& FaceContext::GetFaceJawOpenAactionsResultCache() const {
+const std::vector<int>& FaceSession::GetFaceJawOpenAactionsResultCache() const {
     return m_action_jaw_open_results_cache_;
 }
 
-const std::vector<int>& FaceContext::GetFaceBlinkAactionsResultCache() const {
+const std::vector<int>& FaceSession::GetFaceBlinkAactionsResultCache() const {
     return m_action_blink_results_cache_;
 }
 
-const std::vector<int>& FaceContext::GetFaceShakeAactionsResultCache() const {
+const std::vector<int>& FaceSession::GetFaceShakeAactionsResultCache() const {
     return m_action_shake_results_cache_;
 }
 
-const std::vector<int>& FaceContext::GetFaceRaiseHeadAactionsResultCache() const {
+const std::vector<int>& FaceSession::GetFaceRaiseHeadAactionsResultCache() const {
     return m_action_raise_head_results_cache_;
 }
 
-int32_t FaceContext::FaceFeatureExtract(CameraStream& image, FaceBasicData& data) {
+int32_t FaceSession::FaceFeatureExtract(inspirecv::InspireImageProcess& process, FaceBasicData& data) {
     std::lock_guard<std::mutex> lock(m_mtx_);
     int32_t ret;
     HyperFaceData face = {0};
-    ret = DeserializeHyperFaceData((char*)data.data, data.dataSize, face);
+    ret = RunDeserializeHyperFaceData((char*)data.data, data.dataSize, face);
     if (ret != HSUCCEED) {
         return ret;
     }
     m_face_feature_cache_.clear();
-    ret = m_face_recognition_->FaceExtract(image, face, m_face_feature_cache_);
+    ret = m_face_recognition_->FaceExtract(process, face, m_face_feature_cache_, m_face_feature_norm_);
 
     return ret;
 }
 
-const CustomPipelineParameter& FaceContext::getMParameter() const {
+const CustomPipelineParameter& FaceSession::getMParameter() const {
     return m_parameter_;
 }
 
-int32_t FaceContext::FaceQualityDetect(FaceBasicData& data, float& result) {
+int32_t FaceSession::FaceQualityDetect(FaceBasicData& data, float& result) {
     int32_t ret;
     HyperFaceData face = {0};
-    ret = DeserializeHyperFaceData((char*)data.data, data.dataSize, face);
+    ret = RunDeserializeHyperFaceData((char*)data.data, data.dataSize, face);
     //    PrintHyperFaceData(face);
     if (ret != HSUCCEED) {
         return ret;
@@ -343,9 +347,9 @@ int32_t FaceContext::FaceQualityDetect(FaceBasicData& data, float& result) {
     return ret;
 }
 
-int32_t FaceContext::SetDetectMode(DetectMode mode) {
+int32_t FaceSession::SetDetectMode(DetectModuleMode mode) {
     m_detect_mode_ = mode;
-    if (m_detect_mode_ == DetectMode::DETECT_MODE_ALWAYS_DETECT) {
+    if (m_detect_mode_ == DetectModuleMode::DETECT_MODE_ALWAYS_DETECT) {
         m_always_detect_ = true;
     } else {
         m_always_detect_ = false;
@@ -353,12 +357,12 @@ int32_t FaceContext::SetDetectMode(DetectMode mode) {
     return HSUCCEED;
 }
 
-int32_t FaceContext::SetTrackPreviewSize(const int32_t preview_size) {
+int32_t FaceSession::SetTrackPreviewSize(const int32_t preview_size) {
     m_face_track_->SetTrackPreviewSize(preview_size);
     return HSUCCEED;
 }
 
-int32_t FaceContext::SetTrackFaceMinimumSize(int32_t minSize) {
+int32_t FaceSession::SetTrackFaceMinimumSize(int32_t minSize) {
     m_face_track_->SetMinimumFacePxSize(minSize);
     return HSUCCEED;
 }

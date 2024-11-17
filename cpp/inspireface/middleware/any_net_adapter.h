@@ -136,13 +136,11 @@ public:
     void Forward(const inspirecv::Image &image, AnyTensorOutputs &outputs) {
         InputTensorInfo &input_tensor_info = getMInputTensorInfoList()[0];
         if (m_infer_type_ == InferenceHelper::kRknn) {
-            // Start by simply implementing a temporary color shift on the outside
-            // TODO: 未实现
             if (getData<bool>("swap_color")) {
-                // cv::cvtColor(data, m_cache_, cv::COLOR_BGR2RGB);
+                m_cache_ = image.SwapRB();
                 input_tensor_info.data = (uint8_t *)m_cache_.Data();
             } else {
-                // input_tensor_info.data = data.data;
+                input_tensor_info.data = (uint8_t *)image.Data();
             }
         } else {
             input_tensor_info.data = (uint8_t *)image.Data();

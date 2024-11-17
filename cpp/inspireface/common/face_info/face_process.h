@@ -4,8 +4,8 @@
 
 // Include guard to prevent double inclusion of this header file
 #pragma once
-#ifndef HYPERFACEREPO_FACEPROCESS_H
-#define HYPERFACEREPO_FACEPROCESS_H
+#ifndef INSPIRE_FACE_FACEPROCESS_H
+#define INSPIRE_FACE_FACEPROCESS_H
 
 // Include the necessary header file "data_type.h"
 #include "data_type.h"
@@ -50,4 +50,4 @@ public:
 
 } // namespace hyper
 
-#endif //HYPERFACEREPO_FACEPROCESS_H
+#endif //INSPIRE_FACE_FACEPROCESS_H

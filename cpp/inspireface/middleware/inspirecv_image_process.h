@@ -4,6 +4,7 @@
 #include <memory>
 #include <inspirecv/inspirecv.h>
 #include <MNN/ImageProcess.hpp>
+#include "isf_check.h"
 
 // using namespace inspire;
 namespace inspirecv {
@@ -35,9 +36,7 @@ public:
     InspireImageProcess() {
         SetDataFormat(NV21);
         SetDestFormat(BGR);
-        // config_.filterType = MNN::CV::BICUBIC;
         config_.filterType = MNN::CV::BILINEAR;
-        // config_.filterType = MNN::CV::NEAREST;
         config_.wrap = MNN::CV::ZERO;
         rotation_mode_ = ROTATION_0;
         preview_size_ = 192;
@@ -163,8 +162,8 @@ public:
         auto img_out = inspirecv::Image::Create(width_out, height_out, 3);
         std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
           std::vector<int>{1, height_out, width_out, 3}, (uint8_t *)img_out.Data()));
-        process->convert(buffer_, sw, sh, 0, tensor.get());
-        //        std::cout << std::to_string(1) << std::endl;
+        auto ret = process->convert(buffer_, sw, sh, 0, tensor.get());
+        INSPIREFACE_CHECK_MSG(ret == MNN::ErrorCode::NO_ERROR, "ImageProcess::convert failed");
         return img_out;
     }
 
@@ -223,7 +222,8 @@ public:
             inspirecv::Image img_out(scaled_width, scaled_height, 3);
             std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
                     std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
-            process->convert(buffer_, sw, sh, 0, tensor.get());
+            auto ret = process->convert(buffer_, sw, sh, 0, tensor.get());
+            INSPIREFACE_CHECK_MSG(ret == MNN::ErrorCode::NO_ERROR, "ImageProcess::convert failed");
             return img_out;
         } else if (rotation_mode_ == ROTATION_90 && with_rotation) {
             float srcPoints[] = {
@@ -254,7 +254,8 @@ public:
             inspirecv::Image img_out(scaled_width, scaled_height, 3);
             std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
                     std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
-            process->convert(buffer_, sw, sh, 0, tensor.get());
+            auto ret =  process->convert(buffer_, sw, sh, 0, tensor.get());
+            INSPIREFACE_CHECK_MSG(ret == MNN::ErrorCode::NO_ERROR, "ImageProcess::convert failed");
             return img_out;
         } else if (rotation_mode_ == ROTATION_180 && with_rotation) {
             float srcPoints[] = {
@@ -285,7 +286,8 @@ public:
             inspirecv::Image img_out(scaled_width, scaled_height, 3);
             std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
                     std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
-            process->convert(buffer_, sw, sh, 0, tensor.get());
+            auto ret = process->convert(buffer_, sw, sh, 0, tensor.get());
+            INSPIREFACE_CHECK_MSG(ret == MNN::ErrorCode::NO_ERROR, "ImageProcess::convert failed");
             return img_out;
         } else {
             float srcPoints[] = {
@@ -317,7 +319,8 @@ public:
             inspirecv::Image img_out(scaled_width, scaled_height, 3);
             std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
                     std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
-            auto err = process->convert(buffer_, sw, sh, 0, tensor.get());
+            auto ret = process->convert(buffer_, sw, sh, 0, tensor.get());
+            INSPIREFACE_CHECK_MSG(ret == MNN::ErrorCode::NO_ERROR, "ImageProcess::convert failed");
             return img_out;
         }
     }

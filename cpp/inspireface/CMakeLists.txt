@@ -19,13 +19,17 @@ file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
 
 if (ISF_ENABLE_RKNN)
-    set(ISF_RKNN_API_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/include)
-    set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
+    set(ISF_RKNN_API_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/include)
+    set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
     link_directories(${ISF_RKNN_API_LIB})
 endif()
 
+set(LINK_THIRD_LIBS ${MNN_LIBS})
+
 # OpenCV
-set(LINK_THIRD_LIBS ${OpenCV_LIBS} ${MNN_LIBS})
+if(ISF_ENABLE_OPENCV)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${OpenCV_LIBS})
+endif()
 
 if(ISF_ENABLE_TRACKING_BY_DETECTION)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} Eigen3::Eigen)
@@ -34,10 +38,10 @@ endif()
 
 # SQLite3
 set(SOURCE_FILES ${SOURCE_FILES} 
-        ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite3.c
-        ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/sqlite-vec.c
+        ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/sqlite/sqlite3.c
+        ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/sqlite/sqlite-vec.c
 )   # Add SQLite3 C_API file
-set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/sqlite/)
+set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/sqlite/)
 
 
 
@@ -61,9 +65,9 @@ link_directories(${MNN_LIBS})
 
 if(ISF_BUILD_SHARED_LIBS)
     add_definitions("-DISF_BUILD_SHARED_LIBS")
-    add_library(InspireFace SHARED ${SOURCE_FILES})
+    add_library(InspireFace SHARED ${SOURCE_FILES} $<TARGET_OBJECTS:inspirecv>)
 else()
-    add_library(InspireFace STATIC ${SOURCE_FILES})
+    add_library(InspireFace STATIC ${SOURCE_FILES} $<TARGET_OBJECTS:inspirecv>)
 endif()
 
 target_compile_definitions(InspireFace PUBLIC INFERENCE_HELPER_ENABLE_MNN)
@@ -91,7 +95,7 @@ if(PLAT STREQUAL "linux")
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${CMAKE_THREAD_LIBS_INIT} dl)
 endif()
 
-set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} inspirecv)
+# set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} inspirecv)
 set(NEED_INCLUDE ${NEED_INCLUDE} ${INSPIRECV_INCLUDE_PATH})
 message("INSPIRECV_INCLUDE_PATH: ${INSPIRECV_INCLUDE_PATH}")
 
@@ -110,15 +114,18 @@ elseif(IOS)
 #    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ObjC")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ObjC")
     target_link_libraries(InspireFace
-            "-fobjc-arc"
-            "-framework opencv2"
-            "-framework Metal"
-            "-framework CoreML"
-            "-framework Foundation"
-            "-framework CoreVideo"
-            "-framework CoreMedia"
-            ${MNN_FRAMEWORK_PATH}
-            )
+        "-fobjc-arc"
+        "-framework Metal"
+        "-framework CoreML"
+        "-framework Foundation"
+        "-framework CoreVideo"
+        "-framework CoreMedia"
+        ${MNN_FRAMEWORK_PATH}
+    )
+    if(ISF_ENABLE_OPENCV)
+        set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} "-framework opencv2")
+    endif()
+    
 else()
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
 

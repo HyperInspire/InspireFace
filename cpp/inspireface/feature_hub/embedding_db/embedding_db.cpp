@@ -1,5 +1,6 @@
 #include "embedding_db.h"
 #include "sqlite-vec.h"
+#include "isf_check.h"
 
 namespace inspire
 {
@@ -10,20 +11,14 @@ namespace inspire
     EmbeddingDB &EmbeddingDB::GetInstance()
     {
         std::lock_guard<std::mutex> lock(instanceMutex_);
-        if (!instance_)
-        {
-            throw std::runtime_error("EmbeddingDB not initialized. Call Init() first.");
-        }
+        INSPIREFACE_CHECK_MSG(instance_, "EmbeddingDB not initialized. Call Init() first.");
         return *instance_;
     }
 
     void EmbeddingDB::Init(const std::string &dbPath, size_t vectorDim, IdMode idMode)
     {
         std::lock_guard<std::mutex> lock(instanceMutex_);
-        if (instance_)
-        {
-            throw std::runtime_error("EmbeddingDB already initialized");
-        }
+        INSPIREFACE_CHECK_MSG(!instance_, "EmbeddingDB already initialized");
         instance_.reset(new EmbeddingDB(dbPath, vectorDim, "cosine", idMode));
     }
 
@@ -192,9 +187,9 @@ namespace inspire
 
         rc = sqlite3_step(stmt);
         sqlite3_finalize(stmt);
-        CheckSQLiteError(rc == SQLITE_DONE ? SQLITE_OK : rc, db_);
+        INSPIREFACE_CHECK_MSG(rc == SQLITE_DONE, "Failed to update vector");
         if (sqlite3_changes(db_) == 0) {
-            throw std::runtime_error("Vector with id " + std::to_string(id) + " not found");
+            INSPIRE_LOGF("Vector with id %ld not found", id);
         }
     }
 
@@ -289,13 +284,10 @@ namespace inspire
 
     void EmbeddingDB::CheckVectorDimension(const std::vector<float> &vector) const
     {
-        if (vector.size() != vectorDim_)
-        {
-            throw std::invalid_argument(
-                "Vector dimension mismatch. Expected: " +
-                std::to_string(vectorDim_) +
-                ", Got: " + std::to_string(vector.size()));
-        }
+        INSPIREFACE_CHECK_MSG(vector.size() == vectorDim_,
+            ("Vector dimension mismatch. Expected: " + 
+            std::to_string(vectorDim_) + 
+            ", Got: " + std::to_string(vector.size())).c_str());
     }
 
     void EmbeddingDB::ExecuteSQL(const std::string &sql)
@@ -308,7 +300,7 @@ namespace inspire
         {
             std::string error = errMsg;
             sqlite3_free(errMsg);
-            throw std::runtime_error("SQL error: " + error);
+            INSPIREFACE_CHECK_MSG(false, ("SQL error: " + error).c_str());
         }
 
         CheckSQLiteError(rc, db_);
@@ -316,11 +308,8 @@ namespace inspire
 
     void EmbeddingDB::CheckSQLiteError(int rc, sqlite3 *db)
     {
-        if (rc != SQLITE_OK)
-        {
-            std::string error = db ? sqlite3_errmsg(db) : "SQLite error";
-            throw std::runtime_error(error);
-        }
+        std::string error = db ? sqlite3_errmsg(db) : "SQLite error";
+        INSPIREFACE_CHECK_MSG(rc == SQLITE_OK, error.c_str());
     }
 
 } // namespace inspire
