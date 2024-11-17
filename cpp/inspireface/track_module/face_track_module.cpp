@@ -44,7 +44,6 @@ FaceTrackModule::FaceTrackModule(DetectModuleMode mode, int max_detected_faces, 
 void FaceTrackModule::SparseLandmarkPredict(const inspirecv::Image &raw_face_crop, std::vector<inspirecv::Point2f> &landmarks_output, float &score,
                                             float size) {
     COST_TIME_SIMPLE(SparseLandmarkPredict);
-    //    LOGD("ready to landmark predict");
     landmarks_output.resize(FaceLandmarkAdapt::NUM_OF_LANDMARK);
     std::vector<float> lmk_out = (*m_landmark_predictor_)(raw_face_crop);
     for (int i = 0; i < FaceLandmarkAdapt::NUM_OF_LANDMARK; ++i) {
@@ -57,7 +56,7 @@ void FaceTrackModule::SparseLandmarkPredict(const inspirecv::Image &raw_face_cro
 
 bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjectInternal &face) {
     COST_TIME_SIMPLE(TrackFace);
-    // 如果人脸置信度低于0.1，禁用跟踪
+    // If the face confidence level is below 0.1, disable tracking
     if (face.GetConfidence() < 0.1) {
         face.DisableTracking();
         return false;
@@ -66,11 +65,11 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
     inspirecv::TransformMatrix affine;
     std::vector<inspirecv::Point2f> landmark_back;
 
-    // 增加跟踪计数
+    // Increase track count
     face.IncrementTrackingCount();
 
     float score;
-    // 如果是检测状态，计算仿射变换矩阵
+    // If it is a detection state, calculate the affine transformation matrix
     if (face.TrackingState() == ISF_DETECT) {
         COST_TIME_SIMPLE(GetRectSquare);
         inspirecv::Rect2i rect_square = face.GetRectSquare(0.0);
@@ -96,7 +95,7 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
 
     affine = face.getTransMatrix();
     inspirecv::Image crop;
-    // 获取仿射变换后的RGB图像
+    // Get the RGB image after affine transformation
     crop = image.ExecuteImageAffineProcessing(affine, 112, 112);
     inspirecv::TransformMatrix affine_inv = affine.GetInverse();
 
@@ -104,21 +103,20 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
     std::vector<float> bbox;
 
     Timer lmk_cost_time;
-    // 预测稀疏关键点
+    // Predicted sparse key point
     SparseLandmarkPredict(crop, landmark_rawout, score, 112);
-    // 提取5个关键点
+    // Extract 5 key points
     std::vector<inspirecv::Point2f> lmk_5 = {landmark_rawout[FaceLandmarkAdapt::LEFT_EYE_CENTER],
                                              landmark_rawout[FaceLandmarkAdapt::RIGHT_EYE_CENTER], landmark_rawout[FaceLandmarkAdapt::NOSE_CORNER],
                                              landmark_rawout[FaceLandmarkAdapt::MOUTH_LEFT_CORNER],
                                              landmark_rawout[FaceLandmarkAdapt::MOUTH_RIGHT_CORNER]};
     face.setAlignMeanSquareError(lmk_5);
 
-    // 将关键点转换回原图坐标系
+    // Convert key points back to the original coordinate system
     landmark_back.resize(landmark_rawout.size());
     landmark_back = inspirecv::ApplyTransformToPoints(landmark_rawout, affine_inv);
     int MODE = 1;
 
-    // 根据跟踪状态进行处理
     if (MODE > 0) {
         if (face.TrackingState() == ISF_DETECT) {
             face.ReadyTracking();
@@ -127,13 +125,13 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
             inspirecv::TransformMatrix trans_m;
             inspirecv::TransformMatrix tmp = face.getTransMatrix();
             std::vector<inspirecv::Point2f> inside_points = landmark_rawout;
-            // cv::Mat _affine(2, 3, CV_64F);
+
             std::vector<inspirecv::Point2f> mean_shape_(FaceLandmarkAdapt::NUM_OF_LANDMARK);
             for (int k = 0; k < FaceLandmarkAdapt::NUM_OF_LANDMARK; k++) {
                 mean_shape_[k].SetX(mean_shape[k * 2]);
                 mean_shape_[k].SetY(mean_shape[k * 2 + 1]);
             }
-            // 估计相似变换
+           
             auto _affine = inspirecv::SimilarityTransformEstimate(inside_points, mean_shape_);
             auto mid_inside_points = ApplyTransformToPoints(inside_points, _affine);
             inside_points = FixPointsMeanshape(mid_inside_points, mean_shape_);
@@ -164,10 +162,9 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
             // INSPIRE_LOGD("Extensive Affine Cost %f", extensive_cost_time.GetCostTimeUpdate());
         }
     }
-    // 更新人脸关键点
+    // Update face key points
     face.SetLandmark(landmark_back, true);
 
-    // 如果存在人脸质量评估模型，进行质量评估
     if (m_face_quality_ != nullptr) {
         COST_TIME_SIMPLE(FaceQuality);
         auto affine_extensive = face.getTransMatrixExtensive();
@@ -181,13 +178,11 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
         res.lmk = lmk_extensive;
         face.high_result = res;
     }
-
-    // 如果是跟踪状态，更新置信度
+    // If tracking status, update the confidence level
     if (face.TrackingState() == ISF_TRACKING) {
         face.SetConfidence(score);
     }
-    // 更新人脸动作
-    face.UpdateFaceAction();
+    
     return true;
 }
 
@@ -289,9 +284,9 @@ void FaceTrackModule::DetectFace(const inspirecv::Image &input, float scale) {
         }
         vector<STrack> output_stracks = m_TbD_tracker_->update(objects);
         for (const auto &st_track : output_stracks) {
-            cv::Rect rect = cv::Rect_<float>(st_track.tlwh[0], st_track.tlwh[1], st_track.tlwh[2], st_track.tlwh[3]);
-            FaceObject faceinfo(st_track.track_id, rect, FaceLandmark::NUM_OF_LANDMARK);
-            faceinfo.detect_bbox_ = rect;
+            inspirecv::Rect<float> rect = inspirecv::Rect<float>(st_track.tlwh[0], st_track.tlwh[1], st_track.tlwh[2], st_track.tlwh[3]);
+            FaceObjectInternal faceinfo(st_track.track_id, rect, FaceLandmarkAdapt::NUM_OF_LANDMARK);
+            faceinfo.detect_bbox_ = rect.As<int>();
             candidate_faces_.push_back(faceinfo);
         }
 #endif
@@ -331,11 +326,7 @@ int FaceTrackModule::Configuration(inspire::InspireArchive &archive, const std::
     m_expansion_path_ = std::move(expansion_path);
     InspireModel detModel;
     auto scheme = ChoiceMultiLevelDetectModel(m_dynamic_detection_input_level_);
-#ifdef ISF_ENABLE_APPLE_EXTENSION
-    auto ret = archive.LoadModel(scheme, detModel, true);
-#else
     auto ret = archive.LoadModel(scheme, detModel);
-#endif
     if (ret != SARC_SUCCESS) {
         INSPIRE_LOGE("Load %s error: %d", scheme.c_str(), ret);
         return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
@@ -362,11 +353,7 @@ int FaceTrackModule::Configuration(inspire::InspireArchive &archive, const std::
 
     // Initialize the pose quality model
     InspireModel pquModel;
-#ifdef ISF_ENABLE_APPLE_EXTENSION
-    ret = archive.LoadModel("pose_quality", pquModel, true);
-#else
     ret = archive.LoadModel("pose_quality", pquModel);
-#endif
     if (ret != SARC_SUCCESS) {
         INSPIRE_LOGE("Load %s error: %d", "pose_quality", ret);
         return HERR_ARCHIVE_LOAD_MODEL_FAILURE;

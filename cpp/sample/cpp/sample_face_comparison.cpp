@@ -2,7 +2,6 @@
 // Created by tunm on 2024/4/20.
 //
 #include <iostream>
-#include "opencv2/opencv.hpp"
 #include "inspireface/c_api/inspireface.h"
 
 int main(int argc, char* argv[]) {
@@ -41,20 +40,16 @@ int main(int argc, char* argv[]) {
     std::vector<char* > twoImg = {imgPath1, imgPath2};
     std::vector<std::vector<float>> vec(2, std::vector<float>(512));
     for (int i = 0; i < twoImg.size(); ++i) {
-        auto image = cv::imread(twoImg[i]);
-        if (image.empty()) {
-            std::cout << "Image is empty: " << twoImg[i] << std::endl;
-            return 0;
+        HFImageBitmap imageBitmap = {0};
+        ret = HFCreateImageBitmapFromFilePath(twoImg[i], 3, &imageBitmap);
+        if (ret != HSUCCEED) {
+            std::cout << "Create image bitmap error: " << ret << std::endl;
+            return ret;
         }
         // Prepare image data for processing
-        HFImageData imageData = {0};
-        imageData.data = image.data; // Pointer to the image data
-        imageData.format = HF_STREAM_BGR; // Image format (BGR in this case)
-        imageData.height = image.rows; // Image height
-        imageData.width = image.cols; // Image width
-        imageData.rotation = HF_CAMERA_ROTATION_0; // Image rotation
+        
         HFImageStream stream;
-        ret = HFCreateImageStream(&imageData, &stream); // Create an image stream for processing
+        ret = HFCreateImageStreamFromImageBitmap(imageBitmap, HF_CAMERA_ROTATION_0, &stream); // Create an image stream for processing
         if (ret != HSUCCEED) {
             std::cout << "Create stream error: " << ret << std::endl;
             return ret;
@@ -73,7 +68,8 @@ int main(int argc, char* argv[]) {
         }
 
         // Extract facial features from the first detected face, an interface that uses copy features in a comparison scenario
-        ret = HFFaceFeatureExtractCpy(session, stream, multipleFaceData.tokens[0], vec[i].data()); // Extract features
+        float norm = 0;
+        ret = HFFaceFeatureExtractCpy(session, stream, multipleFaceData.tokens[0], vec[i].data(), &norm); // Extract features
         if (ret != HSUCCEED) {
             std::cout << "Extract feature error: " << ret << std::endl;
             return ret;
@@ -82,6 +78,11 @@ int main(int argc, char* argv[]) {
         ret = HFReleaseImageStream(stream);
         if (ret != HSUCCEED) {
             printf("Release image stream error: %lu\n", ret);
+        }
+        ret = HFReleaseImageBitmap(imageBitmap);
+        if (ret != HSUCCEED) {
+            printf("Release image bitmap error: %lu\n", ret);
+            return ret;
         }
 
     }

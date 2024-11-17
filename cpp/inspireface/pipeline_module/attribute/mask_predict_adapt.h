@@ -2,8 +2,8 @@
 // Created by Tunm-Air13 on 2023/9/8.
 //
 #pragma once
-#ifndef PIPELINE_MODULE_ATTRIBUTE_MASKPREDICT_ADAPT_H
-#define PIPELINE_MODULE_ATTRIBUTE_MASKPREDICT_ADAPT_H
+#ifndef INSPIRE_FACE_MASKPREDICT_ADAPT_H
+#define INSPIRE_FACE_MASKPREDICT_ADAPT_H
 #include "data_type.h"
 #include "middleware/any_net_adapter.h"
 
@@ -36,4 +36,4 @@ private:
 
 }   // namespace inspire
     
-#endif //PIPELINE_MODULE_ATTRIBUTE_MASKPREDICT_ADAPT_H
+#endif //INSPIRE_FACE_MASKPREDICT_ADAPT_H

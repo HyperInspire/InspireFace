@@ -2,8 +2,8 @@
 // Created by tunm on 2023/10/3.
 //
 
-#ifndef HYPERFACEREPO_INSPIREFACE_H
-#define HYPERFACEREPO_INSPIREFACE_H
+#ifndef INSPIREFACE_H
+#define INSPIREFACE_H
 
 #include <stdint.h>
 #include "intypedef.h"
@@ -90,6 +90,114 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, HFImageS
  */
 HYPER_CAPI_EXPORT extern HResult HFReleaseImageStream(HFImageStream streamHandle);
 
+/**
+ * @brief Struct for image bitmap data.
+ */
+typedef struct HFImageBitmapData {
+    uint8_t *data;         ///< Pointer to the image data.
+    HInt32 width;          ///< Width of the image.
+    HInt32 height;         ///< Height of the image.
+    HInt32 channels;       ///< Number of channels in the image, only support 3 channels or 1 channel.
+} HFImageBitmapData, *PHFImageBitmapData;
+
+/**
+ * @brief Create a image bitmap from data, default pixel format is BGR.
+ *
+ * @param data Pointer to the image bitmap data structure.
+ * @param handle Pointer to the image bitmap handle that will be returned.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmap(PHFImageBitmapData data, HFImageBitmap *handle);
+
+/**
+ * @brief Create a image bitmap from file path, default pixel format is BGR.
+ *
+ * @param filePath The path to the image file.
+ * @param channels The number of channels in the image, only support 3 channels or 1 channel.
+ * @param handle Pointer to the image bitmap handle that will be returned.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromFilePath(HPath filePath, HInt32 channels, HFImageBitmap *handle);
+
+/**
+ * @brief Copy an image bitmap.
+ *
+ * @param handle Pointer to the image bitmap handle.
+ * @param copyHandle Pointer to the image bitmap handle that will be returned.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapCopy(HFImageBitmap handle, HFImageBitmap *copyHandle);
+
+/**
+ * @brief Release the image bitmap.
+ *
+ * @param handle Pointer to the image bitmap handle.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFReleaseImageBitmap(HFImageBitmap handle);
+
+/**
+ * @brief Create a image stream from image bitmap.
+ *
+ * @param handle Pointer to the image bitmap handle.
+ * @param rotation The rotation angle of the image.
+ * @param streamHandle Pointer to the image stream handle that will be returned.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitmap handle, HFRotation rotation, HFImageStream *streamHandle);
+
+/**
+ * @brief Write the image bitmap to a file.
+ *
+ * @param handle Pointer to the image bitmap handle.
+ * @param filePath The path to the image file.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapWriteToFile(HFImageBitmap handle, HPath filePath);
+
+/**
+ * @brief Draw a rectangle on the image bitmap.
+ *
+ * @param handle Pointer to the image bitmap handle.
+ * @param rect The rectangle to be drawn.
+ * @param color The color of the rectangle.
+ * @param thickness The thickness of the rectangle.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapDrawRect(HFImageBitmap handle, HFaceRect rect, HColor color, HInt32 thickness);
+
+/**
+ * @brief Draw a circle on the image bitmap.
+ *
+ * @param handle Pointer to the image bitmap handle.
+ * @param point The center point of the circle.
+ * @param radius The radius of the circle.
+ * @param color The color of the circle.
+ * @param thickness The thickness of the circle.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapDrawCircleF(HFImageBitmap handle, HPoint2f point, HInt32 radius, HColor color, HInt32 thickness);
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapDrawCircle(HFImageBitmap handle, HPoint2i point, HInt32 radius, HColor color, HInt32 thickness);
+
+/**
+ * @brief Get the data of the image bitmap.
+ *
+ * @param handle Pointer to the image bitmap handle.
+ * @param data Pointer to the image bitmap data structure.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapGetData(HFImageBitmap handle, PHFImageBitmapData data);
+
+/**
+ * @brief Show the image bitmap.
+ *
+ * @param handle Pointer to the image bitmap handle, must rely on opencv's gui functionality
+ * @param title The title of the image.
+ * @param delay The delay time of the image.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapShow(HFImageBitmap handle, HString title, HInt32 delay);
+
 /************************************************************************
  * Resource Function
  ************************************************************************/
@@ -113,7 +221,7 @@ HYPER_CAPI_EXPORT extern HResult HFLaunchInspireFace(HPath resourcePath);
 HYPER_CAPI_EXPORT extern HResult HFTerminateInspireFace();
 
 /************************************************************************
- * FaceContext
+ * FaceSession
  ************************************************************************/
 
 /**
@@ -346,7 +454,8 @@ HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtract(HFSession session, HFImage
  * @param feature Pointer to the buffer where the extracted feature will be copied.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HPFloat feature);
+HYPER_CAPI_EXPORT extern HResult
+HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HPFloat feature, HPFloat norm);
 
 /************************************************************************
  * Feature Hub
@@ -361,19 +470,22 @@ typedef enum HFSearchMode {
     HF_SEARCH_MODE_EXHAUSTIVE,  // Exhaustive mode: Searches until the best match is found.
 } HFSearchMode;
 
+typedef enum HFPKMode {
+    HF_PK_AUTO_INCREMENT = 0,
+    HF_PK_MANUAL_INPUT,
+} HFPKMode;
+
 /**
  * @brief Struct for database configuration.
  *
- * This struct holds the configuration settings for using a database in the face recognition
- * context.
+ * This struct holds the configuration settings for using a database in the face recognition context.
  */
 typedef struct HFFeatureHubConfiguration {
-    HInt32 featureBlockNum;    ///< The order of magnitude of face feature database is N * 512, and 20
-                               ///< is recommended by default
-    HInt32 enablePersistence;  ///< Flag to enable or disable the use of the database.
-    HString dbPath;            ///< Path to the database file.
-    float searchThreshold;     ///< Threshold for face search
-    HFSearchMode searchMode;   ///< Mode of face search
+    HFPKMode primaryKeyMode;           ///< Primary key mode(The id increment mode is recommended)
+    HInt32 enablePersistence;           ///< Flag to enable or disable the use of the database.
+    HString persistenceDbPath;          ///< Path to the database file.
+    float searchThreshold;              ///< Threshold for face search
+    HFSearchMode searchMode;           ///< Mode of face search
 } HFFeatureHubConfiguration;
 
 /**
@@ -400,18 +512,18 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubDataDisable();
  * This struct associates a custom identifier and a tag with a specific face feature.
  */
 typedef struct HFFaceFeatureIdentity {
-    HInt32 customId;         ///< Custom identifier for the face feature.
-    HString tag;             ///< Tag associated with the face feature.
-    PHFFaceFeature feature;  ///< Pointer to the face feature.
+    HInt32 id;                   ///< If you use automatic assignment id mode when inserting, ignore it.
+    PHFFaceFeature feature;      ///< Pointer to the face feature.
+    // HString tag;                 ///< Not supported yet
 } HFFaceFeatureIdentity, *PHFFaceFeatureIdentity;
 
 /**
  * Search structure for top-k mode
  * */
 typedef struct HFSearchTopKResults {
-    HInt32 size;         ///< The number of faces searched
-    HPFloat confidence;  ///< Search confidence(it has already been filtered once by the threshold)
-    HPInt32 customIds;   ///< fACE customIds
+    HInt32 size;            ///< The number of faces searched
+    HPFloat confidence;      ///< Search confidence(it has already been filtered once by the threshold)
+    HPInt32 ids;      ///< Searched face ids
 } HFSearchTopKResults, *PHFSearchTopKResults;
 
 /**
@@ -451,7 +563,7 @@ HYPER_CAPI_EXPORT extern HResult HFGetFeatureLength(HPInt32 num);
  * @param featureIdentity The face feature identity to be inserted.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity);
+HYPER_CAPI_EXPORT extern HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity, HPInt32 allocId);
 
 /**
  * @brief Search for the most similar face feature in the features group.
@@ -480,7 +592,7 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceSearchTopK(HFFaceFeature search
  * @param customId The custom ID of the feature to be removed.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceRemove(HInt32 customId);
+HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceRemove(HInt32 id);
 
 /**
  * @brief Update a face feature identity in the features group.
@@ -839,4 +951,4 @@ HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedStreams(HFImageStream *stre
 }
 #endif
 
-#endif  // HYPERFACEREPO_INSPIREFACE_H
+#endif  // INSPIREFACE_H

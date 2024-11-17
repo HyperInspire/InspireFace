@@ -19,17 +19,17 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
         REQUIRE(ret == HSUCCEED);
-        HFFeatureHubConfiguration configuration = {0};
+        HFFeatureHubConfiguration configuration;
         auto dbPath = GET_SAVE_DATA(".test");
         HString dbPathStr = new char[dbPath.size() + 1];
         std::strcpy(dbPathStr, dbPath.c_str());
+        configuration.primaryKeyMode = HF_PK_AUTO_INCREMENT;
         configuration.enablePersistence = 1;
-        configuration.dbPath = dbPathStr;
-        configuration.featureBlockNum = 20;
+        configuration.persistenceDbPath = dbPathStr;
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
         // Delete the previous data before testing
-        if (std::remove(configuration.dbPath) != 0) {
+        if (std::remove(configuration.persistenceDbPath) != 0) {
             spdlog::trace("Error deleting file");
         }
         ret = HFFeatureHubDataEnable(configuration);

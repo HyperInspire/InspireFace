@@ -2,8 +2,8 @@
 // Created by tunm on 2023/5/5.
 //
 #pragma once
-#ifndef HYPERFACE_DATATYPE_H
-#define HYPERFACE_DATATYPE_H
+#ifndef INSPIRE_FACE_DATATYPE_H
+#define INSPIRE_FACE_DATATYPE_H
 
 #include <cstdint>
 #if defined(_WIN32) && (defined(_DEBUG) || defined(DEBUG))
@@ -15,7 +15,7 @@
 #define INSPIRE_API
 #endif
 
-#include <opencv2/opencv.hpp>
+#include <inspirecv/inspirecv.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264338327950288
@@ -79,12 +79,12 @@ typedef std::vector<char> ByteArray;
 /** @typedef Point2i
 *  @brief 2D coordinate point with integer precision.
 */
-typedef cv::Point Point2i;
+typedef inspirecv::Point2i Point2i;
 
 /** @typedef Point2f
 *  @brief 2D coordinate point with float precision.
 */
-typedef cv::Point2f Point2f;
+typedef inspirecv::Point2f Point2f;
 
 /** @typedef PointsList2i
 *  @brief List of 2D coordinate points with integer precision.
@@ -116,20 +116,20 @@ typedef Contours2i Textures2i;
 */
 typedef std::vector<float> AnyTensorFp32;
 
-/** @typedef Matrix
-*  @brief Generic matrix representation.
+/** @typedef ImageBitmap
+*  @brief Image bitmap representation.
 */
-typedef cv::Mat Matrix;
+typedef inspirecv::Image ImageBitmap;
 
 /** @typedef Rectangle
 *  @brief Rectangle representation using integer values.
 */
-typedef cv::Rect_<int> Rectangle;
+typedef inspirecv::Rect<int> Rectangle;
 
 /** @typedef Size
 *  @brief Size representation using integer values.
 */
-typedef cv::Size_<int> Size;
+typedef inspirecv::Size<int> Size;
 
 /** @typedef Embedded
 *  @brief Dense vector for feature embedding.
@@ -194,4 +194,4 @@ typedef struct FaceFeatureEntity {
 
 }  // namespace inspire
 
-#endif //HYPERFACE_DATATYPE_H
+#endif //INSPIRE_FACE_DATATYPE_H

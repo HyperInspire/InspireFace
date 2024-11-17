@@ -6,7 +6,7 @@
 #include "intypedef.h"
 #include "inspireface_internal.h"
 #include "information.h"
-#include "feature_hub/feature_hub.h"
+#include "feature_hub/feature_hub_db.h"
 #include "Initialization_module/launch.h"
 #include "Initialization_module/resource_manage.h"
 
@@ -20,36 +20,36 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, HFImageS
     auto stream = new HF_CameraStream();
     switch (data->rotation) {
         case HF_CAMERA_ROTATION_90:
-            stream->impl.SetRotationMode(ROTATION_90);
+            stream->impl.SetRotationMode(inspirecv::ROTATION_90);
             break;
         case HF_CAMERA_ROTATION_180:
-            stream->impl.SetRotationMode(ROTATION_180);
+            stream->impl.SetRotationMode(inspirecv::ROTATION_180);
             break;
         case HF_CAMERA_ROTATION_270:
-            stream->impl.SetRotationMode(ROTATION_270);
+            stream->impl.SetRotationMode(inspirecv::ROTATION_270);
             break;
         default:
-            stream->impl.SetRotationMode(ROTATION_0);
+            stream->impl.SetRotationMode(inspirecv::ROTATION_0);
             break;
     }
     switch (data->format) {
         case HF_STREAM_RGB:
-            stream->impl.SetDataFormat(RGB);
+            stream->impl.SetDataFormat(inspirecv::RGB);
             break;
         case HF_STREAM_BGR:
-            stream->impl.SetDataFormat(BGR);
+            stream->impl.SetDataFormat(inspirecv::BGR);
             break;
         case HF_STREAM_RGBA:
-            stream->impl.SetDataFormat(RGBA);
+            stream->impl.SetDataFormat(inspirecv::RGBA);
             break;
         case HF_STREAM_BGRA:
-            stream->impl.SetDataFormat(BGRA);
+            stream->impl.SetDataFormat(inspirecv::BGRA);
             break;
         case HF_STREAM_YUV_NV12:
-            stream->impl.SetDataFormat(NV12);
+            stream->impl.SetDataFormat(inspirecv::NV12);
             break;
         case HF_STREAM_YUV_NV21:
-            stream->impl.SetDataFormat(NV21);
+            stream->impl.SetDataFormat(inspirecv::NV21);
             break;
         default:
             return HERR_INVALID_IMAGE_STREAM_PARAM;  // Assume there's a return code for unsupported
@@ -77,6 +77,127 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseImageStream(HFImageStream streamHandle
     return HSUCCEED;
 }
 
+
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmap(PHFImageBitmapData data, HFImageBitmap *handle) {
+    if (data == nullptr || handle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    auto bitmap = new HF_ImageBitmap();
+    bitmap->impl.Reset(data->width, data->height, data->channels, data->data);
+    *handle = (HFImageBitmap)bitmap;
+    // Record the creation of this image bitmap in the ResourceManager
+    RESOURCE_MANAGE->createImageBitmap((long)*handle);
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromFilePath(HPath filePath, HInt32 channels, HFImageBitmap *handle) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    auto image = inspirecv::Image::Create(filePath, channels);
+    auto bitmap = new HF_ImageBitmap();
+    bitmap->impl.Reset(image.Width(), image.Height(), image.Channels(), image.Data());
+    *handle = (HFImageBitmap)bitmap;
+    // Record the creation of this image bitmap in the ResourceManager
+    RESOURCE_MANAGE->createImageBitmap((long)*handle);
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapCopy(HFImageBitmap handle, HFImageBitmap *copyHandle) {
+    if (handle == nullptr || copyHandle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    auto bitmap = new HF_ImageBitmap();
+    bitmap->impl.Reset(((HF_ImageBitmap*)handle)->impl.Width(), ((HF_ImageBitmap*)handle)->impl.Height(), ((HF_ImageBitmap*)handle)->impl.Channels(), ((HF_ImageBitmap*)handle)->impl.Data());
+    *copyHandle = (HFImageBitmap)bitmap;
+    // Record the creation of this image bitmap in the ResourceManager
+    RESOURCE_MANAGE->createImageBitmap((long)*copyHandle);
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFReleaseImageBitmap(HFImageBitmap handle) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    // Check and mark this image bitmap as released in the ResourceManager
+    if (!RESOURCE_MANAGE->releaseImageBitmap((long)handle)) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;  // or other appropriate error code
+    }
+    delete (HF_ImageBitmap*)handle;
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitmap handle, HFRotation rotation, HFImageStream *streamHandle) {
+    if (handle == nullptr || streamHandle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    auto stream = new HF_CameraStream();
+    switch (rotation) {
+        case HF_CAMERA_ROTATION_90: stream->impl.SetRotationMode(inspirecv::ROTATION_90); break;
+        case HF_CAMERA_ROTATION_180: stream->impl.SetRotationMode(inspirecv::ROTATION_180); break;
+        case HF_CAMERA_ROTATION_270: stream->impl.SetRotationMode(inspirecv::ROTATION_270); break;
+        default: stream->impl.SetRotationMode(inspirecv::ROTATION_0); break;
+    }
+    stream->impl.SetDataFormat(inspirecv::BGR);
+    stream->impl.SetDataBuffer(((HF_ImageBitmap*)handle)->impl.Data(), ((HF_ImageBitmap*)handle)->impl.Height(), ((HF_ImageBitmap*)handle)->impl.Width());
+    *streamHandle = (HFImageStream)stream;
+
+    // Record the creation of this stream in the ResourceManager
+    RESOURCE_MANAGE->createStream((long)*streamHandle);
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapWriteToFile(HFImageBitmap handle, HPath filePath) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    return ((HF_ImageBitmap*)handle)->impl.Write(filePath);
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapDrawRect(HFImageBitmap handle, HFaceRect rect, HColor color, HInt32 thickness) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    inspirecv::Rect<int> rect_inner(rect.x, rect.y, rect.width, rect.height);
+    ((HF_ImageBitmap*)handle)->impl.DrawRect(rect_inner, {color.r, color.g, color.b}, thickness);
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapDrawCircle(HFImageBitmap handle, HPoint2i point, HInt32 radius, HColor color, HInt32 thickness) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    ((HF_ImageBitmap*)handle)->impl.DrawCircle({point.x, point.y}, radius, {color.r, color.g, color.b}, thickness);
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapDrawCircleF(HFImageBitmap handle, HPoint2f point, HInt32 radius, HColor color, HInt32 thickness) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    ((HF_ImageBitmap*)handle)->impl.DrawCircle({(int) point.x, (int) point.y}, radius, {color.r, color.g, color.b}, thickness);
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapGetData(HFImageBitmap handle, PHFImageBitmapData data) {
+    if (handle == nullptr || data == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    data->width = ((HF_ImageBitmap*)handle)->impl.Width();
+    data->height = ((HF_ImageBitmap*)handle)->impl.Height();
+    data->channels = ((HF_ImageBitmap*)handle)->impl.Channels();
+    data->data = (uint8_t*)((HF_ImageBitmap*)handle)->impl.Data();
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapShow(HFImageBitmap handle, HString title, HInt32 delay) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    ((HF_ImageBitmap*)handle)->impl.Show(title, delay);
+    return HSUCCEED;
+}
+
 void HFDeBugImageStreamImShow(HFImageStream streamHandle) {
     if (streamHandle == nullptr) {
         INSPIRE_LOGE("Handle error");
@@ -86,12 +207,11 @@ void HFDeBugImageStreamImShow(HFImageStream streamHandle) {
         INSPIRE_LOGE("Image error");
         return;
     }
-    auto image = stream->impl.GetScaledImage(1.0f, true);
+    auto image = stream->impl.ExecuteImageScaleProcessing(1.0f, true);
 #ifdef DISABLE_GUI
-    cv::imwrite("tmp.jpg", image);
+    image.Write("tmp.jpg");
 #else
-    cv::imshow("Debug", image);
-    cv::waitKey(0);
+    image.Show();
 #endif
 }
 
@@ -100,13 +220,13 @@ HResult HFDeBugImageStreamDecodeSave(HFImageStream streamHandle, HPath savePath)
         INSPIRE_LOGE("Handle error");
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
-    HF_CameraStream *stream = (HF_CameraStream *)streamHandle;
+    HF_CameraStream *stream = (HF_CameraStream* ) streamHandle;
     if (stream == nullptr) {
         INSPIRE_LOGE("Image error");
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
-    auto image = stream->impl.GetScaledImage(1.0f, true);
-    auto ret = cv::imwrite(savePath, image);
+    auto image = stream->impl.ExecuteImageScaleProcessing(1.0f, true);
+    auto ret = image.Write(savePath);
     if (ret) {
         INSPIRE_LOGE("Image saved successfully to %s", savePath);
         return HSUCCEED;
@@ -138,7 +258,7 @@ HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectM
     param.enable_ir_liveness = parameter.enable_ir_liveness;
     param.enable_recognition = parameter.enable_recognition;
     param.enable_face_attribute = parameter.enable_face_attribute;
-    inspire::DetectMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
+    inspire::DetectModuleMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
     if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
         detMode = inspire::DETECT_MODE_LIGHT_TRACK;
     } else if (detectMode == HF_DETECT_MODE_TRACK_BY_DETECTION) {
@@ -183,7 +303,7 @@ HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode de
     if (customOption & HF_ENABLE_INTERACTION) {
         param.enable_interaction_liveness = true;
     }
-    inspire::DetectMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
+    inspire::DetectModuleMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
     if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
         detMode = inspire::DETECT_MODE_LIGHT_TRACK;
     } else if (detectMode == HF_DETECT_MODE_TRACK_BY_DETECTION) {
@@ -215,17 +335,17 @@ HResult HFTerminateInspireFace() {
 }
 
 HResult HFFeatureHubDataDisable() {
-    return FEATURE_HUB->DisableHub();
+    return FEATURE_HUB_DB->DisableHub();
 }
 
 HResult HFFeatureHubDataEnable(HFFeatureHubConfiguration configuration) {
     inspire::DatabaseConfiguration param;
-    param.db_path = (configuration.dbPath != nullptr) ? std::string(configuration.dbPath) : std::string();
-    param.enable_use_db = configuration.enablePersistence;
-    param.feature_block_num = configuration.featureBlockNum;
+    param.primary_key_mode = PrimaryKeyMode(configuration.primaryKeyMode);
+    param.persistence_db_path = (configuration.persistenceDbPath != nullptr) ? std::string(configuration.persistenceDbPath) : std::string();
+    param.enable_persistence = configuration.enablePersistence;
     param.recognition_threshold = configuration.searchThreshold;
-    param.search_mode = (SearchMode)configuration.searchMode;
-    auto ret = FEATURE_HUB->EnableHub(param);
+    param.search_mode = (SearchMode )configuration.searchMode;
+    auto ret = FEATURE_HUB_DB->EnableHub(param);
 
     return ret;
 }
@@ -260,7 +380,7 @@ HResult HFSessionSetFaceTrackMode(HFSession session, HFDetectMode detectMode) {
     if (ctx == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
-    inspire::DetectMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
+    inspire::DetectModuleMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
     if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
         detMode = inspire::DETECT_MODE_LIGHT_TRACK;
     }
@@ -333,7 +453,7 @@ HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, HPoint2
     data.data = singleFace.data;
     HyperFaceData face = {0};
     HInt32 ret;
-    ret = DeserializeHyperFaceData((char *)data.data, data.dataSize, face);
+    ret = RunDeserializeHyperFaceData((char *)data.data, data.dataSize, face);
     if (ret != HSUCCEED) {
         return ret;
     }
@@ -346,7 +466,7 @@ HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, HPoint2
 }
 
 HResult HFFeatureHubFaceSearchThresholdSetting(float threshold) {
-    FEATURE_HUB->SetRecognitionThreshold(threshold);
+    FEATURE_HUB_DB->SetRecognitionThreshold(threshold);
     return HSUCCEED;
 }
 
@@ -378,18 +498,18 @@ HResult HFFaceFeatureExtract(HFSession session, HFImageStream streamHandle, HFFa
     return ret;
 }
 
-HResult HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HPFloat feature) {
+HResult HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HPFloat feature, HPFloat norm) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
     if (streamHandle == nullptr) {
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
-    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession* ) session;
     if (ctx == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
-    HF_CameraStream *stream = (HF_CameraStream *)streamHandle;
+    HF_CameraStream *stream = (HF_CameraStream* ) streamHandle;
     if (stream == nullptr) {
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
@@ -403,6 +523,7 @@ HResult HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, H
     for (int i = 0; i < ctx->impl.GetFaceFeatureCache().size(); ++i) {
         feature[i] = ctx->impl.GetFaceFeatureCache()[i];
     }
+    *norm = ctx->impl.GetFaceFeatureNormCache();
 
     return ret;
 }
@@ -417,19 +538,19 @@ HResult HFFaceComparison(HFFaceFeature feature1, HFFaceFeature feature2, HPFloat
     }
     *result = 0.0f;
     float res = -1.0f;
-    auto ret = FEATURE_HUB->CosineSimilarity(feature1.data, feature2.data, feature1.size, res);
+    auto ret = FEATURE_HUB_DB->CosineSimilarity(feature1.data, feature2.data, feature1.size, res);
     *result = res;
 
     return ret;
 }
 
 HResult HFGetFeatureLength(HPInt32 num) {
-    *num = FEATURE_HUB->GetFeatureNum();
+    *num = 512;
 
     return HSUCCEED;
 }
 
-HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity) {
+HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity, HPInt32 allocId) {
     if (featureIdentity.feature->data == nullptr) {
         return HERR_INVALID_FACE_FEATURE;
     }
@@ -438,8 +559,7 @@ HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity) {
     for (int i = 0; i < featureIdentity.feature->size; ++i) {
         feat.push_back(featureIdentity.feature->data[i]);
     }
-    std::string tag(featureIdentity.tag);
-    HInt32 ret = FEATURE_HUB->FaceFeatureInsertFromCustomId(feat, tag, featureIdentity.customId);
+    HInt32 ret = FEATURE_HUB_DB->FaceFeatureInsert(feat, featureIdentity.id, *allocId);
 
     return ret;
 }
@@ -453,14 +573,16 @@ HResult HFFeatureHubFaceSearch(HFFaceFeature searchFeature, HPFloat confidence, 
     for (int i = 0; i < searchFeature.size; ++i) {
         feat.push_back(searchFeature.data[i]);
     }
-    inspire::SearchResult result;
-    HInt32 ret = FEATURE_HUB->SearchFaceFeature(feat, result);
-    mostSimilar->feature = (HFFaceFeature *)FEATURE_HUB->GetFaceFeaturePtrCache().get();
-    mostSimilar->feature->data = (HFloat *)FEATURE_HUB->GetSearchFaceFeatureCache().data();
-    mostSimilar->feature->size = FEATURE_HUB->GetSearchFaceFeatureCache().size();
-    mostSimilar->tag = FEATURE_HUB->GetStringCache();
-    mostSimilar->customId = result.customId;
-    *confidence = result.score;
+    *confidence = -1.0f;
+    inspire::FaceSearchResult result;
+    HInt32 ret = FEATURE_HUB_DB->SearchFaceFeature(feat, result);
+    mostSimilar->feature = (HFFaceFeature* ) FEATURE_HUB_DB->GetFaceFeaturePtrCache().get();
+    mostSimilar->feature->data = (HFloat* ) FEATURE_HUB_DB->GetSearchFaceFeatureCache().data();
+    mostSimilar->feature->size = FEATURE_HUB_DB->GetSearchFaceFeatureCache().size();
+    mostSimilar->id = result.id;
+    if (mostSimilar->id != -1) {
+        *confidence = result.similarity;
+    }
 
     return ret;
 }
@@ -474,18 +596,18 @@ HResult HFFeatureHubFaceSearchTopK(HFFaceFeature searchFeature, HInt32 topK, PHF
     for (int i = 0; i < searchFeature.size; ++i) {
         feat.push_back(searchFeature.data[i]);
     }
-    HInt32 ret = FEATURE_HUB->SearchFaceFeatureTopK(feat, topK);
+    HInt32 ret = FEATURE_HUB_DB->SearchFaceFeatureTopKCache(feat, topK);
     if (ret == HSUCCEED) {
-        results->size = FEATURE_HUB->GetTopKConfidence().size();
-        results->confidence = FEATURE_HUB->GetTopKConfidence().data();
-        results->customIds = FEATURE_HUB->GetTopKCustomIdsCache().data();
+        results->size = FEATURE_HUB_DB->GetTopKConfidence().size();
+        results->confidence = FEATURE_HUB_DB->GetTopKConfidence().data();
+        results->ids = FEATURE_HUB_DB->GetTopKCustomIdsCache().data();
     }
 
     return ret;
 }
 
-HResult HFFeatureHubFaceRemove(HInt32 customId) {
-    auto ret = FEATURE_HUB->FaceFeatureRemoveFromCustomId(customId);
+HResult HFFeatureHubFaceRemove(HInt32 id) {
+    auto ret = FEATURE_HUB_DB->FaceFeatureRemove(id);
     return ret;
 }
 
@@ -498,23 +620,21 @@ HResult HFFeatureHubFaceUpdate(HFFaceFeatureIdentity featureIdentity) {
     for (int i = 0; i < featureIdentity.feature->size; ++i) {
         feat.push_back(featureIdentity.feature->data[i]);
     }
-    std::string tag(featureIdentity.tag);
 
-    auto ret = FEATURE_HUB->FaceFeatureUpdateFromCustomId(feat, tag, featureIdentity.customId);
+    auto ret = FEATURE_HUB_DB->FaceFeatureUpdate(feat, featureIdentity.id);
 
     return ret;
 }
 
-HResult HFFeatureHubGetFaceIdentity(HInt32 customId, PHFFaceFeatureIdentity identity) {
-    auto ret = FEATURE_HUB->GetFaceFeatureFromCustomId(customId);
+HResult HFFeatureHubGetFaceIdentity(HInt32 id, PHFFaceFeatureIdentity identity) {
+    auto ret = FEATURE_HUB_DB->GetFaceFeature(id);
     if (ret == HSUCCEED) {
-        identity->tag = FEATURE_HUB->GetStringCache();
-        identity->customId = customId;
-        identity->feature = (HFFaceFeature *)FEATURE_HUB->GetFaceFeaturePtrCache().get();
-        identity->feature->data = (HFloat *)FEATURE_HUB->GetFaceFeaturePtrCache()->data;
-        identity->feature->size = FEATURE_HUB->GetFaceFeaturePtrCache()->dataSize;
+        identity->id = id;
+        identity->feature = (HFFaceFeature* ) FEATURE_HUB_DB->GetFaceFeaturePtrCache().get();
+        identity->feature->data = (HFloat* ) FEATURE_HUB_DB->GetFaceFeaturePtrCache()->data;
+        identity->feature->size = FEATURE_HUB_DB->GetFaceFeaturePtrCache()->dataSize;
     } else {
-        identity->customId = -1;
+        identity->id = -1;
     }
 
     return ret;
@@ -557,7 +677,7 @@ HResult HFMultipleFacePipelineProcess(HFSession session, HFImageStream streamHan
     data.resize(faces->detectedNum);
     for (int i = 0; i < faces->detectedNum; ++i) {
         auto &face = data[i];
-        ret = DeserializeHyperFaceData((char *)faces->tokens[i].data, faces->tokens[i].size, face);
+        ret = RunDeserializeHyperFaceData((char *)faces->tokens[i].data, faces->tokens[i].size, face);
         if (ret != HSUCCEED) {
             return HERR_INVALID_FACE_TOKEN;
         }
@@ -618,7 +738,7 @@ HResult HFMultipleFacePipelineProcessOptional(HFSession session, HFImageStream s
     data.resize(faces->detectedNum);
     for (int i = 0; i < faces->detectedNum; ++i) {
         auto &face = data[i];
-        ret = DeserializeHyperFaceData((char *)faces->tokens[i].data, faces->tokens[i].size, face);
+        ret = RunDeserializeHyperFaceData((char *)faces->tokens[i].data, faces->tokens[i].size, face);
         if (ret != HSUCCEED) {
             return HERR_INVALID_FACE_TOKEN;
         }
@@ -687,7 +807,7 @@ HResult HFFaceQualityDetect(HFSession session, HFFaceBasicToken singleFace, HFlo
     data.dataSize = singleFace.size;
     data.data = singleFace.data;
 
-    auto ret = inspire::FaceContext::FaceQualityDetect(data, *confidence);
+    auto ret = inspire::FaceSession::FaceQualityDetect(data, *confidence);
 
     return ret;
 }
@@ -743,12 +863,13 @@ HResult HFGetFaceAttributeResult(HFSession session, PHFFaceAttributeResult resul
 }
 
 HResult HFFeatureHubGetFaceCount(HInt32 *count) {
-    *count = FEATURE_HUB->GetFaceFeatureCount();
+    *count = FEATURE_HUB_DB->GetFaceFeatureCount();
     return HSUCCEED;
 }
 
 HResult HFFeatureHubViewDBTable() {
-    return FEATURE_HUB->ViewDBTable();
+    // return FEATURE_HUB_DB->ViewDBTable();
+    return HSUCCEED;
 }
 
 HResult HFQueryInspireFaceVersion(PHFInspireFaceVersion version) {
