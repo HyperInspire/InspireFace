@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#ifndef HYPERAI_PARAMETER_H
-#define HYPERAI_PARAMETER_H
+#ifndef INSPIREFACE_CONFIGURABLE_H
+#define INSPIREFACE_CONFIGURABLE_H
 #include "nlohmann/json.hpp"
 #include <iostream>
 
@@ -156,5 +156,5 @@ public:                                                                         
         return m_configuration.toString(indent);                                                          \
     }
 
-} // namespace hyper
-#endif //HYPERAI_PARAMETER_H
+} // namespace inspire
+#endif //INSPIREFACE_CONFIGURABLE_H

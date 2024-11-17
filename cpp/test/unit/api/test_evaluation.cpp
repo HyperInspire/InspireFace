@@ -1,11 +1,9 @@
 //
 // Created by Tunm-Air13 on 2024/3/26.
 //
-
 #include <iostream>
 #include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
-#include "opencv2/opencv.hpp"
 #include "unit/test_helper/simple_csv_writer.h"
 #include "unit/test_helper/test_help.h"
 #include "unit/test_helper/test_tools.h"

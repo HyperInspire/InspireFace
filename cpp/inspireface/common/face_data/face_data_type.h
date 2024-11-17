@@ -4,12 +4,12 @@
 
 // Include guard to prevent double inclusion of this header file
 #pragma once
-#ifndef HYPERFACEREPO_FACEDATATYPE_H
-#define HYPERFACEREPO_FACEDATATYPE_H
+#ifndef INSPIRE_FACE_FACEDATATYPE_H
+#define INSPIRE_FACE_FACEDATATYPE_H
 
 // Include the necessary header files
 #include "../../data_type.h"
-#include "../face_info/face_object.h"
+#include "../face_info/face_object_internal.h"
 
 // Define the namespace "inspire" for encapsulation
 namespace inspire {
@@ -71,4 +71,4 @@ typedef struct HyperFaceData {
 
 } // namespace inspire
 
-#endif //HYPERFACEREPO_FACEDATATYPE_H
+#endif //INSPIRE_FACE_FACEDATATYPE_H

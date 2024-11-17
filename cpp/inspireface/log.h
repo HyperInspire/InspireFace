@@ -1,5 +1,5 @@
-#ifndef LOG_MANAGER_H
-#define LOG_MANAGER_H
+#ifndef INSPIRE_FACE_LOG_H
+#define INSPIRE_FACE_LOG_H
 
 #include <mutex>
 #include <string>
@@ -111,6 +111,11 @@ public:
         va_start(args, format);
         __android_log_vprint(androidLevel, tag, format, args);
         va_end(args);
+
+        if (level == ISF_LOG_FATAL) {
+            std::flush(std::cerr);
+            abort();
+        }
     }
 #else
     // Method for standard platform logging
@@ -158,6 +163,11 @@ public:
         }
 
         printf("\n");  // New line after log message
+        
+        if (level == ISF_LOG_FATAL) {
+            std::flush(std::cerr);
+            abort();
+        }
     }
 
 #endif
@@ -165,4 +175,4 @@ public:
 
 }  // namespace inspire
 
-#endif  // LOG_MANAGER_H
+#endif  // INSPIRE_FACE_LOG_H

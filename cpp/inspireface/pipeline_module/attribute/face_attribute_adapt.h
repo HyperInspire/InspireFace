@@ -2,8 +2,8 @@
 // Created by Tunm-Air13 on 2023/9/8.
 //
 #pragma once
-#ifndef HYPERFACEREPO_GENDERPREDICT_H
-#define HYPERFACEREPO_GENDERPREDICT_H
+#ifndef INSPIRE_FACE_ATTRIBUTE_ADAPT_H
+#define INSPIRE_FACE_ATTRIBUTE_ADAPT_H
 #include "data_type.h"
 #include "middleware/any_net_adapter.h"
 
@@ -67,6 +67,6 @@ private:
 };
 
 
-}   // namespace hyper
+}   // namespace inspire
 
-#endif //HYPERFACEREPO_GENDERPREDICT_H
+#endif //INSPIRE_FACE_ATTRIBUTE_ADAPT_H

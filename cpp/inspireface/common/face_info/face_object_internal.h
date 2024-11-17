@@ -1,11 +1,8 @@
-#ifndef FACE_INFO_INTERNAL_H
-#define FACE_INFO_INTERNAL_H
+#ifndef INSPIRE_FACE_FACE_INFO_INTERNAL_H
+#define INSPIRE_FACE_FACE_INFO_INTERNAL_H
 
 #include <memory>
 #include <utility>
-
-// #include "face_action.h"
-//  #include "opencv2/opencv.hpp"
 #include <inspirecv/inspirecv.h>
 #include "middleware/utils.h"
 #include "data_type.h"
@@ -28,7 +25,7 @@ public:
         tracking_count_ = 0;
         pose_euler_angle_.resize(3);
         keyPointFive.resize(5);
-        //    face_action_ = std::make_shared<FaceAction>(10);
+        face_action_ = std::make_shared<FaceActionPredictor>(10);
     }
 
     void SetLandmark(const std::vector<inspirecv::Point2f> &lmk, bool update_rect = true, bool update_matrix = true) {
@@ -69,12 +66,12 @@ public:
         align_mse_ = sum / 5.0f;
     }
 
-    // 增加跟踪次数
+    // Increment tracking count
     void IncrementTrackingCount() {
         tracking_count_++;
     }
 
-    // 获取跟踪次数
+    // Get tracking count
     int GetTrackingCount() const {
         return tracking_count_;
     }
@@ -109,9 +106,9 @@ public:
         return box_square;
     }
 
-    FaceActions UpdateFaceAction() {
-        cv::Vec3f euler(high_result.pitch, high_result.yaw, high_result.roll);
-        cv::Vec2f eyes(left_eye_status_.back(), right_eye_status_.back());
+    FaceActionList UpdateFaceAction() {
+        inspirecv::Vec3f euler{high_result.pitch, high_result.yaw, high_result.roll};
+        inspirecv::Vec2f eyes{left_eye_status_.back(), right_eye_status_.back()};
         face_action_->RecordActionFrame(landmark_, euler, eyes);
         return face_action_->AnalysisFaceAction();
     }
@@ -233,28 +230,6 @@ public:
         return bbox_;
     }
 
-    // std::vector<inspirecv::Point2f> getRotateLandmark(int height, int width, int rotate = 0) {
-    //     if (rotate != 0) {
-    //         std::vector<cv::Point2f> result = RotatePoints(landmark_, rotate, cv::Size(height, width));
-    //         return result;
-    //     } else {
-    //         return GetLanmdark();
-    //     }
-    // }
-
-    // cv::Rect getRotateBbox(int height, int width, int rotate = 0, bool use_flip = false) {
-    //     if (rotate != 0) {
-    //         cv::Rect src_bbox = bbox_;
-    //         std::vector<cv::Point2f> points;
-    //         cv::Rect trans_rect;
-    //         RotateRect(src_bbox, points, trans_rect, rotate, cv::Size(height, width));
-    //         if (use_flip)
-    //             trans_rect = flipRectWidth(trans_rect, cv::Size(width, height));
-    //         return trans_rect;
-    //     } else {
-    //         return getBbox();
-    //     }
-    // }
 
     void setBbox(const inspirecv::Rect2i &bbox) {
         bbox_ = bbox;
@@ -264,7 +239,7 @@ public:
     inspirecv::TransformMatrix trans_matrix_extensive_;
     float confidence_;
     inspirecv::Rect2i detect_bbox_;
-    int tracking_count_;  // 跟踪次数
+    int tracking_count_;  // Tracking count
 
     bool is_standard_;
 
@@ -284,7 +259,7 @@ public:
 
 private:
     ISF_TRACK_STATE tracking_state_;
-    std::shared_ptr<FaceActionAnalyse> face_action_;
+    std::shared_ptr<FaceActionPredictor> face_action_;
     int face_id_;
 };
 
@@ -292,4 +267,4 @@ typedef std::vector<FaceObjectInternal> FaceObjectInternalList;
 
 }  // namespace inspire
 
-#endif  // FACE_INFO_INTERNAL_H
+#endif  // INSPIRE_FACE_FACE_INFO_INTERNAL_H

@@ -2,8 +2,8 @@
 // Created by Tunm-Air13 on 2024/4/12.
 //
 #pragma once
-#ifndef INSPIREFACE_FACE_FEATURE_EXTRACTION_MODULE_H
-#define INSPIREFACE_FACE_FEATURE_EXTRACTION_MODULE_H
+#ifndef INSPIRE_FACE_FEATURE_EXTRACTION_MODULE_H
+#define INSPIRE_FACE_FEATURE_EXTRACTION_MODULE_H
 #include <mutex>
 #include "extract/extract_adapt.h"
 #include "common/face_info/face_object_internal.h"
@@ -77,4 +77,4 @@ private:
 
 }   // namespace inspire
 
-#endif //INSPIREFACE_FACE_FEATURE_EXTRACTION_MODULE_H
+#endif //INSPIRE_FACE_FEATURE_EXTRACTION_MODULE_H

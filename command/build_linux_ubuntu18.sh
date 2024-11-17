@@ -42,7 +42,6 @@ cmake -DCMAKE_BUILD_TYPE=Release \
   -DISF_ENABLE_BENCHMARK=OFF \
   -DISF_ENABLE_USE_LFW_DATA=OFF \
   -DISF_ENABLE_TEST_EVALUATION=OFF \
-  -DOpenCV_DIR=3rdparty/inspireface-precompile/opencv/4.5.1/opencv-ubuntu18-x86/lib/cmake/opencv4 \
   -DISF_BUILD_SHARED_LIBS=ON ${SCRIPT_DIR}
 
 make -j4

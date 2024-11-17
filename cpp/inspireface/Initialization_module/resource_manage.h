@@ -30,6 +30,7 @@ private:
     // Use hash tables to store session and image stream handles
     std::unordered_map<long, bool> sessionMap;
     std::unordered_map<long, bool> streamMap;
+    std::unordered_map<long, bool> imageBitmapMap;
 
     // The private constructor guarantees singletons
     ResourceManager() {}
@@ -84,6 +85,23 @@ public:
                        // released
     }
 
+    // Create and record image bitmaps
+    void createImageBitmap(long handle) {
+        std::lock_guard<std::mutex> lock(mutex);
+        imageBitmapMap[handle] = false;  // false indicates that it is not released
+    }
+
+    // Release image bitmap
+    bool releaseImageBitmap(long handle) {
+        std::lock_guard<std::mutex> lock(mutex);
+        auto it = imageBitmapMap.find(handle);
+        if (it != imageBitmapMap.end() && !it->second) {
+            it->second = true;  // Mark as released
+            return true;
+        }
+        return false;  // Release failed, possibly because the handle could not be found or was released
+    }
+
     // Gets a list of unreleased session handles
     std::vector<long> getUnreleasedSessions() {
         std::lock_guard<std::mutex> lock(mutex);
@@ -106,6 +124,18 @@ public:
             }
         }
         return unreleasedStreams;
+    }
+
+    // Gets a list of unreleased image bitmap handles
+    std::vector<long> getUnreleasedImageBitmaps() {
+        std::lock_guard<std::mutex> lock(mutex);
+        std::vector<long> unreleasedImageBitmaps;
+        for (const auto& entry : imageBitmapMap) {
+            if (!entry.second) {
+                unreleasedImageBitmaps.push_back(entry.first);
+            }
+        }
+        return unreleasedImageBitmaps;
     }
 
     // Method to print resource management statistics
@@ -139,6 +169,19 @@ public:
         }
         std::cout << std::left << std::setw(15) << "Stream" << std::setw(15) << totalStreamsCreated << std::setw(15) << totalStreamsReleased
                   << std::setw(15) << streamsNotReleased << std::endl;
+
+        // Print bitmap statistics
+        int totalBitmapsCreated = imageBitmapMap.size();
+        int totalBitmapsReleased = 0;
+        int bitmapsNotReleased = 0;
+        for (const auto& entry : imageBitmapMap) {
+            if (entry.second)
+                ++totalBitmapsReleased;
+            if (!entry.second)
+                ++bitmapsNotReleased;
+        }
+        std::cout << std::left << std::setw(15) << "Bitmap" << std::setw(15) << totalBitmapsCreated << std::setw(15) << totalBitmapsReleased
+                  << std::setw(15) << bitmapsNotReleased << std::endl;
     }
 };
 
