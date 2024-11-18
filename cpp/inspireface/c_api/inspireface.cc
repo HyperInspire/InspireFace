@@ -925,6 +925,11 @@ HResult HFQueryInspireFaceVersion(PHFInspireFaceVersion version) {
     return HSUCCEED;
 }
 
+HResult HFQueryInspireFaceExtendedInformation(PHFInspireFaceExtendedInformation information) {
+    strncpy(information->information, INSPIRE_FACE_EXTENDED_INFORMATION, strlen(INSPIRE_FACE_EXTENDED_INFORMATION));
+    return HSUCCEED;
+}
+
 HResult HFSetLogLevel(HFLogLevel level) {
     INSPIRE_SET_LOG_LEVEL(LogLevel(level));
     return HSUCCEED;

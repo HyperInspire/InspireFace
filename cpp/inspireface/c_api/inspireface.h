@@ -852,6 +852,21 @@ typedef struct HFInspireFaceVersion {
 HYPER_CAPI_EXPORT extern HResult HFQueryInspireFaceVersion(PHFInspireFaceVersion version);
 
 /**
+ * @brief Struct representing the extended information of the InspireFace library.
+ */
+typedef struct HFInspireFaceExtendedInformation {
+    HChar information[256];
+    // TODO: Add more information
+} HFInspireFaceExtendedInformation, *PHFInspireFaceExtendedInformation;
+
+/**
+ * @brief Get the extended information of the InspireFace library.
+ *
+ * This function retrieves the extended information of the InspireFace library.
+ */
+HYPER_CAPI_EXPORT extern HResult HFQueryInspireFaceExtendedInformation(PHFInspireFaceExtendedInformation information);
+
+/**
  * @brief SDK built-in log level mode
  * */
 typedef enum HFLogLevel {
