@@ -6,7 +6,6 @@
 
 namespace inspire {
 
-
 float RNetAdapt::operator()(const inspirecv::Image &bgr_affine) {
     auto resized = bgr_affine.Resize(24, 24);
 
@@ -18,5 +17,4 @@ float RNetAdapt::operator()(const inspirecv::Image &bgr_affine) {
 
 RNetAdapt::RNetAdapt() : AnyNetAdapter("RNetAdapt") {}
 
-
-}   //  namespace hyper
+}  //  namespace inspire

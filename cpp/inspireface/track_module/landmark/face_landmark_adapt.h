@@ -15,7 +15,7 @@ namespace inspire {
  *
  * This class specializes in detecting facial landmarks from images using neural network models.
  */
-class INSPIRE_API FaceLandmarkAdapt: public AnyNetAdapter {
+class INSPIRE_API FaceLandmarkAdapt : public AnyNetAdapter {
 public:
     /**
      * @brief Operator to process an affine-transformed face image and return facial landmarks.
@@ -37,20 +37,20 @@ public:
     int getInputSize() const;
 
 public:
-    const static int LEFT_EYE_CENTER = 55;      ///< Landmark index for the center of the left eye.
-    const static int RIGHT_EYE_CENTER = 105;    ///< Landmark index for the center of the right eye.
-    const static int NOSE_CORNER = 69;          ///< Landmark index for the tip of the nose.
-    const static int MOUTH_LEFT_CORNER = 45;    ///< Landmark index for the left corner of the mouth.
-    const static int MOUTH_RIGHT_CORNER = 50;   ///< Landmark index for the right corner of the mouth.
+    const static int LEFT_EYE_CENTER = 55;     ///< Landmark index for the center of the left eye.
+    const static int RIGHT_EYE_CENTER = 105;   ///< Landmark index for the center of the right eye.
+    const static int NOSE_CORNER = 69;         ///< Landmark index for the tip of the nose.
+    const static int MOUTH_LEFT_CORNER = 45;   ///< Landmark index for the left corner of the mouth.
+    const static int MOUTH_RIGHT_CORNER = 50;  ///< Landmark index for the right corner of the mouth.
     const static int MOUTH_LOWER = 37 - 1;
     const static int MOUTH_UPPER = 104 - 1;
 
-    const static int NUM_OF_LANDMARK = 106;     ///< Total number of landmarks detected.
+    const static int NUM_OF_LANDMARK = 106;  ///< Total number of landmarks detected.
 
 private:
-    const int m_input_size_;                    ///< The input size for the neural network model.
+    const int m_input_size_;  ///< The input size for the neural network model.
 };
 
-}   //  namespace hyper
+}  //  namespace inspire
 
-#endif //INSPIRE_FACE_TRACK_MODULE_LANDMARK_FACE_LANDMARK_ADAPT_H
+#endif  // INSPIRE_FACE_TRACK_MODULE_LANDMARK_FACE_LANDMARK_ADAPT_H
