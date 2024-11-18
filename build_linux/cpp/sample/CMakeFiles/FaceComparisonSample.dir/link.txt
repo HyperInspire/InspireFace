@@ -1,1 +1,0 @@
-/usr/bin/c++  -std=c++14 -O3 CMakeFiles/FaceComparisonSample.dir/cpp/sample_face_comparison.cpp.o -o ../../sample/FaceComparisonSample  -Wl,-rpath,/host/work/inspireface/build_linux/lib ../../lib/libInspireFace.so ../../3rdparty/MNN/libMNN.a -pthread -lpthread -ldl 
