@@ -24,11 +24,11 @@ def case_face_recognition(resource_path, test_data_folder):
 
     # Configure the feature management system.
     feature_hub_config = ifac.FeatureHubConfiguration(
-        feature_block_num=10,
-        enable_use_db=False,
-        db_path="",
+        primary_key_mode=ifac.HF_PK_AUTO_INCREMENT,
+        enable_persistence=False,
+        persistence_db_path="",
         search_threshold=0.48,
-        search_mode=HF_SEARCH_MODE_EAGER,
+        search_mode=ifac.HF_SEARCH_MODE_EAGER,
     )
     ret = ifac.feature_hub_enable(feature_hub_config)
     assert ret, "Failed to enable FeatureHub."
@@ -46,8 +46,8 @@ def case_face_recognition(resource_path, test_data_folder):
         if faces:
             face = faces[0]  # Assume the most prominent face is what we want.
             feature = session.face_feature_extract(image, face)
-            identity = ifac.FaceIdentity(feature, custom_id=idx, tag=name)
-            ret = ifac.feature_hub_face_insert(identity)
+            identity = ifac.FaceIdentity(feature, id=idx)
+            ret, alloc_id = ifac.feature_hub_face_insert(identity)
             assert ret, "Failed to insert face."
 
     count = ifac.feature_hub_get_face_count()
@@ -66,8 +66,8 @@ def case_face_recognition(resource_path, test_data_folder):
         if faces:
             face = faces[0]
             feature = session.face_feature_extract(image, face)
-            identity = ifac.FaceIdentity(feature, custom_id=idx+count+1, tag=name)
-            ret = ifac.feature_hub_face_insert(identity)
+            identity = ifac.FaceIdentity(feature, id=idx+count+1)
+            ret, alloc_id = ifac.feature_hub_face_insert(identity)
             assert ret, "Failed to insert face."
 
     count = ifac.feature_hub_get_face_count()
@@ -82,17 +82,17 @@ def case_face_recognition(resource_path, test_data_folder):
     feature = session.face_feature_extract(remain, face)
 
     search = ifac.feature_hub_face_search(feature)
-    if search.similar_identity.custom_id != -1:
-        print(f"Found similar identity with ID: {search.similar_identity.custom_id}, Tag: {search.similar_identity.tag}, Confidence: {search.confidence:.2f}")
+    if search.similar_identity.id != -1:
+        print(f"Found similar identity with ID: {search.similar_identity.id}, Confidence: {search.confidence:.2f}")
     else:
         print("No similar identity found.")
 
     # Display top-k similar face identities.
     print("Top-k similar identities:")
     search_top_k = ifac.feature_hub_face_search_top_k(feature, 10)
-    for idx, (conf, custom_id) in enumerate(search_top_k):
-        identity = ifac.feature_hub_get_face_identity(custom_id)
-        print(f"Top-{idx + 1}: {identity.tag}, ID: {custom_id}, Confidence: {conf:.2f}")
+    for idx, (conf, _id) in enumerate(search_top_k):
+        identity = ifac.feature_hub_get_face_identity(_id)
+        print(f"Top-{idx + 1}: ID: {_id}, Confidence: {conf:.2f}")
 
 
 if __name__ == '__main__':

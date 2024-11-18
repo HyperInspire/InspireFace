@@ -5,7 +5,7 @@
 #include "feature_hub/feature_hub_db.h"
 #include "middleware/costman.h"
 #include "track_module/face_detect/all.h"
-#include "inspireface/Initialization_module/launch.h"
+#include "inspireface/initialization_module/launch.h"
 #include "track_module/face_track_module.h"
 #include "middleware/inspirecv_image_process.h"
 
@@ -17,8 +17,7 @@ TEST_CASE("test_FaceDetect", "[track_module") {
     auto archive = INSPIRE_LAUNCH->getMArchive();
     const std::vector<int32_t> supported_sizes = {160, 320, 640};
     const std::vector<std::string> scheme_names = {"face_detect_160", "face_detect_320", "face_detect_640"};
-    for (size_t i = 0; i < scheme_names.size(); i++)
-    {
+    for (size_t i = 0; i < scheme_names.size(); i++) {
         InspireModel model;
         auto ret = archive.LoadModel(scheme_names[i], model);
         REQUIRE(ret == 0);
@@ -29,7 +28,6 @@ TEST_CASE("test_FaceDetect", "[track_module") {
         auto result = face_detector(img);
         REQUIRE(result.size() == 1);
     }
-    
 }
 
 TEST_CASE("test_RefineNet", "[track_module") {
@@ -49,7 +47,6 @@ TEST_CASE("test_RefineNet", "[track_module") {
     inspirecv::Image no_face = inspirecv::Image::Create(GET_DATA("data/crop/no_face.png"));
     auto result2 = rnet(no_face);
     REQUIRE(result2 < 0.5f);
-
 }
 
 TEST_CASE("test_Landmark", "[track_module") {
@@ -83,7 +80,6 @@ TEST_CASE("test_Quality", "[track_module") {
     auto result = quality(img);
     REQUIRE(result.lmk.size() == 5);
     REQUIRE(result.lmk_quality.size() == 5);
-
 }
 
 TEST_CASE("test_FaceTrackModule", "[track_module") {
@@ -108,11 +104,9 @@ TEST_CASE("test_FaceTrackModule", "[track_module") {
         FaceTrackModule face_track(mode, max_detected_faces);
         face_track.Configuration(archive);
         inspirecv::Image img = inspirecv::Image::Create(GET_DATA("data/bulk/r90.jpg"));
-        inspirecv::InspireImageProcess image = inspirecv::InspireImageProcess::Create(img.Data(), img.Height(), img.Width(), inspirecv::BGR, inspirecv::ROTATION_90);
+        inspirecv::InspireImageProcess image =
+          inspirecv::InspireImageProcess::Create(img.Data(), img.Height(), img.Width(), inspirecv::BGR, inspirecv::ROTATION_90);
         face_track.UpdateStream(image);
         REQUIRE(face_track.trackingFace.size() == 1);
     }
-
-    
-    
 }

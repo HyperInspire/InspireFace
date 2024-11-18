@@ -127,6 +127,8 @@ public:
      */
     int32_t FaceFeatureExtract(inspirecv::InspireImageProcess& process, FaceBasicData& data);
 
+    int32_t FaceGetFaceAlignmentImage(inspirecv::InspireImageProcess& process, FaceBasicData& data, inspirecv::Image& image);
+
     /**
      * @brief Retrieves the custom pipeline parameters.
      * @return CustomPipelineParameter Current custom pipeline parameters.
@@ -301,7 +303,7 @@ public:
      * @return A const reference to a vector containing face detection confidence.
      */
     const std::vector<float>& GetDetConfidenceCache() const;
-    
+
     const float GetFaceFeatureNormCache() const;
 
 private:

@@ -94,10 +94,10 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseImageStream(HFImageStream streamHandle
  * @brief Struct for image bitmap data.
  */
 typedef struct HFImageBitmapData {
-    uint8_t *data;         ///< Pointer to the image data.
-    HInt32 width;          ///< Width of the image.
-    HInt32 height;         ///< Height of the image.
-    HInt32 channels;       ///< Number of channels in the image, only support 3 channels or 1 channel.
+    uint8_t *data;    ///< Pointer to the image data.
+    HInt32 width;     ///< Width of the image.
+    HInt32 height;    ///< Height of the image.
+    HInt32 channels;  ///< Number of channels in the image, only support 3 channels or 1 channel.
 } HFImageBitmapData, *PHFImageBitmapData;
 
 /**
@@ -454,8 +454,18 @@ HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtract(HFSession session, HFImage
  * @param feature Pointer to the buffer where the extracted feature will be copied.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult
-HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HPFloat feature, HPFloat norm);
+HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HPFloat feature);
+
+/**
+ * @brief Get the face alignment image.
+ * @param session Handle to the session.
+ * @param streamHandle Handle to the data buffer representing the camera stream component.
+ * @param singleFace Basic token representing a single face.
+ * @param handle Pointer to the handle that will be returned.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFFaceGetFaceAlignmentImage(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace,
+                                                             HFImageBitmap *handle);
 
 /************************************************************************
  * Feature Hub
@@ -481,11 +491,11 @@ typedef enum HFPKMode {
  * This struct holds the configuration settings for using a database in the face recognition context.
  */
 typedef struct HFFeatureHubConfiguration {
-    HFPKMode primaryKeyMode;           ///< Primary key mode(The id increment mode is recommended)
-    HInt32 enablePersistence;           ///< Flag to enable or disable the use of the database.
-    HString persistenceDbPath;          ///< Path to the database file.
-    float searchThreshold;              ///< Threshold for face search
-    HFSearchMode searchMode;           ///< Mode of face search
+    HFPKMode primaryKeyMode;    ///< Primary key mode(The id increment mode is recommended)
+    HInt32 enablePersistence;   ///< Flag to enable or disable the use of the database.
+    HString persistenceDbPath;  ///< Path to the database file.
+    float searchThreshold;      ///< Threshold for face search
+    HFSearchMode searchMode;    ///< Mode of face search
 } HFFeatureHubConfiguration;
 
 /**
@@ -512,8 +522,8 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubDataDisable();
  * This struct associates a custom identifier and a tag with a specific face feature.
  */
 typedef struct HFFaceFeatureIdentity {
-    HInt32 id;                   ///< If you use automatic assignment id mode when inserting, ignore it.
-    PHFFaceFeature feature;      ///< Pointer to the face feature.
+    HInt32 id;               ///< If you use automatic assignment id mode when inserting, ignore it.
+    PHFFaceFeature feature;  ///< Pointer to the face feature.
     // HString tag;                 ///< Not supported yet
 } HFFaceFeatureIdentity, *PHFFaceFeatureIdentity;
 
@@ -521,9 +531,9 @@ typedef struct HFFaceFeatureIdentity {
  * Search structure for top-k mode
  * */
 typedef struct HFSearchTopKResults {
-    HInt32 size;            ///< The number of faces searched
-    HPFloat confidence;      ///< Search confidence(it has already been filtered once by the threshold)
-    HPInt32 ids;      ///< Searched face ids
+    HInt32 size;         ///< The number of faces searched
+    HPFloat confidence;  ///< Search confidence(it has already been filtered once by the threshold)
+    HPInt32 ids;         ///< Searched face ids
 } HFSearchTopKResults, *PHFSearchTopKResults;
 
 /**
