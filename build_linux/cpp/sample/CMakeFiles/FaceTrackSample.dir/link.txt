@@ -1,1 +1,0 @@
-/usr/bin/c++  -std=c++14 -O3 CMakeFiles/FaceTrackSample.dir/cpp/sample_face_track.cpp.o -o ../../sample/FaceTrackSample  -Wl,-rpath,/host/work/inspireface/build_linux/lib ../../lib/libInspireFace.so ../../3rdparty/MNN/libMNN.a -pthread -lpthread -ldl 
