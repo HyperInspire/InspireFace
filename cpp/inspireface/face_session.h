@@ -21,12 +21,6 @@
 #include "middleware/inspirecv_image_process.h"
 #include "common/face_data/face_serialize_tools.h"
 
-/**
- * @def DB_FILE_NAME
- * @brief Default database file name used in the FaceContext.
- */
-#define DB_FILE_NAME ".feature_hub_db_v0"
-
 namespace inspire {
 
 /**

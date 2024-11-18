@@ -17,7 +17,7 @@
  * @def DB_FILE_NAME
  * @brief Default database file name used in the FaceContext.
  */
-#define DB_FILE_NAME ".E63520A95DD5B3892C56DA38C3B28E551D8173FD"
+#define DB_FILE_NAME ".feature_hub_db_v0"
 
 #define FEATURE_HUB_DB FeatureHubDB::GetInstance()
 
