@@ -23,7 +23,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Install necessary dependencies for building the CMake project
       - name: Install Dependencies
@@ -69,7 +69,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Install wget and xz-utils
       - name: Install wget and xz-utils
@@ -126,7 +126,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
       - name: Extract Version Number
@@ -183,7 +183,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
       - name: Extract Version Number
@@ -240,7 +240,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Install dependencies
       - name: Install Dependencies
@@ -317,7 +317,7 @@ jobs:
       # Step 3: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 4: Start building the SDK
       - name: Start Building the InspireFace-iOS
