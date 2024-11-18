@@ -44,7 +44,7 @@ Clone the `3rdparty` repository from the remote repository into the root directo
 # Must enter this directory
 cd InspireFace
 # Clone the repository and pull submodules
-git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 ```
 
 If you need to update the `3rdparty` repository to ensure it is current, or if you didn't use the `--recursive` parameter during the initial pull, you can run `git submodule update --init --recursive`:
@@ -53,7 +53,7 @@ If you need to update the `3rdparty` repository to ensure it is current, or if y
 # Must enter this directory
 cd InspireFace
 # If you're not using recursive pull
-git clone https://github.com/HyperInspire/3rdparty.git
+git clone https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
 cd 3rdparty
 git pull

@@ -2,8 +2,8 @@
 // Created by Tunm-Air13 on 2023/9/8.
 //
 #pragma once
-#ifndef HYPERFACEREPO_BLINK_PREDICT_H
-#define HYPERFACEREPO_BLINK_PREDICT_H
+#ifndef INSPIREFACE_BLINK_PREDICT_H
+#define INSPIREFACE_BLINK_PREDICT_H
 #include "data_type.h"
 #include "middleware/any_net_adapter.h"
 
@@ -36,4 +36,4 @@ public:
 
 }  // namespace inspire
 
-#endif  // HYPERFACEREPO_BLINK_PREDICT_H
+#endif  // INSPIREFACE_BLINK_PREDICT_H

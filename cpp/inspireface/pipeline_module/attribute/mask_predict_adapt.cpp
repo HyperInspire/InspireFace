@@ -6,8 +6,7 @@
 
 namespace inspire {
 
-
-MaskPredictAdapt::MaskPredictAdapt(): AnyNetAdapter("MaskPredictAdapt") {}
+MaskPredictAdapt::MaskPredictAdapt() : AnyNetAdapter("MaskPredictAdapt") {}
 
 float MaskPredictAdapt::operator()(const inspirecv::Image &bgr_affine) {
     AnyTensorOutputs outputs;
@@ -19,8 +18,6 @@ float MaskPredictAdapt::operator()(const inspirecv::Image &bgr_affine) {
     }
 
     return outputs[0].second[0];
-
 }
 
-
-}   // namespace hyper
+}  // namespace inspire

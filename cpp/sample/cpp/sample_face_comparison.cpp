@@ -2,6 +2,7 @@
 // Created by tunm on 2024/4/20.
 //
 #include <iostream>
+#include <vector>
 #include "inspireface/c_api/inspireface.h"
 
 int main(int argc, char* argv[]) {
@@ -36,8 +37,7 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
-
-    std::vector<char* > twoImg = {imgPath1, imgPath2};
+    std::vector<char*> twoImg = {imgPath1, imgPath2};
     std::vector<std::vector<float>> vec(2, std::vector<float>(512));
     for (int i = 0; i < twoImg.size(); ++i) {
         HFImageBitmap imageBitmap = {0};
@@ -47,9 +47,9 @@ int main(int argc, char* argv[]) {
             return ret;
         }
         // Prepare image data for processing
-        
+
         HFImageStream stream;
-        ret = HFCreateImageStreamFromImageBitmap(imageBitmap, HF_CAMERA_ROTATION_0, &stream); // Create an image stream for processing
+        ret = HFCreateImageStreamFromImageBitmap(imageBitmap, HF_CAMERA_ROTATION_0, &stream);  // Create an image stream for processing
         if (ret != HSUCCEED) {
             std::cout << "Create stream error: " << ret << std::endl;
             return ret;
@@ -57,19 +57,18 @@ int main(int argc, char* argv[]) {
 
         // Execute face tracking on the image
         HFMultipleFaceData multipleFaceData = {0};
-        ret = HFExecuteFaceTrack(session, stream, &multipleFaceData); // Track faces in the image
+        ret = HFExecuteFaceTrack(session, stream, &multipleFaceData);  // Track faces in the image
         if (ret != HSUCCEED) {
             std::cout << "Run face track error: " << ret << std::endl;
             return ret;
         }
-        if (multipleFaceData.detectedNum == 0) { // Check if any faces were detected
+        if (multipleFaceData.detectedNum == 0) {  // Check if any faces were detected
             std::cout << "No face was detected: " << twoImg[i] << ret << std::endl;
             return ret;
         }
 
         // Extract facial features from the first detected face, an interface that uses copy features in a comparison scenario
-        float norm = 0;
-        ret = HFFaceFeatureExtractCpy(session, stream, multipleFaceData.tokens[0], vec[i].data(), &norm); // Extract features
+        ret = HFFaceFeatureExtractCpy(session, stream, multipleFaceData.tokens[0], vec[i].data());  // Extract features
         if (ret != HSUCCEED) {
             std::cout << "Extract feature error: " << ret << std::endl;
             return ret;
@@ -84,7 +83,6 @@ int main(int argc, char* argv[]) {
             printf("Release image bitmap error: %lu\n", ret);
             return ret;
         }
-
     }
 
     // Make feature1
@@ -113,5 +111,4 @@ int main(int argc, char* argv[]) {
         printf("Release session error: %lu\n", ret);
         return ret;
     }
-
 }

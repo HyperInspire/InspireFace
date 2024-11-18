@@ -42,10 +42,10 @@ public:
     static std::vector<float> Softmax(const std::vector<float>& input);
 
 private:
-    int m_input_size_; ///< The input size for the model.
-    bool m_softmax_ = false; ///< Whether to use softmax activation.
+    int m_input_size_;        ///< The input size for the model.
+    bool m_softmax_ = false;  ///< Whether to use softmax activation.
 };
 
-}   // namespace hyper
+}  // namespace inspire
 
-#endif //INSPIRE_RGB_ANTI_SPOOFING_ADAPT_H
+#endif  // INSPIRE_RGB_ANTI_SPOOFING_ADAPT_H

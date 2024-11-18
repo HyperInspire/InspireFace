@@ -2,8 +2,8 @@
 // Created by Tunm-Air13 on 2023/9/12.
 //
 
-#ifndef HYPERFACEREPO_TEST_HELP_H
-#define HYPERFACEREPO_TEST_HELP_H
+#ifndef INSPIREFACE_TEST_TEST_HELP_H
+#define INSPIREFACE_TEST_TEST_HELP_H
 
 #include <iostream>
 #include <vector>
@@ -30,9 +30,9 @@ inline void Split(const std::string& src, std::vector<std::string>& res, const s
     size_t Start = 0;
     size_t end = 0;
     std::string sub;
-    while(Start < src.size()) {
+    while (Start < src.size()) {
         end = src.find_first_of(pattern, Start);
-        if(std::string::npos == end || res.size() >= maxsplit) {
+        if (std::string::npos == end || res.size() >= maxsplit) {
             sub = src.substr(Start);
             res.push_back(sub);
             return;
@@ -51,20 +51,20 @@ inline std::vector<std::string> Split(const std::string& src, const std::string&
 }
 
 inline bool EndsWith(const std::string& str, const std::string& suffix) {
-    if(suffix.length() > str.length()) {
+    if (suffix.length() > str.length()) {
         return false;
     }
-    return 0 == str.compare(str.length() -  suffix.length(), suffix.length(), suffix);
+    return 0 == str.compare(str.length() - suffix.length(), suffix.length(), suffix);
 }
 
 inline std::string PathJoin(const std::string& path1, const std::string& path2) {
-    if(EndsWith(path1, "/")) {
+    if (EndsWith(path1, "/")) {
         return path1 + path2;
     }
     return path1 + "/" + path2;
 }
 
-inline FaceImageDataList LoadLFWFunneledValidData(const std::string &dir, const std::string &txtPath){
+inline FaceImageDataList LoadLFWFunneledValidData(const std::string& dir, const std::string& txtPath) {
     FaceImageDataList list;
     std::ifstream file(txtPath);
     std::string line;
@@ -88,14 +88,12 @@ inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data
     std::string title = "Import " + std::to_string(importNum) + " face data...";
     // Hide cursor
     show_console_cursor(false);
-    BlockProgressBar bar{
-            option::BarWidth{60},
-            option::Start{"["},
-            option::End{"]"},
-            option::PostfixText{title},
-            option::ForegroundColor{Color::white}  ,
-            option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
-    };
+    BlockProgressBar bar{option::BarWidth{60},
+                         option::Start{"["},
+                         option::End{"]"},
+                         option::PostfixText{title},
+                         option::ForegroundColor{Color::white},
+                         option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}};
 
     auto progress = 0.0f;
     for (size_t i = 0; i < importNum; ++i) {
@@ -113,7 +111,7 @@ inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data
         HFImageStream imgHandle;
         auto ret = HFCreateImageStream(&imageData, &imgHandle);
         if (ret != HSUCCEED || image.Empty()) {
-            std::cerr << "Error image: " << std::to_string(ret)  << " , " << item.second << std::endl;
+            std::cerr << "Error image: " << std::to_string(ret) << " , " << item.second << std::endl;
             return false;
         }
         // Face tracked
@@ -121,7 +119,7 @@ inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data
         ret = HFExecuteFaceTrack(handle, imgHandle, &multipleFaceData);
 
         if (ret != HSUCCEED) {
-            std::cerr << "Error Track: " << std::to_string(ret)  << " , " << item.second << std::endl;
+            std::cerr << "Error Track: " << std::to_string(ret) << " , " << item.second << std::endl;
             return false;
         }
 
@@ -134,10 +132,10 @@ inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data
         HFFaceFeature feature = {0};
         ret = HFFaceFeatureExtract(handle, imgHandle, multipleFaceData.tokens[0], &feature);
         if (ret != HSUCCEED) {
-            std::cerr << "Error extract: " << std::to_string(ret)  << " , " << item.second << std::endl;
+            std::cerr << "Error extract: " << std::to_string(ret) << " , " << item.second << std::endl;
             return false;
         }
-        char *newTagName = new char[item.first.size() + 1];
+        char* newTagName = new char[item.first.size() + 1];
         std::strcpy(newTagName, item.first.c_str());
         HFFaceFeatureIdentity identity = {0};
         identity.id = i;
@@ -146,7 +144,7 @@ inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data
         HInt32 allocId;
         ret = HFFeatureHubInsertFeature(identity, &allocId);
         if (ret != HSUCCEED) {
-            std::cerr << "Error insert feature: " << std::to_string(ret)  << " , " << item.second << std::endl;
+            std::cerr << "Error insert feature: " << std::to_string(ret) << " , " << item.second << std::endl;
             return false;
         }
 
@@ -158,7 +156,7 @@ inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data
     bar.set_progress(100.0f);
     // Show cursor
     show_console_cursor(true);
-    std::cout << "\033[0m\n"; // ANSI resets the color code
+    std::cout << "\033[0m\n";  // ANSI resets the color code
 
     return true;
 }
@@ -194,13 +192,13 @@ inline std::vector<std::string> generateFilenames(const std::string& templateStr
     return filenames;
 }
 
-inline bool FindMostSimilarScoreFromTwoPic(HFSession handle, const std::string& img1, const std::string& img2, float& mostSimilar){
+inline bool FindMostSimilarScoreFromTwoPic(HFSession handle, const std::string& img1, const std::string& img2, float& mostSimilar) {
     mostSimilar = -1.0f;
     std::vector<std::vector<std::vector<float>>> features(2);
     std::vector<std::string> images = {img1, img2};
     for (int i = 0; i < 2; ++i) {
         HFImageStream img;
-//        auto ret = ReadImageToImageStream(images[i].c_str(), img);
+        //        auto ret = ReadImageToImageStream(images[i].c_str(), img);
         auto cvMat = inspirecv::Image::Create(images[i]);
         auto ret = CVImageToImageStream(cvMat, img);
         if (ret != 0) {
@@ -218,8 +216,7 @@ inline bool FindMostSimilarScoreFromTwoPic(HFSession handle, const std::string& 
         HFGetFeatureLength(&featureNum);
         for (int j = 0; j < multipleFaceData.detectedNum; ++j) {
             std::vector<float> feature(featureNum, 0.0f);
-            float norm;
-            ret = HFFaceFeatureExtractCpy(handle, img, multipleFaceData.tokens[j], feature.data(), &norm);
+            ret = HFFaceFeatureExtractCpy(handle, img, multipleFaceData.tokens[j], feature.data());
             if (ret != 0) {
                 std::cerr << "Error extract: " << ret << std::endl;
                 HFReleaseImageStream(img);
@@ -241,13 +238,13 @@ inline bool FindMostSimilarScoreFromTwoPic(HFSession handle, const std::string& 
     }
 
     if (features[0].empty() || features[1].empty()) {
-//        std::cerr << "Not detected " << std::endl;
+        //        std::cerr << "Not detected " << std::endl;
         return false;
     }
-    auto &features1 = features[0];
-    auto &features2 = features[1];
-    for (auto &feat1: features1) {
-        for (auto &feat2: features2) {
+    auto& features1 = features[0];
+    auto& features2 = features[1];
+    for (auto& feat1 : features1) {
+        for (auto& feat2 : features2) {
             float comp;
             HFFaceFeature faceFeature1 = {0};
             faceFeature1.size = feat1.size();
@@ -268,15 +265,15 @@ inline bool FindMostSimilarScoreFromTwoPic(HFSession handle, const std::string& 
 
 inline std::vector<std::vector<std::string>> ReadPairs(const std::string& pairs_filename) {
     std::vector<std::vector<std::string>> pairs;
-    std::ifstream file(pairs_filename); // Open the file
+    std::ifstream file(pairs_filename);  // Open the file
     std::string line;
 
     if (!file.is_open()) {
         std::cerr << "Unable to open file: " << pairs_filename << std::endl;
-        return pairs; // If the file cannot be opened, an empty list is returned
+        return pairs;  // If the file cannot be opened, an empty list is returned
     }
 
-    std::getline(file, line); // Skip the first line
+    std::getline(file, line);  // Skip the first line
     while (std::getline(file, line)) {
         std::istringstream iss(line);
         std::vector<std::string> pair;
@@ -342,7 +339,7 @@ inline std::vector<float> GenerateRandomFeature(size_t length, bool normalize = 
     std::vector<float> featureVector(length);
     float norm = 0.0;
 
-    for (float &value : featureVector) {
+    for (float& value : featureVector) {
         value = dis(gen);
         norm += value * value;
     }
@@ -350,7 +347,7 @@ inline std::vector<float> GenerateRandomFeature(size_t length, bool normalize = 
     norm = std::sqrt(norm);
 
     if (norm > 0 && normalize) {
-        for (float &value : featureVector) {
+        for (float& value : featureVector) {
             value /= norm;
         }
     }
@@ -403,8 +400,8 @@ inline std::string ReplaceFileExtension(const std::string& filePath, const std::
         // If the 'dot' is not found, return to the original path
         return filePath;
     }
-    
+
     return filePath.substr(0, lastDotPos) + newExtension;
 }
 
-#endif //HYPERFACEREPO_TEST_HELP_H
+#endif  // INSPIREFACE_TEST_TEST_HELP_H
