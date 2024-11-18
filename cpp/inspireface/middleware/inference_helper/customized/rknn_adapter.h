@@ -11,7 +11,6 @@
 #include "data_type.h"
 #include "log.h"
 
-
 /**
  * @brief Function to get RKNN data type string.
  * @param type Data type
@@ -92,7 +91,7 @@ inline unsigned char *load_data_(FILE *fp, size_t ofst, size_t sz) {
         return NULL;
     }
 
-    data = (unsigned char *) malloc(sz);
+    data = (unsigned char *)malloc(sz);
     if (data == NULL) {
         printf("buffer malloc failure.\n");
         return NULL;
@@ -133,9 +132,9 @@ inline unsigned char *load_model_(const char *filename, int *model_size) {
  * @ingroup NeuralNetwork
  */
 enum Status {
-    SUCCESS = 0,                ///< Executed successfully
-    ERROR_SHAPE_MATCH = 1,      ///< Execution error. tensor shapes don't match
-    ERROR_DATA_ORDER = 2        ///< Execution error, tensor data sorting error
+    SUCCESS = 0,            ///< Executed successfully
+    ERROR_SHAPE_MATCH = 1,  ///< Execution error. tensor shapes don't match
+    ERROR_DATA_ORDER = 2    ///< Execution error, tensor data sorting error
 };
 
 /**
@@ -145,7 +144,6 @@ enum Status {
  */
 class RKNNAdapter {
 public:
-
     RKNNAdapter(const RKNNAdapter &) = delete;
     RKNNAdapter &operator=(const RKNNAdapter &) = delete;
     RKNNAdapter() = default;
@@ -162,7 +160,7 @@ public:
         model_data = load_model_(model_path, &model_data_size);
         load_ = true;
         int ret = rknn_init(&rk_ctx_, model_data, model_data_size, 0);
-//        INSPIRE_LOG_INFO("RKNN Init ok.");
+        //        INSPIRE_LOG_INFO("RKNN Init ok.");
         if (ret < 0) {
             INSPIRE_LOGE("rknn_init fail! ret=%d", ret);
             return -1;
@@ -172,7 +170,6 @@ public:
         return init_();
     }
 
-
     /**
      * @brief Manually initialize
      * @details Initialize the RKNN model using model data and its size, and allocate memory for creating the inference engine session
@@ -180,10 +177,10 @@ public:
      * @param model_size Size of the model data
      * @return Initialization result
      */
-    int Initialize(const unsigned char* model_data, const unsigned int model_size) {
+    int Initialize(const unsigned char *model_data, const unsigned int model_size) {
         /* Create the neural network */
         INSPIRE_LOGD("The neural network is being initialized...");
-        int ret = rknn_init(&rk_ctx_, (void *) model_data, model_size, 0);
+        int ret = rknn_init(&rk_ctx_, (void *)model_data, model_size, 0);
 
         if (ret < 0) {
             INSPIRE_LOGE("rknn_init fail! ret=%d", ret);
@@ -200,9 +197,7 @@ public:
      * @return Dimensions information composed of various sizes
      */
     std::vector<int> GetInputTensorSize(const int &index) {
-        std::vector<int> dims(input_attrs_[index].dims,
-                              input_attrs_[index].dims +
-                              input_attrs_[index].n_dims);
+        std::vector<int> dims(input_attrs_[index].dims, input_attrs_[index].dims + input_attrs_[index].n_dims);
         return dims;
     }
 
@@ -212,10 +207,8 @@ public:
      * @return Dimensions information composed of various sizes
      */
     std::vector<unsigned long> GetOutputTensorSize(const int &index) {
-//        std::cout << "output_attrs_[index].n_dims:" << output_attrs_[index].n_dims << std::endl;
-        std::vector<unsigned long> dims(output_attrs_[index].dims,
-                                        output_attrs_[index].dims +
-                                        output_attrs_[index].n_dims);
+        //        std::cout << "output_attrs_[index].n_dims:" << output_attrs_[index].n_dims << std::endl;
+        std::vector<unsigned long> dims(output_attrs_[index].dims, output_attrs_[index].dims + output_attrs_[index].n_dims);
         return dims;
     }
 
@@ -227,31 +220,9 @@ public:
     int GetOutputTensorLen(const int &index) {
         std::vector<unsigned long> tensor_size_out = GetOutputTensorSize(index);
         int size = 1;
-        for (auto &one: tensor_size_out) size *= one;
+        for (auto &one : tensor_size_out)
+            size *= one;
         return size;
-    }
-
-    /**
-     * @brief Set the data stream for the input layer
-     * @param index Index of the input layer
-     * @param data Image data in the form of an OpenCV Mat
-     * @return Input status
-     */
-    Status SetInputData(const int index, const cv::Mat &data) {
-        if (data.type() != CV_8UC3) {
-            INSPIRE_LOGE("error: input data required CV_8UC3");
-        }
-        if (index < input_tensors_.size()) {
-            input_tensors_[index].index = 0;
-            input_tensors_[index].type = RKNN_TENSOR_UINT8;
-            input_tensors_[index].size = data.cols * data.rows * data.channels();
-            input_tensors_[index].fmt = RKNN_TENSOR_NHWC;
-            input_tensors_[index].buf = data.data;
-            input_tensors_[index].pass_through = 0;
-        } else {
-            INSPIRE_LOGE("error: assert index < len");
-        }
-        return SUCCESS;
     }
 
     /**
@@ -265,8 +236,7 @@ public:
      * @param format Format of the input data (default: RKNN_TENSOR_NHWC)
      * @return Input status
      */
-    Status SetInputData(const int index, void* data, int width, int height, int channels,
-                        rknn_tensor_type type = RKNN_TENSOR_UINT8,
+    Status SetInputData(const int index, void *data, int width, int height, int channels, rknn_tensor_type type = RKNN_TENSOR_UINT8,
                         rknn_tensor_format format = RKNN_TENSOR_NHWC) {
         if (index < input_tensors_.size()) {
             input_tensors_[index].index = 0;
@@ -287,7 +257,7 @@ public:
      * @return Inference status result
      */
     int RunModel() {
-//        INSPIRE_LOGD("set input");
+        //        INSPIRE_LOGD("set input");
         int ret = rknn_inputs_set(rk_ctx_, rk_io_num_.n_input, input_tensors_.data());
         if (ret < 0)
             INSPIRE_LOGE("rknn_input fail! ret=%d", ret);
@@ -296,7 +266,7 @@ public:
             output_tensors_[i].want_float = outputs_want_float_;
         }
 
-//        INSPIRE_LOGD("rknn_run");
+        //        INSPIRE_LOGD("rknn_run");
         ret = rknn_run(rk_ctx_, nullptr);
         if (ret < 0) {
             INSPIRE_LOGE("rknn_run fail! ret=%d", ret);
@@ -317,7 +287,7 @@ public:
      * @return Pointer to the output data
      */
     const float *GetOutputData(const int index) {
-        return (float *) (output_tensors_[index].buf);
+        return (float *)(output_tensors_[index].buf);
     }
 
     /**
@@ -336,7 +306,7 @@ public:
      * @return Returns a pointer to the output data
      */
     u_int8_t *GetOutputDataU8(const int index) {
-        return (uint8_t *) (output_tensors_[index].buf);
+        return (uint8_t *)(output_tensors_[index].buf);
     }
 
     int32_t ReleaseOutputs() {
@@ -350,8 +320,7 @@ public:
      * @param index_name Name of the input tensor
      * @param shape New shape for the input tensor
      */
-    void ResizeInputTensor(const std::string &index_name,
-                           const std::vector<int> &shape) {
+    void ResizeInputTensor(const std::string &index_name, const std::vector<int> &shape) {
         // No implementation
     }
 
@@ -375,7 +344,7 @@ public:
     /**
      * @brief Get a reference to the vector of output tensors
      * @return A reference to the vector of output tensors.
-    */
+     */
     std::vector<rknn_output> &GetOutputTensors() {
         return output_tensors_;
     }
@@ -398,7 +367,7 @@ public:
      * @details Release all resources in memory, typically called in the destructor
      */
     void Release() {
-        if (run_){
+        if (run_) {
             rknn_destroy(rk_ctx_);
             if (load_) {
                 free(model_data);
@@ -430,8 +399,7 @@ private:
         }
         INSPIRE_LOGD("sdk version: %s driver version: %s", version.api_version, version.drv_version);
 
-        ret = rknn_query(rk_ctx_, RKNN_QUERY_IN_OUT_NUM, &rk_io_num_,
-                         sizeof(rk_io_num_));
+        ret = rknn_query(rk_ctx_, RKNN_QUERY_IN_OUT_NUM, &rk_io_num_, sizeof(rk_io_num_));
 
         if (ret != RKNN_SUCC) {
             INSPIRE_LOGE("rknn_query ctx fail! ret=%d", ret);
@@ -440,8 +408,7 @@ private:
 
         INSPIRE_LOGD("models input num: %d, output num: %d", rk_io_num_.n_input, rk_io_num_.n_output);
 
-
-//        spdlog::trace("input tensors: ");
+        //        spdlog::trace("input tensors: ");
         input_attrs_.resize(rk_io_num_.n_input);
         output_attrs_.resize(rk_io_num_.n_output);
         input_tensors_.resize(rk_io_num_.n_input);
@@ -451,8 +418,7 @@ private:
             memset(&input_attrs_[i], 0, sizeof(input_attrs_[i]));
             memset(&input_tensors_[i], 0, sizeof(input_tensors_[i]));
             input_attrs_[i].index = i;
-            ret = rknn_query(rk_ctx_, RKNN_QUERY_INPUT_ATTR, &(input_attrs_[i]),
-                             sizeof(rknn_tensor_attr));
+            ret = rknn_query(rk_ctx_, RKNN_QUERY_INPUT_ATTR, &(input_attrs_[i]), sizeof(rknn_tensor_attr));
 
             INSPIRE_LOGD("input node index %d", i);
             int channel = 3;
@@ -468,39 +434,36 @@ private:
                 height = input_attrs_[i].dims[2];
             }
             INSPIRE_LOGD("models input height=%d, width=%d, channel=%d", height, width, channel);
-//            print_tensor_attr_(input_attrs_);
+            //            print_tensor_attr_(input_attrs_);
             if (ret != RKNN_SUCC) {
                 INSPIRE_LOGE("rknn_query fail! ret=%d", ret);
                 return -1;
             }
         }
 
-//        printf("[debug]models input num: %d, output num: %d\n", rk_io_num_.n_input, rk_io_num_.n_output);
+        //        printf("[debug]models input num: %d, output num: %d\n", rk_io_num_.n_input, rk_io_num_.n_output);
         for (int i = 0; i < rk_io_num_.n_output; ++i) {
             memset(&output_attrs_[i], 0, sizeof(output_attrs_[i]));
             memset(&output_tensors_[i], 0, sizeof(output_tensors_[i]));
             output_attrs_[i].index = i;
-            ret = rknn_query(rk_ctx_, RKNN_QUERY_OUTPUT_ATTR, &(output_attrs_[i]),
-                             sizeof(rknn_tensor_attr));
+            ret = rknn_query(rk_ctx_, RKNN_QUERY_OUTPUT_ATTR, &(output_attrs_[i]), sizeof(rknn_tensor_attr));
 
-            if (output_attrs_[i].qnt_type != RKNN_TENSOR_QNT_AFFINE_ASYMMETRIC ||
-                output_attrs_[i].type != RKNN_TENSOR_UINT8) {
-                INSPIRE_LOGW("The Demo required for a Affine asymmetric u8 quantized rknn models, but output quant type is %s, output "
-                        "data type is %s",
-                        get_qnt_type_string_(output_attrs_[i].qnt_type), get_type_string_(output_attrs_[i].type));
-//                return -1;
+            if (output_attrs_[i].qnt_type != RKNN_TENSOR_QNT_AFFINE_ASYMMETRIC || output_attrs_[i].type != RKNN_TENSOR_UINT8) {
+                INSPIRE_LOGW(
+                  "The Demo required for a Affine asymmetric u8 quantized rknn models, but output quant type is %s, output "
+                  "data type is %s",
+                  get_qnt_type_string_(output_attrs_[i].qnt_type), get_type_string_(output_attrs_[i].type));
+                //                return -1;
             }
-//            print_tensor_attr_(output_attrs_[i]);
+            //            print_tensor_attr_(output_attrs_[i]);
 
-
-//            rknn_tensor_attr rknn_attr;
-//            memset(&rknn_attr, 0, sizeof(rknn_tensor_attr));
-//
-//            ret = rknn_query(rk_ctx_, RKNN_QUERY_OUTPUT_ATTR, &rknn_attr,
-//                             sizeof(rknn_tensor_attr));
-//            printf("output node index %d \n", i);
-//            print_tensor_attr_(rknn_attr);
-
+            //            rknn_tensor_attr rknn_attr;
+            //            memset(&rknn_attr, 0, sizeof(rknn_tensor_attr));
+            //
+            //            ret = rknn_query(rk_ctx_, RKNN_QUERY_OUTPUT_ATTR, &rknn_attr,
+            //                             sizeof(rknn_tensor_attr));
+            //            printf("output node index %d \n", i);
+            //            print_tensor_attr_(rknn_attr);
 
             if (ret != RKNN_SUCC) {
                 INSPIRE_LOGE("rknn_query fail! ret=%d", ret);
@@ -512,25 +475,24 @@ private:
     }
 
 private:
-    rknn_context rk_ctx_;               ///< The context manager for RKNN.
-    rknn_input_output_num rk_io_num_;   ///< The number of input and output streams in RKNN.
+    rknn_context rk_ctx_;              ///< The context manager for RKNN.
+    rknn_input_output_num rk_io_num_;  ///< The number of input and output streams in RKNN.
 
     std::vector<rknn_tensor_attr> input_attrs_;   ///< Attributes of input tensors.
     std::vector<rknn_tensor_attr> output_attrs_;  ///< Attributes of output tensors.
     std::vector<rknn_input> input_tensors_;       ///< Input data for the neural network.
     std::vector<rknn_output> output_tensors_;     ///< Output data from the neural network.
 
-    int outputs_want_float_ = 0;        ///< Flag to indicate support for floating-point output.
+    int outputs_want_float_ = 0;  ///< Flag to indicate support for floating-point output.
 
-    std::vector<int> tensor_shape_;     ///< The shape of input tensors.
-    int width_;                         ///< The width of input data (typically for images).
-    int height_;                        ///< The height of input data (typically for images).
-    bool run_status_;                   ///< Flag to indicate the execution status of the neural network.
+    std::vector<int> tensor_shape_;  ///< The shape of input tensors.
+    int width_;                      ///< The width of input data (typically for images).
+    int height_;                     ///< The height of input data (typically for images).
+    bool run_status_;                ///< Flag to indicate the execution status of the neural network.
 
-    unsigned char *model_data;          ///< Pointer to the model's data stream.
+    unsigned char *model_data;  ///< Pointer to the model's data stream.
     bool load_;
     bool run_;
 };
 
-
-#endif //MAGIC_GESTURES_RKNN_ADAPTER_H
+#endif  // MAGIC_GESTURES_RKNN_ADAPTER_H

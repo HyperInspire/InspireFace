@@ -7,8 +7,8 @@
 #include "inspireface_internal.h"
 #include "information.h"
 #include "feature_hub/feature_hub_db.h"
-#include "Initialization_module/launch.h"
-#include "Initialization_module/resource_manage.h"
+#include "initialization_module/launch.h"
+#include "initialization_module/resource_manage.h"
 
 using namespace inspire;
 
