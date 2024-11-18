@@ -5,8 +5,8 @@ set -e
 
 ROOT_DIR="$(pwd)"
 TARGET_DIR="test_res"
-DOWNLOAD_URL="https://github.com/tunmx/inspireface-store/raw/main/resource/test_res-lite.zip"
-ZIP_FILE="test_res-lite.zip"
+DOWNLOAD_URL="https://github.com/tunmx/inspireface-store/raw/main/resource/test_res-lite2.zip"
+ZIP_FILE="test_res-lite2.zip"
 BUILD_DIRNAME="ubuntu18_shared"
 
 # Check if the target directory already exists
