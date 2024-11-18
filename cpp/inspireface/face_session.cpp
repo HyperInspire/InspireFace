@@ -8,6 +8,7 @@
 #include "log.h"
 #include "herror.h"
 #include "middleware/utils.h"
+#include "recognition_module/dest_const.h"
 
 namespace inspire {
 
@@ -322,6 +323,23 @@ int32_t FaceSession::FaceFeatureExtract(inspirecv::InspireImageProcess& process,
     m_face_feature_cache_.clear();
     ret = m_face_recognition_->FaceExtract(process, face, m_face_feature_cache_, m_face_feature_norm_);
 
+    return ret;
+}
+
+int32_t FaceSession::FaceGetFaceAlignmentImage(inspirecv::InspireImageProcess& process, FaceBasicData& data, inspirecv::Image& image) {
+    std::lock_guard<std::mutex> lock(m_mtx_);
+    int32_t ret;
+    HyperFaceData face = {0};
+    ret = RunDeserializeHyperFaceData((char*)data.data, data.dataSize, face);
+    if (ret != HSUCCEED) {
+        return ret;
+    }
+    std::vector<inspirecv::Point2f> pointsFive;
+    for (const auto& p : face.keyPoints) {
+        pointsFive.push_back(inspirecv::Point2f(p.x, p.y));
+    }
+    auto trans = inspirecv::SimilarityTransformEstimateUmeyama(SIMILARITY_TRANSFORM_DEST, pointsFive);
+    image = process.ExecuteImageAffineProcessing(trans, FACE_CROP_SIZE, FACE_CROP_SIZE);
     return ret;
 }
 

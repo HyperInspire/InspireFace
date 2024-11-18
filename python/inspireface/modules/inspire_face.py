@@ -608,9 +608,9 @@ class FeatureHubConfiguration:
         search_threshold (float): The threshold value for considering a match.
         search_mode (int): The mode of searching in the database.
     """
-    feature_block_num: int
-    enable_use_db: bool
-    db_path: str
+    primary_key_mode: int
+    enable_persistence: bool
+    persistence_db_path: str
     search_threshold: float
     search_mode: int
 
@@ -622,9 +622,9 @@ class FeatureHubConfiguration:
             HFFeatureHubConfiguration: A C-structure for feature hub configuration.
         """
         return HFFeatureHubConfiguration(
-            enableUseDb=int(self.enable_use_db),
-            dbPath=String(bytes(self.db_path, encoding="utf8")),
-            featureBlockNum=self.feature_block_num,
+            primaryKeyMode=self.primary_key_mode,
+            enablePersistence=int(self.enable_persistence),
+            persistenceDbPath=String(bytes(self.persistence_db_path, encoding="utf8")),
             searchThreshold=self.search_threshold,
             searchMode=self.search_mode
         )
@@ -714,7 +714,7 @@ class FaceIdentity(object):
         _c_struct: Converts the instance back to a compatible C structure.
     """
 
-    def __init__(self, data: np.ndarray, custom_id: int, tag: str):
+    def __init__(self, data: np.ndarray, id: int):
         """
         Initializes a new FaceIdentity instance with facial feature data, a custom identifier, and a tag.
 
@@ -724,8 +724,7 @@ class FaceIdentity(object):
             tag (str): A descriptive tag or label for the face identity.
         """
         self.feature = data
-        self.custom_id = custom_id
-        self.tag = tag
+        self.id = id
 
     @staticmethod
     def from_ctypes(raw_identity: HFFaceFeatureIdentity):
@@ -741,10 +740,9 @@ class FaceIdentity(object):
         feature_size = raw_identity.feature.contents.size
         feature_data_ptr = raw_identity.feature.contents.data
         feature_data = np.ctypeslib.as_array(cast(feature_data_ptr, HPFloat), (feature_size,))
-        custom_id = raw_identity.customId
-        tag = raw_identity.tag.data.decode('utf-8')
+        id_ = raw_identity.id
 
-        return FaceIdentity(data=feature_data, custom_id=custom_id, tag=tag)
+        return FaceIdentity(data=feature_data, id=id_)
 
     def _c_struct(self):
         """
@@ -758,8 +756,7 @@ class FaceIdentity(object):
         feature.size = HInt32(self.feature.size)
         feature.data = data_ptr
         return HFFaceFeatureIdentity(
-            customId=self.custom_id,
-            tag=String(bytes(self.tag, encoding="utf8")),
+            customId=self.id,
             feature=PHFFaceFeature(feature)
         )
 
@@ -774,7 +771,7 @@ def feature_hub_set_search_threshold(threshold: float):
     HFFeatureHubFaceSearchThresholdSetting(threshold)
 
 
-def feature_hub_face_insert(face_identity: FaceIdentity) -> bool:
+def feature_hub_face_insert(face_identity: FaceIdentity) -> Tuple[bool, int]:
     """
     Inserts a face identity into the FeatureHub database.
 
@@ -787,11 +784,12 @@ def feature_hub_face_insert(face_identity: FaceIdentity) -> bool:
     Notes:
         Logs an error if the insertion process fails.
     """
-    ret = HFFeatureHubInsertFeature(face_identity._c_struct())
+    alloc_id = HInt32()
+    ret = HFFeatureHubInsertFeature(face_identity._c_struct(), HPInt32(alloc_id))
     if ret != 0:
         logger.error(f"Failed to insert face feature data into FeatureHub: {ret}")
-        return False
-    return True
+        return False, -1
+    return True, int(alloc_id.value)
 
 
 @dataclass
@@ -827,7 +825,7 @@ def feature_hub_face_search(data: np.ndarray) -> SearchResult:
     if ret != 0:
         logger.error(f"Failed to search face: {ret}")
         return SearchResult(confidence=-1, similar_identity=FaceIdentity(np.zeros(0), most_similar.customId, "None"))
-    if most_similar.customId != -1:
+    if most_similar.id != -1:
         search_identity = FaceIdentity.from_ctypes(most_similar)
         return SearchResult(confidence=confidence.value, similar_identity=search_identity)
     else:
@@ -856,8 +854,8 @@ def feature_hub_face_search_top_k(data: np.ndarray, top_k: int) -> List[Tuple]:
     if ret == 0:
         for idx in range(results.size):
             confidence = results.confidence[idx]
-            customId = results.customIds[idx]
-            outputs.append((confidence, customId))
+            id_ = results.ids[idx]
+            outputs.append((confidence, id_))
     return outputs
 
 
