@@ -1,0 +1,1 @@
+/usr/bin/c++  -std=c++14 -O3 CMakeFiles/NewFaceTrackPipelineSample.dir/new/new_tracker_pipeline.cpp.o -o ../../sample/NewFaceTrackPipelineSample  -Wl,-rpath,/host/work/inspireface/build_linux/lib ../../lib/libInspireFace.so ../../3rdparty/MNN/libMNN.a -pthread -lpthread -ldl 

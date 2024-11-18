@@ -1,6 +1,18 @@
 #ifndef INSPIRE_EMBEDDING_DB_H
 #define INSPIRE_EMBEDDING_DB_H
 
+#ifndef SQLITE_CORE
+#define SQLITE_CORE
+#endif
+
+#ifndef SQLITE_VEC_STATIC
+#define SQLITE_VEC_STATIC
+#endif
+
+#ifndef SQLITE_VEC_ENABLE_AVX
+#define SQLITE_VEC_ENABLE_AVX
+#endif
+
 #include <sqlite3.h>
 #include <vector>
 #include <string>
