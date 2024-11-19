@@ -2,7 +2,7 @@ name: Build MacOS-x86
 
 on:
   push:
-    branches: ["feature/macos_x86", "dev/next-gen"]
+    branches: ["feature/macos_x86"]
 
 # Set the global GitHub token environment variable
 env:
