@@ -2,7 +2,7 @@ name: Build SDKs
 
 on:
   push:
-    branches: ["master", "dev/next-gen"]
+    branches: ["master"]
   pull_request:
     branches: ["master"]
 

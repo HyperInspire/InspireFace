@@ -13,6 +13,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
+**`2024-11-19`** After version 1.8, the project has been made lighter by **removing the dependency on OpenCV**.
+
 **`2024-10-09`** Enhanced system-level resource monitoring, added statistical information for session and image stream creation.
 
 **`2024-09-30`** Fixed some bugs in the feature hub.
@@ -66,7 +68,7 @@ git submodule update --init --recursive
 You can download the model package files containing models and configurations needed for compilation from [Google Drive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) and extract them to any location. 
 
 ### 1.3. Installing OpenCV
-If you intend to use the SDK locally or on a server, ensure that OpenCV is installed on the host device beforehand to enable successful linking during the compilation process. For cross-compilation targets like Android or ARM embedded boards, you can use the pre-compiled OpenCV libraries provided by **3rdparty/inspireface-precompile/opencv/**.
+If you are using InspireFace **version 1.8 or higher**, **you can ignore the OpenCV-related configuration** since InspiReFace's image processing backend no longer depends on OpenCV by default starting from version 1.8, **which is recommended**. However, if you still want to use OpenCV, you can use the cmake option parameter: INSPIRECV_BACKEND_OPENCV to build InspireFace with an OpenCV-based image processing backend.The 3rdparty repository will no longer provide pre-compiled OpenCV libraries for versions above 1.8.
 
 ### 1.4. Installing MNN
 The '**3rdparty**' directory already includes the MNN library and specifies a particular version as the stable version. If you need to enable or disable additional configuration options during compilation, you can refer to the CMake Options provided by MNN. If you need to use your own precompiled version, feel free to replace it.
@@ -74,9 +76,9 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 ### 1.5. Requirements
 
 - CMake (version 3.10 or higher)
-- OpenCV (version 3.5 or higher)
+- OpenCV (version 3.5 or higher) [**Optional**: If the version **>= 1.8**, opencv is not used by default]
     - Use the specific OpenCV-SDK supported by each target platform such as Android, iOS, and Linux.
-- NDK (version 16 or higher, only required for Android)
+- NDK (version 16 or higher, only required for Android)[**Optional**]
 - MNN (version 1.4.0 or higher)
 - C++ Compiler
     - Either GCC or Clang can be used (macOS does not require additional installation as Xcode is included)
@@ -84,14 +86,13 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
             - Note that in some distributions, GCC (GNU C Compiler) and G++ (GNU C++ Compiler) are installed separately.
             - For instance, on Ubuntu, you need to install both gcc and g++
         - Recommended Clang version is 3.9 or higher
-    - arm-linux-gnueabihf (for RV1109/RV1126)
+    - arm-linux-gnueabihf (for RV1109/RV1126) [**Optional**]
         - Prepare the cross-compilation toolchain in advance, such as gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
-- CUDA (version 10.1 or higher)
+- CUDA (version 10.1 or higher) [**Optional**]
     - GPU-based inference requires installing NVIDIA's CUDA dependencies on the device.
 - Eigen3
-    - If you need to use the tracking-by-detection feature, you must have Eigen3 installed in advance.
-
-- RKNN
+    
+- RKNN [**Optional**]
     - Adjust and select versions currently supported for specific requirements.
 
 ## 2. Compilation
@@ -147,8 +148,8 @@ We have completed the adaptation and testing of the software across various oper
 | 3       |                      | x86/x86_64            | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | [![test](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/test_ubuntu_x86_Pikachu.yaml?style=for-the-badge&label=Test&color=blue)](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml) |
 | 4       |                      | ARMv7                 | RV1109RV1126               | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 5       |                      | x86/x86_64            | CUDA                       | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
-| 6       | **macOS**            | Intel x86             | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
-| 7       |                      | Apple Silicon         | -                          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 6       | **macOS**            | Intel       | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 7       |                      | Apple Silicon         | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 8       | **iOS**              | ARM                   | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 9       | **Android**          | ARMv7                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |  |
 | 10      |                      | ARMv8                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |  |
@@ -165,7 +166,7 @@ We offer a method for rapid multi-platform compilation using Docker, provided th
 docker-compose up build-ubuntu18
 
 # Build armv7 cross-compile
-build-cross-armv7-armhf
+docker-compose up build-cross-armv7-armhf
 
 # Build armv7 with support RV1109RV1126 device NPU cross-complie
 docker-compose up build-cross-rv1109rv1126-armhf
@@ -181,7 +182,7 @@ docker-compose up
 ### 3.1. C/C++ Sample
 To integrate InspireFace into a C/C++ project, you simply need to link the InspireFace library and include the appropriate header files. Below is a basic example demonstrating face detection:
 
-```cpp
+```c
 HResult ret;
 // The resource file must be loaded before it can be used
 ret = HFLaunchInspireFace(packPath);
@@ -190,37 +191,37 @@ if (ret != HSUCCEED) {
     return ret;
 }
 
-// Enable the functions in the pipeline: mask detection, live detection, and face quality detection
+// Enable the functions in the pipeline: mask detection, live detection, and face quality
+// detection
 HOption option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
-// Non-video or frame sequence mode uses IMAGE-MODE, which is always face detection without tracking
-HFDetectMode detMode = HF_DETECT_MODE_IMAGE;
+// Non-video or frame sequence mode uses IMAGE-MODE, which is always face detection without
+// tracking
+HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
 // Maximum number of faces detected
-HInt32 maxDetectNum = 5;
+HInt32 maxDetectNum = 20;
+// Face detection image input level
+HInt32 detectPixelLevel = 160;
 // Handle of the current face SDK algorithm context
 HFSession session = {0};
-ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, -1, -1, &session);
+ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, detectPixelLevel, -1, &session);
 if (ret != HSUCCEED) {
     std::cout << "Create FaceContext error: " << ret << std::endl;
     return ret;
 }
 
+HFSessionSetTrackPreviewSize(session, detectPixelLevel);
+HFSessionSetFilterMinimumFacePixelSize(session, 4);
+
 // Load a image
-cv::Mat image = cv::imread(sourcePath);
-if (image.empty()) {
+HFImageBitmap image;
+ret = HFCreateImageBitmapFromFilePath(sourcePath, 3, &image);
+if (ret != HSUCCEED) {
     std::cout << "The source entered is not a picture or read error." << std::endl;
-    return 1;
+    return ret;
 }
 // Prepare an image parameter structure for configuration
-HFImageData imageParam = {0};
-imageParam.data = image.data;       // Data buffer
-imageParam.width = image.cols;      // Target view width
-imageParam.height = image.rows;      // Target view width
-imageParam.rotation = HF_CAMERA_ROTATION_0;      // Data source rotate
-imageParam.format = HF_STREAM_BGR;      // Data source format
-
-// Create an image data stream
 HFImageStream imageHandle = {0};
-ret = HFCreateImageStream(&imageParam, &imageHandle);
+ret = HFCreateImageStreamFromImageBitmap(image, rotation_enum, &imageHandle);
 if (ret != HSUCCEED) {
     std::cout << "Create ImageStream error: " << ret << std::endl;
     return ret;
@@ -237,16 +238,23 @@ if (ret != HSUCCEED) {
 auto faceNum = multipleFaceData.detectedNum;
 std::cout << "Num of face: " << faceNum << std::endl;
 
+// The memory must be freed at the end of the program
+ret = HFReleaseImageBitmap(image);
+if (ret != HSUCCEED) {
+    printf("Release image bitmap error: %lu\n", ret);
+    return ret;
+}
+
 ret = HFReleaseImageStream(imageHandle);
 if (ret != HSUCCEED) {
     printf("Release image stream error: %lu\n", ret);
 }
-// The memory must be freed at the end of the program
 ret = HFReleaseInspireFaceSession(session);
 if (ret != HSUCCEED) {
     printf("Release session error: %lu\n", ret);
     return ret;
 }
+
 ```
 For more examples, you can refer to the `cpp/sample` sub-project located in the root directory. You can compile these sample executables by enabling the `ISF_BUILD_WITH_SAMPLE` option during the compilation process.
 
@@ -370,7 +378,7 @@ The following functionalities and technologies are currently supported.
 | 7 | Face Quality Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
 | 8 | Face Pose Estimation | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
 | 9 | Face Attribute Prediction | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Age, Race, Gender |
-| 10 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/DEVELOP-green?style=for-the-badge) | Blink |
+| 10 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Expressions and head |
 
 
 ## 6. Models Package List
