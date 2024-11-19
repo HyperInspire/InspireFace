@@ -3,13 +3,17 @@ import cv2
 import inspireface as ifac
 from inspireface.param import *
 import numpy as np
+import os
 
 def case_feature_hub():
+    db_path = "test.db"
+    if os.path.exists(db_path):
+        os.remove(db_path)
     # Configure the feature management system.
     feature_hub_config = ifac.FeatureHubConfiguration(
         feature_block_num=10,
         enable_use_db=True,
-        db_path="test.db",
+        db_path=db_path,
         search_threshold=0.48,
         search_mode=HF_SEARCH_MODE_EAGER,
     )
@@ -20,6 +24,8 @@ def case_feature_hub():
         feature = ifac.FaceIdentity(np.random.rand(512), i, "test")
         ifac.feature_hub_face_insert(feature)
     print(ifac.feature_hub_get_face_count())
+
+    assert os.path.exists(db_path), "FeatureHub database file not found."
 
 
 if __name__ == "__main__":
