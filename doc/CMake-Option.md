@@ -20,3 +20,4 @@ Here are the translation details for the compilation parameters as per your requ
 | ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA | OFF | Enable global MNN_CUDA inference mode, requires device support for CUDA                                                                                    |
 | ISF_LINUX_MNN_CUDA                        | "" | Specific MNN library path, requires pre-compiled MNN library supporting MNN_CUDA, only effective when ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA is enabled |
 | ISF_ENABLE_TRACKING_BY_DETECTION | OFF | Enable tracking-by-detection face detection mode, which references the Eigen library |
+| INSPIRECV_BACKEND_OPENCV | OFF | The image processing backend relies on OpenCV and is **not recommended** |
