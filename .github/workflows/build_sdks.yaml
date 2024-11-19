@@ -35,7 +35,7 @@ jobs:
       # Step 4: Start building the SDK
       - name: Start Building the InspireFace-Linux-x86
         run: |
-          bash command/build_linux_ubuntu18.sh
+          bash command/build_linux_macos_x86.sh
           ls build
 
   build_armv7_armhf:
