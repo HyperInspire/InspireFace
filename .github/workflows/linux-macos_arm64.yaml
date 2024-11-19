@@ -1,8 +1,8 @@
-name: Build MacOS-x86
+name: Build MacOS-arm64
 
 on:
   push:
-    branches: ["feature/macos_x86", "dev/next-gen"]
+    branches: ["feature/macos_arm64", "dev/next-gen"]
 
 # Set the global GitHub token environment variable
 env:
@@ -10,8 +10,8 @@ env:
 
 jobs:
   build:
-    name: Compile MacOS-x86
-    runs-on: macos-12
+    name: Compile MacOS-arm64
+    runs-on: macos-14
 
     steps:
       # Step 1: Checkout the repository
@@ -29,7 +29,7 @@ jobs:
           brew install cmake
 
       # Step 4: Start building the SDK
-      - name: Start Building the InspireFace-MacOS-x86
+      - name: Start Building the InspireFace-MacOS-arm64
         run: |
-          bash command/build_linux_macos_x86.sh
+          bash command/build_linux_macos_arm64.sh
           ls build
