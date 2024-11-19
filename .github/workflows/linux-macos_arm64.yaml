@@ -2,7 +2,7 @@ name: Build MacOS-arm64
 
 on:
   push:
-    branches: ["feature/macos_arm64", "dev/next-gen"]
+    branches: ["feature/macos_arm64"]
 
 # Set the global GitHub token environment variable
 env:
