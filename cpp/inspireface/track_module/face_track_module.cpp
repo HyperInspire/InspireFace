@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/8/29.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #include "face_track_module.h"
 #include "log.h"
@@ -131,7 +132,7 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
                 mean_shape_[k].SetX(mean_shape[k * 2]);
                 mean_shape_[k].SetY(mean_shape[k * 2 + 1]);
             }
-           
+
             auto _affine = inspirecv::SimilarityTransformEstimate(inside_points, mean_shape_);
             auto mid_inside_points = ApplyTransformToPoints(inside_points, _affine);
             inside_points = FixPointsMeanshape(mid_inside_points, mean_shape_);
@@ -182,7 +183,7 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
     if (face.TrackingState() == ISF_TRACKING) {
         face.SetConfidence(score);
     }
-    
+
     return true;
 }
 

@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/9/7.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef INSPIRE_FACE_PIPELINE_MODULE_H
 #define INSPIRE_FACE_PIPELINE_MODULE_H

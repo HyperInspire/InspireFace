@@ -1,11 +1,11 @@
-//
-// Created by Tunm-Air13 on 2023/9/8.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #include "rgb_anti_spoofing_adapt.h"
 
 namespace inspire {
-
 
 std::vector<float> RBGAntiSpoofingAdapt::Softmax(const std::vector<float>& input) {
     std::vector<float> result;
@@ -26,13 +26,12 @@ std::vector<float> RBGAntiSpoofingAdapt::Softmax(const std::vector<float>& input
     return result;
 }
 
-RBGAntiSpoofingAdapt::RBGAntiSpoofingAdapt(int input_size, bool use_softmax): AnyNetAdapter("RBGAntiSpoofingAdapt") {
+RBGAntiSpoofingAdapt::RBGAntiSpoofingAdapt(int input_size, bool use_softmax) : AnyNetAdapter("RBGAntiSpoofingAdapt") {
     m_input_size_ = input_size;
     m_softmax_ = use_softmax;
 }
 
-
-float RBGAntiSpoofingAdapt::operator()(const inspirecv::Image &bgr_affine27) {
+float RBGAntiSpoofingAdapt::operator()(const inspirecv::Image& bgr_affine27) {
     AnyTensorOutputs outputs;
     if (bgr_affine27.Width() != m_input_size_ || bgr_affine27.Height() != m_input_size_) {
         auto resized = bgr_affine27.Resize(m_input_size_, m_input_size_);
@@ -48,5 +47,4 @@ float RBGAntiSpoofingAdapt::operator()(const inspirecv::Image &bgr_affine27) {
     }
 }
 
-
-}
+}  // namespace inspire

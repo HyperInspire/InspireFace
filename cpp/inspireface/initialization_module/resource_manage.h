@@ -1,4 +1,7 @@
-// Created by tunm on 2024/07/16.
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIREFACE_RESOURCE_MANAGE_H
 #define INSPIREFACE_RESOURCE_MANAGE_H

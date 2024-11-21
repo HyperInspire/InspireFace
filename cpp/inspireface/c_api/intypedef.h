@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/10/3.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef INSPIREFACE_INTYPEDEF_H
 #define INSPIREFACE_INTYPEDEF_H

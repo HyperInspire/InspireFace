@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2024/3/22.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef INSPIREFACE_SIMPLE_CSV_WRITER_H
 #define INSPIREFACE_SIMPLE_CSV_WRITER_H

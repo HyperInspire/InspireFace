@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/8.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #include "face_attribute_adapt.h"
 #include "middleware/utils.h"

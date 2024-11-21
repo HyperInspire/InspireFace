@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/9/8.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIRE_FEATURE_HUB_DB_H
 #define INSPIRE_FEATURE_HUB_DB_H

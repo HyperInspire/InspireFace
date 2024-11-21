@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/8.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIREFACE_BLINK_PREDICT_H
 #define INSPIREFACE_BLINK_PREDICT_H

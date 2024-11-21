@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/8/29.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIRE_FACE_TRACK_MODULE_FACE_TRACK_MODULE_H
 #define INSPIRE_FACE_TRACK_MODULE_FACE_TRACK_MODULE_H
@@ -167,7 +168,7 @@ private:
     int filter_minimum_face_px_size = 0;               ///< Minimum face pixel allowed to be retained (take the edge with the smallest Rect).
 
 private:
-    std::shared_ptr<FaceDetectAdapt> m_face_detector_;  ///< Shared pointer to the face detector.
+    std::shared_ptr<FaceDetectAdapt> m_face_detector_;         ///< Shared pointer to the face detector.
     std::shared_ptr<FaceLandmarkAdapt> m_landmark_predictor_;  ///< Shared pointer to the landmark predictor.
     std::shared_ptr<RNetAdapt> m_refine_net_;                  ///< Shared pointer to the RNet model.
 

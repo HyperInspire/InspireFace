@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2024/3/26.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #include <iostream>
 #include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"

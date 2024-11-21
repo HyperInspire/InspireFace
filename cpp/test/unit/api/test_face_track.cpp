@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/10/11.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #include <iostream>
 #include "settings/test_settings.h"
@@ -9,7 +10,6 @@
 #include "unit/test_helper/test_help.h"
 #include "unit/test_helper/test_tools.h"
 #include "middleware/costman.h"
-
 
 TEST_CASE("test_FaceTrack", "[face_track]") {
     DRAW_SPLIT_LINE
@@ -68,7 +68,6 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
 
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
-
     }
 
     SECTION("Face tracking stability from frames") {
@@ -93,7 +92,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
             HFMultipleFaceData multipleFaceData = {0};
             ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
             REQUIRE(ret == HSUCCEED);
-//            CHECK(multipleFaceData.detectedNum == 1);
+            //            CHECK(multipleFaceData.detectedNum == 1);
             if (multipleFaceData.detectedNum != 1) {
                 count_loss++;
                 continue;
@@ -104,7 +103,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
             std::string save = GET_SAVE_DATA("video_frames") + "/" + std::to_string(i) + ".jpg";
             image.Write(save);
             auto id = multipleFaceData.trackIds[0];
-//            TEST_PRINT("{}", id);
+            //            TEST_PRINT("{}", id);
             if (id != expectedId) {
                 count_loss++;
             }
@@ -112,9 +111,9 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
             ret = HFReleaseImageStream(imgHandle);
             REQUIRE(ret == HSUCCEED);
         }
-        float loss = (float )count_loss / filenames.size();
+        float loss = (float)count_loss / filenames.size();
         // The face track loss is allowed to have an error of 5%
-//        CHECK(loss == Approx(0.0f).epsilon(0.05));
+        //        CHECK(loss == Approx(0.0f).epsilon(0.05));
 
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
@@ -221,7 +220,6 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         //  finish
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
-
     }
 
     SECTION("Face detection benchmark") {
@@ -301,15 +299,13 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
 #else
         TEST_PRINT("Skip the face light track benchmark test. To run it, you need to turn on the benchmark test.");
 #endif
-
     }
-
 }
 
 TEST_CASE("test_MultipleLevelFaceDetect", "[face_detect]") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
-    
+
     SECTION("Detect input 192px") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
@@ -341,7 +337,7 @@ TEST_CASE("test_MultipleLevelFaceDetect", "[face_detect]") {
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
     }
-    
+
     SECTION("Detect input 320px") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
@@ -373,7 +369,7 @@ TEST_CASE("test_MultipleLevelFaceDetect", "[face_detect]") {
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
     }
-    
+
     SECTION("Detect input 640px") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
@@ -405,6 +401,4 @@ TEST_CASE("test_MultipleLevelFaceDetect", "[face_detect]") {
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
     }
-
-
 }

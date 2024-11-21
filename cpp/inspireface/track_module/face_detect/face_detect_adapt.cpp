@@ -1,19 +1,15 @@
-//
-// Created by Tunm-Air13 on 2023/5/6.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #include "face_detect_adapt.h"
 #include "cost_time.h"
 
 namespace inspire {
 
-FaceDetectAdapt::FaceDetectAdapt(int input_size, float nms_threshold, float cls_threshold):
-    AnyNetAdapter("FaceDetectAdapt"),
-    m_nms_threshold_(nms_threshold),
-    m_cls_threshold_(cls_threshold),
-    m_input_size_(input_size){
-
-}
+FaceDetectAdapt::FaceDetectAdapt(int input_size, float nms_threshold, float cls_threshold)
+: AnyNetAdapter("FaceDetectAdapt"), m_nms_threshold_(nms_threshold), m_cls_threshold_(cls_threshold), m_input_size_(input_size) {}
 
 FaceLocList FaceDetectAdapt::operator()(const inspirecv::Image &bgr) {
     int ori_w = bgr.Width();
@@ -42,11 +38,11 @@ FaceLocList FaceDetectAdapt::operator()(const inspirecv::Image &bgr) {
     resized_img = bgr.Resize(w, h);
     pad = resized_img.Pad(0, hpad, 0, wpad, {0.0f, 0.0f, 0.0f});
     // pad.Write("pad.jpg");
-    
-//    LOGD("Prepare");
+
+    //    LOGD("Prepare");
     AnyTensorOutputs outputs;
     Forward(pad, outputs);
-//    LOGD("Forward");
+    //    LOGD("Forward");
 
     std::vector<FaceLoc> results;
     std::vector<int> strides = {8, 16, 32};
@@ -58,18 +54,18 @@ FaceLocList FaceDetectAdapt::operator()(const inspirecv::Image &bgr) {
     }
 
     _nms(results, m_nms_threshold_);
-    std::sort(results.begin(), results.end(), [](FaceLoc a, FaceLoc b) { return (a.y2 -  a.y1) * (a.x2 - a.x1) > (b.y2 -  b.y1) * (b.x2 - b.x1); });
-    for (auto &face:results) {
+    std::sort(results.begin(), results.end(), [](FaceLoc a, FaceLoc b) { return (a.y2 - a.y1) * (a.x2 - a.x1) > (b.y2 - b.y1) * (b.x2 - b.x1); });
+    for (auto &face : results) {
         face.x1 = face.x1 / scale;
         face.y1 = face.y1 / scale;
         face.x2 = face.x2 / scale;
         face.y2 = face.y2 / scale;
-//        if(use_kps_) {
+        //        if(use_kps_) {
         for (int i = 0; i < 5; ++i) {
             face.lmk[i * 2 + 0] = face.lmk[i * 2 + 0] / scale;
             face.lmk[i * 2 + 1] = face.lmk[i * 2 + 1] / scale;
         }
-//        }
+        //        }
     }
     return results;
 }
@@ -78,8 +74,7 @@ void FaceDetectAdapt::_nms(std::vector<FaceLoc> &input_faces, float nms_threshol
     std::sort(input_faces.begin(), input_faces.end(), [](FaceLoc a, FaceLoc b) { return a.score > b.score; });
     std::vector<float> area(input_faces.size());
     for (int i = 0; i < int(input_faces.size()); ++i) {
-        area[i] =
-                (input_faces.at(i).x2 - input_faces.at(i).x1 + 1) * (input_faces.at(i).y2 - input_faces.at(i).y1 + 1);
+        area[i] = (input_faces.at(i).x2 - input_faces.at(i).x1 + 1) * (input_faces.at(i).y2 - input_faces.at(i).y1 + 1);
     }
     for (int i = 0; i < int(input_faces.size()); ++i) {
         for (int j = i + 1; j < int(input_faces.size());) {
@@ -114,17 +109,17 @@ void FaceDetectAdapt::_generate_anchors(int stride, int input_size, int num_anch
     }
 }
 
-void FaceDetectAdapt::_decode(const std::vector<float> &cls_pred, const std::vector<float> &box_pred, const std::vector<float>& lmk_pred, int stride, std::vector<FaceLoc> &results) {
+void FaceDetectAdapt::_decode(const std::vector<float> &cls_pred, const std::vector<float> &box_pred, const std::vector<float> &lmk_pred, int stride,
+                              std::vector<FaceLoc> &results) {
     std::vector<float> anchors_center;
     _generate_anchors(stride, m_input_size_, 2, anchors_center);
-//    const float *scores = cls_pred->host<float>();
-//    const float *boxes = box_pred->host<float>();
-//    float *lmk;
-//    if(use_kps_)
-//    const float *lmk = lmk_pred->host<float>();
+    //    const float *scores = cls_pred->host<float>();
+    //    const float *boxes = box_pred->host<float>();
+    //    float *lmk;
+    //    if(use_kps_)
+    //    const float *lmk = lmk_pred->host<float>();
 
     for (int i = 0; i < anchors_center.size() / 2; ++i) {
-
         if (cls_pred[i] > m_cls_threshold_) {
             FaceLoc faceInfo;
             float cx = anchors_center[i * 2 + 0];
@@ -138,27 +133,27 @@ void FaceDetectAdapt::_decode(const std::vector<float> &cls_pred, const std::vec
             faceInfo.x2 = x2;
             faceInfo.y2 = y2;
             faceInfo.score = cls_pred[i];
-//            if (use_kps_) {
+            //            if (use_kps_) {
             for (int j = 0; j < 5; ++j) {
                 float px = cx + lmk_pred[i * 10 + j * 2 + 0] * stride;
                 float py = cy + lmk_pred[i * 10 + j * 2 + 1] * stride;
                 faceInfo.lmk[j * 2 + 0] = px;
                 faceInfo.lmk[j * 2 + 1] = py;
             }
-//            }
+            //            }
             results.push_back(faceInfo);
         }
         std::sort(results.begin(), results.end(), SortBoxSizeAdapt);
     }
 }
 
-    void FaceDetectAdapt::SetNmsThreshold(float mNmsThreshold) {
-        m_nms_threshold_ = mNmsThreshold;
-    }
+void FaceDetectAdapt::SetNmsThreshold(float mNmsThreshold) {
+    m_nms_threshold_ = mNmsThreshold;
+}
 
-    void FaceDetectAdapt::SetClsThreshold(float mClsThreshold) {
-        m_cls_threshold_ = mClsThreshold;
-    }
+void FaceDetectAdapt::SetClsThreshold(float mClsThreshold) {
+    m_cls_threshold_ = mClsThreshold;
+}
 
 bool SortBoxSizeAdapt(const FaceLoc &a, const FaceLoc &b) {
     int sq_a = (a.y2 - a.y1) * (a.x2 - a.x1);
@@ -166,5 +161,4 @@ bool SortBoxSizeAdapt(const FaceLoc &a, const FaceLoc &b) {
     return sq_a > sq_b;
 }
 
-
-}   // namespace
+}  // namespace inspire

@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2024/4/13.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #include <iostream>
 #include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
@@ -32,7 +33,7 @@ TEST_CASE("test_FeatureHubBase", "[FeatureHub][BasicFunction]") {
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
 
-        delete []dbPathStr;
+        delete[] dbPathStr;
     }
 
     SECTION("FeatureHub search top-k") {
@@ -113,7 +114,7 @@ TEST_CASE("test_FeatureHubBase", "[FeatureHub][BasicFunction]") {
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
 
-        delete []dbPathStr;
+        delete[] dbPathStr;
     }
 
     SECTION("Repeat the enable and disable tests") {
@@ -127,7 +128,6 @@ TEST_CASE("test_FeatureHubBase", "[FeatureHub][BasicFunction]") {
         configuration.searchMode = HF_SEARCH_MODE_EXHAUSTIVE;
         configuration.searchThreshold = 0.48f;
 
-
         ret = HFFeatureHubDataEnable(configuration);
         REQUIRE(ret == HSUCCEED);
 
@@ -140,7 +140,7 @@ TEST_CASE("test_FeatureHubBase", "[FeatureHub][BasicFunction]") {
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
 
-        delete []dbPathStr;
+        delete[] dbPathStr;
     }
 
     SECTION("Only memory storage is used") {
@@ -154,9 +154,7 @@ TEST_CASE("test_FeatureHubBase", "[FeatureHub][BasicFunction]") {
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
-
     }
-
 }
 
 TEST_CASE("test_ConcurrencyInsertion", "[FeatureHub][Concurrency]") {
@@ -220,14 +218,13 @@ TEST_CASE("test_ConcurrencyInsertion", "[FeatureHub][Concurrency]") {
     HInt32 count;
     ret = HFFeatureHubGetFaceCount(&count);
     REQUIRE(ret == HSUCCEED);
-    REQUIRE(count == baseNum + numThreads * insertsPerThread); // Ensure that the previous base data is added to the newly inserted data
+    REQUIRE(count == baseNum + numThreads * insertsPerThread);  // Ensure that the previous base data is added to the newly inserted data
 
     ret = HFFeatureHubDataDisable();
     REQUIRE(ret == HSUCCEED);
 
-    delete []dbPathStr;
+    delete[] dbPathStr;
 }
-
 
 TEST_CASE("test_ConcurrencyRemove", "[FeatureHub][Concurrency]") {
     DRAW_SPLIT_LINE
@@ -306,8 +303,7 @@ TEST_CASE("test_ConcurrencyRemove", "[FeatureHub][Concurrency]") {
     ret = HFFeatureHubDataDisable();
     REQUIRE(ret == HSUCCEED);
 
-    delete []dbPathStr;
-
+    delete[] dbPathStr;
 }
 
 TEST_CASE("test_ConcurrencySearch", "[FeatureHub][Concurrency]") {
@@ -384,7 +380,6 @@ TEST_CASE("test_ConcurrencySearch", "[FeatureHub][Concurrency]") {
         REQUIRE(ret == HSUCCEED);
         REQUIRE(cosine > 0.80f);
         similarFeatures.push_back(feature);
-
     }
     REQUIRE(similarFeatures.size() == numberOfSimilar);
 
@@ -415,7 +410,7 @@ TEST_CASE("test_ConcurrencySearch", "[FeatureHub][Concurrency]") {
             std::random_device rd;
             std::mt19937 gen(rd());
             std::uniform_int_distribution<> dis(0, preDataSample - 1);
-            for (int j = 0; j < 50; ++j) { // Each thread performs 50 similar searches
+            for (int j = 0; j < 50; ++j) {  // Each thread performs 50 similar searches
                 int idx = dis(gen);
                 auto targetId = targetIds[idx];
                 HFFaceFeature feature = {0};
@@ -445,10 +440,8 @@ TEST_CASE("test_ConcurrencySearch", "[FeatureHub][Concurrency]") {
     ret = HFFeatureHubDataDisable();
     REQUIRE(ret == HSUCCEED);
 
-
-    delete []dbPathStr;
+    delete[] dbPathStr;
 }
-
 
 TEST_CASE("test_FeatureCache", "[FeatureHub][Concurrency]") {
     DRAW_SPLIT_LINE
@@ -486,7 +479,6 @@ TEST_CASE("test_FeatureCache", "[FeatureHub][Concurrency]") {
     simFeature.data = simVec.data();
     simFeature.size = simVec.size();
 
-
     for (int i = 0; i < 10; ++i) {
         HFFaceFeatureIdentity capture = {0};
         ret = HFFeatureHubGetFaceIdentity(allocId, &capture);
@@ -500,12 +492,10 @@ TEST_CASE("test_FeatureCache", "[FeatureHub][Concurrency]") {
         ret = HFFaceComparison(target, simFeature, &cosine);
         REQUIRE(cosine > 0.8f);
         REQUIRE(ret == HSUCCEED);
-
     }
 
     ret = HFFeatureHubDataDisable();
     REQUIRE(ret == HSUCCEED);
 
-    delete []dbPathStr;
-
+    delete[] dbPathStr;
 }

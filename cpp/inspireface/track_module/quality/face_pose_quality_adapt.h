@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/15.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIRE_FACE_TRACK_MODULE_QUALITY_FACE_POSE_QUALITY_ADAPT_H
 #define INSPIRE_FACE_TRACK_MODULE_QUALITY_FACE_POSE_QUALITY_ADAPT_H
@@ -17,11 +18,11 @@ namespace inspire {
  * This includes pitch, yaw, roll angles, landmarks, and their corresponding quality scores.
  */
 struct FacePoseQualityAdaptResult {
-    float pitch;                ///< Pitch angle of the face.
-    float yaw;                  ///< Yaw angle of the face.
-    float roll;                 ///< Roll angle of the face.
-    std::vector<inspirecv::Point2f> lmk;   ///< Landmarks of the face.
-    std::vector<float> lmk_quality; ///< Quality scores for each landmark.
+    float pitch;                          ///< Pitch angle of the face.
+    float yaw;                            ///< Yaw angle of the face.
+    float roll;                           ///< Roll angle of the face.
+    std::vector<inspirecv::Point2f> lmk;  ///< Landmarks of the face.
+    std::vector<float> lmk_quality;       ///< Quality scores for each landmark.
 };
 
 /**
@@ -49,14 +50,13 @@ public:
      * @param rect Rectangle representing the face in the image.
      * @return cv::Mat The computed affine transformation matrix.
      */
-    static inspirecv::TransformMatrix ComputeCropMatrix(const inspirecv::Rect2i &rect);
+    static inspirecv::TransformMatrix ComputeCropMatrix(const inspirecv::Rect2i& rect);
 
 public:
     const static int INPUT_WIDTH = 96;   ///< Width of the input image for the network.
     const static int INPUT_HEIGHT = 96;  ///< Height of the input image for the network.
-
 };
 
-}   // namespace inspire
+}  // namespace inspire
 
-#endif //INSPIRE_FACE_TRACK_MODULE_QUALITY_FACE_POSE_QUALITY_ADAPT_H
+#endif  // INSPIRE_FACE_TRACK_MODULE_QUALITY_FACE_POSE_QUALITY_ADAPT_H

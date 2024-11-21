@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/9/8.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #include "feature_hub_db.h"
 #include "simd.h"
@@ -8,13 +9,12 @@
 #include <thread>
 #include "middleware/utils.h"
 
-
 namespace inspire {
 
 std::mutex FeatureHubDB::mutex_;
 std::shared_ptr<FeatureHubDB> FeatureHubDB::instance_ = nullptr;
 
-FeatureHubDB::FeatureHubDB(){}
+FeatureHubDB::FeatureHubDB() {}
 
 std::shared_ptr<FeatureHubDB> FeatureHubDB::GetInstance() {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -66,7 +66,7 @@ int32_t FeatureHubDB::EnableHub(const DatabaseConfiguration &configuration) {
     }
     std::string dbFile = ":memory:";
     if (m_db_configuration_.enable_persistence) {
-        if (IsDirectory(m_db_configuration_.persistence_db_path)){
+        if (IsDirectory(m_db_configuration_.persistence_db_path)) {
             dbFile = m_db_configuration_.persistence_db_path + "/" + DB_FILE_NAME;
         } else {
             dbFile = m_db_configuration_.persistence_db_path;
@@ -80,16 +80,16 @@ int32_t FeatureHubDB::EnableHub(const DatabaseConfiguration &configuration) {
     return HSUCCEED;
 }
 
-int32_t FeatureHubDB::CosineSimilarity(const std::vector<float>& v1, const std::vector<float>& v2, float &res, bool normalize) {
+int32_t FeatureHubDB::CosineSimilarity(const std::vector<float> &v1, const std::vector<float> &v2, float &res, bool normalize) {
     if (v1.size() != v2.size() || v1.empty()) {
-        return HERR_SESS_REC_CONTRAST_FEAT_ERR; // The similarity cannot be calculated if the vector lengths are not equal
+        return HERR_SESS_REC_CONTRAST_FEAT_ERR;  // The similarity cannot be calculated if the vector lengths are not equal
     }
     if (normalize) {
         std::vector<float> v1_norm = v1;
         std::vector<float> v2_norm = v2;
         float mse1 = 0.0f;
         float mse2 = 0.0f;
-        for (const auto &one: v1_norm) {
+        for (const auto &one : v1_norm) {
             mse1 += one * one;
         }
         mse1 = sqrt(mse1);
@@ -97,7 +97,7 @@ int32_t FeatureHubDB::CosineSimilarity(const std::vector<float>& v1, const std::
             one /= mse1;
         }
 
-        for (const auto &one: v2_norm) {
+        for (const auto &one : v2_norm) {
             mse2 += one * one;
         }
         mse2 = sqrt(mse2);
@@ -109,11 +109,9 @@ int32_t FeatureHubDB::CosineSimilarity(const std::vector<float>& v1, const std::
         // Calculate the cosine similarity
         res = simd_dot(v1.data(), v2.data(), v1.size());
     }
-    
 
     return HSUCCEED;
 }
-
 
 int32_t FeatureHubDB::CosineSimilarity(const float *v1, const float *v2, int32_t size, float &res, bool normalize) {
     if (normalize) {
@@ -121,14 +119,14 @@ int32_t FeatureHubDB::CosineSimilarity(const float *v1, const float *v2, int32_t
         std::vector<float> v2_norm(v2, v2 + size);
         float mse1 = 0.0f;
         float mse2 = 0.0f;
-        for (const auto &one: v1_norm) {
+        for (const auto &one : v1_norm) {
             mse1 += one * one;
         }
         mse1 = sqrt(mse1);
         for (float &one : v1_norm) {
             one /= mse1;
         }
-        for (const auto &one: v2_norm) {
+        for (const auto &one : v2_norm) {
             mse2 += one * one;
         }
         mse2 = sqrt(mse2);
@@ -143,7 +141,6 @@ int32_t FeatureHubDB::CosineSimilarity(const float *v1, const float *v2, int32_t
     return HSUCCEED;
 }
 
-
 int32_t FeatureHubDB::GetFaceFeatureCount() {
     if (!m_enable_) {
         INSPIRE_LOGW("FeatureHub is disabled, please enable it before it can be served");
@@ -157,7 +154,6 @@ int32_t FeatureHubDB::GetFaceFeatureCount() {
     return totalFeatureCount;
 }
 
-
 int32_t FeatureHubDB::SearchFaceFeature(const Embedded &queryFeature, FaceSearchResult &searchResult, bool returnFeature) {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
@@ -167,8 +163,7 @@ int32_t FeatureHubDB::SearchFaceFeature(const Embedded &queryFeature, FaceSearch
     m_search_face_feature_cache_.clear();
     auto results = EMBEDDING_DB::GetInstance().SearchSimilarVectors(queryFeature, 1, m_recognition_threshold_, returnFeature);
     searchResult.id = -1;
-    if (!results.empty())
-    {
+    if (!results.empty()) {
         auto &searched = results[0];
         searchResult.similarity = searched.similarity;
         searchResult.id = searched.id;
@@ -180,12 +175,11 @@ int32_t FeatureHubDB::SearchFaceFeature(const Embedded &queryFeature, FaceSearch
             m_face_feature_ptr_cache_->dataSize = m_search_face_feature_cache_.size();
         }
     }
-    
 
     return HSUCCEED;
 }
 
-int32_t FeatureHubDB::SearchFaceFeatureTopKCache(const Embedded& queryFeature, size_t topK) {
+int32_t FeatureHubDB::SearchFaceFeatureTopKCache(const Embedded &queryFeature, size_t topK) {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
@@ -194,8 +188,7 @@ int32_t FeatureHubDB::SearchFaceFeatureTopKCache(const Embedded& queryFeature, s
     m_top_k_confidence_.clear();
     m_top_k_custom_ids_cache_.clear();
     auto results = EMBEDDING_DB::GetInstance().SearchSimilarVectors(queryFeature, topK, m_recognition_threshold_, false);
-    for (size_t i = 0; i < results.size(); i++)
-    {
+    for (size_t i = 0; i < results.size(); i++) {
         m_top_k_custom_ids_cache_.push_back(results[i].id);
         m_top_k_confidence_.push_back(results[i].similarity);
     }
@@ -203,7 +196,8 @@ int32_t FeatureHubDB::SearchFaceFeatureTopKCache(const Embedded& queryFeature, s
     return HSUCCEED;
 }
 
-int32_t FeatureHubDB::SearchFaceFeatureTopK(const Embedded& queryFeature, std::vector<FaceSearchResult> &searchResult, size_t topK, bool returnFeature  ) {
+int32_t FeatureHubDB::SearchFaceFeatureTopK(const Embedded &queryFeature, std::vector<FaceSearchResult> &searchResult, size_t topK,
+                                            bool returnFeature) {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGW("FeatureHub is disabled, please enable it before it can be served");
@@ -213,7 +207,7 @@ int32_t FeatureHubDB::SearchFaceFeatureTopK(const Embedded& queryFeature, std::v
     return HSUCCEED;
 }
 
-int32_t FeatureHubDB::FaceFeatureInsert(const std::vector<float>& feature, int32_t id, int32_t &result_id) {
+int32_t FeatureHubDB::FaceFeatureInsert(const std::vector<float> &feature, int32_t id, int32_t &result_id) {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
@@ -242,7 +236,7 @@ int32_t FeatureHubDB::FaceFeatureUpdate(const std::vector<float> &feature, int32
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
     }
-    try {   
+    try {
         EMBEDDING_DB::GetInstance().UpdateVector(customId, feature);
     } catch (const std::exception &e) {
         INSPIRE_LOGW("Failed to update face feature, id: %d", customId);
@@ -257,7 +251,7 @@ int32_t FeatureHubDB::GetFaceFeature(int32_t id) {
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
-    }   
+    }
     try {
         auto vec = EMBEDDING_DB::GetInstance().GetVector(id);
         m_getter_face_feature_cache_ = vec;
@@ -305,11 +299,11 @@ void FeatureHubDB::SetRecognitionSearchMode(SearchMode mode) {
 
 // =========== Getter ===========
 
-const Embedded& FeatureHubDB::GetSearchFaceFeatureCache() const {
+const Embedded &FeatureHubDB::GetSearchFaceFeatureCache() const {
     return m_search_face_feature_cache_;
 }
 
-const std::shared_ptr<FaceFeaturePtr>& FeatureHubDB::GetFaceFeaturePtrCache() const {
+const std::shared_ptr<FaceFeaturePtr> &FeatureHubDB::GetFaceFeaturePtrCache() const {
     return m_face_feature_ptr_cache_;
 }
 
@@ -321,5 +315,4 @@ std::vector<int32_t> &FeatureHubDB::GetTopKCustomIdsCache() {
     return m_top_k_custom_ids_cache_;
 }
 
-
-} // namespace inspire
+}  // namespace inspire

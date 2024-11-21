@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/5/6.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIREFACE_ANYNETADAPTER_H
 #define INSPIREFACE_ANYNETADAPTER_H

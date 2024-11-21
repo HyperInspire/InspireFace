@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2024/1/31.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef INSPIRE_FACE_INFORMATION_H
 #define INSPIRE_FACE_INFORMATION_H
