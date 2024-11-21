@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/9/24.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef INSPIREFACE_INFERENCE_HELPER_RKNN_ADAPTER_H
 #define INSPIREFACE_INFERENCE_HELPER_RKNN_ADAPTER_H

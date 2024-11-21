@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2024/4/17.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #include "launch.h"
 #include "log.h"
@@ -33,8 +34,7 @@ int32_t Launch::Load(const std::string& path) {
             return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
         }
     } else {
-        INSPIRE_LOGW(
-          "There is no need to call launch more than once, as subsequent calls will not affect the initialization.");
+        INSPIRE_LOGW("There is no need to call launch more than once, as subsequent calls will not affect the initialization.");
         return HSUCCEED;
     }
 }

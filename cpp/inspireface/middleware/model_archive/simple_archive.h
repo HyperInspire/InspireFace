@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2024/3/29.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef MODELLOADERTAR_CPP_MICROTAR_H
 #define MODELLOADERTAR_CPP_MICROTAR_H
@@ -16,17 +17,17 @@
 namespace inspire {
 
 enum {
-    SARC_SUCCESS     =  0,
-    SARC_FAILURE     = -1,
-    SARC_OPEN_FAIL    = -2,
-    SARC_READ_FAIL    = -3,
-    SARC_WRITE_FAIL   = -4,
-    SARC_SEEK_FAIL    = -5,
-    SARC_BAD_CHKSUM   = -6,
-    SARC_NULL_RECORD  = -7,
-    SARC_NOTFOUND    = -8,
+    SARC_SUCCESS = 0,
+    SARC_FAILURE = -1,
+    SARC_OPEN_FAIL = -2,
+    SARC_READ_FAIL = -3,
+    SARC_WRITE_FAIL = -4,
+    SARC_SEEK_FAIL = -5,
+    SARC_BAD_CHKSUM = -6,
+    SARC_NULL_RECORD = -7,
+    SARC_NOTFOUND = -8,
     SARC_LOAD_FILE_FAIL = -9,
-    SARC_NOT_LOAD   = -10,
+    SARC_NOT_LOAD = -10,
 };
 
 class INSPIRE_API SimpleArchive {
@@ -54,9 +55,9 @@ public:
             INSPIRE_LOGE("Error reading root from archive.");
             return m_load_file_status_;
         }
-//        m_file_archive_root_ = std::string(h.name);
+        //        m_file_archive_root_ = std::string(h.name);
         size_t index = 0;
-        while ( (mtar_read_header(m_tar_.get(), &h)) != MTAR_ENULLRECORD ) {
+        while ((mtar_read_header(m_tar_.get(), &h)) != MTAR_ENULLRECORD) {
             m_load_file_status_ = mtar_next(m_tar_.get());
             if (m_load_file_status_ != MTAR_ESUCCESS) {
                 INSPIRE_LOGE("Failed to scan the file");
@@ -85,14 +86,13 @@ public:
         return m_load_file_status_;
     }
 
-    const std::vector<std::string> &GetSubfilesNames() const {
+    const std::vector<std::string>& GetSubfilesNames() const {
         return m_subfiles_names_;
     }
 
-    ~SimpleArchive() { 
+    ~SimpleArchive() {
         Close();
     }
-        
 
     void Close() {
         if (m_tar_.get() != nullptr) {
@@ -102,7 +102,6 @@ public:
         m_load_file_status_ = SARC_NOT_LOAD;
         m_subfiles_names_.clear();
     }
-    
 
     void PrintSubFiles() {
         std::cout << "Subfiles: " << m_subfiles_names_.size() << std::endl;
@@ -112,7 +111,6 @@ public:
     }
 
 protected:
-
     size_t filenameFuzzyMatching(const std::string& filename) {
         for (size_t i = 0; i < m_subfiles_names_.size(); ++i) {
             if (m_subfiles_names_[i].find(filename) != std::string::npos) {
@@ -132,7 +130,7 @@ protected:
             std::vector<char> content(h.size);
             ret = mtar_read_data(m_tar_.get(), content.data(), h.size);
             if (ret == MTAR_ESUCCESS) {
-                m_file_content_cache_map_[filename] = std::move(content); // Load and store the file contents
+                m_file_content_cache_map_[filename] = std::move(content);  // Load and store the file contents
                 return MTAR_ESUCCESS;
             } else {
                 INSPIRE_LOGE("Failed to load file: %d", ret);
@@ -145,17 +143,16 @@ protected:
     }
 
 private:
-    std::string m_file_archive_root_;                ///< Archive file path
-    std::vector<std::string> m_subfiles_names_;      ///< Name list of subfiles
-    std::shared_ptr<mtar_t> m_tar_;                  ///< mtar context
-    int32_t m_load_file_status_;                     ///< Initiation status code
+    std::string m_file_archive_root_;            ///< Archive file path
+    std::vector<std::string> m_subfiles_names_;  ///< Name list of subfiles
+    std::shared_ptr<mtar_t> m_tar_;              ///< mtar context
+    int32_t m_load_file_status_;                 ///< Initiation status code
 
-    std::vector<char> m_empty_;                      ///< Const empty
+    std::vector<char> m_empty_;  ///< Const empty
 
-    std::unordered_map<std::string, std::vector<char>> m_file_content_cache_map_;       ///< File buffer cache
+    std::unordered_map<std::string, std::vector<char>> m_file_content_cache_map_;  ///< File buffer cache
 };
 
+}  // namespace inspire
 
-}   // namespace inspire
-
-#endif //MODELLOADERTAR_CPP_MICROTAR_H
+#endif  // MODELLOADERTAR_CPP_MICROTAR_H

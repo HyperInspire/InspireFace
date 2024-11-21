@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/7.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #include <vector>
 #ifndef INSPIRE_FACE_CONTEXT_H

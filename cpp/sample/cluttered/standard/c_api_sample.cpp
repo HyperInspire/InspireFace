@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/10/3.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #include <iostream>
 #include "inspireface/c_api/inspireface.h"
 #include "opencv2/opencv.hpp"

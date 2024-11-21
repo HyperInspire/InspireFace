@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/9/24.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
 

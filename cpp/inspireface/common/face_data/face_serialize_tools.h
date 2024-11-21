@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/9/17.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef INSPIRE_FACE_SERIALIZE_TOOLS_H
 #define INSPIRE_FACE_SERIALIZE_TOOLS_H

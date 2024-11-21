@@ -1,37 +1,37 @@
-//
-// Created by tunm on 2023/10/12.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #include <iostream>
 #include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
 #include "../test_helper/test_tools.h"
-
 
 TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
 
     enum AGE_BRACKED {
-        AGE_0_2 = 0,        ///< Age 0-2 years old
-        AGE_3_9,            ///< Age 3-9 years old
-        AGE_10_19,          ///< Age 10-19 years old
-        AGE_20_29,          ///< Age 20-29 years old
-        AGE_30_39,          ///< Age 30-39 years old
-        AGE_40_49,          ///< Age 40-49 years old
-        AGE_50_59,          ///< Age 50-59 years old
-        AGE_60_69,          ///< Age 60-69 years old
-        MORE_THAN_70,       ///< Age more than 70 years old
+        AGE_0_2 = 0,   ///< Age 0-2 years old
+        AGE_3_9,       ///< Age 3-9 years old
+        AGE_10_19,     ///< Age 10-19 years old
+        AGE_20_29,     ///< Age 20-29 years old
+        AGE_30_39,     ///< Age 30-39 years old
+        AGE_40_49,     ///< Age 40-49 years old
+        AGE_50_59,     ///< Age 50-59 years old
+        AGE_60_69,     ///< Age 60-69 years old
+        MORE_THAN_70,  ///< Age more than 70 years old
     };
     enum GENDER {
-        FEMALE = 0,         ///< Female
-        MALE,               ///< Male
+        FEMALE = 0,  ///< Female
+        MALE,        ///< Male
     };
     enum RACE {
-        BLACK = 0,          ///< Black
-        ASIAN,              ///< Asian
-        LATINO_HISPANIC,    ///< Latino/Hispanic
-        MIDDLE_EASTERN,     ///< Middle Eastern
-        WHITE,              ///< White
+        BLACK = 0,        ///< Black
+        ASIAN,            ///< Asian
+        LATINO_HISPANIC,  ///< Latino/Hispanic
+        MIDDLE_EASTERN,   ///< Middle Eastern
+        WHITE,            ///< White
     };
 
     HResult ret;
@@ -63,8 +63,8 @@ TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
         ret = HFGetFaceAttributeResult(session, &result);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(result.num == 1);
-        
-        // Check attribute 
+
+        // Check attribute
         CHECK(result.race[0] == BLACK);
         CHECK(result.ageBracket[0] == AGE_10_19);
         CHECK(result.gender[0] == FEMALE);
@@ -95,14 +95,12 @@ TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
         REQUIRE(ret == HSUCCEED);
         REQUIRE(result.num == 2);
 
-        // Check attribute 
-        for (size_t i = 0; i < result.num; i++)
-        {
+        // Check attribute
+        for (size_t i = 0; i < result.num; i++) {
             CHECK(result.race[i] == WHITE);
             CHECK(result.ageBracket[i] == AGE_20_29);
             CHECK(result.gender[i] == FEMALE);
         }
-        
 
         ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
@@ -112,7 +110,6 @@ TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
     ret = HFReleaseInspireFaceSession(session);
     session = nullptr;
     REQUIRE(ret == HSUCCEED);
-
 }
 
 TEST_CASE("test_FacePipeline", "[face_pipeline]") {
@@ -171,13 +168,10 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         REQUIRE(ret == HSUCCEED);
         img2Handle = nullptr;
 
-
         ret = HFReleaseInspireFaceSession(session);
         session = nullptr;
         REQUIRE(ret == HSUCCEED);
-
     }
-
 
     SECTION("face mask detect") {
         HResult ret;
@@ -212,7 +206,6 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         REQUIRE(ret == HSUCCEED);
         img1Handle = nullptr;
 
-
         // no mask face
         HFImageStream img2Handle;
         auto img2 = inspirecv::Image::Create(GET_DATA("data/bulk/face_sample.png"));
@@ -224,14 +217,13 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         REQUIRE(ret == HSUCCEED);
         ret = HFGetFaceMaskConfidence(session, &confidence);
         REQUIRE(ret == HSUCCEED);
-//        spdlog::info("mask {}", confidence.confidence[0]);
+        //        spdlog::info("mask {}", confidence.confidence[0]);
         CHECK(confidence.num > 0);
         CHECK(confidence.confidence[0] < 0.1);
 
         ret = HFReleaseImageStream(img2Handle);
         REQUIRE(ret == HSUCCEED);
         img2Handle = nullptr;
-
 
         ret = HFReleaseInspireFaceSession(session);
         session = nullptr;
@@ -292,10 +284,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
-
-
     }
-
 }
 
 TEST_CASE("test_FaceReaction", "[face_reaction]") {

@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/8.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIRE_RGB_ANTI_SPOOFING_ADAPT_H
 #define INSPIRE_RGB_ANTI_SPOOFING_ADAPT_H

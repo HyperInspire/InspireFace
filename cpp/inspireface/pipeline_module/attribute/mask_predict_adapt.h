@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/8.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIRE_FACE_MASKPREDICT_ADAPT_H
 #define INSPIRE_FACE_MASKPREDICT_ADAPT_H
@@ -31,9 +32,9 @@ public:
     float operator()(const inspirecv::Image& bgr_affine);
 
 private:
-    const int m_input_size_ = 96; ///< The input size for the model.
+    const int m_input_size_ = 96;  ///< The input size for the model.
 };
 
-}   // namespace inspire
-    
-#endif //INSPIRE_FACE_MASKPREDICT_ADAPT_H
+}  // namespace inspire
+
+#endif  // INSPIRE_FACE_MASKPREDICT_ADAPT_H

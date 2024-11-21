@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2024/4/2.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef MODELLOADERTAR_INSPIRE_MODEL_H
 #define MODELLOADERTAR_INSPIRE_MODEL_H
@@ -14,7 +15,7 @@
 namespace inspire {
 
 class INSPIRE_API InspireModel {
-CONFIGURABLE_SUPPORT
+    CONFIGURABLE_SUPPORT
 public:
     explicit InspireModel(const YAML::Node &node) {
         Reset(node);
@@ -73,17 +74,16 @@ public:
         INSPIRE_LOGD("%s", m_configuration.toString().c_str());
     }
 
-    void SetBuffer(std::vector<char>& modelBuffer, size_t size) {
+    void SetBuffer(std::vector<char> &modelBuffer, size_t size) {
         buffer = modelBuffer.data();
         bufferSize = size;
     }
 
-    Configurable& Config() {
+    Configurable &Config() {
         return m_configuration;
     }
 
 private:
-
     int32_t decode(const YAML::Node &node) {
         try {
             if (node["input_channel"]) {
@@ -102,9 +102,9 @@ private:
                 auto type = node["data_type"].as<std::string>();
                 if (type == "image") {
                     setData<int>("data_type", InputTensorInfo::InputTensorInfo::kDataTypeImage);
-                } else if(type == "data_nhwc") {
+                } else if (type == "data_nhwc") {
                     setData<int>("data_type", InputTensorInfo::InputTensorInfo::kDataTypeBlobNhwc);
-                } else if(type == "data_nchw") {
+                } else if (type == "data_nchw") {
                     setData<int>("data_type", InputTensorInfo::InputTensorInfo::kDataTypeBlobNchw);
                 }
             }
@@ -112,15 +112,15 @@ private:
                 auto type = node["input_tensor_type"].as<std::string>();
                 if (type == "none") {
                     setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeNone);
-                } else if(type == "uint8") {
+                } else if (type == "uint8") {
                     setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeUint8);
-                } else if(type == "int8") {
+                } else if (type == "int8") {
                     setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt8);
-                } else if(type == "float32") {
+                } else if (type == "float32") {
                     setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
-                } else if(type == "int32") {
+                } else if (type == "int32") {
                     setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt32);
-                } else if(type == "int64") {
+                } else if (type == "int64") {
                     setData<int>("input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt64);
                 }
             }
@@ -128,15 +128,15 @@ private:
                 auto type = node["output_tensor_type"].as<std::string>();
                 if (type == "none") {
                     setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeNone);
-                } else if(type == "uint8") {
+                } else if (type == "uint8") {
                     setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeUint8);
-                } else if(type == "int8") {
+                } else if (type == "int8") {
                     setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt8);
-                } else if(type == "float32") {
+                } else if (type == "float32") {
                     setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
-                } else if(type == "int32") {
+                } else if (type == "int32") {
                     setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt32);
-                } else if(type == "int64") {
+                } else if (type == "int64") {
                     setData<int>("output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeInt64);
                 }
             }
@@ -178,7 +178,7 @@ private:
                 }
                 setData<std::vector<float>>("norm", norm);
             }
-        } catch (const YAML::Exception& e) {
+        } catch (const YAML::Exception &e) {
             INSPIRE_LOGE("An error occurred parsing the interpretation file in archive: %s", e.what());
             return -1;
         }
@@ -196,9 +196,8 @@ public:
 
     char *buffer;
     size_t bufferSize;
-
 };
 
-};   // namespace inspire
+};  // namespace inspire
 
-#endif //MODELLOADERTAR_INSPIRE_MODEL_H
+#endif  // MODELLOADERTAR_INSPIRE_MODEL_H

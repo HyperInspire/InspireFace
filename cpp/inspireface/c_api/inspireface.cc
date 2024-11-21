@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/10/3.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #include "inspireface.h"
 #include "intypedef.h"

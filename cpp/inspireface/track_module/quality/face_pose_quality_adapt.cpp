@@ -1,13 +1,14 @@
-//
-// Created by Tunm-Air13 on 2023/9/15.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #include "face_pose_quality_adapt.h"
 #include "middleware/utils.h"
 
 namespace inspire {
 
-FacePoseQualityAdapt::FacePoseQualityAdapt(): AnyNetAdapter("FacePoseQuality") {}
+FacePoseQualityAdapt::FacePoseQualityAdapt() : AnyNetAdapter("FacePoseQuality") {}
 
 FacePoseQualityAdaptResult FacePoseQualityAdapt::operator()(const inspirecv::Image &img) {
     FacePoseQualityAdaptResult res;
@@ -26,11 +27,11 @@ FacePoseQualityAdaptResult FacePoseQualityAdapt::operator()(const inspirecv::Ima
         res.lmk[i].SetY((face_pts5[i * 2 + 1] + 1) * (INPUT_HEIGHT / 2));
     }
 
-//    for (auto &p: res.lmk) {
-//        cv::circle(bgr_affine, p, 0, cv::Scalar(0, 0, 255), 5);
-//    }
-//    cv::imshow("ww", bgr_affine);
-//    cv::waitKey(0);
+    //    for (auto &p: res.lmk) {
+    //        cv::circle(bgr_affine, p, 0, cv::Scalar(0, 0, 255), 5);
+    //    }
+    //    cv::imshow("ww", bgr_affine);
+    //    cv::waitKey(0);
 
     return res;
 }
@@ -44,5 +45,4 @@ inspirecv::TransformMatrix FacePoseQualityAdapt::ComputeCropMatrix(const inspire
     return m;
 }
 
-
-}   // namespace hyper
+}  // namespace inspire

@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/11.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef INSPIRE_FACE_HERROR_H
 #define INSPIRE_FACE_HERROR_H
