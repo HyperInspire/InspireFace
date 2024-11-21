@@ -16,3 +16,7 @@ build_local/*
 local_build/*
 cpp/inspireface/information.h
 cpp/inspireface/version.txt
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
