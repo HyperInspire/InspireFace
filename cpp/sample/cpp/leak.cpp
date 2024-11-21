@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2024/4/28.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 int main() {
     char *n = new char[1024];

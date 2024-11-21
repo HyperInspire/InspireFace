@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/8.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIREFACE_LIVENESS_ALL_H
 #define INSPIREFACE_LIVENESS_ALL_H

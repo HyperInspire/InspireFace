@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2024/4/17.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #include <iostream>
 #include "inspireface/c_api/inspireface.h"
 
@@ -40,7 +41,6 @@ int main(int argc, char* argv[]) {
             rotation_enum = HF_CAMERA_ROTATION_0;
             break;
     }
-
 
     std::cout << "Pack file Path: " << packPath << std::endl;
     std::cout << "Source file Path: " << sourcePath << std::endl;

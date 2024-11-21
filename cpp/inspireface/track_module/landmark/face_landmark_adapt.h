@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/6.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIRE_FACE_TRACK_MODULE_LANDMARK_FACE_LANDMARK_ADAPT_H
 #define INSPIRE_FACE_TRACK_MODULE_LANDMARK_FACE_LANDMARK_ADAPT_H

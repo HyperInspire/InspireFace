@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2022/10/10.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef MAGIC_GESTURES_RKNN_ADAPTER_H
 #define MAGIC_GESTURES_RKNN_ADAPTER_H

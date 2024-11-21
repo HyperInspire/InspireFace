@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/6.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIRE_FACE_TRACK_MODULE_FACE_DETECT_RNET_ADAPT_H
 #define INSPIRE_FACE_TRACK_MODULE_FACE_DETECT_RNET_ADAPT_H
@@ -16,7 +17,7 @@ namespace inspire {
  * This class is used for refining face detection results, typically as part of a cascaded
  * network system for facial recognition or detection tasks.
  */
-class INSPIRE_API RNetAdapt: public AnyNetAdapter {
+class INSPIRE_API RNetAdapt : public AnyNetAdapter {
 public:
     /**
      * @brief Constructor for the RNet class.
@@ -29,9 +30,8 @@ public:
      * @return float Score representing the quality or confidence of the refinement.
      */
     float operator()(const inspirecv::Image& bgr_affine);
-
 };
 
-}   //  namespace inspire
+}  //  namespace inspire
 
-#endif //INSPIRE_FACE_TRACK_MODULE_FACE_DETECT_RNET_ADAPT_H
+#endif  // INSPIRE_FACE_TRACK_MODULE_FACE_DETECT_RNET_ADAPT_H

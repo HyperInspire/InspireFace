@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2024/3/30.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef MODELLOADERTAR_INSPIREARCHIVE_H
 #define MODELLOADERTAR_INSPIREARCHIVE_H
@@ -19,20 +20,20 @@ enum {
     NOT_READ = -15,
 };
 
-class INSPIRE_API InspireArchive: SimpleArchive {
+class INSPIRE_API InspireArchive : SimpleArchive {
 public:
     InspireArchive() : SimpleArchive() {
         m_status_ = NOT_READ;
     }
 
-    explicit InspireArchive(const std::string& archiveFile) : SimpleArchive(archiveFile) {
+    explicit InspireArchive(const std::string &archiveFile) : SimpleArchive(archiveFile) {
         m_status_ = QueryStatus();
         if (m_status_ == SARC_SUCCESS) {
             m_status_ = loadManifestFile();
         }
     }
 
-    int32_t ReLoad(const std::string& archiveFile) {
+    int32_t ReLoad(const std::string &archiveFile) {
         auto ret = Reset(archiveFile);
         if (ret != SARC_SUCCESS) {
             return ret;
@@ -72,7 +73,6 @@ public:
     }
 
 private:
-
     int32_t loadManifestFile() {
         if (QueryLoadStatus() == SARC_SUCCESS) {
             auto configBuffer = GetFileContent(MANIFEST_FILE);
@@ -100,9 +100,8 @@ private:
 
     std::string m_tag_;
     std::string m_version_;
-
 };
 
-}   // namespace inspire
+}  // namespace inspire
 
-#endif //MODELLOADERTAR_INSPIREARCHIVE_H
+#endif  // MODELLOADERTAR_INSPIREARCHIVE_H

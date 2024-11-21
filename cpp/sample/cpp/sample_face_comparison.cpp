@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2024/4/20.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #include <iostream>
 #include <vector>
 #include "inspireface/c_api/inspireface.h"

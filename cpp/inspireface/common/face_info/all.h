@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/8/29.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIRE_FACE_FO_ALL_H
 #define INSPIRE_FACE_FO_ALL_H
@@ -9,4 +10,4 @@
 #include "face_action_data.h"
 #include "face_process.h"
 
-#endif //INSPIRE_FACE_FO_ALL_H
+#endif  // INSPIRE_FACE_FO_ALL_H

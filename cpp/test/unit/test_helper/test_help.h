@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/12.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef INSPIREFACE_TEST_TEST_HELP_H
 #define INSPIREFACE_TEST_TEST_HELP_H
