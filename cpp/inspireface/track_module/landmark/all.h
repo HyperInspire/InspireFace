@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/8/29.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #ifndef INSPIREFACE_LMK_ALL_H
 #define INSPIREFACE_LMK_ALL_H

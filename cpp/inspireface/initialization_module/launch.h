@@ -1,4 +1,7 @@
-// Created by tunm on 2024/04/17.
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIREFACE_LAUNCH_H
 #define INSPIREFACE_LAUNCH_H
@@ -25,7 +28,7 @@ public:
 
     // Loads the necessary resources from a specified path.
     // Returns an integer status code: 0 on success, non-zero on failure.
-    int32_t Load(const std::string &path);
+    int32_t Load(const std::string& path);
 
     // Provides access to the loaded InspireArchive instance.
     InspireArchive& getMArchive();
@@ -37,16 +40,15 @@ public:
     void Unload();
 
 private:
-    Launch() : m_load_(false) {} ///< Private constructor for the singleton pattern.
+    Launch() : m_load_(false) {}  ///< Private constructor for the singleton pattern.
 
-    static std::mutex mutex_;                         ///< Mutex for synchronizing access to the singleton instance.
-    static std::shared_ptr<Launch> instance_;         ///< The singleton instance of Launch.
+    static std::mutex mutex_;                  ///< Mutex for synchronizing access to the singleton instance.
+    static std::shared_ptr<Launch> instance_;  ///< The singleton instance of Launch.
 
     InspireArchive m_archive_;  ///< The archive containing all necessary resources.
     bool m_load_;               ///< Flag indicating whether the resources have been successfully loaded.
 };
 
+}  // namespace inspire
 
-}   // namespace inspire
-
-#endif //INSPIREFACE_LAUNCH_H
+#endif  // INSPIREFACE_LAUNCH_H

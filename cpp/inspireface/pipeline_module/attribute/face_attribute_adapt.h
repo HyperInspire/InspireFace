@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/9/8.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIRE_FACE_ATTRIBUTE_ADAPT_H
 #define INSPIRE_FACE_ATTRIBUTE_ADAPT_H
@@ -15,7 +16,7 @@ namespace inspire {
  *
  * This class inherits from AnyNet and provides methods for performing face attribute prediction.
  */
-class INSPIRE_API FaceAttributePredictAdapt : public AnyNetAdapter { 
+class INSPIRE_API FaceAttributePredictAdapt : public AnyNetAdapter {
 public:
     int32_t INPUT_WIDTH = 112;
     int32_t INPUT_HEIGHT = 112;
@@ -35,38 +36,26 @@ public:
 
 private:
     // Define primitive tag
-    const std::vector<std::string> m_original_labels_ = {
-        "Black", "East Asian", "Indian", "Latino_Hispanic", "Middle Eastern", "Southeast Asian", "White"
-    };
+    const std::vector<std::string> m_original_labels_ = {"Black",          "East Asian",      "Indian", "Latino_Hispanic",
+                                                         "Middle Eastern", "Southeast Asian", "White"};
 
     // Define simplified labels
-    const std::vector<std::string> m_simplified_labels_ = {
-        "Black", "Asian", "Latino/Hispanic", "Middle Eastern", "White"
-    };
+    const std::vector<std::string> m_simplified_labels_ = {"Black", "Asian", "Latino/Hispanic", "Middle Eastern", "White"};
 
     // Define the mapping from the original tag to the simplified tag
-    const std::unordered_map<std::string, std::string> m_label_map_ = {
-        {"Black", "Black"},
-        {"East Asian", "Asian"},
-        {"Indian", "Asian"},
-        {"Latino_Hispanic", "Latino/Hispanic"},
-        {"Middle Eastern", "Middle Eastern"},
-        {"Southeast Asian", "Asian"},
-        {"White", "White"}
-    };
+    const std::unordered_map<std::string, std::string> m_label_map_ = {{"Black", "Black"},
+                                                                       {"East Asian", "Asian"},
+                                                                       {"Indian", "Asian"},
+                                                                       {"Latino_Hispanic", "Latino/Hispanic"},
+                                                                       {"Middle Eastern", "Middle Eastern"},
+                                                                       {"Southeast Asian", "Asian"},
+                                                                       {"White", "White"}};
 
     // Define index maps for simplified labels
     const std::unordered_map<std::string, int> m_simplified_label_index_ = {
-        {"Black", 0},
-        {"Asian", 1},
-        {"Latino/Hispanic", 2},
-        {"Middle Eastern", 3},
-        {"White", 4}
-    };
-
+      {"Black", 0}, {"Asian", 1}, {"Latino/Hispanic", 2}, {"Middle Eastern", 3}, {"White", 4}};
 };
 
+}  // namespace inspire
 
-}   // namespace inspire
-
-#endif //INSPIRE_FACE_ATTRIBUTE_ADAPT_H
+#endif  // INSPIRE_FACE_ATTRIBUTE_ADAPT_H

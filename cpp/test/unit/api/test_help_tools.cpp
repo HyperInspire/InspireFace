@@ -1,14 +1,15 @@
-//
-// Created by Tunm-Air13 on 2024/3/20.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #include <iostream>
 #include "settings/test_settings.h"
 #include "../test_helper/test_help.h"
 
 TEST_CASE("test_HelpTools", "[help_tools]") {
-        DRAW_SPLIT_LINE
-        TEST_PRINT_OUTPUT(true);
+    DRAW_SPLIT_LINE
+    TEST_PRINT_OUTPUT(true);
 
     SECTION("Load lfw funneled data") {
 #ifdef ISF_ENABLE_USE_LFW_DATA
@@ -46,8 +47,8 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
         REQUIRE(ret == HSUCCEED);
         CHECK(count == numOfNeedImport);
 
-//        ret = HF_ViewFaceDBTable(session);
-//        REQUIRE(ret == HSUCCEED);
+        //        ret = HF_ViewFaceDBTable(session);
+        //        REQUIRE(ret == HSUCCEED);
 
         // Finish
         ret = HFReleaseInspireFaceSession(session);
@@ -56,7 +57,7 @@ TEST_CASE("test_HelpTools", "[help_tools]") {
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
 
-        delete []dbPathStr;
+        delete[] dbPathStr;
 
 #else
         TEST_PRINT("The test case that uses LFW is not enabled, so it will be skipped.");

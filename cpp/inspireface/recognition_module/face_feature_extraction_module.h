@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2024/4/12.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef INSPIRE_FACE_FEATURE_EXTRACTION_MODULE_H
 #define INSPIRE_FACE_FEATURE_EXTRACTION_MODULE_H
@@ -39,7 +40,8 @@ public:
      * @param embedded Output parameter to store the extracted facial feature.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t FaceExtract(inspirecv::InspireImageProcess &processor, const FaceObjectInternal& face, Embedded &embedded, float &norm, bool normalize=false);
+    int32_t FaceExtract(inspirecv::InspireImageProcess &processor, const FaceObjectInternal &face, Embedded &embedded, float &norm,
+                        bool normalize = false);
 
     /**
      * @brief Extracts a facial feature from an image and stores it in the provided 'embedded'.
@@ -49,7 +51,7 @@ public:
      * @param embedded Output parameter to store the extracted facial feature.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t FaceExtract(inspirecv::InspireImageProcess &processor, const HyperFaceData& face, Embedded &embedded, float &norm, bool normalize=true);
+    int32_t FaceExtract(inspirecv::InspireImageProcess &processor, const HyperFaceData &face, Embedded &embedded, float &norm, bool normalize = true);
 
     /**
      * @brief Gets the Extract instance associated with this FaceRecognition.
@@ -57,7 +59,6 @@ public:
      * @return const std::shared_ptr<Extract>& Pointer to the Extract instance.
      */
     const std::shared_ptr<ExtractAdapt> &getMExtract() const;
-    
 
 private:
     /**
@@ -66,15 +67,14 @@ private:
      * @param model Pointer to the loaded model.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t InitExtractInteraction(InspireModel& model);
+    int32_t InitExtractInteraction(InspireModel &model);
 
 private:
+    std::shared_ptr<ExtractAdapt> m_extract_;  ///< Pointer to the Extract instance.
 
-    std::shared_ptr<ExtractAdapt> m_extract_; ///< Pointer to the Extract instance.
-
-    int32_t m_status_code_;     ///< Status code
+    int32_t m_status_code_;  ///< Status code
 };
 
-}   // namespace inspire
+}  // namespace inspire
 
-#endif //INSPIRE_FACE_FEATURE_EXTRACTION_MODULE_H
+#endif  // INSPIRE_FACE_FEATURE_EXTRACTION_MODULE_H

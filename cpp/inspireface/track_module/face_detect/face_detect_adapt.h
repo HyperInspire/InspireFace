@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/5/6.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 
 #pragma once
 #ifndef INSPIRE_FACE_TRACK_MODULE_FACE_DETECT_FACE_DETECT_ADAPT_H
@@ -16,7 +17,7 @@ namespace inspire {
  *
  * This class provides functionalities to detect faces in images using neural network models.
  */
-class INSPIRE_API FaceDetectAdapt: public AnyNetAdapter {
+class INSPIRE_API FaceDetectAdapt : public AnyNetAdapter {
 public:
     /**
      * @brief Constructor for the FaceDetect class.
@@ -33,7 +34,6 @@ public:
      */
     FaceLocList operator()(const inspirecv::Image &bgr);
 
-    
     /** @brief Set non-maximum suppression threshold */
     void SetNmsThreshold(float mNmsThreshold);
 
@@ -65,23 +65,23 @@ private:
      * @param stride The stride of the detection.
      * @param results Decoded face locations.
      */
-    void _decode(const std::vector<float> &cls_pred, const std::vector<float> &box_pred, const std::vector<float>& lmk_pred, int stride, std::vector<FaceLoc> &results);
+    void _decode(const std::vector<float> &cls_pred, const std::vector<float> &box_pred, const std::vector<float> &lmk_pred, int stride,
+                 std::vector<FaceLoc> &results);
 
 private:
-    float m_nms_threshold_; ///< Threshold for non-maximum suppression.
-    float m_cls_threshold_; ///< Threshold for classification score.
-    int m_input_size_;      ///< Input size for the neural network model.
-
+    float m_nms_threshold_;  ///< Threshold for non-maximum suppression.
+    float m_cls_threshold_;  ///< Threshold for classification score.
+    int m_input_size_;       ///< Input size for the neural network model.
 };
 
-    /**
-    * @brief Sorts FaceLoc objects in descending order of area.
-    * @param a The first FaceLoc object.
-    * @param b The second FaceLoc object.
-    * @return bool True if 'a' is larger than 'b'.
-    */
-    bool SortBoxSizeAdapt(const FaceLoc &a, const FaceLoc &b);
+/**
+ * @brief Sorts FaceLoc objects in descending order of area.
+ * @param a The first FaceLoc object.
+ * @param b The second FaceLoc object.
+ * @return bool True if 'a' is larger than 'b'.
+ */
+bool SortBoxSizeAdapt(const FaceLoc &a, const FaceLoc &b);
 
-}
+}  // namespace inspire
 
-#endif //INSPIRE_FACE_TRACK_MODULE_FACE_DETECT_FACE_DETECT_ADAPT_H
+#endif  // INSPIRE_FACE_TRACK_MODULE_FACE_DETECT_FACE_DETECT_ADAPT_H
