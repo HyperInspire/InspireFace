@@ -31,10 +31,10 @@ int main() {
     auto img = cv::imread("/Users/tunm/Downloads/xtl.png");
 
     double time;
-    time = (double) cv::getTickCount();
+    time = (double)cv::getTickCount();
     std::vector<FaceLoc> results = detect(img);
-    time = ((double) cv::getTickCount() - time) / cv::getTickFrequency();
-    std::cout << "use time：" << time << "秒\n";
+    time = ((double)cv::getTickCount() - time) / cv::getTickFrequency();
+    std::cout << "use time：" << time << "s\n";
 
     for (size_t i = 0; i < results.size(); i++) {
         auto &item = results[i];
