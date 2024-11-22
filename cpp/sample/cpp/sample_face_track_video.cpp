@@ -28,8 +28,8 @@ cv::Scalar generateColor(int id) {
     int maxID = 100;
     id = id % maxID;
 
-    int hue = (id * 360 / maxID) % 360; 
-    int saturation = 255; 
+    int hue = (id * 360 / maxID) % 360;
+    int saturation = 255;
     int value = 200;
 
     cv::Mat hsv(1, 1, CV_8UC3, cv::Scalar(hue, saturation, value));
@@ -39,7 +39,6 @@ cv::Scalar generateColor(int id) {
     cv::Vec3b rgbColor = rgb.at<cv::Vec3b>(0, 0);
     return cv::Scalar(rgbColor[0], rgbColor[1], rgbColor[2]);
 }
-
 
 int main(int argc, char* argv[]) {
     // Check whether the number of parameters is correct
@@ -107,11 +106,11 @@ int main(int argc, char* argv[]) {
     while (cap.read(frame)) {
         // Prepare an image parameter structure for configuration
         HFImageData imageParam = {0};
-        imageParam.data = frame.data;       // Data buffer
-        imageParam.width = frame.cols;      // Target view width
-        imageParam.height = frame.rows;      // Target view width
-        imageParam.rotation = HF_CAMERA_ROTATION_0;      // Data source rotate
-        imageParam.format = HF_STREAM_BGR;      // Data source format
+        imageParam.data = frame.data;                // Data buffer
+        imageParam.width = frame.cols;               // Target view width
+        imageParam.height = frame.rows;              // Target view width
+        imageParam.rotation = HF_CAMERA_ROTATION_0;  // Data source rotate
+        imageParam.format = HF_STREAM_BGR;           // Data source format
 
         // Create an image data stream
         HFImageStream imageHandle = {0};
@@ -122,11 +121,11 @@ int main(int argc, char* argv[]) {
         }
 
         // Execute HF_FaceContextRunFaceTrack captures face information in an image
-        double time = (double) cv::getTickCount();
+        double time = (double)cv::getTickCount();
         HFMultipleFaceData multipleFaceData = {0};
         ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
-        time = ((double) cv::getTickCount() - time) / cv::getTickFrequency();
-        std::cout << "use time：" << time << "秒\n";
+        time = ((double)cv::getTickCount() - time) / cv::getTickFrequency();
+        std::cout << "use time：" << time << "s\n";
         if (ret != HSUCCEED) {
             std::cout << "Execute HFExecuteFaceTrack error: " << ret << std::endl;
             return ret;
@@ -143,23 +142,20 @@ int main(int argc, char* argv[]) {
         drawMode(draw, detMode);
         if (faceNum > 0) {
             ret = HFMultipleFacePipelineProcessOptional(session, imageHandle, &multipleFaceData, option);
-            if (ret != HSUCCEED)
-            {   
+            if (ret != HSUCCEED) {
                 std::cout << "HFMultipleFacePipelineProcessOptional error: " << ret << std::endl;
                 return ret;
             }
             HFFaceIntereactionState result;
             ret = HFGetFaceIntereactionStateResult(session, &result);
-             if (ret != HSUCCEED)
-            {   
+            if (ret != HSUCCEED) {
                 std::cout << "HFGetFaceIntereactionStateResult error: " << ret << std::endl;
                 return ret;
             }
             std::cout << "Left eye status: " << result.leftEyeStatusConfidence[0] << std::endl;
             std::cout << "Righ eye status: " << result.rightEyeStatusConfidence[0] << std::endl;
-
         }
-        
+
         for (int index = 0; index < faceNum; ++index) {
             // std::cout << "========================================" << std::endl;
             // std::cout << "Process face index: " << index << std::endl;
@@ -167,8 +163,8 @@ int main(int argc, char* argv[]) {
             auto trackId = multipleFaceData.trackIds[index];
 
             // Use OpenCV's Rect to receive face bounding boxes
-            auto rect = cv::Rect(multipleFaceData.rects[index].x, multipleFaceData.rects[index].y,
-                                 multipleFaceData.rects[index].width, multipleFaceData.rects[index].height);
+            auto rect = cv::Rect(multipleFaceData.rects[index].x, multipleFaceData.rects[index].y, multipleFaceData.rects[index].width,
+                                 multipleFaceData.rects[index].height);
             cv::rectangle(draw, rect, generateColor(trackId), 3);
 
             // std::cout << "FaceID: " << trackId << std::endl;
@@ -179,8 +175,8 @@ int main(int argc, char* argv[]) {
             //           << ", Pitch: " << multipleFaceData.angles.pitch[index] << std::endl;
 
             // Add TrackID to the drawing
-            cv::putText(draw, "ID: " + std::to_string(trackId), cv::Point(rect.x, rect.y - 10),
-                        cv::FONT_HERSHEY_SIMPLEX, 0.5, generateColor(trackId), 2);
+            cv::putText(draw, "ID: " + std::to_string(trackId), cv::Point(rect.x, rect.y - 10), cv::FONT_HERSHEY_SIMPLEX, 0.5, generateColor(trackId),
+                        2);
 
             HInt32 numOfLmk;
             HFGetNumOfFaceDenseLandmark(&numOfLmk);
@@ -195,7 +191,7 @@ int main(int argc, char* argv[]) {
                 cv::circle(draw, p, 0, generateColor(trackId), 2);
             }
         }
-        
+
         cv::imshow("w", draw);
         cv::waitKey(1);
 
