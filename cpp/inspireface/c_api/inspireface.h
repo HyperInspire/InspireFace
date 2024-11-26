@@ -481,9 +481,12 @@ typedef enum HFSearchMode {
     HF_SEARCH_MODE_EXHAUSTIVE,  // Exhaustive mode: Searches until the best match is found.
 } HFSearchMode;
 
+/**
+ * @brief Primary key mode for face feature management.
+ */
 typedef enum HFPKMode {
-    HF_PK_AUTO_INCREMENT = 0,
-    HF_PK_MANUAL_INPUT,
+    HF_PK_AUTO_INCREMENT = 0,  ///< Auto-increment mode for primary key.
+    HF_PK_MANUAL_INPUT,        ///< Manual input mode for primary key.
 } HFPKMode;
 
 /**

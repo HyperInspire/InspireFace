@@ -122,6 +122,13 @@ public:
      */
     int32_t FaceFeatureExtract(inspirecv::InspireImageProcess& process, FaceBasicData& data);
 
+    /**
+     * @brief Gets the face alignment image.
+     * @param process The image process object.
+     * @param data The face basic data.
+     * @param image The output image.
+     * @return int32_t The status code of the operation.
+     */
     int32_t FaceGetFaceAlignmentImage(inspirecv::InspireImageProcess& process, FaceBasicData& data, inspirecv::Image& image);
 
     /**
@@ -299,6 +306,10 @@ public:
      */
     const std::vector<float>& GetDetConfidenceCache() const;
 
+    /**
+     * @brief Gets the cache of face feature norm.
+     * @return A const reference to a float containing face feature norm.
+     */
     const float GetFaceFeatureNormCache() const;
 
 private:
@@ -335,11 +346,11 @@ private:
     std::vector<int> m_action_jaw_open_results_cache_;    ///< Cache for jaw open action in face interaction
     std::vector<int> m_action_raise_head_results_cache_;  ///< Cache for raise head action in face interaction
 
-    std::vector<int> m_attribute_race_results_cache_;
-    std::vector<int> m_attribute_gender_results_cache_;
-    std::vector<int> m_attribute_age_results_cache_;
-    Embedded m_face_feature_cache_;  ///< Cache for current face feature data
-    float m_face_feature_norm_;
+    std::vector<int> m_attribute_race_results_cache_;    ///< Cache for face attribute race results
+    std::vector<int> m_attribute_gender_results_cache_;  ///< Cache for face attribute gender results
+    std::vector<int> m_attribute_age_results_cache_;     ///< Cache for face attribute age results
+    Embedded m_face_feature_cache_;                      ///< Cache for current face feature data
+    float m_face_feature_norm_;                          ///< Cache for face feature norm
 
     std::mutex m_mtx_;  ///< Mutex for thread safety.
 };

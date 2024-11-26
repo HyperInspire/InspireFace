@@ -60,12 +60,10 @@ FaceLocList FaceDetectAdapt::operator()(const inspirecv::Image &bgr) {
         face.y1 = face.y1 / scale;
         face.x2 = face.x2 / scale;
         face.y2 = face.y2 / scale;
-        //        if(use_kps_) {
         for (int i = 0; i < 5; ++i) {
             face.lmk[i * 2 + 0] = face.lmk[i * 2 + 0] / scale;
             face.lmk[i * 2 + 1] = face.lmk[i * 2 + 1] / scale;
         }
-        //        }
     }
     return results;
 }
@@ -113,11 +111,6 @@ void FaceDetectAdapt::_decode(const std::vector<float> &cls_pred, const std::vec
                               std::vector<FaceLoc> &results) {
     std::vector<float> anchors_center;
     _generate_anchors(stride, m_input_size_, 2, anchors_center);
-    //    const float *scores = cls_pred->host<float>();
-    //    const float *boxes = box_pred->host<float>();
-    //    float *lmk;
-    //    if(use_kps_)
-    //    const float *lmk = lmk_pred->host<float>();
 
     for (int i = 0; i < anchors_center.size() / 2; ++i) {
         if (cls_pred[i] > m_cls_threshold_) {
