@@ -27,12 +27,6 @@ FacePoseQualityAdaptResult FacePoseQualityAdapt::operator()(const inspirecv::Ima
         res.lmk[i].SetY((face_pts5[i * 2 + 1] + 1) * (INPUT_HEIGHT / 2));
     }
 
-    //    for (auto &p: res.lmk) {
-    //        cv::circle(bgr_affine, p, 0, cv::Scalar(0, 0, 255), 5);
-    //    }
-    //    cv::imshow("ww", bgr_affine);
-    //    cv::waitKey(0);
-
     return res;
 }
 
