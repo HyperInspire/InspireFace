@@ -238,7 +238,7 @@ HResult HFDeBugImageStreamDecodeSave(HFImageStream streamHandle, HPath savePath)
     auto image = stream->impl.ExecuteImageScaleProcessing(1.0f, true);
     auto ret = image.Write(savePath);
     if (ret) {
-        INSPIRE_LOGE("Image saved successfully to %s", savePath);
+        INSPIRE_LOGI("Image saved successfully to %s", savePath);
         return HSUCCEED;
     } else {
         INSPIRE_LOGE("Failed to save image to %s", savePath);
