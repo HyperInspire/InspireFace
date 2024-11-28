@@ -290,7 +290,7 @@ public class InspireFace extends TypeDefine {
 
     /**
      * Face comparison
-     * @param feature1
+     * @param feature1 FaceFeature object
      * @param feature2 FaceFeature object
      * @return Comparison result
      */
