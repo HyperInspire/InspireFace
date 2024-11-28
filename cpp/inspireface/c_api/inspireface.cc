@@ -858,7 +858,7 @@ HResult HFFaceQualityDetect(HFSession session, HFFaceBasicToken singleFace, HFlo
     return ret;
 }
 
-HResult HFGetFaceIntereactionStateResult(HFSession session, PHFFaceIntereactionState result) {
+HResult HFGetFaceInteractionStateResult(HFSession session, PHFFaceInteractionState result) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -873,7 +873,7 @@ HResult HFGetFaceIntereactionStateResult(HFSession session, PHFFaceIntereactionS
     return HSUCCEED;
 }
 
-HResult HFGetFaceIntereactionActionsResult(HFSession session, PHFFaceIntereactionsActions actions) {
+HResult HFGetFaceInteractionActionsResult(HFSession session, PHFFaceInteractionsActions actions) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -885,7 +885,7 @@ HResult HFGetFaceIntereactionActionsResult(HFSession session, PHFFaceIntereactio
     actions->normal = (HInt32 *)ctx->impl.GetFaceNormalAactionsResultCache().data();
     actions->blink = (HInt32 *)ctx->impl.GetFaceBlinkAactionsResultCache().data();
     actions->shake = (HInt32 *)ctx->impl.GetFaceShakeAactionsResultCache().data();
-    actions->headRiase = (HInt32 *)ctx->impl.GetFaceRaiseHeadAactionsResultCache().data();
+    actions->headRaise = (HInt32 *)ctx->impl.GetFaceRaiseHeadAactionsResultCache().data();
     actions->jawOpen = (HInt32 *)ctx->impl.GetFaceJawOpenAactionsResultCache().data();
 
     return HSUCCEED;

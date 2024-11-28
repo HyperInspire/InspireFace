@@ -318,8 +318,8 @@ TEST_CASE("test_FaceReaction", "[face_reaction]") {
         REQUIRE(ret == HSUCCEED);
 
         // Get results
-        HFFaceIntereactionState result;
-        ret = HFGetFaceIntereactionStateResult(session, &result);
+        HFFaceInteractionState result;
+        ret = HFGetFaceInteractionStateResult(session, &result);
         REQUIRE(multipleFaceData.detectedNum == result.num);
         REQUIRE(ret == HSUCCEED);
 
@@ -349,8 +349,8 @@ TEST_CASE("test_FaceReaction", "[face_reaction]") {
         REQUIRE(ret == HSUCCEED);
 
         // Get results
-        HFFaceIntereactionState result;
-        ret = HFGetFaceIntereactionStateResult(session, &result);
+        HFFaceInteractionState result;
+        ret = HFGetFaceInteractionStateResult(session, &result);
         REQUIRE(multipleFaceData.detectedNum == result.num);
         REQUIRE(ret == HSUCCEED);
 
@@ -380,8 +380,8 @@ TEST_CASE("test_FaceReaction", "[face_reaction]") {
         REQUIRE(ret == HSUCCEED);
 
         // Get results
-        HFFaceIntereactionState result;
-        ret = HFGetFaceIntereactionStateResult(session, &result);
+        HFFaceInteractionState result;
+        ret = HFGetFaceInteractionStateResult(session, &result);
         REQUIRE(multipleFaceData.detectedNum == result.num);
         REQUIRE(ret == HSUCCEED);
 
