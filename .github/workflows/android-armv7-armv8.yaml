@@ -1,6 +1,7 @@
 name: Build Android-armv7-armv8
 
 on:
+  workflow_dispatch:
   push:
     branches: ["feature/build_android"]
 
