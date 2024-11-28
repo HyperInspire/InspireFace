@@ -505,23 +505,17 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubDataEnable)(JNIEnv *en
     config.enablePersistence = env->GetIntField(configuration, enablePersistenceField);
 
     // Add null check for dbPath
-    INSPIRE_LOGD("1");
     jstring dbPath = (jstring)env->GetObjectField(configuration, persistenceDbPathField);
     if (dbPath != nullptr) {
-        INSPIRE_LOGD("not null");
         const char *nativeDbPath = env->GetStringUTFChars(dbPath, nullptr);
         if (nativeDbPath != nullptr) {
-            INSPIRE_LOGD("db not null");
             config.persistenceDbPath = const_cast<char *>(nativeDbPath);
-            INSPIRE_LOGD("db path: %s", config.persistenceDbPath);
         } else {
             config.persistenceDbPath[0] = '\0';
         }
     } else {
-        INSPIRE_LOGD("null");
         config.persistenceDbPath[0] = '\0';
     }
-    INSPIRE_LOGD("4");
 
     config.searchThreshold = env->GetFloatField(configuration, searchThresholdField);
     config.searchMode = (HFSearchMode)env->GetIntField(configuration, searchModeField);
@@ -871,6 +865,407 @@ JNIEXPORT jfloat INSPIRE_FACE_JNI(InspireFace_FaceComparison)(JNIEnv *env, jobje
     }
 
     return compareResult;
+}
+
+JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNIEnv *env, jobject thiz, jobject session, jobject streamHandle,
+                                                                             jobject faces, jobject parameter) {
+    // Get session handle
+    jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
+    jfieldID handleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, handleField);
+
+    // Get stream handle
+    jclass streamClass = env->FindClass("com/insightface/sdk/inspireface/base/ImageStream");
+    handleField = env->GetFieldID(streamClass, "handle", "J");
+    jlong streamHandleValue = env->GetLongField(streamHandle, handleField);
+
+    // Get faces data
+    jclass facesClass = env->FindClass("com/insightface/sdk/inspireface/base/MultipleFaceData");
+    jfieldID numField = env->GetFieldID(facesClass, "detectedNum", "I");
+    jfieldID tokensField = env->GetFieldID(facesClass, "tokens", "[Lcom/insightface/sdk/inspireface/base/FaceBasicToken;");
+
+    jint detectedNum = env->GetIntField(faces, numField);
+    jobjectArray tokenArray = (jobjectArray)env->GetObjectField(faces, tokensField);
+
+    // Create HFMultipleFaceData struct
+    HFMultipleFaceData faceData;
+    faceData.detectedNum = detectedNum;
+
+    // Get token data
+    HFFaceBasicToken *tokens = nullptr;
+    if (detectedNum > 0) {
+        jclass tokenClass = env->FindClass("com/insightface/sdk/inspireface/base/FaceBasicToken");
+        jfieldID handleTokenField = env->GetFieldID(tokenClass, "handle", "J");
+        jfieldID sizeField = env->GetFieldID(tokenClass, "size", "I");
+
+        tokens = new HFFaceBasicToken[detectedNum];
+        for (int i = 0; i < detectedNum; i++) {
+            jobject token = env->GetObjectArrayElement(tokenArray, i);
+            tokens[i].data = (void *)env->GetLongField(token, handleTokenField);
+            tokens[i].size = env->GetIntField(token, sizeField);
+            env->DeleteLocalRef(token);
+        }
+        faceData.tokens = tokens;
+    } else {
+        faceData.tokens = nullptr;
+    }
+
+    // Get custom parameter fields
+    jclass paramClass = env->FindClass("com/insightface/sdk/inspireface/base/CustomParameter");
+    jfieldID enableRecognitionField = env->GetFieldID(paramClass, "enableRecognition", "I");
+    jfieldID enableLivenessField = env->GetFieldID(paramClass, "enableLiveness", "I");
+    jfieldID enableIrLivenessField = env->GetFieldID(paramClass, "enableIrLiveness", "I");
+    jfieldID enableMaskDetectField = env->GetFieldID(paramClass, "enableMaskDetect", "I");
+    jfieldID enableFaceQualityField = env->GetFieldID(paramClass, "enableFaceQuality", "I");
+    jfieldID enableFaceAttributeField = env->GetFieldID(paramClass, "enableFaceAttribute", "I");
+    jfieldID enableInteractionLivenessField = env->GetFieldID(paramClass, "enableInteractionLiveness", "I");
+
+    // Get parameter values
+    HFSessionCustomParameter customParam;
+    customParam.enable_recognition = env->GetIntField(parameter, enableRecognitionField);
+    customParam.enable_liveness = env->GetIntField(parameter, enableLivenessField);
+    customParam.enable_ir_liveness = env->GetIntField(parameter, enableIrLivenessField);
+    customParam.enable_mask_detect = env->GetIntField(parameter, enableMaskDetectField);
+    customParam.enable_face_quality = env->GetIntField(parameter, enableFaceQualityField);
+    customParam.enable_face_attribute = env->GetIntField(parameter, enableFaceAttributeField);
+    customParam.enable_interaction_liveness = env->GetIntField(parameter, enableInteractionLivenessField);
+
+    // Call native function
+    HResult ret = HFMultipleFacePipelineProcess((HFSession)sessionHandle, (HFImageStream)streamHandleValue, &faceData, customParam);
+
+    // Clean up allocated memory
+    if (tokens != nullptr) {
+        delete[] tokens;
+    }
+
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("Failed to process multiple faces, error code: %d", ret);
+        return false;
+    }
+
+    return true;
+}
+
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetRGBLivenessConfidence)(JNIEnv *env, jobject thiz, jobject session) {
+    // Get session handle
+    jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
+    jfieldID handleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, handleField);
+
+    // Create native confidence struct
+    HFRGBLivenessConfidence confidence;
+    HResult ret = HFGetRGBLivenessConfidence((HFSession)sessionHandle, &confidence);
+
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("Failed to get RGB liveness confidence, error code: %d", ret);
+        return nullptr;
+    }
+
+    // Create Java RGBLivenessConfidence object
+    jclass confidenceClass = env->FindClass("com/insightface/sdk/inspireface/base/RGBLivenessConfidence");
+    jobject confidenceObj = env->AllocObject(confidenceClass);
+
+    // Set num field
+    jfieldID numField = env->GetFieldID(confidenceClass, "num", "I");
+    env->SetIntField(confidenceObj, numField, confidence.num);
+
+    // Set confidence array field
+    jfieldID confidenceField = env->GetFieldID(confidenceClass, "confidence", "[F");
+    jfloatArray confidenceArray = env->NewFloatArray(confidence.num);
+    float *confidencePtr = confidence.confidence;
+    env->SetFloatArrayRegion(confidenceArray, 0, confidence.num, confidencePtr);
+    env->SetObjectField(confidenceObj, confidenceField, confidenceArray);
+
+    return confidenceObj;
+}
+
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceQualityConfidence)(JNIEnv *env, jobject thiz, jobject session) {
+    // Get session handle
+    jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
+    jfieldID handleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, handleField);
+
+    // Create native confidence struct
+    HFFaceQualityConfidence confidence;
+    HResult ret = HFGetFaceQualityConfidence((HFSession)sessionHandle, &confidence);
+
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("Failed to get face quality confidence, error code: %d", ret);
+        return nullptr;
+    }
+
+    // Create Java FaceQualityConfidence object
+    jclass confidenceClass = env->FindClass("com/insightface/sdk/inspireface/base/FaceQualityConfidence");
+    jobject confidenceObj = env->AllocObject(confidenceClass);
+
+    // Set num field
+    jfieldID numField = env->GetFieldID(confidenceClass, "num", "I");
+    env->SetIntField(confidenceObj, numField, confidence.num);
+
+    // Set confidence array field
+    jfieldID confidenceField = env->GetFieldID(confidenceClass, "confidence", "[F");
+    jfloatArray confidenceArray = env->NewFloatArray(confidence.num);
+    float *confidencePtr = confidence.confidence;
+    env->SetFloatArrayRegion(confidenceArray, 0, confidence.num, confidencePtr);
+    env->SetObjectField(confidenceObj, confidenceField, confidenceArray);
+
+    return confidenceObj;
+}
+
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceMaskConfidence)(JNIEnv *env, jobject thiz, jobject session) {
+    // Get session handle
+    jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
+    jfieldID handleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, handleField);
+
+    // Create native confidence struct
+    HFFaceMaskConfidence confidence;
+    HResult ret = HFGetFaceMaskConfidence((HFSession)sessionHandle, &confidence);
+
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("Failed to get face mask confidence, error code: %d", ret);
+        return nullptr;
+    }
+
+    // Create Java FaceMaskConfidence object
+    jclass confidenceClass = env->FindClass("com/insightface/sdk/inspireface/base/FaceMaskConfidence");
+    jobject confidenceObj = env->AllocObject(confidenceClass);
+
+    // Set num field
+    jfieldID numField = env->GetFieldID(confidenceClass, "num", "I");
+    env->SetIntField(confidenceObj, numField, confidence.num);
+
+    // Set confidence array field
+    jfieldID confidenceField = env->GetFieldID(confidenceClass, "confidence", "[F");
+    jfloatArray confidenceArray = env->NewFloatArray(confidence.num);
+    float *confidencePtr = confidence.confidence;
+    env->SetFloatArrayRegion(confidenceArray, 0, confidence.num, confidencePtr);
+    env->SetObjectField(confidenceObj, confidenceField, confidenceArray);
+
+    return confidenceObj;
+}
+
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceInteractionStateResult)(JNIEnv *env, jobject thiz, jobject session) {
+    // Get session handle
+    jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
+    jfieldID handleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, handleField);
+
+    // Create native state struct
+    HFFaceInteractionState state;
+    HResult ret = HFGetFaceInteractionStateResult((HFSession)sessionHandle, &state);
+
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("Failed to get face interaction state result, error code: %d", ret);
+        return nullptr;
+    }
+
+    // Create Java FaceInteractionState object
+    jclass stateClass = env->FindClass("com/insightface/sdk/inspireface/base/FaceInteractionState");
+    jobject stateObj = env->AllocObject(stateClass);
+
+    // Set num field
+    jfieldID numField = env->GetFieldID(stateClass, "num", "I");
+    env->SetIntField(stateObj, numField, state.num);
+
+    // Set leftEyeStatusConfidence array field
+    jfieldID leftEyeField = env->GetFieldID(stateClass, "leftEyeStatusConfidence", "[F");
+    jfloatArray leftEyeArray = env->NewFloatArray(state.num);
+    float *leftEyePtr = state.leftEyeStatusConfidence;
+    env->SetFloatArrayRegion(leftEyeArray, 0, state.num, leftEyePtr);
+    env->SetObjectField(stateObj, leftEyeField, leftEyeArray);
+
+    // Set rightEyeStatusConfidence array field
+    jfieldID rightEyeField = env->GetFieldID(stateClass, "rightEyeStatusConfidence", "[F");
+    jfloatArray rightEyeArray = env->NewFloatArray(state.num);
+    float *rightEyePtr = state.rightEyeStatusConfidence;
+    env->SetFloatArrayRegion(rightEyeArray, 0, state.num, rightEyePtr);
+    env->SetObjectField(stateObj, rightEyeField, rightEyeArray);
+
+    return stateObj;
+}
+
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceInteractionActionsResult)(JNIEnv *env, jobject thiz, jobject session) {
+    // Get session handle
+    jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
+    jfieldID handleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, handleField);
+
+    // Create native actions struct
+    HFFaceInteractionsActions actions;
+    HResult ret = HFGetFaceInteractionActionsResult((HFSession)sessionHandle, &actions);
+
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("Failed to get face interaction actions result, error code: %d", ret);
+        return nullptr;
+    }
+
+    // Create Java FaceInteractionsActions object
+    jclass actionsClass = env->FindClass("com/insightface/sdk/inspireface/base/FaceInteractionsActions");
+    jobject actionsObj = env->AllocObject(actionsClass);
+
+    // Set num field
+    jfieldID numField = env->GetFieldID(actionsClass, "num", "I");
+    env->SetIntField(actionsObj, numField, actions.num);
+
+    // Set normal array field
+    jfieldID normalField = env->GetFieldID(actionsClass, "normal", "[I");
+    jintArray normalArray = env->NewIntArray(actions.num);
+    int *normalPtr = actions.normal;
+    env->SetIntArrayRegion(normalArray, 0, actions.num, normalPtr);
+    env->SetObjectField(actionsObj, normalField, normalArray);
+
+    // Set shake array field
+    jfieldID shakeField = env->GetFieldID(actionsClass, "shake", "[I");
+    jintArray shakeArray = env->NewIntArray(actions.num);
+    int *shakePtr = actions.shake;
+    env->SetIntArrayRegion(shakeArray, 0, actions.num, shakePtr);
+    env->SetObjectField(actionsObj, shakeField, shakeArray);
+
+    // Set jawOpen array field
+    jfieldID jawOpenField = env->GetFieldID(actionsClass, "jawOpen", "[I");
+    jintArray jawOpenArray = env->NewIntArray(actions.num);
+    int *jawOpenPtr = actions.jawOpen;
+    env->SetIntArrayRegion(jawOpenArray, 0, actions.num, jawOpenPtr);
+    env->SetObjectField(actionsObj, jawOpenField, jawOpenArray);
+
+    // Set headRaise array field
+    jfieldID headRaiseField = env->GetFieldID(actionsClass, "headRaise", "[I");
+    jintArray headRaiseArray = env->NewIntArray(actions.num);
+    int *headRaisePtr = actions.headRaise;
+    env->SetIntArrayRegion(headRaiseArray, 0, actions.num, headRaisePtr);
+    env->SetObjectField(actionsObj, headRaiseField, headRaiseArray);
+
+    // Set blink array field
+    jfieldID blinkField = env->GetFieldID(actionsClass, "blink", "[I");
+    jintArray blinkArray = env->NewIntArray(actions.num);
+    int *blinkPtr = actions.blink;
+    env->SetIntArrayRegion(blinkArray, 0, actions.num, blinkPtr);
+    env->SetObjectField(actionsObj, blinkField, blinkArray);
+
+    return actionsObj;
+}
+
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceAttributeResult)(JNIEnv *env, jobject thiz, jobject session) {
+    // Validate input parameters
+    if (!env || !session) {
+        INSPIRE_LOGE("Invalid input parameters");
+        return nullptr;
+    }
+
+    // Get session handle
+    jclass sessionClass = env->GetObjectClass(session);
+    jfieldID handleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, handleField);
+    if (!sessionHandle) {
+        INSPIRE_LOGE("Invalid session handle");
+        return nullptr;
+    }
+
+    // Get face attribute results
+    HFFaceAttributeResult results = {};
+    HResult ret = HFGetFaceAttributeResult((HFSession)sessionHandle, &results);
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("Failed to get face attribute result, error code: %d", ret);
+        return nullptr;
+    }
+
+    // Create Java FaceAttributeResult object
+    jclass attributeClass = env->FindClass("com/insightface/sdk/inspireface/base/FaceAttributeResult");
+    if (!attributeClass) {
+        INSPIRE_LOGE("Failed to find FaceAttributeResult class");
+        return nullptr;
+    }
+
+    jmethodID constructor = env->GetMethodID(attributeClass, "<init>", "()V");
+    jobject attributeObj = env->NewObject(attributeClass, constructor);
+    if (!attributeObj) {
+        INSPIRE_LOGE("Failed to create FaceAttributeResult object");
+        return nullptr;
+    }
+
+    // Set fields
+    jfieldID numField = env->GetFieldID(attributeClass, "num", "I");
+    jfieldID raceField = env->GetFieldID(attributeClass, "race", "[I");
+    jfieldID genderField = env->GetFieldID(attributeClass, "gender", "[I");
+    jfieldID ageBracketField = env->GetFieldID(attributeClass, "ageBracket", "[I");
+
+    if (!numField || !raceField || !genderField || !ageBracketField) {
+        INSPIRE_LOGE("Failed to get field IDs");
+        return nullptr;
+    }
+
+    // Set num
+    env->SetIntField(attributeObj, numField, results.num);
+
+    // Set arrays
+    jintArray raceArray = env->NewIntArray(results.num);
+    jintArray genderArray = env->NewIntArray(results.num);
+    jintArray ageBracketArray = env->NewIntArray(results.num);
+
+    if (!raceArray || !genderArray || !ageBracketArray) {
+        INSPIRE_LOGE("Failed to create arrays");
+        return nullptr;
+    }
+
+    env->SetIntArrayRegion(raceArray, 0, results.num, results.race);
+    env->SetIntArrayRegion(genderArray, 0, results.num, results.gender);
+    env->SetIntArrayRegion(ageBracketArray, 0, results.num, results.ageBracket);
+
+    env->SetObjectField(attributeObj, raceField, raceArray);
+    env->SetObjectField(attributeObj, genderField, genderArray);
+    env->SetObjectField(attributeObj, ageBracketField, ageBracketArray);
+
+    return attributeObj;
+}
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_QueryInspireFaceVersion)(JNIEnv *env, jobject thiz) {
+    // Get version info
+    HFInspireFaceVersion versionInfo;
+    HFQueryInspireFaceVersion(&versionInfo);
+
+    // Create new InspireFaceVersion object
+    jclass versionClass = env->FindClass("com/insightface/sdk/inspireface/base/InspireFaceVersion");
+    if (!versionClass) {
+        INSPIRE_LOGE("Failed to find InspireFaceVersion class");
+        return nullptr;
+    }
+
+    jmethodID constructor = env->GetMethodID(versionClass, "<init>", "()V");
+    jobject version = env->NewObject(versionClass, constructor);
+    if (!version) {
+        INSPIRE_LOGE("Failed to create InspireFaceVersion object");
+        return nullptr;
+    }
+
+    // Get field IDs
+    jfieldID majorField = env->GetFieldID(versionClass, "major", "I");
+    jfieldID minorField = env->GetFieldID(versionClass, "minor", "I");
+    jfieldID patchField = env->GetFieldID(versionClass, "patch", "I");
+    jfieldID infoField = env->GetFieldID(versionClass, "information", "Ljava/lang/String;");
+
+    if (!majorField || !minorField || !patchField || !infoField) {
+        INSPIRE_LOGE("Failed to get InspireFaceVersion field IDs");
+        return nullptr;
+    }
+
+    // Set version fields
+    env->SetIntField(version, majorField, versionInfo.major);
+    env->SetIntField(version, minorField, versionInfo.minor);
+    env->SetIntField(version, patchField, versionInfo.patch);
+
+    // Get extended information
+    HFInspireFaceExtendedInformation extendedInfo;
+    HFQueryInspireFaceExtendedInformation(&extendedInfo);
+
+    // Convert C string to Java string and set information field
+    jstring infoString = env->NewStringUTF(extendedInfo.information);
+    env->SetObjectField(version, infoField, infoString);
+
+    return version;
+}
+
+JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetLogLevel)(JNIEnv *env, jobject thiz, jint level) {
+    HFSetLogLevel((HFLogLevel)level);
 }
 
 }  // extern "C"
