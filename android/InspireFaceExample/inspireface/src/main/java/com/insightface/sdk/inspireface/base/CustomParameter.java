@@ -12,7 +12,6 @@ public class CustomParameter {
 
     public CustomParameter() {}
 
-
     public CustomParameter enableFaceAttribute(boolean enable) {
         this.enableFaceAttribute = enable ? 1 : 0;
         return this;

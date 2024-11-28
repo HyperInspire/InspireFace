@@ -758,32 +758,32 @@ HYPER_CAPI_EXPORT extern HResult HFFaceQualityDetect(HFSession session, HFFaceBa
 /**
  * @brief Facial states in the face interaction module.
  */
-typedef struct HFFaceIntereactionState {
+typedef struct HFFaceInteractionState {
     HInt32 num;                        ///< Number of faces detected.
     HPFloat leftEyeStatusConfidence;   ///< Left eye state: confidence close to 1 means open, close
                                        ///< to 0 means closed.
     HPFloat rightEyeStatusConfidence;  ///< Right eye state: confidence close to 1 means open, close
                                        ///< to 0 means closed.
-} HFFaceIntereactionState, *PHFFaceIntereactionState;
+} HFFaceInteractionState, *PHFFaceInteractionState;
 
 /**
  * @brief Get the prediction results of face interaction.
  * @param session Handle to the session.
  * @param result Facial state prediction results in the face interaction module.
  */
-HYPER_CAPI_EXPORT extern HResult HFGetFaceIntereactionStateResult(HFSession session, PHFFaceIntereactionState result);
+HYPER_CAPI_EXPORT extern HResult HFGetFaceInteractionStateResult(HFSession session, PHFFaceInteractionState result);
 
 /**
  * @brief Actions detected in the face interaction module.
  */
-typedef struct HFFaceIntereactionsActions {
+typedef struct HFFaceInteractionsActions {
     HInt32 num;         ///< Number of actions detected.
     HPInt32 normal;     ///< Normal actions.
     HPInt32 shake;      ///< Shake actions.
     HPInt32 jawOpen;    ///< Jaw open actions.
-    HPInt32 headRiase;  ///< Head raise actions.
+    HPInt32 headRaise;  ///< Head raise actions.
     HPInt32 blink;      ///< Blink actions.
-} HFFaceIntereactionsActions, *PHFFaceIntereactionsActions;
+} HFFaceInteractionsActions, *PHFFaceInteractionsActions;
 
 /**
  * @brief Get the prediction results of face interaction actions.
@@ -791,7 +791,7 @@ typedef struct HFFaceIntereactionsActions {
  * @param actions Facial action prediction results in the face interaction module.
  * @return HResult indicating success or failure of the function call.
  */
-HYPER_CAPI_EXPORT extern HResult HFGetFaceIntereactionActionsResult(HFSession session, PHFFaceIntereactionsActions actions);
+HYPER_CAPI_EXPORT extern HResult HFGetFaceInteractionActionsResult(HFSession session, PHFFaceInteractionsActions actions);
 /**
  * @brief Struct representing face attribute results.
  *

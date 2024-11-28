@@ -478,22 +478,22 @@ class InspireFaceSession(object):
     def _update_face_interact_confidence(self, exec_param, flag, extends):
         if (flag == "object" and exec_param.enable_interaction_liveness) or (
                 flag == "bitmask" and exec_param & HF_ENABLE_INTERACTION):
-            results = HFFaceIntereactionState()
-            ret = HFGetFaceIntereactionStateResult(self._sess, PHFFaceIntereactionState(results))
+            results = HFFaceInteractionState()
+            ret = HFGetFaceInteractionStateResult(self._sess, PHFFaceInteractionState(results))
             if ret == 0:
                 for i in range(results.num):
                     extends[i].left_eye_status_confidence = results.leftEyeStatusConfidence[i]
                     extends[i].right_eye_status_confidence = results.rightEyeStatusConfidence[i]
             else:
                 logger.error(f"Get face interact result error: {ret}")
-            actions = HFFaceIntereactionsActions()
-            ret = HFGetFaceIntereactionActionsResult(self._sess, PHFFaceIntereactionsActions(actions))
+            actions = HFFaceInteractionsActions()
+            ret = HFGetFaceInteractionActionsResult(self._sess, PHFFaceInteractionsActions(actions))
             if ret == 0:
                 for i in range(results.num):
                     extends[i].action_normal = actions.normal[i]
                     extends[i].action_shake = actions.shake[i]
                     extends[i].action_jaw_open = actions.jawOpen[i]
-                    extends[i].action_head_raise = actions.headRiase[i]
+                    extends[i].action_head_raise = actions.headRaise[i]
                     extends[i].action_blink = actions.blink[i]
             else:
                 logger.error(f"Get face action result error: {ret}")

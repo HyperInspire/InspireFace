@@ -1,11 +1,11 @@
 package com.insightface.sdk.inspireface.base;
 
 public class FeatureHubConfiguration {
-    public int primaryKeyMode = 0;
+    public int primaryKeyMode = TypeDefine.PK_AUTO_INCREMENT;
     public int enablePersistence = 0;
     public String persistenceDbPath = "";
     public float searchThreshold = 0.42f;
-    public int searchMode = 0;
+    public int searchMode = TypeDefine.SEARCH_MODE_EXHAUSTIVE;
 
     public FeatureHubConfiguration setPrimaryKeyMode(int primaryKeyMode) {
         this.primaryKeyMode = primaryKeyMode;
