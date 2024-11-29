@@ -91,7 +91,7 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 - CUDA (version 10.1 or higher) [**Optional**]
     - GPU-based inference requires installing NVIDIA's CUDA dependencies on the device.
 - Eigen3
-  
+    
 - RKNN [**Optional**]
     - Adjust and select versions currently supported for specific requirements.
 
@@ -317,50 +317,7 @@ In the project, more usage examples are provided:
 - sample_face_recognition.py: Facial recognition example
 - sample_face_track_from_video.py: Facial tracking from video stream example
 
-### 3.3 Java and Android platform API
-
-We provide a Java API for Android devices, which is implemented using Java Native Interface(JNI). 
-
-```java
-// Launch InspireFace, only need to call once
-boolean launchStatus = InspireFace.GlobalLaunch(folder + "/Pikachu");
-if (!launchStatus) {
-    Log.e(TAG, "Failed to launch InspireFace");
-}
-
-// Create a ImageStream
-ImageStream stream = InspireFace.CreateImageStreamFromBitmap(img, InspireFace.CAMERA_ROTATION_0);
-
-// Create a session
-CustomParameter parameter = InspireFace.CreateCustomParameter()
-                .enableRecognition(true)
-                .enableFaceQuality(true)
-                .enableFaceAttribute(true)
-                .enableInteractionLiveness(true)
-                .enableLiveness(true)
-                .enableMaskDetect(true);
-Session session = InspireFace.CreateSession(parameter, InspireFace.DETECT_MODE_ALWAYS_DETECT, 10, -1, -1);
-
-// Execute face detection
-MultipleFaceData multipleFaceData = InspireFace.ExecuteFaceTrack(session, stream);
-if (multipleFaceData.detectedNum > 0) {
-    // Get face feature
-    FaceFeature feature = InspireFace.ExtractFaceFeature(session, stream, multipleFaceData.tokens[0]);
-    // ....
-}
-
-// .... 
-
-// Release resource
-InspireFace.ReleaseSession(session);
-InspireFace.ReleaseImageStream(stream);
-
-// Global release
-InspireFace.GlobalRelease();
-```
-
 ## 4. Test
-
 In the project, there is a subproject called cpp/test. To compile it, you need to enable the ISF_BUILD_WITH_TEST switch, which will allow you to compile executable programs for testing.
 
 ```bash

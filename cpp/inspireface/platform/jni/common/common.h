@@ -9,6 +9,12 @@
 #include <jni.h>
 #include <string>
 
+/**
+ * @brief Convert jstring to std::string
+ * @param env JNIEnv pointer
+ * @param jstr jstring object
+ * @return std::string
+ */
 inline std::string jstring2str(JNIEnv *env, jstring jstr) {
     char *rtn = NULL;
     jclass clsstring = env->FindClass("java/lang/String");

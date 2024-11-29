@@ -11,14 +11,14 @@ if (ISF_ENABLE_RKNN)
     set(ext rknn_api dl)
 endif ()
 
-add_executable(Leak cpp/leak.cpp)
+add_executable(Leak api/leak.cpp)
 target_link_libraries(Leak InspireFace ${ext})
 set_target_properties(Leak PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
 # # Examples of face detection and tracking
-add_executable(FaceTrackSample cpp/sample_face_track.cpp)
+add_executable(FaceTrackSample api/sample_face_track.cpp)
 target_link_libraries(FaceTrackSample InspireFace ${ext})
 set_target_properties(FaceTrackSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
@@ -27,7 +27,7 @@ set_target_properties(FaceTrackSample PROPERTIES
 
 
 # Examples of face recognition
-add_executable(FaceComparisonSample cpp/sample_face_comparison.cpp)
+add_executable(FaceComparisonSample api/sample_face_comparison.cpp)
 target_link_libraries(FaceComparisonSample InspireFace ${ext})
 set_target_properties(FaceComparisonSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
@@ -35,15 +35,15 @@ set_target_properties(FaceComparisonSample PROPERTIES
 
 
 
-add_executable(NewFaceTrackerSample new/new_tracker_sample.cpp)
-target_link_libraries(NewFaceTrackerSample InspireFace ${ext})
-set_target_properties(NewFaceTrackerSample PROPERTIES
+add_executable(FaceTrackerSample source/tracker_sample.cpp)
+target_link_libraries(FaceTrackerSample InspireFace ${ext})
+set_target_properties(FaceTrackerSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
-add_executable(NewFaceTrackPipelineSample new/new_tracker_pipeline.cpp)
-target_link_libraries(NewFaceTrackPipelineSample InspireFace ${ext})
-set_target_properties(NewFaceTrackPipelineSample PROPERTIES
+add_executable(FaceTrackPipelineSample source/tracker_pipeline.cpp)
+target_link_libraries(FaceTrackPipelineSample InspireFace ${ext})
+set_target_properties(FaceTrackPipelineSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
@@ -227,10 +227,10 @@ message(STATUS "\t ISF_BUILD_SAMPLE_CLUTTERED: ${ISF_BUILD_SAMPLE_CLUTTERED}")
 
 # Install bin
 install(TARGETS Leak RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-# install(TARGETS FaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS FaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 # install(TARGETS FaceTrackSampleCost RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 # install(TARGETS MTFaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 # install(TARGETS FaceRecognitionSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 # install(TARGETS FaceSearchSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-# install(TARGETS FaceComparisonSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS FaceComparisonSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 
