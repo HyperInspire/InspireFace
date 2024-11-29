@@ -7,12 +7,6 @@
 #ifndef INSPIRE_FACE_CONTEXT_H
 #define INSPIRE_FACE_CONTEXT_H
 
-/**
- * @file face_context.h
- * @brief Face context handling for HyperFaceRepo project.
- *        Includes definitions for face detection, tracking, and feature extraction.
- */
-
 #include <memory>
 #include "data_type.h"
 #include "track_module/face_track_module.h"

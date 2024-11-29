@@ -163,7 +163,7 @@ public:
         }
 
         printf("\n");  // New line after log message
-        
+
         if (level == ISF_LOG_FATAL) {
             std::flush(std::cerr);
             abort();
