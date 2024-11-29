@@ -75,6 +75,7 @@ FacePipelineModule::FacePipelineModule(InspireArchive &archive, bool enableLiven
 
 int32_t FacePipelineModule::Process(inspirecv::InspireImageProcess &processor, const HyperFaceData &face, FaceProcessFunctionOption proc) {
     inspirecv::Image originImage;
+    inspirecv::Image scaleImage;
     switch (proc) {
         case PROCESS_MASK: {
             if (m_mask_predict_ == nullptr) {
@@ -153,7 +154,6 @@ int32_t FacePipelineModule::Process(inspirecv::InspireImageProcess &processor, c
             auto crop = processor.ExecuteImageAffineProcessing(trans, FACE_CROP_SIZE, FACE_CROP_SIZE);
             auto outputs = (*m_attribute_predict_)(crop);
             faceAttributeCache = inspirecv::Vec3i{outputs[0], outputs[1], outputs[2]};
-            std::cout << "attribute: " << outputs[0] << " " << outputs[1] << " " << outputs[2] << std::endl;
             break;
         }
     }
