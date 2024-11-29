@@ -39,18 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "InspireFace";
 
-    private Bitmap getImageFromAssetsFile(Context context, String fileName) {
-        Bitmap image = null;
-        AssetManager am = context.getResources().getAssets();
-        try {
-            InputStream is = am.open(fileName);
-            image = BitmapFactory.decodeStream(is);
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
+
 
     void test() {
         InspireFaceVersion version = InspireFace.QueryInspireFaceVersion();
@@ -88,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         InspireFace.SetFaceDetectThreshold(session, 0.5f);
         InspireFace.SetFilterMinimumFacePixelSize(session, 0);
 
-        Bitmap img = getImageFromAssetsFile(this, "inspireface/kun.jpg");
+        Bitmap img = SDKUtils.getImageFromAssetsFile(this, "inspireface/kun.jpg");
         ImageStream stream = InspireFace.CreateImageStreamFromBitmap(img, InspireFace.CAMERA_ROTATION_0);
         Log.i(TAG, "stream handle: " + stream.handle);
         InspireFace.WriteImageStreamToFile(stream, "/storage/emulated/0/Android/data/com.example.inspireface_example/files/out.jpg");

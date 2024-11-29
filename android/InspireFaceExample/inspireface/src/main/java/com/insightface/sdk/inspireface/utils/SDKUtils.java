@@ -78,7 +78,6 @@ public class SDKUtils {
         return f.getAbsolutePath();
     }
 
-
     static public boolean cropperBitmap(Bitmap bitmap, int[] rePoints, String sdcardPath, String name) {
         int newWidth = 160;
         int newHeight = 192;
