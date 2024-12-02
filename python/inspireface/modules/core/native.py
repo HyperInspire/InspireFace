@@ -1880,3 +1880,61 @@ HFInspireFaceExtendedInformation = struct_HFInspireFaceExtendedInformation# /Use
 
 # No prefix-stripping
 
+def get_system_info():
+    """
+    Get the system and architecture information.
+    
+    Returns:
+        tuple: A tuple containing (system_name, architecture)
+            - system_name (str): The name of the operating system ('windows', 'linux', or 'darwin')
+            - architecture (str): The CPU architecture ('x64' or 'arm64')
+        
+    Raises:
+        RuntimeError: If the platform/architecture is unsupported
+    """
+    # Get basic platform information
+    system = platform.system().lower()
+    machine = platform.machine().lower()
+    
+    # Initialize architecture variable
+    arch = None
+    
+    if system == 'windows':
+        # Windows architecture detection
+        arch = 'x64' if machine == 'amd64' or machine == 'x86_64' else 'arm64'
+        
+    elif system == 'linux':
+        # Linux architecture detection
+        if machine == 'x86_64':
+            arch = 'x64'
+        elif machine in ['aarch64', 'arm64']:
+            arch = 'arm64'
+        elif machine.startswith('arm'):
+            arch = 'arm64'  # Might need more specific ARM version distinction
+            
+    elif system == 'darwin':  # macOS
+        # macOS architecture detection
+        if machine == 'x86_64':
+            # Check if running under Rosetta 2
+            try:
+                # Use sysctl to detect Rosetta 2
+                is_rosetta = bool(int(subprocess.check_output(
+                    ['sysctl', '-n', 'sysctl.proc_translated']).decode().strip()))
+                # If running under Rosetta, it's actually an ARM machine
+                if is_rosetta:
+                    arch = 'arm64'
+                else:
+                    arch = 'x64'
+            except:
+                # If detection fails, assume native x64
+                arch = 'x64'
+        elif machine == 'arm64':
+            arch = 'arm64'
+    
+    # Validate that system and architecture were properly detected
+    if not system or not arch:
+        raise RuntimeError(
+            f"Unsupported platform: system={system}, machine={machine}")
+    
+    return system, arch
+
