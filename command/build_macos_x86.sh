@@ -29,7 +29,7 @@ else
     TAG=""
 fi
 
-BUILD_FOLDER_PATH="build/inspireface-linux-x86-ubuntu18${TAG}/"
+BUILD_FOLDER_PATH="build/inspireface-macos_x86${TAG}/"
 SCRIPT_DIR=$(pwd)  # Project dir
 
 mkdir -p ${BUILD_FOLDER_PATH}
