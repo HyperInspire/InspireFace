@@ -5,9 +5,8 @@ from inspireface.param import *
 import click
 
 @click.command()
-@click.argument("resource_path")
 @click.argument('test_data_folder')
-def case_face_recognition(resource_path, test_data_folder):
+def case_face_recognition(test_data_folder):
     """
     Launches the face recognition system, inserts face features into a database, and performs searches.
     Args:
@@ -15,7 +14,7 @@ def case_face_recognition(resource_path, test_data_folder):
         test_data_folder (str): Path to the test data containing images for insertion and recognition tests.
     """
     # Initialize the face recognition system with provided resources.
-    ret = ifac.launch(resource_path)
+    ret = ifac.launch()
     assert ret, "Launch failure. Please ensure the resource path is correct."
 
     # Enable face recognition features.

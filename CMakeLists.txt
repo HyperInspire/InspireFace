@@ -18,6 +18,7 @@ string(CONCAT INSPIRE_FACE_VERSION_MINOR_STR ${INSPIRE_FACE_VERSION_MINOR})
 string(CONCAT INSPIRE_FACE_VERSION_PATCH_STR ${INSPIRE_FACE_VERSION_PATCH})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/information.h)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/python/version.txt)
 
 # Set the ISF_THIRD_PARTY_DIR variable to allow it to be set externally from the command line, or use the default path if it is not set
 set(ISF_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty" CACHE PATH "Path to the third-party libraries directory")
