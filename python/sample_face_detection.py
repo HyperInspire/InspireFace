@@ -11,15 +11,14 @@ age_bracket_tags = ["0-2 years old", "3-9 years old", "10-19 years old", "20-29 
                     "40-49 years old", "50-59 years old", "60-69 years old", "more than 70 years old"]
 
 @click.command()
-@click.argument("resource_path")
 @click.argument('image_path')
-def case_face_detection_image(resource_path, image_path):
+def case_face_detection_image(image_path):
     """
     This is a sample application for face detection and tracking using an image.
     It also includes pipeline extensions such as RGB liveness, mask detection, and face quality evaluation.
     """
     # Step 1: Initialize the SDK and load the algorithm resource files.
-    ret = ifac.launch(resource_path)
+    ret = ifac.launch()
     assert ret, "Launch failure. Please ensure the resource path is correct."
 
     # Optional features, loaded during session creation based on the modules specified.

@@ -1,12 +1,11 @@
 import ctypes
 
-import cv2
 import numpy as np
 from .core import *
 from typing import Tuple, List
 from dataclasses import dataclass
 from loguru import logger
-
+from .utils import ResourceManager
 
 class ImageStream(object):
     """
@@ -571,12 +570,13 @@ class InspireFaceSession(object):
 
 
 # == Global API ==
-def launch(resource_path: str) -> bool:
+def launch(model_name: str = "Pikachu", resource_path: str = None) -> bool:
     """
     Launches the InspireFace system with the specified resource directory.
 
     Args:
-        resource_path (str): The file path to the resource directory necessary for operation.
+        model_name (str): the name of the model to use.
+        resource_path (str): if None, use the default model path.
 
     Returns:
         bool: True if the system was successfully launched, False otherwise.
@@ -584,6 +584,9 @@ def launch(resource_path: str) -> bool:
     Notes:
         A specific error is logged if duplicate loading is detected or if there is any other launch failure.
     """
+    if resource_path is None:
+        sm = ResourceManager()
+        resource_path = sm.get_model(model_name)
     path_c = String(bytes(resource_path, encoding="utf8"))
     ret = HFLaunchInspireFace(path_c)
     if ret != 0:

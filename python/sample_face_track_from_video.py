@@ -31,7 +31,6 @@ def generate_color(id):
     return (int(rgb_color[0]), int(rgb_color[1]), int(rgb_color[2]))
 
 @click.command()
-@click.argument("resource_path")
 @click.argument('source')
 @click.option('--show', is_flag=True, help='Display the video stream or video file in a window.')
 @click.option('--out', type=str, default=None, help='Path to save the processed video.')
@@ -49,7 +48,7 @@ def case_face_tracker_from_video(resource_path, source, show, out):
     # Initialize the face tracker or other resources.
     print(f"Initializing with resources from: {resource_path}")
     # Step 1: Initialize the SDK and load the algorithm resource files.
-    ret = ifac.launch(resource_path)
+    ret = ifac.launch()
     assert ret, "Launch failure. Please ensure the resource path is correct."
 
     # Optional features, loaded during session creation based on the modules specified.
