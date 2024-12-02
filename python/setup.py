@@ -6,7 +6,8 @@ import os
 
 def get_version():
     """Get version number"""
-    with open('version.txt', 'r') as f:
+    version_path = os.path.join(os.path.dirname(__file__), 'version.txt')
+    with open(version_path, 'r') as f:
         return f.read().strip()
 
 def get_wheel_platform_tag():
@@ -83,16 +84,20 @@ lib_path = os.path.join('modules', 'core', 'libs', system, arch, '*')
 
 setup(
     name='inspireface',
-    version=get_version,
+    version=get_version(),
     packages=find_packages(),
     # package_data path should be relative to package directory
     package_data={
         'inspireface': [lib_path]
     },
+    install_requires=[
+        'numpy',
+        'loguru'
+    ],
     author='Jingyu Yan',
     author_email='tunmxy@163.com',
     description='InspireFace Python SDK',
-    long_description=open('README.md').read(),
+    long_description=open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'README.md')).read(),
     long_description_content_type='text/markdown',
     url='https://github.com/HyperInspire/InspireFace',
     classifiers=[
