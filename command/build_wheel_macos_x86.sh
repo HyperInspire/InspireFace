@@ -37,7 +37,7 @@ mkdir -p ${BUILD_FOLDER_PATH}
 cd ${BUILD_FOLDER_PATH}
 
 cmake -DCMAKE_BUILD_TYPE=Release \
-  -DISF_BUILD_WITH_SAMPLE=ON \
+  -DISF_BUILD_WITH_SAMPLE=OFF \
   -DISF_BUILD_WITH_TEST=OFF \
   -DISF_ENABLE_BENCHMARK=OFF \
   -DISF_ENABLE_USE_LFW_DATA=OFF \
@@ -48,3 +48,17 @@ make -j4
 make install
 
 move_install_files "$(pwd)"
+BUILD_DYLIB_PATH="$(pwd)/InspireFace/lib/libInspireFace.dylib"
+# Copy the library to the python directory
+
+DYLIB_DEST_PATH="${SCRIPT_DIR}/python/inspireface/modules/core/libs/darwin/x64/"
+mkdir -p ${DYLIB_DEST_PATH}
+cp -r ${BUILD_DYLIB_PATH} ${DYLIB_DEST_PATH}
+
+pip3 install setuptools wheel twine
+
+PYTHON_PRJ_PATH=${SCRIPT_DIR}/python
+cd ${PYTHON_PRJ_PATH}/
+python setup.py bdist_wheel
+
+echo "Build wheel for MacOS x86_64, Well Done!"
