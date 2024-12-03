@@ -15,9 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.7", 
-        # "3.8", "3.9", "3.10"  // ignore
-      ] 
+        python-version: ["3.7", "3.8", "3.9", "3.10"] 
     
     steps:
       # Step 1: Checkout the repository
@@ -62,7 +60,7 @@ jobs:
     runs-on: macos-14
     strategy:
       matrix:
-        python-version: ["3.8"]
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
       # Step 1: Checkout the repository
