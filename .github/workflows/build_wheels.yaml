@@ -62,7 +62,7 @@ jobs:
     runs-on: macos-14
     strategy:
       matrix:
-        python-version: ["3.7"]
+        python-version: ["3.8"]
 
     steps:
       # Step 1: Checkout the repository
