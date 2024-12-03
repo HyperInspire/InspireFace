@@ -18,22 +18,22 @@ def get_wheel_platform_tag():
     arch_mapping = {
         'x86_64': {
             'windows': 'win_amd64',
-            'linux': 'manylinux2014_x86_64',
+            'linux': 'manylinux2010_x86_64',
             'darwin': 'macosx_12_0_x86_64'
         },
         'amd64': {
             'windows': 'win_amd64',
-            'linux': 'manylinux2014_x86_64',
+            'linux': 'manylinux2010_x86_64',
             'darwin': 'macosx_12_0_x86_64'
         },
         'arm64': {
             'windows': 'win_arm64',
-            'linux': 'manylinux2014_aarch64',
+            'linux': 'manylinux2010_aarch64',
             'darwin': 'macosx_11_0_arm64'
         },
         'aarch64': {
             'windows': 'win_arm64',
-            'linux': 'manylinux2014_aarch64',
+            'linux': 'manylinux2010_aarch64',
             'darwin': 'macosx_11_0_arm64'
         }
     }
@@ -100,6 +100,7 @@ setup(
     long_description=open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'README.md')).read(),
     long_description_content_type='text/markdown',
     url='https://github.com/HyperInspire/InspireFace',
+    python_requires='>=3.7,<3.11',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
