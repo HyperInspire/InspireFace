@@ -9,6 +9,7 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
+
 jobs:
   build_manylinux2014_x86_64:
     name: Compile manylinux2014_x86_64
@@ -18,13 +19,19 @@ jobs:
       # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      # Step 2: Set up Docker Compose
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
       
-      # Step 2: Execute the docker-compose command
+      # Step 3: Execute the docker-compose command
       - name: Execute Docker Compose
         run: |
           docker-compose up build-manylinux2014-x86
       
-      # Step 3: Upload to PyPI
+      # Step 4: Upload to PyPI
       - name: Upload to PyPI
         env:
           PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
@@ -32,6 +39,7 @@ jobs:
           pip install twine
           twine upload python/dist/* -u __token__ -p $PYPI_API_TOKEN
 
+          
   # build_macos_arm64:
   #   name: Compile MacOS-arm64
   #   runs-on: macos-14
