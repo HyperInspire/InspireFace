@@ -59,6 +59,6 @@ pip3 install setuptools wheel twine
 
 PYTHON_PRJ_PATH=${SCRIPT_DIR}/python
 cd ${PYTHON_PRJ_PATH}/
-python setup.py bdist_wheel
+python3 setup.py bdist_wheel
 
 echo "Build wheel for MacOS Arm64, Well Done!"

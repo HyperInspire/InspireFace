@@ -37,10 +37,10 @@ def get_wheel_platform_tag():
             'darwin': 'macosx_11_0_arm64'
         }
     }
-    
     platform_arch = arch_mapping.get(machine, {}).get(system)
     if not platform_arch:
-        raise RuntimeError(f"Unsupported platform: {system} {machine}")
+        print("Unsupported platform: {} {}".format(system, machine))
+        raise RuntimeError("Unsupported platform: {} {}".format(system, machine))
     
     return platform_arch
 
