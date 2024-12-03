@@ -3,7 +3,6 @@ import sys
 from pathlib import Path
 import urllib.request
 import ssl
-from typing import Optional
 
 class ResourceManager:
     def __init__(self):
