@@ -36,4 +36,11 @@ jobs:
       - name: Start Building the InspireFace-Linux-x86
         run: |
           bash command/build_wheel_linux_ubuntu18.sh
-          ls python/dist
+          ls python/dist 
+
+      - name: Upload to PyPI
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          pip install twine
+          twine upload python/dist/* -u __token__ -p $PYPI_API_TOKEN
