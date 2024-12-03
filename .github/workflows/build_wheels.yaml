@@ -18,7 +18,7 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
       
       # 首先安装基础工具
       - name: Install basic tools
