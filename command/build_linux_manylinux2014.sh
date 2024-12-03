@@ -29,7 +29,7 @@ else
     TAG=""
 fi
 
-BUILD_FOLDER_PATH="build/inspireface-linux-x86-ubuntu18${TAG}/"
+BUILD_FOLDER_PATH="build/inspireface-linux-x86-manylinux2014${TAG}/"
 SCRIPT_DIR=$(pwd)  # Project dir
 
 mkdir -p ${BUILD_FOLDER_PATH}
@@ -48,17 +48,3 @@ make -j4
 make install
 
 move_install_files "$(pwd)"
-BUILD_DYLIB_PATH="$(pwd)/InspireFace/lib/libInspireFace.so"
-# Copy the library to the python directory
-
-DYLIB_DEST_PATH="${SCRIPT_DIR}/python/inspireface/modules/core/libs/linux/x64/"
-mkdir -p ${DYLIB_DEST_PATH}
-cp -r ${BUILD_DYLIB_PATH} ${DYLIB_DEST_PATH}
-
-pip3 install setuptools wheel twine
-
-PYTHON_PRJ_PATH=${SCRIPT_DIR}/python
-cd ${PYTHON_PRJ_PATH}/
-python3 setup.py bdist_wheel
-
-echo "Build wheel for Linux x86_64, Well Done!"
