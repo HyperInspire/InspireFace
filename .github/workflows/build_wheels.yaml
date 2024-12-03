@@ -55,44 +55,44 @@ jobs:
           pip install twine
           twine upload python/dist/* -u __token__ -p $PYPI_API_TOKEN
 
-  build_macos_arm64:
-    name: Compile MacOS-arm64
-    runs-on: macos-14
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+  # build_macos_arm64:
+  #   name: Compile MacOS-arm64
+  #   runs-on: macos-14
+  #   strategy:
+  #     matrix:
+  #       python-version: ["3.8", "3.9", "3.10"]
 
-    steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+  #   steps:
+  #     # Step 1: Checkout the repository
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
       
-      # Step 2: Setting up the Python environment
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+  #     # Step 2: Setting up the Python environment
+  #     - name: Set up Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
       
-      # Step 3: Synchronize and update submodules
-      - name: Update submodules
-        run: |
-          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+  #     # Step 3: Synchronize and update submodules
+  #     - name: Update submodules
+  #       run: |
+  #         git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
       
-      # Step 4: Install necessary dependencies for building the CMake project
-      - name: Install Dependencies
-        run: |
-          brew install cmake
+  #     # Step 4: Install necessary dependencies for building the CMake project
+  #     - name: Install Dependencies
+  #       run: |
+  #         brew install cmake
 
-      # Step 5: Build the SDK
-      - name: Start Building the InspireFace-Linux-x86
-        run: |
-          bash command/build_wheel_macos_arm64.sh
-          ls python/dist
+  #     # Step 5: Build the SDK
+  #     - name: Start Building the InspireFace-Linux-x86
+  #       run: |
+  #         bash command/build_wheel_macos_arm64.sh
+  #         ls python/dist
       
-      # Step 6: Upload to PyPI
-      - name: Upload to PyPI
-        env:
-          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        run: |
-          pip install twine
-          twine upload python/dist/* -u __token__ -p $PYPI_API_TOKEN
+  #     # Step 6: Upload to PyPI
+  #     - name: Upload to PyPI
+  #       env:
+  #         PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+  #       run: |
+  #         pip install twine
+  #         twine upload python/dist/* -u __token__ -p $PYPI_API_TOKEN
