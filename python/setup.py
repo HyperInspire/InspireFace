@@ -18,22 +18,22 @@ def get_wheel_platform_tag():
     arch_mapping = {
         'x86_64': {
             'windows': 'win_amd64',
-            'linux': 'manylinux2010_x86_64',
+            'linux': 'manylinux2014_x86_64',
             'darwin': 'macosx_12_0_x86_64'
         },
         'amd64': {
             'windows': 'win_amd64',
-            'linux': 'manylinux2010_x86_64',
+            'linux': 'manylinux2014_x86_64',
             'darwin': 'macosx_12_0_x86_64'
         },
         'arm64': {
             'windows': 'win_arm64',
-            'linux': 'manylinux2010_aarch64',
+            'linux': 'manylinux2014_aarch64',
             'darwin': 'macosx_11_0_arm64'
         },
         'aarch64': {
             'windows': 'win_arm64',
-            'linux': 'manylinux2010_aarch64',
+            'linux': 'manylinux2014_aarch64',
             'darwin': 'macosx_11_0_arm64'
         }
     }
@@ -75,6 +75,7 @@ class BinaryDistWheel(bdist_wheel):
         self.root_is_pure = False
         # Set platform tag
         self.plat_name = get_wheel_platform_tag()
+        self.universal = False
 
 # Get current platform information
 system, arch = get_lib_path_info()
