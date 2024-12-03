@@ -75,6 +75,7 @@ class BinaryDistWheel(bdist_wheel):
         self.root_is_pure = False
         # Set platform tag
         self.plat_name = get_wheel_platform_tag()
+        self.py_limited_api = 'cp38'
 
 # Get current platform information
 system, arch = get_lib_path_info()
