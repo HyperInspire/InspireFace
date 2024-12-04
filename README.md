@@ -261,6 +261,17 @@ For more examples, you can refer to the `cpp/sample` sub-project located in the 
 **Note**: For each error code feedback, you can click on this [link](doc/Error-Feedback-Codes.md) to view detailed explanations.
 
 ### 3.2. Python Native Sample
+
+#### 3.2.1 Quick Start
+
+You can use pip to install the InspireFace Python package:
+
+```bash
+pip install inspireface
+```
+
+#### 3.2.2. Python Native Sample
+
 We provide a Python API that allows for more efficient use of the InspireFace library. After compiling the dynamic link library, you need to either symlink or copy it to the `python/inspireface/modules/core` directory within the root directory. You can then start testing by navigating to the **[python/](python/)** directory. Your Python environment will need to have some dependencies installed:
 
 - python >= 3.7
