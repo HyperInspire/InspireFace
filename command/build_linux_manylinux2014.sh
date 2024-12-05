@@ -29,6 +29,7 @@ else
     TAG=""
 fi
 
+# Build folder path
 BUILD_FOLDER_PATH="build/inspireface-linux-x86-manylinux2014${TAG}/"
 SCRIPT_DIR=$(pwd)  # Project dir
 
