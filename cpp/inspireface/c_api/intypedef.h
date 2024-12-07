@@ -50,6 +50,6 @@ typedef struct HColor {
     HFloat r;          ///< Red component
     HFloat g;          ///< Green component
     HFloat b;          ///< Blue component
-} HFColor;
+} HColor;
 
 #endif //INSPIREFACE_INTYPEDEF_H
