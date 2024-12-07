@@ -31,14 +31,7 @@ FaceTrackModule::FaceTrackModule(DetectModuleMode mode, int max_detected_faces, 
     }
 
     if (m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
-#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
         m_TbD_tracker_ = std::make_shared<BYTETracker>(TbD_mode_fps, 30);
-#else
-        m_mode_ = DETECT_MODE_ALWAYS_DETECT;
-        INSPIRE_LOGW(
-          "If you want to use tracking-by-detection in this release, you must turn on the option symbol ISF_ENABLE_TRACKING_BY_DETECTION at compile "
-          "time");
-#endif
     }
 }
 
@@ -268,14 +261,13 @@ void FaceTrackModule::DetectFace(const inspirecv::Image &input, float scale) {
     std::vector<FaceLoc> boxes = (*m_face_detector_)(input);
 
     if (m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
-#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
         std::vector<Object> objects;
         auto num_of_effective = std::min(boxes.size(), (size_t)max_detected_faces_);
         for (size_t i = 0; i < num_of_effective; i++) {
             Object obj;
             const auto box = boxes[i];
-            obj.rect = Rect_<float>(box.x1, box.y1, box.x2 - box.x1, box.y2 - box.y1);
-            if (!isShortestSideGreaterThan<float>(obj.rect, filter_minimum_face_px_size, scale)) {
+            obj.rect = inspirecv::Rect<int>(box.x1, box.y1, box.x2 - box.x1, box.y2 - box.y1);
+            if (!isShortestSideGreaterThan<int>(obj.rect, filter_minimum_face_px_size, scale)) {
                 // Filter too small face detection box
                 continue;
             }
@@ -283,14 +275,13 @@ void FaceTrackModule::DetectFace(const inspirecv::Image &input, float scale) {
             obj.prob = box.score;
             objects.push_back(obj);
         }
-        vector<STrack> output_stracks = m_TbD_tracker_->update(objects);
+        std::vector<STrack> output_stracks = m_TbD_tracker_->update(objects);
         for (const auto &st_track : output_stracks) {
-            inspirecv::Rect<float> rect = inspirecv::Rect<float>(st_track.tlwh[0], st_track.tlwh[1], st_track.tlwh[2], st_track.tlwh[3]);
+            inspirecv::Rect<int> rect = inspirecv::Rect<int>(st_track.tlwh[0], st_track.tlwh[1], st_track.tlwh[2], st_track.tlwh[3]);
             FaceObjectInternal faceinfo(st_track.track_id, rect, FaceLandmarkAdapt::NUM_OF_LANDMARK);
             faceinfo.detect_bbox_ = rect.As<int>();
             candidate_faces_.push_back(faceinfo);
         }
-#endif
     } else {
         std::vector<inspirecv::Rect2i> bbox;
         bbox.resize(boxes.size());
