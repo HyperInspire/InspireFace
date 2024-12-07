@@ -18,11 +18,11 @@ class ResourceManager:
         # Model URLs
         self._MODEL_LIST = {
             "Pikachu": {
-                "url": "https://github.com/tunmx/inspireface-open-models/raw/refs/heads/main/resource/Pikachu",
+                "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu",
                 "filename": "Pikachu"
             },
             "Megatron": {
-                "url": "https://github.com/tunmx/inspireface-open-models/raw/refs/heads/main/resource/Megatron",
+                "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron",
                 "filename": "Megatron"
             }
         }

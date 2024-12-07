@@ -32,7 +32,7 @@ TEST_CASE("test_ImageBitmap", "[image_bitmap]") {
     REQUIRE(multipleFaceData.detectedNum == 1);
 
     auto rect = multipleFaceData.rects[0];
-    HFColor color = {0, 0, 255};
+    HColor color = {0, 0, 255};
     HFImageBitmapDrawRect(handle, rect, color, 2);
     HFImageBitmapWriteToFile(handle, "bitmap_draw_test.jpg");
 
