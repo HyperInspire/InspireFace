@@ -14,10 +14,7 @@
 #include "feature_hub/embedding_db/embedding_db.h"
 #include "log.h"
 
-/**
- * @def DB_FILE_NAME
- * @brief Default database file name used in the FaceContext.
- */
+// Default database file name used in the FaceContext.
 #define DB_FILE_NAME ".feature_hub_db_v0"
 
 #define FEATURE_HUB_DB FeatureHubDB::GetInstance()
@@ -110,6 +107,11 @@ public:
      */
     int32_t SearchFaceFeatureTopKCache(const Embedded& queryFeature, size_t topK);
 
+    /**
+     * @brief Search the stored data for the top k facial features that are most similar.
+     * @param topK Maximum search
+     * @return int32_t Status code of the search operation.
+     */
     int32_t SearchFaceFeatureTopK(const Embedded& queryFeature, std::vector<FaceSearchResult>& searchResult, size_t topK, bool returnFeature = false);
 
     /**
@@ -144,6 +146,12 @@ public:
      */
     int32_t GetFaceFeature(int32_t id);
 
+    /**
+     * @brief Retrieves a face feature by its custom ID.
+     * @param customId Custom ID of the feature to retrieve.
+     * @param feature Vector of floats representing the face feature.
+     * @return int32_t Status code of the retrieval operation.
+     */
     int32_t GetFaceFeature(int32_t id, std::vector<float>& feature);
 
     // /**
@@ -207,8 +215,16 @@ public:
      */
     int32_t GetFaceFeatureCount();
 
+    /**
+     * @brief Retrieves the confidence scores for the top k facial features.
+     * @return A reference to the vector of confidence scores.
+     */
     std::vector<float>& GetTopKConfidence();
 
+    /**
+     * @brief Retrieves the custom IDs for the top k facial features.
+     * @return A reference to the vector of custom IDs.
+     */
     std::vector<int32_t>& GetTopKCustomIdsCache();
 
     /**
