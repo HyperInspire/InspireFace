@@ -65,9 +65,18 @@ git submodule update --init --recursive
 
 ### 1.2. Downloading Model Package Files
 
-You can download the model package files containing models and configurations needed for compilation from [Google Drive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) and extract them to any location. 
+You can download the model package files containing models and configurations needed for compilation from [Release Page](https://github.com/HyperInspire/InspireFace/releases/tag/v1.x) and extract them to any location. 
 
-### 1.3. Installing OpenCV
+You can use the **command/download_models_general.sh** command to download resource files, which will be downloaded to the **test_res/pack** directory. This way, when running the Test program, it can access and read the resource files from this path by default.
+
+```bash
+# Download lightweight resource files
+bash command/download_models_general.sh Pikachu
+# Download resource files for PC/server
+bash command/download_models_general.sh Megatron
+```
+
+### 1.3. Installing OpenCV(Optional)
 If you are using InspireFace **version 1.8 or higher**, **you can ignore the OpenCV-related configuration** since InspiReFace's image processing backend no longer depends on OpenCV by default starting from version 1.8, **which is recommended**. However, if you still want to use OpenCV, you can use the cmake option parameter: INSPIRECV_BACKEND_OPENCV to build InspireFace with an OpenCV-based image processing backend.The 3rdparty repository will no longer provide pre-compiled OpenCV libraries for versions above 1.8.
 
 ### 1.4. Installing MNN
@@ -377,7 +386,7 @@ In the project, there is a subproject called cpp/test. To compile it, you need t
 ```bash
 cmake -DISF_BUILD_WITH_TEST=ON ..
 ```
-If you need to run test cases, you will need to download the required [resource files](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing): **test_res**. Unzip the test_res folder. The directory structure of test_res should be prepared as follows before testing:
+To run the test modules in the project, first check if the resource files exist in the test_res/pack directory. If they don't exist, you can either execute **command/download_models_general.sh** to download the required files, or download the files from the [Release Page](https://github.com/HyperInspire/InspireFace/releases/tag/v1.x) and manually place them in this directory.
 
 ```bash
 
@@ -437,11 +446,11 @@ The following functionalities and technologies are currently supported.
 
 ## 6. Models Package List
 
-For different scenarios, we currently provide several Packs, each containing multiple models and configurations.The package file is placed in the **pack** subdirectory under the **test_res** directory.
+For different scenarios, we currently provide several Packs, each containing multiple models and configurations.
 
 | Name | Supported Devices | Note | Link |
 | --- | --- | --- | --- |
-| Pikachu | CPU | Lightweight edge-side models | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
-| Megatron | CPU, GPU | Mobile and server models | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
-| Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | [GDrive](https://drive.google.com/drive/folders/1krmv9Pj0XEZXR1GRPHjW_Sl7t4l0dNSS?usp=sharing) |
+| Pikachu | CPU | Lightweight edge-side models | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu) |
+| Megatron | CPU, GPU | Mobile and server models | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron) |
+| Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
 
