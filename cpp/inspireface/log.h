@@ -112,6 +112,7 @@ public:
         __android_log_vprint(androidLevel, tag, format, args);
         va_end(args);
 
+        // If the log level is fatal, flush the error stream and abort the program
         if (level == ISF_LOG_FATAL) {
             std::flush(std::cerr);
             abort();
@@ -164,6 +165,7 @@ public:
 
         printf("\n");  // New line after log message
 
+        // If the log level is fatal, flush the error stream and abort the program
         if (level == ISF_LOG_FATAL) {
             std::flush(std::cerr);
             abort();
