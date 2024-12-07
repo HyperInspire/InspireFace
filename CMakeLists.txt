@@ -105,6 +105,8 @@ if(INSPIRECV_BACKEND_OPENCV OR INSPIRECV_BACKEND_OKCV_USE_OPENCV OR INSPIRECV_BA
     set(ISF_ENABLE_OPENCV ON)
 endif()
 
+include_directories(${ISF_THIRD_PARTY_DIR}/InspireCV/3rdparty/Eigen-3.4.0-Headers)
+
 if(APPLE)
     if(IOS)
         add_definitions(-DTARGET_OS_IOS)

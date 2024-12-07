@@ -13,9 +13,7 @@
 #include "middleware/inspirecv_image_process.h"
 #include "quality/face_pose_quality_adapt.h"
 #include "middleware/model_archive/inspire_archive.h"
-#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
 #include "tracker_optional/bytetrack/BYTETracker.h"
-#endif
 
 namespace inspire {
 
@@ -174,10 +172,8 @@ private:
 
     std::shared_ptr<FacePoseQualityAdapt> m_face_quality_;  ///< Shared pointer to the face pose quality assessor.
 
-#ifdef ISF_ENABLE_TRACKING_BY_DETECTION
     std::shared_ptr<BYTETracker> m_TbD_tracker_;  ///< Shared pointer to the Bytetrack.
-#endif
-    int m_dynamic_detection_input_level_ = -1;  ///< Detector size class for dynamic input.
+    int m_dynamic_detection_input_level_ = -1;    ///< Detector size class for dynamic input.
 
     float m_crop_extensive_ratio_ = 1.8f;
     int m_crop_extensive_size_ = 96;
