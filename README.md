@@ -13,7 +13,7 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
-**`2024-11-19`** After version 1.8, the project has been made lighter by **removing the dependency on OpenCV**.
+**`2024-11-19`** After version 1.1.8, the project has been made lighter by **removing the dependency on OpenCV**.
 
 **`2024-10-09`** Enhanced system-level resource monitoring, added statistical information for session and image stream creation.
 
