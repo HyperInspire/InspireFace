@@ -121,7 +121,7 @@ public:
      * @param customId Custom ID for the feature.
      * @return int32_t Status code of the insertion operation.
      */
-    int32_t FaceFeatureInsert(const std::vector<float>& feature, int32_t id, int32_t& result_id);
+    int32_t FaceFeatureInsert(const std::vector<float>& feature, int32_t id, int64_t& result_id);
 
     /**
      * @brief Removes a face feature by its custom ID.
@@ -225,7 +225,7 @@ public:
      * @brief Retrieves the custom IDs for the top k facial features.
      * @return A reference to the vector of custom IDs.
      */
-    std::vector<int32_t>& GetTopKCustomIdsCache();
+    std::vector<int64_t>& GetTopKCustomIdsCache();
 
     /**
      * @brief Constructor for FeatureHub class.
@@ -244,7 +244,7 @@ private:
 
     std::vector<FaceSearchResult> m_search_top_k_cache_;
     std::vector<float> m_top_k_confidence_;
-    std::vector<int32_t> m_top_k_custom_ids_cache_;
+    std::vector<int64_t> m_top_k_custom_ids_cache_;
 
 private:
     DatabaseConfiguration m_db_configuration_;     ///< Configuration settings for the database

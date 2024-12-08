@@ -596,7 +596,7 @@ HResult HFGetFeatureLength(HPInt32 num) {
     return HSUCCEED;
 }
 
-HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity, HPInt32 allocId) {
+HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity, HPFaceId allocId) {
     if (featureIdentity.feature->data == nullptr) {
         return HERR_INVALID_FACE_FEATURE;
     }
@@ -652,7 +652,7 @@ HResult HFFeatureHubFaceSearchTopK(HFFaceFeature searchFeature, HInt32 topK, PHF
     return ret;
 }
 
-HResult HFFeatureHubFaceRemove(HInt32 id) {
+HResult HFFeatureHubFaceRemove(HFaceId id) {
     auto ret = FEATURE_HUB_DB->FaceFeatureRemove(id);
     return ret;
 }
@@ -672,7 +672,7 @@ HResult HFFeatureHubFaceUpdate(HFFaceFeatureIdentity featureIdentity) {
     return ret;
 }
 
-HResult HFFeatureHubGetFaceIdentity(HInt32 id, PHFFaceFeatureIdentity identity) {
+HResult HFFeatureHubGetFaceIdentity(HFaceId id, PHFFaceFeatureIdentity identity) {
     auto ret = FEATURE_HUB_DB->GetFaceFeature(id);
     if (ret == HSUCCEED) {
         identity->id = id;

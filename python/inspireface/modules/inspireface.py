@@ -745,7 +745,7 @@ class FaceIdentity(object):
         feature_data = np.ctypeslib.as_array(cast(feature_data_ptr, HPFloat), (feature_size,))
         id_ = raw_identity.id
 
-        return FaceIdentity(data=feature_data, id=id_)
+        return FaceIdentity(data=feature_data, id=id_.value)
 
     def _c_struct(self):
         """
@@ -759,7 +759,7 @@ class FaceIdentity(object):
         feature.size = HInt32(self.feature.size)
         feature.data = data_ptr
         return HFFaceFeatureIdentity(
-            customId=self.id,
+            customId=HFaceId(self.id),
             feature=PHFFaceFeature(feature)
         )
 
@@ -787,8 +787,8 @@ def feature_hub_face_insert(face_identity: FaceIdentity) -> Tuple[bool, int]:
     Notes:
         Logs an error if the insertion process fails.
     """
-    alloc_id = HInt32()
-    ret = HFFeatureHubInsertFeature(face_identity._c_struct(), HPInt32(alloc_id))
+    alloc_id = HFaceId()
+    ret = HFFeatureHubInsertFeature(face_identity._c_struct(), HPFaceId(alloc_id))
     if ret != 0:
         logger.error(f"Failed to insert face feature data into FeatureHub: {ret}")
         return False, -1
@@ -827,12 +827,13 @@ def feature_hub_face_search(data: np.ndarray) -> SearchResult:
     ret = HFFeatureHubFaceSearch(feature, HPFloat(confidence), PHFFaceFeatureIdentity(most_similar))
     if ret != 0:
         logger.error(f"Failed to search face: {ret}")
-        return SearchResult(confidence=-1, similar_identity=FaceIdentity(np.zeros(0), most_similar.customId, "None"))
+        return SearchResult(confidence=-1, similar_identity=FaceIdentity(np.zeros(0), most_similar.id))
+    print("most_similar.id: ", most_similar.id)
     if most_similar.id != -1:
         search_identity = FaceIdentity.from_ctypes(most_similar)
         return SearchResult(confidence=confidence.value, similar_identity=search_identity)
     else:
-        none = FaceIdentity(np.zeros(0), most_similar.customId, "None")
+        none = FaceIdentity(np.zeros(0), most_similar.id)
         return SearchResult(confidence=confidence.value, similar_identity=none)
 
 
@@ -895,7 +896,7 @@ def feature_hub_face_remove(custom_id: int) -> bool:
     Notes:
         Logs an error if the removal operation fails.
     """
-    ret = HFFeatureHubFaceRemove(custom_id)
+    ret = HFFeatureHubFaceRemove(HFaceId(custom_id))
     if ret != 0:
         logger.error(f"Failed to remove face feature data from FeatureHub: {ret}")
         return False
@@ -916,7 +917,7 @@ def feature_hub_get_face_identity(custom_id: int):
         Logs an error if retrieving the face identity fails.
     """
     identify = HFFaceFeatureIdentity()
-    ret = HFFeatureHubGetFaceIdentity(custom_id, PHFFaceFeatureIdentity(identify))
+    ret = HFFeatureHubGetFaceIdentity(HFaceId(custom_id), PHFFaceFeatureIdentity(identify))
     if ret != 0:
         logger.error("Get face identity errors from FeatureHub")
         return None

@@ -207,14 +207,18 @@ int32_t FeatureHubDB::SearchFaceFeatureTopK(const Embedded &queryFeature, std::v
     return HSUCCEED;
 }
 
-int32_t FeatureHubDB::FaceFeatureInsert(const std::vector<float> &feature, int32_t id, int32_t &result_id) {
+int32_t FeatureHubDB::FaceFeatureInsert(const std::vector<float> &feature, int32_t id, int64_t &result_id) {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
     }
 
-    result_id = EMBEDDING_DB::GetInstance().InsertVector(id, feature);
+    bool ret = EMBEDDING_DB::GetInstance().InsertVector(id, feature, result_id);
+    if (!ret) {
+        result_id = -1;
+        return HERR_FT_HUB_INSERT_FAILURE;
+    }
 
     return HSUCCEED;
 }
@@ -311,7 +315,7 @@ std::vector<float> &FeatureHubDB::GetTopKConfidence() {
     return m_top_k_confidence_;
 }
 
-std::vector<int32_t> &FeatureHubDB::GetTopKCustomIdsCache() {
+std::vector<int64_t> &FeatureHubDB::GetTopKCustomIdsCache() {
     return m_top_k_custom_ids_cache_;
 }
 
