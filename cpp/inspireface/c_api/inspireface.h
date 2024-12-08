@@ -526,7 +526,7 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubDataDisable();
  * This struct associates a custom identifier and a tag with a specific face feature.
  */
 typedef struct HFFaceFeatureIdentity {
-    HInt32 id;               ///< If you use automatic assignment id mode when inserting, ignore it.
+    HFaceId id;              ///< If you use automatic assignment id mode when inserting, ignore it.
     PHFFaceFeature feature;  ///< Pointer to the face feature.
     // HString tag;                 ///< Not supported yet
 } HFFaceFeatureIdentity, *PHFFaceFeatureIdentity;
@@ -537,7 +537,7 @@ typedef struct HFFaceFeatureIdentity {
 typedef struct HFSearchTopKResults {
     HInt32 size;         ///< The number of faces searched
     HPFloat confidence;  ///< Search confidence(it has already been filtered once by the threshold)
-    HPInt32 ids;         ///< Searched face ids
+    HPFaceId ids;        ///< Searched face ids
 } HFSearchTopKResults, *PHFSearchTopKResults;
 
 /**
@@ -577,7 +577,7 @@ HYPER_CAPI_EXPORT extern HResult HFGetFeatureLength(HPInt32 num);
  * @param featureIdentity The face feature identity to be inserted.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity, HPInt32 allocId);
+HYPER_CAPI_EXPORT extern HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity, HPFaceId allocId);
 
 /**
  * @brief Search for the most similar face feature in the features group.
@@ -606,7 +606,7 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceSearchTopK(HFFaceFeature search
  * @param customId The custom ID of the feature to be removed.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceRemove(HInt32 id);
+HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceRemove(HFaceId id);
 
 /**
  * @brief Update a face feature identity in the features group.
@@ -623,7 +623,7 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceUpdate(HFFaceFeatureIdentity fe
  * @param identity Pointer to the face feature identity to be retrieved.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFFeatureHubGetFaceIdentity(HInt32 customId, PHFFaceFeatureIdentity identity);
+HYPER_CAPI_EXPORT extern HResult HFFeatureHubGetFaceIdentity(HFaceId customId, PHFFaceFeatureIdentity identity);
 
 /**
  * @brief Get the count of face features in the features group.

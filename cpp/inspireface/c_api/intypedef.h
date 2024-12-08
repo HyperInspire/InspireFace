@@ -19,6 +19,8 @@ typedef	unsigned char		HUInt8;                           ///< Unsigned 8-bit int
 typedef signed int			HInt32;                           ///< Signed 32-bit integer.
 typedef signed int			HOption;                          ///< Signed 32-bit integer option.
 typedef signed int*			HPInt32;                          ///< Pointer to signed 32-bit integer.
+typedef int64_t             HFaceId;                          ///< Face ID type for non-Windows platforms
+typedef int64_t*            HPFaceId;                         ///< Pointer to Face ID type for non-Windows platforms
 typedef long                HResult;                          ///< Result code.
 typedef char*               HString;                          ///< String.
 typedef const char*         HPath;                            ///< Const String.

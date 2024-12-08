@@ -2,7 +2,7 @@ name: Build Linux-Ubuntu-x86
 
 on:
   push:
-    branches: ["dev/next-gen"]
+    branches: ["feature/build_manylinux2014_x86"]
 
 # Set the global GitHub token environment variable
 env:
