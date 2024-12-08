@@ -33,6 +33,11 @@ set_target_properties(FaceComparisonSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
+add_executable(FaceFeatureHubSample api/sample_feature_hub.cpp)
+target_link_libraries(FaceFeatureHubSample InspireFace ${ext})
+set_target_properties(FaceFeatureHubSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
 
 
 add_executable(FaceTrackerSample source/tracker_sample.cpp)
