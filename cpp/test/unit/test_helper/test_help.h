@@ -142,7 +142,7 @@ inline bool ImportLFWFunneledValidData(HFSession handle, FaceImageDataList& data
         identity.id = i;
         // identity.tag = newTagName;
         identity.feature = &feature;
-        HInt32 allocId;
+        HFaceId allocId;
         ret = HFFeatureHubInsertFeature(identity, &allocId);
         if (ret != HSUCCEED) {
             std::cerr << "Error insert feature: " << std::to_string(ret) << " , " << item.second << std::endl;

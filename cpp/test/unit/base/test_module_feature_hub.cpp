@@ -25,11 +25,11 @@ TEST_CASE("test_FeatureHubBasic", "[feature_hub") {
 
     // Check number of features
     int32_t count = 1000;
-    std::vector<int32_t> ids;
-    std::vector<int32_t> expected_ids;
+    std::vector<int64_t> ids;
+    std::vector<int64_t> expected_ids;
     for (int32_t i = 0; i < count; i++) {
         auto vec = GenerateRandomFeature(512, false);
-        int32_t alloc_id;
+        int64_t alloc_id;
         ret = FEATURE_HUB_DB->FaceFeatureInsert(vec, -1, alloc_id);
         REQUIRE(ret == HSUCCEED);
         ids.push_back(alloc_id);
@@ -39,7 +39,7 @@ TEST_CASE("test_FeatureHubBasic", "[feature_hub") {
     REQUIRE(ids == expected_ids);
 
     // Delete data
-    std::vector<int32_t> delete_ids = {5, 20, 100};
+    std::vector<int64_t> delete_ids = {5, 20, 100};
     for (auto id : delete_ids) {
         FEATURE_HUB_DB->FaceFeatureRemove(id);
     }
@@ -51,7 +51,7 @@ TEST_CASE("test_FeatureHubBasic", "[feature_hub") {
     REQUIRE(ret == HERR_FT_HUB_NOT_FOUND_FEATURE);
 
     // Check if the data can be found
-    ret = FEATURE_HUB_DB->GetFaceFeature(1, feature);   
+    ret = FEATURE_HUB_DB->GetFaceFeature(1, feature);
     REQUIRE(ret == HSUCCEED);
     REQUIRE(feature.size() == 512);
 
@@ -102,7 +102,7 @@ TEST_CASE("test_PerformanceMemoryMode", "[feature_hub") {
 
     DatabaseConfiguration config;
     config.primary_key_mode = PrimaryKeyMode::AUTO_INCREMENT;
-    config.enable_persistence = false;  // memory mode  
+    config.enable_persistence = false;  // memory mode
     int32_t ret;
     ret = FEATURE_HUB_DB->EnableHub(config);
     REQUIRE(ret == HSUCCEED);
@@ -111,7 +111,7 @@ TEST_CASE("test_PerformanceMemoryMode", "[feature_hub") {
     int num = 10000;
     for (int i = 0; i < num; i++) {
         auto vec = GenerateRandomFeature(512, false);
-        int32_t alloc_id;
+        int64_t alloc_id;
         ret = FEATURE_HUB_DB->FaceFeatureInsert(vec, -1, alloc_id);
         REQUIRE(ret == HSUCCEED);
     }
@@ -121,26 +121,24 @@ TEST_CASE("test_PerformanceMemoryMode", "[feature_hub") {
     std::vector<float> feature;
     ret = FEATURE_HUB_DB->GetFaceFeature(1, feature);
     TEST_PRINT("[Memory Mode]Get feature from id cost: {:.2f} ms", t2.GetCostTime());
-    REQUIRE(ret == HSUCCEED);   
+    REQUIRE(ret == HSUCCEED);
 
     Timer t3;
     ret = FEATURE_HUB_DB->GetFaceFeature(9998, feature);
     TEST_PRINT("[Memory Mode]Get feature from id cost: {:.2f} ms", t3.GetCostTime());
-    REQUIRE(ret == HSUCCEED);   
+    REQUIRE(ret == HSUCCEED);
     auto sim_vec = SimulateSimilarVector(feature, false);
     FaceSearchResult search_result;
     Timer t4;
     FEATURE_HUB_DB->SearchFaceFeature(sim_vec, search_result, true);
     TEST_PRINT("[Memory Mode]Search feature cost: {:.2f} ms", t4.GetCostTime());
     REQUIRE(search_result.id == 9998);
-    
 
     ret = FEATURE_HUB_DB->FaceFeatureRemove(9998);
     REQUIRE(ret == HSUCCEED);
 
     FEATURE_HUB_DB->DisableHub();
 }
-
 
 TEST_CASE("test_PerformancePersistentMode", "[feature_hub") {
     DRAW_SPLIT_LINE
@@ -151,7 +149,7 @@ TEST_CASE("test_PerformancePersistentMode", "[feature_hub") {
 
     DatabaseConfiguration config;
     config.primary_key_mode = PrimaryKeyMode::AUTO_INCREMENT;
-    config.enable_persistence = true;  // persistent mode  
+    config.enable_persistence = true;  // persistent mode
     config.persistence_db_path = db_path;
 
     int32_t ret;
@@ -162,7 +160,7 @@ TEST_CASE("test_PerformancePersistentMode", "[feature_hub") {
     int num = 10000;
     for (int i = 0; i < num; i++) {
         auto vec = GenerateRandomFeature(512, false);
-        int32_t alloc_id;
+        int64_t alloc_id;
         ret = FEATURE_HUB_DB->FaceFeatureInsert(vec, -1, alloc_id);
         REQUIRE(ret == HSUCCEED);
     }
@@ -172,12 +170,12 @@ TEST_CASE("test_PerformancePersistentMode", "[feature_hub") {
     std::vector<float> feature;
     ret = FEATURE_HUB_DB->GetFaceFeature(1, feature);
     TEST_PRINT("[Persistent Mode]Get feature from id cost: {:.2f} ms", t2.GetCostTime());
-    REQUIRE(ret == HSUCCEED);   
+    REQUIRE(ret == HSUCCEED);
 
     Timer t3;
     ret = FEATURE_HUB_DB->GetFaceFeature(9998, feature);
     TEST_PRINT("[Persistent Mode]Get feature from id cost: {:.2f} ms", t3.GetCostTime());
-    REQUIRE(ret == HSUCCEED);   
+    REQUIRE(ret == HSUCCEED);
     auto sim_vec = SimulateSimilarVector(feature, false);
     FaceSearchResult search_result;
     Timer t4;
@@ -185,7 +183,6 @@ TEST_CASE("test_PerformancePersistentMode", "[feature_hub") {
     TEST_PRINT("[Persistent Mode]Search feature cost: {:.2f} ms", t4.GetCostTime());
     REQUIRE(search_result.id == 9998);
 
-    
     ret = FEATURE_HUB_DB->FaceFeatureRemove(9998);
     REQUIRE(ret == HSUCCEED);
 
@@ -198,7 +195,4 @@ TEST_CASE("test_PerformancePersistentMode", "[feature_hub") {
     REQUIRE(FEATURE_HUB_DB->GetFaceFeatureCount() == remark_num);
 
     FEATURE_HUB_DB->DisableHub();
-    
 }
-
-
