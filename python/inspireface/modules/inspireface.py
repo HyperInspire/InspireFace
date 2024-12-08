@@ -726,6 +726,10 @@ class FaceIdentity(object):
             custom_id (int): A custom identifier for tracking or referencing the face identity.
             tag (str): A descriptive tag or label for the face identity.
         """
+
+        if data.dtype != np.float32:
+            logger.error("The input data must be in float32 format")
+            raise ValueError("The input data must be in float32 format")
         self.feature = data
         self.id = id
 
@@ -745,7 +749,7 @@ class FaceIdentity(object):
         feature_data = np.ctypeslib.as_array(cast(feature_data_ptr, HPFloat), (feature_size,))
         id_ = raw_identity.id
 
-        return FaceIdentity(data=feature_data, id=id_.value)
+        return FaceIdentity(data=feature_data, id=id_)
 
     def _c_struct(self):
         """
@@ -821,6 +825,9 @@ def feature_hub_face_search(data: np.ndarray) -> SearchResult:
     Notes:
         If the search operation fails, logs an error and returns a SearchResult with a confidence of -1.
     """
+    if data.dtype != np.float32:
+        logger.error("The input data must be in float32 format")
+        raise ValueError("The input data must be in float32 format")
     feature = HFFaceFeature(size=HInt32(data.size), data=data.ctypes.data_as(HPFloat))
     confidence = HFloat()
     most_similar = HFFaceFeatureIdentity()
@@ -828,7 +835,6 @@ def feature_hub_face_search(data: np.ndarray) -> SearchResult:
     if ret != 0:
         logger.error(f"Failed to search face: {ret}")
         return SearchResult(confidence=-1, similar_identity=FaceIdentity(np.zeros(0), most_similar.id))
-    print("most_similar.id: ", most_similar.id)
     if most_similar.id != -1:
         search_identity = FaceIdentity.from_ctypes(most_similar)
         return SearchResult(confidence=confidence.value, similar_identity=search_identity)
@@ -851,6 +857,10 @@ def feature_hub_face_search_top_k(data: np.ndarray, top_k: int) -> List[Tuple]:
     Notes:
         If the search operation fails, an empty list is returned.
     """
+
+    if data.dtype != np.float32:
+        logger.error("The input data must be in float32 format")
+        raise ValueError("The input data must be in float32 format")
     feature = HFFaceFeature(size=HInt32(data.size), data=data.ctypes.data_as(HPFloat))
     results = HFSearchTopKResults()
     ret = HFFeatureHubFaceSearchTopK(feature, top_k, PHFSearchTopKResults(results))
