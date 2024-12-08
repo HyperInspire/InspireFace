@@ -68,7 +68,7 @@ TEST_CASE("test_FeatureHubBase", "[FeatureHub][BasicFunction]") {
             feature.data = feat.data();
             HFFaceFeatureIdentity identity = {0};
             identity.feature = &feature;
-            HInt32 allocId;
+            HFaceId allocId;
             ret = HFFeatureHubInsertFeature(identity, &allocId);
             REQUIRE(ret == HSUCCEED);
         }
@@ -204,7 +204,7 @@ TEST_CASE("test_ConcurrencyInsertion", "[FeatureHub][Concurrency]") {
                 featureIdentity.feature = &feature;
                 // featureIdentity.customId = beginGenId + j + i * insertsPerThread; // 确保 customId 唯一
                 // featureIdentity.tag = nameBuffer.data();
-                HInt32 allocId;
+                HFaceId allocId;
                 auto ret = HFFeatureHubInsertFeature(featureIdentity, &allocId);
                 REQUIRE(ret == HSUCCEED);
             }
@@ -268,7 +268,7 @@ TEST_CASE("test_ConcurrencyRemove", "[FeatureHub][Concurrency]") {
         identity.feature = &feature;
         // identity.customId = i;
         // identity.tag = nameBuffer.data();
-        HInt32 allocId;
+        HFaceId allocId;
         ret = HFFeatureHubInsertFeature(identity, &allocId);
         REQUIRE(ret == HSUCCEED);
     }
@@ -347,7 +347,7 @@ TEST_CASE("test_ConcurrencySearch", "[FeatureHub][Concurrency]") {
         identity.feature = &feature;
         // identity.customId = i;
         // identity.tag = nameBuffer.data();
-        HInt32 allocId;
+        HFaceId allocId;
         ret = HFFeatureHubInsertFeature(identity, &allocId);
         REQUIRE(ret == HSUCCEED);
     }
@@ -470,7 +470,7 @@ TEST_CASE("test_FeatureCache", "[FeatureHub][Concurrency]") {
     feature.size = randomVec.size();
     HFFaceFeatureIdentity identity = {0};
     identity.feature = &feature;
-    HInt32 allocId;
+    HFaceId allocId;
     ret = HFFeatureHubInsertFeature(identity, &allocId);
     REQUIRE(ret == HSUCCEED);
 
@@ -498,4 +498,41 @@ TEST_CASE("test_FeatureCache", "[FeatureHub][Concurrency]") {
     REQUIRE(ret == HSUCCEED);
 
     delete[] dbPathStr;
+}
+
+TEST_CASE("test_FeatureHubManualInput", "[FeatureHub][ManualInput]") {
+    DRAW_SPLIT_LINE
+    TEST_PRINT_OUTPUT(true);
+    HResult ret;
+    HFFeatureHubConfiguration configuration;
+    configuration.primaryKeyMode = HF_PK_MANUAL_INPUT;
+    configuration.enablePersistence = 0;
+    ret = HFFeatureHubDataEnable(configuration);
+    REQUIRE(ret == HSUCCEED);
+
+    std::vector<HFaceId> ids = {10086, 23541, 2124, 24, 204};
+
+    for (auto id : ids) {
+        auto randomVec = GenerateRandomFeature(512);
+        HFFaceFeature feature = {0};
+        feature.data = randomVec.data();
+        feature.size = randomVec.size();
+        HFFaceFeatureIdentity identity = {0};
+        identity.feature = &feature;
+        identity.id = id;
+        HFaceId allocId;
+        ret = HFFeatureHubInsertFeature(identity, &allocId);
+        REQUIRE(ret == HSUCCEED);
+    }
+
+    // query
+    for (auto id : ids) {
+        HFFaceFeatureIdentity query = {0};
+        ret = HFFeatureHubGetFaceIdentity(id, &query);
+        REQUIRE(ret == HSUCCEED);
+        REQUIRE(query.id == id);
+    }
+
+    ret = HFFeatureHubDataDisable();
+    REQUIRE(ret == HSUCCEED);
 }

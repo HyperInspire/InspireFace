@@ -1,11 +1,15 @@
-import os
-import cv2
-import inspireface as ifac
-from inspireface.param import *
-import numpy as np
-import os
+#include <inspirecv/inspirecv.h>
+#include <inspireface/track_module/face_track_module.h>
+#include "inspireface/initialization_module/launch.h"
+#include <inspireface/middleware/inspirecv_image_process.h>
+#include <inspireface/pipeline_module/face_pipeline_module.h>
+#include <inspireface/common/face_data/face_serialize_tools.h>
+#include <inspireface/feature_hub/feature_hub_db.h>
 
-FEATURE = np.asarray([  0.0706566,   0.00640248,  0.0418103,   -0.00597861, 0.0269879,   0.0187478,   0.0486305,   0.0349162,   -0.0080779,  -0.0550556,  0.0229963,
+using namespace inspire;
+
+static std::vector<float> FT = {
+  0.0706566,   0.00640248,  0.0418103,   -0.00597861, 0.0269879,   0.0187478,   0.0486305,   0.0349162,   -0.0080779,  -0.0550556,  0.0229963,
   -0.00683422, -0.0338589,  0.0533989,   -0.0371725,  0.000972469, 0.0612415,   0.0389846,   -0.00126743, -0.0128782,  0.0935529,   0.0588179,
   0.0164787,   -0.00732871, -0.0458209,  -0.0100137,  -0.0372892,  0.000871123, 0.0245121,   -0.0811471,  -0.00481095, 0.0266868,   0.0712961,
   -0.0675362,  -0.0117453,  0.0658745,   -0.0694139,  -0.00704822, -0.0237313,  0.0209365,   0.0131902,   0.00192449,  -0.0593105,  0.0191942,
@@ -51,35 +55,39 @@ FEATURE = np.asarray([  0.0706566,   0.00640248,  0.0418103,   -0.00597861, 0.02
   0.0262906,   -0.0407654,  -0.0144264,  -0.0310807,  0.0596711,   0.0238081,   -0.0138019,  0.000502882, 0.0496892,   0.0126823,   0.0511028,
   -0.0310699,  -0.0322141,  0.00996936,  0.0675392,   -0.0164277,  0.0930009,   -0.037467,   0.0419618,   -0.00358901, -0.0309569,  -0.0225608,
   -0.0332198,  0.00102291,  0.108814,    -0.0831313,  0.048208,    -0.0277542,  -0.061584,   0.0721224,   -0.0795082,  0.0340047,   0.056139,
-  -0.0166783,  -0.0803042,  -0.014245,   -0.0476374,  0.048495,    0.0378856,])
+  -0.0166783,  -0.0803042,  -0.014245,   -0.0476374,  0.048495,    0.0378856,
+};
 
-def case_feature_hub():
-    db_path = "test.db"
-    # Configure the feature management system.
-    feature_hub_config = ifac.FeatureHubConfiguration(
-        primary_key_mode=ifac.HF_PK_AUTO_INCREMENT,
-        enable_persistence=True,
-        persistence_db_path=db_path,
-        search_threshold=0.48,
-        search_mode=HF_SEARCH_MODE_EAGER,
-    )
-    ret = ifac.feature_hub_enable(feature_hub_config)
-    assert ret, "Failed to enable FeatureHub."
-    print(ifac.feature_hub_get_face_count())
-    for i in range(10):
-        v = np.random.rand(512)
-        feature = ifac.FaceIdentity(v, -1)
-        ifac.feature_hub_face_insert(feature)
-    feature = ifac.FaceIdentity(FEATURE, -1)
-    ifac.feature_hub_face_insert(feature)
-    print(ifac.feature_hub_get_face_count())
-    # has bug
-    result = ifac.feature_hub_face_search(FEATURE)
-    print(result.confidence, result.similar_identity.id)
+int main() {
+    std::string expansion_path = "";
+    INSPIRE_LAUNCH->Load("test_res/pack/Pikachu");
 
-    assert os.path.exists(db_path), "FeatureHub database file not found."
+    DatabaseConfiguration configuration;
+    configuration.primary_key_mode = PrimaryKeyMode::MANUAL_INPUT;
+    configuration.enable_persistence = false;
+    configuration.recognition_threshold = 0.48f;
 
+    FEATURE_HUB_DB->EnableHub(configuration);
 
+    // std::vector<float> feature(512, 0.0f);
 
-if __name__ == "__main__":
-    case_feature_hub()
+    int64_t result_id = 0;
+    auto ret = FEATURE_HUB_DB->FaceFeatureInsert(FT, 10086, result_id);
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("Failed to insert face feature");
+        INSPIRE_LOGI("result id: %lld", result_id);
+    } else {
+        INSPIRE_LOGI("Insert face feature success, result_id: %lld", result_id);
+    }
+
+    // std::vector<float> query_feature(512, 20.0f);
+    FaceSearchResult search_result;
+    ret = FEATURE_HUB_DB->SearchFaceFeature(FT, search_result, true);
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("Failed to search face feature");
+    } else {
+        INSPIRE_LOGI("Search face feature success, result_id: %lld", search_result.id);
+    }
+
+    return 0;
+}

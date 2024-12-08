@@ -43,12 +43,12 @@ EmbeddingDB::~EmbeddingDB() {
     }
 }
 
-int64_t EmbeddingDB::InsertVector(const std::vector<float> &vector) {
+bool EmbeddingDB::InsertVector(const std::vector<float> &vector, int64_t &allocId) {
     std::lock_guard<std::mutex> lock(dbMutex_);
-    return InsertVector(0, vector);  // In auto-increment mode, the passed ID is ignored
+    return InsertVector(0, vector, allocId);  // In auto-increment mode, the passed ID is ignored
 }
 
-int64_t EmbeddingDB::InsertVector(int64_t id, const std::vector<float> &vector) {
+bool EmbeddingDB::InsertVector(int64_t id, const std::vector<float> &vector, int64_t &allocId) {
     CheckVectorDimension(vector);
 
     sqlite3_stmt *stmt;
@@ -61,7 +61,12 @@ int64_t EmbeddingDB::InsertVector(int64_t id, const std::vector<float> &vector) 
     }
 
     int rc = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
-    CheckSQLiteError(rc, db_);
+    // CheckSQLiteError(rc, db_);
+    if (rc != SQLITE_OK) {
+        INSPIRE_LOGE("Failed to prepare statement: %s", sqlite3_errmsg(db_));
+        sqlite3_finalize(stmt);
+        return false;
+    }
 
     if (idMode_ == IdMode::AUTO_INCREMENT) {
         sqlite3_bind_blob(stmt, 1, vector.data(), vector.size() * sizeof(float), SQLITE_STATIC);
@@ -72,9 +77,14 @@ int64_t EmbeddingDB::InsertVector(int64_t id, const std::vector<float> &vector) 
 
     rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
-    CheckSQLiteError(rc == SQLITE_DONE ? SQLITE_OK : rc, db_);
+    if (rc != SQLITE_DONE) {
+        INSPIRE_LOGE("Failed to insert vector: %s", sqlite3_errmsg(db_));
+        return false;
+    }
+    // CheckSQLiteError(rc == SQLITE_DONE ? SQLITE_OK : rc, db_);
 
-    return idMode_ == IdMode::AUTO_INCREMENT ? GetLastInsertRowId() : id;
+    allocId = idMode_ == IdMode::AUTO_INCREMENT ? GetLastInsertRowId() : id;
+    return true;
 }
 
 std::vector<float> EmbeddingDB::GetVector(int64_t id) const {
@@ -109,7 +119,11 @@ std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<VectorDat
 
     try {
         for (const auto &data : vectors) {
-            int64_t id = InsertVector(data.id, data.vector);
+            int64_t id = 0;
+            bool ret = InsertVector(data.id, data.vector, id);
+            if (!ret) {
+                throw std::runtime_error("Failed to insert vector");
+            }
             insertedIds.push_back(id);
         }
         ExecuteSQL("COMMIT");
@@ -128,7 +142,11 @@ std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<std::vect
 
     try {
         for (const auto &vector : vectors) {
-            int64_t id = InsertVector(vector);
+            int64_t id = 0;
+            bool ret = InsertVector(0, vector, id);
+            if (!ret) {
+                throw std::runtime_error("Failed to insert vector");
+            }
             insertedIds.push_back(id);
         }
         ExecuteSQL("COMMIT");
