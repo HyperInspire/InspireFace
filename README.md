@@ -77,7 +77,7 @@ bash command/download_models_general.sh Megatron
 ```
 
 ### 1.3. Installing OpenCV(Optional)
-If you are using InspireFace **version 1.8 or higher**, **you can ignore the OpenCV-related configuration** since InspiReFace's image processing backend no longer depends on OpenCV by default starting from version 1.8, **which is recommended**. However, if you still want to use OpenCV, you can use the cmake option parameter: INSPIRECV_BACKEND_OPENCV to build InspireFace with an OpenCV-based image processing backend.The 3rdparty repository will no longer provide pre-compiled OpenCV libraries for versions above 1.8.
+If you are using InspireFace **version 1.1.8 or higher**, **you can ignore the OpenCV-related configuration** since InspiReFace's image processing backend no longer depends on OpenCV by default starting from version 1.1.8, **which is recommended**. However, if you still want to use OpenCV, you can use the cmake option parameter: INSPIRECV_BACKEND_OPENCV to build InspireFace with an OpenCV-based image processing backend.The 3rdparty repository will no longer provide pre-compiled OpenCV libraries for versions above 1.1.8.
 
 ### 1.4. Installing MNN
 The '**3rdparty**' directory already includes the MNN library and specifies a particular version as the stable version. If you need to enable or disable additional configuration options during compilation, you can refer to the CMake Options provided by MNN. If you need to use your own precompiled version, feel free to replace it.
@@ -85,7 +85,7 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 ### 1.5. Requirements
 
 - CMake (version 3.10 or higher)
-- OpenCV (version 3.5 or higher) [**Optional**: If the version **>= 1.8**, opencv is not used by default]
+- OpenCV (version 3.5 or higher) [**Optional**: If the version **>= 1.1.8**, opencv is not used by default]
     - Use the specific OpenCV-SDK supported by each target platform such as Android, iOS, and Linux.
 - NDK (version 16 or higher, only required for Android)[**Optional**]
 - MNN (version 1.4.0 or higher)

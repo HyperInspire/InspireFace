@@ -1,0 +1,35 @@
+name: Build Linux-Ubuntu-x86
+
+on:
+  push:
+    branches: ["dev/next-gen"]
+
+# Set the global GitHub token environment variable
+env:
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+jobs:
+  build:
+    name: Compile manylinux2014-x86
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+      
+      # Step 3: Set up Docker Compose
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      # Step 4: Execute the docker-compose command
+      - name: Execute Docker Compose
+        run: |
+          docker-compose up build-manylinux2014-x86
