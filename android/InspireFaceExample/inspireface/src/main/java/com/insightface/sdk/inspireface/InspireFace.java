@@ -254,7 +254,7 @@ public class InspireFace extends TypeDefine {
      * @param id Face identity
      * @return true if success, false otherwise
      */
-    public static native boolean FeatureHubFaceRemove(int id);
+    public static native boolean FeatureHubFaceRemove(long id);
 
     /**
      * Update face feature in feature hub
@@ -268,7 +268,7 @@ public class InspireFace extends TypeDefine {
      * @param id Face identity
      * @return FaceFeatureIdentity object
      */
-    public static native FaceFeatureIdentity FeatureHubGetFaceIdentity(int id);
+    public static native FaceFeatureIdentity FeatureHubGetFaceIdentity(long id);
 
     /**
      * Get face count in feature hub

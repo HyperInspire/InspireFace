@@ -543,7 +543,7 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubDataDisable)(JNIEnv *e
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubInsertFeature)(JNIEnv *env, jobject thiz, jobject newIdentity) {
     // Get FaceFeatureIdentity class and fields
     jclass identityClass = env->GetObjectClass(newIdentity);
-    jfieldID idField = env->GetFieldID(identityClass, "id", "I");
+    jfieldID idField = env->GetFieldID(identityClass, "id", "J");
     jfieldID featureField = env->GetFieldID(identityClass, "feature", "Lcom/insightface/sdk/inspireface/base/FaceFeature;");
 
     // Get feature object
@@ -575,11 +575,11 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubInsertFeature)(JNIEnv 
 
     // Create HFFaceFeatureIdentity
     HFFaceFeatureIdentity identity;
-    identity.id = env->GetIntField(newIdentity, idField);
+    identity.id = env->GetLongField(newIdentity, idField);
     identity.feature = &feature;
 
     // Insert feature and get allocated ID
-    int32_t allocId = -1;
+    HFaceId allocId = -1;
     auto result = HFFeatureHubInsertFeature(identity, &allocId);
 
     // Release array elements
@@ -591,7 +591,7 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubInsertFeature)(JNIEnv 
     }
 
     // Update ID field with allocated ID
-    env->SetIntField(newIdentity, idField, allocId);
+    env->SetLongField(newIdentity, idField, allocId);
     return true;
 }
 
@@ -635,8 +635,8 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceSearch)(JNIEnv *env
     jobject identityObj = env->NewObject(identityClass, constructor);
 
     // Set id field
-    jfieldID idField = env->GetFieldID(identityClass, "id", "I");
-    env->SetIntField(identityObj, idField, mostSimilar.id);
+    jfieldID idField = env->GetFieldID(identityClass, "id", "J");
+    env->SetLongField(identityObj, idField, mostSimilar.id);
 
     // Create FaceFeature object and set data
     jclass faceFeatureClass = env->FindClass("com/insightface/sdk/inspireface/base/FaceFeature");
@@ -700,15 +700,15 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceSearchTopK)(JNIEnv 
     env->SetObjectField(searchResultsObj, confidenceField, confidenceArray);
 
     // Create and set ids array
-    jintArray idsArray = env->NewIntArray(results.size);
-    env->SetIntArrayRegion(idsArray, 0, results.size, results.ids);
-    jfieldID idsField = env->GetFieldID(searchResultsClass, "ids", "[I");
+    jlongArray idsArray = env->NewLongArray(results.size);
+    env->SetLongArrayRegion(idsArray, 0, results.size, results.ids);
+    jfieldID idsField = env->GetFieldID(searchResultsClass, "ids", "[J");
     env->SetObjectField(searchResultsObj, idsField, idsArray);
 
     return searchResultsObj;
 }
 
-JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceRemove)(JNIEnv *env, jobject thiz, jint id) {
+JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceRemove)(JNIEnv *env, jobject thiz, jlong id) {
     auto result = HFFeatureHubFaceRemove(id);
     if (result != HSUCCEED) {
         INSPIRE_LOGE("Failed to remove feature, error code: %d", result);
@@ -720,11 +720,11 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceRemove)(JNIEnv *en
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceUpdate)(JNIEnv *env, jobject thiz, jobject featureIdentity) {
     // Get FaceFeatureIdentity class and fields
     jclass identityClass = env->GetObjectClass(featureIdentity);
-    jfieldID idField = env->GetFieldID(identityClass, "id", "I");
+    jfieldID idField = env->GetFieldID(identityClass, "id", "J");
     jfieldID featureField = env->GetFieldID(identityClass, "feature", "Lcom/insightface/sdk/inspireface/base/FaceFeature;");
 
     // Get id value
-    jint id = env->GetIntField(featureIdentity, idField);
+    jlong id = env->GetLongField(featureIdentity, idField);
 
     // Get feature object
     jobject featureObj = env->GetObjectField(featureIdentity, featureField);
@@ -759,7 +759,7 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceUpdate)(JNIEnv *en
     return true;
 }
 
-JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubGetFaceIdentity)(JNIEnv *env, jobject thiz, jint id) {
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubGetFaceIdentity)(JNIEnv *env, jobject thiz, jlong id) {
     // Create HFFaceFeatureIdentity
     HFFaceFeatureIdentity identity;
     auto result = HFFeatureHubGetFaceIdentity(id, &identity);
@@ -785,9 +785,9 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubGetFaceIdentity)(JNIEnv
     jobject identityObj = env->NewObject(identityClass, identityConstructor);
 
     // Set id and feature fields
-    jfieldID idField = env->GetFieldID(identityClass, "id", "I");
+    jfieldID idField = env->GetFieldID(identityClass, "id", "J");
     jfieldID featureField = env->GetFieldID(identityClass, "feature", "Lcom/insightface/sdk/inspireface/base/FaceFeature;");
-    env->SetIntField(identityObj, idField, identity.id);
+    env->SetLongField(identityObj, idField, identity.id);
     env->SetObjectField(identityObj, featureField, featureObj);
 
     return identityObj;
