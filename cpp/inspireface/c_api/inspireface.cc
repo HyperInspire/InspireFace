@@ -355,12 +355,22 @@ HResult HFFeatureHubDataEnable(HFFeatureHubConfiguration configuration) {
     } else {
         param.primary_key_mode = inspire::PrimaryKeyMode(configuration.primaryKeyMode);
     }
-    param.persistence_db_path = (configuration.persistenceDbPath != nullptr) ? std::string(configuration.persistenceDbPath) : std::string();
+    if (configuration.persistenceDbPath == nullptr) {
+        INSPIRE_LOGE("persistenceDbPath is null, use default path");
+    }
+    // Add validation for persistenceDbPath
+    if (configuration.enablePersistence) {
+        if (configuration.persistenceDbPath == nullptr) {
+            param.persistence_db_path = std::string("");
+        }
+    } else {
+        param.persistence_db_path = std::string("");  // Empty string for in-memory mode
+    }
+
     param.enable_persistence = configuration.enablePersistence;
     param.recognition_threshold = configuration.searchThreshold;
     param.search_mode = (inspire::SearchMode)configuration.searchMode;
     auto ret = FEATURE_HUB_DB->EnableHub(param);
-
     return ret;
 }
 
@@ -914,8 +924,17 @@ HResult HFFeatureHubGetFaceCount(HInt32 *count) {
 }
 
 HResult HFFeatureHubViewDBTable() {
-    // return FEATURE_HUB_DB->ViewDBTable();
+    FEATURE_HUB_DB->ViewDBTable();
     return HSUCCEED;
+}
+
+HResult HFFeatureHubGetExistingIds(PHFFeatureHubExistingIds ids) {
+    auto ret = FEATURE_HUB_DB->GetAllIds();
+    if (ret == HSUCCEED) {
+        ids->size = FEATURE_HUB_DB->GetExistingIds().size();
+        ids->ids = FEATURE_HUB_DB->GetExistingIds().data();
+    }
+    return ret;
 }
 
 HResult HFQueryInspireFaceVersion(PHFInspireFaceVersion version) {

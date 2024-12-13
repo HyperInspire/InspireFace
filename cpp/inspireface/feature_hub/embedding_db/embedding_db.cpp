@@ -296,4 +296,72 @@ void EmbeddingDB::CheckSQLiteError(int rc, sqlite3 *db) {
     INSPIREFACE_CHECK_MSG(rc == SQLITE_OK, error.c_str());
 }
 
+void EmbeddingDB::ShowTable() {
+    if (!initialized_) {
+        INSPIRE_LOGE("EmbeddingDB is not initialized");
+        return;
+    }
+    std::lock_guard<std::mutex> lock(dbMutex_);
+    sqlite3_stmt *stmt;
+    std::string sql = "SELECT rowid, embedding FROM " + tableName_;
+
+    int rc = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    CheckSQLiteError(rc, db_);
+
+    // Print header
+#ifdef __ANDROID__
+    __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "=== Table Content ===");
+    __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "ID | Vector (first 5 elements)");
+    __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "------------------------");
+#else
+    printf("=== Table Content ===\n");
+    printf("ID | Vector (first 5 elements)\n");
+    printf("------------------------\n");
+#endif
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int64_t id = sqlite3_column_int64(stmt, 0);
+        const float *vector_data = static_cast<const float *>(sqlite3_column_blob(stmt, 1));
+        size_t vector_size = std::min(size_t(5), sqlite3_column_bytes(stmt, 1) / sizeof(float));
+
+        std::string vector_str;
+        for (size_t i = 0; i < vector_size; ++i) {
+            vector_str += std::to_string(vector_data[i]);
+            if (i < vector_size - 1)
+                vector_str += ", ";
+        }
+        vector_str += "...";
+
+#ifdef __ANDROID__
+        __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "%lld | %s", id, vector_str.c_str());
+#else
+        printf("%lld | %s\n", id, vector_str.c_str());
+#endif
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+std::vector<int64_t> EmbeddingDB::GetAllIds() {
+    if (!initialized_) {
+        INSPIRE_LOGE("EmbeddingDB is not initialized");
+        return {};
+    }
+    std::lock_guard<std::mutex> lock(dbMutex_);
+    std::vector<int64_t> ids;
+
+    sqlite3_stmt *stmt;
+    std::string sql = "SELECT rowid FROM " + tableName_;
+
+    int rc = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    CheckSQLiteError(rc, db_);
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        ids.push_back(sqlite3_column_int64(stmt, 0));
+    }
+
+    sqlite3_finalize(stmt);
+    return ids;
+}
+
 }  // namespace inspire

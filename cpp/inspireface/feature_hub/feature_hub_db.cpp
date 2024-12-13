@@ -51,6 +51,15 @@ int32_t FeatureHubDB::DisableHub() {
     return HSUCCEED;
 }
 
+int32_t FeatureHubDB::GetAllIds() {
+    if (!m_enable_) {
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
+        return HERR_FT_HUB_DISABLE;
+    }
+    m_all_ids_ = EMBEDDING_DB::GetInstance().GetAllIds();
+    return HSUCCEED;
+}
+
 int32_t FeatureHubDB::EnableHub(const DatabaseConfiguration &configuration) {
     int32_t ret;
     if (m_enable_) {
@@ -284,14 +293,14 @@ int32_t FeatureHubDB::GetFaceFeature(int32_t id, std::vector<float> &feature) {
     return HSUCCEED;
 }
 
-// int32_t FeatureHubDB::ViewDBTable() {
-//     if (!m_enable_) {
-//         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
-//         return HERR_FT_HUB_DISABLE;
-//     }
-//     auto ret = m_db_->ViewTotal();
-//     return ret;
-// }
+int32_t FeatureHubDB::ViewDBTable() {
+    if (!m_enable_) {
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
+        return HERR_FT_HUB_DISABLE;
+    }
+    EMBEDDING_DB::GetInstance().ShowTable();
+    return HSUCCEED;
+}
 
 void FeatureHubDB::SetRecognitionThreshold(float threshold) {
     m_recognition_threshold_ = threshold;
@@ -317,6 +326,10 @@ std::vector<float> &FeatureHubDB::GetTopKConfidence() {
 
 std::vector<int64_t> &FeatureHubDB::GetTopKCustomIdsCache() {
     return m_top_k_custom_ids_cache_;
+}
+
+std::vector<int64_t> &FeatureHubDB::GetExistingIds() {
+    return m_all_ids_;
 }
 
 }  // namespace inspire
