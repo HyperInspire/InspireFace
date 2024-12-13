@@ -18,7 +18,7 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 **`2024-11-19`** Project has been made lighter by removing mandatory dependency on OpenCV.
 
-**`2024-10-09`** Enhanced system-level resource monitoring, added statistical information for session and image stream creation.
+**`2024-10-09`** Added system resource monitoring and session statistics.
 
 **`2024-09-30`** Fixed some bugs in the feature hub.
 
