@@ -640,6 +640,21 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubGetFaceCount(HInt32 *count);
  */
 HYPER_CAPI_EXPORT extern HResult HFFeatureHubViewDBTable();
 
+/**
+ * @brief Struct representing the existing ids in the database.
+ */
+typedef struct HFFeatureHubExistingIds {
+    HInt32 size;   ///< The number of ids
+    HPFaceId ids;  ///< The ids
+} HFFeatureHubExistingIds, *PHFFeatureHubExistingIds;
+
+/**
+ * @brief Get all ids in the database.
+ * @param ids Output parameter to store the ids.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFFeatureHubGetExistingIds(PHFFeatureHubExistingIds ids);
+
 /************************************************************************
  * Face Pipeline
  ************************************************************************/
