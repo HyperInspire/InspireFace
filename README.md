@@ -510,6 +510,7 @@ The following Features and technologies are currently supported.
 | 8 | Face Pose Estimation | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
 | 9 | Face Attribute Prediction | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Age, Race, Gender |
 | 10 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Expressions and head |
+| 11 | Face Embedding Management | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Memory and Persistence |
 
 
 ## 6. Resource Package List
@@ -522,3 +523,13 @@ For different scenarios, we currently provide several Packs, each containing mul
 | Megatron | CPU, GPU | Mobile and server models | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron) |
 | Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
 
+## Acknowledgement
+
+InspireFace is built on the following libraries:
+
+- [MNN](https://github.com/alibaba/MNN)
+- [rknn](https://github.com/rockchip-linux/rknn-toolkit)
+- [sqlite](https://www.sqlite.org/index.html)
+- [sqlite-vec](https://github.com/asg017/sqlite-vec)
+- [Catch2](https://github.com/catchorg/Catch2)
+- [yaml-cpp](https://github.com/jbeder/yaml-cpp)
