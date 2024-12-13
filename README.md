@@ -341,7 +341,7 @@ For more examples, you can refer to the `cpp/sample` sub-project located in the 
 
 ### Python Native Sample
 
-#### Quick Start
+#### Use pip to install InspireFace
 
 You can use pip to install the InspireFace Python package:
 
