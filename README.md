@@ -14,9 +14,9 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
-**`2024-12-10`** Add python quick installation package.
+**`2024-12-10`** Added support for quick installation via Python package manager.
 
-**`2024-11-19`** After version 1.1.8, the project has been made lighter by **removing the dependency on OpenCV**.
+**`2024-11-19`** After version 1.1.8, the project has been made lighter by making **OpenCV an optional dependency** rather than a required one.
 
 **`2024-10-09`** Enhanced system-level resource monitoring, added statistical information for session and image stream creation.
 
@@ -484,10 +484,10 @@ bash ci/quick_test_local.sh
 
 Every time code is committed, tests are run on GitHub Actions.
 
-## 5. Function Support
-The following functionalities and technologies are currently supported.
+## 5. Features
+The following Features and technologies are currently supported.
 
-| Index | Function | Adaptation | Note |
+| Index | Feature | Adaptation | Note |
 | -- | --- | --- | --- |
 | 1 | Face Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | SCRFD |
 | 2 | Facial Landmark Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | HyperLandmark |
@@ -501,7 +501,7 @@ The following functionalities and technologies are currently supported.
 | 10 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Expressions and head |
 
 
-## 6. Models Package List
+## 6. Resource Package List
 
 For different scenarios, we currently provide several Packs, each containing multiple models and configurations.
 
