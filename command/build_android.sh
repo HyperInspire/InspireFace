@@ -98,6 +98,7 @@ build() {
     cmake ${SCRIPT_DIR} \
         -G "Unix Makefiles" \
         -DCMAKE_BUILD_TYPE=Release \
+        -s \
         -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK}/build/cmake/android.toolchain.cmake \
         -DANDROID_TOOLCHAIN=clang \
         -DANDROID_ABI=${arch} \
@@ -114,7 +115,7 @@ build() {
     make -j4
     make install
     popd
-    move_install_files "${BUILD_FOLDER_PATH}/${arch}"
+    # move_install_files "${BUILD_FOLDER_PATH}/${arch}"
 }
 
 if [ -n "$VERSION" ]; then
@@ -129,5 +130,5 @@ BUILD_FOLDER_PATH="build/inspireface-android${TAG}"
 build arm64-v8a 21
 build armeabi-v7a 21
 
-reorganize_structure "${BUILD_FOLDER_PATH}"
+# reorganize_structure "${BUILD_FOLDER_PATH}"
 
