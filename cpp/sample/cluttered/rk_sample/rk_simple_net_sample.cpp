@@ -133,7 +133,7 @@ void test_quality() {
 
             Timer timer;
             auto pose_res = (*m_face_quality_)(image);
-            LOGD("质量cost: %f", timer.GetCostTimeUpdate());
+            LOGD("quality cost: %f", timer.GetCostTimeUpdate());
 
             for (auto &p : pose_res.lmk) {
                 cv::circle(image, p, 0, cv::Scalar(0, 0, 255), 2);

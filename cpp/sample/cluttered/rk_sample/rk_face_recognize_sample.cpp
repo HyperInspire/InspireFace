@@ -49,7 +49,7 @@ void rec_function() {
         auto warped = cv::imread(files[i]);
         Timer timer;
         auto emb = (*m_extract_)(warped);
-        LOGD("耗时: %f", timer.GetCostTimeUpdate());
+        LOGD("cost: %f", timer.GetCostTimeUpdate());
         embedded_list.push_back(emb);
         LOGD("%lu", emb.size());
     }
