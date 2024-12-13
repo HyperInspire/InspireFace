@@ -1,7 +1,6 @@
 import os
 import cv2
-import inspireface as ifac
-from inspireface.param import *
+import inspireface as isf
 import numpy as np
 import os
 
@@ -56,24 +55,24 @@ FEATURE = np.asarray([  0.0706566,   0.00640248,  0.0418103,   -0.00597861, 0.02
 def case_feature_hub():
     db_path = "test.db"
     # Configure the feature management system.
-    feature_hub_config = ifac.FeatureHubConfiguration(
-        primary_key_mode=ifac.HF_PK_AUTO_INCREMENT,
+    feature_hub_config = isf.FeatureHubConfiguration(
+        primary_key_mode=isf.HF_PK_AUTO_INCREMENT,
         enable_persistence=True,
         persistence_db_path=db_path,
         search_threshold=0.48,
-        search_mode=HF_SEARCH_MODE_EAGER,
+        search_mode=isf.HF_SEARCH_MODE_EAGER,
     )
-    ret = ifac.feature_hub_enable(feature_hub_config)
+    ret = isf.feature_hub_enable(feature_hub_config)
     assert ret, "Failed to enable FeatureHub."
-    print(ifac.feature_hub_get_face_count())
+    print(isf.feature_hub_get_face_count())
     for i in range(10):
         v = np.random.rand(512).astype(np.float32)
-        feature = ifac.FaceIdentity(v, -1)
-        ifac.feature_hub_face_insert(feature)
-    feature = ifac.FaceIdentity(FEATURE, -1)
-    ifac.feature_hub_face_insert(feature)
-    print(ifac.feature_hub_get_face_count())
-    result = ifac.feature_hub_face_search(FEATURE)
+        feature = isf.FaceIdentity(v, -1)
+        isf.feature_hub_face_insert(feature)
+    feature = isf.FaceIdentity(FEATURE, -1)
+    isf.feature_hub_face_insert(feature)
+    print(isf.feature_hub_get_face_count())
+    result = isf.feature_hub_face_search(FEATURE)
     print(result.confidence, result.similar_identity.id)
 
     assert os.path.exists(db_path), "FeatureHub database file not found."

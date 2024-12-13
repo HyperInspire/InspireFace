@@ -1,5 +1,6 @@
 #include <iostream>
 #include "inspireface/c_api/inspireface.h"
+#include <vector>
 
 static std::vector<float> FT = {
   0.0706566,   0.00640248,  0.0418103,   -0.00597861, 0.0269879,   0.0187478,   0.0486305,   0.0349162,   -0.0080779,  -0.0550556,  0.0229963,

@@ -38,6 +38,59 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 **`2024-06-01`** Adapted for accelerated inference on CUDA-enabled devices.
 
+## Quick Start
+
+For Python users on Linux and MacOS, InspireFace can be quickly installed via pip:
+
+```bash
+pip install inspireface
+```
+
+_⚠️Windows support is **not available yet**, but will be coming soon!_
+
+After installation, you can use inspireface like this:
+
+```Python
+import cv2
+import inspireface as isf
+
+# Global launching and automatic downloading of resource files
+ret = isf.launch()
+assert ret, "Launch failure. Please ensure the resource path is correct."
+
+# Create a session with optional features
+opt = isf.HF_ENABLE_NONE
+session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_IMAGE)
+
+# Load the image using OpenCV.
+image = cv2.imread(image_path)
+
+# Perform face detection on the image.
+faces = session.face_detection(image)
+
+for face in faces:
+    x1, y1, x2, y2 = face.location
+    rect = ((x1, y1), (x2, y2), face.roll)
+     # Calculate center, size, and angle
+    center = ((x1 + x2) / 2, (y1 + y2) / 2)
+    size = (x2 - x1, y2 - y1)
+    angle = face.roll
+
+    # Apply rotation to the bounding box corners
+    rect = ((center[0], center[1]), (size[0], size[1]), angle)
+    box = cv2.boxPoints(rect)
+    box = box.astype(int)
+
+    # Draw the rotated bounding box
+    cv2.drawContours(image, [box], 0, (100, 180, 29), 2)
+
+cv2.imshow("face detection", image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+More examples can be found in the [python/](python/) directory.
+
 ## 1. Preparation
 ### 1.1. Clone 3rdparty
 

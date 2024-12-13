@@ -191,7 +191,7 @@ TEST_CASE("test_ConcurrencyInsertion", "[FeatureHub][Concurrency]") {
     auto beginGenId = 2000;
 
     for (int i = 0; i < numThreads; ++i) {
-        threads.emplace_back([=]() {  // 使用值捕获以避免捕获引用后变量改变
+        threads.emplace_back([=]() {
             for (int j = 0; j < insertsPerThread; ++j) {
                 auto feat = GenerateRandomFeature(featureLength);
                 auto name = std::to_string(beginGenId + j + i * insertsPerThread);
@@ -202,7 +202,7 @@ TEST_CASE("test_ConcurrencyInsertion", "[FeatureHub][Concurrency]") {
                 feature.data = feat.data();
                 HFFaceFeatureIdentity featureIdentity = {0};
                 featureIdentity.feature = &feature;
-                // featureIdentity.customId = beginGenId + j + i * insertsPerThread; // 确保 customId 唯一
+                // featureIdentity.customId = beginGenId + j + i * insertsPerThread;
                 // featureIdentity.tag = nameBuffer.data();
                 HFaceId allocId;
                 auto ret = HFFeatureHubInsertFeature(featureIdentity, &allocId);
@@ -507,8 +507,10 @@ TEST_CASE("test_FeatureHubManualInput", "[FeatureHub][ManualInput]") {
     HFFeatureHubConfiguration configuration;
     configuration.primaryKeyMode = HF_PK_MANUAL_INPUT;
     configuration.enablePersistence = 0;
+    TEST_PRINT("Start enable feature hub");
     ret = HFFeatureHubDataEnable(configuration);
     REQUIRE(ret == HSUCCEED);
+    TEST_PRINT("Enable feature hub success");
 
     std::vector<HFaceId> ids = {10086, 23541, 2124, 24, 204};
 
@@ -524,6 +526,18 @@ TEST_CASE("test_FeatureHubManualInput", "[FeatureHub][ManualInput]") {
         ret = HFFeatureHubInsertFeature(identity, &allocId);
         REQUIRE(ret == HSUCCEED);
     }
+
+    HFFeatureHubExistingIds existingIds = {0};
+    ret = HFFeatureHubGetExistingIds(&existingIds);
+    REQUIRE(ret == HSUCCEED);
+    REQUIRE(existingIds.size == ids.size());
+    for (int i = 0; i < existingIds.size; ++i) {
+        TEST_PRINT("Existing ID: {}", existingIds.ids[i]);
+        REQUIRE(existingIds.ids[i] == ids[i]);
+    }
+
+    ret = HFFeatureHubViewDBTable();
+    REQUIRE(ret == HSUCCEED);
 
     // query
     for (auto id : ids) {

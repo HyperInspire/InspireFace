@@ -1,7 +1,6 @@
 import os
 import cv2
-import inspireface as ifac
-from inspireface.param import *
+import inspireface as isf
 import click
 
 @click.command()
@@ -14,22 +13,22 @@ def case_face_recognition(test_data_folder):
         test_data_folder (str): Path to the test data containing images for insertion and recognition tests.
     """
     # Initialize the face recognition system with provided resources.
-    ret = ifac.launch()
+    ret = isf.launch()
     assert ret, "Launch failure. Please ensure the resource path is correct."
 
     # Enable face recognition features.
-    opt = HF_ENABLE_FACE_RECOGNITION
-    session = ifac.InspireFaceSession(opt, HF_DETECT_MODE_ALWAYS_DETECT)
+    opt = isf.HF_ENABLE_FACE_RECOGNITION
+    session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT)
 
     # Configure the feature management system.
-    feature_hub_config = ifac.FeatureHubConfiguration(
-        primary_key_mode=ifac.HF_PK_AUTO_INCREMENT,
+    feature_hub_config = isf.FeatureHubConfiguration(
+        primary_key_mode=isf.HF_PK_AUTO_INCREMENT,
         enable_persistence=False,
         persistence_db_path="",
         search_threshold=0.48,
-        search_mode=ifac.HF_SEARCH_MODE_EAGER,
+        search_mode=isf.HF_SEARCH_MODE_EAGER,
     )
-    ret = ifac.feature_hub_enable(feature_hub_config)
+    ret = isf.feature_hub_enable(feature_hub_config)
     assert ret, "Failed to enable FeatureHub."
 
     # Insert face features from 'bulk' directory.
@@ -45,11 +44,11 @@ def case_face_recognition(test_data_folder):
         if faces:
             face = faces[0]  # Assume the most prominent face is what we want.
             feature = session.face_feature_extract(image, face)
-            identity = ifac.FaceIdentity(feature, id=idx)
-            ret, alloc_id = ifac.feature_hub_face_insert(identity)
+            identity = isf.FaceIdentity(feature, id=idx)
+            ret, alloc_id = isf.feature_hub_face_insert(identity)
             assert ret, "Failed to insert face."
 
-    count = ifac.feature_hub_get_face_count()
+    count = isf.feature_hub_get_face_count()
     print(f"Number of faces inserted: {count}")
 
     # Process faces from 'RD' directory and insert them.
@@ -65,11 +64,11 @@ def case_face_recognition(test_data_folder):
         if faces:
             face = faces[0]
             feature = session.face_feature_extract(image, face)
-            identity = ifac.FaceIdentity(feature, id=idx+count+1)
-            ret, alloc_id = ifac.feature_hub_face_insert(identity)
+            identity = isf.FaceIdentity(feature, id=idx+count+1)
+            ret, alloc_id = isf.feature_hub_face_insert(identity)
             assert ret, "Failed to insert face."
 
-    count = ifac.feature_hub_get_face_count()
+    count = isf.feature_hub_get_face_count()
     print(f"Total number of faces after insertion: {count}")
 
     # Search for a similar face using the last image in RD directory.
@@ -80,7 +79,7 @@ def case_face_recognition(test_data_folder):
     face = faces[0]
     feature = session.face_feature_extract(remain, face)
 
-    search = ifac.feature_hub_face_search(feature)
+    search = isf.feature_hub_face_search(feature)
     if search.similar_identity.id != -1:
         print(f"Found similar identity with ID: {search.similar_identity.id}, Confidence: {search.confidence:.2f}")
     else:
@@ -88,9 +87,9 @@ def case_face_recognition(test_data_folder):
 
     # Display top-k similar face identities.
     print("Top-k similar identities:")
-    search_top_k = ifac.feature_hub_face_search_top_k(feature, 10)
+    search_top_k = isf.feature_hub_face_search_top_k(feature, 10)
     for idx, (conf, _id) in enumerate(search_top_k):
-        identity = ifac.feature_hub_get_face_identity(_id)
+        identity = isf.feature_hub_get_face_identity(_id)
         print(f"Top-{idx + 1}: ID: {_id}, Confidence: {conf:.2f}")
 
 

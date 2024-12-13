@@ -90,6 +90,13 @@ public:
      */
     int32_t DisableHub();
 
+    /**
+     * @brief Get all ids in the database.
+     * @param ids Output parameter to store the ids.
+     * @return int32_t Status code of the operation.
+     */
+    int32_t GetAllIds();
+
     static std::shared_ptr<FeatureHubDB> GetInstance();
 
     /**
@@ -154,11 +161,11 @@ public:
      */
     int32_t GetFaceFeature(int32_t id, std::vector<float>& feature);
 
-    // /**
-    //  * @brief Views the database table containing face data.
-    //  * @return int32_t Status code of the operation.
-    //  */
-    // int32_t ViewDBTable();
+    /**
+     * @brief Views the database table containing face data.
+     * @return int32_t Status code of the operation.
+     */
+    int32_t ViewDBTable();
 
     /**
      * @brief Sets the recognition threshold for face recognition.
@@ -228,6 +235,12 @@ public:
     std::vector<int64_t>& GetTopKCustomIdsCache();
 
     /**
+     * @brief Retrieves the existing ids in the database.
+     * @return A reference to the vector of existing ids.
+     */
+    std::vector<int64_t>& GetExistingIds();
+
+    /**
      * @brief Constructor for FeatureHub class.
      */
     FeatureHubDB();
@@ -245,6 +258,8 @@ private:
     std::vector<FaceSearchResult> m_search_top_k_cache_;
     std::vector<float> m_top_k_confidence_;
     std::vector<int64_t> m_top_k_custom_ids_cache_;
+
+    std::vector<int64_t> m_all_ids_;
 
 private:
     DatabaseConfiguration m_db_configuration_;     ///< Configuration settings for the database
