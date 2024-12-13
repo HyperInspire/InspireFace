@@ -2,8 +2,7 @@ import time
 
 import click
 import cv2
-import inspireface as ifac
-from inspireface.param import *
+import inspireface as isf
 import numpy as np
 
 
@@ -48,12 +47,12 @@ def case_face_tracker_from_video(resource_path, source, show, out):
     # Initialize the face tracker or other resources.
     print(f"Initializing with resources from: {resource_path}")
     # Step 1: Initialize the SDK and load the algorithm resource files.
-    ret = ifac.launch()
+    ret = isf.launch()
     assert ret, "Launch failure. Please ensure the resource path is correct."
 
     # Optional features, loaded during session creation based on the modules specified.
-    opt = HF_ENABLE_NONE | HF_ENABLE_INTERACTION
-    session = ifac.InspireFaceSession(opt, HF_DETECT_MODE_ALWAYS_DETECT, max_detect_num=25, detect_pixel_level=320)    # Use video mode
+    opt = isf.HF_ENABLE_NONE | isf.HF_ENABLE_INTERACTION
+    session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT, max_detect_num=25, detect_pixel_level=320)    # Use video mode
     session.set_filter_minimum_face_pixel_size(0)
     # Determine if the source is a digital webcam index or a video file path.
     try:
@@ -87,7 +86,7 @@ def case_face_tracker_from_video(resource_path, source, show, out):
         # Process frame here (e.g., face detection/tracking).
         faces = session.face_detection(frame)
 
-        exts = session.face_pipeline(frame, faces, HF_ENABLE_INTERACTION)
+        exts = session.face_pipeline(frame, faces, isf.HF_ENABLE_INTERACTION)
         print(exts)
 
         for idx, face in enumerate(faces):

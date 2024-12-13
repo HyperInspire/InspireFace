@@ -95,6 +95,10 @@ public:
 
     std::vector<float> GetVector(int64_t id) const;
 
+    void ShowTable();
+
+    std::vector<int64_t> GetAllIds();
+
 private:
     // Constructor: add ID mode parameter
     explicit EmbeddingDB(const std::string &dbPath = ":memory:", size_t vectorDim = 4, const std::string &distanceMetric = "cosine",
