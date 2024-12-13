@@ -16,7 +16,7 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 **`2024-12-10`** Added support for quick installation via Python package manager.
 
-**`2024-11-19`** After version 1.1.8, the project has been made lighter by making **OpenCV an optional dependency** rather than a required one.
+**`2024-11-19`** Project has been made lighter by removing mandatory dependency on OpenCV.
 
 **`2024-10-09`** Enhanced system-level resource monitoring, added statistical information for session and image stream creation.
 
