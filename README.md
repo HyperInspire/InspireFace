@@ -93,8 +93,8 @@ cv2.destroyAllWindows()
 
 More examples can be found in the [python/](python/) directory.
 
-## 1. Preparation
-### 1.1. Clone 3rdparty
+## Preparation
+### Clone 3rdparty
 
 Clone the `3rdparty` repository from the remote repository into the root directory of the project. Note that this repository contains some submodules. When cloning, you should use the `--recurse-submodules` parameter, or after entering the directory, use `git submodule update --init --recursive` to fetch and synchronize the latest submodules:
 
@@ -119,7 +119,7 @@ git pull
 git submodule update --init --recursive
 ```
 
-### 1.2. Downloading Model Package Files
+### Downloading Model Package Files
 
 You can download the model package files containing models and configurations needed for compilation from [Release Page](https://github.com/HyperInspire/InspireFace/releases/tag/v1.x) and extract them to any location. 
 
@@ -132,13 +132,13 @@ bash command/download_models_general.sh Pikachu
 bash command/download_models_general.sh Megatron
 ```
 
-### 1.3. Installing OpenCV(Optional)
+### Installing OpenCV(Optional)
 For **InspireFace v1.1.8** and above, **OpenCV is optional and not required by default**. If you need OpenCV support, you can enable it using the cmake option ` INSPIRECV_BACKEND_OPENCV`.
 
-### 1.4. Installing MNN
+### Installing MNN
 The '**3rdparty**' directory already includes the MNN library and specifies a particular version as the stable version. If you need to enable or disable additional configuration options during compilation, you can refer to the CMake Options provided by MNN. If you need to use your own precompiled version, feel free to replace it.
 
-### 1.5. Requirements
+### Requirements
 
 - CMake (version 3.10 or higher)
 - OpenCV (version 3.5 or higher) [**Optional**: If the version **>= 1.1.8**, opencv is not used by default]
@@ -160,10 +160,10 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 - RKNN [**Optional**]
     - Adjust and select versions currently supported for specific requirements.
 
-## 2. Compilation
+## Compilation
 CMake option are used to control the various details of the compilation phase. Please select according to your actual requirements. [CMake Option](doc/CMake-Option.md).
 
-### 2.1. Local Compilation
+### Local Compilation
 Make sure OpenCV is installed, you can begin the compilation process.  If you are using macOS or Linux, you can quickly compile using the shell scripts provided in the `command` folder at the project root:
 ```bash
 cd InspireFace/
@@ -183,7 +183,7 @@ inspireface-linux
 - **libInspireFace.so**：Compiled dynamic linking library.
 - **inspireface.h**：Header file definition.
 - **herror.h**：Reference error number definition.
-### 2.2. Cross Compilation
+### Cross Compilation
 Cross compilation requires you to prepare the target platform's cross-compilation toolchain on the host machine in advance. Here, compiling for Rockchip's embedded devices RV1109/RV1126 is used as an example:
 ```bash
 # Set the path for the cross-compilation toolchain
@@ -193,7 +193,7 @@ bash command/build_cross_rv1109rv1126_armhf.sh
 ```
 After the compilation is complete, you can find the compiled results in the `build/inspireface-linux-armv7-rv1109rv1126-armhf` directory.
 
-### 2.3. iOS Compilation
+### iOS Compilation
 
 To compile for iOS, ensure you are using a Mac device. The script will automatically download third-party dependencies into the `.macos_cache` directory.
 
@@ -203,7 +203,7 @@ bash command/build_ios.sh
 
 After the compilation is complete, `inspireface.framework` will be placed in the `build/inspireface-ios` directory.
 
-### 2.4. Android Compilation
+### Android Compilation
 
 You can compile for Android using the following command, but first you need to set your Android NDK path:
 
@@ -214,7 +214,7 @@ bash command/build_android.sh
 
 After the compilation is complete, arm64-v8a and armeabi-v7a libraries will be placed in the `build/inspireface-android` directory.
 
-### 2.5. Supported Platforms and Architectures
+### Supported Platforms and Architectures
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
 
 | **No.** | **Platform** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** |
@@ -237,7 +237,7 @@ We have completed the adaptation and testing of the software across various oper
 - Pass unit tests on physical devices.
 - Meet all performance benchmarks in tests.
 
-### 2.6. Multi-platform compilation using Docker
+### Multi-platform compilation using Docker
 
 We offer a method for rapid multi-platform compilation using Docker, provided that Docker is installed beforehand, and the appropriate commands are executed:
 ```Bash
@@ -257,8 +257,8 @@ docker-compose up build-cross-android
 docker-compose up
 ```
 
-## 3. Example
-### 3.1. C/C++ Sample
+## Example
+### C/C++ Sample
 To integrate InspireFace into a C/C++ project, you simply need to link the InspireFace library and include the appropriate header files. Below is a basic example demonstrating face detection:
 
 ```c
@@ -339,9 +339,9 @@ For more examples, you can refer to the `cpp/sample` sub-project located in the 
 
 **Note**: For each error code feedback, you can click on this [link](doc/Error-Feedback-Codes.md) to view detailed explanations.
 
-### 3.2. Python Native Sample
+### Python Native Sample
 
-#### 3.2.1 Quick Start
+#### Quick Start
 
 You can use pip to install the InspireFace Python package:
 
@@ -349,7 +349,7 @@ You can use pip to install the InspireFace Python package:
 pip install inspireface
 ```
 
-#### 3.2.2. Python Native Sample
+#### Python Native Sample
 
 We provide a Python API that allows for more efficient use of the InspireFace library. After compiling the dynamic link library, you need to either symlink or copy it to the `python/inspireface/modules/core` directory within the root directory. You can then start testing by navigating to the **[python/](python/)** directory. Your Python environment will need to have some dependencies installed:
 
@@ -405,7 +405,7 @@ In the project, more usage examples are provided:
 - sample_face_recognition.py: Facial recognition example
 - sample_face_track_from_video.py: Facial tracking from video stream example
 
-### 3.3 Java and Android platform API
+### Java and Android platform API
 
 We provide a Java API for Android devices, which is implemented using Java Native Interface(JNI). 
 
@@ -447,7 +447,7 @@ InspireFace.ReleaseImageStream(stream);
 InspireFace.GlobalRelease();
 ```
 
-## 4. Test
+## Test
 
 In the project, there is a subproject called cpp/test. To compile it, you need to enable the ISF_BUILD_WITH_TEST switch, which will allow you to compile executable programs for testing.
 
@@ -495,7 +495,7 @@ bash ci/quick_test_local.sh
 
 Every time code is committed, tests are run on GitHub Actions.
 
-## 5. Features
+## Features
 The following Features and technologies are currently supported.
 
 | Index | Feature | Adaptation | Note |
@@ -513,7 +513,7 @@ The following Features and technologies are currently supported.
 | 11 | Face Embedding Management | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Memory and Persistence |
 
 
-## 6. Resource Package List
+## Resource Package List
 
 For different scenarios, we currently provide several Packs, each containing multiple models and configurations.
 
