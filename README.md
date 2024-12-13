@@ -1,6 +1,6 @@
-# InspireFace 1.1.8 preview
+# InspireFace
 [![GitHub release](https://img.shields.io/github/v/release/HyperInspire/InspireFace.svg?style=for-the-badge&color=blue)](https://github.com/HyperInspire/InspireFace/releases/latest)
-[![pypi](https://img.shields.io/pypi/v/inspireface.svg?style=for-the-badge&color=blue)](https://pypi.org/project/inspireface/)
+[![pypi](https://img.shields.io/pypi/v/inspireface.svg?style=for-the-badge&color=orange)](https://pypi.org/project/inspireface/)
 [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)
 [![test](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=test)](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/test_ubuntu_x86_Pikachu.yaml?&style=for-the-badge&label=test)
 
@@ -13,6 +13,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 <img src="images/banner.jpg" alt="banner" style="zoom:80%;" />
 
 ## Change Logs
+
+**`2024-12-10`** Add python quick installation package.
 
 **`2024-11-19`** After version 1.1.8, the project has been made lighter by **removing the dependency on OpenCV**.
 
@@ -131,7 +133,7 @@ bash command/download_models_general.sh Megatron
 ```
 
 ### 1.3. Installing OpenCV(Optional)
-If you are using InspireFace **version 1.1.8 or higher**, **you can ignore the OpenCV-related configuration** since InspiReFace's image processing backend no longer depends on OpenCV by default starting from version 1.1.8, **which is recommended**. However, if you still want to use OpenCV, you can use the cmake option parameter: INSPIRECV_BACKEND_OPENCV to build InspireFace with an OpenCV-based image processing backend.The 3rdparty repository will no longer provide pre-compiled OpenCV libraries for versions above 1.1.8.
+For **InspireFace v1.1.8** and above, **OpenCV is optional and not required by default**. If you need OpenCV support, you can enable it using the cmake option ` INSPIRECV_BACKEND_OPENCV`.
 
 ### 1.4. Installing MNN
 The '**3rdparty**' directory already includes the MNN library and specifies a particular version as the stable version. If you need to enable or disable additional configuration options during compilation, you can refer to the CMake Options provided by MNN. If you need to use your own precompiled version, feel free to replace it.
@@ -141,7 +143,7 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 - CMake (version 3.10 or higher)
 - OpenCV (version 3.5 or higher) [**Optional**: If the version **>= 1.1.8**, opencv is not used by default]
     - Use the specific OpenCV-SDK supported by each target platform such as Android, iOS, and Linux.
-- NDK (version 16 or higher, only required for Android)[**Optional**]
+- NDK (version 16 or higher, only required for Android) [**Optional**]
 - MNN (version 1.4.0 or higher)
 - C++ Compiler
     - Either GCC or Clang can be used (macOS does not require additional installation as Xcode is included)
@@ -204,18 +206,21 @@ After the compilation is complete, `inspireface.framework` will be placed in the
 ### 2.4. Supported Platforms and Architectures
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
 
-| **No.** | **Operating System** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** |
+| **No.** | **Platform** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** |
 | ------- | -------------------- | --------------------- | -------------------------- | ----------- | ---------------- |
-| 1       | **Linux**            | ARMv7                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 1       | **Linux-CPU**        | ARMv7                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 2       |                      | ARMv8                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 3       |                      | x86/x86_64            | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | [![test](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/test_ubuntu_x86_Pikachu.yaml?style=for-the-badge&label=Test&color=blue)](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml) |
-| 4       |                      | ARMv7                 | RV1109RV1126               | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
-| 5       |                      | x86/x86_64            | CUDA                       | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
-| 6       | **macOS**            | Intel       | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
-| 7       |                      | Apple Silicon         | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
-| 8       | **iOS**              | ARM                   | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
-| 9       | **Android**          | ARMv7                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |  |
-| 10      |                      | ARMv8                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |  |
+| 4       | **Linux-Rockchip** | ARMv7                 | RV1109RV1126               | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 5 | | ARMv7 | RV1106 | ![build](https://img.shields.io/badge/build-developing-yellow?style=for-the-badge) ||
+| 6 | | ARMv7 | RK3566/RK3568 | ![build](https://img.shields.io/badge/build-developing-yellow?style=for-the-badge) |  |
+| 7 | | ARMv7 | RK3588 | ![build](https://img.shields.io/badge/build-developing-yellow?style=for-the-badge) |  |
+| 8      | **Linux-CUDA** | x86/x86_64            | NVIDIA-GPU          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 9      | **MacOS**           | Intel       | CPU/Metal/**ANE** | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 10   |                      | Apple Silicon         | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 11     | **iOS**              | ARM                   | CPU/Metal/**ANE**         | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 12     | **Android**          | ARMv7                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 13     |                      | ARMv8                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 
 - Complete compilation scripts and successful compilation.
 - Pass unit tests on physical devices.
@@ -354,17 +359,15 @@ cd python
 Import inspireface for a quick facial detection example:
 ```python
 import cv2
-import inspireface as ifac
-from inspireface.param import *
+import inspireface as isf
 
-# Step 1: Initialize the SDK and load the algorithm resource files.
-resource_path = "pack/Pikachu"
-ret = ifac.launch(resource_path)
+# Step 1: Initialize the SDK and downloading resource files.
+ret = isf.launch()
 assert ret, "Launch failure. Please ensure the resource path is correct."
 
 # Optional features, loaded during session creation based on the modules specified.
-opt = HF_ENABLE_NONE
-session = ifac.InspireFaceSession(opt, HF_DETECT_MODE_IMAGE)
+opt = isf.HF_ENABLE_NONE
+session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_IMAGE)
 
 # Load the image using OpenCV.
 image = cv2.imread(image_path)

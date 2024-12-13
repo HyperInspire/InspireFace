@@ -215,14 +215,14 @@ int search() {
 
         ret = HF_FeatureHubInsertFeature(identity);
         if (ret != HSUCCEED) {
-            INSPIRE_LOGE("插入失败: %ld", ret);
+            INSPIRE_LOGE("Insert failed: %ld", ret);
             return -1;
         }
 
-        //        // 在插入一次测试一下重复操作问题
+        //        // Test duplicate insertion operation
         //        ret = HF_FeaturesGroupInsertFeature(session, identity);
         //        if (ret != HSUCCEED) {
-        //            LOGE("不能重复id插入: %ld", ret);
+        //            INSPIRE_LOGE("Cannot insert duplicate ID: %ld", ret);
         //        }
 
         delete[] tagName;
@@ -356,7 +356,7 @@ int main() {
     HResult ret;
 
     //    {
-    //        // 测试ImageStream
+    //        // TestImageStream
     //        cv::Mat image = cv::imread("test_res/images/kun.jpg");
     //        HF_ImageData imageData = {0};
     //        imageData.data = image.data;
