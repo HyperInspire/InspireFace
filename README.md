@@ -203,7 +203,7 @@ bash command/build_ios.sh
 
 After the compilation is complete, `inspireface.framework` will be placed in the `build/inspireface-ios` directory.
 
-### 2.4 Android Compilation
+### 2.4. Android Compilation
 
 You can compile for Android using the following command, but first you need to set your Android NDK path:
 
@@ -214,7 +214,7 @@ bash command/build_android.sh
 
 After the compilation is complete, arm64-v8a and armeabi-v7a libraries will be placed in the `build/inspireface-android` directory.
 
-### 2.4. Supported Platforms and Architectures
+### 2.5. Supported Platforms and Architectures
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
 
 | **No.** | **Platform** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** |
@@ -237,7 +237,7 @@ We have completed the adaptation and testing of the software across various oper
 - Pass unit tests on physical devices.
 - Meet all performance benchmarks in tests.
 
-### 2.5. Multi-platform compilation using Docker
+### 2.6. Multi-platform compilation using Docker
 
 We offer a method for rapid multi-platform compilation using Docker, provided that Docker is installed beforehand, and the appropriate commands are executed:
 ```Bash
