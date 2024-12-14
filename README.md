@@ -528,7 +528,8 @@ For different scenarios, we currently provide several Packs, each containing mul
 InspireFace is built on the following libraries:
 
 - [MNN](https://github.com/alibaba/MNN)
-- [rknn](https://github.com/rockchip-linux/rknn-toolkit)
+- [RKNN](https://github.com/rockchip-linux/rknn-toolkit)
+- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
 - [sqlite](https://www.sqlite.org/index.html)
 - [sqlite-vec](https://github.com/asg017/sqlite-vec)
 - [Catch2](https://github.com/catchorg/Catch2)
