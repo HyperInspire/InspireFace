@@ -4,33 +4,9 @@
 set -e
 
 ROOT_DIR="$(pwd)"
-TARGET_DIR="test_res"
-DOWNLOAD_URL="https://github.com/tunmx/inspireface-store/raw/main/resource/test_res-lite2.zip"
-ZIP_FILE="test_res-lite2.zip"
 BUILD_DIRNAME="ubuntu18_shared"
 
-# Check if the target directory already exists
-if [ ! -d "$TARGET_DIR" ]; then
-    echo "Directory '$TARGET_DIR' does not exist. Downloading..."
-
-    # Download the dataset zip file
-    wget -q "$DOWNLOAD_URL" -O "$ZIP_FILE"
-
-    echo "Extracting '$ZIP_FILE' to '$TARGET_DIR'..."
-    # Unzip the downloaded file
-    unzip "$ZIP_FILE"
-
-    # Remove the downloaded zip file and unnecessary folders
-    rm "$ZIP_FILE"
-    rm -rf "__MACOSX"
-
-    echo "Download and extraction complete."
-else
-    echo "Directory '$TARGET_DIR' already exists. Skipping download."
-fi
-
-# Get the absolute path of the target directory
-FULL_TEST_DIR="$(realpath ${TARGET_DIR})"
+bash command/download_models_general.sh Pikachu
 
 # Create the build directory if it doesn't exist
 mkdir -p build/${BUILD_DIRNAME}/
@@ -56,7 +32,8 @@ make -j4
 cd ${ROOT_DIR}
 
 # Important: You must copy the compiled dynamic library to this path!
-cp build/${BUILD_DIRNAME}/lib/libInspireFace.so python/inspireface/modules/core/
+mkdir -p python/inspireface/modules/core/libs/linux/x64/
+cp build/${BUILD_DIRNAME}/lib/libInspireFace.so python/inspireface/modules/core/libs/linux/x64/
 
 # Install dependency
 pip install opencv-python
