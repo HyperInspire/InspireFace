@@ -74,7 +74,6 @@ def case_feature_hub():
     print(isf.feature_hub_get_face_count())
     result = isf.feature_hub_face_search(FEATURE)
     print(result.confidence, result.similar_identity.id)
-
     assert os.path.exists(db_path), "FeatureHub database file not found."
 
 
