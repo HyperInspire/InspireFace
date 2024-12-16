@@ -1,6 +1,7 @@
-//
-// Created by Tunm-Air13 on 2023/5/24.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #pragma once
 #ifndef BIGGUYSMAIN_TEST_SETTINGS_H
 #define BIGGUYSMAIN_TEST_SETTINGS_H
