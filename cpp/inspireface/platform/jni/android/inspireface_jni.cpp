@@ -1257,9 +1257,27 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_QueryInspireFaceVersion)(JNIEnv *
     HFInspireFaceExtendedInformation extendedInfo;
     HFQueryInspireFaceExtendedInformation(&extendedInfo);
 
-    // Convert C string to Java string and set information field
-    jstring infoString = env->NewStringUTF(extendedInfo.information);
-    env->SetObjectField(version, infoField, infoString);
+    // Sanitize the information string to ensure valid UTF-8
+    std::string sanitizedInfo;
+    const char *rawInfo = extendedInfo.information;
+    while (*rawInfo) {
+        unsigned char c = static_cast<unsigned char>(*rawInfo);
+        if (c < 0x80 || (c >= 0xC0 && c <= 0xF4)) {
+            // Valid UTF-8 start byte
+            sanitizedInfo += *rawInfo;
+        }
+        rawInfo++;
+    }
+
+    // Convert sanitized string to Java string
+    jstring infoString = env->NewStringUTF(sanitizedInfo.c_str());
+    if (infoString) {
+        env->SetObjectField(version, infoField, infoString);
+    } else {
+        // Fallback to a safe string if conversion fails
+        jstring fallbackString = env->NewStringUTF("Version information unavailable");
+        env->SetObjectField(version, infoField, fallbackString);
+    }
 
     return version;
 }
