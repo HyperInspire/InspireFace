@@ -1,6 +1,7 @@
-//
-// Created by tunm on 2023/2/5.
-//
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 /*** Include ***/
 /* for general */
 
@@ -21,10 +22,9 @@
 #include "inference_helper_log.h"
 #include "log.h"
 
-static unsigned char* load_data(FILE* fp, size_t ofst, size_t sz)
-{
+static unsigned char* load_data(FILE* fp, size_t ofst, size_t sz) {
     unsigned char* data;
-    int            ret;
+    int ret;
 
     data = NULL;
 
@@ -47,8 +47,7 @@ static unsigned char* load_data(FILE* fp, size_t ofst, size_t sz)
     return data;
 }
 
-static unsigned char* load_model(const char* filename, int* model_size)
-{
+static unsigned char* load_model(const char* filename, int* model_size) {
     FILE* fp;
     unsigned char* data;
 
@@ -69,65 +68,60 @@ static unsigned char* load_model(const char* filename, int* model_size)
     return data;
 }
 
-
 /*** Macro ***/
 #define TAG "InferenceHelperRknn"
-#define PRINT(...)   INFERENCE_HELPER_LOG_PRINT(TAG, __VA_ARGS__)
+#define PRINT(...) INFERENCE_HELPER_LOG_PRINT(TAG, __VA_ARGS__)
 #define PRINT_E(...) INFERENCE_HELPER_LOG_PRINT_E(TAG, __VA_ARGS__)
 
 InferenceHelperRKNN::InferenceHelperRKNN() {
     num_threads_ = 1;
 }
 
-InferenceHelperRKNN::~InferenceHelperRKNN() {
-}
+InferenceHelperRKNN::~InferenceHelperRKNN() {}
 
 int32_t InferenceHelperRKNN::SetNumThreads(const int32_t num_threads) {
     num_threads_ = num_threads;
     return kRetOk;
 }
 
-int32_t InferenceHelperRKNN::SetCustomOps(const std::vector<std::pair<const char *, const void *>> &custom_ops) {
+int32_t InferenceHelperRKNN::SetCustomOps(const std::vector<std::pair<const char*, const void*>>& custom_ops) {
     PRINT("[WARNING] This method is not supported\n");
     return kRetOk;
 }
 
-int32_t InferenceHelperRKNN::ParameterInitialization(std::vector<InputTensorInfo>& input_tensor_info_list, std::vector<OutputTensorInfo>& output_tensor_info_list) {
-    auto ret = rknn_query(net_, RKNN_QUERY_IN_OUT_NUM, &rk_io_num_,
-                     sizeof(rk_io_num_));
+int32_t InferenceHelperRKNN::ParameterInitialization(std::vector<InputTensorInfo>& input_tensor_info_list,
+                                                     std::vector<OutputTensorInfo>& output_tensor_info_list) {
+    auto ret = rknn_query(net_, RKNN_QUERY_IN_OUT_NUM, &rk_io_num_, sizeof(rk_io_num_));
 
     if (ret != RKNN_SUCC) {
         PRINT_E("rknn_query ctx fail! ret=%d\n", ret)
         return kRetErr;
     }
 
-
-//    for (size_t index = 0; index < input_tensor_info_list.size(); ++index) {
-//        auto &input_tensor_info = input_tensor_info_list[index];
-//    }
+    //    for (size_t index = 0; index < input_tensor_info_list.size(); ++index) {
+    //        auto &input_tensor_info = input_tensor_info_list[index];
+    //    }
     std::vector<rknn_tensor_attr> output_attrs_;
     output_attrs_.resize(rk_io_num_.n_output);
     for (int i = 0; i < rk_io_num_.n_output; ++i) {
-//        memset(&output_attrs_[i], 0, sizeof(output_attrs_[i]));
-//        memset(&output_tensors_[i], 0, sizeof(output_tensors_[i]));
+        //        memset(&output_attrs_[i], 0, sizeof(output_attrs_[i]));
+        //        memset(&output_tensors_[i], 0, sizeof(output_tensors_[i]));
         output_attrs_[i].index = i;
-        ret = rknn_query(net_, RKNN_QUERY_OUTPUT_ATTR, &(output_attrs_[i]),
-                         sizeof(rknn_tensor_attr));
-        auto &output = output_tensor_info_list[i];
+        ret = rknn_query(net_, RKNN_QUERY_OUTPUT_ATTR, &(output_attrs_[i]), sizeof(rknn_tensor_attr));
+        auto& output = output_tensor_info_list[i];
         output.tensor_dims.clear();
         for (int j = 0; j < output_attrs_[i].n_dims; ++j) {
             output.tensor_dims.push_back(output_attrs_[i].dims[j]);
             std::cout << "dim: " << output_attrs_[i].dims[j] << std::endl;
         }
-//        std::cout << output_attrs_[i].n_dims << std::endl;
+        //        std::cout << output_attrs_[i].n_dims << std::endl;
     }
 
     return kRetOk;
 }
 
-int32_t
-InferenceHelperRKNN::Initialize(const std::string &model_filename, std::vector<InputTensorInfo> &input_tensor_info_list,
-                                std::vector<OutputTensorInfo> &output_tensor_info_list) {
+int32_t InferenceHelperRKNN::Initialize(const std::string& model_filename, std::vector<InputTensorInfo>& input_tensor_info_list,
+                                        std::vector<OutputTensorInfo>& output_tensor_info_list) {
     int model_data_size = 0;
     unsigned char* model_data = load_model(model_filename.c_str(), &model_data_size);
     int ret = rknn_init(&net_, model_data, model_data_size, 0);
@@ -145,7 +139,8 @@ InferenceHelperRKNN::Initialize(const std::string &model_filename, std::vector<I
     return ParameterInitialization(input_tensor_info_list, output_tensor_info_list);
 }
 
-int32_t InferenceHelperRKNN::Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list, std::vector<OutputTensorInfo>& output_tensor_info_list) {
+int32_t InferenceHelperRKNN::Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list,
+                                        std::vector<OutputTensorInfo>& output_tensor_info_list) {
     int ret = rknn_init(&net_, model_buffer, model_size, 0);
     if (ret < 0) {
         PRINT_E("rknn_init error ret=%d\n", ret)
@@ -165,8 +160,7 @@ int32_t InferenceHelperRKNN::Finalize(void) {
     return kRetOk;
 }
 
-int32_t InferenceHelperRKNN::PreProcess(const std::vector<InputTensorInfo> &input_tensor_info_list) {
-
+int32_t InferenceHelperRKNN::PreProcess(const std::vector<InputTensorInfo>& input_tensor_info_list) {
     /* Check tensor info fits the info from model */
     if (input_tensor_info_list.size() != rk_io_num_.n_input) {
         PRINT_E("The inputs quantity is inconsistent: i: %d, m: %d", input_tensor_info_list.size(), rk_io_num_.n_input);
@@ -175,7 +169,7 @@ int32_t InferenceHelperRKNN::PreProcess(const std::vector<InputTensorInfo> &inpu
 
     std::vector<rknn_input> input_tensors_;
     for (size_t index = 0; index < input_tensor_info_list.size(); index++) {
-        auto &input_tensor_info = input_tensor_info_list[index];
+        auto& input_tensor_info = input_tensor_info_list[index];
         if (input_tensor_info.data_type == InputTensorInfo::kDataTypeImage) {
             /* Crop */
             // Not Implement
@@ -204,30 +198,29 @@ int32_t InferenceHelperRKNN::PreProcess(const std::vector<InputTensorInfo> &inpu
             input_tensors_.push_back(input);
         }
     }
-//    INSPIRE_LOGD("Prepare data!");
+    //    INSPIRE_LOGD("Prepare data!");
     int ret = rknn_inputs_set(net_, input_tensor_info_list.size(), input_tensors_.data());
-//    INSPIRE_LOGD("Set data!");
-    if (ret < 0){
+    //    INSPIRE_LOGD("Set data!");
+    if (ret < 0) {
         PRINT_E("rknn_run fail! ret=%d", ret)
         return kRetErr;
     }
     return kRetOk;
 }
 
-int32_t InferenceHelperRKNN::Process(std::vector<OutputTensorInfo> &output_tensor_info_list) {
-
+int32_t InferenceHelperRKNN::Process(std::vector<OutputTensorInfo>& output_tensor_info_list) {
     if (output_tensor_info_list.size() != rk_io_num_.n_output) {
         PRINT_E("The outputs quantity is inconsistent")
         return kRetErr;
     }
     auto ret = rknn_run(net_, NULL);
-    if (ret < 0){
+    if (ret < 0) {
         PRINT_E("rknn_run fail! ret=%d", ret)
         return kRetErr;
     }
 
     for (size_t index = 0; index < output_tensor_info_list.size(); index++) {
-        auto &output_tensor = output_tensor_info_list[index];
+        auto& output_tensor = output_tensor_info_list[index];
         rknn_output output;
         if (output_tensor.tensor_type == TensorInfo::kTensorTypeFp32) {
             output.want_float = 1;
@@ -235,22 +228,21 @@ int32_t InferenceHelperRKNN::Process(std::vector<OutputTensorInfo> &output_tenso
         }
         output.is_prealloc = 0;
         output_tensors_.push_back(output);
-//        output.want_float = 1;  // float
+        //        output.want_float = 1;  // float
     }
 
     ret = rknn_outputs_get(net_, output_tensor_info_list.size(), output_tensors_.data(), NULL);
-    if (ret < 0){
+    if (ret < 0) {
         PRINT_E("rknn_run fail! ret=%d", ret)
         return kRetErr;
     }
     for (size_t index = 0; index < output_tensor_info_list.size(); index++) {
-        auto &output_tensor = output_tensor_info_list[index];
-        auto &output = output_tensors_[index];
+        auto& output_tensor = output_tensor_info_list[index];
+        auto& output = output_tensors_[index];
         output_tensor.data = output.buf;
-        float* outBlob = (float* )output.buf;
-//        output_tensor.
+        float* outBlob = (float*)output.buf;
+        //        output_tensor.
     }
-
 
     return kRetOk;
 }
@@ -264,5 +256,4 @@ int32_t InferenceHelperRKNN::ResizeInput(const std::vector<InputTensorInfo>& inp
     return 0;
 }
 
-
-#endif // INFERENCE_HELPER_ENABLE_RKNN
+#endif  // INFERENCE_HELPER_ENABLE_RKNN

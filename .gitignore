@@ -3,7 +3,8 @@ cmake-build-debug/*
 build/*
 test_*.rknn
 test_zip_*
-test_res/*
+test_res/pack/*
+test_res/save/*
 resource/*
 pack/*
 *.zip
@@ -14,3 +15,9 @@ pack/*
 .vscode/*
 build_local/*
 local_build/*
+cpp/inspireface/information.h
+cpp/inspireface/version.txt
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store

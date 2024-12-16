@@ -23,7 +23,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
       - name: Extract Version Number
