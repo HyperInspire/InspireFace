@@ -8,6 +8,10 @@ BUILD_DIRNAME="ci_ubuntu18"
 TEST_DIR="./build/${BUILD_DIRNAME}/test"
 TEST_EXECUTABLE="./test/Test"
 
+# Make dir
+mkdir -p ${TARGET_DIR}/save/video_frames
+
+# Download models
 bash command/download_models_general.sh Pikachu
 
 # Get the absolute path of the target directory

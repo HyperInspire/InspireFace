@@ -6,8 +6,6 @@ set -e
 ROOT_DIR="$(pwd)"
 BUILD_DIRNAME="ubuntu18_shared"
 
-bash command/download_models_general.sh Pikachu
-
 # Create the build directory if it doesn't exist
 mkdir -p build/${BUILD_DIRNAME}/
 
@@ -43,5 +41,5 @@ pip install loguru
 cd python/
 
 # Run sample
-python sample_face_detection.py ../test_res/pack/Pikachu ../test_res/data/bulk/woman.png
+python sample_face_detection.py ../test_res/data/bulk/woman.png
 
