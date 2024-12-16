@@ -348,23 +348,29 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Synchronize and update submodules recursively
+      # Step 2: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 3: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
           git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
       
-      # Step 3: Set up Docker Compose
+      # Step 4: Set up Docker Compose
       - name: Set up Docker Compose
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
 
-      # Step 4: Execute the docker-compose command
+      # Step 5: Execute the docker-compose command
       - name: Execute Docker Compose
         run: |
           docker-compose up build-manylinux2014-x86
+          ls build
 
-      # Step 5: Zip SDK directory
+      # Step 6: Zip SDK directory
       - name: Zip SDK directory
         run: |
           zip -r inspireface-linux-x86-manylinux2014-${{ env.VERSION }}.zip build/inspireface-linux-x86-manylinux2014-${{ env.VERSION }}
