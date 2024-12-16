@@ -232,7 +232,7 @@ double BYTETracker::lapjv(const vector<vector<float> > &cost, vector<int> &rowso
     } else {
         if (!extend_cost) {
             std::cout << "set extend_cost=True" << std::endl;
-            system("pause");
+            // system("pause");
             exit(0);
         }
     }

@@ -31,5 +31,5 @@ jobs:
       # Step 4: Start building the SDK
       - name: Start Building the InspireFace-MacOS-x86
         run: |
-          bash command/build_linux_macos_x86.sh
+          bash command/build_macos_x86.sh
           ls build
