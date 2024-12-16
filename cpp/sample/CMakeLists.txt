@@ -25,7 +25,6 @@ set_target_properties(FaceTrackSample PROPERTIES
 )
 
 
-
 # Examples of face recognition
 add_executable(FaceComparisonSample api/sample_face_comparison.cpp)
 target_link_libraries(FaceComparisonSample InspireFace ${ext})
