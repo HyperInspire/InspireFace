@@ -29,7 +29,7 @@ jobs:
       # Step 2: Update Git submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Install necessary dependencies for building the CMake project
       - name: Install dependencies

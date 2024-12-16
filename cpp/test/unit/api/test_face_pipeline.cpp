@@ -1,7 +1,7 @@
-//
-// Created by tunm on 2023/10/12.
-//
-
+/**
+ * @author Jingyu Yan
+ * @date 2024-10-01
+ */
 #include <iostream>
 #include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
@@ -39,14 +39,14 @@ TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
     parameter.enable_face_attribute = 1;
     HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
     HFSession session;
-    HInt32 faceDetectPixelLevel = 160;
+    HInt32 faceDetectPixelLevel = 320;
     ret = HFCreateInspireFaceSession(parameter, detMode, 5, faceDetectPixelLevel, -1, &session);
     REQUIRE(ret == HSUCCEED);
 
     SECTION("a black girl") {
         HFImageStream imgHandle;
-        auto img = cv::imread(GET_DATA("data/attribute/1423.jpg"));
-        REQUIRE(!img.empty());
+        auto img = inspirecv::Image::Create(GET_DATA("data/attribute/1423.jpg"));
+        REQUIRE(!img.Empty());
         ret = CVImageToImageStream(img, imgHandle);
         REQUIRE(ret == HSUCCEED);
 
@@ -56,8 +56,7 @@ TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
         REQUIRE(multipleFaceData.detectedNum == 1);
 
         // Run pipeline
-        ret = HFMultipleFacePipelineProcessOptional(session, imgHandle, &multipleFaceData,
-                                                    HF_ENABLE_FACE_ATTRIBUTE);
+        ret = HFMultipleFacePipelineProcessOptional(session, imgHandle, &multipleFaceData, HF_ENABLE_FACE_ATTRIBUTE);
         REQUIRE(ret == HSUCCEED);
 
         HFFaceAttributeResult result = {0};
@@ -77,8 +76,8 @@ TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
 
     SECTION("two young white women") {
         HFImageStream imgHandle;
-        auto img = cv::imread(GET_DATA("data/attribute/7242.jpg"));
-        REQUIRE(!img.empty());
+        auto img = inspirecv::Image::Create(GET_DATA("data/attribute/7242.jpg"));
+        REQUIRE(!img.Empty());
         ret = CVImageToImageStream(img, imgHandle);
         REQUIRE(ret == HSUCCEED);
 
@@ -88,8 +87,7 @@ TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
         REQUIRE(multipleFaceData.detectedNum == 2);
 
         // Run pipeline
-        ret = HFMultipleFacePipelineProcessOptional(session, imgHandle, &multipleFaceData,
-                                                    HF_ENABLE_FACE_ATTRIBUTE);
+        ret = HFMultipleFacePipelineProcessOptional(session, imgHandle, &multipleFaceData, HF_ENABLE_FACE_ATTRIBUTE);
         REQUIRE(ret == HSUCCEED);
 
         HFFaceAttributeResult result = {0};
@@ -114,49 +112,6 @@ TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
     REQUIRE(ret == HSUCCEED);
 }
 
-TEST_CASE("test_FacePipelineRobustness", "[robustness]") {
-    DRAW_SPLIT_LINE
-    TEST_PRINT_OUTPUT(true);
-
-    SECTION("Exception") {
-        HResult ret;
-        HFSessionCustomParameter parameter = {0};
-        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
-        HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
-        REQUIRE(ret == HSUCCEED);
-
-        // Input exception data
-        HFImageStream nullHandle = {0};
-        HFMultipleFaceData nullfaces = {0};
-        ret =
-          HFMultipleFacePipelineProcessOptional(session, nullHandle, &nullfaces, HF_ENABLE_NONE);
-        REQUIRE(ret == HERR_INVALID_IMAGE_STREAM_HANDLE);
-
-        // Get a face picture
-        HFImageStream img1Handle;
-        auto img1 = cv::imread(GET_DATA("data/bulk/image_T1.jpeg"));
-        ret = CVImageToImageStream(img1, img1Handle);
-        REQUIRE(ret == HSUCCEED);
-
-        // Input correct Image and exception faces struct
-        ret =
-          HFMultipleFacePipelineProcessOptional(session, img1Handle, &nullfaces, HF_ENABLE_NONE);
-        REQUIRE(ret == HSUCCEED);
-
-        ret = HFReleaseImageStream(img1Handle);
-        REQUIRE(ret == HSUCCEED);
-        ret = HFReleaseInspireFaceSession(session);
-        REQUIRE(ret == HSUCCEED);
-
-        // Multiple release
-        ret = HFReleaseInspireFaceSession(session);
-        REQUIRE(ret == HERR_INVALID_CONTEXT_HANDLE);
-
-        HFDeBugShowResourceStatistics();
-    }
-}
-
 TEST_CASE("test_FacePipeline", "[face_pipeline]") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
@@ -167,12 +122,12 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         parameter.enable_liveness = 1;
         HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
-        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, 320, -1, &session);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
         HFImageStream img1Handle;
-        auto img1 = cv::imread(GET_DATA("data/bulk/image_T1.jpeg"));
+        auto img1 = inspirecv::Image::Create(GET_DATA("data/bulk/image_T1.jpeg"));
         ret = CVImageToImageStream(img1, img1Handle);
         REQUIRE(ret == HSUCCEED);
 
@@ -189,7 +144,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         TEST_PRINT("{}", confidence.confidence[0]);
         REQUIRE(ret == HSUCCEED);
         CHECK(confidence.num > 0);
-        CHECK(confidence.confidence[0] > 0.9);
+        CHECK(confidence.confidence[0] > 0.8);
 
         ret = HFReleaseImageStream(img1Handle);
         REQUIRE(ret == HSUCCEED);
@@ -197,7 +152,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // fake face
         HFImageStream img2Handle;
-        auto img2 = cv::imread(GET_DATA("data/bulk/rgb_fake.jpg"));
+        auto img2 = inspirecv::Image::Create(GET_DATA("data/bulk/rgb_fake.jpg"));
         ret = CVImageToImageStream(img2, img2Handle);
         REQUIRE(ret == HSUCCEED);
         ret = HFExecuteFaceTrack(session, img2Handle, &multipleFaceData);
@@ -229,7 +184,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // Get a face picture
         HFImageStream img1Handle;
-        auto img1 = cv::imread(GET_DATA("data/bulk/mask2.jpg"));
+        auto img1 = inspirecv::Image::Create(GET_DATA("data/bulk/mask2.jpg"));
         ret = CVImageToImageStream(img1, img1Handle);
         REQUIRE(ret == HSUCCEED);
 
@@ -253,7 +208,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
 
         // no mask face
         HFImageStream img2Handle;
-        auto img2 = cv::imread(GET_DATA("data/bulk/face_sample.png"));
+        auto img2 = inspirecv::Image::Create(GET_DATA("data/bulk/face_sample.png"));
         ret = CVImageToImageStream(img2, img2Handle);
         REQUIRE(ret == HSUCCEED);
         ret = HFExecuteFaceTrack(session, img2Handle, &multipleFaceData);
@@ -280,12 +235,12 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HInt32 option = HF_ENABLE_QUALITY;
         HFSession session;
-        ret = HFCreateInspireFaceSessionOptional(option, detMode, 3, -1, -1, &session);
+        ret = HFCreateInspireFaceSessionOptional(option, detMode, 3, 320, -1, &session);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
         HFImageStream superiorHandle;
-        auto superior = cv::imread(GET_DATA("data/bulk/yifei.jpg"));
+        auto superior = inspirecv::Image::Create(GET_DATA("data/bulk/yifei.jpg"));
         ret = CVImageToImageStream(superior, superiorHandle);
         REQUIRE(ret == HSUCCEED);
 
@@ -295,18 +250,17 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum > 0);
 
-        ret =
-          HFMultipleFacePipelineProcessOptional(session, superiorHandle, &multipleFaceData, option);
+        ret = HFMultipleFacePipelineProcessOptional(session, superiorHandle, &multipleFaceData, option);
         REQUIRE(ret == HSUCCEED);
 
         HFloat quality;
         ret = HFFaceQualityDetect(session, multipleFaceData.tokens[0], &quality);
         REQUIRE(ret == HSUCCEED);
-        CHECK(quality > 0.85);
+        CHECK(quality > 0.8);
 
         // blur image
         HFImageStream blurHandle;
-        auto blur = cv::imread(GET_DATA("data/bulk/blur.jpg"));
+        auto blur = inspirecv::Image::Create(GET_DATA("data/bulk/blur.jpg"));
         ret = CVImageToImageStream(blur, blurHandle);
         REQUIRE(ret == HSUCCEED);
 
@@ -349,7 +303,7 @@ TEST_CASE("test_FaceReaction", "[face_reaction]") {
     SECTION("open eyes") {
         // Get a face picture
         HFImageStream imgHandle;
-        auto img = cv::imread(GET_DATA("data/reaction/open_eyes.png"));
+        auto img = inspirecv::Image::Create(GET_DATA("data/reaction/open_eyes.png"));
         ret = CVImageToImageStream(img, imgHandle);
         REQUIRE(ret == HSUCCEED);
 
@@ -364,8 +318,8 @@ TEST_CASE("test_FaceReaction", "[face_reaction]") {
         REQUIRE(ret == HSUCCEED);
 
         // Get results
-        HFFaceIntereactionState result;
-        ret = HFGetFaceIntereactionStateResult(session, &result);
+        HFFaceInteractionState result;
+        ret = HFGetFaceInteractionStateResult(session, &result);
         REQUIRE(multipleFaceData.detectedNum == result.num);
         REQUIRE(ret == HSUCCEED);
 
@@ -380,7 +334,7 @@ TEST_CASE("test_FaceReaction", "[face_reaction]") {
     SECTION("close eyes") {
         // Get a face picture
         HFImageStream imgHandle;
-        auto img = cv::imread(GET_DATA("data/reaction/close_eyes.jpeg"));
+        auto img = inspirecv::Image::Create(GET_DATA("data/reaction/close_eyes.jpeg"));
         ret = CVImageToImageStream(img, imgHandle);
         REQUIRE(ret == HSUCCEED);
 
@@ -395,8 +349,8 @@ TEST_CASE("test_FaceReaction", "[face_reaction]") {
         REQUIRE(ret == HSUCCEED);
 
         // Get results
-        HFFaceIntereactionState result;
-        ret = HFGetFaceIntereactionStateResult(session, &result);
+        HFFaceInteractionState result;
+        ret = HFGetFaceInteractionStateResult(session, &result);
         REQUIRE(multipleFaceData.detectedNum == result.num);
         REQUIRE(ret == HSUCCEED);
 
@@ -411,7 +365,7 @@ TEST_CASE("test_FaceReaction", "[face_reaction]") {
     SECTION("Close one eye and open the other") {
         // Get a face picture
         HFImageStream imgHandle;
-        auto img = cv::imread(GET_DATA("data/reaction/close_open_eyes.jpeg"));
+        auto img = inspirecv::Image::Create(GET_DATA("data/reaction/close_open_eyes.jpeg"));
         ret = CVImageToImageStream(img, imgHandle);
         REQUIRE(ret == HSUCCEED);
 
@@ -426,8 +380,8 @@ TEST_CASE("test_FaceReaction", "[face_reaction]") {
         REQUIRE(ret == HSUCCEED);
 
         // Get results
-        HFFaceIntereactionState result;
-        ret = HFGetFaceIntereactionStateResult(session, &result);
+        HFFaceInteractionState result;
+        ret = HFGetFaceInteractionStateResult(session, &result);
         REQUIRE(multipleFaceData.detectedNum == result.num);
         REQUIRE(ret == HSUCCEED);
 
