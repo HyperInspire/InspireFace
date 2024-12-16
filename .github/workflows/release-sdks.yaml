@@ -23,7 +23,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Install necessary dependencies for building the CMake project
       - name: Install Dependencies
@@ -69,7 +69,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Install wget and xz-utils
       - name: Install wget and xz-utils
@@ -126,7 +126,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
       - name: Extract Version Number
@@ -183,7 +183,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
       - name: Extract Version Number
@@ -240,7 +240,7 @@ jobs:
       # Step 2: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 3: Install dependencies
       - name: Install Dependencies
@@ -317,7 +317,7 @@ jobs:
       # Step 3: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
-          git clone --recurse-submodules https://github.com/HyperInspire/3rdparty.git
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
       # Step 4: Start building the SDK
       - name: Start Building the InspireFace-iOS
@@ -339,9 +339,41 @@ jobs:
           path: |
             inspireface-ios-${{ env.VERSION }}.zip
 
+  build_manylinux2014_x86:
+    name: Compile manylinux2014-x86
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+      
+      # Step 3: Set up Docker Compose
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      # Step 4: Execute the docker-compose command
+      - name: Execute Docker Compose
+        run: |
+          docker-compose up build-manylinux2014-x86
+
+      # Step 5: Zip SDK directory
+      - name: Zip SDK directory
+        run: |
+          zip -r inspireface-linux-x86-manylinux2014-${{ env.VERSION }}.zip build/inspireface-linux-x86-manylinux2014-${{ env.VERSION }}
+          stat inspireface-linux-x86-manylinux2014-${{ env.VERSION }}.zip
+
+
   release:
     name: Release SDKs to GitHub
-    needs: [ build_linux_x86, build_armv7_armhf, build_armv7_rv1109rv1126_armhf, build_linux_aarch64, build_android, build_ios]
+    needs: [ build_linux_x86, build_armv7_armhf, build_armv7_rv1109rv1126_armhf, build_linux_aarch64, build_android, build_ios, build_manylinux2014_x86]
     runs-on: ubuntu-latest
 
     steps:
@@ -375,3 +407,4 @@ jobs:
             sdk_artifacts/sdk_files_linux_aarch64/inspireface-linux-aarch64-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_android/inspireface-android-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_ios/inspireface-ios-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_manylinux2014_x86/inspireface-linux-x86-manylinux2014-${{ env.VERSION }}.zip

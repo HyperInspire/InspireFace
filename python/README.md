@@ -25,17 +25,16 @@ You can easily call the api to implement a number of functions:
 
 ```Python
 import cv2
-import inspireface as ifac
-from inspireface.param import *
+import inspireface as isf
 
 # Step 1: Initialize the SDK and load the algorithm resource files.
 resource_path = "pack/Pikachu"
-ret = ifac.launch(resource_path)
+ret = isf.launch(resource_path)
 assert ret, "Launch failure. Please ensure the resource path is correct."
 
 # Optional features, loaded during session creation based on the modules specified.
-opt = HF_ENABLE_NONE
-session = ifac.InspireFaceSession(opt, HF_DETECT_MODE_IMAGE)
+opt = isf.HF_ENABLE_NONE
+session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_IMAGE)
 
 # Load the image using OpenCV.
 image = cv2.imread(image_path)

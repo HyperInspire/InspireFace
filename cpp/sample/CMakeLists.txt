@@ -6,78 +6,56 @@ option(ISF_BUILD_SAMPLE_CLUTTERED "Whether to compile the cluttered sample progr
 include_directories(${SRC_DIR})
 
 if (ISF_ENABLE_RKNN)
-        set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
+        set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
     link_directories(${ISF_RKNN_API_LIB})
     set(ext rknn_api dl)
 endif ()
 
-add_executable(Leak cpp/leak.cpp)
+add_executable(Leak api/leak.cpp)
 target_link_libraries(Leak InspireFace ${ext})
 set_target_properties(Leak PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
-# Examples of face detection and tracking
-add_executable(FaceTrackSample cpp/sample_face_track.cpp)
+# # Examples of face detection and tracking
+add_executable(FaceTrackSample api/sample_face_track.cpp)
 target_link_libraries(FaceTrackSample InspireFace ${ext})
 set_target_properties(FaceTrackSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
-add_executable(FaceTrackSampleCost cpp/sample_face_track_cost.cpp)
-target_link_libraries(FaceTrackSampleCost InspireFace ${ext})
-set_target_properties(FaceTrackSampleCost PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
-)
-
-
-# Examples of face detection and tracking
-add_executable(MTFaceTrackSample cpp/sample_face_track_mt.cpp)
-target_link_libraries(MTFaceTrackSample InspireFace ${ext})
-set_target_properties(MTFaceTrackSample PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
-)
-
-if(NOT DISABLE_GUI)
-    # Examples of face detection and tracking
-    add_executable(FaceTrackVideoSample cpp/sample_face_track_video.cpp)
-    target_link_libraries(FaceTrackVideoSample InspireFace ${ext})
-    set_target_properties(FaceTrackVideoSample PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
-    )
-endif ()
-
-
 
 # Examples of face recognition
-add_executable(FaceRecognitionSample cpp/sample_face_recognition.cpp)
-target_link_libraries(FaceRecognitionSample InspireFace ${ext})
-set_target_properties(FaceRecognitionSample PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
-)
-
-add_executable(FaceSearchSample cpp/sample_face_search.cpp)
-target_link_libraries(FaceSearchSample InspireFace ${ext})
-set_target_properties(FaceSearchSample PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
-)
-
-
-# Examples of face recognition
-add_executable(FaceComparisonSample cpp/sample_face_comparison.cpp)
+add_executable(FaceComparisonSample api/sample_face_comparison.cpp)
 target_link_libraries(FaceComparisonSample InspireFace ${ext})
 set_target_properties(FaceComparisonSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
-
-# Examples of face recognition
-add_executable(FaceDetect cpp/face_detect.cpp)
-target_link_libraries(FaceDetect InspireFace ${ext})
-set_target_properties(FaceDetect PROPERTIES
+add_executable(FaceFeatureHubSample api/sample_feature_hub.cpp)
+target_link_libraries(FaceFeatureHubSample InspireFace ${ext})
+set_target_properties(FaceFeatureHubSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
+
+add_executable(FaceTrackerSample source/tracker_sample.cpp)
+target_link_libraries(FaceTrackerSample InspireFace ${ext})
+set_target_properties(FaceTrackerSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+add_executable(FaceTrackPipelineSample source/tracker_pipeline.cpp)
+target_link_libraries(FaceTrackPipelineSample InspireFace ${ext})
+set_target_properties(FaceTrackPipelineSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
+add_executable(FeatureHubSample source/feature_hub_sample.cpp)
+target_link_libraries(FeatureHubSample InspireFace ${ext})
+set_target_properties(FeatureHubSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
 
 # Platform watershed
 if (ISF_BUILD_LINUX_ARM7 OR ISF_BUILD_LINUX_AARCH64)
@@ -260,10 +238,9 @@ message(STATUS "\t ISF_BUILD_SAMPLE_CLUTTERED: ${ISF_BUILD_SAMPLE_CLUTTERED}")
 # Install bin
 install(TARGETS Leak RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 install(TARGETS FaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-install(TARGETS FaceTrackSampleCost RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-install(TARGETS MTFaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-install(TARGETS FaceRecognitionSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-install(TARGETS FaceSearchSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+# install(TARGETS FaceTrackSampleCost RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+# install(TARGETS MTFaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+# install(TARGETS FaceRecognitionSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+# install(TARGETS FaceSearchSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 install(TARGETS FaceComparisonSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-install(TARGETS FaceTrackVideoSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 
