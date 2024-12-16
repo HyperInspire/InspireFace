@@ -85,7 +85,7 @@ jobs:
       # Step 4: Start building the SDK
       - name: Start Building the InspireFace-MacOS-arm64
         run: |
-          bash command/build_linux_macos_arm64.sh
+          bash command/build_macos_arm64.sh
           ls build
 
   build_armv7_armhf:
