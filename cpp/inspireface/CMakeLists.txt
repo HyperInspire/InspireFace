@@ -21,9 +21,22 @@ file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
 
 if (ISF_ENABLE_RKNN)
-    set(ISF_RKNN_API_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/include)
-    set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
-    link_directories(${ISF_RKNN_API_LIB})
+    if (ISF_RKNPU_MAJOR STREQUAL "rknpu1")
+        set(ISF_RKNN_API_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/include)
+        set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
+        link_directories(${ISF_RKNN_API_LIB})
+        set(RKNN_LINKED rknn_api)
+    else()
+        if(ANDROID)
+            set(RK_PLATFORM "Android")
+        else()
+            set(RK_PLATFORM "Linux")
+        endif()
+        set(ISF_RKNN_API_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${RK_PLATFORM}/librknn_api/include)
+        set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${RK_PLATFORM}/librknn_api/${ISF_RK_COMPILER_TYPE}/librknnmrt.a)
+        # For rknpu2, we recommend linking static libraries by default
+        set(RKNN_LINKED ${ISF_RKNN_API_LIB})
+    endif()
 endif()
 
 set(LINK_THIRD_LIBS ${MNN_LIBS})
@@ -43,9 +56,13 @@ set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/sqlite/)
 
 
 if (ISF_ENABLE_RKNN)
-    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknn_api dl)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${RKNN_LINKED} dl)
     # InferenceHelp use RkNN
-    add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN")
+    if (ISF_RKNPU_MAJOR STREQUAL "rknpu1")
+        add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN")
+    elseif(ISF_RKNPU_MAJOR STREQUAL "rknpu2")
+        add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN2")
+    endif()
 
 endif()
 
@@ -163,7 +180,7 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/herror.h DESTINATION ${CMAKE_INSTALL_P
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/version.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/)
 
-if (ISF_ENABLE_RKNN)
+if (ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu1")
     # Install rknn 3rd lib
     install(FILES ${ISF_RKNN_API_LIB}/librknn_api.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
 endif ()
