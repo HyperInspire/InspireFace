@@ -5,7 +5,7 @@ option(ISF_BUILD_SAMPLE_CLUTTERED "Whether to compile the cluttered sample progr
 
 include_directories(${SRC_DIR})
 
-if (ISF_ENABLE_RKNN)
+if (ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu1")
         set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
     link_directories(${ISF_RKNN_API_LIB})
     set(ext rknn_api dl)
