@@ -7,25 +7,6 @@
 
 namespace inspire {
 
-std::vector<float> RBGAntiSpoofingAdapt::Softmax(const std::vector<float>& input) {
-    std::vector<float> result;
-    float sum = 0.0;
-
-    // Calculate the exponentials and the sum of exponentials
-    for (float x : input) {
-        float exp_x = std::exp(x);
-        result.push_back(exp_x);
-        sum += exp_x;
-    }
-
-    // Normalize by dividing each element by the sum
-    for (float& value : result) {
-        value /= sum;
-    }
-
-    return result;
-}
-
 RBGAntiSpoofingAdapt::RBGAntiSpoofingAdapt(int input_size, bool use_softmax) : AnyNetAdapter("RBGAntiSpoofingAdapt") {
     m_input_size_ = input_size;
     m_softmax_ = use_softmax;
@@ -34,7 +15,12 @@ RBGAntiSpoofingAdapt::RBGAntiSpoofingAdapt(int input_size, bool use_softmax) : A
 float RBGAntiSpoofingAdapt::operator()(const inspirecv::Image& bgr_affine27) {
     AnyTensorOutputs outputs;
     if (bgr_affine27.Width() != m_input_size_ || bgr_affine27.Height() != m_input_size_) {
-        auto resized = bgr_affine27.Resize(m_input_size_, m_input_size_);
+        // auto resized = bgr_affine27.Resize(m_input_size_, m_input_size_);
+        uint8_t* resized_data = nullptr;
+        float scale;
+        m_processor_->Resize(bgr_affine27.Data(), bgr_affine27.Width(), bgr_affine27.Height(), bgr_affine27.Channels(), &resized_data, m_input_size_,
+                             m_input_size_);
+        auto resized = inspirecv::Image::Create(m_input_size_, m_input_size_, bgr_affine27.Channels(), resized_data, false);
         Forward(resized, outputs);
     } else {
         Forward(bgr_affine27, outputs);

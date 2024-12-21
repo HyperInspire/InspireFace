@@ -29,6 +29,8 @@ else
     TAG=""
 fi
 
+export ARM_CROSS_COMPILE_TOOLCHAIN=/root/arm-rockchip830-linux-uclibcgnueabihf/
+
 SCRIPT_DIR=$(pwd)  # Project dir
 BUILD_FOLDER_PATH="build/inspireface-linux-armv7-rv1106-armhf-uclibc${TAG}"
 
@@ -51,14 +53,16 @@ cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DISF_RK_DEVICE_TYPE=RV1106 \
   -DISF_RKNPU_MAJOR=rknpu2 \
   -DISF_RK_COMPILER_TYPE=armhf-uclibc \
+  -DISF_ENABLE_RGA=ON \
+  -DISF_ENABLE_COST_TIME=OFF \
   -DISF_BUILD_WITH_SAMPLE=ON \
   -DISF_BUILD_WITH_TEST=OFF \
   -DISF_ENABLE_BENCHMARK=OFF \
   -DISF_ENABLE_USE_LFW_DATA=OFF \
   -DISF_ENABLE_TEST_EVALUATION=OFF \
-  -DISF_BUILD_SHARED_LIBS=ON ${SCRIPT_DIR}
+  -DISF_BUILD_SHARED_LIBS=OFF ${SCRIPT_DIR}
 
 make -j4
-make install
+# make install
 
-move_install_files "$(pwd)"
+# move_install_files "$(pwd)"
