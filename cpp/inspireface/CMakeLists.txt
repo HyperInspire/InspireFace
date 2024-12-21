@@ -37,6 +37,8 @@ if (ISF_ENABLE_RKNN)
         # For rknpu2, we recommend linking static libraries by default
         set(RKNN_LINKED ${ISF_RKNN_API_LIB})
     endif()
+
+    
 endif()
 
 set(LINK_THIRD_LIBS ${MNN_LIBS})
@@ -63,7 +65,6 @@ if (ISF_ENABLE_RKNN)
     elseif(ISF_RKNPU_MAJOR STREQUAL "rknpu2")
         add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN2")
     endif()
-
 endif()
 
 # cpp yaml
@@ -91,6 +92,10 @@ target_compile_definitions(InspireFace PUBLIC FEATURE_BLOCK_ENABLE_OPENCV)
 set(NEED_INCLUDE . ${MNN_INCLUDE_DIRS})
 if (ISF_ENABLE_RKNN)
     set(NEED_INCLUDE ${NEED_INCLUDE} ${ISF_RKNN_API_INCLUDE_DIRS})
+    if(ISF_ENABLE_RGA)
+        set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${RGA_LIBS})
+        set(NEED_INCLUDE ${NEED_INCLUDE} ${RGA_INCLUDE_DIRS})
+    endif()
 endif ()
 
 if (ISF_BUILD_LINUX_ARM7 OR ANDROID)
@@ -159,6 +164,11 @@ message(STATUS "\t ISF_ENABLE_RKNN: ${ISF_ENABLE_RKNN}")
 if (ISF_ENABLE_RKNN)
     message(STATUS "\t ISF_RKNN_API_INCLUDE_DIRS: ${ISF_RKNN_API_INCLUDE_DIRS}")
     message(STATUS "\t ISF_RKNN_API_LIB: ${ISF_RKNN_API_LIB}")
+endif ()
+if (ISF_ENABLE_RGA)
+    message(STATUS "\t ISF_ENABLE_RGA: ${ISF_ENABLE_RGA}")
+    message(STATUS "\t RGA_LIBS: ${RGA_LIBS}")
+    message(STATUS "\t RGA_INCLUDE_DIRS: ${RGA_INCLUDE_DIRS}")
 endif ()
 if (ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
     message(STATUS "\t ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA: ${ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA}")
