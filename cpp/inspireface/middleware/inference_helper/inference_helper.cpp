@@ -211,6 +211,12 @@ InferenceHelper* InferenceHelper::Create(const InferenceHelper::HelperType helpe
             break;
 
 #endif
+#ifdef INFERENCE_HELPER_ENABLE_RKNN2
+        case kRknn:
+            // PRINT("Use Rknn2\n");
+            p = new InferenceHelperRknnAdapter();
+            break;
+#endif
         default:
             PRINT_E("Unsupported inference helper type (%d)\n", helper_type)
             break;

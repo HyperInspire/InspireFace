@@ -67,6 +67,22 @@ else()
 
 endif ()
 
+if(ISF_RK_DEVICE_TYPE STREQUAL "RV1106")
+    add_executable(FaceTrackSampleRV1106 rv1106/face_detect.cpp)
+    target_link_libraries(FaceTrackSampleRV1106 InspireFace ${ext})
+    set_target_properties(FaceTrackSampleRV1106 PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+            )
+endif()
+
+add_executable(NexusImageSample rv1106/rga_image.cpp)
+target_link_libraries(NexusImageSample InspireFace ${ext})
+set_target_properties(NexusImageSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+        )
+
+
+
 # These sample programs are debugging and testing code left behind by developers during the development process.
 # They are cluttered and have not been organized, or similar functionalities have already been organized in the standard samples.
 # You can ignore them.
