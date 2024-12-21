@@ -27,7 +27,7 @@ inline std::vector<float> softmax(const std::vector<float> &input) {
     float sum = 0.0;
 
     for (float val : input) {
-        sum += std::exp(val - max);  // 减去max以提高数值稳定性
+        sum += std::exp(val - max);
     }
 
     for (float val : input) {
@@ -37,8 +37,6 @@ inline std::vector<float> softmax(const std::vector<float> &input) {
     return output;
 }
 
-// 量化模型的npu输出结果为int8数据类型，后处理要按照int8数据类型处理
-// 如下提供了int8排布的NC1HWC2转换成float的nchw转换代码
 inline int NC1HWC2_int8_to_NCHW_float(const int8_t *src, float *dst, int *dims, int channel, int h, int w, int zp, float scale) {
     int batch = dims[0];
     int C1 = dims[1];
@@ -282,25 +280,27 @@ public:
     }
 
     void Release() {
-        for (uint32_t i = 0; i < m_rk_io_num_.n_input; ++i) {
-            rknn_destroy_mem(m_rk_ctx_, m_input_mems_[i]);
-        }
-        for (uint32_t i = 0; i < m_rk_io_num_.n_output; ++i) {
-            rknn_destroy_mem(m_rk_ctx_, m_output_mems_[i]);
-        }
-        if (m_rk_ctx_) {
-            rknn_destroy(m_rk_ctx_);
+        if (run_) {
+            for (uint32_t i = 0; i < m_rk_io_num_.n_input; ++i) {
+                rknn_destroy_mem(m_rk_ctx_, m_input_mems_[i]);
+            }
+            for (uint32_t i = 0; i < m_rk_io_num_.n_output; ++i) {
+                rknn_destroy_mem(m_rk_ctx_, m_output_mems_[i]);
+            }
+            if (m_rk_ctx_) {
+                rknn_destroy(m_rk_ctx_);
+            }
         }
         run_ = false;
     }
 
 private:
-    rknn_context m_rk_ctx_;  // rknn的上下文管理器
+    rknn_context m_rk_ctx_;
 
-    rknn_input_output_num m_rk_io_num_;                  // rkn的输入输出流数量
-    std::vector<rknn_tensor_attr> m_input_attrs_;        // 输入属性
-    std::vector<rknn_tensor_attr> m_output_attrs_;       // 输出属性
-    std::vector<rknn_tensor_attr> m_orig_output_attrs_;  // 原始输出属性
+    rknn_input_output_num m_rk_io_num_;
+    std::vector<rknn_tensor_attr> m_input_attrs_;
+    std::vector<rknn_tensor_attr> m_output_attrs_;
+    std::vector<rknn_tensor_attr> m_orig_output_attrs_;
 
     std::vector<rknn_tensor_mem *> m_input_mems_;
     std::vector<rknn_tensor_mem *> m_output_mems_;

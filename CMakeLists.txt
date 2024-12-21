@@ -71,6 +71,31 @@ if (ISF_ENABLE_RKNN)
     message(STATUS "Use ${ISF_RKNPU_MAJOR}")
 endif ()
 
+# Enable Rockchip RGA
+option(ISF_ENABLE_RGA "Use Rockchip RGA." OFF)
+if(ISF_ENABLE_RGA)
+    if(NOT ISF_ENABLE_RKNN)
+        message(FATAL_ERROR "RGA requires RKNN to be enabled. Please enable ISF_ENABLE_RKNN first.")
+    endif()
+    if(NOT ISF_RKNPU_MAJOR STREQUAL "rknpu2")
+        message(FATAL_ERROR "RGA requires RKNPU2. Please use a device that supports RKNPU2.")
+    endif()
+
+    add_definitions("-DISF_ENABLE_RGA")
+    if(ANDROID)
+        set(PLAT Android)
+    else()
+        set(PLAT Linux)
+    endif()
+    set(RGA_LIBS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/librga/${PLAT}/${ISF_RK_COMPILER_TYPE}/librga.a)
+    set(RGA_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/librga/include)
+endif()
+
+option(ISF_ENABLE_COST_TIME "Enable cost time." OFF)
+if(ISF_ENABLE_COST_TIME)
+    add_definitions("-DISF_ENABLE_COST_TIME")
+endif()
+
 # Platform configuration
 option(ISF_BUILD_LINUX_ARM7 "Platform Armv7." OFF)
 option(ISF_BUILD_LINUX_AARCH64 "Platform Armv8." OFF)
