@@ -2,9 +2,9 @@ name: Build Wheels
 
 on:
   push:
-    branches: ["feature/rv1106"]
+    branches: ["dev/next-gen1"]
   pull_request:
-    branches: ["feature/rv1106"]
+    branches: ["dev/next-gen1"]
 
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -132,4 +132,4 @@ jobs:
           PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           pip install twine
-          twine upload dist/*/*.whl -u __token__ -p $PYPI_API_TOKEN
+          find dist -name "*.whl" -exec twine upload {} -u __token__ -p $PYPI_API_TOKEN \;
