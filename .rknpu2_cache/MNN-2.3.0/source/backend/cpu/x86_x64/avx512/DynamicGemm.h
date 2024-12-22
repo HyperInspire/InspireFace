@@ -1,5 +1,0 @@
-
-
-
-#define AVX512_PACK_C_UNIT (16)
-#define AVX512_INPUT_TILE_MAX (14)
