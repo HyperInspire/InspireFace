@@ -14,6 +14,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
+**`2024-12-22`** Started adapting for multiple Rockchip devices with NPU support, beginning with RV1106 support.
+
 **`2024-12-10`** Added support for quick installation via Python package manager.
 
 **`2024-11-19`** Project has been made lighter by removing mandatory dependency on OpenCV.
