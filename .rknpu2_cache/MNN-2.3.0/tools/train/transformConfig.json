@@ -1,0 +1,21 @@
+{
+    "Train": true,
+    "Loss": {
+        "op": "output"
+    },
+    "Optimizor": {
+        "OnlyUpdateOps":[],
+        "NoUpdateOps":[],
+        "StopBackPropOps":[],
+        "type": "SGD"
+    },
+    "BatchNorm": {
+        "momentum":0.99
+    },
+    "Debug": {
+        "L2Norm": []
+    },
+    "Shape": {
+        "input": [1, 3, 224, 224]
+    }
+}

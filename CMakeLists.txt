@@ -237,6 +237,15 @@ elseif(DEFINED MNN_STATIC_PATH)
     set(MNN_LIBS "${MNN_STATIC_PATH}/lib/libMNN.a")
 elseif(IOS)
     message(Build iOS)
+
+elseif(DEFINED MNN_CUSTOM_SOURCE)
+    message("Using custom external MNN source path: ${MNN_CUSTOM_SOURCE}")
+    # In particular, rknpu2 uses a lower version of mnn
+    set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "Build MNN as a shared library")
+    add_subdirectory(${MNN_CUSTOM_SOURCE} EXCLUDE_FROM_ALL)
+    set(MNN_INCLUDE_DIRS "${MNN_CUSTOM_SOURCE}/include")
+    set(MNN_LIBS MNN)
+    
 else ()
     # Default or fallback case for MNN setup
     message("Default or fallback case for MNN setup")
