@@ -29,9 +29,45 @@ else
     TAG=""
 fi
 
-export ARM_CROSS_COMPILE_TOOLCHAIN=/root/arm-rockchip830-linux-uclibcgnueabihf/
 
 SCRIPT_DIR=$(pwd)  # Project dir
+
+# Create .rknpu2_cache directory if it doesn't exist
+CACHE_DIR="$(pwd)/.rknpu2_cache"
+mkdir -p "$CACHE_DIR"
+
+# Check if MNN-2.3.0 directory already exists
+if [ ! -d "$CACHE_DIR/MNN-2.3.0" ]; then
+    echo "Downloading MNN 2.3.0..."
+    # Download MNN 2.3.0
+    if ! wget -P "$CACHE_DIR" https://github.com/alibaba/MNN/archive/refs/tags/2.3.0.zip; then
+        echo "Error: Failed to download MNN 2.3.0"
+        exit 1
+    fi
+    
+    # Extract the zip file
+    cd "$CACHE_DIR"
+    if ! unzip 2.3.0.zip; then
+        echo "Error: Failed to extract MNN 2.3.0"
+        exit 1
+    fi
+    
+    # Remove the zip file
+    rm 2.3.0.zip
+    
+    echo "MNN 2.3.0 downloaded and extracted"
+else
+    echo "MNN-2.3.0 already exists in cache"
+fi
+
+# Set absolute path to MNN source
+export MNN_CUSTOM_SOURCE="$CACHE_DIR/MNN-2.3.0"
+
+echo "MNN_CUSTOM_SOURCE: ${MNN_CUSTOM_SOURCE}"
+cd ${SCRIPT_DIR}
+
+export ARM_CROSS_COMPILE_TOOLCHAIN=/root/arm-rockchip830-linux-uclibcgnueabihf/
+
 BUILD_FOLDER_PATH="build/inspireface-linux-armv7-rv1106-armhf-uclibc${TAG}"
 
 mkdir -p ${BUILD_FOLDER_PATH}
@@ -48,6 +84,7 @@ cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -flax-vector-conversions" \
   -DTARGET_PLATFORM=armlinux \
   -DISF_BUILD_LINUX_ARM7=ON \
+  -DMNN_CUSTOM_SOURCE=${MNN_CUSTOM_SOURCE} \
   -DMNN_SEP_BUILD=off \
   -DISF_ENABLE_RKNN=ON \
   -DISF_RK_DEVICE_TYPE=RV1106 \
