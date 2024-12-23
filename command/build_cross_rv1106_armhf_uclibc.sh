@@ -66,7 +66,7 @@ export MNN_CUSTOM_SOURCE="$CACHE_DIR/MNN-2.3.0"
 echo "MNN_CUSTOM_SOURCE: ${MNN_CUSTOM_SOURCE}"
 cd ${SCRIPT_DIR}
 
-export ARM_CROSS_COMPILE_TOOLCHAIN=/root/arm-rockchip830-linux-uclibcgnueabihf/
+# export ARM_CROSS_COMPILE_TOOLCHAIN=/root/arm-rockchip830-linux-uclibcgnueabihf/
 
 BUILD_FOLDER_PATH="build/inspireface-linux-armv7-rv1106-armhf-uclibc${TAG}"
 
