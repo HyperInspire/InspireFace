@@ -436,9 +436,9 @@ jobs:
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: sdk_files_manylinux2014_x86
+          name: sdk_files_rv1106_armhf_uclibc
           path: |
-            inspireface-linux-x86-manylinux2014-${{ env.VERSION }}.zip
+            inspireface-linux-armv7-rv1106-armhf-uclibc-${{ env.VERSION }}.zip
 
   build_macos_apple_silicon_arm64:
     name: Compile MacOS Apple Silicon Arm64
