@@ -339,8 +339,18 @@ HResult HFLaunchInspireFace(HPath resourcePath) {
     return INSPIRE_LAUNCH->Load(resourcePath);
 }
 
+HResult HFReloadInspireFace(HPath resourcePath) {
+    std::string path(resourcePath);
+    return INSPIRE_LAUNCH->Reload(resourcePath);
+}
+
 HResult HFTerminateInspireFace() {
     INSPIRE_LAUNCH->Unload();
+    return HSUCCEED;
+}
+
+HResult HFQueryInspireFaceLaunchStatus(HInt32 *status) {
+    *status = INSPIRE_LAUNCH->isMLoad();
     return HSUCCEED;
 }
 

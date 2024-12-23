@@ -13,7 +13,11 @@ std::mutex Launch::mutex_;
 std::shared_ptr<Launch> Launch::instance_ = nullptr;
 
 InspireArchive& Launch::getMArchive() {
-    return m_archive_;
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!m_archive_) {
+        throw std::runtime_error("Archive not initialized");
+    }
+    return *m_archive_;
 }
 
 std::shared_ptr<Launch> Launch::GetInstance() {
@@ -25,17 +29,58 @@ std::shared_ptr<Launch> Launch::GetInstance() {
 }
 
 int32_t Launch::Load(const std::string& path) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!m_load_) {
-        m_archive_.ReLoad(path);
-        if (m_archive_.QueryStatus() == SARC_SUCCESS) {
-            m_load_ = true;
-            return HSUCCEED;
-        } else {
+        try {
+            m_archive_ = std::make_unique<InspireArchive>();
+            m_archive_->ReLoad(path);
+
+            if (m_archive_->QueryStatus() == SARC_SUCCESS) {
+                m_load_ = true;
+                INSPIRE_LOGI("Successfully loaded resources");
+                return HSUCCEED;
+            } else {
+                m_archive_.reset();
+                INSPIRE_LOGE("Failed to load resources");
+                return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
+            }
+        } catch (const std::exception& e) {
+            m_archive_.reset();
+            INSPIRE_LOGE("Exception during resource loading: %s", e.what());
             return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
         }
     } else {
         INSPIRE_LOGW("There is no need to call launch more than once, as subsequent calls will not affect the initialization.");
         return HSUCCEED;
+    }
+}
+
+int32_t Launch::Reload(const std::string& path) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    try {
+        // Clean up existing archive if it exists
+        if (m_archive_) {
+            m_archive_.reset();
+            m_load_ = false;
+        }
+
+        // Create and load new archive
+        m_archive_ = std::make_unique<InspireArchive>();
+        m_archive_->ReLoad(path);
+
+        if (m_archive_->QueryStatus() == SARC_SUCCESS) {
+            m_load_ = true;
+            INSPIRE_LOGI("Successfully reloaded resources");
+            return HSUCCEED;
+        } else {
+            m_archive_.reset();
+            INSPIRE_LOGE("Failed to reload resources");
+            return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
+        }
+    } catch (const std::exception& e) {
+        m_archive_.reset();
+        INSPIRE_LOGE("Exception during resource reloading: %s", e.what());
+        return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
     }
 }
 
@@ -46,8 +91,7 @@ bool Launch::isMLoad() const {
 void Launch::Unload() {
     std::lock_guard<std::mutex> lock(mutex_);
     if (m_load_) {
-        // Assuming InspireArchive has a method to clear its resources
-        m_archive_.Release();
+        m_archive_.reset();
         m_load_ = false;
         INSPIRE_LOGI("All resources have been successfully unloaded and system is reset.");
     } else {

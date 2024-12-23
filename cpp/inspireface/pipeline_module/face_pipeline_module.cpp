@@ -78,7 +78,6 @@ int32_t FacePipelineModule::Process(inspirecv::InspireImageProcess &processor, c
     inspirecv::Image scaleImage;
     switch (proc) {
         case PROCESS_MASK: {
-            std::cout << "Process mask" << std::endl;
             if (m_mask_predict_ == nullptr) {
                 return HERR_SESS_PIPELINE_FAILURE;  // uninitialized
             }
@@ -95,7 +94,6 @@ int32_t FacePipelineModule::Process(inspirecv::InspireImageProcess &processor, c
             break;
         }
         case PROCESS_RGB_LIVENESS: {
-            std::cout << "Process rgb liveness" << std::endl;
             if (m_rgb_anti_spoofing_ == nullptr) {
                 return HERR_SESS_PIPELINE_FAILURE;  // uninitialized
             }
@@ -112,7 +110,6 @@ int32_t FacePipelineModule::Process(inspirecv::InspireImageProcess &processor, c
             break;
         }
         case PROCESS_INTERACTION: {
-            std::cout << "Process interaction" << std::endl;
             if (m_blink_predict_ == nullptr) {
                 return HERR_SESS_PIPELINE_FAILURE;  // uninitialized
             }

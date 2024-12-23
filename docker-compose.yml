@@ -30,6 +30,16 @@ services:
     volumes:
       - .:/workspace  # Mount the project root directory to the container
     command: bash command/build_cross_armv7_armhf.sh
+  build-cross-rv1106-armhf-uclibc:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.arm-linux-rockchip830-armhf-uclibc
+    environment:
+      - VERSION=${VERSION}
+    working_dir: /workspace
+    volumes:
+      - .:/workspace  # Mount the project root directory to the container
+    command: bash command/build_cross_rv1106_armhf_uclibc.sh
   build-cross-aarch64:
     build:
       context: .
