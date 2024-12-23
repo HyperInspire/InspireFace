@@ -8,6 +8,7 @@
 #define INSPIRE_FACE_TRACK_MODULE_FACE_DETECT_FACE_DETECT_ADAPT_H
 #include "../../data_type.h"
 #include "middleware/any_net_adapter.h"
+#include "middleware/nexus_processor/image_processor.h"
 
 namespace inspire {
 

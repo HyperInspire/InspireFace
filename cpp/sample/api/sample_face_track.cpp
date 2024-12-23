@@ -46,6 +46,8 @@ int main(int argc, char* argv[]) {
     std::cout << "Source file Path: " << sourcePath << std::endl;
     std::cout << "Rotation: " << rotation << std::endl;
 
+    HFSetLogLevel(HF_LOG_INFO);
+
     HResult ret;
     // The resource file must be loaded before it can be used
     ret = HFLaunchInspireFace(packPath);
@@ -97,6 +99,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Execute HFExecuteFaceTrack error: " << ret << std::endl;
         return ret;
     }
+
     // Print the number of faces detected
     auto faceNum = multipleFaceData.detectedNum;
     std::cout << "Num of face: " << faceNum << std::endl;
@@ -145,13 +148,16 @@ int main(int argc, char* argv[]) {
         std::cout << "area: " << area << std::endl;
     }
     HFImageBitmapWriteToFile(drawImage, "draw_detected.jpg");
+    std::cout << "Write to file success: " << "draw_detected.jpg" << std::endl;
 
     // Run pipeline function
     // Select the pipeline function that you want to execute, provided that it is already enabled
     // when FaceContext is created!
     auto pipelineOption = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     // In this loop, all faces are processed
+    std::cout << "HFMultipleFacePipelineProcessOptional" << std::endl;
     ret = HFMultipleFacePipelineProcessOptional(session, imageHandle, &multipleFaceData, pipelineOption);
+    std::cout << "HFMultipleFacePipelineProcessOptional success" << std::endl;
     if (ret != HSUCCEED) {
         std::cout << "Execute Pipeline error: " << ret << std::endl;
         return ret;

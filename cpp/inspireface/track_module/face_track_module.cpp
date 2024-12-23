@@ -14,6 +14,7 @@
 #include "herror.h"
 #include "middleware/costman.h"
 #include "cost_time.h"
+#include <inspirecv/time_spend.h>
 
 namespace inspire {
 
@@ -181,6 +182,8 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
 }
 
 void FaceTrackModule::UpdateStream(inspirecv::InspireImageProcess &image) {
+    inspirecv::TimeSpend total("UpdateStream");
+    total.Start();
     COST_TIME_SIMPLE(FaceTrackUpdateStream);
     detection_index_ += 1;
     if (m_mode_ == DETECT_MODE_ALWAYS_DETECT || m_mode_ == DETECT_MODE_TRACK_BY_DETECT)
@@ -218,6 +221,8 @@ void FaceTrackModule::UpdateStream(inspirecv::InspireImageProcess &image) {
             iter++;
         }
     }
+    total.Stop();
+    // std::cout << total << std::endl;
 }
 
 void FaceTrackModule::nms(float th) {

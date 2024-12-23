@@ -34,14 +34,6 @@ public:
      */
     float operator()(const inspirecv::Image& bgr_affine27);
 
-    /**
-     * @brief Softmax function.
-     *
-     * @param input The input vector.
-     * @return The softmax result.
-     */
-    static std::vector<float> Softmax(const std::vector<float>& input);
-
 private:
     int m_input_size_;        ///< The input size for the model.
     bool m_softmax_ = false;  ///< Whether to use softmax activation.
