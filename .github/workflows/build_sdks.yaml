@@ -300,3 +300,40 @@ jobs:
         run: |
           docker-compose up build-manylinux2014-x86
           ls build
+
+  build_armv7_rv1106_armhf_uclibc:
+    name: Compile Linux-armv7 rv1106
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+
+      # Step 3: Install wget and xz-utils
+      - name: Install wget and xz-utils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget xz-utils
+
+      # Step 4: Download Toolchain
+      - name: Download and Extract Linaro Toolchain
+        run: |
+          git clone https://github.com/tunmx/arm-rockchip830-linux-uclibcgnueabihf.git
+
+      # Step 5: Install Toolchain
+      - name: Set environment variables
+        run: |
+          echo "ARM_CROSS_COMPILE_TOOLCHAIN=${{ github.workspace }}/arm-rockchip830-linux-uclibcgnueabihf" >> $GITHUB_ENV
+          echo "PATH=${{ github.workspace }}/arm-rockchip830-linux-uclibcgnueabihf/bin:${PATH}" >> $GITHUB_ENV
+
+      # Step 6: Start building the SDK
+      - name: Start Building the InspireFace-Linux-armv7-rv1106 
+        run: |
+          bash command/build_cross_rv1106_armhf_uclibc.sh
+          ls build

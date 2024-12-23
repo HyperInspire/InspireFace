@@ -12,8 +12,8 @@ def case_face_recognition(test_data_folder):
         resource_path (str): Path to the resource directory for face recognition algorithms.
         test_data_folder (str): Path to the test data containing images for insertion and recognition tests.
     """
-    # Initialize the face recognition system with provided resources.
-    ret = isf.launch()
+    # If you need to switch from the default Pikachu model to another model like Megatron, you can use reload
+    ret = isf.reload("Megatron")
     assert ret, "Launch failure. Please ensure the resource path is correct."
 
     # Enable face recognition features.

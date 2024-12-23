@@ -30,6 +30,10 @@ public:
     // Returns an integer status code: 0 on success, non-zero on failure.
     int32_t Load(const std::string& path);
 
+    // Reloads the resources from a specified path.
+    // Returns an integer status code: 0 on success, non-zero on failure.
+    int32_t Reload(const std::string& path);
+
     // Provides access to the loaded InspireArchive instance.
     InspireArchive& getMArchive();
 
@@ -40,13 +44,13 @@ public:
     void Unload();
 
 private:
-    Launch() : m_load_(false) {}  ///< Private constructor for the singleton pattern.
+    Launch() : m_load_(false), m_archive_(nullptr) {}  ///< Private constructor for the singleton pattern.
 
     static std::mutex mutex_;                  ///< Mutex for synchronizing access to the singleton instance.
     static std::shared_ptr<Launch> instance_;  ///< The singleton instance of Launch.
 
-    InspireArchive m_archive_;  ///< The archive containing all necessary resources.
-    bool m_load_;               ///< Flag indicating whether the resources have been successfully loaded.
+    std::unique_ptr<InspireArchive> m_archive_;  ///< The archive containing all necessary resources.
+    bool m_load_;                                ///< Flag indicating whether the resources have been successfully loaded.
 };
 
 }  // namespace inspire
