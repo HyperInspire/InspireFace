@@ -5,6 +5,7 @@
 
 #include "face_detect_adapt.h"
 #include "cost_time.h"
+#include <inspirecv/time_spend.h>
 
 namespace inspire {
 
@@ -12,38 +13,33 @@ FaceDetectAdapt::FaceDetectAdapt(int input_size, float nms_threshold, float cls_
 : AnyNetAdapter("FaceDetectAdapt"), m_nms_threshold_(nms_threshold), m_cls_threshold_(cls_threshold), m_input_size_(input_size) {}
 
 FaceLocList FaceDetectAdapt::operator()(const inspirecv::Image &bgr) {
+    inspirecv::TimeSpend time_image_process("Image process");
+    time_image_process.Start();
     int ori_w = bgr.Width();
     int ori_h = bgr.Height();
-    int w, h;
     float scale;
 
     inspirecv::Image pad;
-    if (ori_w == m_input_size_ && ori_h == m_input_size_) {
-        // If the input image already matches the desired size, no need to resize, just pad
-        pad = bgr.Pad(0, 0, 0, 0, {0.0f, 0.0f, 0.0f});
-    }
 
-    if (ori_w > ori_h) {
-        scale = static_cast<float>(m_input_size_) / ori_w;
-        w = m_input_size_;
-        h = ori_h * scale;
-    } else {
-        scale = static_cast<float>(m_input_size_) / ori_h;
-        h = m_input_size_;
-        w = ori_w * scale;
-    }
-    int wpad = m_input_size_ - w;
-    int hpad = m_input_size_ - h;
-    inspirecv::Image resized_img;
-    resized_img = bgr.Resize(w, h);
-    pad = resized_img.Pad(0, hpad, 0, wpad, {0.0f, 0.0f, 0.0f});
+    uint8_t *resized_data = nullptr;
+    m_processor_->ResizeAndPadding(bgr.Data(), bgr.Width(), bgr.Height(), bgr.Channels(), m_input_size_, m_input_size_, &resized_data, scale);
+
+    pad = inspirecv::Image::Create(m_input_size_, m_input_size_, bgr.Channels(), resized_data, false);
+
+    time_image_process.Stop();
+    // std::cout << time_image_process << std::endl;
     // pad.Write("pad.jpg");
-
     //    LOGD("Prepare");
     AnyTensorOutputs outputs;
+    inspirecv::TimeSpend time_forward("Forward");
+    time_forward.Start();
     Forward(pad, outputs);
+    time_forward.Stop();
+    // std::cout << time_forward << std::endl;
     //    LOGD("Forward");
 
+    inspirecv::TimeSpend time_decode("Decode");
+    time_decode.Start();
     std::vector<FaceLoc> results;
     std::vector<int> strides = {8, 16, 32};
     for (int i = 0; i < strides.size(); ++i) {
@@ -52,6 +48,8 @@ FaceLocList FaceDetectAdapt::operator()(const inspirecv::Image &bgr) {
         const std::vector<float> &tensor_lmk = outputs[i + 6].second;
         _decode(tensor_cls, tensor_box, tensor_lmk, strides[i], results);
     }
+    time_decode.Stop();
+    // std::cout << time_decode << std::endl;
 
     _nms(results, m_nms_threshold_);
     std::sort(results.begin(), results.end(), [](FaceLoc a, FaceLoc b) { return (a.y2 - a.y1) * (a.x2 - a.x1) > (b.y2 - b.y1) * (b.x2 - b.x1); });
@@ -65,6 +63,8 @@ FaceLocList FaceDetectAdapt::operator()(const inspirecv::Image &bgr) {
             face.lmk[i * 2 + 1] = face.lmk[i * 2 + 1] / scale;
         }
     }
+    m_processor_->MarkDone();
+
     return results;
 }
 
