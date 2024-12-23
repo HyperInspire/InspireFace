@@ -74,7 +74,8 @@ mkdir -p ${BUILD_FOLDER_PATH}
 # shellcheck disable=SC2164
 cd ${BUILD_FOLDER_PATH}
 
-# export cross_compile_toolchain=/home/jingyuyan/software/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
+# export cross_compile_toolchain=/home/jingyuyan/software/arm-rockchip830-linux-uclibcgnueabihf
+
 cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_SYSTEM_VERSION=1 \
@@ -92,12 +93,12 @@ cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DISF_RK_COMPILER_TYPE=armhf-uclibc \
   -DISF_ENABLE_RGA=ON \
   -DISF_ENABLE_COST_TIME=OFF \
-  -DISF_BUILD_WITH_SAMPLE=ON \
+  -DISF_BUILD_WITH_SAMPLE=OFF \
   -DISF_BUILD_WITH_TEST=OFF \
   -DISF_ENABLE_BENCHMARK=OFF \
   -DISF_ENABLE_USE_LFW_DATA=OFF \
   -DISF_ENABLE_TEST_EVALUATION=OFF \
-  -DISF_BUILD_SHARED_LIBS=OFF ${SCRIPT_DIR}
+  -DISF_BUILD_SHARED_LIBS=ON ${SCRIPT_DIR}
 
 make -j4
 # make install
