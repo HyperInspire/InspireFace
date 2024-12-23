@@ -31,7 +31,8 @@ limitations under the License.
 #ifdef INFERENCE_HELPER_ENABLE_OPENCV
 #include "inference_helper_opencv.h"
 #endif
-#if defined(INFERENCE_HELPER_ENABLE_TFLITE) || defined(INFERENCE_HELPER_ENABLE_TFLITE_DELEGATE_XNNPACK) || defined(INFERENCE_HELPER_ENABLE_TFLITE_DELEGATE_GPU) || defined(INFERENCE_HELPER_ENABLE_TFLITE_DELEGATE_EDGETPU)
+#if defined(INFERENCE_HELPER_ENABLE_TFLITE) || defined(INFERENCE_HELPER_ENABLE_TFLITE_DELEGATE_XNNPACK) || \
+  defined(INFERENCE_HELPER_ENABLE_TFLITE_DELEGATE_GPU) || defined(INFERENCE_HELPER_ENABLE_TFLITE_DELEGATE_EDGETPU)
 #include "inference_helper_tensorflow_lite.h"
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_TENSORRT
@@ -65,153 +66,160 @@ limitations under the License.
 #include "inference_helper_sample.h"
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
-//#include "inference_helper_rknn.h"
+// #include "inference_helper_rknn.h"
 #include "inference_helper_rknn_adapter.h"
+#endif
+#ifdef INFERENCE_HELPER_ENABLE_RKNN2
+#include "inference_helper_rknn_adapter_nano.h"
 #endif
 
 /*** Macro ***/
 #define TAG "InferenceHelper"
-#define PRINT(...)   INFERENCE_HELPER_LOG_PRINT(TAG, __VA_ARGS__)
+#define PRINT(...) INFERENCE_HELPER_LOG_PRINT(TAG, __VA_ARGS__)
 #define PRINT_E(...) INFERENCE_HELPER_LOG_PRINT_E(TAG, __VA_ARGS__)
 
-
-InferenceHelper* InferenceHelper::Create(const InferenceHelper::HelperType helper_type)
-{
+InferenceHelper* InferenceHelper::Create(const InferenceHelper::HelperType helper_type) {
     InferenceHelper* p = nullptr;
     switch (helper_type) {
 #ifdef INFERENCE_HELPER_ENABLE_OPENCV
-    case kOpencv:
-    case kOpencvGpu:
-        PRINT("Use OpenCV \n");
-        p = new InferenceHelperOpenCV();
-        break;
+        case kOpencv:
+        case kOpencvGpu:
+            PRINT("Use OpenCV \n");
+            p = new InferenceHelperOpenCV();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_TFLITE
-    case kTensorflowLite:
-        PRINT("Use TensorflowLite\n");
-        p = new InferenceHelperTensorflowLite();
-        break;
+        case kTensorflowLite:
+            PRINT("Use TensorflowLite\n");
+            p = new InferenceHelperTensorflowLite();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_TFLITE_DELEGATE_XNNPACK
-    case kTensorflowLiteXnnpack:
-        PRINT("Use TensorflowLite XNNPACK Delegate\n");
-        p = new InferenceHelperTensorflowLite();
-        break;
+        case kTensorflowLiteXnnpack:
+            PRINT("Use TensorflowLite XNNPACK Delegate\n");
+            p = new InferenceHelperTensorflowLite();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_TFLITE_DELEGATE_GPU
-    case kTensorflowLiteGpu:
-        PRINT("Use TensorflowLite GPU Delegate\n");
-        p = new InferenceHelperTensorflowLite();
-        break;
+        case kTensorflowLiteGpu:
+            PRINT("Use TensorflowLite GPU Delegate\n");
+            p = new InferenceHelperTensorflowLite();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_TFLITE_DELEGATE_EDGETPU
-    case kTensorflowLiteEdgetpu:
-        PRINT("Use TensorflowLite EdgeTPU Delegate\n");
-        p = new InferenceHelperTensorflowLite();
-        break;
+        case kTensorflowLiteEdgetpu:
+            PRINT("Use TensorflowLite EdgeTPU Delegate\n");
+            p = new InferenceHelperTensorflowLite();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_TFLITE_DELEGATE_NNAPI
-    case kTensorflowLiteNnapi:
-        PRINT("Use TensorflowLite NNAPI Delegate\n");
-        p = new InferenceHelperTensorflowLite();
-        break;
+        case kTensorflowLiteNnapi:
+            PRINT("Use TensorflowLite NNAPI Delegate\n");
+            p = new InferenceHelperTensorflowLite();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_TENSORRT
-    case kTensorrt:
-        PRINT("Use TensorRT \n");
-        p = new InferenceHelperTensorRt();
-        break;
+        case kTensorrt:
+            PRINT("Use TensorRT \n");
+            p = new InferenceHelperTensorRt();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_NCNN
-    case kNcnn:
-    case kNcnnVulkan:
-        PRINT("Use NCNN\n");
-        p = new InferenceHelperNcnn();
-        break;
+        case kNcnn:
+        case kNcnnVulkan:
+            PRINT("Use NCNN\n");
+            p = new InferenceHelperNcnn();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_MNN
-    case kMnn:
-//        PRINT("Use General Inference\n");
-        p = new InferenceHelperMnn();
-        break;
+        case kMnn:
+            //        PRINT("Use General Inference\n");
+            p = new InferenceHelperMnn();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_SNPE
-    case kSnpe:
-        PRINT("Use SNPE\n");
-        p = new InferenceHelperSnpe();
-        break;
+        case kSnpe:
+            PRINT("Use SNPE\n");
+            p = new InferenceHelperSnpe();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_ARMNN
-    case kArmnn:
-        PRINT("Use ARMNN\n");
-        p = new InferenceHelperArmnn();
-        break;
+        case kArmnn:
+            PRINT("Use ARMNN\n");
+            p = new InferenceHelperArmnn();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_NNABLA
-    case kNnabla:
-        PRINT("Use NNabla\n");
-        p = new InferenceHelperNnabla();
-        break;
+        case kNnabla:
+            PRINT("Use NNabla\n");
+            p = new InferenceHelperNnabla();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_NNABLA_CUDA
-    case kNnablaCuda:
-        PRINT("Use NNabla_CUDA\n");
-        p = new InferenceHelperNnabla();
-        break;
+        case kNnablaCuda:
+            PRINT("Use NNabla_CUDA\n");
+            p = new InferenceHelperNnabla();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_ONNX_RUNTIME
-    case kOnnxRuntime:
-        PRINT("Use ONNX Runtime\n");
-        p = new InferenceHelperOnnxRuntime();
-        break;
+        case kOnnxRuntime:
+            PRINT("Use ONNX Runtime\n");
+            p = new InferenceHelperOnnxRuntime();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_ONNX_RUNTIME_CUDA
-    case kOnnxRuntimeCuda:
-        PRINT("Use ONNX Runtime_CUDA\n");
-        p = new InferenceHelperOnnxRuntime();
-        break;
+        case kOnnxRuntimeCuda:
+            PRINT("Use ONNX Runtime_CUDA\n");
+            p = new InferenceHelperOnnxRuntime();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_LIBTORCH
-    case kLibtorch:
-        PRINT("Use LibTorch\n");
-        p = new InferenceHelperLibtorch();
-        break;
+        case kLibtorch:
+            PRINT("Use LibTorch\n");
+            p = new InferenceHelperLibtorch();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_LIBTORCH_CUDA
-    case kLibtorchCuda:
-        PRINT("Use LibTorch CUDA\n");
-        p = new InferenceHelperLibtorch();
-        break;
+        case kLibtorchCuda:
+            PRINT("Use LibTorch CUDA\n");
+            p = new InferenceHelperLibtorch();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_TENSORFLOW
-    case kTensorflow:
-        PRINT("Use TensorFlow\n");
-        p = new InferenceHelperTensorflow();
-        break;
+        case kTensorflow:
+            PRINT("Use TensorFlow\n");
+            p = new InferenceHelperTensorflow();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_TENSORFLOW_GPU
-    case kTensorflowGpu:
-        PRINT("Use TensorFlow GPU\n");
-        p = new InferenceHelperTensorflow();
-        break;
+        case kTensorflowGpu:
+            PRINT("Use TensorFlow GPU\n");
+            p = new InferenceHelperTensorflow();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_SAMPLE
-    case kSample:
-        PRINT("Do not use this. this is just a reference code\n");
-        p = new InferenceHelperSample();
-        break;
+        case kSample:
+            PRINT("Do not use this. this is just a reference code\n");
+            p = new InferenceHelperSample();
+            break;
 #endif
 #ifdef INFERENCE_HELPER_ENABLE_RKNN
-    case kRknn:
-//        PRINT("Use Rknn\n")
-//        p = new InferenceHelperRKNN();
-        p = new InferenceHelperRknnAdapter();
-        break;
+        case kRknn:
+            //        PRINT("Use Rknn\n")
+            //        p = new InferenceHelperRKNN();
+            p = new InferenceHelperRknnAdapter();
+            break;
 
 #endif
-    default:
-        PRINT_E("Unsupported inference helper type (%d)\n", helper_type)
-        break;
+#ifdef INFERENCE_HELPER_ENABLE_RKNN2
+        case kRknn:
+            // PRINT("Use Rknn2\n");
+            p = new InferenceHelperRknnAdapter();
+            break;
+#endif
+        default:
+            PRINT_E("Unsupported inference helper type (%d)\n", helper_type)
+            break;
     }
     if (p == nullptr) {
         PRINT_E("Failed to create inference helper\n")
@@ -223,20 +231,23 @@ InferenceHelper* InferenceHelper::Create(const InferenceHelper::HelperType helpe
 
 #ifdef INFERENCE_HELPER_ENABLE_PRE_PROCESS_BY_OPENCV
 #include <opencv2/opencv.hpp>
-void InferenceHelper::PreProcessByOpenCV(const InputTensorInfo& input_tensor_info, bool is_nchw, cv::Mat& img_blob)
-{
+void InferenceHelper::PreProcessByOpenCV(const InputTensorInfo& input_tensor_info, bool is_nchw, cv::Mat& img_blob) {
     /* Generate mat from original data */
-    cv::Mat img_src = cv::Mat(cv::Size(input_tensor_info.image_info.width, input_tensor_info.image_info.height), (input_tensor_info.image_info.channel == 3) ? CV_8UC3 : CV_8UC1, input_tensor_info.data);
+    cv::Mat img_src = cv::Mat(cv::Size(input_tensor_info.image_info.width, input_tensor_info.image_info.height),
+                              (input_tensor_info.image_info.channel == 3) ? CV_8UC3 : CV_8UC1, input_tensor_info.data);
 
     /* Crop image */
-    if (input_tensor_info.image_info.width == input_tensor_info.image_info.crop_width && input_tensor_info.image_info.height == input_tensor_info.image_info.crop_height) {
+    if (input_tensor_info.image_info.width == input_tensor_info.image_info.crop_width &&
+        input_tensor_info.image_info.height == input_tensor_info.image_info.crop_height) {
         /* do nothing */
     } else {
-        img_src = img_src(cv::Rect(input_tensor_info.image_info.crop_x, input_tensor_info.image_info.crop_y, input_tensor_info.image_info.crop_width, input_tensor_info.image_info.crop_height));
+        img_src = img_src(cv::Rect(input_tensor_info.image_info.crop_x, input_tensor_info.image_info.crop_y, input_tensor_info.image_info.crop_width,
+                                   input_tensor_info.image_info.crop_height));
     }
 
     /* Resize image */
-    if (input_tensor_info.image_info.crop_width == input_tensor_info.GetWidth() && input_tensor_info.image_info.crop_height == input_tensor_info.GetHeight()) {
+    if (input_tensor_info.image_info.crop_width == input_tensor_info.GetWidth() &&
+        input_tensor_info.image_info.crop_height == input_tensor_info.GetHeight()) {
         /* do nothing */
     } else {
         cv::resize(img_src, img_src, cv::Size(input_tensor_info.GetWidth(), input_tensor_info.GetHeight()));
@@ -286,24 +297,20 @@ void InferenceHelper::PreProcessByOpenCV(const InputTensorInfo& input_tensor_inf
     }
 
     img_blob = img_src;
-    //memcpy(blobData, img_src.data, img_src.cols * img_src.rows * img_src.channels());
-
+    // memcpy(blobData, img_src.data, img_src.cols * img_src.rows * img_src.channels());
 }
 
-#else 
+#else
 /* For the environment where OpenCV is not supported */
-void InferenceHelper::PreProcessByOpenCV(const InputTensorInfo& input_tensor_info, bool is_nchw, cv::Mat& img_blob)
-{
+void InferenceHelper::PreProcessByOpenCV(const InputTensorInfo& input_tensor_info, bool is_nchw, cv::Mat& img_blob) {
     PRINT_E("[PreProcessByOpenCV] Unsupported function called\n");
     exit(-1);
 }
 #endif
 
-
-
-void InferenceHelper::ConvertNormalizeParameters(InputTensorInfo& tensor_info)
-{
-    if (tensor_info.data_type != InputTensorInfo::kDataTypeImage) return;
+void InferenceHelper::ConvertNormalizeParameters(InputTensorInfo& tensor_info) {
+    if (tensor_info.data_type != InputTensorInfo::kDataTypeImage)
+        return;
 
 #if 0
     /* Convert to speeden up normalization:  ((src / 255) - mean) / norm  = src * 1 / (255 * norm) - (mean / norm) */
@@ -323,9 +330,7 @@ void InferenceHelper::ConvertNormalizeParameters(InputTensorInfo& tensor_info)
 #endif
 }
 
-
-void InferenceHelper::PreProcessImage(int32_t num_thread, const InputTensorInfo& input_tensor_info, float* dst)
-{
+void InferenceHelper::PreProcessImage(int32_t num_thread, const InputTensorInfo& input_tensor_info, float* dst) {
     const int32_t img_width = input_tensor_info.GetWidth();
     const int32_t img_height = input_tensor_info.GetHeight();
     const int32_t img_channel = input_tensor_info.GetChannel();
@@ -335,7 +340,8 @@ void InferenceHelper::PreProcessImage(int32_t num_thread, const InputTensorInfo&
 #pragma omp parallel for num_threads(num_thread)
         for (int32_t c = 0; c < img_channel; c++) {
             for (int32_t i = 0; i < img_width * img_height; i++) {
-                dst[c * img_width * img_height + i] = (src[i * img_channel + c] - input_tensor_info.normalize.mean[c]) * input_tensor_info.normalize.norm[c];
+                dst[c * img_width * img_height + i] =
+                  (src[i * img_channel + c] - input_tensor_info.normalize.mean[c]) * input_tensor_info.normalize.norm[c];
             }
         }
     } else {
@@ -346,15 +352,15 @@ void InferenceHelper::PreProcessImage(int32_t num_thread, const InputTensorInfo&
 #if 1
                 dst[i * img_channel + c] = (src[i * img_channel + c] - input_tensor_info.normalize.mean[c]) * input_tensor_info.normalize.norm[c];
 #else
-                dst[i * img_channel + c] = (src[i * img_channel + c] / 255.0f - input_tensor_info.normalize.mean[c]) / input_tensor_info.normalize.norm[c];
+                dst[i * img_channel + c] =
+                  (src[i * img_channel + c] / 255.0f - input_tensor_info.normalize.mean[c]) / input_tensor_info.normalize.norm[c];
 #endif
             }
         }
     }
 }
 
-void InferenceHelper::PreProcessImage(int32_t num_thread, const InputTensorInfo& input_tensor_info, uint8_t* dst)
-{
+void InferenceHelper::PreProcessImage(int32_t num_thread, const InputTensorInfo& input_tensor_info, uint8_t* dst) {
     const int32_t img_width = input_tensor_info.GetWidth();
     const int32_t img_height = input_tensor_info.GetHeight();
     const int32_t img_channel = input_tensor_info.GetChannel();
@@ -373,8 +379,7 @@ void InferenceHelper::PreProcessImage(int32_t num_thread, const InputTensorInfo&
     }
 }
 
-void InferenceHelper::PreProcessImage(int32_t num_thread, const InputTensorInfo& input_tensor_info, int8_t* dst)
-{
+void InferenceHelper::PreProcessImage(int32_t num_thread, const InputTensorInfo& input_tensor_info, int8_t* dst) {
     const int32_t img_width = input_tensor_info.GetWidth();
     const int32_t img_height = input_tensor_info.GetHeight();
     const int32_t img_channel = input_tensor_info.GetChannel();
@@ -397,14 +402,14 @@ void InferenceHelper::PreProcessImage(int32_t num_thread, const InputTensorInfo&
     }
 }
 
-template<typename T>
-void InferenceHelper::PreProcessBlob(int32_t num_thread, const InputTensorInfo& input_tensor_info, T* dst)
-{
+template <typename T>
+void InferenceHelper::PreProcessBlob(int32_t num_thread, const InputTensorInfo& input_tensor_info, T* dst) {
     const int32_t img_width = input_tensor_info.GetWidth();
     const int32_t img_height = input_tensor_info.GetHeight();
     const int32_t img_channel = input_tensor_info.GetChannel();
     T* src = static_cast<T*>(input_tensor_info.data);
-    if ((input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNchw && input_tensor_info.is_nchw) || (input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNhwc && !input_tensor_info.is_nchw)) {
+    if ((input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNchw && input_tensor_info.is_nchw) ||
+        (input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNhwc && !input_tensor_info.is_nchw)) {
         std::copy(src, src + input_tensor_info.GetElementNum(), dst);
     } else if (input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNchw) {
         /* NCHW -> NHWC */

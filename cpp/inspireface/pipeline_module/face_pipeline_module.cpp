@@ -136,6 +136,21 @@ int32_t FacePipelineModule::Process(inspirecv::InspireImageProcess &processor, c
                 auto cy = new_eyes_points[i].GetY();
                 new_rect.SetX(cx - new_rect.GetWidth() / 2);
                 new_rect.SetY(cy - new_rect.GetHeight() / 2);
+
+                // Ensure rect stays within image bounds
+                if (new_rect.GetX() < 0) {
+                    new_rect.SetX(0);
+                }
+                if (new_rect.GetY() < 0) {
+                    new_rect.SetY(0);
+                }
+                if (new_rect.GetX() + new_rect.GetWidth() > originImage.Width()) {
+                    new_rect.SetWidth(originImage.Width() - new_rect.GetX());
+                }
+                if (new_rect.GetY() + new_rect.GetHeight() > originImage.Height()) {
+                    new_rect.SetHeight(originImage.Height() - new_rect.GetY());
+                }
+
                 auto crop = originImage.Crop(new_rect);
                 auto score = (*m_blink_predict_)(crop);
                 eyesStatusCache[i] = score;

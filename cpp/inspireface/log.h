@@ -54,7 +54,7 @@ private:
     static std::mutex mutex;
 
     // Private constructor
-    LogManager() : currentLevel(ISF_LOG_DEBUG) {}  // Default log level is DEBUG
+    LogManager() : currentLevel(ISF_LOG_INFO) {}  // Default log level is INFO
 
 public:
     // Disable copy construction and assignment

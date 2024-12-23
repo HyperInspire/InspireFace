@@ -214,12 +214,28 @@ HYPER_CAPI_EXPORT extern HResult HFImageBitmapShow(HFImageBitmap handle, HString
 HYPER_CAPI_EXPORT extern HResult HFLaunchInspireFace(HPath resourcePath);
 
 /**
+ * @brief Reload InspireFace SDK
+ * Reload the InspireFace SDK, releasing all allocated resources.
+ * @param resourcePath Initializes the path to the resource file that needs to be loaded
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFReloadInspireFace(HPath resourcePath);
+
+/**
  * @brief Terminate InspireFace SDK
  * Terminate the InspireFace SDK, releasing all allocated resources.
  * This should be called at the end of your program to ensure proper cleanup.
  * @return HResult indicating the success or failure of the operation.
  * */
 HYPER_CAPI_EXPORT extern HResult HFTerminateInspireFace();
+
+/**
+ * @brief Query InspireFace SDK launch status
+ * Query the launch status of the InspireFace SDK.
+ * @param status Pointer to the status variable that will be returned.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFQueryInspireFaceLaunchStatus(HInt32 *status);
 
 /************************************************************************
  * FaceSession

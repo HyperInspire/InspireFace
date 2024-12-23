@@ -8,12 +8,23 @@
 namespace inspire {
 
 float RNetAdapt::operator()(const inspirecv::Image &bgr_affine) {
-    auto resized = bgr_affine.Resize(24, 24);
+    // auto resized = bgr_affine.Resize(24, 24);
+    uint8_t *resized_data = nullptr;
+    float scale;
+    m_processor_->Resize(bgr_affine.Data(), bgr_affine.Width(), bgr_affine.Height(), bgr_affine.Channels(), &resized_data, 24, 24);
+    auto resized = inspirecv::Image::Create(24, 24, bgr_affine.Channels(), resized_data, false);
 
     AnyTensorOutputs outputs;
     Forward(resized, outputs);
-
+    m_processor_->MarkDone();
+#ifdef INFERENCE_HELPER_ENABLE_RKNN2
+    auto sm = Softmax(outputs[0].second);
+    // std::cout << sm[0] << ", " << sm[1] << std ::endl;
+    return sm[1];
+#else
     return outputs[0].second[1];
+    // std::cout << outputs[0].second[0] << ", " << outputs[0].second[1] << std ::endl;
+#endif
 }
 
 RNetAdapt::RNetAdapt() : AnyNetAdapter("RNetAdapt") {}

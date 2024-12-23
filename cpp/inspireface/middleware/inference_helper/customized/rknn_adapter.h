@@ -3,8 +3,8 @@
  * @date 2024-10-01
  */
 
-#ifndef MAGIC_GESTURES_RKNN_ADAPTER_H
-#define MAGIC_GESTURES_RKNN_ADAPTER_H
+#ifndef INSPIREFACE_RKNN_ADAPTER_RKNPU1_H
+#define INSPIREFACE_RKNN_ADAPTER_RKNPU1_H
 
 #include <iostream>
 #include "rknn_api.h"
@@ -495,4 +495,4 @@ private:
     bool run_;
 };
 
-#endif  // MAGIC_GESTURES_RKNN_ADAPTER_H
+#endif  // INSPIREFACE_RKNN_ADAPTER_RKNPU1_H

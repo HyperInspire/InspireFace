@@ -267,6 +267,12 @@ class InspireFaceSession(object):
         Raises:
             Exception: If session creation fails.
         """
+        # If InspireFace is not initialized, run launch() use Pikachu model
+        if not query_launch_status():
+            ret = launch()
+            if not ret:
+                raise Exception("Launch InspireFace failure")
+
         self.multiple_faces = None
         self._sess = HFSession()
         self.param = param
@@ -598,6 +604,35 @@ def launch(model_name: str = "Pikachu", resource_path: str = None) -> bool:
             return False
     return True
 
+def reload(model_name: str = "Pikachu", resource_path: str = None) -> bool:
+    if resource_path is None:
+        sm = ResourceManager()
+        resource_path = sm.get_model(model_name)
+    path_c = String(bytes(resource_path, encoding="utf8"))
+    ret = HFReloadInspireFace(path_c)
+    if ret != 0:
+        if ret == 1363:
+            logger.warning("Duplicate loading was found")
+            return True
+        else:
+            logger.error(f"Launch InspireFace failure: {ret}")
+            return False
+    return True
+
+
+def query_launch_status() -> bool:
+    """
+    Queries the launch status of the InspireFace SDK.
+
+    Returns:
+        bool: True if InspireFace is launched, False otherwise.
+    """
+    status = HInt32()
+    ret = HFQueryInspireFaceLaunchStatus(byref(status))
+    if ret != 0:
+        logger.error(f"Query launch status error: {ret}")
+        return False
+    return status.value == 1
 
 @dataclass
 class FeatureHubConfiguration:
