@@ -28,8 +28,6 @@ def get_quality(image, session: isf.InspireFaceSession) -> float:
 
 
 if __name__ == "__main__":
-    ret = isf.launch()
-    assert ret, "Launch failure. Please ensure the resource path is correct."
     register_exec_func = isf.HF_ENABLE_QUALITY | isf.HF_ENABLE_MASK_DETECT | isf.HF_ENABLE_LIVENESS | isf.HF_ENABLE_INTERACTION | isf.HF_ENABLE_FACE_ATTRIBUTE
     session = isf.InspireFaceSession(register_exec_func, isf.HF_DETECT_MODE_ALWAYS_DETECT)
     cam = cv2.VideoCapture(0)

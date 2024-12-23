@@ -39,6 +39,12 @@ set_target_properties(FaceFeatureHubSample PROPERTIES
 )
 
 
+add_executable(FaceLoadReloadSample api/sample_load_reload.cpp)
+target_link_libraries(FaceLoadReloadSample InspireFace ${ext})
+set_target_properties(FaceLoadReloadSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
 add_executable(FaceTrackerSample source/tracker_sample.cpp)
 target_link_libraries(FaceTrackerSample InspireFace ${ext})
 set_target_properties(FaceTrackerSample PROPERTIES

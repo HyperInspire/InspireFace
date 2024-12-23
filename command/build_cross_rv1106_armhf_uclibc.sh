@@ -101,6 +101,6 @@ cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DISF_BUILD_SHARED_LIBS=ON ${SCRIPT_DIR}
 
 make -j4
-# make install
+make install
 
-# move_install_files "$(pwd)"
+move_install_files "$(pwd)"

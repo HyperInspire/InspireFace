@@ -10,6 +10,19 @@ namespace inspire {
 
 namespace nexus {
 
+/**
+ * @brief Extensible image processing interface that supports hardware acceleration backends
+ *
+ * This interface provides common image processing operations like resize, color conversion,
+ * padding etc. It can be implemented by different backends based on compile options:
+ * - Default CPU-based implementation using InspireCV (always available)
+ * - Hardware accelerated implementation like Rockchip RGA (enabled with ISF_ENABLE_RGA)
+ * - Other potential hardware acceleration backends can be enabled via corresponding compile flags
+ *
+ * The backend implementation is selected at compile time based on which acceleration options
+ * are enabled. Only one backend will be active at runtime.
+ */
+
 class ImageProcessor {
 public:
     static std::unique_ptr<ImageProcessor> Create();

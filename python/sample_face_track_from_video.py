@@ -33,7 +33,7 @@ def generate_color(id):
 @click.argument('source')
 @click.option('--show', is_flag=True, help='Display the video stream or video file in a window.')
 @click.option('--out', type=str, default=None, help='Path to save the processed video.')
-def case_face_tracker_from_video(resource_path, source, show, out):
+def case_face_tracker_from_video(source, show, out):
     """
     Launch a face tracking process from a video source. The 'source' can either be a webcam index (0, 1, ...)
     or a path to a video file. Use the --show option to display the video.
@@ -44,12 +44,6 @@ def case_face_tracker_from_video(resource_path, source, show, out):
         show (bool): If set, the video will be displayed in a window.
         out (str): Path to save the processed video.
     """
-    # Initialize the face tracker or other resources.
-    print(f"Initializing with resources from: {resource_path}")
-    # Step 1: Initialize the SDK and load the algorithm resource files.
-    ret = isf.launch()
-    assert ret, "Launch failure. Please ensure the resource path is correct."
-
     # Optional features, loaded during session creation based on the modules specified.
     opt = isf.HF_ENABLE_NONE | isf.HF_ENABLE_INTERACTION
     session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT, max_detect_num=25, detect_pixel_level=320)    # Use video mode
@@ -57,12 +51,12 @@ def case_face_tracker_from_video(resource_path, source, show, out):
     # Determine if the source is a digital webcam index or a video file path.
     try:
         source_index = int(source)  # Try to convert source to an integer.
-        cap = cv2.VideoCapture(source_index)
         print(f"Using webcam at index {source_index}.")
+        cap = cv2.VideoCapture(source_index)
     except ValueError:
         # If conversion fails, treat source as a file path.
-        cap = cv2.VideoCapture(source)
         print(f"Opening video file at {source}.")
+        cap = cv2.VideoCapture(source)
 
     if not cap.isOpened():
         print("Error: Could not open video source.")

@@ -58,10 +58,6 @@ After installation, you can use inspireface like this:
 import cv2
 import inspireface as isf
 
-# Global launching and automatic downloading of resource files
-ret = isf.launch()
-assert ret, "Launch failure. Please ensure the resource path is correct."
-
 # Create a session with optional features
 opt = isf.HF_ENABLE_NONE
 session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_IMAGE)
@@ -128,10 +124,17 @@ You can download the model package files containing models and configurations ne
 You can use the **command/download_models_general.sh** command to download resource files, which will be downloaded to the **test_res/pack** directory. This way, when running the Test program, it can access and read the resource files from this path by default.
 
 ```bash
-# Download lightweight resource files
+# Download lightweight resource files for mobile device
 bash command/download_models_general.sh Pikachu
-# Download resource files for PC/server
+# Download resource files for mobile device or PC/server
 bash command/download_models_general.sh Megatron
+# Download resource files for RV1109
+bash command/download_models_general.sh Gundam_RV1109
+# Download resource files for RV1106
+bash command/download_models_general.sh Gundam_RV1106
+
+# Download all model files
+bash command/download_models_general.sh
 ```
 
 ### Installing OpenCV(Optional)
@@ -186,14 +189,14 @@ inspireface-linux
 - **inspireface.h**：Header file definition.
 - **herror.h**：Reference error number definition.
 ### Cross Compilation
-Cross compilation requires you to prepare the target platform's cross-compilation toolchain on the host machine in advance. Here, compiling for Rockchip's embedded devices RV1109/RV1126 is used as an example:
+Cross compilation requires you to prepare the target platform's cross-compilation toolchain on the host machine in advance. Here, compiling for Rockchip's embedded devices RV1106 is used as an example:
 ```bash
 # Set the path for the cross-compilation toolchain
-export ARM_CROSS_COMPILE_TOOLCHAIN=YOUR_DIR/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
-# Execute the cross-compilation script for RV1109/RV1126
-bash command/build_cross_rv1109rv1126_armhf.sh
+export ARM_CROSS_COMPILE_TOOLCHAIN=YOUR_DIR/arm-rockchip830-linux-uclibcgnueabihf
+# Execute the cross-compilation script for RV1106
+bash command/build_cross_rv1106_armhf_uclibc.sh
 ```
-After the compilation is complete, you can find the compiled results in the `build/inspireface-linux-armv7-rv1109rv1126-armhf` directory.
+After the compilation is complete, you can find the compiled results in the `build/inspireface-linux-armv7-rv1106-armhf-uclibc` directory.
 
 ### iOS Compilation
 
@@ -225,7 +228,7 @@ We have completed the adaptation and testing of the software across various oper
 | 2       |                      | ARMv8                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 3       |                      | x86/x86_64            | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | [![test](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/test_ubuntu_x86_Pikachu.yaml?style=for-the-badge&label=Test&color=blue)](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml) |
 | 4       | **Linux-Rockchip** | ARMv7                 | RV1109RV1126               | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
-| 5 | | ARMv7 | RV1106 | ![build](https://img.shields.io/badge/build-developing-yellow?style=for-the-badge) ||
+| 5 | | ARMv7 | RV1106 | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge)|
 | 6 | | ARMv8 | RK3566/RK3568 | ![build](https://img.shields.io/badge/build-developing-yellow?style=for-the-badge) |  |
 | 7 | | ARMv8 | RK3588 | ![build](https://img.shields.io/badge/build-developing-yellow?style=for-the-badge) |  |
 | 8      | **Linux-CUDA** | x86/x86_64            | NVIDIA-GPU          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
@@ -251,6 +254,9 @@ docker-compose up build-cross-armv7-armhf
 
 # Build armv7 with support RV1109RV1126 device NPU cross-complie
 docker-compose up build-cross-rv1109rv1126-armhf
+
+# Build armv7 with support RV1106 device NPU cross-complie
+docker-compose up build-cross-rv1106-armhf-uclibc
 
 # Build Android with support arm64-v8a and armeabi-v7a
 docker-compose up build-cross-android
@@ -374,8 +380,8 @@ Import inspireface for a quick facial detection example:
 import cv2
 import inspireface as isf
 
-# Step 1: Initialize the SDK and downloading resource files.
-ret = isf.launch()
+# Step 1: Initialize the SDK globally (only needs to be called once per application)
+ret = isf.reload()
 assert ret, "Launch failure. Please ensure the resource path is correct."
 
 # Optional features, loaded during session creation based on the modules specified.
@@ -524,6 +530,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 | Pikachu | CPU | Lightweight edge-side models | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu) |
 | Megatron | CPU, GPU | Mobile and server models | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron) |
 | Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
+| Gundam-RV1106 | RKNPU | Supports RK1106(RV1103 may be supported, but not verified) | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
 
 ## Acknowledgement
 
@@ -531,6 +538,8 @@ InspireFace is built on the following libraries:
 
 - [MNN](https://github.com/alibaba/MNN)
 - [RKNN](https://github.com/rockchip-linux/rknn-toolkit)
+- [RKNN2](https://github.com/airockchip/rknn-toolkit2.git)
+- [librga](https://github.com/airockchip/librga.git)
 - [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
 - [sqlite](https://www.sqlite.org/index.html)
 - [sqlite-vec](https://github.com/asg017/sqlite-vec)
