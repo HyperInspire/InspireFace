@@ -436,7 +436,7 @@ jobs:
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: sdk_files_rv1106_armhf_uclibc
+          name: sdk_files_armv7_rv1106_armhf_uclibc
           path: |
             inspireface-linux-armv7-rv1106-armhf-uclibc-${{ env.VERSION }}.zip
 
