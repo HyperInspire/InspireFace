@@ -60,7 +60,7 @@ import inspireface as isf
 
 # Create a session with optional features
 opt = isf.HF_ENABLE_NONE
-session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_IMAGE)
+session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT)
 
 # Load the image using OpenCV.
 image = cv2.imread(image_path)
@@ -386,7 +386,7 @@ assert ret, "Launch failure. Please ensure the resource path is correct."
 
 # Optional features, loaded during session creation based on the modules specified.
 opt = isf.HF_ENABLE_NONE
-session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_IMAGE)
+session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT)
 
 # Load the image using OpenCV.
 image = cv2.imread(image_path)
