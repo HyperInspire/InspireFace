@@ -425,7 +425,7 @@ jobs:
         run: |
           bash command/build_cross_rv1106_armhf_uclibc.sh
           ls build
-      
+
       # Step 8: Zip SDK directory
       - name: Zip SDK directory
         run: |
@@ -436,9 +436,98 @@ jobs:
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: sdk_files_armv7_rv1106_armhf_uclibc
+          name: sdk_files_manylinux2014_x86
           path: |
-            inspireface-linux-armv7-rv1106-armhf-uclibc-${{ env.VERSION }}.zip
+            inspireface-linux-x86-manylinux2014-${{ env.VERSION }}.zip
+
+  build_macos_apple_silicon_arm64:
+    name: Compile MacOS Apple Silicon Arm64
+    runs-on: macos-14
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 3: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+
+      # Step 4: Install necessary dependencies for building the CMake project
+      - name: Install Dependencies
+        run: |
+          brew install cmake
+
+      # Step 5: Start building the SDK
+      - name: Start Building the InspireFace-MacOS-Apple-Silicon-Arm64
+        run: |
+          bash command/build_macos_arm64.sh
+          ls build
+
+      # Step 6: Zip SDK directory
+      - name: Zip SDK directory
+        run: |
+          zip -r inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}.zip build/inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}
+          stat inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}.zip
+
+      # Step 7: Upload the zipped SDK files for the next job
+      - name: Upload SDK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk_files_macos_apple_silicon_arm64
+          path: |
+            inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}.zip
+
+  build_macos_intel_x86_64:
+    name: Compile MacOS intel x86_64
+    runs-on: macos-13
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      - name: Extract Version Number
+        id: extract_version
+        run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
+
+      # Step 3: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+
+      # Step 4: Install necessary dependencies for building the CMake project
+      - name: Install Dependencies
+        run: |
+          brew install cmake
+
+      # Step 5: Start building the SDK
+      - name: Start Building the InspireFace-MacOS-intel-x86-64
+        run: |
+          bash command/build_macos_x86.sh
+          ls build
+
+      # Step 6: Zip SDK directory
+      - name: Zip SDK directory
+        run: |
+          zip -r inspireface-macos-intel-x86-64-${{ env.VERSION }}.zip build/inspireface-macos-intel-x86-64-${{ env.VERSION }}
+          stat inspireface-macos-intel-x86-64-${{ env.VERSION }}.zip
+
+      # Step 7: Upload the zipped SDK files for the next job
+      - name: Upload SDK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk_files_macos_intel_x86_64
+          path: |
+            inspireface-macos-intel-x86-64-${{ env.VERSION }}.zip
+
 
   release:
     name: Release SDKs to GitHub
@@ -478,3 +567,5 @@ jobs:
             sdk_artifacts/sdk_files_linux_aarch64/inspireface-linux-aarch64-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_android/inspireface-android-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_ios/inspireface-ios-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_macos_apple_silicon_arm64/inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_macos_intel_x86_64/inspireface-macos-intel-x86-64-${{ env.VERSION }}.zip
