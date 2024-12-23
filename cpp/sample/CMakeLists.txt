@@ -5,7 +5,7 @@ option(ISF_BUILD_SAMPLE_CLUTTERED "Whether to compile the cluttered sample progr
 
 include_directories(${SRC_DIR})
 
-if (ISF_ENABLE_RKNN)
+if (ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu1")
         set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
     link_directories(${ISF_RKNN_API_LIB})
     set(ext rknn_api dl)
@@ -39,6 +39,12 @@ set_target_properties(FaceFeatureHubSample PROPERTIES
 )
 
 
+add_executable(FaceLoadReloadSample api/sample_load_reload.cpp)
+target_link_libraries(FaceLoadReloadSample InspireFace ${ext})
+set_target_properties(FaceLoadReloadSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
 add_executable(FaceTrackerSample source/tracker_sample.cpp)
 target_link_libraries(FaceTrackerSample InspireFace ${ext})
 set_target_properties(FaceTrackerSample PROPERTIES
@@ -66,6 +72,22 @@ else()
     # Usually x86 linux or macos
 
 endif ()
+
+if(ISF_RK_DEVICE_TYPE STREQUAL "RV1106")
+    add_executable(FaceTrackSampleRV1106 rv1106/face_detect.cpp)
+    target_link_libraries(FaceTrackSampleRV1106 InspireFace ${ext})
+    set_target_properties(FaceTrackSampleRV1106 PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+            )
+endif()
+
+add_executable(NexusImageSample rv1106/rga_image.cpp)
+target_link_libraries(NexusImageSample InspireFace ${ext})
+set_target_properties(NexusImageSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+        )
+
+
 
 # These sample programs are debugging and testing code left behind by developers during the development process.
 # They are cluttered and have not been organized, or similar functionalities have already been organized in the standard samples.

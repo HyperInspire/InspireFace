@@ -13,6 +13,7 @@
 #include "configurable.h"
 #include "../log.h"
 #include "model_archive/inspire_archive.h"
+#include "nexus_processor/image_processor.h"
 
 namespace inspire {
 
@@ -33,7 +34,9 @@ public:
      * @brief Constructor for AnyNet.
      * @param name Name of the neural network.
      */
-    explicit AnyNetAdapter(std::string name) : m_name_(std::move(name)) {}
+    explicit AnyNetAdapter(std::string name) : m_name_(std::move(name)) {
+        m_processor_ = nexus::ImageProcessor::Create();
+    }
 
     ~AnyNetAdapter() {
         m_nn_inference_->Finalize();
@@ -169,8 +172,6 @@ public:
             //            LOGE("m_output_tensor_info_list_[i].GetElementNum(): %d",m_output_tensor_info_list_[i].GetElementNum());
             outputs.push_back(std::make_pair(m_output_tensor_info_list_[i].name, output_score_raw_list));
         }
-
-        m_cache_.Reset(0, 0, 0);
     }
 
 public:
@@ -198,8 +199,35 @@ public:
         return m_input_image_size_;
     }
 
+    /**
+     * @brief Softmax function.
+     *
+     * @param input The input vector.
+     * @return The softmax result.
+     */
+    static std::vector<float> Softmax(const std::vector<float> &input) {
+        std::vector<float> result;
+        float sum = 0.0;
+
+        // Calculate the exponentials and the sum of exponentials
+        for (float x : input) {
+            float exp_x = std::exp(x);
+            result.push_back(exp_x);
+            sum += exp_x;
+        }
+
+        // Normalize by dividing each element by the sum
+        for (float &value : result) {
+            value /= sum;
+        }
+
+        return result;
+    }
+
 protected:
     std::string m_name_;  ///< Name of the neural network.
+
+    std::unique_ptr<nexus::ImageProcessor> m_processor_;  ///< Assign a nexus processor to each anynet object
 
 private:
     InferenceHelper::HelperType m_infer_type_;                 ///< Inference engine type

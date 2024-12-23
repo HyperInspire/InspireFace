@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 # Current version
 set(INSPIRE_FACE_VERSION_MAJOR 1)
 set(INSPIRE_FACE_VERSION_MINOR 1)
-set(INSPIRE_FACE_VERSION_PATCH 8)
+set(INSPIRE_FACE_VERSION_PATCH 9)
 
 # Converts the version number to a string
 string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
@@ -51,6 +51,7 @@ set(TARGET_PLATFORM "drawin-x86" CACHE STRING "Target platform")
 # RKNN dependency configuration
 option(ISF_ENABLE_RKNN "Use RKNPU." OFF)
 set(ISF_RK_DEVICE_TYPE "RV1109RV1126" CACHE STRING "Type of the device")
+set(ISF_RK_COMPILER_TYPE "armhf" CACHE STRING "Type of the compiler")
 if (ISF_ENABLE_RKNN)
     add_definitions("-DISF_ENABLE_RKNN")
     # Device list
@@ -69,6 +70,31 @@ if (ISF_ENABLE_RKNN)
     # Result
     message(STATUS "Use ${ISF_RKNPU_MAJOR}")
 endif ()
+
+# Enable Rockchip RGA
+option(ISF_ENABLE_RGA "Use Rockchip RGA." OFF)
+if(ISF_ENABLE_RGA)
+    if(NOT ISF_ENABLE_RKNN)
+        message(FATAL_ERROR "RGA requires RKNN to be enabled. Please enable ISF_ENABLE_RKNN first.")
+    endif()
+    if(NOT ISF_RKNPU_MAJOR STREQUAL "rknpu2")
+        message(FATAL_ERROR "RGA requires RKNPU2. Please use a device that supports RKNPU2.")
+    endif()
+
+    add_definitions("-DISF_ENABLE_RGA")
+    if(ANDROID)
+        set(PLAT Android)
+    else()
+        set(PLAT Linux)
+    endif()
+    set(RGA_LIBS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/librga/${PLAT}/${ISF_RK_COMPILER_TYPE}/librga.a)
+    set(RGA_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/librga/include)
+endif()
+
+option(ISF_ENABLE_COST_TIME "Enable cost time." OFF)
+if(ISF_ENABLE_COST_TIME)
+    add_definitions("-DISF_ENABLE_COST_TIME")
+endif()
 
 # Platform configuration
 option(ISF_BUILD_LINUX_ARM7 "Platform Armv7." OFF)
@@ -211,6 +237,15 @@ elseif(DEFINED MNN_STATIC_PATH)
     set(MNN_LIBS "${MNN_STATIC_PATH}/lib/libMNN.a")
 elseif(IOS)
     message(Build iOS)
+
+elseif(DEFINED MNN_CUSTOM_SOURCE)
+    message("Using custom external MNN source path: ${MNN_CUSTOM_SOURCE}")
+    # In particular, rknpu2 uses a lower version of mnn
+    set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "Build MNN as a shared library")
+    add_subdirectory(${MNN_CUSTOM_SOURCE} EXCLUDE_FROM_ALL)
+    set(MNN_INCLUDE_DIRS "${MNN_CUSTOM_SOURCE}/include")
+    set(MNN_LIBS MNN)
+    
 else ()
     # Default or fallback case for MNN setup
     message("Default or fallback case for MNN setup")
@@ -252,6 +287,7 @@ message(STATUS "\t ISF_ENABLE_RKNN: ${ISF_ENABLE_RKNN}")
 if (ISF_ENABLE_RKNN)
     message(STATUS "\t ISF_RKNPU_MAJOR: ${ISF_RKNPU_MAJOR}")
     message(STATUS "\t ISF_RK_DEVICE_TYPE: ${ISF_RK_DEVICE_TYPE}")
+    message(STATUS "\t ISF_RK_COMPILER_TYPE: ${ISF_RK_COMPILER_TYPE}")
 endif ()
 message(STATUS "\t ISF_BUILD_LINUX_ARM7: ${ISF_BUILD_LINUX_ARM7}")
 message(STATUS "\t ISF_BUILD_LINUX_AARCH64: ${ISF_BUILD_LINUX_AARCH64}")

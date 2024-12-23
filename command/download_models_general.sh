@@ -6,6 +6,8 @@ DOWNLOAD_DIR="test_res/pack"
 # File URLs
 URL1="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron"
 URL2="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu"
+URL3="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109"
+URL4="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106"
 
 # Color codes
 YELLOW='\033[1;33m'
@@ -39,43 +41,42 @@ if [ $# -eq 0 ]; then
     echo "No argument provided, downloading all files..."
     download_file "$URL1"
     download_file "$URL2"
-    # Check both files
-    if [ -f "$DOWNLOAD_DIR/Megatron" ] && [ -f "$DOWNLOAD_DIR/Pikachu" ]; then
+    download_file "$URL3"
+    download_file "$URL4"
+    # Check all files
+    if [ -f "$DOWNLOAD_DIR/Megatron" ] && [ -f "$DOWNLOAD_DIR/Pikachu" ] && \
+       [ -f "$DOWNLOAD_DIR/Gundam_RV1109" ] && [ -f "$DOWNLOAD_DIR/Gundam_RV1106" ]; then
         echo "All downloads completed successfully!"
         print_file_path "Megatron"
         print_file_path "Pikachu"
+        print_file_path "Gundam_RV1109"
+        print_file_path "Gundam_RV1106"
     else
         echo "Download failed!"
         exit 1
     fi
 else
     case "$1" in
-        "Megatron")
-            echo "Downloading Megatron..."
-            download_file "$URL1"
-            # Check Megatron file
-            if [ -f "$DOWNLOAD_DIR/Megatron" ]; then
-                echo "Megatron download completed successfully!"
-                print_file_path "Megatron"
+        "Megatron"|"Pikachu"|"Gundam_RV1109"|"Gundam_RV1106")
+            echo "Downloading $1..."
+            case "$1" in
+                "Megatron") url="$URL1" ;;
+                "Pikachu") url="$URL2" ;;
+                "Gundam_RV1109") url="$URL3" ;;
+                "Gundam_RV1106") url="$URL4" ;;
+            esac
+            download_file "$url"
+            # Check file
+            if [ -f "$DOWNLOAD_DIR/$1" ]; then
+                echo "$1 download completed successfully!"
+                print_file_path "$1"
             else
-                echo "Megatron download failed!"
-                exit 1
-            fi
-            ;;
-        "Pikachu")
-            echo "Downloading Pikachu..."
-            download_file "$URL2"
-            # Check Pikachu file
-            if [ -f "$DOWNLOAD_DIR/Pikachu" ]; then
-                echo "Pikachu download completed successfully!"
-                print_file_path "Pikachu"
-            else
-                echo "Pikachu download failed!"
+                echo "$1 download failed!"
                 exit 1
             fi
             ;;
         *)
-            echo "Invalid argument. Please use 'Megatron' or 'Pikachu'"
+            echo "Invalid argument. Please use 'Megatron', 'Pikachu', 'Gundam_RV1109' or 'Gundam_RV1106'"
             exit 1
             ;;
     esac
