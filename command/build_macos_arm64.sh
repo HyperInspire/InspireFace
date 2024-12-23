@@ -29,7 +29,7 @@ else
     TAG=""
 fi
 
-BUILD_FOLDER_PATH="build/inspireface-macos_arm64${TAG}/"
+BUILD_FOLDER_PATH="build/inspireface-macos-apple-silicon-arm64${TAG}/"
 SCRIPT_DIR=$(pwd)  # Project dir
 
 mkdir -p ${BUILD_FOLDER_PATH}
