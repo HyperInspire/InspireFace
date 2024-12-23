@@ -16,10 +16,6 @@ def case_face_detection_image(image_path):
     This is a sample application for face detection and tracking using an image.
     It also includes pipeline extensions such as RGB liveness, mask detection, and face quality evaluation.
     """
-    # Step 1: Initialize the SDK and load the algorithm resource files.
-    ret = isf.launch()
-    assert ret, "Launch failure. Please ensure the resource path is correct."
-
     # Optional features, loaded during session creation based on the modules specified.
     opt = isf.HF_ENABLE_FACE_RECOGNITION | isf.HF_ENABLE_QUALITY | isf.HF_ENABLE_MASK_DETECT | isf.HF_ENABLE_LIVENESS | isf.HF_ENABLE_INTERACTION | isf.HF_ENABLE_FACE_ATTRIBUTE
     session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT)
