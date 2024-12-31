@@ -874,7 +874,7 @@ def feature_hub_face_search(data: np.ndarray) -> SearchResult:
         search_identity = FaceIdentity.from_ctypes(most_similar)
         return SearchResult(confidence=confidence.value, similar_identity=search_identity)
     else:
-        none = FaceIdentity(np.zeros(0), most_similar.id)
+        none = FaceIdentity(np.zeros(0, dtype=np.float32), most_similar.id)
         return SearchResult(confidence=confidence.value, similar_identity=none)
 
 
