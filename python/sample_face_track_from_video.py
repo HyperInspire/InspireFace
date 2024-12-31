@@ -46,7 +46,7 @@ def case_face_tracker_from_video(source, show, out):
     """
     # Optional features, loaded during session creation based on the modules specified.
     opt = isf.HF_ENABLE_NONE | isf.HF_ENABLE_INTERACTION
-    session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT, max_detect_num=25, detect_pixel_level=320)    # Use video mode
+    session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_LIGHT_TRACK, max_detect_num=25, detect_pixel_level=320)    # Use video mode
     session.set_filter_minimum_face_pixel_size(0)
     # Determine if the source is a digital webcam index or a video file path.
     try:
@@ -81,7 +81,6 @@ def case_face_tracker_from_video(source, show, out):
         faces = session.face_detection(frame)
 
         exts = session.face_pipeline(frame, faces, isf.HF_ENABLE_INTERACTION)
-        print(exts)
 
         for idx, face in enumerate(faces):
             # Get face bounding box
@@ -97,6 +96,19 @@ def case_face_tracker_from_video(source, show, out):
             box = cv2.boxPoints(rect)
             box = box.astype(int)
 
+            actions = []
+            if exts[idx].action_normal:
+                actions.append("Normal")
+            if exts[idx].action_jaw_open:
+                actions.append("Jaw Open") 
+            if exts[idx].action_shake:
+                actions.append("Shake")
+            if exts[idx].action_blink:
+                actions.append("Blink")
+            if exts[idx].action_head_raise:
+                actions.append("Head Raise")
+            print("Actions:", actions)
+            
             color = generate_color(face.track_id)
 
             # Draw the rotated bounding box
