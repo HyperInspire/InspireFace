@@ -95,10 +95,10 @@ int main(int argc, char* argv[]) {
         SET_RUNTIME_FULLPATH_NAME(fullPath);
     }
 
-    std::cout << fullPath << std::endl;
+    TEST_PRINT("Launching InspireFace with path: {}", fullPath);
     auto ret = HFLaunchInspireFace(fullPath.c_str());
     if (ret != HSUCCEED) {
-        spdlog::error("An error occurred while starting InspireFace: {}", ret);
+        TEST_ERROR_PRINT("An error occurred while starting InspireFace: {}", ret);
         return ret;
     }
 
