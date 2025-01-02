@@ -1,11 +1,12 @@
-#ifndef RESOURCE_POOL_H
-#define RESOURCE_POOL_H
+#ifndef INSPIRE_RESOURCE_POOL_H
+#define INSPIRE_RESOURCE_POOL_H
 
 #include <iostream>
 #include <mutex>
 #include <queue>
 #include <condition_variable>
 #include <memory>
+#include <functional>
 
 namespace inspire {
 namespace parallel {
@@ -13,6 +14,8 @@ namespace parallel {
 template <typename Resource>
 class ResourcePool {
 public:
+    using ResourceDeleter = std::function<void(Resource&)>;
+
     class ResourceGuard {
     public:
         ResourceGuard(Resource& resource, ResourcePool& pool) : m_resource(resource), m_pool(pool), m_valid(true) {}
@@ -35,6 +38,7 @@ public:
         Resource* operator->() {
             return &m_resource;
         }
+
         Resource& operator*() {
             return m_resource;
         }
@@ -45,8 +49,17 @@ public:
         bool m_valid;
     };
 
-    explicit ResourcePool(size_t size) {
+    explicit ResourcePool(size_t size, ResourceDeleter deleter = nullptr) : m_deleter(deleter) {
         m_resources.reserve(size);
+    }
+
+    ~ResourcePool() {
+        if (m_deleter) {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            for (auto& resource : m_resources) {
+                m_deleter(resource);
+            }
+        }
     }
 
     void addResource(Resource&& resource) {
@@ -120,6 +133,7 @@ private:
     std::condition_variable m_cv;
     std::vector<Resource> m_resources;            // Store actual resources
     std::queue<Resource*> m_available_resources;  // Queue of available resources
+    ResourceDeleter m_deleter;                    // Resource cleanup callback
 
     friend class ResourceGuard;
 };
@@ -127,4 +141,4 @@ private:
 }  // namespace parallel
 }  // namespace inspire
 
-#endif  // RESOURCE_POOL_H
+#endif  // INSPIRE_RESOURCE_POOL_H
