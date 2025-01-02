@@ -11,6 +11,10 @@
 namespace inspire {
 namespace parallel {
 
+/**
+ * @brief ResourcePool is a thread-safe resource pool that can be used to manage resources in a multi-threaded environment.
+ * @tparam Resource The type of the resource to be managed.
+ */
 template <typename Resource>
 class ResourcePool {
 public:
