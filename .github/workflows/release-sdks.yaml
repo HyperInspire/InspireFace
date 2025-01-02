@@ -46,7 +46,9 @@ jobs:
       # Step 6: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip build/inspireface-linux-x86-ubuntu18-${{ env.VERSION }}
+          cd build
+          zip -r ../inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip inspireface-linux-x86-ubuntu18-${{ env.VERSION }}
+          cd ..
           stat inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
 
       # Step 7: Upload the zipped SDK files for the next job
@@ -103,7 +105,9 @@ jobs:
       # Step 8: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-armhf-${{ env.VERSION }}
+          cd build
+          zip -r ../inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip inspireface-linux-armv7-armhf-${{ env.VERSION }}
+          cd ..
           stat inspireface-linux-armv7-armhf-${{ env.VERSION }}.zip
 
       # Step 9: Upload the zipped SDK files for the next job
@@ -160,7 +164,9 @@ jobs:
       # Step 8: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip build/inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}
+          cd build
+          zip -r ../inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}
+          cd ..
           stat inspireface-linux-armv7-rv1109rv1126-armhf-${{ env.VERSION }}.zip
 
       # Step 9: Upload the zipped SDK files for the next job
@@ -217,7 +223,9 @@ jobs:
       # Step 8: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-aarch64-${{ env.VERSION }}.zip build/inspireface-linux-aarch64-${{ env.VERSION }}
+          cd build
+          zip -r ../inspireface-linux-aarch64-${{ env.VERSION }}.zip inspireface-linux-aarch64-${{ env.VERSION }}
+          cd ..
           stat inspireface-linux-aarch64-${{ env.VERSION }}.zip
 
       # Step 9: Upload the zipped SDK files for the next job
@@ -289,7 +297,9 @@ jobs:
       # Step 10: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-android-${{ env.VERSION }}.zip build/inspireface-android-${{ env.VERSION }}
+          cd build
+          zip -r ../inspireface-android-${{ env.VERSION }}.zip inspireface-android-${{ env.VERSION }}
+          cd ..
           stat inspireface-android-${{ env.VERSION }}.zip
 
       # Step 11: Upload the zipped SDK files for the next job
@@ -328,7 +338,9 @@ jobs:
       # Step 5: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-ios-${{ env.VERSION }}.zip build/inspireface-ios-${{ env.VERSION }}
+          cd build
+          zip -r ../inspireface-ios-${{ env.VERSION }}.zip inspireface-ios-${{ env.VERSION }}
+          cd ..
           stat inspireface-ios-${{ env.VERSION }}.zip
 
       # Step 6: Upload the zipped SDK files for the next job
@@ -373,7 +385,9 @@ jobs:
       # Step 6: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-x86-manylinux2014-${{ env.VERSION }}.zip build/inspireface-linux-x86-manylinux2014-${{ env.VERSION }}
+          cd build
+          zip -r ../inspireface-linux-x86-manylinux2014-${{ env.VERSION }}.zip inspireface-linux-x86-manylinux2014-${{ env.VERSION }}
+          cd ..
           stat inspireface-linux-x86-manylinux2014-${{ env.VERSION }}.zip
 
       # Step 7: Upload the zipped SDK files for the next job
@@ -429,7 +443,9 @@ jobs:
       # Step 8: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-linux-armv7-rv1106-armhf-uclibc-${{ env.VERSION }}.zip build/inspireface-linux-armv7-rv1106-armhf-uclibc-${{ env.VERSION }}
+          cd build
+          zip -r ../inspireface-linux-armv7-rv1106-armhf-uclibc-${{ env.VERSION }}.zip inspireface-linux-armv7-rv1106-armhf-uclibc-${{ env.VERSION }}
+          cd ..
           stat inspireface-linux-armv7-rv1106-armhf-uclibc-${{ env.VERSION }}.zip
 
       # Step 9: Upload the zipped SDK files for the next job
@@ -473,7 +489,9 @@ jobs:
       # Step 6: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}.zip build/inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}
+          cd build
+          zip -r ../inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}.zip inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}
+          cd ..
           stat inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}.zip
 
       # Step 7: Upload the zipped SDK files for the next job
@@ -517,7 +535,9 @@ jobs:
       # Step 6: Zip SDK directory
       - name: Zip SDK directory
         run: |
-          zip -r inspireface-macos-intel-x86-64-${{ env.VERSION }}.zip build/inspireface-macos-intel-x86-64-${{ env.VERSION }}
+          cd build
+          zip -r ../inspireface-macos-intel-x86-64-${{ env.VERSION }}.zip inspireface-macos-intel-x86-64-${{ env.VERSION }}
+          cd ..
           stat inspireface-macos-intel-x86-64-${{ env.VERSION }}.zip
 
       # Step 7: Upload the zipped SDK files for the next job

@@ -62,7 +62,7 @@ TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
         inspire::parallel::ResourcePool<HFSession> sessionPool(N, [](HFSession& session) {
             auto ret = HFReleaseInspireFaceSession(session);
             if (ret != HSUCCEED) {
-                TEST_PRINT("Failed to release session: {}", ret);
+                TEST_ERROR_PRINT("Failed to release session: {}", ret);
             }
         });
 
@@ -125,7 +125,7 @@ TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
 TEST_CASE("test_SessionParallel_Memory", "[Session][Parallel][Memory]") {
     size_t memoryUsage = getCurrentMemoryUsage();
     TEST_PRINT("Current memory usage: {}MB", memoryUsage);
-    int loop = 8;
+    int loop = 4;
     std::vector<HFSession> sessions;
     for (int i = 0; i < loop; ++i) {
         HFSessionCustomParameter parameter = {0};

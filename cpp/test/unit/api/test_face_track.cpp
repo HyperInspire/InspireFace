@@ -21,7 +21,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
         HFSession session;
         ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
-        spdlog::error("error ret :{}", ret);
+        TEST_ERROR_PRINT("error ret :{}", ret);
         REQUIRE(ret == HSUCCEED);
 
         // Get a face picture
