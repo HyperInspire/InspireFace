@@ -21,6 +21,12 @@
 #include "test_tools.h"
 #include <random>
 #include <fstream>
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+#else
+#include <sys/resource.h>
+#endif
 
 using namespace indicators;
 
@@ -403,6 +409,100 @@ inline std::string ReplaceFileExtension(const std::string& filePath, const std::
     }
 
     return filePath.substr(0, lastDotPos) + newExtension;
+}
+
+inline bool CompareTwoFaces(HFSession handle, const inspirecv::Image& img1, const inspirecv::Image& img2, float& similarity) {
+    HFImageStream img;
+    auto ret = CVImageToImageStream(img1, img);
+    if (ret != 0) {
+        std::cerr << "Image is not found: " << ret << std::endl;
+        return false;
+    }
+    HFMultipleFaceData multipleFaceData = {0};
+    ret = HFExecuteFaceTrack(handle, img, &multipleFaceData);
+    if (ret != 0) {
+        std::cerr << "Error track: " << ret << std::endl;
+        HFReleaseImageStream(img);
+        return false;
+    }
+
+    if (multipleFaceData.detectedNum == 0) {
+        std::cerr << "No face detected in first image" << std::endl;
+        HFReleaseImageStream(img);
+        return false;
+    }
+
+    // Extract features from first image
+    HInt32 featureLength;
+    HFGetFeatureLength(&featureLength);
+    std::vector<float> feature1(featureLength);
+    ret = HFFaceFeatureExtractCpy(handle, img, multipleFaceData.tokens[0], feature1.data());
+    if (ret != HSUCCEED) {
+        std::cerr << "Feature extraction failed for first image" << std::endl;
+        HFReleaseImageStream(img);
+        return false;
+    }
+    HFReleaseImageStream(img);
+
+    // Process second image
+    ret = CVImageToImageStream(img2, img);
+    if (ret != HSUCCEED) {
+        std::cerr << "Second image not found" << std::endl;
+        return false;
+    }
+
+    ret = HFExecuteFaceTrack(handle, img, &multipleFaceData);
+    if (ret != HSUCCEED) {
+        std::cerr << "Face tracking failed on second image" << std::endl;
+        HFReleaseImageStream(img);
+        return false;
+    }
+
+    if (multipleFaceData.detectedNum == 0) {
+        std::cerr << "No face detected in second image" << std::endl;
+        HFReleaseImageStream(img);
+        return false;
+    }
+
+    // Extract features from second image
+    std::vector<float> feature2(featureLength);
+    ret = HFFaceFeatureExtractCpy(handle, img, multipleFaceData.tokens[0], feature2.data());
+    if (ret != HSUCCEED) {
+        std::cerr << "Feature extraction failed for second image" << std::endl;
+        HFReleaseImageStream(img);
+        return false;
+    }
+    HFReleaseImageStream(img);
+
+    // Compare features
+    HFFaceFeature faceFeature1 = {0};
+    faceFeature1.data = feature1.data();
+    faceFeature1.size = feature1.size();
+
+    HFFaceFeature faceFeature2 = {0};
+    faceFeature2.data = feature2.data();
+    faceFeature2.size = feature2.size();
+
+    ret = HFFaceComparison(faceFeature1, faceFeature2, &similarity);
+    if (ret != HSUCCEED) {
+        std::cerr << "Face comparison failed" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+// Get the current memory usage in MB
+inline size_t getCurrentMemoryUsage() {
+#ifdef _WIN32
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+    return pmc.WorkingSetSize / (1024 * 1024);  // Convert bytes to MB
+#else
+    struct rusage rusage;
+    getrusage(RUSAGE_SELF, &rusage);
+    return (size_t)rusage.ru_maxrss / 1024;  // ru_maxrss is in KB, convert to MB
+#endif
 }
 
 #endif  // INSPIREFACE_TEST_TEST_HELP_H
