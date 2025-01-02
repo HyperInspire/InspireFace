@@ -4,7 +4,6 @@
 #include "inspireface/c_api/inspireface.h"
 #include <cstdio>
 
-
 TEST_CASE("test_ImageBitmap", "[image_bitmap]") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
@@ -12,7 +11,6 @@ TEST_CASE("test_ImageBitmap", "[image_bitmap]") {
     HFImageBitmap handle;
     HResult ret = HFCreateImageBitmapFromFilePath(GET_DATA("data/bulk/r90.jpg").c_str(), 3, &handle);
     REQUIRE(ret == HSUCCEED);
-
 
     HFImageStream stream;
     ret = HFCreateImageStreamFromImageBitmap(handle, HF_CAMERA_ROTATION_90, &stream);
@@ -22,7 +20,7 @@ TEST_CASE("test_ImageBitmap", "[image_bitmap]") {
     HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
     HFSession session;
     ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
-    spdlog::error("error ret :{}", ret);
+    TEST_ERROR_PRINT("error ret :{}", ret);
     REQUIRE(ret == HSUCCEED);
 
     // Extract basic face information from photos
