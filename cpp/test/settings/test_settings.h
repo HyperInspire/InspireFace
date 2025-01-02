@@ -42,6 +42,8 @@ using namespace Catch::Detail;
 #define TEST_PRINT_OUTPUT(open) TestMessageBroadcast test_msg_broadcast_##open(open)
 // Set the log output level
 #define LOG_OUTPUT_LEVEL(level) LogLevelBroadcast log_level_broadcast_##level(level);
+// Print test error message
+#define TEST_ERROR_PRINT(...) SPDLOG_LOGGER_CALL(spdlog::get("TEST"), spdlog::level::err, __VA_ARGS__)
 
 // Get the test data directory
 #define GET_DIR getTestDataDir()

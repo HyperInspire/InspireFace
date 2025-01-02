@@ -6,6 +6,7 @@
 #include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
 #include "../test_helper/test_tools.h"
+#include "../test_helper/test_help.h"
 
 TEST_CASE("test_FacePipelineAttribute", "[face_pipeline_attribute]") {
     DRAW_SPLIT_LINE
@@ -391,6 +392,86 @@ TEST_CASE("test_FaceReaction", "[face_reaction]") {
 
         ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
+    }
+
+    ret = HFReleaseInspireFaceSession(session);
+    REQUIRE(ret == HSUCCEED);
+}
+
+TEST_CASE("test_TrackModeFaceAction", "[face_action]") {
+    DRAW_SPLIT_LINE
+    TEST_PRINT_OUTPUT(true);
+
+    HResult ret;
+    HFSessionCustomParameter parameter = {0};
+    parameter.enable_interaction_liveness = 1;
+    HFDetectMode detMode = HF_DETECT_MODE_LIGHT_TRACK;
+    HFSession session;
+    ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
+    REQUIRE(ret == HSUCCEED);
+
+    SECTION("Action Blink") {
+        auto start = 130, end = 150;
+        std::vector<std::string> filenames = generateFilenames("frame-%04d.jpg", start, end);
+        int count = 0;
+        for (size_t i = 0; i < filenames.size(); i++) {
+            auto filename = filenames[i];
+            HFImageStream imgHandle;
+            auto image = inspirecv::Image::Create(GET_DATA("data/video_frames/" + filename));
+            ret = CVImageToImageStream(image, imgHandle);
+            REQUIRE(ret == HSUCCEED);
+
+            HFMultipleFaceData multipleFaceData = {0};
+            ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+            REQUIRE(ret == HSUCCEED);
+            REQUIRE(multipleFaceData.detectedNum > 0);
+
+            ret = HFMultipleFacePipelineProcessOptional(session, imgHandle, &multipleFaceData, HF_ENABLE_INTERACTION);
+            REQUIRE(ret == HSUCCEED);
+
+            HFFaceInteractionsActions result;
+            ret = HFGetFaceInteractionActionsResult(session, &result);
+            REQUIRE(ret == HSUCCEED);
+            REQUIRE(multipleFaceData.detectedNum == result.num);
+
+            count += result.blink[0];
+            ret = HFReleaseImageStream(imgHandle);
+            REQUIRE(ret == HSUCCEED);
+        }
+        // Blink at least once
+        REQUIRE(count > 0);
+    }
+
+    SECTION("Action Jaw Open") {
+        auto start = 110, end = 150;
+        std::vector<std::string> filenames = generateFilenames("frame-%04d.jpg", start, end);
+        int count = 0;
+        for (size_t i = 0; i < filenames.size(); i++) {
+            auto filename = filenames[i];
+            HFImageStream imgHandle;
+            auto image = inspirecv::Image::Create(GET_DATA("data/video_frames/" + filename));
+            ret = CVImageToImageStream(image, imgHandle);
+            REQUIRE(ret == HSUCCEED);
+
+            HFMultipleFaceData multipleFaceData = {0};
+            ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+            REQUIRE(ret == HSUCCEED);
+            REQUIRE(multipleFaceData.detectedNum > 0);
+
+            ret = HFMultipleFacePipelineProcessOptional(session, imgHandle, &multipleFaceData, HF_ENABLE_INTERACTION);
+            REQUIRE(ret == HSUCCEED);
+
+            HFFaceInteractionsActions result;
+            ret = HFGetFaceInteractionActionsResult(session, &result);
+            REQUIRE(ret == HSUCCEED);
+            REQUIRE(multipleFaceData.detectedNum == result.num);
+
+            count += result.jawOpen[0];
+            ret = HFReleaseImageStream(imgHandle);
+            REQUIRE(ret == HSUCCEED);
+        }
+        // Jaw open at least once
+        REQUIRE(count > 0);
     }
 
     ret = HFReleaseInspireFaceSession(session);
