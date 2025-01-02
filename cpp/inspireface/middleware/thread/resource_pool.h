@@ -35,7 +35,7 @@ public:
 
         ~ResourceGuard() {
             if (m_valid) {
-                m_pool.returnResource(std::move(m_resource));
+                m_pool.ReturnResource(std::move(m_resource));
             }
         }
 
@@ -66,7 +66,7 @@ public:
         }
     }
 
-    void addResource(Resource&& resource) {
+    void AddResource(Resource&& resource) {
         std::lock_guard<std::mutex> lock(m_mutex);
         m_resources.push_back(std::move(resource));
         m_available_resources.push(&m_resources.back());
@@ -74,7 +74,7 @@ public:
     }
 
     // Acquire resource (blocking mode)
-    ResourceGuard acquireResource() {
+    ResourceGuard AcquireResource() {
         std::unique_lock<std::mutex> lock(m_mutex);
         m_cv.wait(lock, [this] { return !m_available_resources.empty(); });
 
@@ -85,7 +85,7 @@ public:
     }
 
     // Try to acquire resource (non-blocking mode), returns nullptr if no resource available
-    std::unique_ptr<ResourceGuard> tryAcquireResource() {
+    std::unique_ptr<ResourceGuard> TryAcquireResource() {
         std::lock_guard<std::mutex> lock(m_mutex);
         if (m_available_resources.empty()) {
             return nullptr;
@@ -98,7 +98,7 @@ public:
     }
 
     // Acquire resource with timeout, returns nullptr if timeout
-    std::unique_ptr<ResourceGuard> acquireResource(std::chrono::milliseconds timeout) {
+    std::unique_ptr<ResourceGuard> AcquireResource(std::chrono::milliseconds timeout) {
         std::unique_lock<std::mutex> lock(m_mutex);
         if (!m_cv.wait_for(lock, timeout, [this] { return !m_available_resources.empty(); })) {
             return nullptr;
@@ -110,18 +110,18 @@ public:
         return std::unique_ptr<ResourceGuard>(new ResourceGuard(*resource, *this));
     }
 
-    size_t availableCount() const {
+    size_t AvailableCount() const {
         std::lock_guard<std::mutex> lock(m_mutex);
         return m_available_resources.size();
     }
 
-    size_t totalCount() const {
+    size_t TotalCount() const {
         std::lock_guard<std::mutex> lock(m_mutex);
         return m_resources.size();
     }
 
 private:
-    void returnResource(Resource&& resource) {
+    void ReturnResource(Resource&& resource) {
         std::lock_guard<std::mutex> lock(m_mutex);
         for (auto& stored_resource : m_resources) {
             if (&stored_resource == &resource) {
