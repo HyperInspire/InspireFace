@@ -6,8 +6,8 @@
 #include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
 #include "unit/test_helper/test_help.h"
-#include <thread>
 #include "inspireface/middleware/thread/resource_pool.h"
+#include <thread>
 
 TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
     DRAW_SPLIT_LINE
@@ -28,6 +28,10 @@ TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
     float expectedSimilarity = GenerateRandomNumbers(1, 0, 100)[0] / 100.0f;
     ret = CompareTwoFaces(session, image1, image2, expectedSimilarity);
     REQUIRE(ret);
+    TEST_PRINT("Expected similarity: {}", expectedSimilarity);
+
+    ret = HFReleaseInspireFaceSession(session);
+    REQUIRE(ret == HSUCCEED);
 
     SECTION("Serial") {
         HResult ret;
@@ -48,11 +52,19 @@ TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
         }
         timeSpend.Stop();
         std::cout << timeSpend << std::endl;
+
+        ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
     }
 
     SECTION("Parallel") {
         const int N = 4;  // Use 4 sessions in parallel
-        inspire::parallel::ResourcePool<HFSession> sessionPool(N);
+        inspire::parallel::ResourcePool<HFSession> sessionPool(N, [](HFSession& session) {
+            auto ret = HFReleaseInspireFaceSession(session);
+            if (ret != HSUCCEED) {
+                TEST_PRINT("Failed to release session: {}", ret);
+            }
+        });
 
         // Example Initialize N sessions to the resource pool
         for (int i = 0; i < N; ++i) {
@@ -124,5 +136,12 @@ TEST_CASE("test_SessionParallel_Memory", "[Session][Parallel][Memory]") {
         sessions.push_back(session);
         size_t memoryUsage = getCurrentMemoryUsage();
         TEST_PRINT("[alloc{}] Current memory usage: {}MB", i + 1, memoryUsage);
+    }
+    // Release all sessions
+    for (int i = 0; i < loop; ++i) {
+        auto ret = HFReleaseInspireFaceSession(sessions[i]);
+        REQUIRE(ret == HSUCCEED);
+        size_t memoryUsage = getCurrentMemoryUsage();
+        TEST_PRINT("[free{}] Current memory usage: {}MB", i + 1, memoryUsage);
     }
 }
