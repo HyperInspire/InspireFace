@@ -73,7 +73,7 @@ TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
             HFSession session;
             HResult ret = HFCreateInspireFaceSession(parameter, HF_DETECT_MODE_ALWAYS_DETECT, 3, -1, -1, &session);
             REQUIRE(ret == HSUCCEED);
-            sessionPool.addResource(std::move(session));
+            sessionPool.AddResource(std::move(session));
         }
 
         // Create a thread pool to execute a task
@@ -93,7 +93,7 @@ TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
             int taskCount = tasksPerThread + (i < remainingTasks ? 1 : 0);
             threads.emplace_back([&, taskCount]() {
                 for (int j = 0; j < taskCount; ++j) {
-                    auto sessionGuard = sessionPool.acquireResource();
+                    auto sessionGuard = sessionPool.AcquireResource();
                     float similarity = 0.0f;
                     HResult ret = CompareTwoFaces(*sessionGuard, image1, image2, similarity);
                     REQUIRE(ret);
