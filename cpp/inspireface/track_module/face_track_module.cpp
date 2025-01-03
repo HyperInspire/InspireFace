@@ -107,12 +107,9 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
         COST_TIME_SIMPLE(FaceQuality);
         auto affine_extensive = face.getTransMatrixExtensive();
         auto pre_crop = image.ExecuteImageAffineProcessing(affine_extensive, m_crop_extensive_size_, m_crop_extensive_size_);
-        pre_crop.Show();
         auto res = (*m_face_quality_)(pre_crop);
-
         auto affine_extensive_inv = affine_extensive.GetInverse();
         std::vector<inspirecv::Point2f> lmk_extensive = ApplyTransformToPoints(res.lmk, affine_extensive_inv);
-
         res.lmk = lmk_extensive;
         face.high_result = res;
     }

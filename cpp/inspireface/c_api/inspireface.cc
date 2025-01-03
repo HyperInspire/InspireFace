@@ -268,6 +268,7 @@ HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectM
     param.enable_ir_liveness = parameter.enable_ir_liveness;
     param.enable_recognition = parameter.enable_recognition;
     param.enable_face_attribute = parameter.enable_face_attribute;
+    param.enable_detect_mode_landmark = parameter.enable_detect_mode_landmark;
     inspire::DetectModuleMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
     if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
         detMode = inspire::DETECT_MODE_LIGHT_TRACK;
@@ -312,6 +313,9 @@ HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode de
     }
     if (customOption & HF_ENABLE_INTERACTION) {
         param.enable_interaction_liveness = true;
+    }
+    if (customOption & HF_ENABLE_DETECT_MODE_LANDMARK) {
+        param.enable_detect_mode_landmark = true;
     }
     inspire::DetectModuleMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
     if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
@@ -487,18 +491,18 @@ HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, HPoint2
     data.data = singleFace.data;
     HyperFaceData face = {0};
     HInt32 ret;
-    std::cout << "1" << std::endl;
     ret = RunDeserializeHyperFaceData((char *)data.data, data.dataSize, face);
-    std::cout << "2" << std::endl;
     if (ret != HSUCCEED) {
         return ret;
     }
-    std::cout << "3" << std::endl;
+    if (face.densityLandmarkEnable == 0) {
+        INSPIRE_LOGW("To get dense landmarks in always-detect mode, you need to enable HF_ENABLE_DETECT_MODE_LANDMARK");
+        return HERR_SESS_LANDMARK_NOT_ENABLE;
+    }
     for (size_t i = 0; i < num; i++) {
         landmarks[i].x = face.densityLandmark[i].x;
         landmarks[i].y = face.densityLandmark[i].y;
     }
-    std::cout << "4" << std::endl;
     return HSUCCEED;
 }
 

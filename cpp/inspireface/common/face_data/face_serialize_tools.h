@@ -98,11 +98,14 @@ inline HyperFaceData INSPIRE_API FaceObjectInternalToHyperFaceData(const FaceObj
     data.face3DAngle.yaw = obj.high_result.yaw;
     // Density Landmark
     if (!obj.landmark_smooth_aux_.empty()) {
+        data.densityLandmarkEnable = 1;
         const auto& lmk = obj.landmark_smooth_aux_.back();
         for (size_t i = 0; i < lmk.size(); i++) {
             data.densityLandmark[i].x = lmk[i].GetX();
             data.densityLandmark[i].y = lmk[i].GetY();
         }
+    } else {
+        data.densityLandmarkEnable = 0;
     }
 
     return data;
