@@ -19,18 +19,24 @@
 namespace inspire {
 
 FaceTrackModule::FaceTrackModule(DetectModuleMode mode, int max_detected_faces, int detection_interval, int track_preview_size,
-                                 int dynamic_detection_input_level, int TbD_mode_fps)
+                                 int dynamic_detection_input_level, int TbD_mode_fps, bool detect_mode_landmark)
 : m_mode_(mode),
   max_detected_faces_(max_detected_faces),
   detection_interval_(detection_interval),
   track_preview_size_(track_preview_size),
-  m_dynamic_detection_input_level_(dynamic_detection_input_level) {
+  m_dynamic_detection_input_level_(dynamic_detection_input_level),
+  m_detect_mode_landmark_(detect_mode_landmark) {
     detection_index_ = -1;
     tracking_idx_ = 0;
     if (TbD_mode_fps < 0) {
         TbD_mode_fps = 30;
     }
-
+    if (mode == DETECT_MODE_LIGHT_TRACK) {
+        // In lightweight tracking mode, landmark detection is always required
+        m_detect_mode_landmark_ = true;
+    } else {
+        m_detect_mode_landmark_ = detect_mode_landmark;
+    }
     if (m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
         m_TbD_tracker_ = std::make_shared<BYTETracker>(TbD_mode_fps, 30);
     }
@@ -68,6 +74,7 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
     if (face.TrackingState() == ISF_DETECT) {
         COST_TIME_SIMPLE(GetRectSquare);
         inspirecv::Rect2i rect_square = face.GetRectSquare(0.0);
+
         std::vector<inspirecv::Point2f> rect_pts = rect_square.As<float>().ToFourVertices();
         inspirecv::TransformMatrix rotation_mode_affine = image.GetAffineMatrix();
         std::vector<inspirecv::Point2f> camera_pts = ApplyTransformToPoints(rect_pts, rotation_mode_affine);
@@ -82,89 +89,25 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
                                                              {0, (float)m_crop_extensive_size_}};
         // Add extensive rect
         inspirecv::Rect2i extensive_rect = rect_square.Square(m_crop_extensive_ratio_);
-        std::vector<inspirecv::Point2f> camera_pts_extensive =
-          ApplyTransformToPoints(extensive_rect.As<float>().ToFourVertices(), rotation_mode_affine);
+        auto extensive_rect_pts = extensive_rect.As<float>().ToFourVertices();
+        std::vector<inspirecv::Point2f> camera_pts_extensive = ApplyTransformToPoints(extensive_rect_pts, rotation_mode_affine);
         inspirecv::TransformMatrix extensive_affine = inspirecv::SimilarityTransformEstimate(camera_pts_extensive, dst_pts);
         face.setTransMatrixExtensive(extensive_affine);
-    }
 
-    affine = face.getTransMatrix();
-    inspirecv::Image crop;
-    // Get the RGB image after affine transformation
-    crop = image.ExecuteImageAffineProcessing(affine, 112, 112);
-    inspirecv::TransformMatrix affine_inv = affine.GetInverse();
-
-    std::vector<inspirecv::Point2f> landmark_rawout;
-    std::vector<float> bbox;
-
-    Timer lmk_cost_time;
-    // Predicted sparse key point
-    SparseLandmarkPredict(crop, landmark_rawout, score, 112);
-    // Extract 5 key points
-    std::vector<inspirecv::Point2f> lmk_5 = {landmark_rawout[FaceLandmarkAdapt::LEFT_EYE_CENTER],
-                                             landmark_rawout[FaceLandmarkAdapt::RIGHT_EYE_CENTER], landmark_rawout[FaceLandmarkAdapt::NOSE_CORNER],
-                                             landmark_rawout[FaceLandmarkAdapt::MOUTH_LEFT_CORNER],
-                                             landmark_rawout[FaceLandmarkAdapt::MOUTH_RIGHT_CORNER]};
-    face.setAlignMeanSquareError(lmk_5);
-
-    // Convert key points back to the original coordinate system
-    landmark_back.resize(landmark_rawout.size());
-    landmark_back = inspirecv::ApplyTransformToPoints(landmark_rawout, affine_inv);
-    int MODE = 1;
-
-    if (MODE > 0) {
-        if (face.TrackingState() == ISF_DETECT) {
-            face.ReadyTracking();
-        } else if (face.TrackingState() == ISF_READY || face.TrackingState() == ISF_TRACKING) {
-            COST_TIME_SIMPLE(LandmarkBack);
-            inspirecv::TransformMatrix trans_m;
-            inspirecv::TransformMatrix tmp = face.getTransMatrix();
-            std::vector<inspirecv::Point2f> inside_points = landmark_rawout;
-
-            std::vector<inspirecv::Point2f> mean_shape_(FaceLandmarkAdapt::NUM_OF_LANDMARK);
-            for (int k = 0; k < FaceLandmarkAdapt::NUM_OF_LANDMARK; k++) {
-                mean_shape_[k].SetX(mean_shape[k * 2]);
-                mean_shape_[k].SetY(mean_shape[k * 2 + 1]);
-            }
-
-            auto _affine = inspirecv::SimilarityTransformEstimate(inside_points, mean_shape_);
-            auto mid_inside_points = ApplyTransformToPoints(inside_points, _affine);
-            inside_points = FixPointsMeanshape(mid_inside_points, mean_shape_);
-
-            trans_m = inspirecv::SimilarityTransformEstimate(landmark_back, inside_points);
-            face.setTransMatrix(trans_m);
-            face.EnableTracking();
-
-            Timer extensive_cost_time;
-            // Add extensive rect
-            // Calculate center point of landmarks
-            inspirecv::Point2f center(0.0f, 0.0f);
-            for (const auto &pt : landmark_back) {
-                center.SetX(center.GetX() + pt.GetX());
-                center.SetY(center.GetY() + pt.GetY());
-            }
-            center.SetX(center.GetX() / landmark_back.size());
-            center.SetY(center.GetY() / landmark_back.size());
-
-            // Create expanded points by scaling from center by 1.3
-            std::vector<inspirecv::Point2f> lmk_back_rect = landmark_back;
-            for (auto &pt : lmk_back_rect) {
-                pt.SetX(center.GetX() + (pt.GetX() - center.GetX()) * m_crop_extensive_ratio_);
-                pt.SetY(center.GetY() + (pt.GetY() - center.GetY()) * m_crop_extensive_ratio_);
-            }
-            inspirecv::TransformMatrix extensive_affine = inspirecv::SimilarityTransformEstimate(lmk_back_rect, mid_inside_points);
-            face.setTransMatrixExtensive(extensive_affine);
-            // INSPIRE_LOGD("Extensive Affine Cost %f", extensive_cost_time.GetCostTimeUpdate());
+        if (!m_detect_mode_landmark_) {
+            /*If landmark is not extracted, the detection frame of the preview image needs to be changed
+            back to the coordinate system of the original image */
+            std::vector<inspirecv::Point2f> restore_rect_pts = inspirecv::ApplyTransformToPoints(rect_pts, rotation_mode_affine);
+            inspirecv::Rect2f restore_rect = inspirecv::MinBoundingRect(restore_rect_pts);
+            face.bbox_ = restore_rect.As<int>();
         }
     }
-    // Update face key points
-    face.SetLandmark(landmark_back, true);
 
     if (m_face_quality_ != nullptr) {
         COST_TIME_SIMPLE(FaceQuality);
         auto affine_extensive = face.getTransMatrixExtensive();
         auto pre_crop = image.ExecuteImageAffineProcessing(affine_extensive, m_crop_extensive_size_, m_crop_extensive_size_);
-
+        pre_crop.Show();
         auto res = (*m_face_quality_)(pre_crop);
 
         auto affine_extensive_inv = affine_extensive.GetInverse();
@@ -173,6 +116,83 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
         res.lmk = lmk_extensive;
         face.high_result = res;
     }
+
+    if (m_detect_mode_landmark_) {
+        // If Landmark need to be extracted in detection mode,
+        // Landmark must be detected when fast tracing is enabled
+        affine = face.getTransMatrix();
+        inspirecv::Image crop;
+        // Get the RGB image after affine transformation
+        crop = image.ExecuteImageAffineProcessing(affine, 112, 112);
+        inspirecv::TransformMatrix affine_inv = affine.GetInverse();
+
+        std::vector<inspirecv::Point2f> landmark_rawout;
+        std::vector<float> bbox;
+
+        Timer lmk_cost_time;
+        // Predicted sparse key point
+        SparseLandmarkPredict(crop, landmark_rawout, score, 112);
+        // Extract 5 key points
+        std::vector<inspirecv::Point2f> lmk_5 = {
+          landmark_rawout[FaceLandmarkAdapt::LEFT_EYE_CENTER], landmark_rawout[FaceLandmarkAdapt::RIGHT_EYE_CENTER],
+          landmark_rawout[FaceLandmarkAdapt::NOSE_CORNER], landmark_rawout[FaceLandmarkAdapt::MOUTH_LEFT_CORNER],
+          landmark_rawout[FaceLandmarkAdapt::MOUTH_RIGHT_CORNER]};
+        face.setAlignMeanSquareError(lmk_5);
+
+        // Convert key points back to the original coordinate system
+        landmark_back.resize(landmark_rawout.size());
+        landmark_back = inspirecv::ApplyTransformToPoints(landmark_rawout, affine_inv);
+        int MODE = 1;
+
+        if (MODE > 0) {
+            if (face.TrackingState() == ISF_DETECT) {
+                face.ReadyTracking();
+            } else if (face.TrackingState() == ISF_READY || face.TrackingState() == ISF_TRACKING) {
+                COST_TIME_SIMPLE(LandmarkBack);
+                inspirecv::TransformMatrix trans_m;
+                inspirecv::TransformMatrix tmp = face.getTransMatrix();
+                std::vector<inspirecv::Point2f> inside_points = landmark_rawout;
+
+                std::vector<inspirecv::Point2f> mean_shape_(FaceLandmarkAdapt::NUM_OF_LANDMARK);
+                for (int k = 0; k < FaceLandmarkAdapt::NUM_OF_LANDMARK; k++) {
+                    mean_shape_[k].SetX(mean_shape[k * 2]);
+                    mean_shape_[k].SetY(mean_shape[k * 2 + 1]);
+                }
+
+                auto _affine = inspirecv::SimilarityTransformEstimate(inside_points, mean_shape_);
+                auto mid_inside_points = ApplyTransformToPoints(inside_points, _affine);
+                inside_points = FixPointsMeanshape(mid_inside_points, mean_shape_);
+
+                trans_m = inspirecv::SimilarityTransformEstimate(landmark_back, inside_points);
+                face.setTransMatrix(trans_m);
+                face.EnableTracking();
+
+                Timer extensive_cost_time;
+                // Add extensive rect
+                // Calculate center point of landmarks
+                inspirecv::Point2f center(0.0f, 0.0f);
+                for (const auto &pt : landmark_back) {
+                    center.SetX(center.GetX() + pt.GetX());
+                    center.SetY(center.GetY() + pt.GetY());
+                }
+                center.SetX(center.GetX() / landmark_back.size());
+                center.SetY(center.GetY() / landmark_back.size());
+
+                // Create expanded points by scaling from center by 1.3
+                std::vector<inspirecv::Point2f> lmk_back_rect = landmark_back;
+                for (auto &pt : lmk_back_rect) {
+                    pt.SetX(center.GetX() + (pt.GetX() - center.GetX()) * m_crop_extensive_ratio_);
+                    pt.SetY(center.GetY() + (pt.GetY() - center.GetY()) * m_crop_extensive_ratio_);
+                }
+                inspirecv::TransformMatrix extensive_affine = inspirecv::SimilarityTransformEstimate(lmk_back_rect, mid_inside_points);
+                face.setTransMatrixExtensive(extensive_affine);
+                // INSPIRE_LOGD("Extensive Affine Cost %f", extensive_cost_time.GetCostTimeUpdate());
+            }
+        }
+        // Update face key points
+        face.SetLandmark(landmark_back, true);
+    }
+
     // If tracking status, update the confidence level
     if (face.TrackingState() == ISF_TRACKING) {
         face.SetConfidence(score);
@@ -449,4 +469,7 @@ std::string FaceTrackModule::ChoiceMultiLevelDetectModel(const int32_t pixel_siz
     return closest_scheme;
 }
 
+bool FaceTrackModule::IsDetectModeLandmark() const {
+    return m_detect_mode_landmark_;
+}
 }  // namespace inspire
