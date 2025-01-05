@@ -108,9 +108,9 @@ private:
             channels = c;
             buffer_size = width * height * channels;
 
-            int ret = dma_buf_alloc(RV1106_CMA_HEAP_PATH, buffer_size, &dma_fd, &virtual_addr);
+            int ret = dma_buf_alloc(DMA_HEAP_PATH, buffer_size, &dma_fd, &virtual_addr);
             if (ret < 0) {
-                INSPIRECV_LOG(ERROR) << "Failed to allocate DMA buffer";
+                INSPIRECV_LOG(ERROR) << "Failed to allocate DMA buffer: " << ret;
                 return false;
             }
 
