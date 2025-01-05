@@ -29,6 +29,7 @@
 #define HERR_SESS_INVALID_RESOURCE (HERR_SESS_BASE + 10)         // Invalid static resource
 #define HERR_SESS_NUM_OF_MODELS_NOT_MATCH (HERR_SESS_BASE + 11)  // Number of models does not match
 #define HERR_SESS_LANDMARK_NUM_NOT_MATCH (HERR_SESS_BASE + 20)   // The number of input landmark points does not match
+#define HERR_SESS_LANDMARK_NOT_ENABLE (HERR_SESS_BASE + 21)      // The number of input landmark points does not match
 
 #define HERR_SESS_PIPELINE_FAILURE (HERR_SESS_BASE + 8)  // Pipeline module not initialized
 

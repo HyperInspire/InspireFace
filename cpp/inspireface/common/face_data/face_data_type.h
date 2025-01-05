@@ -68,6 +68,7 @@ typedef struct HyperFaceData {
     Face3DAngle face3DAngle;       ///< 3D face angles
     float quality[5];              ///< Quality values for key points
     Point2F densityLandmark[106];  ///< Face density landmark
+    int densityLandmarkEnable;     ///< Density landmark enable
 } HyperFaceData;
 
 }  // namespace inspire

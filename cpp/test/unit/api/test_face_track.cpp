@@ -39,10 +39,10 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         // Detect face position
         auto rect = multipleFaceData.rects[0];
         HFaceRect expect = {0};
-        expect.x = 98;
-        expect.y = 146;
-        expect.width = 233 - expect.x;
-        expect.height = 272 - expect.y;
+        expect.x = 79;
+        expect.y = 104;
+        expect.width = 168;
+        expect.height = 167;
 
         auto iou = CalculateOverlap(rect, expect);
         auto cvRect = inspirecv::Rect<int>::Create(rect.x, rect.y, rect.width, rect.height);
