@@ -45,7 +45,7 @@ public:
      * @param dynamic_detection_input_level Change the detector input size.
      */
     explicit FaceTrackModule(DetectModuleMode mode, int max_detected_faces = 1, int detection_interval = 20, int track_preview_size = 192,
-                             int dynamic_detection_input_level = -1, int TbD_mode_fps = 30);
+                             int dynamic_detection_input_level = -1, int TbD_mode_fps = 30, bool detect_mode_landmark = true);
 
     /**
      * @brief Configures the face tracking with models.
@@ -153,6 +153,12 @@ public:
      * */
     void SetMinimumFacePxSize(float value);
 
+    /**
+     * @brief Check if landmark detection is enabled in detection mode.
+     * @return True if landmark detection is enabled, false otherwise.
+     */
+    bool IsDetectModeLandmark() const;
+
 public:
     std::vector<FaceObjectInternal> trackingFace;  ///< Vector of FaceObjects currently being tracked.
 
@@ -181,6 +187,8 @@ private:
     DetectModuleMode m_mode_;  ///< Detect mode
 
     std::string m_expansion_path_{""};
+
+    bool m_detect_mode_landmark_{true};
 };
 
 }  // namespace inspire

@@ -27,7 +27,12 @@ int32_t FaceSession::Configuration(DetectModuleMode detect_mode, int32_t max_det
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
 
-    m_face_track_ = std::make_shared<FaceTrackModule>(m_detect_mode_, m_max_detect_face_, 20, 192, detect_level_px, track_by_detect_mode_fps);
+    if (m_parameter_.enable_interaction_liveness) {
+        m_parameter_.enable_detect_mode_landmark = true;
+    }
+
+    m_face_track_ = std::make_shared<FaceTrackModule>(m_detect_mode_, m_max_detect_face_, 20, 192, detect_level_px, track_by_detect_mode_fps,
+                                                      m_parameter_.enable_detect_mode_landmark);
     m_face_track_->Configuration(INSPIRE_LAUNCH->getMArchive());
     // SetDetectMode(m_detect_mode_);
 
@@ -374,6 +379,10 @@ int32_t FaceSession::SetDetectMode(DetectModuleMode mode) {
         m_always_detect_ = false;
     }
     return HSUCCEED;
+}
+
+bool FaceSession::IsDetectModeLandmark() const {
+    return m_face_track_->IsDetectModeLandmark();
 }
 
 int32_t FaceSession::SetTrackPreviewSize(const int32_t preview_size) {
