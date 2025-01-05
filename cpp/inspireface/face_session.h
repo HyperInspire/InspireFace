@@ -32,6 +32,7 @@ typedef struct CustomPipelineParameter {
     bool enable_face_attribute = false;        ///< Enable face attribute prediction feature
     bool enable_face_quality = false;          ///< Enable face quality assessment feature
     bool enable_interaction_liveness = false;  ///< Enable interactive liveness detection feature
+    bool enable_detect_mode_landmark = false;  ///< Enable landmark detection in detection mode
 
 } ContextCustomParameter;
 
@@ -159,6 +160,12 @@ public:
      * @return int32_t Status code of the operation.
      * */
     int32_t SetDetectMode(DetectModuleMode mode);
+
+    /**
+     * @brief Check if landmark detection is enabled in detection mode.
+     * @return True if landmark detection is enabled, false otherwise.
+     */
+    bool IsDetectModeLandmark() const;
 
 public:
     // Accessor methods for various cached data

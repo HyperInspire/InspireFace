@@ -24,15 +24,16 @@
 extern "C" {
 #endif
 
-#define HF_ENABLE_NONE 0x00000000              ///< Flag to enable no features.
-#define HF_ENABLE_FACE_RECOGNITION 0x00000002  ///< Flag to enable face recognition feature.
-#define HF_ENABLE_LIVENESS 0x00000004          ///< Flag to enable RGB liveness detection feature.
-#define HF_ENABLE_IR_LIVENESS 0x00000008       ///< Flag to enable IR (Infrared) liveness detection feature.
-#define HF_ENABLE_MASK_DETECT 0x00000010       ///< Flag to enable mask detection feature.
-#define HF_ENABLE_FACE_ATTRIBUTE 0x00000020    ///< Flag to enable face attribute prediction feature.
-#define HF_ENABLE_PLACEHOLDER_ 0x00000040      ///< -
-#define HF_ENABLE_QUALITY 0x00000080           ///< Flag to enable face quality assessment feature.
-#define HF_ENABLE_INTERACTION 0x00000100       ///< Flag to enable interaction feature.
+#define HF_ENABLE_NONE 0x00000000                  ///< Flag to enable no features.
+#define HF_ENABLE_FACE_RECOGNITION 0x00000002      ///< Flag to enable face recognition feature.
+#define HF_ENABLE_LIVENESS 0x00000004              ///< Flag to enable RGB liveness detection feature.
+#define HF_ENABLE_IR_LIVENESS 0x00000008           ///< Flag to enable IR (Infrared) liveness detection feature.
+#define HF_ENABLE_MASK_DETECT 0x00000010           ///< Flag to enable mask detection feature.
+#define HF_ENABLE_FACE_ATTRIBUTE 0x00000020        ///< Flag to enable face attribute prediction feature.
+#define HF_ENABLE_PLACEHOLDER_ 0x00000040          ///< -
+#define HF_ENABLE_QUALITY 0x00000080               ///< Flag to enable face quality assessment feature.
+#define HF_ENABLE_INTERACTION 0x00000100           ///< Flag to enable interaction feature.
+#define HF_ENABLE_DETECT_MODE_LANDMARK 0x00000200  ///< Flag to enable landmark detection in detection mode
 
 /**
  * Camera stream format.
@@ -256,6 +257,7 @@ typedef struct HFSessionCustomParameter {
     HInt32 enable_face_quality;          ///< Enable face quality detection feature.
     HInt32 enable_face_attribute;        ///< Enable face attribute prediction feature.
     HInt32 enable_interaction_liveness;  ///< Enable interaction for liveness detection feature.
+    HInt32 enable_detect_mode_landmark;  ///< Enable landmark detection in detection mode
 } HFSessionCustomParameter, *PHFSessionCustomParameter;
 
 /**
