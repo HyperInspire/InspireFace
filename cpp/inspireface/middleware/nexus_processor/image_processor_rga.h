@@ -108,7 +108,7 @@ private:
             channels = c;
             buffer_size = width * height * channels;
 
-            int ret = dma_buf_alloc(DMA_HEAP_PATH, buffer_size, &dma_fd, &virtual_addr);
+            int ret = dma_buf_alloc(DMA_HEAP_DMA32_UNCACHE_PATCH, buffer_size, &dma_fd, &virtual_addr);
             if (ret < 0) {
                 INSPIRECV_LOG(ERROR) << "Failed to allocate DMA buffer: " << ret;
                 return false;
