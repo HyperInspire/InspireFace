@@ -8,6 +8,7 @@ URL1="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatro
 URL2="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu"
 URL3="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109"
 URL4="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106"
+URL5="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X"
 
 # Color codes
 YELLOW='\033[1;33m'
@@ -43,27 +44,31 @@ if [ $# -eq 0 ]; then
     download_file "$URL2"
     download_file "$URL3"
     download_file "$URL4"
+    download_file "$URL5"
     # Check all files
     if [ -f "$DOWNLOAD_DIR/Megatron" ] && [ -f "$DOWNLOAD_DIR/Pikachu" ] && \
-       [ -f "$DOWNLOAD_DIR/Gundam_RV1109" ] && [ -f "$DOWNLOAD_DIR/Gundam_RV1106" ]; then
+       [ -f "$DOWNLOAD_DIR/Gundam_RV1109" ] && [ -f "$DOWNLOAD_DIR/Gundam_RV1106" ] && \
+       [ -f "$DOWNLOAD_DIR/Gundam_RK356X" ]; then
         echo "All downloads completed successfully!"
         print_file_path "Megatron"
         print_file_path "Pikachu"
         print_file_path "Gundam_RV1109"
         print_file_path "Gundam_RV1106"
+        print_file_path "Gundam_RK356X"
     else
         echo "Download failed!"
         exit 1
     fi
 else
     case "$1" in
-        "Megatron"|"Pikachu"|"Gundam_RV1109"|"Gundam_RV1106")
+        "Megatron"|"Pikachu"|"Gundam_RV1109"|"Gundam_RV1106"|"Gundam_RK356X")
             echo "Downloading $1..."
             case "$1" in
                 "Megatron") url="$URL1" ;;
                 "Pikachu") url="$URL2" ;;
                 "Gundam_RV1109") url="$URL3" ;;
                 "Gundam_RV1106") url="$URL4" ;;
+                "Gundam_RK356X") url="$URL5" ;;
             esac
             download_file "$url"
             # Check file
@@ -76,7 +81,7 @@ else
             fi
             ;;
         *)
-            echo "Invalid argument. Please use 'Megatron', 'Pikachu', 'Gundam_RV1109' or 'Gundam_RV1106'"
+            echo "Invalid argument. Please use 'Megatron', 'Pikachu', 'Gundam_RV1109', 'Gundam_RV1106' or 'Gundam_RK356X'"
             exit 1
             ;;
     esac

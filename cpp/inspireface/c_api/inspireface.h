@@ -238,6 +238,23 @@ HYPER_CAPI_EXPORT extern HResult HFTerminateInspireFace();
  * */
 HYPER_CAPI_EXPORT extern HResult HFQueryInspireFaceLaunchStatus(HInt32 *status);
 
+/**
+ * @brief Set the rockchip dma heap path
+ * By default, we have already configured the DMA Heap address used by RGA on RK devices.
+ * If you wish to customize this address, you can modify it through this API.
+ * @param path The path to the rockchip dma heap
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareRockchipDmaHeapPath(HPath path);
+
+/**
+ * @brief Query the rockchip dma heap path
+ * @param path Pointer to a pre-allocated character array that will store the returned path.
+ * The array should be at least 256 bytes in size.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path);
+
 /************************************************************************
  * FaceSession
  ************************************************************************/
