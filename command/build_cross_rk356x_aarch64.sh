@@ -74,7 +74,7 @@ mkdir -p ${BUILD_FOLDER_PATH}
 # shellcheck disable=SC2164
 cd ${BUILD_FOLDER_PATH}
 
-# export cross_compile_toolchain=/home/jingyuyan/software/arm-rockchip830-linux-uclibcgnueabihf
+# export ARM_CROSS_COMPILE_TOOLCHAIN=/host/software/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu
 
 cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DCMAKE_BUILD_TYPE=Release \
