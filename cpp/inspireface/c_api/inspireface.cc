@@ -362,6 +362,16 @@ HResult HFFeatureHubDataDisable() {
     return FEATURE_HUB_DB->DisableHub();
 }
 
+HResult HFSetExpansiveHardwareRockchipDmaHeapPath(HPath path) {
+    INSPIRE_LAUNCH->SetRockchipDmaHeapPath(path);
+    return HSUCCEED;
+}
+
+HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path) {
+    strcpy(path, INSPIRE_LAUNCH->GetRockchipDmaHeapPath().c_str());
+    return HSUCCEED;
+}
+
 HResult HFFeatureHubDataEnable(HFFeatureHubConfiguration configuration) {
     inspire::DatabaseConfiguration param;
     if (configuration.primaryKeyMode != HF_PK_AUTO_INCREMENT && configuration.primaryKeyMode != HF_PK_MANUAL_INPUT) {
