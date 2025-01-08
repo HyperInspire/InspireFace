@@ -23,34 +23,35 @@ During the use of InspireFace, some error feedback codes may be generated. Here 
  | 18 | HERR_SESS_INVALID_RESOURCE | 1290 | Invalid static resource | 
  | 19 | HERR_SESS_NUM_OF_MODELS_NOT_MATCH | 1291 | Number of models does not match | 
  | 20 | HERR_SESS_LANDMARK_NUM_NOT_MATCH | 1300 | The number of input landmark points does not match | 
- | 21 | HERR_SESS_PIPELINE_FAILURE | 1288 | Pipeline module not initialized | 
- | 22 | HERR_SESS_REC_EXTRACT_FAILURE | 1295 | Face feature extraction not registered | 
- | 23 | HERR_SESS_REC_DEL_FAILURE | 1296 | Face feature deletion failed due to out of range index | 
- | 24 | HERR_SESS_REC_UPDATE_FAILURE | 1297 | Face feature update failed due to out of range index | 
- | 25 | HERR_SESS_REC_ADD_FEAT_EMPTY | 1298 | Feature vector for registration cannot be empty | 
- | 26 | HERR_SESS_REC_FEAT_SIZE_ERR | 1299 | Incorrect length of feature vector for registration | 
- | 27 | HERR_SESS_REC_INVALID_INDEX | 1300 | Invalid index number | 
- | 28 | HERR_SESS_REC_CONTRAST_FEAT_ERR | 1303 | Incorrect length of feature vector for comparison | 
- | 29 | HERR_SESS_REC_BLOCK_FULL | 1304 | Feature vector block full | 
- | 30 | HERR_SESS_REC_BLOCK_DEL_FAILURE | 1305 | Deletion failed | 
- | 31 | HERR_SESS_REC_BLOCK_UPDATE_FAILURE | 1306 | Update failed | 
- | 32 | HERR_SESS_REC_ID_ALREADY_EXIST | 1307 | ID already exists | 
- | 33 | HERR_SESS_FACE_DATA_ERROR | 1310 | Face data parsing | 
- | 34 | HERR_SESS_FACE_REC_OPTION_ERROR | 1320 | An optional parameter is incorrect | 
- | 35 | HERR_FT_HUB_DISABLE | 1329 | FeatureHub is disabled | 
- | 36 | HERR_FT_HUB_OPEN_ERROR | 1330 | Database open error | 
- | 37 | HERR_FT_HUB_NOT_OPENED | 1331 | Database not opened | 
- | 38 | HERR_FT_HUB_NO_RECORD_FOUND | 1332 | No record found | 
- | 39 | HERR_FT_HUB_CHECK_TABLE_ERROR | 1333 | Data table check error | 
- | 40 | HERR_FT_HUB_INSERT_FAILURE | 1334 | Data insertion error | 
- | 41 | HERR_FT_HUB_PREPARING_FAILURE | 1335 | Data preparation error | 
- | 42 | HERR_FT_HUB_EXECUTING_FAILURE | 1336 | SQL execution error | 
- | 43 | HERR_FT_HUB_NOT_VALID_FOLDER_PATH | 1337 | Invalid folder path | 
- | 44 | HERR_FT_HUB_ENABLE_REPETITION | 1338 | Enable db function repeatedly | 
- | 45 | HERR_FT_HUB_DISABLE_REPETITION | 1339 | Disable db function repeatedly | 
- | 46 | HERR_FT_HUB_NOT_FOUND_FEATURE | 1340 | Get face feature error | 
- | 47 | HERR_ARCHIVE_LOAD_FAILURE | 1360 | Archive load failure | 
- | 48 | HERR_ARCHIVE_LOAD_MODEL_FAILURE | 1361 | Model load failure | 
- | 49 | HERR_ARCHIVE_FILE_FORMAT_ERROR | 1362 | The archive format is incorrect | 
- | 50 | HERR_ARCHIVE_REPETITION_LOAD | 1363 | Do not reload the model | 
- | 51 | HERR_ARCHIVE_NOT_LOAD | 1364 | Model not loaded | 
+ | 21 | HERR_SESS_LANDMARK_NOT_ENABLE | 1301 | The number of input landmark points does not match | 
+ | 22 | HERR_SESS_PIPELINE_FAILURE | 1288 | Pipeline module not initialized | 
+ | 23 | HERR_SESS_REC_EXTRACT_FAILURE | 1295 | Face feature extraction not registered | 
+ | 24 | HERR_SESS_REC_DEL_FAILURE | 1296 | Face feature deletion failed due to out of range index | 
+ | 25 | HERR_SESS_REC_UPDATE_FAILURE | 1297 | Face feature update failed due to out of range index | 
+ | 26 | HERR_SESS_REC_ADD_FEAT_EMPTY | 1298 | Feature vector for registration cannot be empty | 
+ | 27 | HERR_SESS_REC_FEAT_SIZE_ERR | 1299 | Incorrect length of feature vector for registration | 
+ | 28 | HERR_SESS_REC_INVALID_INDEX | 1300 | Invalid index number | 
+ | 29 | HERR_SESS_REC_CONTRAST_FEAT_ERR | 1303 | Incorrect length of feature vector for comparison | 
+ | 30 | HERR_SESS_REC_BLOCK_FULL | 1304 | Feature vector block full | 
+ | 31 | HERR_SESS_REC_BLOCK_DEL_FAILURE | 1305 | Deletion failed | 
+ | 32 | HERR_SESS_REC_BLOCK_UPDATE_FAILURE | 1306 | Update failed | 
+ | 33 | HERR_SESS_REC_ID_ALREADY_EXIST | 1307 | ID already exists | 
+ | 34 | HERR_SESS_FACE_DATA_ERROR | 1310 | Face data parsing | 
+ | 35 | HERR_SESS_FACE_REC_OPTION_ERROR | 1320 | An optional parameter is incorrect | 
+ | 36 | HERR_FT_HUB_DISABLE | 1329 | FeatureHub is disabled | 
+ | 37 | HERR_FT_HUB_OPEN_ERROR | 1330 | Database open error | 
+ | 38 | HERR_FT_HUB_NOT_OPENED | 1331 | Database not opened | 
+ | 39 | HERR_FT_HUB_NO_RECORD_FOUND | 1332 | No record found | 
+ | 40 | HERR_FT_HUB_CHECK_TABLE_ERROR | 1333 | Data table check error | 
+ | 41 | HERR_FT_HUB_INSERT_FAILURE | 1334 | Data insertion error | 
+ | 42 | HERR_FT_HUB_PREPARING_FAILURE | 1335 | Data preparation error | 
+ | 43 | HERR_FT_HUB_EXECUTING_FAILURE | 1336 | SQL execution error | 
+ | 44 | HERR_FT_HUB_NOT_VALID_FOLDER_PATH | 1337 | Invalid folder path | 
+ | 45 | HERR_FT_HUB_ENABLE_REPETITION | 1338 | Enable db function repeatedly | 
+ | 46 | HERR_FT_HUB_DISABLE_REPETITION | 1339 | Disable db function repeatedly | 
+ | 47 | HERR_FT_HUB_NOT_FOUND_FEATURE | 1340 | Get face feature error | 
+ | 48 | HERR_ARCHIVE_LOAD_FAILURE | 1360 | Archive load failure | 
+ | 49 | HERR_ARCHIVE_LOAD_MODEL_FAILURE | 1361 | Model load failure | 
+ | 50 | HERR_ARCHIVE_FILE_FORMAT_ERROR | 1362 | The archive format is incorrect | 
+ | 51 | HERR_ARCHIVE_REPETITION_LOAD | 1363 | Do not reload the model | 
+ | 52 | HERR_ARCHIVE_NOT_LOAD | 1364 | Model not loaded | 

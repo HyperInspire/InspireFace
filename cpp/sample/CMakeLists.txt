@@ -11,6 +11,18 @@ if (ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu1")
     set(ext rknn_api dl)
 endif ()
 
+if (ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu2" AND ISF_RK_COMPILER_TYPE STREQUAL "aarch64")
+    if(ANDROID)
+        set(RK_PLATFORM "Android")
+    else()
+        set(RK_PLATFORM "Linux")
+    endif()
+    set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${RK_PLATFORM}/librknn_api/${ISF_RK_COMPILER_TYPE}/)
+    message("ISF_RKNN_API_LIB: ${ISF_RKNN_API_LIB}")
+    link_directories(${ISF_RKNN_API_LIB})
+    set(ext rknnrt dl)
+endif ()
+
 add_executable(Leak api/leak.cpp)
 target_link_libraries(Leak InspireFace ${ext})
 set_target_properties(Leak PROPERTIES

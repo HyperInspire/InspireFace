@@ -64,7 +64,7 @@ jobs:
           ls build
 
   build_macos_arm64:
-    name: Compile MacOS-arm64
+    name: Compile MacOS-Arm64
     runs-on: macos-14
 
     steps:
@@ -89,7 +89,7 @@ jobs:
           ls build
 
   build_armv7_armhf:
-    name: Compile Armv7-armhf
+    name: Compile Armv7-Armhf
     runs-on: ubuntu-latest
 
     steps:
@@ -256,7 +256,7 @@ jobs:
           ls build
 
   build_ios:
-    name: Compile iOS-arm64
+    name: Compile iOS-Arm64
     runs-on: macos-latest
 
     steps:
@@ -302,7 +302,7 @@ jobs:
           ls build
 
   build_armv7_rv1106_armhf_uclibc:
-    name: Compile Linux-armv7 rv1106
+    name: Compile Linux-Armv7 RV1106
     runs-on: ubuntu-latest
 
     steps:
@@ -336,4 +336,42 @@ jobs:
       - name: Start Building the InspireFace-Linux-armv7-rv1106 
         run: |
           bash command/build_cross_rv1106_armhf_uclibc.sh
+          ls build
+
+  build_rk356x_aarch64:
+    name: Compile Linux-AArch64 RK356X
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+
+      # Step 3: Install wget and xz-utils
+      - name: Install wget and xz-utils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget xz-utils
+
+      # Step 4: Download Toolchain
+      - name: Download and Extract Linaro Toolchain
+        run: |
+          mkdir -p /opt/linaro-toolchain
+          wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/aarch64-linux-gnu/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu.tar.xz | tar -xJ -C /opt/linaro-toolchain --strip-components=1
+
+      # Step 5: Install Toolchain
+      - name: Set environment variables
+        run: |
+          echo "ARM_CROSS_COMPILE_TOOLCHAIN=/opt/linaro-toolchain" >> $GITHUB_ENV
+          echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
+
+      # Step 6: Start building the SDK
+      - name: Start Building the InspireFace-Linux-AArch64-rk356x 
+        run: |
+          bash command/build_cross_rk356x_aarch64.sh
           ls build

@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 # Current version
 set(INSPIRE_FACE_VERSION_MAJOR 1)
 set(INSPIRE_FACE_VERSION_MINOR 1)
-set(INSPIRE_FACE_VERSION_PATCH 9)
+set(INSPIRE_FACE_VERSION_PATCH 10)
 
 # Converts the version number to a string
 string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
@@ -69,6 +69,12 @@ if (ISF_ENABLE_RKNN)
     endif()
     # Result
     message(STATUS "Use ${ISF_RKNPU_MAJOR}")
+
+    if(ISF_RK_DEVICE_TYPE STREQUAL "RV1106")
+        set(ISF_RKNPU_RV1106 ON)
+        add_definitions("-DISF_RKNPU_RV1106")
+    endif()
+    
 endif ()
 
 # Enable Rockchip RGA
@@ -288,6 +294,9 @@ if (ISF_ENABLE_RKNN)
     message(STATUS "\t ISF_RKNPU_MAJOR: ${ISF_RKNPU_MAJOR}")
     message(STATUS "\t ISF_RK_DEVICE_TYPE: ${ISF_RK_DEVICE_TYPE}")
     message(STATUS "\t ISF_RK_COMPILER_TYPE: ${ISF_RK_COMPILER_TYPE}")
+    if(ISF_RKNPU_RV1106)
+        message(STATUS "\t ISF_RKNPU_RV1106: ${ISF_RKNPU_RV1106}")
+    endif()
 endif ()
 message(STATUS "\t ISF_BUILD_LINUX_ARM7: ${ISF_BUILD_LINUX_ARM7}")
 message(STATUS "\t ISF_BUILD_LINUX_AARCH64: ${ISF_BUILD_LINUX_AARCH64}")
