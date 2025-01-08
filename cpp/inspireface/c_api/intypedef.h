@@ -5,6 +5,7 @@
 
 #ifndef INSPIREFACE_INTYPEDEF_H
 #define INSPIREFACE_INTYPEDEF_H
+#include <stdint.h>
 
 // clang-format off
 typedef void*               HPVoid;                           ///< Pointer to Void.
