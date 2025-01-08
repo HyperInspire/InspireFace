@@ -33,9 +33,14 @@ if (ISF_ENABLE_RKNN)
             set(RK_PLATFORM "Linux")
         endif()
         set(ISF_RKNN_API_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${RK_PLATFORM}/librknn_api/include)
-        set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${RK_PLATFORM}/librknn_api/${ISF_RK_COMPILER_TYPE}/librknnmrt.a)
-        # For rknpu2, we recommend linking static libraries by default
-        set(RKNN_LINKED ${ISF_RKNN_API_LIB})
+        if (ISF_RK_COMPILER_TYPE STREQUAL "aarch64")
+            set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${RK_PLATFORM}/librknn_api/${ISF_RK_COMPILER_TYPE}/)
+            link_directories(${ISF_RKNN_API_LIB})
+        else()
+            # For rknpu2 with armv7, we recommend linking static libraries by default
+            set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${RK_PLATFORM}/librknn_api/${ISF_RK_COMPILER_TYPE}/librknnmrt.a)
+            set(RKNN_LINKED ${ISF_RKNN_API_LIB})
+        endif()
     endif()
 
     
@@ -64,6 +69,9 @@ if (ISF_ENABLE_RKNN)
         add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN")
     elseif(ISF_RKNPU_MAJOR STREQUAL "rknpu2")
         add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN2")
+    endif()
+    if (ISF_RK_COMPILER_TYPE STREQUAL "aarch64")
+        set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknnrt)
     endif()
 endif()
 
