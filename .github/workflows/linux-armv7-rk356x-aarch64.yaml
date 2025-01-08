@@ -1,0 +1,49 @@
+name: Build Linux-Ubuntu-AArch64-rk356x
+
+on:
+  push:
+    branches: ["feature/rk356x"]
+
+# Set the global GitHub token environment variable
+env:
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+jobs:
+  build:
+    name: Compile Linux-AArch64 RK356X
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+
+      # Step 3: Install wget and xz-utils
+      - name: Install wget and xz-utils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget xz-utils
+
+      # Step 4: Download Toolchain
+      - name: Download and Extract Linaro Toolchain
+        run: |
+          mkdir -p /opt/linaro-toolchain
+          wget -qO- https://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/aarch64-linux-gnu/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu.tar.xz | tar -xJ -C /opt/linaro-toolchain --strip-components=1
+
+      # Step 5: Install Toolchain
+      - name: Set environment variables
+        run: |
+          echo "ARM_CROSS_COMPILE_TOOLCHAIN=/opt/linaro-toolchain" >> $GITHUB_ENV
+          echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
+
+      # Step 6: Start building the SDK
+      - name: Start Building the InspireFace-Linux-AArch64-rk356x 
+        run: |
+          bash command/build_cross_rk356x_aarch64.sh
+          ls build
+

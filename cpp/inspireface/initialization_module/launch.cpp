@@ -99,4 +99,12 @@ void Launch::Unload() {
     }
 }
 
+void Launch::SetRockchipDmaHeapPath(const std::string& path) {
+    m_rockchip_dma_heap_path_ = path;
+}
+
+std::string Launch::GetRockchipDmaHeapPath() const {
+    return m_rockchip_dma_heap_path_;
+}
+
 }  // namespace inspire

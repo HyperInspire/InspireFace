@@ -6,6 +6,9 @@
 #ifndef INSPIREFACE_LAUNCH_H
 #define INSPIREFACE_LAUNCH_H
 #include "middleware/model_archive/inspire_archive.h"
+#if defined(ISF_ENABLE_RGA)
+#include "middleware/nexus_processor/rga/dma_alloc.h"
+#endif
 #include <mutex>
 
 #ifndef INSPIRE_API
@@ -43,8 +46,27 @@ public:
     // Unloads the resources and resets the system to its initial state.
     void Unload();
 
+    // Set the rockchip dma heap path
+    void SetRockchipDmaHeapPath(const std::string& path);
+
+    // Get the rockchip dma heap path
+    std::string GetRockchipDmaHeapPath() const;
+
 private:
-    Launch() : m_load_(false), m_archive_(nullptr) {}  ///< Private constructor for the singleton pattern.
+    // Parameters
+    std::string m_rockchip_dma_heap_path_;
+
+    // Constructor
+    Launch() : m_load_(false), m_archive_(nullptr) {
+#if defined(ISF_ENABLE_RGA)
+#if defined(ISF_RKNPU_RV1106)
+        m_rockchip_dma_heap_path_ = RV1106_CMA_HEAP_PATH;
+#else
+        m_rockchip_dma_heap_path_ = DMA_HEAP_DMA32_UNCACHE_PATCH;
+#endif
+        INSPIRE_LOGW("Rockchip dma heap configured path: %s", m_rockchip_dma_heap_path_.c_str());
+#endif
+    }  ///< Private constructor for the singleton pattern.
 
     static std::mutex mutex_;                  ///< Mutex for synchronizing access to the singleton instance.
     static std::shared_ptr<Launch> instance_;  ///< The singleton instance of Launch.
