@@ -19,7 +19,6 @@ float RNetAdapt::operator()(const inspirecv::Image &bgr_affine) {
     m_processor_->MarkDone();
 #ifdef INFERENCE_HELPER_ENABLE_RKNN2
     auto sm = Softmax(outputs[0].second);
-    std::cout << sm[0] << ", " << sm[1] << std ::endl;
     return sm[1];
 #else
     return outputs[0].second[1];
