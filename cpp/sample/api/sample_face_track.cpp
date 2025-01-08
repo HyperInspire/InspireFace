@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
     HOption option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS | HF_ENABLE_DETECT_MODE_LANDMARK;
     // Non-video or frame sequence mode uses IMAGE-MODE, which is always face detection without
     // tracking
-    HFDetectMode detMode = HF_DETECT_MODE_LIGHT_TRACK;
+    HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
     // Maximum number of faces detected
     HInt32 maxDetectNum = 20;
     // Face detection image input level
@@ -94,12 +94,10 @@ int main(int argc, char* argv[]) {
 
     // Execute HF_FaceContextRunFaceTrack captures face information in an image
     HFMultipleFaceData multipleFaceData = {0};
-    for (int i = 0; i < 3; i++) {
-        ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
-        if (ret != HSUCCEED) {
-            std::cout << "Execute HFExecuteFaceTrack error: " << ret << std::endl;
-            return ret;
-        }
+    ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
+    if (ret != HSUCCEED) {
+        std::cout << "Execute HFExecuteFaceTrack error: " << ret << std::endl;
+        return ret;
     }
 
     // Print the number of faces detected
