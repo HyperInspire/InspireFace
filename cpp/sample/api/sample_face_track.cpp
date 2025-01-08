@@ -155,9 +155,7 @@ int main(int argc, char* argv[]) {
     // when FaceContext is created!
     auto pipelineOption = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     // In this loop, all faces are processed
-    std::cout << "HFMultipleFacePipelineProcessOptional" << std::endl;
     ret = HFMultipleFacePipelineProcessOptional(session, imageHandle, &multipleFaceData, pipelineOption);
-    std::cout << "HFMultipleFacePipelineProcessOptional success" << std::endl;
     if (ret != HSUCCEED) {
         std::cout << "Execute Pipeline error: " << ret << std::endl;
         return ret;
