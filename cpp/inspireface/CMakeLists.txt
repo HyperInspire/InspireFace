@@ -203,3 +203,6 @@ if (ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu1")
     install(FILES ${ISF_RKNN_API_LIB}/librknn_api.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
 endif ()
 
+if (ISF_RK_COMPILER_TYPE STREQUAL "aarch64")
+    install(FILES ${ISF_RKNN_API_LIB}/librknnrt.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+endif()
