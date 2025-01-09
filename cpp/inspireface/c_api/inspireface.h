@@ -455,6 +455,15 @@ HYPER_CAPI_EXPORT extern HResult HFGetNumOfFaceDenseLandmark(HPInt32 num);
  */
 HYPER_CAPI_EXPORT extern HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, HPoint2f *landmarks, HInt32 num);
 
+/**
+ * @brief Get the five key points from the face token.
+ * @param singleFace Basic token representing a single face.
+ * @param landmarks Pre-allocated memory address of the array for 2D floating-point coordinates.
+ * @param num Number of landmark points
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasicToken singleFace, HPoint2f *landmarks, HInt32 num);
+
 /************************************************************************
  * Face Recognition
  ************************************************************************/
