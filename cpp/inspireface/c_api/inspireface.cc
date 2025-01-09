@@ -1011,6 +1011,21 @@ HResult HFLogDisable() {
     return HSUCCEED;
 }
 
+HResult HFLogPrint(HFLogLevel level, HFormat format, ...) {
+    inspire::LogLevel logLevel = static_cast<inspire::LogLevel>(level);
+    if (inspire::LogManager::getInstance()->getLogLevel() == inspire::ISF_LOG_NONE || logLevel < inspire::LogManager::getInstance()->getLogLevel()) {
+        return HSUCCEED;
+    }
+    char buffer[1024];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+    inspire::LogManager::getInstance()->logStandard(logLevel, "", "", -1, buffer);
+
+    return HSUCCEED;
+}
+
 HResult HFDeBugShowResourceStatistics() {
     RESOURCE_MANAGE->printResourceStatistics();
     return HSUCCEED;
