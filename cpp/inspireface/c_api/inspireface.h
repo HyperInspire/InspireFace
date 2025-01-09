@@ -455,6 +455,15 @@ HYPER_CAPI_EXPORT extern HResult HFGetNumOfFaceDenseLandmark(HPInt32 num);
  */
 HYPER_CAPI_EXPORT extern HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, HPoint2f *landmarks, HInt32 num);
 
+/**
+ * @brief Get the five key points from the face token.
+ * @param singleFace Basic token representing a single face.
+ * @param landmarks Pre-allocated memory address of the array for 2D floating-point coordinates.
+ * @param num Number of landmark points
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasicToken singleFace, HPoint2f *landmarks, HInt32 num);
+
 /************************************************************************
  * Face Recognition
  ************************************************************************/
@@ -941,6 +950,16 @@ HYPER_CAPI_EXPORT extern HResult HFSetLogLevel(HFLogLevel level);
  * @brief Disable the log function. Like HFSetLogLevel(HF_LOG_NONE)
  * */
 HYPER_CAPI_EXPORT extern HResult HFLogDisable();
+
+/**
+ * @brief Print the log.
+ * @param level The log level.
+ * @param format The log format.
+ * @param ... The log arguments.
+ * @warning The maximum buffer size for log messages is 1024 bytes. Messages longer than this will be truncated.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFLogPrint(HFLogLevel level, HFormat format, ...);
 
 /********************************DEBUG Utils****************************************/
 

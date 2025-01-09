@@ -8,7 +8,7 @@ Here are the translation details for the compilation parameters as per your requ
 | ISF_SANITIZE_ADDRESS                      | OFF | Enable AddressSanitizer for memory error detection                                                                                                         |
 | ISF_SANITIZE_LEAK                         | OFF | Enable LeakSanitizer to detect memory leaks                                                                                                                |
 | ISF_ENABLE_RKNN                           | OFF | Enable RKNN for Rockchip embedded devices                                                                                                                  |
-| ISF_RK_DEVICE_TYPE                        | RV1109RV1126 | Target device model for Rockchip(Supports RV1109RV1126 and RV1106)             |
+| ISF_RK_DEVICE_TYPE                        | RV1109RV1126 | Target device model for Rockchip(Supports RV1109RV1126, RV1106, RV356X) |
 | ISF_RK_COMPILER_TYPE | armhf | The **armhf**、**armhf-uclibc** and aarch64 compilers are supported. Select one based on the actual situation |
 | ISF_ENABLE_RGA | OFF | Enable **RGA** image acceleration on Rockchip devices (currently only supported on devices using **RKNPU2**) |
 | ISF_BUILD_LINUX_ARM7                      | OFF | Compile for ARM7 architecture                                                                                                                              |
@@ -24,4 +24,7 @@ Here are the translation details for the compilation parameters as per your requ
 | MNN_CUSTOM_SOURCE | "" | Using this option to replace different versions of MNN, the input must be the root directory of the MNN source code. |
 | INSPIRECV_BACKEND_OPENCV | OFF | The image processing backend relies on OpenCV and is **not recommended** |
 | ISF_ENABLE_COST_TIME | OFF | This parameter can be used to print the time of some important compute nodes in the Debug state |
+| ISF_NEVER_USE_OPENCV | ON | When you need to use OpenCV as the image processing engine, you need to turn this option off |
+
+
 
