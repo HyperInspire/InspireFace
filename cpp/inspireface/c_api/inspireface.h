@@ -951,6 +951,16 @@ HYPER_CAPI_EXPORT extern HResult HFSetLogLevel(HFLogLevel level);
  * */
 HYPER_CAPI_EXPORT extern HResult HFLogDisable();
 
+/**
+ * @brief Print the log.
+ * @param level The log level.
+ * @param format The log format.
+ * @param ... The log arguments.
+ * @warning The maximum buffer size for log messages is 1024 bytes. Messages longer than this will be truncated.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFLogPrint(HFLogLevel level, HFormat format, ...);
+
 /********************************DEBUG Utils****************************************/
 
 /**

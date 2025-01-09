@@ -57,7 +57,7 @@ int main() {
     // The resource file must be loaded before it can be used
     ret = HFLaunchInspireFace("test_res/pack/Pikachu");
     if (ret != HSUCCEED) {
-        std::cout << "Load Resource error: " << ret << std::endl;
+        HFLogPrint(HF_LOG_ERROR, "Load Resource error: %d", ret);
         return ret;
     }
 
@@ -69,7 +69,7 @@ int main() {
     configuration.searchThreshold = 0.48f;
     ret = HFFeatureHubDataEnable(configuration);
     if (ret != HSUCCEED) {
-        std::cout << "Enable feature hub error: " << ret << std::endl;
+        HFLogPrint(HF_LOG_ERROR, "Enable feature hub error: %d", ret);
         return ret;
     }
 
@@ -83,7 +83,7 @@ int main() {
     identity.feature = &feature;
     ret = HFFeatureHubInsertFeature(identity, &result_id);
     if (ret != HSUCCEED) {
-        std::cout << "Insert feature error: " << ret << std::endl;
+        HFLogPrint(HF_LOG_ERROR, "Insert feature error: %d", ret);
         return ret;
     }
 
@@ -95,9 +95,9 @@ int main() {
     HFFaceFeatureIdentity search_result = {0};
     ret = HFFeatureHubFaceSearch(query_feature, &confidence, &search_result);
     if (ret != HSUCCEED) {
-        std::cout << "Search feature error: " << ret << std::endl;
+        HFLogPrint(HF_LOG_ERROR, "Search feature error: %d", ret);
     } else {
-        std::cout << "Search face feature success, result_id: " << search_result.id << std::endl;
+        HFLogPrint(HF_LOG_INFO, "Search face feature success, result_id: %d", search_result.id);
     }
 
     return 0;
