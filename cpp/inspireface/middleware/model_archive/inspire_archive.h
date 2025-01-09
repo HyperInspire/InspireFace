@@ -36,6 +36,8 @@ public:
     int32_t ReLoad(const std::string &archiveFile) {
         auto ret = Reset(archiveFile);
         if (ret != SARC_SUCCESS) {
+            Close();
+            m_status_ = ret;
             return ret;
         }
         m_status_ = loadManifestFile();
