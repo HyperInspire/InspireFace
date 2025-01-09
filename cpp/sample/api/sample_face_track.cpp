@@ -146,6 +146,16 @@ int main(int argc, char* argv[]) {
         auto& rt = multipleFaceData.rects[index];
         float area = ((float)(rt.height * rt.width)) / (data.width * data.height);
         std::cout << "area: " << area << std::endl;
+
+        HPoint2f fiveKeyPoints[5];
+        ret = HFGetFaceFiveKeyPointsFromFaceToken(multipleFaceData.tokens[index], fiveKeyPoints, 5);
+        if (ret != HSUCCEED) {
+            std::cerr << "HFGetFaceFiveKeyPointsFromFaceToken error!!" << std::endl;
+            return -1;
+        }
+        for (size_t i = 0; i < 5; i++) {
+            HFImageBitmapDrawCircleF(drawImage, {fiveKeyPoints[i].x, fiveKeyPoints[i].y}, 0, {0, 0, 232}, 2);
+        }
     }
     HFImageBitmapWriteToFile(drawImage, "draw_detected.jpg");
     std::cout << "Write to file success: " << "draw_detected.jpg" << std::endl;
