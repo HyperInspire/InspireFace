@@ -27,9 +27,9 @@
 // Standard platform log macros
 #define INSPIRE_LOGD(...) inspire::LogManager::getInstance()->logStandard(inspire::ISF_LOG_DEBUG, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #define INSPIRE_LOGI(...) inspire::LogManager::getInstance()->logStandard(inspire::ISF_LOG_INFO, "", "", -1, __VA_ARGS__)
-#define INSPIRE_LOGW(...) inspire::LogManager::getInstance()->logStandard(inspire::ISF_LOG_WARN, __FILENAME__, "", __LINE__, __VA_ARGS__)
-#define INSPIRE_LOGE(...) inspire::LogManager::getInstance()->logStandard(inspire::ISF_LOG_ERROR, __FILENAME__, "", __LINE__, __VA_ARGS__)
-#define INSPIRE_LOGF(...) inspire::LogManager::getInstance()->logStandard(inspire::ISF_LOG_FATAL, __FILENAME__, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define INSPIRE_LOGW(...) inspire::LogManager::getInstance()->logStandard(inspire::ISF_LOG_WARN, "", "", -1, __VA_ARGS__)
+#define INSPIRE_LOGE(...) inspire::LogManager::getInstance()->logStandard(inspire::ISF_LOG_ERROR, "", "", -1, __VA_ARGS__)
+#define INSPIRE_LOGF(...) inspire::LogManager::getInstance()->logStandard(inspire::ISF_LOG_FATAL, "", "", -1, __VA_ARGS__)
 #endif
 
 // Macro to set the global log level
