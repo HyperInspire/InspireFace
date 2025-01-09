@@ -428,7 +428,7 @@ In the project, more usage examples are provided:
 
 ### Java and Android platform API
 
-We have prepared an Android sample project. You can download it from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs directory` of the Android sample project. You can compile and run this project using Android Studio.
+We have prepared an Android sample project. You can download library from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs directory` of the Android sample project. You can compile and run this project using Android Studio.
 
 ```bash
 InspireFaceExample/inspireface/libs
