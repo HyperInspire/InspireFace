@@ -237,12 +237,16 @@ We have completed the adaptation and testing of the software across various oper
 | 5 | | ARMv7 | RV1103/RV1106 | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge)|
 | 6 | | ARMv8 | RK3566/RK3568 | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 7 | | ARMv8 | RK3588 | ![build](https://img.shields.io/badge/build-developing-yellow?style=for-the-badge) |  |
-| 8      | **Linux-CUDA** | x86/x86_64            | NVIDIA-GPU          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 8      | **Linux-CUDA(MNN)** | x86/x86_64            | NVIDIA-GPU          | ![build](https://img.shields.io/badge/OFFLINE-PASSING-green?style=for-the-badge) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 9      | **MacOS**           | Intel       | CPU/Metal/**ANE** | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 10   |                      | Apple Silicon         | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 11     | **iOS**              | ARM                   | CPU/Metal/**ANE**         | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 12     | **Android**          | ARMv7                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 13     |                      | ARMv8                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
+| 14 | **Android-Rockchip** | ARMv8 | RK3566/RK3568 | ![build](https://img.shields.io/badge/build-developing-yellow?style=for-the-badge) |  |
+| 15 |  | ARMv8 | RK3588 | ![build](https://img.shields.io/badge/build-developing-yellow?style=for-the-badge) |  |
+| 16 | **HarmonyOS** | ARMv8 | - | ![build](https://img.shields.io/badge/build-developing-yellow?style=for-the-badge) |  |
+| 17 | **Jetson series** | ARMv8 | - |  |  |
 
 - Complete compilation scripts and successful compilation.
 - Pass unit tests on physical devices.
@@ -263,6 +267,9 @@ docker-compose up build-cross-rv1109rv1126-armhf
 
 # Build armv7 with support RV1106 device NPU cross-complie
 docker-compose up build-cross-rv1106-armhf-uclibc
+
+# Build armv8 with support RK356x device NPU cross-complie
+docker-compose up build-cross-rk356x-aarch64
 
 # Build Android with support arm64-v8a and armeabi-v7a
 docker-compose up build-cross-android
@@ -420,6 +427,16 @@ In the project, more usage examples are provided:
 - sample_face_track_from_video.py: Facial tracking from video stream example
 
 ### Java and Android platform API
+
+We have prepared an Android sample project. You can download it from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs directory` of the Android sample project. You can compile and run this project using Android Studio.
+
+```bash
+InspireFaceExample/inspireface/libs
+├── arm64-v8a
+│   └── libInspireFace.so
+└── armeabi-v7a
+    └── libInspireFace.so
+```
 
 We provide a Java API for Android devices, which is implemented using Java Native Interface(JNI). 
 

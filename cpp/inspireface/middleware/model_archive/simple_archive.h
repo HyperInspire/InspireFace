@@ -41,11 +41,13 @@ public:
     }
 
     int32_t Reset(const std::string& archiveFile) {
+        Close();
         std::vector<char>().swap(m_empty_);
         m_tar_ = std::make_shared<mtar_t>();
         m_load_file_status_ = mtar_open(m_tar_.get(), archiveFile.c_str(), "r");
         if (m_load_file_status_ != MTAR_ESUCCESS) {
             INSPIRE_LOGE("Invalid archive file: %d", m_load_file_status_);
+            Close();
             m_tar_.reset();
             return m_load_file_status_;
         }
@@ -60,7 +62,8 @@ public:
         while ((mtar_read_header(m_tar_.get(), &h)) != MTAR_ENULLRECORD) {
             m_load_file_status_ = mtar_next(m_tar_.get());
             if (m_load_file_status_ != MTAR_ESUCCESS) {
-                INSPIRE_LOGE("Failed to scan the file");
+                INSPIRE_LOGE("Failed to scan the file: %d", m_load_file_status_);
+                Close();
                 return m_load_file_status_;
             }
             m_subfiles_names_.emplace_back(h.name);
