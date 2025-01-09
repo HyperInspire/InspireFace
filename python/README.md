@@ -1,12 +1,23 @@
-# PyInspireFace
+# InspireFace Python API
+
+We provide a Python API for calling InspireFace, which is implemented by wrapping the dynamic link library using ctypes. You can install the latest release version on your computer via pip from PyPI, or you can configure it using a self-compiled dynamic library with this project.
+
+## Quick Install
+
+For Python users on Linux and MacOS, InspireFace can be quickly installed via pip:
+
+```bash
+pip install inspireface
+```
+
 
 ## Setup Library
 
-You need to compile the dynamic linking library in the main project and then place it in **inspireface/modules/core**.
+You need to compile the dynamic linking library in the main project and then place it in **inspireface/modules/core/SYSTEM/CORE_ARCH/**.
 
 ```Bash
 # copy or link
-cp YOUR_BUILD_DIR/libInspireFace.so inspireface/modules/core
+cp YOUR_BUILD_DIR/libInspireFace.so inspireface/modules/core/SYSTEM/CORE_ARCH/
 ```
 
 ## Require
@@ -19,7 +30,7 @@ pip install tqdm
 pip install opencv-python
 ```
 
-## Quick Start
+## Simple example
 
 You can easily call the api to implement a number of functions:
 
