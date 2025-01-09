@@ -1021,7 +1021,26 @@ HResult HFLogPrint(HFLogLevel level, HFormat format, ...) {
     va_start(args, format);
     vsnprintf(buffer, sizeof(buffer), format, args);
     va_end(args);
-    inspire::LogManager::getInstance()->logStandard(logLevel, "", "", -1, buffer);
+
+    switch (logLevel) {
+        case inspire::ISF_LOG_DEBUG:
+            INSPIRE_LOGD("%s", buffer);
+            break;
+        case inspire::ISF_LOG_INFO:
+            INSPIRE_LOGI("%s", buffer);
+            break;
+        case inspire::ISF_LOG_WARN:
+            INSPIRE_LOGW("%s", buffer);
+            break;
+        case inspire::ISF_LOG_ERROR:
+            INSPIRE_LOGE("%s", buffer);
+            break;
+        case inspire::ISF_LOG_FATAL:
+            INSPIRE_LOGF("%s", buffer);
+            break;
+        default:
+            break;
+    }
 
     return HSUCCEED;
 }
