@@ -516,6 +516,26 @@ HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, HPoint2
     return HSUCCEED;
 }
 
+HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasicToken singleFace, HPoint2f *landmarks, HInt32 num) {
+    if (num != 5) {
+        return HERR_SESS_KEY_POINT_NUM_NOT_MATCH;
+    }
+    inspire::FaceBasicData data;
+    data.dataSize = singleFace.size;
+    data.data = singleFace.data;
+    HyperFaceData face = {0};
+    HInt32 ret;
+    ret = RunDeserializeHyperFaceData((char *)data.data, data.dataSize, face);
+    if (ret != HSUCCEED) {
+        return ret;
+    }
+    for (size_t i = 0; i < num; i++) {
+        landmarks[i].x = face.keyPoints[i].x;
+        landmarks[i].y = face.keyPoints[i].y;
+    }
+    return HSUCCEED;
+}
+
 HResult HFFeatureHubFaceSearchThresholdSetting(float threshold) {
     FEATURE_HUB_DB->SetRecognitionThreshold(threshold);
     return HSUCCEED;
