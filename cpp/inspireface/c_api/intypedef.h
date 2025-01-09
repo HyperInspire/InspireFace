@@ -25,6 +25,7 @@ typedef int64_t*            HPFaceId;                         ///< Pointer to Fa
 typedef long                HResult;                          ///< Result code.
 typedef char*               HString;                          ///< String.
 typedef const char*         HPath;                            ///< Const String.
+typedef const char*         HFormat;                            ///< Const String.
 typedef char                HBuffer;                            ///< Character.
 typedef char                HChar;                            ///< Character.
 typedef char*               HPBuffer;                           ///< Pointer Character.

@@ -516,6 +516,26 @@ HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, HPoint2
     return HSUCCEED;
 }
 
+HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasicToken singleFace, HPoint2f *landmarks, HInt32 num) {
+    if (num != 5) {
+        return HERR_SESS_KEY_POINT_NUM_NOT_MATCH;
+    }
+    inspire::FaceBasicData data;
+    data.dataSize = singleFace.size;
+    data.data = singleFace.data;
+    HyperFaceData face = {0};
+    HInt32 ret;
+    ret = RunDeserializeHyperFaceData((char *)data.data, data.dataSize, face);
+    if (ret != HSUCCEED) {
+        return ret;
+    }
+    for (size_t i = 0; i < num; i++) {
+        landmarks[i].x = face.keyPoints[i].x;
+        landmarks[i].y = face.keyPoints[i].y;
+    }
+    return HSUCCEED;
+}
+
 HResult HFFeatureHubFaceSearchThresholdSetting(float threshold) {
     FEATURE_HUB_DB->SetRecognitionThreshold(threshold);
     return HSUCCEED;
@@ -988,6 +1008,40 @@ HResult HFSetLogLevel(HFLogLevel level) {
 
 HResult HFLogDisable() {
     INSPIRE_SET_LOG_LEVEL(inspire::ISF_LOG_NONE);
+    return HSUCCEED;
+}
+
+HResult HFLogPrint(HFLogLevel level, HFormat format, ...) {
+    inspire::LogLevel logLevel = static_cast<inspire::LogLevel>(level);
+    if (inspire::LogManager::getInstance()->getLogLevel() == inspire::ISF_LOG_NONE || logLevel < inspire::LogManager::getInstance()->getLogLevel()) {
+        return HSUCCEED;
+    }
+    char buffer[1024];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+
+    switch (logLevel) {
+        case inspire::ISF_LOG_DEBUG:
+            INSPIRE_LOGD("%s", buffer);
+            break;
+        case inspire::ISF_LOG_INFO:
+            INSPIRE_LOGI("%s", buffer);
+            break;
+        case inspire::ISF_LOG_WARN:
+            INSPIRE_LOGW("%s", buffer);
+            break;
+        case inspire::ISF_LOG_ERROR:
+            INSPIRE_LOGE("%s", buffer);
+            break;
+        case inspire::ISF_LOG_FATAL:
+            INSPIRE_LOGF("%s", buffer);
+            break;
+        default:
+            break;
+    }
+
     return HSUCCEED;
 }
 
