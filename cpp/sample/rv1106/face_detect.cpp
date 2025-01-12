@@ -7,8 +7,9 @@
 using namespace inspire;
 
 int main() {
+    INSPIRE_SET_LOG_LEVEL(ISF_LOG_DEBUG);
     std::string expansion_path = "";
-    INSPIRE_LAUNCH->Load("Gundam_RV1106");
+    INSPIRE_LAUNCH->Load("test_res/pack/Gundam_RV1106");
     auto archive = INSPIRE_LAUNCH->getMArchive();
     InspireModel detModel;
     auto ret = archive.LoadModel("face_detect_160", detModel);
