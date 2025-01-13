@@ -170,8 +170,6 @@ TEST_CASE("test_BenchmarkFaceExtractWithAlign", "[benchmark]") {
     HFSessionCustomParameter parameter = {0};
     HFDetectMode detMode = HF_DETECT_MODE_LIGHT_TRACK;
     HFSession session;
-    ret = HFCreateInspireFaceSession(parameter, detMode, 3, pixLevel, -1, &session);
-    REQUIRE(ret == HSUCCEED);
 
     ret = HFCreateInspireFaceSessionOptional(HF_ENABLE_FACE_RECOGNITION, detMode, 3, -1, -1, &session);
     REQUIRE(ret == HSUCCEED);
