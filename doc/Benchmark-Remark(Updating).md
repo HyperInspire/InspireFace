@@ -57,4 +57,22 @@ The benchmark tests will be continuously updated.
 | Search Face from 5k | 1000 | 15745.00533ms | **15.74501ms** |
 | Search Face from 10k | 1000 | 31267.2301ms | **31.26723ms** |
 
+## Gundam_RV1106(RKNPU)
+### Device: RV1106
+| **Benchmark** | **Loops** | **Total Time** | **Average Time** |
+| --- | --- | --- | --- |
+| Face Detect@160          | 1000      | 23776ms         | **23.78ms**      |
+| Face Detect@320          | 1000      | 33310ms         | **33.31ms**      |
+| Face Detect@640          | 1000      | 58631ms         | **58.63ms**      |
+| Face Light-Track         | 1000      | 15642ms         | **15.64ms**      |
+| Face alignment & Extract | 1000      | 15178ms         | **15.18ms**      |
+| Face Comparison          | 1000      | 23us            | **0.023us**      |
+| Search Face from 1k@Memory     | 1000      | 16576ms         | **16.58ms**      |
+| Search Face from 5k@Memory     | 1000      | 61837ms         | **61.84ms**      |
+| Search Face from 10k@Memory    | 1000      | 118477ms        | **118.48ms**     |
+| Search Face from 1k@Persistence | 1000      | 21545ms         | **21.55ms**      |
+| Search Face from 5k@Persistence | 1000      | 88403ms         | **88.40ms**      |
+| Search Face from 10k@Persistence| 1000      | 168557ms        | **168.56ms**     |
+
+
 **Note**: The test results are all calculated by the test programs in the '**cpp/test**' subproject.
