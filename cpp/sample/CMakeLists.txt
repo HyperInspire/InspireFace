@@ -91,6 +91,12 @@ if(ISF_RK_DEVICE_TYPE STREQUAL "RV1106")
     set_target_properties(FaceTrackSampleRV1106 PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
             )
+
+    add_executable(FaceAttributeSampleRV1106 rv1106/face_attribute.cpp)
+    target_link_libraries(FaceAttributeSampleRV1106 InspireFace ${ext})
+    set_target_properties(FaceAttributeSampleRV1106 PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+            )
 endif()
 
 add_executable(NexusImageSample rv1106/rga_image.cpp)

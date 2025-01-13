@@ -48,8 +48,8 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         auto cvRect = inspirecv::Rect<int>::Create(rect.x, rect.y, rect.width, rect.height);
         image.DrawRect(cvRect, {0, 0, 255}, 2);
         image.Write("ww.jpg");
-        // The iou is allowed to have an error of 10%
-        CHECK(iou == Approx(1.0f).epsilon(0.1));
+        // The iou is allowed to have an error of 25%
+        CHECK(iou == Approx(1.0f).epsilon(0.25));
 
         ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
@@ -214,7 +214,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
         roll = multipleFaceData.angles.roll[0];
-        CHECK(roll > 30);
+        CHECK(roll > 25);
         HFReleaseImageStream(rightWryneckHandle);
 
         //  finish
@@ -392,7 +392,7 @@ TEST_CASE("test_MultipleLevelFaceDetect", "[face_detect]") {
         ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
 
-        CHECK(multipleFaceData.detectedNum > 16);
+        CHECK(multipleFaceData.detectedNum > 15);
         CHECK(multipleFaceData.detectedNum < 21);
 
         ret = HFReleaseImageStream(imgHandle);

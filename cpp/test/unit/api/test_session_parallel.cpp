@@ -58,7 +58,10 @@ TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
     }
 
     SECTION("Parallel") {
-        const int N = 4;  // Use 4 sessions in parallel
+        int N = 4;  // Use 4 sessions in parallel
+#ifdef ISF_RKNPU_RV1106
+        N = 1;  // Use 1 session in parallel
+#endif
         inspire::parallel::ResourcePool<HFSession> sessionPool(N, [](HFSession& session) {
             auto ret = HFReleaseInspireFaceSession(session);
             if (ret != HSUCCEED) {
@@ -126,6 +129,9 @@ TEST_CASE("test_SessionParallel_Memory", "[Session][Parallel][Memory]") {
     size_t memoryUsage = getCurrentMemoryUsage();
     TEST_PRINT("Current memory usage: {}MB", memoryUsage);
     int loop = 4;
+#ifdef ISF_RKNPU_RV1106
+    loop = 1;
+#endif
     std::vector<HFSession> sessions;
     for (int i = 0; i < loop; ++i) {
         HFSessionCustomParameter parameter = {0};

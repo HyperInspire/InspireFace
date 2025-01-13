@@ -98,9 +98,9 @@ cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DISF_ENABLE_BENCHMARK=OFF \
   -DISF_ENABLE_USE_LFW_DATA=OFF \
   -DISF_ENABLE_TEST_EVALUATION=OFF \
-  -DISF_BUILD_SHARED_LIBS=ON ${SCRIPT_DIR}
+  -DISF_BUILD_SHARED_LIBS=OFF ${SCRIPT_DIR}
 
 make -j4
-make install
+# make install
 
-move_install_files "$(pwd)"
+# move_install_files "$(pwd)"
