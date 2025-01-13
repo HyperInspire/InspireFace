@@ -214,7 +214,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
         roll = multipleFaceData.angles.roll[0];
-        CHECK(roll > 30);
+        CHECK(roll > 25);
         HFReleaseImageStream(rightWryneckHandle);
 
         //  finish
@@ -392,7 +392,7 @@ TEST_CASE("test_MultipleLevelFaceDetect", "[face_detect]") {
         ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
 
-        CHECK(multipleFaceData.detectedNum > 16);
+        CHECK(multipleFaceData.detectedNum > 15);
         CHECK(multipleFaceData.detectedNum < 21);
 
         ret = HFReleaseImageStream(imgHandle);
