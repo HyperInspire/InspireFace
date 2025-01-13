@@ -548,13 +548,13 @@ The following Features and technologies are currently supported.
 
 For different scenarios, we currently provide several Packs, each containing multiple models and configurations.
 
-| Name | Supported Devices | Note | Link | Last Update |
+| Name | Supported Devices | Note | Last Update | Link |
 | --- | --- | --- | --- | --- |
-| Pikachu | CPU | Lightweight edge-side models | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu) | Jul 17, 2024 |
-| Megatron | CPU, GPU | Mobile and server models | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron) | Jul 17, 2024 |
-| Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) | Jul 17, 2024 |
-| Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) | Jan 13, 2025 |
-| Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) | Jan 13, 2025 |
+| Pikachu | CPU | Lightweight edge-side models | Jul 17, 2024 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu) |
+| Megatron | CPU, GPU | Mobile and server models | Jul 17, 2024 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron) |
+| Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | Jul 17, 2024 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
+| Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | Jan 13, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
+| Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | Jan 13, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) |
 
 ## Acknowledgement
 
