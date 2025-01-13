@@ -1008,6 +1008,7 @@ HResult HFSetLogLevel(HFLogLevel level) {
 
 HResult HFLogDisable() {
     INSPIRE_SET_LOG_LEVEL(inspire::ISF_LOG_NONE);
+
     return HSUCCEED;
 }
 
