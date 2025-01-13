@@ -48,7 +48,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         auto cvRect = inspirecv::Rect<int>::Create(rect.x, rect.y, rect.width, rect.height);
         image.DrawRect(cvRect, {0, 0, 255}, 2);
         image.Write("ww.jpg");
-        // The iou is allowed to have an error of 10%
+        // The iou is allowed to have an error of 25%
         CHECK(iou == Approx(1.0f).epsilon(0.25));
 
         ret = HFReleaseImageStream(imgHandle);
