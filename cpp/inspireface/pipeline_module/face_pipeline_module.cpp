@@ -228,7 +228,11 @@ int32_t FacePipelineModule::InitMaskPredict(InspireModel &model) {
 
 int32_t FacePipelineModule::InitRBGAntiSpoofing(InspireModel &model) {
     auto input_size = model.Config().get<std::vector<int>>("input_size");
+#ifdef INFERENCE_HELPER_ENABLE_RKNN2
+    m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofingAdapt>(input_size[0], true);
+#else
     m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofingAdapt>(input_size[0]);
+#endif
     auto ret = m_rgb_anti_spoofing_->loadData(model, model.modelType);
     if (ret != InferenceHelper::kRetOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
