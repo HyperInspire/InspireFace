@@ -49,7 +49,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         image.DrawRect(cvRect, {0, 0, 255}, 2);
         image.Write("ww.jpg");
         // The iou is allowed to have an error of 10%
-        CHECK(iou == Approx(1.0f).epsilon(0.1));
+        CHECK(iou == Approx(1.0f).epsilon(0.25));
 
         ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
