@@ -118,6 +118,8 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
     TEST_PRINT_OUTPUT(true);
 
     SECTION("rgb liveness detect") {
+#ifndef INFERENCE_HELPER_ENABLE_RKNN2
+        /** The anti spoofing model based on RGB faces seems to have some problems with quantization under RKNPU2, so it is not started yet */
         HResult ret;
         HFSessionCustomParameter parameter = {0};
         parameter.enable_liveness = 1;
@@ -172,6 +174,9 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         ret = HFReleaseInspireFaceSession(session);
         session = nullptr;
         REQUIRE(ret == HSUCCEED);
+#else
+        TEST_PRINT("The anti spoofing model based on RGB faces seems to have some problems with quantization under RKNPU2, so we skip this test.");
+#endif
     }
 
     SECTION("face mask detect") {

@@ -33,7 +33,6 @@ fi
 SCRIPT_DIR=$(pwd)  # Project dir
 
 
-echo "MNN_CUSTOM_SOURCE: ${MNN_CUSTOM_SOURCE}"
 cd ${SCRIPT_DIR}
 
 # export ARM_CROSS_COMPILE_TOOLCHAIN=/root/arm-rockchip830-linux-uclibcgnueabihf/
