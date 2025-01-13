@@ -6,9 +6,9 @@ name: Run Ubuntu-x86 Test Pikachu
 # Trigger this workflow on push or pull request to the "feature/sub" branch
 on:
   push:
-    branches: ["dev/patch-5"]
+    branches: ["master"]
   pull_request:
-    branches: ["dev/patch-5"]
+    branches: ["master"]
 
 # Define environment variables shared across jobs
 env:
