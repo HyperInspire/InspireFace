@@ -386,11 +386,12 @@ HResult HFFeatureHubDataEnable(HFFeatureHubConfiguration configuration) {
     if (configuration.enablePersistence) {
         if (configuration.persistenceDbPath == nullptr) {
             param.persistence_db_path = std::string("");
+        } else {
+            param.persistence_db_path = std::string(configuration.persistenceDbPath);
         }
     } else {
         param.persistence_db_path = std::string("");  // Empty string for in-memory mode
     }
-
     param.enable_persistence = configuration.enablePersistence;
     param.recognition_threshold = configuration.searchThreshold;
     param.search_mode = (inspire::SearchMode)configuration.searchMode;
