@@ -2,9 +2,9 @@ name: Build Wheels
 
 on:
   push:
-    branches: ["release/wheels"]
+    branches: ["dev/patch-7"]
   pull_request:
-    branches: ["release/wheels"]
+    branches: ["dev/patch-7"]
 
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
