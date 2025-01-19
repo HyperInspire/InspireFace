@@ -159,6 +159,21 @@ public:
      */
     bool IsDetectModeLandmark() const;
 
+    /**
+     * @brief Fix detect threshold
+     * */
+    void SetTrackModeSmoothRatio(float value);
+
+    /**
+     * @brief Fix detect threshold
+     * */
+    void SetTrackModeNumSmoothCacheFrame(int value);
+
+    /**
+     * @brief Fix detect interval
+     * */
+    void SetTrackModelDetectInterval(int value);
+
 public:
     std::vector<FaceObjectInternal> trackingFace;  ///< Vector of FaceObjects currently being tracked.
 
@@ -189,6 +204,10 @@ private:
     std::string m_expansion_path_{""};
 
     bool m_detect_mode_landmark_{true};
+
+    int m_track_mode_num_smooth_cache_frame_ = 15;
+
+    float m_track_mode_smooth_ratio_ = 0.025;
 };
 
 }  // namespace inspire

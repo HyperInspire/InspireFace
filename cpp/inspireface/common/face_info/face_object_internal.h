@@ -28,13 +28,14 @@ public:
         face_action_ = std::make_shared<FaceActionPredictor>(10);
     }
 
-    void SetLandmark(const std::vector<inspirecv::Point2f> &lmk, bool update_rect = true, bool update_matrix = true) {
+    void SetLandmark(const std::vector<inspirecv::Point2f> &lmk, bool update_rect = true, bool update_matrix = true, float h = 0.06f, int n = 5) {
         if (lmk.size() != landmark_.size()) {
             INSPIRE_LOGW("The SetLandmark function displays an exception indicating that the lmk number does not match");
             return;
         }
         std::copy(lmk.begin(), lmk.end(), landmark_.begin());
-        DynamicSmoothParamUpdate(landmark_, landmark_smooth_aux_, 106 * 2, 0.06);
+        DynamicSmoothParamUpdate(landmark_, landmark_smooth_aux_, 106 * 2, h, n);
+        // std::cout << "smooth ratio: " << h << " num smooth cache frame: " << n << std::endl;
 
         // cv::Vec3d euler_angle;
         // EstimateHeadPose(landmark_, euler_angle_);
@@ -162,8 +163,7 @@ public:
     }
 
     void DynamicSmoothParamUpdate(std::vector<inspirecv::Point2f> &landmarks, std::vector<std::vector<inspirecv::Point2f>> &landmarks_lastNframes,
-                                  int lm_length, float h) {
-        int n = 5;
+                                  int lm_length, float h = 0.06f, int n = 5) {
         std::vector<inspirecv::Point2f> landmarks_temp;
         landmarks_temp.assign(landmarks.begin(), landmarks.end());
         if (landmarks_lastNframes.size() == n) {
@@ -191,7 +191,7 @@ public:
             landmarks_frame.push_back(inspirecv::Point2f(landmarks[i].GetX(), landmarks[i].GetY()));
         }
         landmarks_lastNframes.push_back(landmarks_frame);
-        if (landmarks_lastNframes.size() > 5)
+        if (landmarks_lastNframes.size() > n)
             landmarks_lastNframes.erase(landmarks_lastNframes.begin());
     }
 
@@ -229,7 +229,6 @@ public:
     const inspirecv::Rect2i &getBbox() const {
         return bbox_;
     }
-
 
     void setBbox(const inspirecv::Rect2i &bbox) {
         bbox_ = bbox;
