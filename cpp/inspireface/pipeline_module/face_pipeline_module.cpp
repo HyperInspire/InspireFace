@@ -137,18 +137,33 @@ int32_t FacePipelineModule::Process(inspirecv::InspireImageProcess &processor, c
                 new_rect.SetX(cx - new_rect.GetWidth() / 2);
                 new_rect.SetY(cy - new_rect.GetHeight() / 2);
 
-                // Ensure rect stays within image bounds
+                // Ensure rect stays within image bounds while maintaining aspect ratio
+                float originalAspectRatio = new_rect.GetWidth() / new_rect.GetHeight();
+
+                // Adjust position and size to fit within image bounds
                 if (new_rect.GetX() < 0) {
+                    new_rect.SetWidth(new_rect.GetWidth() + new_rect.GetX());  // Reduce width by overflow amount
                     new_rect.SetX(0);
                 }
                 if (new_rect.GetY() < 0) {
+                    new_rect.SetHeight(new_rect.GetHeight() + new_rect.GetY());  // Reduce height by overflow amount
                     new_rect.SetY(0);
                 }
-                if (new_rect.GetX() + new_rect.GetWidth() > originImage.Width()) {
-                    new_rect.SetWidth(originImage.Width() - new_rect.GetX());
+
+                float rightOverflow = (new_rect.GetX() + new_rect.GetWidth()) - originImage.Width();
+                if (rightOverflow > 0) {
+                    new_rect.SetWidth(new_rect.GetWidth() - rightOverflow);
                 }
-                if (new_rect.GetY() + new_rect.GetHeight() > originImage.Height()) {
-                    new_rect.SetHeight(originImage.Height() - new_rect.GetY());
+
+                float bottomOverflow = (new_rect.GetY() + new_rect.GetHeight()) - originImage.Height();
+                if (bottomOverflow > 0) {
+                    new_rect.SetHeight(new_rect.GetHeight() - bottomOverflow);
+                }
+
+                // Maintain minimum size (e.g., 20x20 pixels)
+                const float minSize = 20.0f;
+                if (new_rect.GetWidth() < minSize || new_rect.GetHeight() < minSize) {
+                    continue;  // Skip this eye if the crop region is too small
                 }
 
                 auto crop = originImage.Crop(new_rect);
