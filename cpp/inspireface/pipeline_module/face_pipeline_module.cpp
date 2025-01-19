@@ -160,7 +160,7 @@ int32_t FacePipelineModule::Process(inspirecv::InspireImageProcess &processor, c
                     new_rect.SetHeight(new_rect.GetHeight() - bottomOverflow);
                 }
 
-                // Maintain minimum size (e.g., 20x20 pixels)
+                // Maintain minimum size (e.g., 20x20 ixels)
                 const float minSize = 20.0f;
                 if (new_rect.GetWidth() < minSize || new_rect.GetHeight() < minSize) {
                     continue;  // Skip this eye if the crop region is too small
