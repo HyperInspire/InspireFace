@@ -313,6 +313,27 @@ public:
      */
     const float GetFaceFeatureNormCache() const;
 
+    /**
+     * @brief Set the track mode smooth ratio
+     * @param value The smooth ratio value
+     * @return int32_t Status code of the operation.
+     * */
+    int32_t SetTrackModeSmoothRatio(float value);
+
+    /**
+     * @brief Set the track mode num smooth cache frame
+     * @param value The num smooth cache frame value
+     * @return int32_t Status code of the operation.
+     * */
+    int32_t SetTrackModeNumSmoothCacheFrame(int value);
+
+    /**
+     * @brief Set the track model detect interval
+     * @param value The detect interval value
+     * @return int32_t Status code of the operation.
+     * */
+    int32_t SetTrackModelDetectInterval(int value);
+
 private:
     // Private member variables
     CustomPipelineParameter m_parameter_;  ///< Stores custom parameters for the pipeline
