@@ -398,6 +398,33 @@ HYPER_CAPI_EXPORT extern HResult HFSessionSetFilterMinimumFacePixelSize(HFSessio
 HYPER_CAPI_EXPORT extern HResult HFSessionSetFaceDetectThreshold(HFSession session, HFloat threshold);
 
 /**
+ * @brief Set the track mode smooth ratio in the session. default value is  0.025
+ *
+ * @param session Handle to the session.
+ * @param ratio The smooth ratio value.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeSmoothRatio(HFSession session, HFloat ratio);
+
+/**
+ * @brief Set the track mode num smooth cache frame in the session. default value is 15
+ *
+ * @param session Handle to the session.
+ * @param num The num smooth cache frame value.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeNumSmoothCacheFrame(HFSession session, HInt32 num);
+
+/**
+ * @brief Set the track model detect interval in the session. default value is 1
+ *
+ * @param session Handle to the session.
+ * @param num The detect interval value.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModelDetectInterval(HFSession session, HInt32 num);
+
+/**
  * @brief Run face tracking in the session.
  *
  * @param session Handle to the session.

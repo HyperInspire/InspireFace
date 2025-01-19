@@ -447,6 +447,39 @@ HResult HFSessionSetFaceDetectThreshold(HFSession session, HFloat threshold) {
     return ctx->impl.SetFaceDetectThreshold(threshold);
 }
 
+HResult HFSessionSetTrackModeSmoothRatio(HFSession session, HFloat ratio) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetTrackModeSmoothRatio(ratio);
+}
+
+HResult HFSessionSetTrackModeNumSmoothCacheFrame(HFSession session, HInt32 num) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetTrackModeNumSmoothCacheFrame(num);
+}
+
+HResult HFSessionSetTrackModelDetectInterval(HFSession session, HInt32 num) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetTrackModelDetectInterval(num);
+}
+
 HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMultipleFaceData results) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
