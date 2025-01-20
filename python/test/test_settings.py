@@ -18,7 +18,7 @@ ENABLE_SEARCH_BENCHMARK_TEST = True
 ENABLE_LFW_PRECISION_TEST = False
 
 # Testing model name
-TEST_MODEL_NAME = "Pikachu"
+TEST_MODEL_NAME = "Pikachu-t3"
 # TEST_MODEL_NAME = "Megatron"
 
 # Testing length of face feature
