@@ -255,11 +255,11 @@ private:
     Embedded m_getter_face_feature_cache_;                      ///< Cache for face feature data used in search operations
     std::shared_ptr<FaceFeaturePtr> m_face_feature_ptr_cache_;  ///< Shared pointer to cache of face feature pointers
 
-    std::vector<FaceSearchResult> m_search_top_k_cache_;
-    std::vector<float> m_top_k_confidence_;
-    std::vector<int64_t> m_top_k_custom_ids_cache_;
+    std::vector<FaceSearchResult> m_search_top_k_cache_;  ///< Cache for top k search results
+    std::vector<float> m_top_k_confidence_;               ///< Cache for top k confidence scores
+    std::vector<int64_t> m_top_k_custom_ids_cache_;       ///< Cache for top k custom ids
 
-    std::vector<int64_t> m_all_ids_;
+    std::vector<int64_t> m_all_ids_;  ///< Cache for all ids
 
 private:
     DatabaseConfiguration m_db_configuration_;     ///< Configuration settings for the database

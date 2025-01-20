@@ -196,18 +196,18 @@ private:
     std::shared_ptr<BYTETracker> m_TbD_tracker_;  ///< Shared pointer to the Bytetrack.
     int m_dynamic_detection_input_level_ = -1;    ///< Detector size class for dynamic input.
 
-    float m_crop_extensive_ratio_ = 1.8f;
-    int m_crop_extensive_size_ = 96;
+    float m_crop_extensive_ratio_ = 1.8f;  ///< Crop extensive ratio
+    int m_crop_extensive_size_ = 96;       ///< Crop extensive size
 
     DetectModuleMode m_mode_;  ///< Detect mode
 
-    std::string m_expansion_path_{""};
+    std::string m_expansion_path_{""};  ///< Expand the path if you need it.
 
-    bool m_detect_mode_landmark_{true};
+    bool m_detect_mode_landmark_{true};  ///< Detect mode landmark
 
-    int m_track_mode_num_smooth_cache_frame_ = 15;
+    int m_track_mode_num_smooth_cache_frame_ = 15;  ///< Track mode number of smooth cache frame
 
-    float m_track_mode_smooth_ratio_ = 0.025;
+    float m_track_mode_smooth_ratio_ = 0.025;  ///< Track mode smooth ratio
 };
 
 }  // namespace inspire
