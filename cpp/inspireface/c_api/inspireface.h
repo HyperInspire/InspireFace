@@ -64,7 +64,7 @@ typedef enum HFRotation {
  * Defines the structure for image data stream.
  */
 typedef struct HFImageData {
-    uint8_t *data;         ///< Pointer to the image data stream.
+    HPUInt8 data;          ///< Pointer to the image data stream.
     HInt32 width;          ///< Width of the image.
     HInt32 height;         ///< Height of the image.
     HFImageFormat format;  ///< Format of the image, indicating the data stream format to be parsed.
@@ -81,6 +81,45 @@ typedef struct HFImageData {
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, HFImageStream *handle);
+
+/**
+ * @brief Create an empty image stream instance.
+ *
+ * This function is used to create an instance of a data buffer stream with the given image data.
+ *
+ * @param handle Pointer to the stream handle that will be returned.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamEmpty(HFImageStream *handle);
+
+/**
+ * @brief Set the buffer of the image stream.
+ *
+ * @param handle Pointer to the stream handle.
+ * @param buffer Pointer to the buffer.
+ * @param width Width of the image.
+ * @param height Height of the image.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetBuffer(HFImageStream handle, HPUInt8 buffer, HInt32 width, HInt32 height);
+
+/**
+ * @brief Set the rotation of the image stream.
+ *
+ * @param handle Pointer to the stream handle.
+ * @param rotation Rotation angle of the image.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetRotation(HFImageStream handle, HFRotation rotation);
+
+/**
+ * @brief Set the format of the image stream.
+ *
+ * @param handle Pointer to the stream handle.
+ * @param format Format of the image.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetFormat(HFImageStream handle, HFImageFormat format);
 
 /**
  * @brief Release the instantiated DataBuffer object.
@@ -238,6 +277,15 @@ HYPER_CAPI_EXPORT extern HResult HFTerminateInspireFace();
  * */
 HYPER_CAPI_EXPORT extern HResult HFQueryInspireFaceLaunchStatus(HInt32 *status);
 
+/************************************************************************
+ * Extended Interface Based on Third-party Hardware Devices
+ *
+ * According to different manufacturers' devices, manufacturers typically perform deep customization and optimization, such as neural network
+ * inference computation, geometric image acceleration computation, and deeply customized device interfaces, etc. These types of functionalities are
+ * usually difficult to abstract, so they are placed in extension module APIs, involving hybrid computing, heterogeneous computing, multi-device
+ * computing, and other features.
+ ************************************************************************/
+
 /**
  * @brief Set the rockchip dma heap path
  * By default, we have already configured the DMA Heap address used by RGA on RK devices.
@@ -254,6 +302,21 @@ HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareRockchipDmaHeapPath(HPath
  * @return HResult indicating the success or failure of the operation.
  * */
 HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path);
+
+/**
+ * @brief Set the Apple CoreML model path. In normal circumstances, manual modification is not needed.
+ * @param path The path to the apple coreml model
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HString path);
+
+/**
+ * @brief Query the Apple CoreML model path. After executing HFLaunchInspireFace, it's typically your input filename plus the suffix '.mlmodelc', for
+ * example: Pikachu and Pikachu.mlmodelc
+ * @param path Query the apple coreml model path
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareAppleCoreMLModelPath(HString path);
 
 /************************************************************************
  * FaceSession

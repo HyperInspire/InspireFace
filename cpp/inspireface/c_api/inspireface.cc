@@ -66,6 +66,74 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, HFImageS
     return HSUCCEED;
 }
 
+HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamEmpty(HFImageStream *handle) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    auto stream = new HF_CameraStream();
+    *handle = (HFImageStream)stream;
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetBuffer(HFImageStream handle, HPUInt8 buffer, HInt32 width, HInt32 height) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    ((HF_CameraStream *)handle)->impl.SetDataBuffer(buffer, width, height);
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetRotation(HFImageStream handle, HFRotation rotation) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    switch (rotation) {
+        case HF_CAMERA_ROTATION_90:
+            ((HF_CameraStream *)handle)->impl.SetRotationMode(inspirecv::ROTATION_90);
+            break;
+        case HF_CAMERA_ROTATION_180:
+            ((HF_CameraStream *)handle)->impl.SetRotationMode(inspirecv::ROTATION_180);
+            break;
+        case HF_CAMERA_ROTATION_270:
+            ((HF_CameraStream *)handle)->impl.SetRotationMode(inspirecv::ROTATION_270);
+            break;
+        default:
+            ((HF_CameraStream *)handle)->impl.SetRotationMode(inspirecv::ROTATION_0);
+            break;
+    }
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetFormat(HFImageStream handle, HFImageFormat format) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    switch (format) {
+        case HF_STREAM_RGB:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::RGB);
+            break;
+        case HF_STREAM_BGR:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::BGR);
+            break;
+        case HF_STREAM_RGBA:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::RGBA);
+            break;
+        case HF_STREAM_BGRA:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::BGRA);
+            break;
+        case HF_STREAM_YUV_NV12:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::NV12);
+            break;
+        case HF_STREAM_YUV_NV21:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::NV21);
+            break;
+        default:
+            return HERR_INVALID_IMAGE_STREAM_PARAM;  // Assume there's a return code for unsupported
+                                                     // formats
+    }
+    return HSUCCEED;
+}
+
 HYPER_CAPI_EXPORT extern HResult HFReleaseImageStream(HFImageStream streamHandle) {
     if (streamHandle == nullptr) {
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
@@ -369,6 +437,16 @@ HResult HFSetExpansiveHardwareRockchipDmaHeapPath(HPath path) {
 
 HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path) {
     strcpy(path, INSPIRE_LAUNCH->GetRockchipDmaHeapPath().c_str());
+    return HSUCCEED;
+}
+
+HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HString path) {
+    // TODO: Implement this function
+    return HSUCCEED;
+}
+
+HResult HFQueryExpansiveHardwareAppleCoreMLModelPath(HString path) {
+    // TODO: Implement this function
     return HSUCCEED;
 }
 
