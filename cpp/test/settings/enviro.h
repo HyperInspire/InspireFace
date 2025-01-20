@@ -52,7 +52,7 @@ public:
 private:
     Enviro() {}
 
-    std::string packName{"Pikachu"};
+    std::string packName{"Pikachu-t3"};
     std::string testResDir{"test_res"};
     std::string runtimeFullPath;
 };
