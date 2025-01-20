@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def transform_similarity(cosine_sim, threshold=0.48, target_score=0.6, steepness=15):
+def transform_similarity(cosine_sim, threshold=0.48, target_score=0.6, steepness=10):
     """
     Transform cosine similarity to a percentage score between 0-1
     
@@ -14,21 +14,26 @@ def transform_similarity(cosine_sim, threshold=0.48, target_score=0.6, steepness
     Returns:
         float: Transformed score between 0-1
     """
-    # Map cosine value to sigmoid domain (typically between -6 and 6)
+    # Map cosine value to sigmoid domain
     x = steepness * (cosine_sim - threshold)
     
     # Apply base sigmoid function
     base_sigmoid = 1 / (1 + np.exp(-x))
     
+    # Scale the sigmoid output to start from 0 instead of 0.5
+    shifted_sigmoid = 2 * base_sigmoid - 1
+    
+    # Now shifted_sigmoid ranges from -1 to 1, scale it to 0 to 1
+    normalized = (shifted_sigmoid + 1) / 2
+    
     # Linear transform to make output equal target_score when cosine_sim = threshold
-    # Base sigmoid output value at threshold
-    threshold_base = 0.5  # because sigmoid(0) = 0.5
+    threshold_base = 0.5  # the value of normalized when cosine_sim = threshold
     
     # Linear transform parameters
     scale = (1.0 - target_score) / (1.0 - threshold_base)
     
     # Apply linear transform
-    final_score = target_score + scale * (base_sigmoid - threshold_base)
+    final_score = target_score + scale * (normalized - threshold_base)
     
     # Ensure result is between 0-1
     return np.clip(final_score, 0, 1)
