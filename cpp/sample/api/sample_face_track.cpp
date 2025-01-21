@@ -3,7 +3,7 @@
  * @date 2024-10-01
  */
 #include <iostream>
-#include "inspireface/c_api/inspireface.h"
+#include <inspireface.h>
 
 int main(int argc, char* argv[]) {
     // Check whether the number of parameters is correct

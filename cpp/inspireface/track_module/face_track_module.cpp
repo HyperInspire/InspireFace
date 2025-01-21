@@ -186,8 +186,22 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
                 // INSPIRE_LOGD("Extensive Affine Cost %f", extensive_cost_time.GetCostTimeUpdate());
             }
         }
+        // Replace the landmark with the high-quality landmark
+        landmark_back[FaceLandmarkAdapt::LEFT_EYE_CENTER] = face.high_result.lmk[0];
+        landmark_back[FaceLandmarkAdapt::RIGHT_EYE_CENTER] = face.high_result.lmk[1];
+        landmark_back[FaceLandmarkAdapt::NOSE_CORNER] = face.high_result.lmk[2];
+        landmark_back[FaceLandmarkAdapt::MOUTH_LEFT_CORNER] = face.high_result.lmk[3];
+        landmark_back[FaceLandmarkAdapt::MOUTH_RIGHT_CORNER] = face.high_result.lmk[4];
         // Update face key points
-        face.SetLandmark(landmark_back, true);
+        face.SetLandmark(landmark_back, true, true, m_track_mode_smooth_ratio_, m_track_mode_num_smooth_cache_frame_);
+        // Get the smoothed landmark
+        auto &landmark_smooth = face.landmark_smooth_aux_.back();
+        // Update the face key points
+        face.high_result.lmk[0] = landmark_smooth[FaceLandmarkAdapt::LEFT_EYE_CENTER];
+        face.high_result.lmk[1] = landmark_smooth[FaceLandmarkAdapt::RIGHT_EYE_CENTER];
+        face.high_result.lmk[2] = landmark_smooth[FaceLandmarkAdapt::NOSE_CORNER];
+        face.high_result.lmk[3] = landmark_smooth[FaceLandmarkAdapt::MOUTH_LEFT_CORNER];
+        face.high_result.lmk[4] = landmark_smooth[FaceLandmarkAdapt::MOUTH_RIGHT_CORNER];
     }
 
     // If tracking status, update the confidence level
@@ -205,7 +219,8 @@ void FaceTrackModule::UpdateStream(inspirecv::InspireImageProcess &image) {
     detection_index_ += 1;
     if (m_mode_ == DETECT_MODE_ALWAYS_DETECT || m_mode_ == DETECT_MODE_TRACK_BY_DETECT)
         trackingFace.clear();
-    if (detection_index_ % detection_interval_ == 0 || m_mode_ == DETECT_MODE_ALWAYS_DETECT || m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
+    if (trackingFace.empty() || detection_index_ % detection_interval_ == 0 || m_mode_ == DETECT_MODE_ALWAYS_DETECT ||
+        m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
         image.SetPreviewSize(track_preview_size_);
         inspirecv::Image image_detect = image.ExecutePreviewImageProcessing(true);
 
@@ -469,4 +484,17 @@ std::string FaceTrackModule::ChoiceMultiLevelDetectModel(const int32_t pixel_siz
 bool FaceTrackModule::IsDetectModeLandmark() const {
     return m_detect_mode_landmark_;
 }
+
+void FaceTrackModule::SetTrackModeSmoothRatio(float value) {
+    m_track_mode_smooth_ratio_ = value;
+}
+
+void FaceTrackModule::SetTrackModeNumSmoothCacheFrame(int value) {
+    m_track_mode_num_smooth_cache_frame_ = value;
+}
+
+void FaceTrackModule::SetTrackModeDetectInterval(int value) {
+    detection_interval_ = value;
+}
+
 }  // namespace inspire
