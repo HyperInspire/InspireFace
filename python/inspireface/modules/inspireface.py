@@ -395,7 +395,7 @@ class InspireFaceSession(object):
             logger.error(f"Set track mode num smooth cache frame error: {ret}")
 
     def set_track_model_detect_interval(self, num=20):
-        ret = HFSessionSetTrackModelDetectInterval(self._sess, num)
+        ret = HFSessionSetTrackModeDetectInterval(self._sess, num)
         if ret != 0:
             logger.error(f"Set track model detect interval error: {ret}")
 
