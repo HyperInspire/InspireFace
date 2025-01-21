@@ -335,6 +335,20 @@ class InspireFaceSession(object):
             return infos
         else:
             return []
+        
+    def get_face_five_key_points(self, single_face: FaceInformation):
+        num_landmarks = 5
+        landmarks_array = (HPoint2f * num_landmarks)()
+        ret = HFGetFaceFiveKeyPointsFromFaceToken(single_face._token, landmarks_array, num_landmarks)
+        if ret != 0:
+            logger.error(f"An error occurred obtaining a dense landmark for a single face: {ret}")
+
+        landmark = []
+        for point in landmarks_array:
+            landmark.append(point.x)
+            landmark.append(point.y)
+
+        return np.asarray(landmark).reshape(-1, 2)
 
     def get_face_dense_landmark(self, single_face: FaceInformation):
         num_landmarks = HInt32()

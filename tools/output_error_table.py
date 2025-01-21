@@ -76,8 +76,14 @@ def process_header(header_path, output_path):
     # Parse and calculate the error codes from the header content
     parsed_error_codes = parse_and_calculate_error_codes(header_content)
 
+    md_table = """# Error Feedback Codes
+
+During the use of InspireFace, some error feedback codes may be generated. Here is a table of error feedback codes.
+
+"""
+
     # Prepare the Markdown table header
-    md_table = " | Index | Name | Code | Comment | \n"
+    md_table += " | Index | Name | Code | Comment | \n"
     md_table += " | --- | --- | --- | --- | \n"
 
     # Fill the Markdown table with parsed error codes
