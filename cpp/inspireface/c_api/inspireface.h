@@ -485,7 +485,7 @@ HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeNumSmoothCacheFrame(HFSess
  * @param num The detect interval value.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModelDetectInterval(HFSession session, HInt32 num);
+HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num);
 
 /**
  * @brief Run face tracking in the session.
@@ -702,13 +702,15 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceSearchThresholdSetting(float th
 HYPER_CAPI_EXPORT extern HResult HFFaceComparison(HFFaceFeature feature1, HFFaceFeature feature2, HPFloat result);
 
 /**
- * @brief Get the recommended cosine threshold.
+ * @brief Get recommended cosine threshold from loaded resource.
+ *  Use it to determine face similarity. Note: it's just a reference and may not be optimal for your task.
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFGetRecommendedCosineThreshold(HPFloat threshold);
 
 /**
  * @brief Convert cosine similarity to percentage similarity.
+ *  This is a nonlinear transformation function. You can adjust curve parameters to map the similarity distribution you need.
  * @note The conversion parameters are primarily read from the Resource file configuration, as different models
  *       have different conversion parameters. The parameters provided in the Resource file are only reference
  *       values. If they do not meet your specific use case requirements, you can implement your own conversion
