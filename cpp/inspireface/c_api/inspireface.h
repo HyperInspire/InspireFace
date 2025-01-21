@@ -64,7 +64,7 @@ typedef enum HFRotation {
  * Defines the structure for image data stream.
  */
 typedef struct HFImageData {
-    uint8_t *data;         ///< Pointer to the image data stream.
+    HPUInt8 data;          ///< Pointer to the image data stream.
     HInt32 width;          ///< Width of the image.
     HInt32 height;         ///< Height of the image.
     HFImageFormat format;  ///< Format of the image, indicating the data stream format to be parsed.
@@ -81,6 +81,45 @@ typedef struct HFImageData {
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, HFImageStream *handle);
+
+/**
+ * @brief Create an empty image stream instance.
+ *
+ * This function is used to create an instance of a data buffer stream with the given image data.
+ *
+ * @param handle Pointer to the stream handle that will be returned.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamEmpty(HFImageStream *handle);
+
+/**
+ * @brief Set the buffer of the image stream.
+ *
+ * @param handle Pointer to the stream handle.
+ * @param buffer Pointer to the buffer.
+ * @param width Width of the image.
+ * @param height Height of the image.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetBuffer(HFImageStream handle, HPUInt8 buffer, HInt32 width, HInt32 height);
+
+/**
+ * @brief Set the rotation of the image stream.
+ *
+ * @param handle Pointer to the stream handle.
+ * @param rotation Rotation angle of the image.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetRotation(HFImageStream handle, HFRotation rotation);
+
+/**
+ * @brief Set the format of the image stream.
+ *
+ * @param handle Pointer to the stream handle.
+ * @param format Format of the image.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetFormat(HFImageStream handle, HFImageFormat format);
 
 /**
  * @brief Release the instantiated DataBuffer object.
@@ -238,6 +277,15 @@ HYPER_CAPI_EXPORT extern HResult HFTerminateInspireFace();
  * */
 HYPER_CAPI_EXPORT extern HResult HFQueryInspireFaceLaunchStatus(HInt32 *status);
 
+/************************************************************************
+ * Extended Interface Based on Third-party Hardware Devices
+ *
+ * According to different manufacturers' devices, manufacturers typically perform deep customization and optimization, such as neural network
+ * inference computation, geometric image acceleration computation, and deeply customized device interfaces, etc. These types of functionalities are
+ * usually difficult to abstract, so they are placed in extension module APIs, involving hybrid computing, heterogeneous computing, multi-device
+ * computing, and other features.
+ ************************************************************************/
+
 /**
  * @brief Set the rockchip dma heap path
  * By default, we have already configured the DMA Heap address used by RGA on RK devices.
@@ -254,6 +302,21 @@ HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareRockchipDmaHeapPath(HPath
  * @return HResult indicating the success or failure of the operation.
  * */
 HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path);
+
+/**
+ * @brief Set the Apple CoreML model path. In normal circumstances, manual modification is not needed.
+ * @param path The path to the apple coreml model
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HString path);
+
+/**
+ * @brief Query the Apple CoreML model path. After executing HFLaunchInspireFace, it's typically your input filename plus the suffix '.mlmodelc', for
+ * example: Pikachu and Pikachu.mlmodelc
+ * @param path Query the apple coreml model path
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareAppleCoreMLModelPath(HString path);
 
 /************************************************************************
  * FaceSession
@@ -396,6 +459,33 @@ HYPER_CAPI_EXPORT extern HResult HFSessionSetFilterMinimumFacePixelSize(HFSessio
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFSessionSetFaceDetectThreshold(HFSession session, HFloat threshold);
+
+/**
+ * @brief Set the track mode smooth ratio in the session. default value is  0.025
+ *
+ * @param session Handle to the session.
+ * @param ratio The smooth ratio value.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeSmoothRatio(HFSession session, HFloat ratio);
+
+/**
+ * @brief Set the track mode num smooth cache frame in the session. default value is 15
+ *
+ * @param session Handle to the session.
+ * @param num The num smooth cache frame value.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeNumSmoothCacheFrame(HFSession session, HInt32 num);
+
+/**
+ * @brief Set the track model detect interval in the session. default value is 20
+ *
+ * @param session Handle to the session.
+ * @param num The detect interval value.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num);
 
 /**
  * @brief Run face tracking in the session.
@@ -598,14 +688,67 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceSearchThresholdSetting(float th
 
 /**
  * @brief Perform a one-to-one comparison of two face features.
+ *  Result is a cosine similarity score, not a percentage similarity.
  *
  * @param session Handle to the session.
  * @param feature1 The first face feature for comparison.
  * @param feature2 The second face feature for comparison.
  * @param result Pointer to the floating-point value where the comparison result will be stored.
+ *               The result is a cosine similarity score, not a percentage similarity.
+ *               The score ranges from -1 to 1, where 1 indicates identical features,
+ *               0 indicates orthogonal features, and -1 indicates opposite features.
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFFaceComparison(HFFaceFeature feature1, HFFaceFeature feature2, HPFloat result);
+
+/**
+ * @brief Get recommended cosine threshold from loaded resource.
+ *  Use it to determine face similarity. Note: it's just a reference and may not be optimal for your task.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFGetRecommendedCosineThreshold(HPFloat threshold);
+
+/**
+ * @brief Convert cosine similarity to percentage similarity.
+ *  This is a nonlinear transformation function. You can adjust curve parameters to map the similarity distribution you need.
+ * @note The conversion parameters are primarily read from the Resource file configuration, as different models
+ *       have different conversion parameters. The parameters provided in the Resource file are only reference
+ *       values. If they do not meet your specific use case requirements, you can implement your own conversion
+ *       function.
+ * @param similarity The cosine similarity score.
+ * @param result Pointer to the floating-point value where the percentage similarity will be stored.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFCosineSimilarityConvertToPercentage(HFloat similarity, HPFloat result);
+
+/**
+ * @brief Similarity converter configuration.
+ */
+typedef struct HFSimilarityConverterConfig {
+    HFloat threshold;    ///< If you think that the threshold for judging the same person using cosine is some value such as 0.42,
+                         // you need to convert him to a percentage of 0.6(pass), you can modify it.
+    HFloat middleScore;  ///< Cosine threshold converted to a percentage reference value,
+                         // usually set 0.6 or 0.5, greater than it indicates similar, pass
+    HFloat steepness;    ///< Steepness of the curve, usually set 8.0
+    HFloat outputMin;    ///< Minimum value of output range, usually set 0.01
+    HFloat outputMax;    ///< Maximum value of output range, usually set 1.0
+} HFSimilarityConverterConfig, *PHFSimilarityConverterConfig;
+
+/**
+ * @brief Update the similarity converter configuration.
+ * @note The default configuration is loaded from the resource file during initialization.
+ *       This function allows you to override those default settings if needed.
+ * @param config The new similarity converter configuration to apply.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFUpdateCosineSimilarityConverter(HFSimilarityConverterConfig config);
+
+/**
+ * @brief Get the similarity converter configuration.
+ * @param config Pointer to the similarity converter configuration to be filled.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFGetCosineSimilarityConverter(PHFSimilarityConverterConfig config);
 
 /**
  * @brief Get the length of the face feature.

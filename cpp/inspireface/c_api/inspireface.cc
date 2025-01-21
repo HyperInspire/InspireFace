@@ -10,6 +10,7 @@
 #include "feature_hub/feature_hub_db.h"
 #include "initialization_module/launch.h"
 #include "initialization_module/resource_manage.h"
+#include "recognition_module/similarity_converter.h"
 
 using namespace inspire;
 
@@ -63,6 +64,74 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, HFImageS
     // Record the creation of this stream in the ResourceManager
     RESOURCE_MANAGE->createStream((long)*handle);
 
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamEmpty(HFImageStream *handle) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    auto stream = new HF_CameraStream();
+    *handle = (HFImageStream)stream;
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetBuffer(HFImageStream handle, HPUInt8 buffer, HInt32 width, HInt32 height) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    ((HF_CameraStream *)handle)->impl.SetDataBuffer(buffer, width, height);
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetRotation(HFImageStream handle, HFRotation rotation) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    switch (rotation) {
+        case HF_CAMERA_ROTATION_90:
+            ((HF_CameraStream *)handle)->impl.SetRotationMode(inspirecv::ROTATION_90);
+            break;
+        case HF_CAMERA_ROTATION_180:
+            ((HF_CameraStream *)handle)->impl.SetRotationMode(inspirecv::ROTATION_180);
+            break;
+        case HF_CAMERA_ROTATION_270:
+            ((HF_CameraStream *)handle)->impl.SetRotationMode(inspirecv::ROTATION_270);
+            break;
+        default:
+            ((HF_CameraStream *)handle)->impl.SetRotationMode(inspirecv::ROTATION_0);
+            break;
+    }
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFImageStreamSetFormat(HFImageStream handle, HFImageFormat format) {
+    if (handle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    switch (format) {
+        case HF_STREAM_RGB:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::RGB);
+            break;
+        case HF_STREAM_BGR:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::BGR);
+            break;
+        case HF_STREAM_RGBA:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::RGBA);
+            break;
+        case HF_STREAM_BGRA:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::BGRA);
+            break;
+        case HF_STREAM_YUV_NV12:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::NV12);
+            break;
+        case HF_STREAM_YUV_NV21:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::NV21);
+            break;
+        default:
+            return HERR_INVALID_IMAGE_STREAM_PARAM;  // Assume there's a return code for unsupported
+                                                     // formats
+    }
     return HSUCCEED;
 }
 
@@ -372,6 +441,16 @@ HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path) {
     return HSUCCEED;
 }
 
+HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HString path) {
+    // TODO: Implement this function
+    return HSUCCEED;
+}
+
+HResult HFQueryExpansiveHardwareAppleCoreMLModelPath(HString path) {
+    // TODO: Implement this function
+    return HSUCCEED;
+}
+
 HResult HFFeatureHubDataEnable(HFFeatureHubConfiguration configuration) {
     inspire::DatabaseConfiguration param;
     if (configuration.primaryKeyMode != HF_PK_AUTO_INCREMENT && configuration.primaryKeyMode != HF_PK_MANUAL_INPUT) {
@@ -445,6 +524,39 @@ HResult HFSessionSetFaceDetectThreshold(HFSession session, HFloat threshold) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
     return ctx->impl.SetFaceDetectThreshold(threshold);
+}
+
+HResult HFSessionSetTrackModeSmoothRatio(HFSession session, HFloat ratio) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetTrackModeSmoothRatio(ratio);
+}
+
+HResult HFSessionSetTrackModeNumSmoothCacheFrame(HFSession session, HInt32 num) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetTrackModeNumSmoothCacheFrame(num);
+}
+
+HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetTrackModeDetectInterval(num);
 }
 
 HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMultipleFaceData results) {
@@ -646,6 +758,49 @@ HResult HFFaceComparison(HFFaceFeature feature1, HFFaceFeature feature2, HPFloat
     *result = res;
 
     return ret;
+}
+
+HResult HFGetRecommendedCosineThreshold(HPFloat threshold) {
+    if (!INSPIRE_LAUNCH->isMLoad()) {
+        INSPIRE_LOGW("Inspireface is not launched, using default threshold 0.48");
+    }
+    *threshold = SIMILARITY_CONVERTER_GET_RECOMMENDED_COSINE_THRESHOLD();
+    return HSUCCEED;
+}
+
+HResult HFCosineSimilarityConvertToPercentage(HFloat similarity, HPFloat result) {
+    if (!INSPIRE_LAUNCH->isMLoad()) {
+        INSPIRE_LOGW("Inspireface is not launched.");
+    }
+    *result = SIMILARITY_CONVERTER_RUN(similarity);
+    return HSUCCEED;
+}
+
+HResult HFUpdateCosineSimilarityConverter(HFSimilarityConverterConfig config) {
+    if (!INSPIRE_LAUNCH->isMLoad()) {
+        INSPIRE_LOGW("Inspireface is not launched.");
+    }
+    inspire::SimilarityConverterConfig cfg;
+    cfg.threshold = config.threshold;
+    cfg.middleScore = config.middleScore;
+    cfg.steepness = config.steepness;
+    cfg.outputMin = config.outputMin;
+    cfg.outputMax = config.outputMax;
+    SIMILARITY_CONVERTER_UPDATE_CONFIG(cfg);
+    return HSUCCEED;
+}
+
+HResult HFGetCosineSimilarityConverter(PHFSimilarityConverterConfig config) {
+    if (!INSPIRE_LAUNCH->isMLoad()) {
+        INSPIRE_LOGW("Inspireface is not launched.");
+    }
+    inspire::SimilarityConverterConfig cfg = SIMILARITY_CONVERTER_GET_CONFIG();
+    config->threshold = cfg.threshold;
+    config->middleScore = cfg.middleScore;
+    config->steepness = cfg.steepness;
+    config->outputMin = cfg.outputMin;
+    config->outputMax = cfg.outputMax;
+    return HSUCCEED;
 }
 
 HResult HFGetFeatureLength(HPInt32 num) {

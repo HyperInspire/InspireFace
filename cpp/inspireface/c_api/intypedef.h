@@ -17,6 +17,7 @@ typedef float               HFloat;                          ///< Single-precisi
 typedef float*              HPFloat;                         ///< Pointer to Single-precision floating point.
 typedef double              HDouble;                          ///< Double-precision floating point.
 typedef	unsigned char		HUInt8;                           ///< Unsigned 8-bit integer.
+typedef unsigned char*      HPUInt8;                          ///< Pointer to unsigned 8-bit integer.
 typedef signed int			HInt32;                           ///< Signed 32-bit integer.
 typedef signed int			HOption;                          ///< Signed 32-bit integer option.
 typedef signed int*			HPInt32;                          ///< Pointer to signed 32-bit integer.

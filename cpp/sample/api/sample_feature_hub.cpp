@@ -1,5 +1,5 @@
 #include <iostream>
-#include "inspireface/c_api/inspireface.h"
+#include <inspireface.h>
 #include <vector>
 
 static std::vector<float> FT = {
