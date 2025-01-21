@@ -1,5 +1,5 @@
 #include <iostream>
-#include "inspireface/c_api/inspireface.h"
+#include <inspireface.h>
 
 int main() {
     std::string resourcePath = "test_res/pack/Pikachu";

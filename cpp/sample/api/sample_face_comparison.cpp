@@ -4,7 +4,7 @@
  */
 #include <iostream>
 #include <vector>
-#include "inspireface/c_api/inspireface.h"
+#include <inspireface.h>
 
 int main(int argc, char* argv[]) {
     // Check whether the number of parameters is correct
@@ -112,14 +112,14 @@ int main(int argc, char* argv[]) {
     }
 
     if (similarity > recommended_cosine_threshold) {
-        HFLogPrint(HF_LOG_INFO, "Cosine similarity %.3f is greater than recommended threshold %.3f - Same person", similarity,
-                   recommended_cosine_threshold);
+        HFLogPrint(HF_LOG_INFO, "%.3f > %.3f ✓ Same face", similarity, recommended_cosine_threshold);
     } else {
-        HFLogPrint(HF_LOG_WARN, "Cosine similarity %.3f is less than recommended threshold %.3f - Different person", similarity,
-                   recommended_cosine_threshold);
+        HFLogPrint(HF_LOG_WARN, "%.3f < %.3f ✗ Different face", similarity, recommended_cosine_threshold);
     }
+    HFLogPrint(HF_LOG_INFO, "Similarity score: %.3f", similarity);
 
-    HFLogPrint(HF_LOG_INFO, "Similarity: %f", similarity);
+    // Convert cosine similarity to percentage similarity.
+    // Note: conversion parameters are not optimal and should be adjusted based on your specific use case.
     HFloat percentage;
     ret = HFCosineSimilarityConvertToPercentage(similarity, &percentage);
     if (ret != HSUCCEED) {
