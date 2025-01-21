@@ -395,4 +395,19 @@ int32_t FaceSession::SetTrackFaceMinimumSize(int32_t minSize) {
     return HSUCCEED;
 }
 
+int32_t FaceSession::SetTrackModeSmoothRatio(float value) {
+    m_face_track_->SetTrackModeSmoothRatio(value);
+    return HSUCCEED;
+}
+
+int32_t FaceSession::SetTrackModeNumSmoothCacheFrame(int value) {
+    m_face_track_->SetTrackModeNumSmoothCacheFrame(value);
+    return HSUCCEED;
+}
+
+int32_t FaceSession::SetTrackModeDetectInterval(int value) {
+    m_face_track_->SetTrackModeDetectInterval(value);
+    return HSUCCEED;
+}
+
 }  // namespace inspire

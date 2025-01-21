@@ -492,6 +492,37 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetFaceDetectThreshold)(JNIEnv *env,
         INSPIRE_LOGE("Failed to set face detect threshold, error code: %d", result);
     }
 }
+
+JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackModeSmoothRatio)(JNIEnv *env, jobject thiz, jobject session, jfloat ratio) {
+    jclass sessionClass = env->GetObjectClass(session);
+    jfieldID sessionHandleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, sessionHandleField);
+    auto result = HFSessionSetTrackModeSmoothRatio((HFSession)sessionHandle, ratio);
+    if (result != HSUCCEED) {
+        INSPIRE_LOGE("Failed to set track mode smooth ratio, error code: %d", result);
+    }
+}
+
+JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackModeNumSmoothCacheFrame)(JNIEnv *env, jobject thiz, jobject session, jint num) {
+    jclass sessionClass = env->GetObjectClass(session);
+    jfieldID sessionHandleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, sessionHandleField);
+    auto result = HFSessionSetTrackModeNumSmoothCacheFrame((HFSession)sessionHandle, num);
+    if (result != HSUCCEED) {
+        INSPIRE_LOGE("Failed to set track mode num smooth cache frame, error code: %d", result);
+    }
+}
+
+JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackModeDetectInterval)(JNIEnv *env, jobject thiz, jobject session, jint interval) {
+    jclass sessionClass = env->GetObjectClass(session);
+    jfieldID sessionHandleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, sessionHandleField);
+    auto result = HFSessionSetTrackModeDetectInterval((HFSession)sessionHandle, interval);
+    if (result != HSUCCEED) {
+        INSPIRE_LOGE("Failed to set track mode detect interval, error code: %d", result);
+    }
+}
+
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubDataEnable)(JNIEnv *env, jobject thiz, jobject configuration) {
     jclass configClass = env->GetObjectClass(configuration);
 
@@ -814,6 +845,53 @@ JNIEXPORT jint INSPIRE_FACE_JNI(InspireFace_GetFeatureLength)(JNIEnv *env, jobje
     HInt32 length;
     auto result = HFGetFeatureLength(&length);
     return length;
+}
+
+JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_UpdateCosineSimilarityConverter)(JNIEnv *env, jobject thiz, jobject config) {
+    jclass configClass = env->GetObjectClass(config);
+    jfieldID thresholdField = env->GetFieldID(configClass, "threshold", "F");
+    jfieldID middleScoreField = env->GetFieldID(configClass, "middleScore", "F");
+    jfieldID steepnessField = env->GetFieldID(configClass, "steepness", "F");
+    jfieldID outputMinField = env->GetFieldID(configClass, "outputMin", "F");
+    jfieldID outputMaxField = env->GetFieldID(configClass, "outputMax", "F");
+
+    HFSimilarityConverterConfig converterConfig;
+    converterConfig.threshold = env->GetFloatField(config, thresholdField);
+    converterConfig.middleScore = env->GetFloatField(config, middleScoreField);
+    converterConfig.steepness = env->GetFloatField(config, steepnessField);
+    converterConfig.outputMin = env->GetFloatField(config, outputMinField);
+    converterConfig.outputMax = env->GetFloatField(config, outputMaxField);
+    HFUpdateCosineSimilarityConverter(converterConfig);
+}
+
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetCosineSimilarityConverter)(JNIEnv *env, jobject thiz) {
+    HFSimilarityConverterConfig converterConfig;
+    HFGetCosineSimilarityConverter(&converterConfig);
+    jclass configClass = env->FindClass("com/insightface/sdk/inspireface/base/SimilarityConverterConfig");
+    jmethodID constructor = env->GetMethodID(configClass, "<init>", "()V");
+    jobject configObj = env->NewObject(configClass, constructor);
+
+    // Get field IDs
+    jfieldID thresholdField = env->GetFieldID(configClass, "threshold", "F");
+    jfieldID middleScoreField = env->GetFieldID(configClass, "middleScore", "F");
+    jfieldID steepnessField = env->GetFieldID(configClass, "steepness", "F");
+    jfieldID outputMinField = env->GetFieldID(configClass, "outputMin", "F");
+    jfieldID outputMaxField = env->GetFieldID(configClass, "outputMax", "F");
+
+    // Set fields
+    env->SetFloatField(configObj, thresholdField, converterConfig.threshold);
+    env->SetFloatField(configObj, middleScoreField, converterConfig.middleScore);
+    env->SetFloatField(configObj, steepnessField, converterConfig.steepness);
+    env->SetFloatField(configObj, outputMinField, converterConfig.outputMin);
+    env->SetFloatField(configObj, outputMaxField, converterConfig.outputMax);
+
+    return configObj;
+}
+
+JNIEXPORT jfloat INSPIRE_FACE_JNI(InspireFace_CosineSimilarityConvertToPercentage)(JNIEnv *env, jobject thiz, jfloat similarity) {
+    HFloat result;
+    HFCosineSimilarityConvertToPercentage(similarity, &result);
+    return result;
 }
 
 JNIEXPORT jfloat INSPIRE_FACE_JNI(InspireFace_FaceComparison)(JNIEnv *env, jobject thiz, jobject feature1, jobject feature2) {
