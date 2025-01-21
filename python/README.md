@@ -13,11 +13,21 @@ pip install inspireface
 
 ## Setup Library
 
+#### Copy the compiled dynamic library
+
 You need to compile the dynamic linking library in the main project and then place it in **inspireface/modules/core/SYSTEM/CORE_ARCH/**.
 
 ```Bash
 # copy or link
 cp YOUR_BUILD_DIR/libInspireFace.so inspireface/modules/core/SYSTEM/CORE_ARCH/
+```
+
+#### Install
+
+Run the command to install: 
+
+```
+python setup.py install
 ```
 
 ## Require
@@ -38,14 +48,11 @@ You can easily call the api to implement a number of functions:
 import cv2
 import inspireface as isf
 
-# Step 1: Initialize the SDK and load the algorithm resource files.
-resource_path = "pack/Pikachu"
-ret = isf.launch(resource_path)
-assert ret, "Launch failure. Please ensure the resource path is correct."
-
 # Optional features, loaded during session creation based on the modules specified.
 opt = isf.HF_ENABLE_NONE
-session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_IMAGE)
+session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT)
+# Set detection confidence threshold
+session.set_detection_confidence_threshold(0.5)
 
 # Load the image using OpenCV.
 image = cv2.imread(image_path)
@@ -60,14 +67,30 @@ draw = image.copy()
 for idx, face in enumerate(faces):
     print(f"{'==' * 20}")
     print(f"idx: {idx}")
-    # Print detection confidence.
     print(f"detection confidence: {face.detection_confidence}")
     # Print Euler angles of the face.
     print(f"roll: {face.roll}, yaw: {face.yaw}, pitch: {face.pitch}")
-    # Draw bounding box around the detected face.
-    x1, y1, x2, y2 = face.location
-    cv2.rectangle(draw, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
+    # Get face bounding box
+    x1, y1, x2, y2 = face.location
+
+    # Calculate center, size, and angle
+    center = ((x1 + x2) / 2, (y1 + y2) / 2)
+    size = (x2 - x1, y2 - y1)
+    angle = face.roll
+
+    # Apply rotation to the bounding box corners
+    rect = ((center[0], center[1]), (size[0], size[1]), angle)
+    box = cv2.boxPoints(rect)
+    box = box.astype(int)
+
+    # Draw the rotated bounding box
+    cv2.drawContours(draw, [box], 0, (100, 180, 29), 2)
+
+    # Draw landmarks
+    lmk = session.get_face_dense_landmark(face)
+    for x, y in lmk.astype(int):
+        cv2.circle(draw, (x, y), 0, (220, 100, 0), 2)
 ```
 
 

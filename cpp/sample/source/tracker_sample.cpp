@@ -9,7 +9,7 @@ int main() {
     std::string expansion_path = "";
     INSPIRE_LAUNCH->Load("test_res/pack/Pikachu");
     auto archive = INSPIRE_LAUNCH->getMArchive();
-    auto mode = inspire::DetectModuleMode::DETECT_MODE_LIGHT_TRACK;
+    auto mode = inspire::DetectModuleMode::DETECT_MODE_ALWAYS_DETECT;
     FaceTrackModule tracker(mode, 10, 20, 320, -1);
     tracker.Configuration(archive, expansion_path);
 

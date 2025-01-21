@@ -26,15 +26,17 @@ public:
         pose_euler_angle_.resize(3);
         keyPointFive.resize(5);
         face_action_ = std::make_shared<FaceActionPredictor>(10);
+        num_of_dense_landmark_ = num_landmark;
     }
 
-    void SetLandmark(const std::vector<inspirecv::Point2f> &lmk, bool update_rect = true, bool update_matrix = true, float h = 0.06f, int n = 5) {
-        if (lmk.size() != landmark_.size()) {
-            INSPIRE_LOGW("The SetLandmark function displays an exception indicating that the lmk number does not match");
-            return;
-        }
+    void SetLandmark(const std::vector<inspirecv::Point2f> &lmk, bool update_rect = true, bool update_matrix = true, float h = 0.06f, int n = 5,
+                     int num_of_lmk = 106 * 2) {
+        // if (lmk.size() != landmark_.size()) {
+        //     INSPIRE_LOGW("The SetLandmark function displays an exception indicating that the lmk number does not match");
+        //     return;
+        // }
         std::copy(lmk.begin(), lmk.end(), landmark_.begin());
-        DynamicSmoothParamUpdate(landmark_, landmark_smooth_aux_, 106 * 2, h, n);
+        DynamicSmoothParamUpdate(landmark_, landmark_smooth_aux_, num_of_lmk, h, n);
         // std::cout << "smooth ratio: " << h << " num smooth cache frame: " << n << std::endl;
 
         // cv::Vec3d euler_angle;
@@ -201,6 +203,8 @@ public:
     inspirecv::Rect2i bbox_;
     inspirecv::Vec3f euler_angle_;
     std::vector<float> pose_euler_angle_;
+
+    int num_of_dense_landmark_;
 
     float align_mse_{};
 

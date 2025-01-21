@@ -1,3 +1,5 @@
+# Error Feedback Codes
+During the use of InspireFace, some error feedback codes may be generated. Here is a table of error feedback codes.
  | Index | Name | Code | Comment | 
  | --- | --- | --- | --- | 
  | 1 | HSUCCEED | 0 | Success | 
