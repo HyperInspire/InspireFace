@@ -405,8 +405,8 @@ int32_t FaceSession::SetTrackModeNumSmoothCacheFrame(int value) {
     return HSUCCEED;
 }
 
-int32_t FaceSession::SetTrackModelDetectInterval(int value) {
-    m_face_track_->SetTrackModelDetectInterval(value);
+int32_t FaceSession::SetTrackModeDetectInterval(int value) {
+    m_face_track_->SetTrackModeDetectInterval(value);
     return HSUCCEED;
 }
 

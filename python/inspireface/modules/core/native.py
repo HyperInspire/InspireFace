@@ -1415,10 +1415,10 @@ if _libs[_LIBRARY_FILENAME].has("HFSessionSetTrackModeNumSmoothCacheFrame", "cde
     HFSessionSetTrackModeNumSmoothCacheFrame.restype = HResult
 
 # /Users/tunm/work/InspireFace/cpp/inspireface/c_api/inspireface.h: 488
-if _libs[_LIBRARY_FILENAME].has("HFSessionSetTrackModelDetectInterval", "cdecl"):
-    HFSessionSetTrackModelDetectInterval = _libs[_LIBRARY_FILENAME].get("HFSessionSetTrackModelDetectInterval", "cdecl")
-    HFSessionSetTrackModelDetectInterval.argtypes = [HFSession, HInt32]
-    HFSessionSetTrackModelDetectInterval.restype = HResult
+if _libs[_LIBRARY_FILENAME].has("HFSessionSetTrackModeDetectInterval", "cdecl"):
+    HFSessionSetTrackModeDetectInterval = _libs[_LIBRARY_FILENAME].get("HFSessionSetTrackModeDetectInterval", "cdecl")
+    HFSessionSetTrackModeDetectInterval.argtypes = [HFSession, HInt32]
+    HFSessionSetTrackModeDetectInterval.restype = HResult
 
 # /Users/tunm/work/InspireFace/cpp/inspireface/c_api/inspireface.h: 498
 if _libs[_LIBRARY_FILENAME].has("HFExecuteFaceTrack", "cdecl"):
