@@ -200,7 +200,8 @@ private:
     int m_dynamic_detection_input_level_ = -1;    ///< Detector size class for dynamic input.
 
     float m_crop_extensive_ratio_ = 1.8f;  ///< Crop extensive ratio
-    int m_crop_extensive_size_ = 96;       ///< Crop extensive size
+    // float m_crop_extensive_ratio_ = 1.5f;  ///< Crop extensive ratio
+    int m_crop_extensive_size_ = 96;  ///< Crop extensive size
 
     DetectModuleMode m_mode_;  ///< Detect mode
 
