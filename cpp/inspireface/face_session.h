@@ -332,7 +332,7 @@ public:
      * @param value The detect interval value
      * @return int32_t Status code of the operation.
      * */
-    int32_t SetTrackModelDetectInterval(int value);
+    int32_t SetTrackModeDetectInterval(int value);
 
 private:
     // Private member variables

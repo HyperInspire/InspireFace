@@ -144,12 +144,12 @@ private:
 
 public:
     /**
-     * @brief Fix detect threshold
+     * @brief Set the detect threshold
      * */
     void SetDetectThreshold(float value);
 
     /**
-     * @brief Fix detect threshold
+     * @brief Set the minimum face size
      * */
     void SetMinimumFacePxSize(float value);
 
@@ -160,19 +160,22 @@ public:
     bool IsDetectModeLandmark() const;
 
     /**
-     * @brief Fix detect threshold
-     * */
+     * @brief Sets the smoothing ratio for landmark tracking
+     * @param value Smoothing ratio between 0 and 1, smaller values mean stronger smoothing
+     */
     void SetTrackModeSmoothRatio(float value);
 
     /**
-     * @brief Fix detect threshold
-     * */
+     * @brief Set the number of smooth cache frame
+     * @param value Number of frames to cache for smoothing
+     */
     void SetTrackModeNumSmoothCacheFrame(int value);
 
     /**
-     * @brief Fix detect interval
-     * */
-    void SetTrackModelDetectInterval(int value);
+     * @brief Set the detect interval
+     * @param value Interval between detections
+     */
+    void SetTrackModeDetectInterval(int value);
 
 public:
     std::vector<FaceObjectInternal> trackingFace;  ///< Vector of FaceObjects currently being tracked.

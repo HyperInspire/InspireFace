@@ -493,7 +493,7 @@ void FaceTrackModule::SetTrackModeNumSmoothCacheFrame(int value) {
     m_track_mode_num_smooth_cache_frame_ = value;
 }
 
-void FaceTrackModule::SetTrackModelDetectInterval(int value) {
+void FaceTrackModule::SetTrackModeDetectInterval(int value) {
     detection_interval_ = value;
 }
 
