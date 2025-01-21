@@ -619,6 +619,11 @@ def launch(model_name: str = "Pikachu", resource_path: str = None) -> bool:
             return False
     return True
 
+def pull_latest_model(model_name: str = "Pikachu") -> str:
+    sm = ResourceManager()
+    resource_path = sm.get_model(model_name, re_download=True)
+    return resource_path
+
 def reload(model_name: str = "Pikachu", resource_path: str = None) -> bool:
     if resource_path is None:
         sm = ResourceManager()
