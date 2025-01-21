@@ -20,6 +20,7 @@ import com.insightface.sdk.inspireface.base.Point2f;
 import com.insightface.sdk.inspireface.base.RGBLivenessConfidence;
 import com.insightface.sdk.inspireface.base.SearchTopKResults;
 import com.insightface.sdk.inspireface.base.Session;
+import com.insightface.sdk.inspireface.base.SimilarityConverterConfig;
 import com.insightface.sdk.inspireface.base.TypeDefine;
 import com.insightface.sdk.inspireface.utils.SDKUtils;
 
@@ -215,6 +216,27 @@ public class InspireFace extends TypeDefine {
     public static native void SetFaceDetectThreshold(Session session, float threshold);
 
     /**
+     * Set track mode smooth ratio, default value is 0.025
+     * @param session Session object
+     * @param ratio Smooth ratio
+     */
+    public static native void SetTrackModeSmoothRatio(Session session, float ratio);
+
+    /**
+     * Set track mode num smooth cache frame, default value is 15
+     * @param session Session object
+     * @param num Num smooth cache frame
+     */
+    public static native void SetTrackModeNumSmoothCacheFrame(Session session, int num);
+
+    /**
+     * Set track mode detect interval, default value is 20
+     * @param session Session object
+     * @param interval Detect interval
+     */
+    public static native void SetTrackModeDetectInterval(Session session, int interval);
+
+    /**
      * Enable feature hub data
      * @param configuration FeatureHubConfiguration object
      * @return true if success, false otherwise
@@ -287,6 +309,26 @@ public class InspireFace extends TypeDefine {
      * @return Feature length, default is 512
      */
     public static native int GetFeatureLength();
+
+
+    /**
+     * Get cosine similarity converter
+     * @return SimilarityConverterConfig object
+     */
+    public static native SimilarityConverterConfig GetCosineSimilarityConverter();
+
+    /**
+     * Update cosine similarity converter
+     * @param config SimilarityConverterConfig object
+     */
+    public static native void UpdateCosineSimilarityConverter(SimilarityConverterConfig config);
+
+    /**
+     * Convert cosine similarity to percentage
+     * @param similarity Cosine similarity
+     * @return Percentage similarity
+     */
+    public static native float CosineSimilarityConvertToPercentage(float similarity);
 
     /**
      * Face comparison

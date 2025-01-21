@@ -548,7 +548,7 @@ HResult HFSessionSetTrackModeNumSmoothCacheFrame(HFSession session, HInt32 num) 
     return ctx->impl.SetTrackModeNumSmoothCacheFrame(num);
 }
 
-HResult HFSessionSetTrackModelDetectInterval(HFSession session, HInt32 num) {
+HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
