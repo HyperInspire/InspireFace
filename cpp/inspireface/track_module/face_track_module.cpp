@@ -73,7 +73,7 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
     // If it is a detection state, calculate the affine transformation matrix
     if (face.TrackingState() == ISF_DETECT) {
         COST_TIME_SIMPLE(GetRectSquare);
-        inspirecv::Rect2i rect_square = face.GetRectSquare(0.0);
+        inspirecv::Rect2i rect_square = face.GetRectSquare(0);
 
         std::vector<inspirecv::Point2f> rect_pts = rect_square.As<float>().ToFourVertices();
         inspirecv::TransformMatrix rotation_mode_affine = image.GetAffineMatrix();
@@ -108,6 +108,7 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
         auto affine_extensive = face.getTransMatrixExtensive();
         auto pre_crop = image.ExecuteImageAffineProcessing(affine_extensive, m_crop_extensive_size_, m_crop_extensive_size_);
         auto res = (*m_face_quality_)(pre_crop);
+
         auto affine_extensive_inv = affine_extensive.GetInverse();
         std::vector<inspirecv::Point2f> lmk_extensive = ApplyTransformToPoints(res.lmk, affine_extensive_inv);
         res.lmk = lmk_extensive;
@@ -186,22 +187,21 @@ bool FaceTrackModule::TrackFace(inspirecv::InspireImageProcess &image, FaceObjec
                 // INSPIRE_LOGD("Extensive Affine Cost %f", extensive_cost_time.GetCostTimeUpdate());
             }
         }
-        // Replace the landmark with the high-quality landmark
-        landmark_back[FaceLandmarkAdapt::LEFT_EYE_CENTER] = face.high_result.lmk[0];
-        landmark_back[FaceLandmarkAdapt::RIGHT_EYE_CENTER] = face.high_result.lmk[1];
-        landmark_back[FaceLandmarkAdapt::NOSE_CORNER] = face.high_result.lmk[2];
-        landmark_back[FaceLandmarkAdapt::MOUTH_LEFT_CORNER] = face.high_result.lmk[3];
-        landmark_back[FaceLandmarkAdapt::MOUTH_RIGHT_CORNER] = face.high_result.lmk[4];
+        // Add five key points to landmark_back
+        for (int i = 0; i < 5; i++) {
+            landmark_back.push_back(face.high_result.lmk[i]);
+        }
         // Update face key points
-        face.SetLandmark(landmark_back, true, true, m_track_mode_smooth_ratio_, m_track_mode_num_smooth_cache_frame_);
+        face.SetLandmark(landmark_back, true, true, m_track_mode_smooth_ratio_, m_track_mode_num_smooth_cache_frame_,
+                         (FaceLandmarkAdapt::NUM_OF_LANDMARK + 10) * 2);
         // Get the smoothed landmark
         auto &landmark_smooth = face.landmark_smooth_aux_.back();
         // Update the face key points
-        face.high_result.lmk[0] = landmark_smooth[FaceLandmarkAdapt::LEFT_EYE_CENTER];
-        face.high_result.lmk[1] = landmark_smooth[FaceLandmarkAdapt::RIGHT_EYE_CENTER];
-        face.high_result.lmk[2] = landmark_smooth[FaceLandmarkAdapt::NOSE_CORNER];
-        face.high_result.lmk[3] = landmark_smooth[FaceLandmarkAdapt::MOUTH_LEFT_CORNER];
-        face.high_result.lmk[4] = landmark_smooth[FaceLandmarkAdapt::MOUTH_RIGHT_CORNER];
+        face.high_result.lmk[0] = landmark_smooth[FaceLandmarkAdapt::NUM_OF_LANDMARK + 0];
+        face.high_result.lmk[1] = landmark_smooth[FaceLandmarkAdapt::NUM_OF_LANDMARK + 1];
+        face.high_result.lmk[2] = landmark_smooth[FaceLandmarkAdapt::NUM_OF_LANDMARK + 2];
+        face.high_result.lmk[3] = landmark_smooth[FaceLandmarkAdapt::NUM_OF_LANDMARK + 3];
+        face.high_result.lmk[4] = landmark_smooth[FaceLandmarkAdapt::NUM_OF_LANDMARK + 4];
     }
 
     // If tracking status, update the confidence level
@@ -315,7 +315,7 @@ void FaceTrackModule::DetectFace(const inspirecv::Image &input, float scale) {
         std::vector<STrack> output_stracks = m_TbD_tracker_->update(objects);
         for (const auto &st_track : output_stracks) {
             inspirecv::Rect<int> rect = inspirecv::Rect<int>(st_track.tlwh[0], st_track.tlwh[1], st_track.tlwh[2], st_track.tlwh[3]);
-            FaceObjectInternal faceinfo(st_track.track_id, rect, FaceLandmarkAdapt::NUM_OF_LANDMARK);
+            FaceObjectInternal faceinfo(st_track.track_id, rect, FaceLandmarkAdapt::NUM_OF_LANDMARK + 10);
             faceinfo.detect_bbox_ = rect.As<int>();
             candidate_faces_.push_back(faceinfo);
         }
@@ -336,7 +336,7 @@ void FaceTrackModule::DetectFace(const inspirecv::Image &input, float scale) {
                 tracking_idx_ = tracking_idx_ + 1;
             }
 
-            FaceObjectInternal faceinfo(tracking_idx_, bbox[i], FaceLandmarkAdapt::NUM_OF_LANDMARK);
+            FaceObjectInternal faceinfo(tracking_idx_, bbox[i], FaceLandmarkAdapt::NUM_OF_LANDMARK + 10);
             faceinfo.detect_bbox_ = bbox[i];
             faceinfo.SetConfidence(boxes[i].score);
 
