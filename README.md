@@ -14,6 +14,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
+**`2025-01-21`** Update all models to t3 and add tool to convert cosine similarity to percentage.
+
 **`2025-01-08`** Support inference on Rockchip devices **RK3566/RK3568** NPU.
 
 **`2024-12-25`** Add support for optional **RKRGA** image acceleration processing on Rockchip devices.

@@ -384,6 +384,21 @@ class InspireFaceSession(object):
         if ret != 0:
             logger.error(f"Set filter minimum face pixel size error: {ret}")
 
+    def set_track_mode_smooth_ratio(self, ratio=0.025):
+        ret = HFSessionSetTrackModeSmoothRatio(self._sess, ratio)
+        if ret != 0:
+            logger.error(f"Set track mode smooth ratio error: {ret}")
+
+    def set_track_mode_num_smooth_cache_frame(self, num=15):
+        ret = HFSessionSetTrackModeNumSmoothCacheFrame(self._sess, num)
+        if ret != 0:
+            logger.error(f"Set track mode num smooth cache frame error: {ret}")
+
+    def set_track_model_detect_interval(self, num=20):
+        ret = HFSessionSetTrackModelDetectInterval(self._sess, num)
+        if ret != 0:
+            logger.error(f"Set track model detect interval error: {ret}")
+
     def face_pipeline(self, image, faces: List[FaceInformation], exec_param) -> List[FaceExtended]:
         """
         Processes detected faces to extract additional attributes based on the provided execution parameters.
@@ -999,6 +1014,52 @@ def view_table_in_terminal():
     if ret != 0:
         logger.error(f"Failed to view DB: {ret}")
 
+def get_recommended_cosine_threshold() -> float:
+    """
+    Retrieves the recommended cosine threshold.
+    """
+    threshold = HFloat()
+    HFGetRecommendedCosineThreshold(threshold)
+    return float(threshold.value)
+
+def get_similarity_converter_config() -> dict:
+    """
+    Retrieves the similarity converter configuration.
+    """
+    config = HFSimilarityConverterConfig()
+    ret = HFGetCosineSimilarityConverter(PHFSimilarityConverterConfig(config))
+    if ret != 0:
+        logger.error(f"Failed to get cosine similarity converter config: {ret}")
+    cfg = { 
+        "threshold": config.threshold,
+        "middleScore": config.middleScore,
+        "steepness": config.steepness,
+        "outputMin": config.outputMin,
+        "outputMax": config.outputMax
+    }
+    return cfg
+
+def set_similarity_converter_config(cfg: dict):
+    """
+    Sets the similarity converter configuration.
+    """
+    config = HFSimilarityConverterConfig()
+    config.threshold = cfg["threshold"]
+    config.middleScore = cfg["middleScore"]
+    config.steepness = cfg["steepness"]
+    config.outputMin = cfg["outputMin"]
+    config.outputMax = cfg["outputMax"]
+    HFUpdateCosineSimilarityConverter(config)
+
+def cosine_similarity_convert_to_percentage(similarity: float) -> float:
+    """
+    Converts a cosine similarity score to a percentage similarity score.
+    """
+    result = HFloat()
+    ret = HFCosineSimilarityConvertToPercentage(HFloat(similarity), HPFloat(result))
+    if ret != 0:
+        logger.error(f"Failed to convert cosine similarity to percentage: {ret}")
+    return float(result.value)
 
 def version() -> str:
     """
@@ -1033,3 +1094,4 @@ def show_system_resource_statistics():
     Displays the system resource information.
     """
     HFDeBugShowResourceStatistics()
+

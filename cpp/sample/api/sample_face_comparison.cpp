@@ -104,7 +104,29 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
+    HFloat recommended_cosine_threshold;
+    ret = HFGetRecommendedCosineThreshold(&recommended_cosine_threshold);
+    if (ret != HSUCCEED) {
+        HFLogPrint(HF_LOG_ERROR, "Get recommended cosine threshold error: %d", ret);
+        return ret;
+    }
+
+    if (similarity > recommended_cosine_threshold) {
+        HFLogPrint(HF_LOG_INFO, "Cosine similarity %.3f is greater than recommended threshold %.3f - Same person", similarity,
+                   recommended_cosine_threshold);
+    } else {
+        HFLogPrint(HF_LOG_WARN, "Cosine similarity %.3f is less than recommended threshold %.3f - Different person", similarity,
+                   recommended_cosine_threshold);
+    }
+
     HFLogPrint(HF_LOG_INFO, "Similarity: %f", similarity);
+    HFloat percentage;
+    ret = HFCosineSimilarityConvertToPercentage(similarity, &percentage);
+    if (ret != HSUCCEED) {
+        HFLogPrint(HF_LOG_ERROR, "Convert similarity to percentage error: %d", ret);
+        return ret;
+    }
+    HFLogPrint(HF_LOG_INFO, "Percentage similarity: %f", percentage);
 
     // The memory must be freed at the end of the program
     ret = HFReleaseInspireFaceSession(session);

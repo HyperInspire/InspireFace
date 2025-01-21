@@ -10,6 +10,7 @@
 #include "feature_hub/feature_hub_db.h"
 #include "initialization_module/launch.h"
 #include "initialization_module/resource_manage.h"
+#include "recognition_module/similarity_converter.h"
 
 using namespace inspire;
 
@@ -757,6 +758,49 @@ HResult HFFaceComparison(HFFaceFeature feature1, HFFaceFeature feature2, HPFloat
     *result = res;
 
     return ret;
+}
+
+HResult HFGetRecommendedCosineThreshold(HPFloat threshold) {
+    if (!INSPIRE_LAUNCH->isMLoad()) {
+        INSPIRE_LOGW("Inspireface is not launched, using default threshold 0.48");
+    }
+    *threshold = SIMILARITY_CONVERTER_GET_RECOMMENDED_COSINE_THRESHOLD();
+    return HSUCCEED;
+}
+
+HResult HFCosineSimilarityConvertToPercentage(HFloat similarity, HPFloat result) {
+    if (!INSPIRE_LAUNCH->isMLoad()) {
+        INSPIRE_LOGW("Inspireface is not launched.");
+    }
+    *result = SIMILARITY_CONVERTER_RUN(similarity);
+    return HSUCCEED;
+}
+
+HResult HFUpdateCosineSimilarityConverter(HFSimilarityConverterConfig config) {
+    if (!INSPIRE_LAUNCH->isMLoad()) {
+        INSPIRE_LOGW("Inspireface is not launched.");
+    }
+    inspire::SimilarityConverterConfig cfg;
+    cfg.threshold = config.threshold;
+    cfg.middleScore = config.middleScore;
+    cfg.steepness = config.steepness;
+    cfg.outputMin = config.outputMin;
+    cfg.outputMax = config.outputMax;
+    SIMILARITY_CONVERTER_UPDATE_CONFIG(cfg);
+    return HSUCCEED;
+}
+
+HResult HFGetCosineSimilarityConverter(PHFSimilarityConverterConfig config) {
+    if (!INSPIRE_LAUNCH->isMLoad()) {
+        INSPIRE_LOGW("Inspireface is not launched.");
+    }
+    inspire::SimilarityConverterConfig cfg = SIMILARITY_CONVERTER_GET_CONFIG();
+    config->threshold = cfg.threshold;
+    config->middleScore = cfg.middleScore;
+    config->steepness = cfg.steepness;
+    config->outputMin = cfg.outputMin;
+    config->outputMax = cfg.outputMax;
+    return HSUCCEED;
 }
 
 HResult HFGetFeatureLength(HPInt32 num) {
