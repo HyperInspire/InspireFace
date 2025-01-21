@@ -479,7 +479,7 @@ HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeSmoothRatio(HFSession sess
 HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeNumSmoothCacheFrame(HFSession session, HInt32 num);
 
 /**
- * @brief Set the track model detect interval in the session. default value is 1
+ * @brief Set the track model detect interval in the session. default value is 20
  *
  * @param session Handle to the session.
  * @param num The detect interval value.
@@ -688,14 +688,65 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceSearchThresholdSetting(float th
 
 /**
  * @brief Perform a one-to-one comparison of two face features.
+ *  Result is a cosine similarity score, not a percentage similarity.
  *
  * @param session Handle to the session.
  * @param feature1 The first face feature for comparison.
  * @param feature2 The second face feature for comparison.
  * @param result Pointer to the floating-point value where the comparison result will be stored.
+ *               The result is a cosine similarity score, not a percentage similarity.
+ *               The score ranges from -1 to 1, where 1 indicates identical features,
+ *               0 indicates orthogonal features, and -1 indicates opposite features.
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFFaceComparison(HFFaceFeature feature1, HFFaceFeature feature2, HPFloat result);
+
+/**
+ * @brief Get the recommended cosine threshold.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFGetRecommendedCosineThreshold(HPFloat threshold);
+
+/**
+ * @brief Convert cosine similarity to percentage similarity.
+ * @note The conversion parameters are primarily read from the Resource file configuration, as different models
+ *       have different conversion parameters. The parameters provided in the Resource file are only reference
+ *       values. If they do not meet your specific use case requirements, you can implement your own conversion
+ *       function.
+ * @param similarity The cosine similarity score.
+ * @param result Pointer to the floating-point value where the percentage similarity will be stored.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFCosineSimilarityConvertToPercentage(HFloat similarity, HPFloat result);
+
+/**
+ * @brief Similarity converter configuration.
+ */
+typedef struct HFSimilarityConverterConfig {
+    HFloat threshold;    ///< If you think that the threshold for judging the same person using cosine is some value such as 0.42,
+                         // you need to convert him to a percentage of 0.6(pass), you can modify it.
+    HFloat middleScore;  ///< Cosine threshold converted to a percentage reference value,
+                         // usually set 0.6 or 0.5, greater than it indicates similar, pass
+    HFloat steepness;    ///< Steepness of the curve, usually set 8.0
+    HFloat outputMin;    ///< Minimum value of output range, usually set 0.01
+    HFloat outputMax;    ///< Maximum value of output range, usually set 1.0
+} HFSimilarityConverterConfig, *PHFSimilarityConverterConfig;
+
+/**
+ * @brief Update the similarity converter configuration.
+ * @note The default configuration is loaded from the resource file during initialization.
+ *       This function allows you to override those default settings if needed.
+ * @param config The new similarity converter configuration to apply.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFUpdateCosineSimilarityConverter(HFSimilarityConverterConfig config);
+
+/**
+ * @brief Get the similarity converter configuration.
+ * @param config Pointer to the similarity converter configuration to be filled.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFGetCosineSimilarityConverter(PHFSimilarityConverterConfig config);
 
 /**
  * @brief Get the length of the face feature.
