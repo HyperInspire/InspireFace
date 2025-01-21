@@ -40,6 +40,7 @@ if (ISF_ENABLE_RKNN)
             # For rknpu2 with armv7, we recommend linking static libraries by default
             set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${RK_PLATFORM}/librknn_api/${ISF_RK_COMPILER_TYPE}/librknnmrt.a)
             set(RKNN_LINKED ${ISF_RKNN_API_LIB})
+            set(RKNN_USE_STATIC_LIBS TRUE)
         endif()
     endif()
 
@@ -206,3 +207,17 @@ endif ()
 if (ISF_RK_COMPILER_TYPE STREQUAL "aarch64")
     install(FILES ${ISF_RKNN_API_LIB}/librknnrt.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
 endif()
+
+if (NOT ISF_BUILD_SHARED_LIBS)
+    if(MNN_BUILD_SHARED_LIBS)
+        install(FILES ${CMAKE_BINARY_DIR}/3rdparty/MNN/libMNN.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+    else()
+        install(FILES ${CMAKE_BINARY_DIR}/3rdparty/MNN/libMNN.a DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+    endif()
+    if(RKNN_USE_STATIC_LIBS)
+        # To be added: The compilation of the RK series needs to be added
+        install(FILES ${ISF_RKNN_API_LIB} DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+    endif()
+    
+endif()
+
