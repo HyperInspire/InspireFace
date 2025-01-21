@@ -16,6 +16,10 @@ def generate_color(id):
     Returns:
         tuple: A tuple representing the color in BGR format.
     """
+    # Handle invalid ID (-1)
+    if id < 0:
+        return (128, 128, 128)  # Return gray color for invalid ID
+        
     max_id = 50  # Number of unique colors
     id = id % max_id
 
@@ -118,6 +122,10 @@ def case_face_tracker_from_video(source, show, out):
             lmk = session.get_face_dense_landmark(face)
             for x, y in lmk.astype(int):
                 cv2.circle(frame, (x, y), 0, color, 4)
+
+            five_key_points = session.get_face_five_key_points(face)
+            for x, y in five_key_points.astype(int):
+                cv2.circle(frame, (x, y), 0, (255-color[0], 255-color[1], 255-color[2]), 6)
 
             # Draw track ID at the top of the bounding box
             text = f"ID: {face.track_id}"

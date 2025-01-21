@@ -10,6 +10,7 @@
 #include "../face_info/face_object_internal.h"
 #include "herror.h"
 #include "data_type.h"
+#include "track_module/landmark/all.h"
 
 // Define the namespace "inspire" for encapsulation
 namespace inspire {
@@ -100,7 +101,7 @@ inline HyperFaceData INSPIRE_API FaceObjectInternalToHyperFaceData(const FaceObj
     if (!obj.landmark_smooth_aux_.empty()) {
         data.densityLandmarkEnable = 1;
         const auto& lmk = obj.landmark_smooth_aux_.back();
-        for (size_t i = 0; i < lmk.size(); i++) {
+        for (size_t i = 0; i < FaceLandmarkAdapt::NUM_OF_LANDMARK; i++) {
             data.densityLandmark[i].x = lmk[i].GetX();
             data.densityLandmark[i].y = lmk[i].GetY();
         }
