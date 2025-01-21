@@ -556,7 +556,7 @@ HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num) {
     if (ctx == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
-    return ctx->impl.SetTrackModelDetectInterval(num);
+    return ctx->impl.SetTrackModeDetectInterval(num);
 }
 
 HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMultipleFaceData results) {
