@@ -554,6 +554,20 @@ HYPER_CAPI_EXPORT extern HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasic
  */
 HYPER_CAPI_EXPORT extern HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasicToken singleFace, HPoint2f *landmarks, HInt32 num);
 
+/**
+ * @brief Set the enable cost spend
+ * @param value The enable cost spend value
+ * @return int32_t Status code of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSessionSetEnableTrackCostSpend(HFSession session, bool value);
+
+/**
+ * @brief Print the cost spend
+ * @param session The session handle
+ * @return int32_t Status code of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSessionPrintTrackCostSpend(HFSession session);
+
 /************************************************************************
  * Face Recognition
  ************************************************************************/
