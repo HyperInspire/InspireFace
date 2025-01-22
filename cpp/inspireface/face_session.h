@@ -8,6 +8,7 @@
 #define INSPIRE_FACE_CONTEXT_H
 
 #include <memory>
+#include <inspirecv/inspirecv.h>
 #include "data_type.h"
 #include "track_module/face_track_module.h"
 #include "pipeline_module/face_pipeline_module.h"
@@ -334,6 +335,18 @@ public:
      * */
     int32_t SetTrackModeDetectInterval(int value);
 
+    /**
+     * @brief Set the enable cost spend
+     * @param value The enable cost spend value
+     * @return int32_t Status code of the operation.
+     * */
+    int32_t SetEnableTrackCostSpend(bool value);
+
+    /**
+     * @brief Print the cost spend
+     * */
+    void PrintTrackCostSpend();
+
 private:
     // Private member variables
     CustomPipelineParameter m_parameter_;  ///< Stores custom parameters for the pipeline
@@ -375,6 +388,11 @@ private:
     float m_face_feature_norm_;                          ///< Cache for face feature norm
 
     std::mutex m_mtx_;  ///< Mutex for thread safety.
+
+    // cost spend
+    std::shared_ptr<inspirecv::TimeSpend> m_face_track_cost_;
+
+    bool m_enable_track_cost_spend_ = false;
 };
 
 }  // namespace inspire

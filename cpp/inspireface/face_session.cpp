@@ -43,12 +43,16 @@ int32_t FaceSession::Configuration(DetectModuleMode detect_mode, int32_t max_det
 
     m_face_pipeline_ = std::make_shared<FacePipelineModule>(INSPIRE_LAUNCH->getMArchive(), param.enable_liveness, param.enable_mask_detect,
                                                             param.enable_face_attribute, param.enable_interaction_liveness);
+    m_face_track_cost_ = std::make_shared<inspirecv::TimeSpend>("FaceTrack");
 
     return HSUCCEED;
 }
 
 int32_t FaceSession::FaceDetectAndTrack(inspirecv::InspireImageProcess& process) {
     std::lock_guard<std::mutex> lock(m_mtx_);
+    if (m_enable_track_cost_spend_) {
+        m_face_track_cost_->Start();
+    }
     m_detect_cache_.clear();
     m_face_basic_data_cache_.clear();
     m_face_rects_cache_.clear();
@@ -107,7 +111,9 @@ int32_t FaceSession::FaceDetectAndTrack(inspirecv::InspireImageProcess& process)
         basic.dataSize = m_detect_cache_[i].size();
         basic.data = m_detect_cache_[i].data();
     }
-
+    if (m_enable_track_cost_spend_) {
+        m_face_track_cost_->Stop();
+    }
     //    LOGD("Track COST: %f", m_face_track_->GetTrackTotalUseTime());
     return HSUCCEED;
 }
@@ -408,6 +414,18 @@ int32_t FaceSession::SetTrackModeNumSmoothCacheFrame(int value) {
 int32_t FaceSession::SetTrackModeDetectInterval(int value) {
     m_face_track_->SetTrackModeDetectInterval(value);
     return HSUCCEED;
+}
+
+int32_t FaceSession::SetEnableTrackCostSpend(bool value) {
+    m_enable_track_cost_spend_ = value;
+    m_face_track_cost_->Reset();
+    return HSUCCEED;
+}
+
+void FaceSession::PrintTrackCostSpend() {
+    if (m_enable_track_cost_spend_) {
+        INSPIRE_LOGI("%s", m_face_track_cost_->Report().c_str());
+    }
 }
 
 }  // namespace inspire

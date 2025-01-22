@@ -37,6 +37,11 @@ set_target_properties(FaceTrackSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
+add_executable(FaceTrackBenchmarkSample api/sample_face_track_benchmark.cpp)
+target_link_libraries(FaceTrackBenchmarkSample InspireFace ${ext})
+set_target_properties(FaceTrackBenchmarkSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
 
 # Examples of face recognition
 add_executable(FaceComparisonSample api/sample_face_comparison.cpp)
