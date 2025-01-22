@@ -649,6 +649,30 @@ HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasicToken singleFace, HPoint2
     return HSUCCEED;
 }
 
+HResult HFSessionSetEnableTrackCostSpend(HFSession session, bool value) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    ctx->impl.SetEnableTrackCostSpend(value);
+    return HSUCCEED;
+}
+
+HResult HFSessionPrintTrackCostSpend(HFSession session) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    ctx->impl.PrintTrackCostSpend();
+    return HSUCCEED;
+}
+
 HResult HFFeatureHubFaceSearchThresholdSetting(float threshold) {
     FEATURE_HUB_DB->SetRecognitionThreshold(threshold);
     return HSUCCEED;
