@@ -208,16 +208,18 @@ if (ISF_RK_COMPILER_TYPE STREQUAL "aarch64")
     install(FILES ${ISF_RKNN_API_LIB}/librknnrt.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
 endif()
 
-if (NOT ISF_BUILD_SHARED_LIBS)
-    if(MNN_BUILD_SHARED_LIBS)
-        install(FILES ${CMAKE_BINARY_DIR}/3rdparty/MNN/libMNN.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
-    else()
-        install(FILES ${CMAKE_BINARY_DIR}/3rdparty/MNN/libMNN.a DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+if (NOT IOS)
+    if (NOT ISF_BUILD_SHARED_LIBS)
+        if(MNN_BUILD_SHARED_LIBS)
+            install(FILES ${CMAKE_BINARY_DIR}/3rdparty/MNN/libMNN.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+        else()
+            install(FILES ${CMAKE_BINARY_DIR}/3rdparty/MNN/libMNN.a DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+        endif()
+        if(RKNN_USE_STATIC_LIBS)
+            # To be added: The compilation of the RK series needs to be added
+            install(FILES ${ISF_RKNN_API_LIB} DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+        endif()
+        
     endif()
-    if(RKNN_USE_STATIC_LIBS)
-        # To be added: The compilation of the RK series needs to be added
-        install(FILES ${ISF_RKNN_API_LIB} DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
-    endif()
-    
-endif()
 
+endif()
