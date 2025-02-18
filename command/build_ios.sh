@@ -152,3 +152,5 @@ cat <<EOF >$FRAMEWORK_DIR/Resources/Info.plist
 EOF
 
 echo "Framework $FRAMEWORK_NAME.framework has been created at $FRAMEWORK_DIR"
+
+cp -r $MACOS_CACHE/MNN.framework $BUILD_DIR/
