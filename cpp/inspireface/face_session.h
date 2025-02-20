@@ -340,7 +340,7 @@ public:
      * @param value The enable cost spend value
      * @return int32_t Status code of the operation.
      * */
-    int32_t SetEnableTrackCostSpend(bool value);
+    int32_t SetEnableTrackCostSpend(int value);
 
     /**
      * @brief Print the cost spend
@@ -392,7 +392,7 @@ private:
     // cost spend
     std::shared_ptr<inspirecv::TimeSpend> m_face_track_cost_;
 
-    bool m_enable_track_cost_spend_ = false;
+    int m_enable_track_cost_spend_ = 0;
 };
 
 }  // namespace inspire
