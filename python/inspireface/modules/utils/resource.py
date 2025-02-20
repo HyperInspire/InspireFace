@@ -3,6 +3,14 @@ import sys
 from pathlib import Path
 import urllib.request
 import ssl
+import hashlib
+
+def get_file_hash_sha256(file_path):
+    sha256 = hashlib.sha256()
+    with open(file_path, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b''):
+            sha256.update(chunk)
+    return sha256.hexdigest()
 
 class ResourceManager:
     def __init__(self):
@@ -19,11 +27,13 @@ class ResourceManager:
         self._MODEL_LIST = {
             "Pikachu": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu",
-                "filename": "Pikachu"
+                "filename": "Pikachu",
+                "md5": "f2983a2d884902229c1443fdc921b8e5f49cf2daba8a4f103cd127910dc9e7cd"
             },
             "Megatron": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron",
-                "filename": "Megatron"
+                "filename": "Megatron",
+                "md5": "28f2284c5e7cf53b0e152ff524a416c966ab21e724002643b1304aedc4af6b06"
             }
         }
 
@@ -44,10 +54,14 @@ class ResourceManager:
         model_info = self._MODEL_LIST[name]
         model_file = self.models_dir / model_info["filename"]
         downloading_flag = model_file.with_suffix('.downloading')
-
+        
         # Check if model exists and is complete
         if model_file.exists() and not downloading_flag.exists() and not re_download:
-            return str(model_file)
+            current_hash = get_file_hash_sha256(model_file)
+            if current_hash == model_info["md5"]:
+                return str(model_file)
+            else:
+                print(f"Model file hash mismatch for '{name}'. Re-downloading...")
 
         # Start download
         try:

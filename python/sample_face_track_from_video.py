@@ -138,7 +138,7 @@ def case_face_tracker_from_video(source, show, out):
 
         if show:
             cv2.imshow("Face Tracker", frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            if cv2.waitKey(25) & 0xFF == ord('q'):
                 break  # Exit loop if 'q' is pressed.
 
         if out:
