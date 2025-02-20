@@ -14,6 +14,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
+**`2025-02-20`** Upgrade the face landmark model.
+
 **`2025-01-21`** Update all models to t3 and add tool to convert cosine similarity to percentage.
 
 **`2025-01-08`** Support inference on Rockchip devices **RK3566/RK3568** NPU.
@@ -563,11 +565,11 @@ For different scenarios, we currently provide several Packs, each containing mul
 
 | Name | Supported Devices | Note | Last Update | Link |
 | --- | --- | --- | --- | --- |
-| Pikachu | CPU | Lightweight edge-side models | Jan 21, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu) |
-| Megatron | CPU, GPU | Mobile and server models | Jan 21, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron) |
-| Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | Jan 21, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
-| Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | Jan 21, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
-| Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | Jan 21, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) |
+| Pikachu | CPU | Lightweight edge-side models | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu) |
+| Megatron | CPU, GPU | Mobile and server models | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron) |
+| Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
+| Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
+| Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) |
 
 ## Acknowledgement
 

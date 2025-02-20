@@ -209,9 +209,9 @@ private:
 
     bool m_detect_mode_landmark_{true};  ///< Detect mode landmark
 
-    int m_track_mode_num_smooth_cache_frame_ = 15;  ///< Track mode number of smooth cache frame
+    int m_track_mode_num_smooth_cache_frame_ = 5;  ///< Track mode number of smooth cache frame
 
-    float m_track_mode_smooth_ratio_ = 0.025;  ///< Track mode smooth ratio
+    float m_track_mode_smooth_ratio_ = 0.05;  ///< Track mode smooth ratio
 };
 
 }  // namespace inspire
