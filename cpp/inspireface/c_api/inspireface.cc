@@ -649,7 +649,7 @@ HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasicToken singleFace, HPoint2
     return HSUCCEED;
 }
 
-HResult HFSessionSetEnableTrackCostSpend(HFSession session, bool value) {
+HResult HFSessionSetEnableTrackCostSpend(HFSession session, int value) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }

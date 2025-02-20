@@ -416,7 +416,7 @@ int32_t FaceSession::SetTrackModeDetectInterval(int value) {
     return HSUCCEED;
 }
 
-int32_t FaceSession::SetEnableTrackCostSpend(bool value) {
+int32_t FaceSession::SetEnableTrackCostSpend(int value) {
     m_enable_track_cost_spend_ = value;
     m_face_track_cost_->Reset();
     return HSUCCEED;

@@ -559,7 +559,7 @@ HYPER_CAPI_EXPORT extern HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasic
  * @param value The enable cost spend value
  * @return int32_t Status code of the operation.
  * */
-HYPER_CAPI_EXPORT extern HResult HFSessionSetEnableTrackCostSpend(HFSession session, bool value);
+HYPER_CAPI_EXPORT extern HResult HFSessionSetEnableTrackCostSpend(HFSession session, int value);
 
 /**
  * @brief Print the cost spend

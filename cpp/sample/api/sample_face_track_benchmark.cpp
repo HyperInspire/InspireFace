@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
     int loop = 100;
 
     // Enable the cost spend
-    HFSessionSetEnableTrackCostSpend(session, true);
+    HFSessionSetEnableTrackCostSpend(session, 1);
 
     // Execute HF_FaceContextRunFaceTrack captures face information in an image
     HFMultipleFaceData multipleFaceData = {0};
