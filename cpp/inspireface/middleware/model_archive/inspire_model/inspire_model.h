@@ -14,6 +14,18 @@
 
 namespace inspire {
 
+typedef enum {
+    InspireInferBackendAuto = 10,
+    InspireInferBackendCPU = 0,
+    InspireInferBackendRKNPU = 1,
+} InspireInferBackend;
+
+typedef enum {
+    InspireInferEngineMNN = 0,
+    InspireInferEngineRKNN = 1,
+    InspireInferEngineCoreML = 2,
+} InspireInferEngine;
+
 class INSPIRE_API InspireModel {
     CONFIGURABLE_SUPPORT
 public:
@@ -41,6 +53,10 @@ public:
                 modelType = InferenceHelper::kMnn;
             } else if (type == "RKNN") {
                 modelType = InferenceHelper::kRknn;
+            } else if (type == "COREML") {
+                modelType = InferenceHelper::kCoreML;
+                // Special handling, the binary model is not loaded by default
+                disableLoadModel = 1;
             }
         }
         if (node["infer_engine"]) {
@@ -49,22 +65,28 @@ public:
                 inferEngine = InferenceHelper::kMnn;
             } else if (type == "RKNN") {
                 inferEngine = InferenceHelper::kRknn;
+            } else if (type == "COREML") {
+                inferEngine = InferenceHelper::kCoreML;
             }
         }
         if (node["infer_device"]) {
             auto type = node["infer_device"].as<std::string>();
             if (type == "MNN") {
-                inferDevice = 0;
+                inferDevice = InspireInferEngineMNN;
             } else if (type == "RKNPU") {
-                inferDevice = 1;
+                inferDevice = InspireInferEngineRKNN;
+            } else if (type == "COREML") {
+                inferDevice = InspireInferEngineCoreML;
             }
         }
         if (node["infer_backend"]) {
             auto type = node["infer_backend"].as<std::string>();
             if (type == "CPU") {
-                inferBackend = 0;
+                inferBackend = InspireInferBackendCPU;
             } else if (type == "RKNPU") {
-                inferBackend = 1;
+                inferBackend = InspireInferBackendRKNPU;
+            } else if (type == "AUTO") {
+                inferBackend = InspireInferBackendAuto;
             }
         }
         return decode(node);
@@ -193,6 +215,7 @@ public:
     int inferEngine;
     int inferDevice;
     int inferBackend;
+    int disableLoadModel{0};
 
     char *buffer;
     size_t bufferSize;
