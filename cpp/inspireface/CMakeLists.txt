@@ -131,6 +131,19 @@ target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
 )
 
+if(ISF_ENABLE_APPLE_EXTENSION)
+    # link apple libs
+    find_library(FOUNDATION_LIBRARY Foundation)
+    find_library(COREML_LIBRARY CoreML)
+    find_library(ACCELERATE_LIBRARY Accelerate)
+    find_package(OpenCV REQUIRED)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${FOUNDATION_LIBRARY} ${COREML_LIBRARY} ${ACCELERATE_LIBRARY})
+
+    # Add objective-c files
+    set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/inference_helper/coreml/CoreMLAdapter.mm)
+
+endif()
+
 if (ANDROID)
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS} jnigraphics log)
 
@@ -150,6 +163,9 @@ elseif(IOS)
         "-framework CoreMedia"
         ${MNN_FRAMEWORK_PATH}
     )
+    if(ISF_ENABLE_APPLE_EXTENSION)
+        set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${ACCELERATE_LIBRARY})
+    endif()
     if(ISF_ENABLE_OPENCV)
         set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} "-framework opencv2")
     endif()
