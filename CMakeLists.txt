@@ -102,6 +102,12 @@ if(ISF_ENABLE_COST_TIME)
     add_definitions("-DISF_ENABLE_COST_TIME")
 endif()
 
+# Apple device dedicated expansion services, support for some models coreml reasoning and so on
+set(ISF_ENABLE_APPLE_EXTENSION OFF CACHE BOOL "Enable Apple device extension services, such as coreml, etc.")
+if(ISF_ENABLE_APPLE_EXTENSION)  
+    add_definitions("-DISF_ENABLE_APPLE_EXTENSION")
+endif()
+
 # Platform configuration
 option(ISF_BUILD_LINUX_ARM7 "Platform Armv7." OFF)
 option(ISF_BUILD_LINUX_AARCH64 "Platform Armv8." OFF)
@@ -307,6 +313,10 @@ if(ISF_ENABLE_OPENCV)
     message(STATUS "\t OpenCV: Enabled")
 else()
     message(STATUS "\t OpenCV: Disabled")
+endif()
+
+if(ISF_ENABLE_APPLE_EXTENSION)
+    message(STATUS "\t ISF_ENABLE_APPLE_EXTENSION: ${ISF_ENABLE_APPLE_EXTENSION}")
 endif()
 
 message(STATUS "\t CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
