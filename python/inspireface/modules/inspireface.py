@@ -633,6 +633,14 @@ def launch(model_name: str = "Pikachu", resource_path: str = None) -> bool:
             return False
     return True
 
+def set_expansive_pack_path(path: str):
+    path_c = String(bytes(path, encoding="utf8"))
+    ret = HFSetExpansiveHardwareAppleCoreMLModelPath(path_c)
+    if ret != 0:
+        logger.error(f"Set expansive pack path error: {ret}")
+        return False
+    return True
+
 def pull_latest_model(model_name: str = "Pikachu") -> str:
     sm = ResourceManager()
     resource_path = sm.get_model(model_name, re_download=True)
