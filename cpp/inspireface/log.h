@@ -145,12 +145,14 @@ public:
             printf(": ");
         }
 
-        // Set text color for different log levels
+        // Set text color for different log levels, but only if not on iOS
+#ifndef TARGET_OS_IOS
         if (level == ISF_LOG_ERROR || level == ISF_LOG_FATAL) {
             printf("\033[1;31m");  // Red color for errors and fatal issues
         } else if (level == ISF_LOG_WARN) {
             printf("\033[1;33m");  // Yellow color for warnings
         }
+#endif
 
         // Print the actual log message
         va_list args;
@@ -158,10 +160,12 @@ public:
         vprintf(format, args);
         va_end(args);
 
-        // Reset text color if needed
+        // Reset text color if needed, but only if not on iOS
+#ifndef TARGET_OS_IOS
         if (level == ISF_LOG_ERROR || level == ISF_LOG_WARN || level == ISF_LOG_FATAL) {
             printf("\033[0m");  // Reset color
         }
+#endif
 
         printf("\n");  // New line after log message
 
