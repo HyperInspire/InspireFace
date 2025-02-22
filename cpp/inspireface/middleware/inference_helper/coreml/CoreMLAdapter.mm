@@ -38,6 +38,7 @@ int32_t CoreMLAdapter::readFromFile(const std::string &modelPath) {
         NSLog(@"Error loading model: %@", error);
         return COREML_HFAIL;
     }
+    // printModelInfo();
     return COREML_HSUCCEED;
 }
 
@@ -95,16 +96,11 @@ std::vector<int> CoreMLAdapter::getInputShapeByName(const std::string &name) {
 }
 
 std::vector<int> CoreMLAdapter::getOutputShapeByName(const std::string &name) {
-    NSString *nsName = [NSString stringWithUTF8String:name.c_str()];
-    MLFeatureDescription *desc = pImpl->impl.model.modelDescription.outputDescriptionsByName[nsName];
-    if (desc.type != MLFeatureTypeMultiArray) {
-        return {};
+    if (m_outputShapes.find(name) != m_outputShapes.end()) {
+        return m_outputShapes[name];
     }
-    std::vector<int> shape;
-    for (NSNumber *dim in desc.multiArrayConstraint.shape) {
-        shape.push_back(dim.intValue);
-    }
-    return shape;
+
+    return {};
 }
 
 
@@ -112,7 +108,7 @@ void CoreMLAdapter::setInput(const char* inputName, const char* data) {
     NSString *nsInputName = [NSString stringWithUTF8String:inputName];
     MLFeatureDescription *desc = pImpl->impl.model.modelDescription.inputDescriptionsByName[nsInputName];
     if (desc.type != MLFeatureTypeMultiArray) {
-        NSLog(@"Input is not a MultiArray");
+        NSLog(@"Input %s is not a MultiArray", inputName);
         return;
     }
     
@@ -144,11 +140,11 @@ void CoreMLAdapter::setInput(const char* inputName, const char* data) {
 }
 
 
-void CoreMLAdapter::forward() {
+int32_t CoreMLAdapter::forward() {
     @autoreleasepool {
         if (!pImpl->impl.inputFeatures) {
             NSLog(@"Input features not set");
-            return;
+            return COREML_FORWARD_FAILED;
         }
         NSError *error = nil;
         pImpl->impl.outputFeatures = [pImpl->impl.model predictionFromFeatures:pImpl->impl.inputFeatures
@@ -156,7 +152,25 @@ void CoreMLAdapter::forward() {
                                                                         error:&error];
         if (error) {
             NSLog(@"Error in forward pass: %@", error);
+            return COREML_FORWARD_FAILED;
         }
+
+        m_outputShapes.clear();
+        for (NSString *outputName in [pImpl->impl.outputFeatures featureNames]) {
+            MLFeatureValue *value = [pImpl->impl.outputFeatures featureValueForName:outputName];
+            if (value.multiArrayValue) {
+                NSArray<NSNumber *> *shapeArray = value.multiArrayValue.shape;
+                std::vector<int> shapeVector;
+                
+                for (NSNumber *dim in shapeArray) {
+                    shapeVector.push_back([dim intValue]);
+                }
+                
+                std::string outputNameStr = [outputName UTF8String];
+                m_outputShapes[outputNameStr] = shapeVector;
+            }
+        }
+        return COREML_HSUCCEED;
     }
 }
 

@@ -14,6 +14,7 @@
 #include "../log.h"
 #include "model_archive/inspire_archive.h"
 #include "nexus_processor/image_processor.h"
+#include "../initialization_module/launch.h"
 
 namespace inspire {
 
@@ -79,6 +80,11 @@ public:
         INSPIRE_LOGW("You have forced the global use of MNN_CUDA as the neural network inference backend");
         m_nn_inference_->SetSpecialBackend(InferenceHelper::kMnnCuda);
 #endif
+
+#if defined(ISF_ENABLE_APPLE_EXTENSION)
+        m_nn_inference_->SetSpecialBackend(INSPIRE_LAUNCH->GetGlobalCoreMLInferenceMode());
+#endif
+
         m_output_tensor_info_list_.clear();
         std::vector<std::string> outputs_layers = getData<std::vector<std::string>>("outputs_layers");
         int tensor_type = getData<int>("input_tensor_type");
@@ -86,7 +92,23 @@ public:
         for (auto &name : outputs_layers) {
             m_output_tensor_info_list_.push_back(OutputTensorInfo(name, out_tensor_type));
         }
-        auto ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);
+        int32_t ret;
+        if (model.loadFilePath) {
+            auto extensionPath = INSPIRE_LAUNCH->GetExtensionPath();
+            if (extensionPath.empty()) {
+                INSPIRE_LOGE("Extension path is empty");
+                return InferenceHelper::kRetErr;
+            }
+            std::string filePath = extensionPath + "/" + model.fullname;
+            ret = m_nn_inference_->Initialize(filePath, m_input_tensor_info_list_, m_output_tensor_info_list_);
+        } else {
+            ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);
+        }
+        if (ret != InferenceHelper::kRetOk) {
+            INSPIRE_LOGE("NN Initialize fail");
+            return ret;
+        }
+
         if (ret != InferenceHelper::kRetOk) {
             INSPIRE_LOGE("NN Initialize fail");
             return ret;
