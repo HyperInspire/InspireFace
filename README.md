@@ -369,7 +369,6 @@ if (ret != HSUCCEED) {
     printf("Release session error: %lu\n", ret);
     return ret;
 }
-
 ```
 For more examples, you can refer to the `cpp/sample` sub-project located in the root directory. You can compile these sample executables by enabling the `ISF_BUILD_WITH_SAMPLE` option during the compilation process.
 
@@ -400,7 +399,6 @@ We provide a Python API that allows for more efficient use of the InspireFace li
 ln -s YOUR_BUILD_DIR/install/InspireFace/lib/libInspireFace.so python/inspireface/modules/core
 # Navigate to the sub-project directory
 cd python
-
 ```
 
 Import inspireface for a quick facial detection example:
@@ -547,7 +545,7 @@ The following Features and technologies are currently supported.
 | Index | Feature | Adaptation | Note |
 | -- | --- | --- | --- |
 | 1 | Face Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | SCRFD |
-| 2 | Facial Landmark Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | HyperLandmark |
+| 2 | Facial Landmark Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | HyperLandmarkv2 |
 | 3 | Face Recognition | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | ArcFace |
 | 4 | Face Tracking | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
 | 5 | Mask Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |

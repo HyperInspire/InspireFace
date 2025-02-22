@@ -56,7 +56,7 @@ public:
             } else if (type == "COREML") {
                 modelType = InferenceHelper::kCoreML;
                 // Special handling, the binary model is not loaded by default
-                disableLoadModel = 1;
+                loadFilePath = 1;
             }
         }
         if (node["infer_engine"]) {
@@ -215,7 +215,7 @@ public:
     int inferEngine;
     int inferDevice;
     int inferBackend;
-    int disableLoadModel{0};
+    int loadFilePath{0};
 
     char *buffer;
     size_t bufferSize;

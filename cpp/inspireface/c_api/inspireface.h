@@ -305,10 +305,11 @@ HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HSt
 
 /**
  * @brief Set the Apple CoreML model path. In normal circumstances, manual modification is not needed.
+ *      If you need to set the model path manually, you can call this API before HFLaunchInspireFace.
  * @param path The path to the apple coreml model
  * @return HResult indicating the success or failure of the operation.
  * */
-HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HString path);
+HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HPath path);
 
 /**
  * @brief Query the Apple CoreML model path. After executing HFLaunchInspireFace, it's typically your input filename plus the suffix '.mlmodelc', for
@@ -317,6 +318,22 @@ HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HStr
  * @return HResult indicating the success or failure of the operation.
  * */
 HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareAppleCoreMLModelPath(HString path);
+
+/**
+ * @brief Enum for Apple CoreML inference mode.
+ */
+typedef enum HFAppleCoreMLInferenceMode {
+    HF_APPLE_COREML_INFERENCE_MODE_CPU = 0,  ///< CPU Only.
+    HF_APPLE_COREML_INFERENCE_MODE_GPU = 1,  ///< GPU first.
+    HF_APPLE_COREML_INFERENCE_MODE_ANE = 2,  ///< Automatic selection, ANE first.
+} HFAppleCoreMLInferenceMode;
+
+/**
+ * @brief Set the Apple CoreML inference mode, must be called before HFLaunchInspireFace.
+ * @param mode The inference mode to be set.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode);
 
 /************************************************************************
  * FaceSession

@@ -54,11 +54,12 @@ public:
 
 private:
     std::unique_ptr<CoreMLAdapter> net_;
-    std::unique_ptr<MNN::Tensor> input_tensor_;
-    std::vector<std::unique_ptr<MNN::Tensor>> out_mat_list_;
     int32_t num_threads_;
 
     std::vector<std::string> input_names_;
+
+    /** Using MNN imageprocess to do Image Preprocessing */
+    std::unique_ptr<MNN::Tensor> input_tensor_;
 };
 
 #endif  // INFERENCE_HELPER_COREML_

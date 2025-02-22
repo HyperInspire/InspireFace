@@ -11,6 +11,7 @@
 #include "initialization_module/launch.h"
 #include "initialization_module/resource_manage.h"
 #include "recognition_module/similarity_converter.h"
+#include "middleware/inference_helper/inference_helper.h"
 
 using namespace inspire;
 
@@ -441,13 +442,25 @@ HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path) {
     return HSUCCEED;
 }
 
-HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HString path) {
-    // TODO: Implement this function
+HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HPath path) {
+    std::string modelPath(path);
+    INSPIRE_LAUNCH->SetExtensionPath(modelPath);
     return HSUCCEED;
 }
 
 HResult HFQueryExpansiveHardwareAppleCoreMLModelPath(HString path) {
-    // TODO: Implement this function
+    strcpy(path, INSPIRE_LAUNCH->GetExtensionPath().c_str());
+    return HSUCCEED;
+}
+
+HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode) {
+    if (mode == HF_APPLE_COREML_INFERENCE_MODE_CPU) {
+        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceHelper::kCoreMLCPU);
+    } else if (mode == HF_APPLE_COREML_INFERENCE_MODE_GPU) {
+        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceHelper::kCoreMLGPU);
+    } else if (mode == HF_APPLE_COREML_INFERENCE_MODE_ANE) {
+        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceHelper::kCoreMLANE);
+    }
     return HSUCCEED;
 }
 
