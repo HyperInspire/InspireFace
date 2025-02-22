@@ -92,6 +92,7 @@ During the use of InspireFace, some error feedback codes may be generated. Here 
 
     # Write the Markdown table to the output file
     with open(output_path, 'w', encoding='utf-8') as md_file:
+        print(md_table)
         md_file.write(md_table)
 
     click.echo(f"Markdown table of error codes has been written to {output_path}")
