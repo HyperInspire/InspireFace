@@ -84,6 +84,19 @@ set(CPP_YAML_INCLUDE ${ISF_THIRD_PARTY_DIR}/yaml-cpp/include)
 # archive
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/microtar/microtar.c)
 
+if(ISF_ENABLE_APPLE_EXTENSION)
+    # link apple libs
+    find_library(FOUNDATION_LIBRARY Foundation)
+    find_library(COREML_LIBRARY CoreML)
+    find_library(ACCELERATE_LIBRARY Accelerate)
+    find_package(OpenCV REQUIRED)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${FOUNDATION_LIBRARY} ${COREML_LIBRARY} ${ACCELERATE_LIBRARY})
+
+    # Add objective-c files
+    set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/inference_helper/coreml/CoreMLAdapter.mm)
+
+endif()
+
 # MNN
 link_directories(${MNN_LIBS})
 
@@ -131,19 +144,6 @@ target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
 )
 
-if(ISF_ENABLE_APPLE_EXTENSION)
-    # link apple libs
-    find_library(FOUNDATION_LIBRARY Foundation)
-    find_library(COREML_LIBRARY CoreML)
-    find_library(ACCELERATE_LIBRARY Accelerate)
-    find_package(OpenCV REQUIRED)
-    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${FOUNDATION_LIBRARY} ${COREML_LIBRARY} ${ACCELERATE_LIBRARY})
-
-    # Add objective-c files
-    set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/inference_helper/coreml/CoreMLAdapter.mm)
-
-endif()
-
 if (ANDROID)
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS} jnigraphics log)
 
@@ -176,7 +176,7 @@ else()
     set_target_properties(InspireFace PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
             ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
-            )
+    )
 endif()
 
 # Print Message

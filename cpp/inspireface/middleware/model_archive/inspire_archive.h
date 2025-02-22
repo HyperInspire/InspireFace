@@ -55,7 +55,7 @@ public:
             if (ret != 0) {
                 return ret;
             }
-            if (model.disableLoadModel) {
+            if (model.loadFilePath) {
                 // No model files are loaded, only configuration files are loaded for extension modules such as CoreML.
                 return SARC_SUCCESS;
             }

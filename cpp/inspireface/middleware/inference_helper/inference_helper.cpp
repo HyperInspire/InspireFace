@@ -72,6 +72,9 @@ limitations under the License.
 #ifdef INFERENCE_HELPER_ENABLE_RKNN2
 #include "inference_helper_rknn_adapter_nano.h"
 #endif
+#ifdef INFERENCE_HELPER_ENABLE_COREML
+#include "inference_helper_coreml.h"
+#endif
 
 /*** Macro ***/
 #define TAG "InferenceHelper"
@@ -215,6 +218,12 @@ InferenceHelper* InferenceHelper::Create(const InferenceHelper::HelperType helpe
         case kRknn:
             // PRINT("Use Rknn2\n");
             p = new InferenceHelperRknnAdapter();
+            break;
+#endif
+#ifdef INFERENCE_HELPER_ENABLE_COREML
+        case kCoreML:
+            // PRINT("Use CoreML\n");
+            p = new InferenceHelperCoreML();
             break;
 #endif
         default:

@@ -106,6 +106,7 @@ endif()
 set(ISF_ENABLE_APPLE_EXTENSION OFF CACHE BOOL "Enable Apple device extension services, such as coreml, etc.")
 if(ISF_ENABLE_APPLE_EXTENSION)  
     add_definitions("-DISF_ENABLE_APPLE_EXTENSION")
+    add_definitions("-DINFERENCE_HELPER_ENABLE_COREML")
 endif()
 
 # Platform configuration
@@ -250,12 +251,12 @@ elseif(DEFINED MNN_STATIC_PATH)
 elseif(IOS)
     message(Build iOS)
 
-elseif(DEFINED MNN_CUSTOM_SOURCE)
-    message("Using custom external MNN source path: ${MNN_CUSTOM_SOURCE}")
+elseif(DEFINED ISF_MNN_CUSTOM_SOURCE)
+    message("Using custom external MNN source path: ${ISF_MNN_CUSTOM_SOURCE}")
     # In particular, rknpu2 uses a lower version of mnn
     set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "Build MNN as a shared library")
-    add_subdirectory(${MNN_CUSTOM_SOURCE} EXCLUDE_FROM_ALL)
-    set(MNN_INCLUDE_DIRS "${MNN_CUSTOM_SOURCE}/include")
+    add_subdirectory(${ISF_MNN_CUSTOM_SOURCE} EXCLUDE_FROM_ALL)
+    set(MNN_INCLUDE_DIRS "${ISF_MNN_CUSTOM_SOURCE}/include")
     set(MNN_LIBS MNN)
     
 else ()

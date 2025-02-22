@@ -211,6 +211,9 @@ public:
     typedef enum {
         kDefaultCPU,
         kMnnCuda,
+        kCoreMLCPU,
+        kCoreMLGPU,
+        kCoreMLANE,
     } SpecialBackend;
 
     typedef enum {
