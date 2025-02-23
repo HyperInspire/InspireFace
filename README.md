@@ -451,6 +451,14 @@ InspireFaceExample/inspireface/libs
     └── libInspireFace.so
 ```
 
+You need to get the resource file from the release  [Release Page](https://github.com/HyperInspire/InspireFace/releases) and place it in the asset/inspireface in your android project:
+
+```
+asset/
+└── inspireface/
+    └── Pikachu
+```
+
 We provide a Java API for Android devices, which is implemented using Java Native Interface(JNI). 
 
 ```java
