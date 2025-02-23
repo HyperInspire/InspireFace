@@ -20,6 +20,26 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/information.h.in ${CM
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/python/version.txt)
 
+# Check that the 3rdparty folder exists
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty")
+    message(STATUS "3rdparty directory not found, cloning from github...")
+    
+    # Execute git clone and directly specify it in the current directory
+    execute_process(
+        COMMAND git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        RESULT_VARIABLE GIT_RESULT
+    )
+    
+    if(NOT GIT_RESULT EQUAL "0")
+        message(FATAL_ERROR "Failed to clone 3rdparty repository")
+    else()
+        message(STATUS "Successfully cloned 3rdparty repository")
+    endif()
+else()
+    message(STATUS "3rdparty directory already exists")
+endif()
+
 # Set the ISF_THIRD_PARTY_DIR variable to allow it to be set externally from the command line, or use the default path if it is not set
 set(ISF_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty" CACHE PATH "Path to the third-party libraries directory")
 

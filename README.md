@@ -6,7 +6,7 @@
 
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
 
-If you require further information on tracking development branches, CI/CD processes, or downloading pre-compiled libraries, please visit our [Development Repository](https://github.com/HyperInspire/InspireFace).
+If you require further information on tracking development branches, CI/CD processes, or downloading pre-compiled libraries, please visit our [development repository](https://github.com/HyperInspire/InspireFace).
 
 Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=InspireFace) for commercial support, including obtaining and integrating higher accuracy models, as well as custom development.
 
@@ -106,7 +106,7 @@ for model in ["Pikachu", "Megatron"]:
     inspireface.pull_latest_model(model)
 ```
 
-More examples can be found in the [python/](python/) directory.
+More examples can be found in the [python](python/) directory.
 
 ## Preparation
 ### Clone 3rdparty
@@ -386,7 +386,7 @@ pip install inspireface
 
 #### Python Native Sample
 
-We provide a Python API that allows for more efficient use of the InspireFace library. After compiling the dynamic link library, you need to either symlink or copy it to the `python/inspireface/modules/core` directory within the root directory. You can then start testing by navigating to the **[python/](python/)** directory. Your Python environment will need to have some dependencies installed:
+We provide a Python API that allows for more efficient use of the InspireFace library. After compiling the dynamic link library, you need to either symlink or copy it to the `python/inspireface/modules/core` directory within the root directory. You can then start testing by navigating to the **[python](python/)** directory. Your Python environment will need to have some dependencies installed:
 
 - python >= 3.7
 - opencv-python
@@ -396,7 +396,7 @@ We provide a Python API that allows for more efficient use of the InspireFace li
 - ctypes
 ```bash
 # Use a symbolic link
-ln -s YOUR_BUILD_DIR/install/InspireFace/lib/libInspireFace.so python/inspireface/modules/core
+ln -s YOUR_BUILD_DIR/install/InspireFace/lib/libInspireFace.so python/inspireface/modules/core/PLATFORM/ARCH/
 # Navigate to the sub-project directory
 cd python
 ```
@@ -441,7 +441,7 @@ In the project, more usage examples are provided:
 
 ### Java and Android platform API
 
-We have prepared an Android sample project. You can download library from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs directory` of the Android sample project. You can compile and run this project using Android Studio.
+We have prepared an Android sample project. You can download library from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs ` directory of the Android sample project. You can compile and run this project using Android Studio.
 
 ```bash
 InspireFaceExample/inspireface/libs
@@ -493,7 +493,7 @@ InspireFace.GlobalRelease();
 
 ## Test
 
-In the project, there is a subproject called cpp/test. To compile it, you need to enable the ISF_BUILD_WITH_TEST switch, which will allow you to compile executable programs for testing.
+In the project, there is a subproject called `cpp/test`. To compile it, you need to enable the **ISF_BUILD_WITH_TEST** switch, which will allow you to compile executable programs for testing.
 
 ```bash
 cmake -DISF_BUILD_WITH_TEST=ON ..
