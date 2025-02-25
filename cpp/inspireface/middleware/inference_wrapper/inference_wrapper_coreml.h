@@ -1,7 +1,6 @@
 #ifndef INFERENCE_WRAPPER_COREML_
 #define INFERENCE_WRAPPER_COREML_
 
-/* for general */
 #include <cstdint>
 #include <cmath>
 #include <string>
@@ -9,13 +8,10 @@
 #include <array>
 #include <memory>
 
-/* for CoreML */
 #include "coreml/CoreMLAdapter.h"
 
-/* for MNN ImageProcess */
 #include <MNN/ImageProcess.hpp>
 
-/* for My modules */
 #include "inference_wrapper.h"
 
 class InferenceWrapperCoreML : public InferenceWrapper {

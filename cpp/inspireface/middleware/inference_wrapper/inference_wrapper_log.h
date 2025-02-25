@@ -1,7 +1,6 @@
 #ifndef INFERENCE_WRAPPER_LOG_
 #define INFERENCE_WRAPPER_LOG_
 
-/* for general */
 #include <cstdint>
 #include <cmath>
 #include <string>
@@ -11,7 +10,7 @@
 #if defined(ANDROID) || defined(__ANDROID__)
 #define CV_COLOR_IS_RGB
 #include <android/log.h>
-#define INFERENCE_WRAPPER_LOG_NDK_TAG "HyperLPR3-Native-Inference"
+#define INFERENCE_WRAPPER_LOG_NDK_TAG "Inspireface-Native-Inference"
 #define INFERENCE_WRAPPER_LOG_PRINT_(...) __android_log_print(ANDROID_LOG_INFO, INFERENCE_WRAPPER_LOG_NDK_TAG, __VA_ARGS__)
 #else
 #define INFERENCE_WRAPPER_LOG_PRINT_(...) printf(__VA_ARGS__)
