@@ -22,7 +22,6 @@ namespace nexus {
  * The backend implementation is selected at compile time based on which acceleration options
  * are enabled. Only one backend will be active at runtime.
  */
-
 class ImageProcessor {
 public:
     static std::unique_ptr<ImageProcessor> Create();

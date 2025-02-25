@@ -8,23 +8,19 @@
 #include <algorithm>
 #include <chrono>
 
-/* for MNN */
 #include <MNN/ImageProcess.hpp>
 #include <MNN/Interpreter.hpp>
 #include <MNN/AutoTime.hpp>
 
-/* for My modules */
 #include "inference_wrapper_log.h"
 #include "inference_wrapper_mnn.h"
 #include "log.h"
-/*** Macro ***/
-#define TAG "InferenceWrapperMnn"
+#define TAG "InferenceWrapperMNN"
 #define PRINT(...) INFERENCE_WRAPPER_LOG_PRINT(TAG, __VA_ARGS__)
 #define PRINT_E(...) INFERENCE_WRAPPER_LOG_PRINT_E(TAG, __VA_ARGS__)
 
 using namespace inspire;
 
-/*** Function ***/
 InferenceWrapperMNN::InferenceWrapperMNN() {
     num_threads_ = 1;
 }
@@ -191,9 +187,6 @@ int32_t InferenceWrapperMNN::Finalize(void) {
 }
 
 int32_t InferenceWrapperMNN::PreProcess(const std::vector<InputTensorInfo>& input_tensor_info_list) {
-    //    for (auto &item: net_->getSessionInputAll(session_)) {
-    //        PRINT("sss: %s", item.first.c_str());
-    //    }
     for (const auto& input_tensor_info : input_tensor_info_list) {
         auto input_tensor = net_->getSessionInput(session_, input_tensor_info.name.c_str());
         if (input_tensor == nullptr) {
