@@ -9,9 +9,7 @@
 #include <array>
 #include <algorithm>
 #include <chrono>
-
 #include <MNN/ImageProcess.hpp>
-
 #include "inference_wrapper_log.h"
 #include "inference_wrapper_coreml.h"
 #include "log.h"

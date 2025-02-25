@@ -15,7 +15,6 @@
 #include <array>
 #include <memory>
 #include "inference_wrapper.h"
-
 #include "customized/rknn_adapter_nano.h"
 
 class InferenceWrapperRKNNAdapter : public InferenceWrapper {
