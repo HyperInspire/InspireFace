@@ -67,9 +67,9 @@ if (ISF_ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${RKNN_LINKED} dl)
     # InferenceHelp use RkNN
     if (ISF_RKNPU_MAJOR STREQUAL "rknpu1")
-        add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN")
+        add_definitions("-DINFERENCE_WRAPPER_ENABLE_RKNN")
     elseif(ISF_RKNPU_MAJOR STREQUAL "rknpu2")
-        add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN2")
+        add_definitions("-DINFERENCE_WRAPPER_ENABLE_RKNN2")
     endif()
     if (ISF_RK_COMPILER_TYPE STREQUAL "aarch64")
         set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknnrt)
@@ -93,7 +93,7 @@ if(ISF_ENABLE_APPLE_EXTENSION)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${FOUNDATION_LIBRARY} ${COREML_LIBRARY} ${ACCELERATE_LIBRARY})
 
     # Add objective-c files
-    set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/inference_helper/coreml/CoreMLAdapter.mm)
+    set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/inference_wrapper/coreml/CoreMLAdapter.mm)
 
 endif()
 
@@ -107,7 +107,7 @@ else()
     add_library(InspireFace STATIC ${SOURCE_FILES} $<TARGET_OBJECTS:inspirecv>)
 endif()
 
-target_compile_definitions(InspireFace PUBLIC INFERENCE_HELPER_ENABLE_MNN)
+target_compile_definitions(InspireFace PUBLIC INFERENCE_WRAPPER_ENABLE_MNN)
 target_compile_definitions(InspireFace PUBLIC FEATURE_BLOCK_ENABLE_OPENCV)
 
 # Include files
@@ -204,7 +204,7 @@ endif ()
 install(TARGETS InspireFace
         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib
         ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib
-        )
+)
 
 # Install header file
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)

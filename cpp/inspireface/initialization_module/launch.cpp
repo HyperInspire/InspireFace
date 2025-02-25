@@ -115,18 +115,18 @@ std::string Launch::GetExtensionPath() const {
     return m_extension_path_;
 }
 
-void Launch::SetGlobalCoreMLInferenceMode(InferenceHelper::SpecialBackend mode) {
+void Launch::SetGlobalCoreMLInferenceMode(InferenceWrapper::SpecialBackend mode) {
     m_global_coreml_inference_mode_ = mode;
-    if (m_global_coreml_inference_mode_ == InferenceHelper::kCoreMLCPU) {
+    if (m_global_coreml_inference_mode_ == InferenceWrapper::COREML_CPU) {
         INSPIRE_LOGW("Global CoreML Compute Units set to CPU Only.");
-    } else if (m_global_coreml_inference_mode_ == InferenceHelper::kCoreMLGPU) {
+    } else if (m_global_coreml_inference_mode_ == InferenceWrapper::COREML_GPU) {
         INSPIRE_LOGW("Global CoreML Compute Units set to CPU and GPU.");
-    } else if (m_global_coreml_inference_mode_ == InferenceHelper::kCoreMLANE) {
+    } else if (m_global_coreml_inference_mode_ == InferenceWrapper::COREML_ANE) {
         INSPIRE_LOGW("Global CoreML Compute Units set to Auto Switch (ANE, GPU, CPU).");
     }
 }
 
-InferenceHelper::SpecialBackend Launch::GetGlobalCoreMLInferenceMode() const {
+InferenceWrapper::SpecialBackend Launch::GetGlobalCoreMLInferenceMode() const {
     return m_global_coreml_inference_mode_;
 }
 

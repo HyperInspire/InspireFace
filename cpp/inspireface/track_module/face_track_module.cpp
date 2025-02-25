@@ -395,7 +395,7 @@ int FaceTrackModule::Configuration(inspire::InspireArchive &archive, const std::
 int FaceTrackModule::InitLandmarkModel(InspireModel &model) {
     m_landmark_predictor_ = std::make_shared<FaceLandmarkAdapt>(112);
     auto ret = m_landmark_predictor_->loadData(model, model.modelType);
-    if (ret != InferenceHelper::kRetOk) {
+    if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
@@ -407,7 +407,7 @@ int FaceTrackModule::InitDetectModel(InspireModel &model) {
 
     m_face_detector_ = std::make_shared<FaceDetectAdapt>(input_size[0]);
     auto ret = m_face_detector_->loadData(model, model.modelType, false);
-    if (ret != InferenceHelper::kRetOk) {
+    if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
@@ -416,7 +416,7 @@ int FaceTrackModule::InitDetectModel(InspireModel &model) {
 int FaceTrackModule::InitRNetModel(InspireModel &model) {
     m_refine_net_ = std::make_shared<RNetAdapt>();
     auto ret = m_refine_net_->loadData(model, model.modelType);
-    if (ret != InferenceHelper::kRetOk) {
+    if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
@@ -425,7 +425,7 @@ int FaceTrackModule::InitRNetModel(InspireModel &model) {
 int FaceTrackModule::InitFacePoseModel(InspireModel &model) {
     m_face_quality_ = std::make_shared<FacePoseQualityAdapt>();
     auto ret = m_face_quality_->loadData(model, model.modelType);
-    if (ret != InferenceHelper::kRetOk) {
+    if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;

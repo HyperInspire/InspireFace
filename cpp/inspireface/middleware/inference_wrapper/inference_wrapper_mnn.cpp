@@ -1,19 +1,3 @@
-/* Copyright 2021 iwatake2222
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-==============================================================================*/
-/*** Include ***/
-/* for general */
 #include <cstdint>
 #include <cstdlib>
 #include <cmath>
@@ -30,50 +14,45 @@ limitations under the License.
 #include <MNN/AutoTime.hpp>
 
 /* for My modules */
-#include "inference_helper_log.h"
-#include "inference_helper_mnn.h"
+#include "inference_wrapper_log.h"
+#include "inference_wrapper_mnn.h"
 #include "log.h"
 /*** Macro ***/
-#define TAG "InferenceHelperMnn"
-#define PRINT(...) INFERENCE_HELPER_LOG_PRINT(TAG, __VA_ARGS__)
-#define PRINT_E(...) INFERENCE_HELPER_LOG_PRINT_E(TAG, __VA_ARGS__)
+#define TAG "InferenceWrapperMnn"
+#define PRINT(...) INFERENCE_WRAPPER_LOG_PRINT(TAG, __VA_ARGS__)
+#define PRINT_E(...) INFERENCE_WRAPPER_LOG_PRINT_E(TAG, __VA_ARGS__)
 
 using namespace inspire;
 
 /*** Function ***/
-InferenceHelperMnn::InferenceHelperMnn() {
+InferenceWrapperMNN::InferenceWrapperMNN() {
     num_threads_ = 1;
 }
 
-InferenceHelperMnn::~InferenceHelperMnn() {}
+InferenceWrapperMNN::~InferenceWrapperMNN() {}
 
-int32_t InferenceHelperMnn::SetNumThreads(const int32_t num_threads) {
+int32_t InferenceWrapperMNN::SetNumThreads(const int32_t num_threads) {
     num_threads_ = num_threads;
-    return kRetOk;
+    return WrapperOk;
 }
 
-int32_t InferenceHelperMnn::SetCustomOps(const std::vector<std::pair<const char*, const void*>>& custom_ops) {
-    PRINT("[WARNING] This method is not supported\n");
-    return kRetOk;
-}
-
-int32_t InferenceHelperMnn::ParameterInitialization(std::vector<InputTensorInfo>& input_tensor_info_list,
-                                                    std::vector<OutputTensorInfo>& output_tensor_info_list) {
+int32_t InferenceWrapperMNN::ParameterInitialization(std::vector<InputTensorInfo>& input_tensor_info_list,
+                                                     std::vector<OutputTensorInfo>& output_tensor_info_list) {
     /* Check tensor info fits the info from model */
     for (auto& input_tensor_info : input_tensor_info_list) {
         auto input_tensor = net_->getSessionInput(session_, input_tensor_info.name.c_str());
         if (input_tensor == nullptr) {
             PRINT_E("Invalid input name (%s)\n", input_tensor_info.name.c_str());
             //            LOGD("Invalid input name (%s)\n", input_tensor_info.name.c_str());
-            return kRetErr;
+            return WrapperError;
         }
-        if ((input_tensor->getType().code == halide_type_float) && (input_tensor_info.tensor_type == TensorInfo::kTensorTypeFp32)) {
+        if ((input_tensor->getType().code == halide_type_float) && (input_tensor_info.tensor_type == TensorInfo::TensorTypeFp32)) {
             /* OK */
-        } else if ((input_tensor->getType().code == halide_type_uint) && (input_tensor_info.tensor_type == TensorInfo::kTensorTypeUint8)) {
+        } else if ((input_tensor->getType().code == halide_type_uint) && (input_tensor_info.tensor_type == TensorInfo::TensorTypeUint8)) {
             /* OK */
         } else {
             PRINT_E("Incorrect input tensor type (%d, %d)\n", input_tensor->getType().code, input_tensor_info.tensor_type);
-            return kRetErr;
+            return WrapperError;
         }
         if ((input_tensor->channel() != -1) && (input_tensor->height() != -1) && (input_tensor->width() != -1)) {
             if (input_tensor_info.GetChannel() != -1) {
@@ -88,7 +67,7 @@ int32_t InferenceHelperMnn::ParameterInitialization(std::vector<InputTensorInfo>
                     net_->resizeTensor(input_tensor,
                                        {1, input_tensor_info.GetChannel(), input_tensor_info.GetHeight(), input_tensor_info.GetWidth()});
                     net_->resizeSession(session_);
-                    return kRetOk;
+                    return WrapperOk;
                 }
             } else {
                 PRINT("Input tensor size is set from the model\n");
@@ -106,7 +85,7 @@ int32_t InferenceHelperMnn::ParameterInitialization(std::vector<InputTensorInfo>
                 INSPIRE_LOGE("GO RESIZE");
             } else {
                 PRINT_E("Model input size is not set\n");
-                return kRetErr;
+                return WrapperError;
             }
         }
     }
@@ -114,7 +93,7 @@ int32_t InferenceHelperMnn::ParameterInitialization(std::vector<InputTensorInfo>
         auto output_tensor = net_->getSessionOutput(session_, output_tensor_info.name.c_str());
         if (output_tensor == nullptr) {
             PRINT_E("Invalid output name (%s)\n", output_tensor_info.name.c_str());
-            return kRetErr;
+            return WrapperError;
         }
         /* Output size is set when run inference later */
     }
@@ -129,7 +108,7 @@ int32_t InferenceHelperMnn::ParameterInitialization(std::vector<InputTensorInfo>
         for (const auto& dim : input_tensor_info.tensor_dims) {
             if (dim <= 0) {
                 PRINT_E("Invalid tensor size\n");
-                return kRetErr;
+                return WrapperError;
             }
         }
     }
@@ -142,27 +121,22 @@ int32_t InferenceHelperMnn::ParameterInitialization(std::vector<InputTensorInfo>
     //     }
     // }
 
-    return kRetOk;
+    return WrapperOk;
 }
 
-int32_t InferenceHelperMnn::Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list,
-                                       std::vector<OutputTensorInfo>& output_tensor_info_list) {
-    //    PRINT("-Initialize\n");
-    //    LOGD("-Initialize");
-    /*** Create network ***/
-    //    LOG_INFO("init MNN");
-    //    PRINT_E("init MNN");
+int32_t InferenceWrapperMNN::Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list,
+                                        std::vector<OutputTensorInfo>& output_tensor_info_list) {
     net_.reset(MNN::Interpreter::createFromBuffer(model_buffer, model_size));
     if (!net_) {
         PRINT_E("Failed to load model model buffer\n");
-        return kRetErr;
+        return WrapperError;
     }
     MNN::ScheduleConfig scheduleConfig;
     scheduleConfig.numThread = num_threads_;  // it seems, setting 1 has better performance on Android
     MNN::BackendConfig bnconfig;
     bnconfig.power = MNN::BackendConfig::Power_High;
     bnconfig.precision = MNN::BackendConfig::Precision_Normal;
-    if (special_backend_ == kMnnCuda) {
+    if (special_backend_ == MMM_CUDA) {
         INSPIRE_LOGD("Enable CUDA");
         scheduleConfig.type = MNN_FORWARD_CUDA;
         bnconfig.power = MNN::BackendConfig::Power_Normal;
@@ -173,28 +147,23 @@ int32_t InferenceHelperMnn::Initialize(char* model_buffer, int model_size, std::
     scheduleConfig.backendConfig = &bnconfig;
 
     session_ = net_->createSession(scheduleConfig);
-    //    LOG_INFO("-INPUT: {}", net_->getSessionInputAll(session_).size());
-    //    PRINT("-INPUT: %lu", net_->getSessionInputAll(session_).size());
-    //    LOGD("-INPUT: %lu", net_->getSessionInputAll(session_).size());
     for (auto& item : net_->getSessionInputAll(session_)) {
         input_names_.push_back(item.first.c_str());
     }
     if (!session_) {
         PRINT_E("Failed to create session\n");
-        return kRetErr;
+        return WrapperError;
     }
 
     return ParameterInitialization(input_tensor_info_list, output_tensor_info_list);
 }
 
-int32_t InferenceHelperMnn::Initialize(const std::string& model_filename, std::vector<InputTensorInfo>& input_tensor_info_list,
-                                       std::vector<OutputTensorInfo>& output_tensor_info_list) {
-    //    LOG_INFO("init MNN");
-    /*** Create network ***/
+int32_t InferenceWrapperMNN::Initialize(const std::string& model_filename, std::vector<InputTensorInfo>& input_tensor_info_list,
+                                        std::vector<OutputTensorInfo>& output_tensor_info_list) {
     net_.reset(MNN::Interpreter::createFromFile(model_filename.c_str()));
     if (!net_) {
         PRINT_E("Failed to load model file (%s)\n", model_filename.c_str());
-        return kRetErr;
+        return WrapperError;
     }
 
     MNN::ScheduleConfig scheduleConfig;
@@ -207,21 +176,21 @@ int32_t InferenceHelperMnn::Initialize(const std::string& model_filename, std::v
     session_ = net_->createSession(scheduleConfig);
     if (!session_) {
         PRINT_E("Failed to create session\n");
-        return kRetErr;
+        return WrapperError;
     }
 
     return ParameterInitialization(input_tensor_info_list, output_tensor_info_list);
 };
 
-int32_t InferenceHelperMnn::Finalize(void) {
+int32_t InferenceWrapperMNN::Finalize(void) {
     net_->releaseSession(session_);
     net_->releaseModel();
     net_.reset();
     out_mat_list_.clear();
-    return kRetOk;
+    return WrapperOk;
 }
 
-int32_t InferenceHelperMnn::PreProcess(const std::vector<InputTensorInfo>& input_tensor_info_list) {
+int32_t InferenceWrapperMNN::PreProcess(const std::vector<InputTensorInfo>& input_tensor_info_list) {
     //    for (auto &item: net_->getSessionInputAll(session_)) {
     //        PRINT("sss: %s", item.first.c_str());
     //    }
@@ -230,14 +199,14 @@ int32_t InferenceHelperMnn::PreProcess(const std::vector<InputTensorInfo>& input
         if (input_tensor == nullptr) {
             PRINT_E("Invalid input name (%s)\n", input_tensor_info.name.c_str());
             INSPIRE_LOGE("Invalid input name (%s)\n", input_tensor_info.name.c_str());
-            return kRetErr;
+            return WrapperError;
         }
-        if (input_tensor_info.data_type == InputTensorInfo::kDataTypeImage) {
+        if (input_tensor_info.data_type == InputTensorInfo::DataTypeImage) {
             /* Crop */
             if ((input_tensor_info.image_info.width != input_tensor_info.image_info.crop_width) ||
                 (input_tensor_info.image_info.height != input_tensor_info.image_info.crop_height)) {
                 PRINT_E("Crop is not supported\n");
-                return kRetErr;
+                return WrapperError;
             }
 
             MNN::CV::ImageProcess::Config image_processconfig;
@@ -272,7 +241,7 @@ int32_t InferenceHelperMnn::PreProcess(const std::vector<InputTensorInfo>& input
                 image_processconfig.destFormat = MNN::CV::BGR;
             } else {
                 PRINT_E("Unsupported color conversion (%d, %d)\n", input_tensor_info.image_info.channel, input_tensor_info.GetChannel());
-                return kRetErr;
+                return WrapperError;
             }
 
             /* Normalize image */
@@ -292,10 +261,10 @@ int32_t InferenceHelperMnn::PreProcess(const std::vector<InputTensorInfo>& input
             pretreat->convert(static_cast<uint8_t*>(input_tensor_info.data), input_tensor_info.image_info.crop_width,
                               input_tensor_info.image_info.crop_height, 0, input_tensor);
 
-        } else if ((input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNhwc) ||
-                   (input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNchw)) {
+        } else if ((input_tensor_info.data_type == InputTensorInfo::DataTypeBlobNhwc) ||
+                   (input_tensor_info.data_type == InputTensorInfo::DataTypeBlobNchw)) {
             std::unique_ptr<MNN::Tensor> tensor;
-            if (input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNhwc) {
+            if (input_tensor_info.data_type == InputTensorInfo::DataTypeBlobNhwc) {
                 tensor.reset(new MNN::Tensor(input_tensor, MNN::Tensor::TENSORFLOW));
             } else {
                 tensor.reset(new MNN::Tensor(input_tensor, MNN::Tensor::CAFFE));
@@ -312,13 +281,13 @@ int32_t InferenceHelperMnn::PreProcess(const std::vector<InputTensorInfo>& input
             input_tensor->copyFromHostTensor(tensor.get());
         } else {
             PRINT_E("Unsupported data type (%d)\n", input_tensor_info.data_type);
-            return kRetErr;
+            return WrapperError;
         }
     }
-    return kRetOk;
+    return WrapperOk;
 }
 
-int32_t InferenceHelperMnn::Process(std::vector<OutputTensorInfo>& output_tensor_info_list) {
+int32_t InferenceWrapperMNN::Process(std::vector<OutputTensorInfo>& output_tensor_info_list) {
     net_->runSession(session_);
 
     out_mat_list_.clear();
@@ -326,7 +295,7 @@ int32_t InferenceHelperMnn::Process(std::vector<OutputTensorInfo>& output_tensor
         auto output_tensor = net_->getSessionOutput(session_, output_tensor_info.name.c_str());
         if (output_tensor == nullptr) {
             PRINT_E("Invalid output name (%s)\n", output_tensor_info.name.c_str());
-            return kRetErr;
+            return WrapperError;
         }
 
         auto dimType = output_tensor->getDimensionType();
@@ -334,14 +303,14 @@ int32_t InferenceHelperMnn::Process(std::vector<OutputTensorInfo>& output_tensor
         output_tensor->copyToHostTensor(outputUser.get());
         auto type = outputUser->getType();
         if (type.code == halide_type_float) {
-            output_tensor_info.tensor_type = TensorInfo::kTensorTypeFp32;
+            output_tensor_info.tensor_type = TensorInfo::TensorTypeFp32;
             output_tensor_info.data = outputUser->host<float>();
         } else if (type.code == halide_type_uint && type.bytes() == 1) {
-            output_tensor_info.tensor_type = TensorInfo::kTensorTypeUint8;
+            output_tensor_info.tensor_type = TensorInfo::TensorTypeUint8;
             output_tensor_info.data = outputUser->host<uint8_t>();
         } else {
             PRINT_E("Unexpected data type\n");
-            return kRetErr;
+            return WrapperError;
         }
 
         output_tensor_info.tensor_dims.clear();
@@ -352,14 +321,14 @@ int32_t InferenceHelperMnn::Process(std::vector<OutputTensorInfo>& output_tensor
         out_mat_list_.push_back(std::move(outputUser));  // store data in member variable so that data keep exist
     }
 
-    return kRetOk;
+    return WrapperOk;
 }
 
-std::vector<std::string> InferenceHelperMnn::GetInputNames() {
+std::vector<std::string> InferenceWrapperMNN::GetInputNames() {
     return input_names_;
 }
 
-int32_t InferenceHelperMnn::ResizeInput(const std::vector<InputTensorInfo>& input_tensor_info_list) {
+int32_t InferenceWrapperMNN::ResizeInput(const std::vector<InputTensorInfo>& input_tensor_info_list) {
     for (const auto& input_tensor_info : input_tensor_info_list) {
         auto input_tensor = net_->getSessionInput(session_, input_tensor_info.name.c_str());
         net_->resizeTensor(input_tensor, {1, input_tensor_info.GetChannel(), input_tensor_info.GetHeight(), input_tensor_info.GetWidth()});
