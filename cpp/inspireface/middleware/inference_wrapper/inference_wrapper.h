@@ -118,12 +118,12 @@ public:
         int32_t crop_height;
         bool is_bgr;  // used when channel == 3 (true: BGR, false: RGB)
         bool swap_color;
-    } image_info;  // [In] used when data_type_ == DataTypeImage
+    } image_info;
 
     struct {
         float mean[3];
         float norm[3];
-    } normalize;  // [In] used when data_type_ == DataTypeImage
+    } normalize;
 };
 
 class OutputTensorInfo : public TensorInfo {
