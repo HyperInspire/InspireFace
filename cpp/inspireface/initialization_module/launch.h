@@ -5,12 +5,12 @@
 #pragma once
 #ifndef INSPIREFACE_LAUNCH_H
 #define INSPIREFACE_LAUNCH_H
-#include "../middleware/model_archive/inspire_archive.h"
+#include "middleware/model_archive/inspire_archive.h"
 #if defined(ISF_ENABLE_RGA)
 #include "middleware/nexus_processor/rga/dma_alloc.h"
 #endif
 #include <mutex>
-#include "../middleware/inference_wrapper/inference_wrapper.h"
+#include "middleware/inference_wrapper/inference_wrapper.h"
 
 #ifndef INSPIRE_API
 #define INSPIRE_API
