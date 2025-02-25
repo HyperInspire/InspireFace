@@ -28,7 +28,7 @@
 #define PRINT(...) INFERENCE_WRAPPER_LOG_PRINT(TAG, __VA_ARGS__)
 #define PRINT_E(...) INFERENCE_WRAPPER_LOG_PRINT_E(TAG, __VA_ARGS__)
 
-InferenceWrapper* InferenceWrapper::Create(const InferenceWrapper::HelperType helper_type) {
+InferenceWrapper* InferenceWrapper::Create(const InferenceWrapper::EngineType helper_type) {
     InferenceWrapper* p = nullptr;
     switch (helper_type) {
 #ifdef INFERENCE_WRAPPER_ENABLE_MNN

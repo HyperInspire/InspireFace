@@ -211,7 +211,7 @@ public:
     std::string name;
     std::string fullname;
     std::string version;
-    InferenceWrapper::HelperType modelType;
+    InferenceWrapper::EngineType modelType;
     int inferEngine;
     int inferDevice;
     int inferBackend;

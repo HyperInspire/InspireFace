@@ -64,7 +64,7 @@ static unsigned char* load_model(const char* filename, int* model_size) {
 }
 
 /*** Macro ***/
-#define TAG "InferenceHelperRknn"
+#define TAG "InferenceWrapperRKNN"
 #define PRINT(...) INFERENCE_WRAPPER_LOG_PRINT(TAG, __VA_ARGS__)
 #define PRINT_E(...) INFERENCE_WRAPPER_LOG_PRINT_E(TAG, __VA_ARGS__)
 

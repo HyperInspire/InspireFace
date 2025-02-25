@@ -74,12 +74,11 @@ public:
     }
 
 public:
-    std::string name;                  // [In] Set the name_ of tensor
-    int32_t id;                        // [Out] Do not modify (Used in InferenceHelper)
-    int32_t tensor_type;               // [In] The type of tensor (e.g. TensorTypeFp32)
-    std::vector<int32_t> tensor_dims;  // InputTensorInfo:   [In] The dimentions of tensor. (If empty at initialize, the size is updated from model
-                                       // info.) OutputTensorInfo: [Out] The dimentions of tensor is set from model information
-    bool is_nchw;                      // [IN] NCHW or NHWC
+    std::string name;
+    int32_t id;
+    int32_t tensor_type;
+    std::vector<int32_t> tensor_dims;
+    bool is_nchw;
 };
 
 class InputTensorInfo : public TensorInfo {
@@ -106,8 +105,8 @@ public:
     ~InputTensorInfo() {}
 
 public:
-    void* data;         // [In] Set the pointer to image/blob
-    int32_t data_type;  // [In] Set the type of data_ (e.g. DataTypeImage)
+    void* data;
+    int32_t data_type;
 
     struct {
         int32_t width;
@@ -143,7 +142,7 @@ public:
         }
     }
 
-    float* GetDataAsFloat() { /* Returned pointer should be with const, but returning pointer without const is convenient to create cv::Mat */
+    float* GetDataAsFloat() {
         if (tensor_type == TensorTypeUint8 || tensor_type == TensorTypeInt8) {
             if (data_fp32_ == nullptr) {
                 data_fp32_ = new float[GetElementNum()];
@@ -172,11 +171,11 @@ public:
     }
 
 public:
-    void* data;  // [Out] Pointer to the output data_
+    void* data;
     struct {
         float scale;
         int32_t zero_point;
-    } quant;  // [Out] Parameters for dequantization (convert uint8 to float)
+    } quant;
 
 private:
     float* data_fp32_;
@@ -205,10 +204,10 @@ public:
         INFER_MNN,
         INFER_RKNN,
         INFER_COREML,
-    } HelperType;
+    } EngineType;
 
 public:
-    static InferenceWrapper* Create(const HelperType helper_type);
+    static InferenceWrapper* Create(const EngineType helper_type);
 
 public:
     virtual ~InferenceWrapper() {}
@@ -243,7 +242,7 @@ protected:
     void PreProcessBlob(int32_t num_thread, const InputTensorInfo& input_tensor_info, T* dst);
 
 protected:
-    HelperType helper_type_;
+    EngineType helper_type_;
     SpecialBackend special_backend_ = DEFAULT_CPU;
 };
 

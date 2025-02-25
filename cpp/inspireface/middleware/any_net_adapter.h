@@ -50,7 +50,7 @@ public:
      * @param type Type of the inference helper (default: INFER_MNN).
      * @return int32_t Status of the loading and initialization process.
      */
-    int32_t loadData(InspireModel &model, InferenceWrapper::HelperType type = InferenceWrapper::INFER_MNN, bool dynamic = false) {
+    int32_t loadData(InspireModel &model, InferenceWrapper::EngineType type = InferenceWrapper::INFER_MNN, bool dynamic = false) {
         m_infer_type_ = type;
         // must
         pushData<int>(model.Config(), "model_index", 0);
@@ -78,7 +78,7 @@ public:
 
 #if defined(ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA) && !defined(ISF_ENABLE_RKNN)
         INSPIRE_LOGW("You have forced the global use of MNN_CUDA as the neural network inference backend");
-        m_nn_inference_->SetSpecialBackend(InferenceHelper::MMM_CUDA);
+        m_nn_inference_->SetSpecialBackend(InferenceWrapper::MMM_CUDA);
 #endif
 
 #if defined(ISF_ENABLE_APPLE_EXTENSION)
@@ -252,7 +252,7 @@ protected:
     std::unique_ptr<nexus::ImageProcessor> m_processor_;  ///< Assign a nexus processor to each anynet object
 
 private:
-    InferenceWrapper::HelperType m_infer_type_;                ///< Inference engine type
+    InferenceWrapper::EngineType m_infer_type_;                ///< Inference engine type
     std::shared_ptr<InferenceWrapper> m_nn_inference_;         ///< Shared pointer to the inference helper.
     std::vector<InputTensorInfo> m_input_tensor_info_list_;    ///< List of input tensor information.
     std::vector<OutputTensorInfo> m_output_tensor_info_list_;  ///< List of output tensor information.
