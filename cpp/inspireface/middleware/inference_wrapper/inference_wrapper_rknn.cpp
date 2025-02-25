@@ -88,9 +88,6 @@ int32_t InferenceWrapperRKNN::ParameterInitialization(std::vector<InputTensorInf
         return WrapperError;
     }
 
-    //    for (size_t index = 0; index < input_tensor_info_list.size(); ++index) {
-    //        auto &input_tensor_info = input_tensor_info_list[index];
-    //    }
     std::vector<rknn_tensor_attr> output_attrs_;
     output_attrs_.resize(rk_io_num_.n_output);
     for (int i = 0; i < rk_io_num_.n_output; ++i) {

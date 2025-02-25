@@ -106,14 +106,6 @@ int32_t InferenceWrapperMNN::ParameterInitialization(std::vector<InputTensorInfo
             }
         }
     }
-    // for (const auto& output_tensor_info : output_tensor_info_list) {
-    //     for (const auto& dim : output_tensor_info.tensor_dims) {
-    //         if (dim <= 0) {
-    //             PRINT_E("Invalid tensor size\n");
-    //             return kRetErr;
-    //         }
-    //     }
-    // }
 
     return WrapperOk;
 }
