@@ -11,7 +11,7 @@
 #include "initialization_module/launch.h"
 #include "initialization_module/resource_manage.h"
 #include "recognition_module/similarity_converter.h"
-#include "middleware/inference_helper/inference_helper.h"
+#include "middleware/inference_wrapper/inference_wrapper.h"
 
 using namespace inspire;
 
@@ -455,11 +455,11 @@ HResult HFQueryExpansiveHardwareAppleCoreMLModelPath(HString path) {
 
 HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode) {
     if (mode == HF_APPLE_COREML_INFERENCE_MODE_CPU) {
-        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceHelper::kCoreMLCPU);
+        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_CPU);
     } else if (mode == HF_APPLE_COREML_INFERENCE_MODE_GPU) {
-        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceHelper::kCoreMLGPU);
+        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_GPU);
     } else if (mode == HF_APPLE_COREML_INFERENCE_MODE_ANE) {
-        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceHelper::kCoreMLANE);
+        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_ANE);
     }
     return HSUCCEED;
 }

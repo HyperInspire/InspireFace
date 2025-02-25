@@ -5,12 +5,12 @@
 #pragma once
 #ifndef INSPIREFACE_LAUNCH_H
 #define INSPIREFACE_LAUNCH_H
-#include "middleware/model_archive/inspire_archive.h"
+#include "../middleware/model_archive/inspire_archive.h"
 #if defined(ISF_ENABLE_RGA)
 #include "middleware/nexus_processor/rga/dma_alloc.h"
 #endif
 #include <mutex>
-#include "middleware/inference_helper/inference_helper.h"
+#include "../middleware/inference_wrapper/inference_wrapper.h"
 
 #ifndef INSPIRE_API
 #define INSPIRE_API
@@ -60,10 +60,10 @@ public:
     std::string GetExtensionPath() const;
 
     // Set the global coreml inference mode
-    void SetGlobalCoreMLInferenceMode(InferenceHelper::SpecialBackend mode);
+    void SetGlobalCoreMLInferenceMode(InferenceWrapper::SpecialBackend mode);
 
     // Get the global coreml inference mode
-    InferenceHelper::SpecialBackend GetGlobalCoreMLInferenceMode() const;
+    InferenceWrapper::SpecialBackend GetGlobalCoreMLInferenceMode() const;
 
 private:
     // Parameters
@@ -89,7 +89,7 @@ private:
     std::unique_ptr<InspireArchive> m_archive_;  ///< The archive containing all necessary resources.
     bool m_load_;                                ///< Flag indicating whether the resources have been successfully loaded.
 
-    InferenceHelper::SpecialBackend m_global_coreml_inference_mode_{InferenceHelper::kCoreMLANE};  ///< The global coreml inference mode
+    InferenceWrapper::SpecialBackend m_global_coreml_inference_mode_{InferenceWrapper::COREML_ANE};  ///< The global coreml inference mode
 };
 
 }  // namespace inspire

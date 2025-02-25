@@ -9,7 +9,7 @@
 #include "track_module/face_track.h"
 #include "pipeline_module/face_pipeline.h"
 #include "inspireface/feature_hub/face_recognition.h"
-#include "middleware/inference_helper/customized/rknn_adapter.h"
+#include "middleware/inference_wrapper/customized/rknn_adapter.h"
 
 using namespace inspire;
 

@@ -3,11 +3,10 @@
  * @date 2024-10-01
  */
 
-#ifndef RKNPU_PTOCR_INFERENCE_HELPER_RKNN_H
-#define RKNPU_PTOCR_INFERENCE_HELPER_RKNN_H
-#ifdef INFERENCE_HELPER_ENABLE_RKNN
+#ifndef RKNPU_PTOCR_INFERENCE_WRAPPER_RKNN_H
+#define RKNPU_PTOCR_INFERENCE_WRAPPER_RKNN_H
+#ifdef INFERENCE_WRAPPER_ENABLE_RKNN
 
-/* for general */
 #include <cstdint>
 #include <cmath>
 #include <string>
@@ -18,15 +17,13 @@
 /* for RKNN */
 #include <rknn_api.h>
 
-/* for My modules */
-#include "inference_helper.h"
+#include "inference_wrapper.h"
 
-class InferenceHelperRKNN : public InferenceHelper {
+class InferenceWrapperRKNN : public InferenceWrapper {
 public:
-    InferenceHelperRKNN();
-    ~InferenceHelperRKNN() override;
+    InferenceWrapperRKNN();
+    ~InferenceWrapperRKNN() override;
     int32_t SetNumThreads(const int32_t num_threads) override;
-    int32_t SetCustomOps(const std::vector<std::pair<const char*, const void*>>& custom_ops) override;
     int32_t Initialize(const std::string& model_filename, std::vector<InputTensorInfo>& input_tensor_info_list,
                        std::vector<OutputTensorInfo>& output_tensor_info_list) override;
     int32_t Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list,
@@ -49,5 +46,5 @@ private:
 private:
 };
 
-#endif  // INFERENCE_HELPER_ENABLE_RKNN
-#endif  // RKNPU_PTOCR_INFERENCE_HELPER_RKNN_H
+#endif  // INFERENCE_WRAPPER_ENABLE_RKNN
+#endif  // RKNPU_PTOCR_INFERENCE_WRAPPER_RKNN_H
