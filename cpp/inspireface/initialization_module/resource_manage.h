@@ -11,6 +11,7 @@
 #include <memory>
 #include <iomanip>  // For std::setw and std::left
 #include <vector>
+#include "log.h"
 #ifndef INSPIRE_API
 #define INSPIRE_API
 #endif
@@ -144,8 +145,7 @@ public:
     // Method to print resource management statistics
     void printResourceStatistics() {
         std::lock_guard<std::mutex> lock(mutex);
-        std::cout << std::left << std::setw(15) << "Resource Name" << std::setw(15) << "Total Created" << std::setw(15) << "Total Released"
-                  << std::setw(15) << "Not Released" << std::endl;
+        INSPIRE_LOGI("%-15s%-15s%-15s%-15s", "Resource Name", "Total Created", "Total Released", "Not Released");
 
         // Print session statistics
         int totalSessionsCreated = sessionMap.size();
@@ -157,8 +157,7 @@ public:
             if (!entry.second)
                 ++sessionsNotReleased;
         }
-        std::cout << std::left << std::setw(15) << "Session" << std::setw(15) << totalSessionsCreated << std::setw(15) << totalSessionsReleased
-                  << std::setw(15) << sessionsNotReleased << std::endl;
+        INSPIRE_LOGI("%-15s%-15d%-15d%-15d", "Session", totalSessionsCreated, totalSessionsReleased, sessionsNotReleased);
 
         // Print stream statistics
         int totalStreamsCreated = streamMap.size();
@@ -170,8 +169,7 @@ public:
             if (!entry.second)
                 ++streamsNotReleased;
         }
-        std::cout << std::left << std::setw(15) << "Stream" << std::setw(15) << totalStreamsCreated << std::setw(15) << totalStreamsReleased
-                  << std::setw(15) << streamsNotReleased << std::endl;
+        INSPIRE_LOGI("%-15s%-15d%-15d%-15d", "Stream", totalStreamsCreated, totalStreamsReleased, streamsNotReleased);
 
         // Print bitmap statistics
         int totalBitmapsCreated = imageBitmapMap.size();
@@ -183,8 +181,7 @@ public:
             if (!entry.second)
                 ++bitmapsNotReleased;
         }
-        std::cout << std::left << std::setw(15) << "Bitmap" << std::setw(15) << totalBitmapsCreated << std::setw(15) << totalBitmapsReleased
-                  << std::setw(15) << bitmapsNotReleased << std::endl;
+        INSPIRE_LOGI("%-15s%-15d%-15d%-15d", "Bitmap", totalBitmapsCreated, totalBitmapsReleased, bitmapsNotReleased);
     }
 };
 
