@@ -7,11 +7,9 @@
 #include <vector>
 #include <array>
 #include <memory>
-
 #include <MNN/ImageProcess.hpp>
 #include <MNN/Interpreter.hpp>
 #include <MNN/AutoTime.hpp>
-
 #include "inference_wrapper.h"
 
 class InferenceWrapperMNN : public InferenceWrapper {

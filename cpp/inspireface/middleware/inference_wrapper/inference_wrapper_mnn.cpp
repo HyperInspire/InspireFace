@@ -7,11 +7,9 @@
 #include <array>
 #include <algorithm>
 #include <chrono>
-
 #include <MNN/ImageProcess.hpp>
 #include <MNN/Interpreter.hpp>
 #include <MNN/AutoTime.hpp>
-
 #include "inference_wrapper_log.h"
 #include "inference_wrapper_mnn.h"
 #include "log.h"

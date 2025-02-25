@@ -2,7 +2,7 @@ name: Build SDKs
 
 on:
   push:
-    branches: ["feature/infer_custom_fix"]
+    branches: ["master"]
   pull_request:
     branches: ["master"]
 

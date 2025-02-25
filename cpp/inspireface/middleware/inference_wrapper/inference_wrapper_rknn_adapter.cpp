@@ -21,7 +21,6 @@
 #include "log.h"
 #include <cassert>
 
-/*** Macro ***/
 #define TAG "InferenceHelperRknn"
 #define PRINT(...) INFERENCE_WRAPPER_LOG_PRINT(TAG, __VA_ARGS__)
 #define PRINT_E(...) INFERENCE_WRAPPER_LOG_PRINT_E(TAG, __VA_ARGS__)

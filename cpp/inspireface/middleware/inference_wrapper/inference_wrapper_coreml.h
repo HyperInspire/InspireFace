@@ -7,11 +7,8 @@
 #include <vector>
 #include <array>
 #include <memory>
-
 #include "coreml/CoreMLAdapter.h"
-
 #include <MNN/ImageProcess.hpp>
-
 #include "inference_wrapper.h"
 
 class InferenceWrapperCoreML : public InferenceWrapper {
