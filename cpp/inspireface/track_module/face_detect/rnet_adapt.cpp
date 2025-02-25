@@ -17,7 +17,7 @@ float RNetAdapt::operator()(const inspirecv::Image &bgr_affine) {
     AnyTensorOutputs outputs;
     Forward(resized, outputs);
     m_processor_->MarkDone();
-#ifdef INFERENCE_HELPER_ENABLE_RKNN2
+#ifdef INFERENCE_WRAPPER_ENABLE_RKNN2
     auto sm = Softmax(outputs[0].second);
     return sm[1];
 #else

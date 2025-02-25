@@ -101,7 +101,7 @@ void test_feature() {
 int main() {
     std::string archivePath = "test_res/pack/Goku_Apple";
     std::string extensionPath = "test_res/pack/Goku_Apple.mlmodelc";
-    INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceHelper::kCoreMLANE);
+    INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_ANE);
     INSPIRE_LAUNCH->SetExtensionPath(extensionPath);
     INSPIRE_LAUNCH->Load(archivePath);
 

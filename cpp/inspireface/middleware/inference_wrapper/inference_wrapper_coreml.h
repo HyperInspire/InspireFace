@@ -1,19 +1,5 @@
-/* Copyright 2021 iwatake2222
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-==============================================================================*/
-#ifndef INFERENCE_HELPER_COREML_
-#define INFERENCE_HELPER_COREML_
+#ifndef INFERENCE_WRAPPER_COREML_
+#define INFERENCE_WRAPPER_COREML_
 
 /* for general */
 #include <cstdint>
@@ -30,14 +16,13 @@ limitations under the License.
 #include <MNN/ImageProcess.hpp>
 
 /* for My modules */
-#include "inference_helper.h"
+#include "inference_wrapper.h"
 
-class InferenceHelperCoreML : public InferenceHelper {
+class InferenceWrapperCoreML : public InferenceWrapper {
 public:
-    InferenceHelperCoreML();
-    ~InferenceHelperCoreML() override;
+    InferenceWrapperCoreML();
+    ~InferenceWrapperCoreML() override;
     int32_t SetNumThreads(const int32_t num_threads) override;
-    int32_t SetCustomOps(const std::vector<std::pair<const char*, const void*>>& custom_ops) override;
     int32_t Initialize(const std::string& model_filename, std::vector<InputTensorInfo>& input_tensor_info_list,
                        std::vector<OutputTensorInfo>& output_tensor_info_list) override;
     int32_t Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list,
@@ -62,4 +47,4 @@ private:
     std::unique_ptr<MNN::Tensor> input_tensor_;
 };
 
-#endif  // INFERENCE_HELPER_COREML_
+#endif  // INFERENCE_WRAPPER_COREML_

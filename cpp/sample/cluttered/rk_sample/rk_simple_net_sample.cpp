@@ -27,15 +27,15 @@ void test_rnet() {
     param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);  // RGB mode
-    param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
-    param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
-    param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+    param.set<int>("data_type", InputTensorInfo::DataTypeImage);
+    param.set<int>("input_tensor_type", InputTensorInfo::TensorTypeUint8);
+    param.set<int>("output_tensor_type", InputTensorInfo::TensorTypeFp32);
     param.set<bool>("nchw", false);
 
     InspireModel model;
     loader.LoadModel("refine_net", model);
     m_rnet_ = std::make_shared<RNet>();
-    m_rnet_->loadData(model, InferenceHelper::kRknn);
+    m_rnet_->loadData(model, InferenceHelper::INFER_RKNN);
 
     {
         // Load a image
@@ -69,16 +69,16 @@ void test_mask() {
     param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);  // RGB mode
-    param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
-    param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
-    param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+    param.set<int>("data_type", InputTensorInfo::DataTypeImage);
+    param.set<int>("input_tensor_type", InputTensorInfo::TensorTypeUint8);
+    param.set<int>("output_tensor_type", InputTensorInfo::TensorTypeFp32);
     param.set<bool>("nchw", false);
 
     std::shared_ptr<MaskPredict> m_mask_predict_;
     m_mask_predict_ = std::make_shared<MaskPredict>();
     InspireModel model;
     loader.LoadModel("mask_detect", model);
-    m_mask_predict_->loadData(model, InferenceHelper::kRknn);
+    m_mask_predict_->loadData(model, InferenceHelper::INFER_RKNN);
 
     {
         // Load a image
@@ -112,15 +112,15 @@ void test_quality() {
     param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", true);  // RGB mode
-    param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
-    param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
-    param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+    param.set<int>("data_type", InputTensorInfo::DataTypeImage);
+    param.set<int>("input_tensor_type", InputTensorInfo::TensorTypeUint8);
+    param.set<int>("output_tensor_type", InputTensorInfo::TensorTypeFp32);
     param.set<bool>("nchw", false);
     std::shared_ptr<FacePoseQuality> m_face_quality_;
     m_face_quality_ = std::make_shared<FacePoseQuality>();
     InspireModel model;
     loader.LoadModel("pose_quality", model);
-    m_face_quality_->loadData(model, InferenceHelper::kRknn);
+    m_face_quality_->loadData(model, InferenceHelper::INFER_RKNN);
 
     {
         std::vector<std::string> names = {
@@ -197,16 +197,16 @@ void test_landmark() {
     param.set<std::vector<int>>("input_size", {112, 112});
     param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
-    param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
-    param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
-    param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+    param.set<int>("data_type", InputTensorInfo::DataTypeImage);
+    param.set<int>("input_tensor_type", InputTensorInfo::TensorTypeUint8);
+    param.set<int>("output_tensor_type", InputTensorInfo::TensorTypeFp32);
     param.set<bool>("nchw", false);
 
     std::shared_ptr<FaceLandmark> m_landmark_predictor_;
     m_landmark_predictor_ = std::make_shared<FaceLandmark>(112);
     InspireModel model;
     loader.LoadModel("landmark", model);
-    m_landmark_predictor_->loadData(model, InferenceHelper::kRknn);
+    m_landmark_predictor_->loadData(model, InferenceHelper::INFER_RKNN);
 
     cv::Mat image = cv::imread("test_res/images/test_data/0.jpg");
     cv::resize(image, image, cv::Size(112, 112));
@@ -238,9 +238,9 @@ void test_liveness() {
     param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
     param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
     param.set<bool>("swap_color", false);  // RGB mode
-    param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
-    param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
-    param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+    param.set<int>("data_type", InputTensorInfo::DataTypeImage);
+    param.set<int>("input_tensor_type", InputTensorInfo::TensorTypeUint8);
+    param.set<int>("output_tensor_type", InputTensorInfo::TensorTypeFp32);
     param.set<bool>("nchw", false);
 
     std::shared_ptr<RBGAntiSpoofing> m_rgb_anti_spoofing_;
@@ -248,7 +248,7 @@ void test_liveness() {
     InspireModel model;
     loader.LoadModel("rgb_anti_spoofing", model);
     m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofing>(80, true);
-    m_rgb_anti_spoofing_->loadData(model, InferenceHelper::kRknn);
+    m_rgb_anti_spoofing_->loadData(model, InferenceHelper::INFER_RKNN);
 
     std::vector<std::string> names = {
       "test_res/images/test_data/real.jpg", "test_res/images/test_data/fake.jpg", "test_res/images/test_data/live.jpg",

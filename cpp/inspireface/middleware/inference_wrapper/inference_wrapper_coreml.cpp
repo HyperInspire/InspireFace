@@ -14,7 +14,7 @@ limitations under the License.
 ==============================================================================*/
 /*** Include ***/
 /* for general */
-#ifdef INFERENCE_HELPER_ENABLE_COREML
+#ifdef INFERENCE_WRAPPER_ENABLE_COREML
 
 #include <cstdint>
 #include <cstdlib>
@@ -30,59 +30,54 @@ limitations under the License.
 #include <MNN/ImageProcess.hpp>
 
 /* for My modules */
-#include "inference_helper_log.h"
-#include "inference_helper_coreml.h"
+#include "inference_wrapper_log.h"
+#include "inference_wrapper_coreml.h"
 #include "log.h"
 /*** Macro ***/
-#define TAG "InferenceHelperCoreML"
-#define PRINT(...) INFERENCE_HELPER_LOG_PRINT(TAG, __VA_ARGS__)
-#define PRINT_E(...) INFERENCE_HELPER_LOG_PRINT_E(TAG, __VA_ARGS__)
+#define TAG "InferenceWrapperCoreML"
+#define PRINT(...) INFERENCE_WRAPPER_LOG_PRINT(TAG, __VA_ARGS__)
+#define PRINT_E(...) INFERENCE_WRAPPER_LOG_PRINT_E(TAG, __VA_ARGS__)
 
 using namespace inspire;
 
 /*** Function ***/
-InferenceHelperCoreML::InferenceHelperCoreML() {
+InferenceWrapperCoreML::InferenceWrapperCoreML() {
     num_threads_ = 1;
 }
 
-InferenceHelperCoreML::~InferenceHelperCoreML() {}
+InferenceWrapperCoreML::~InferenceWrapperCoreML() {}
 
-int32_t InferenceHelperCoreML::SetNumThreads(const int32_t num_threads) {
+int32_t InferenceWrapperCoreML::SetNumThreads(const int32_t num_threads) {
     num_threads_ = num_threads;
-    return kRetOk;
+    return WrapperOk;
 }
 
-int32_t InferenceHelperCoreML::SetCustomOps(const std::vector<std::pair<const char*, const void*>>& custom_ops) {
-    PRINT("[WARNING] This method is not supported\n");
-    return kRetOk;
+int32_t InferenceWrapperCoreML::ParameterInitialization(std::vector<InputTensorInfo>& input_tensor_info_list,
+                                                        std::vector<OutputTensorInfo>& output_tensor_info_list) {
+    return WrapperOk;
 }
 
-int32_t InferenceHelperCoreML::ParameterInitialization(std::vector<InputTensorInfo>& input_tensor_info_list,
-                                                       std::vector<OutputTensorInfo>& output_tensor_info_list) {
-    return kRetOk;
-}
-
-int32_t InferenceHelperCoreML::Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list,
-                                          std::vector<OutputTensorInfo>& output_tensor_info_list) {
+int32_t InferenceWrapperCoreML::Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list,
+                                           std::vector<OutputTensorInfo>& output_tensor_info_list) {
     PRINT_E("CoreML does not yet support buffer initialization of the model\n");
-    return kRetErr;
+    return WrapperError;
 }
 
-int32_t InferenceHelperCoreML::Initialize(const std::string& model_filename, std::vector<InputTensorInfo>& input_tensor_info_list,
-                                          std::vector<OutputTensorInfo>& output_tensor_info_list) {
+int32_t InferenceWrapperCoreML::Initialize(const std::string& model_filename, std::vector<InputTensorInfo>& input_tensor_info_list,
+                                           std::vector<OutputTensorInfo>& output_tensor_info_list) {
     //    LOG_INFO("init MNN");
     /*** Create network ***/
     net_.reset(new CoreMLAdapter());
     auto ret = net_->readFromFile(model_filename);
-    if (ret != kRetOk) {
+    if (ret != WrapperOk) {
         PRINT_E("Failed to load model file (%s)\n", model_filename.c_str());
-        return kRetErr;
+        return WrapperError;
     }
-    if (special_backend_ == kCoreMLCPU || special_backend_ == kDefaultCPU) {
+    if (special_backend_ == COREML_CPU || special_backend_ == DEFAULT_CPU) {
         net_->setInferenceMode(CoreMLAdapter::InferenceMode::CPU);
-    } else if (special_backend_ == kCoreMLGPU) {
+    } else if (special_backend_ == COREML_GPU) {
         net_->setInferenceMode(CoreMLAdapter::InferenceMode::GPU);
-    } else if (special_backend_ == kCoreMLANE) {
+    } else if (special_backend_ == COREML_ANE) {
         net_->setInferenceMode(CoreMLAdapter::InferenceMode::ANE);
     } else {
         PRINT_E("Unsupported backend (%d)\n, defaulting to ANE", special_backend_);
@@ -90,18 +85,18 @@ int32_t InferenceHelperCoreML::Initialize(const std::string& model_filename, std
     }
     if (!net_) {
         PRINT_E("Failed to load model file (%s)\n", model_filename.c_str());
-        return kRetErr;
+        return WrapperError;
     }
 
     return ParameterInitialization(input_tensor_info_list, output_tensor_info_list);
 };
 
-int32_t InferenceHelperCoreML::Finalize(void) {
+int32_t InferenceWrapperCoreML::Finalize(void) {
     net_.reset();
-    return kRetOk;
+    return WrapperOk;
 }
 
-int32_t InferenceHelperCoreML::PreProcess(const std::vector<InputTensorInfo>& input_tensor_info_list) {
+int32_t InferenceWrapperCoreML::PreProcess(const std::vector<InputTensorInfo>& input_tensor_info_list) {
     // Currently only single-input models are supported
     for (const auto& input_tensor_info : input_tensor_info_list) {
         input_tensor_.reset(MNN::Tensor::create<float>(
@@ -109,14 +104,14 @@ int32_t InferenceHelperCoreML::PreProcess(const std::vector<InputTensorInfo>& in
         if (input_tensor_ == nullptr) {
             PRINT_E("Invalid input name (%s)\n", input_tensor_info.name.c_str());
             INSPIRE_LOGE("Invalid input name (%s)\n", input_tensor_info.name.c_str());
-            return kRetErr;
+            return WrapperError;
         }
-        if (input_tensor_info.data_type == InputTensorInfo::kDataTypeImage) {
+        if (input_tensor_info.data_type == InputTensorInfo::DataTypeImage) {
             /* Crop */
             if ((input_tensor_info.image_info.width != input_tensor_info.image_info.crop_width) ||
                 (input_tensor_info.image_info.height != input_tensor_info.image_info.crop_height)) {
                 PRINT_E("Crop is not supported\n");
-                return kRetErr;
+                return WrapperError;
             }
 
             MNN::CV::ImageProcess::Config image_processconfig;
@@ -151,7 +146,7 @@ int32_t InferenceHelperCoreML::PreProcess(const std::vector<InputTensorInfo>& in
                 image_processconfig.destFormat = MNN::CV::BGR;
             } else {
                 PRINT_E("Unsupported color conversion (%d, %d)\n", input_tensor_info.image_info.channel, input_tensor_info.GetChannel());
-                return kRetErr;
+                return WrapperError;
             }
 
             /* Normalize image */
@@ -171,10 +166,10 @@ int32_t InferenceHelperCoreML::PreProcess(const std::vector<InputTensorInfo>& in
             pretreat->convert(static_cast<uint8_t*>(input_tensor_info.data), input_tensor_info.image_info.crop_width,
                               input_tensor_info.image_info.crop_height, 0, input_tensor_.get());
 
-        } else if ((input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNhwc) ||
-                   (input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNchw)) {
+        } else if ((input_tensor_info.data_type == InputTensorInfo::DataTypeBlobNhwc) ||
+                   (input_tensor_info.data_type == InputTensorInfo::DataTypeBlobNchw)) {
             std::unique_ptr<MNN::Tensor> tensor;
-            if (input_tensor_info.data_type == InputTensorInfo::kDataTypeBlobNhwc) {
+            if (input_tensor_info.data_type == InputTensorInfo::DataTypeBlobNhwc) {
                 tensor.reset(new MNN::Tensor(input_tensor_.get(), MNN::Tensor::TENSORFLOW));
             } else {
                 tensor.reset(new MNN::Tensor(input_tensor_.get(), MNN::Tensor::CAFFE));
@@ -191,19 +186,19 @@ int32_t InferenceHelperCoreML::PreProcess(const std::vector<InputTensorInfo>& in
             input_tensor_->copyFromHostTensor(tensor.get());
         } else {
             PRINT_E("Unsupported data type (%d)\n", input_tensor_info.data_type);
-            return kRetErr;
+            return WrapperError;
         }
         auto p = input_tensor_->host<float>();
         net_->setInput(input_tensor_info.name.c_str(), reinterpret_cast<const char*>(p));
     }
-    return kRetOk;
+    return WrapperOk;
 }
 
-int32_t InferenceHelperCoreML::Process(std::vector<OutputTensorInfo>& output_tensor_info_list) {
+int32_t InferenceWrapperCoreML::Process(std::vector<OutputTensorInfo>& output_tensor_info_list) {
     auto ret = net_->forward();
     if (ret != COREML_HSUCCEED) {
         PRINT_E("Failed to forward\n");
-        return kRetErr;
+        return WrapperError;
     }
 
     // out_mat_list_.clear();
@@ -212,7 +207,7 @@ int32_t InferenceHelperCoreML::Process(std::vector<OutputTensorInfo>& output_ten
         const char* output_tensor = net_->getOutput(output_tensor_info.name.c_str());
         if (output_tensor == nullptr) {
             PRINT_E("Invalid output name (%s)\n", output_tensor_info.name.c_str());
-            return kRetErr;
+            return WrapperError;
         }
         output_tensor_info.data = (void*)output_tensor;
 
@@ -227,16 +222,16 @@ int32_t InferenceHelperCoreML::Process(std::vector<OutputTensorInfo>& output_ten
         }
     }
 
-    return kRetOk;
+    return WrapperOk;
 }
 
-std::vector<std::string> InferenceHelperCoreML::GetInputNames() {
+std::vector<std::string> InferenceWrapperCoreML::GetInputNames() {
     return input_names_;
 }
 
-int32_t InferenceHelperCoreML::ResizeInput(const std::vector<InputTensorInfo>& input_tensor_info_list) {
+int32_t InferenceWrapperCoreML::ResizeInput(const std::vector<InputTensorInfo>& input_tensor_info_list) {
     PRINT_E("Currently, CoreML does not support input resizing\n");
     return 0;
 }
 
-#endif  // INFERENCE_HELPER_ENABLE_COREML
+#endif  // INFERENCE_WRAPPER_ENABLE_COREML

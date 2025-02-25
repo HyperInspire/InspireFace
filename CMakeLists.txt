@@ -126,7 +126,7 @@ endif()
 set(ISF_ENABLE_APPLE_EXTENSION OFF CACHE BOOL "Enable Apple device extension services, such as coreml, etc.")
 if(ISF_ENABLE_APPLE_EXTENSION)  
     add_definitions("-DISF_ENABLE_APPLE_EXTENSION")
-    add_definitions("-DINFERENCE_HELPER_ENABLE_COREML")
+    add_definitions("-DINFERENCE_WRAPPER_ENABLE_COREML")
 endif()
 
 # Platform configuration

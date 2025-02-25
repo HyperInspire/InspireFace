@@ -226,7 +226,7 @@ int32_t FacePipelineModule::Process(inspirecv::InspireImageProcess &processor, F
 int32_t FacePipelineModule::InitFaceAttributePredict(InspireModel &model) {
     m_attribute_predict_ = std::make_shared<FaceAttributePredictAdapt>();
     auto ret = m_attribute_predict_->loadData(model, model.modelType);
-    if (ret != InferenceHelper::kRetOk) {
+    if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
@@ -235,7 +235,7 @@ int32_t FacePipelineModule::InitFaceAttributePredict(InspireModel &model) {
 int32_t FacePipelineModule::InitMaskPredict(InspireModel &model) {
     m_mask_predict_ = std::make_shared<MaskPredictAdapt>();
     auto ret = m_mask_predict_->loadData(model, model.modelType);
-    if (ret != InferenceHelper::kRetOk) {
+    if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
@@ -243,13 +243,13 @@ int32_t FacePipelineModule::InitMaskPredict(InspireModel &model) {
 
 int32_t FacePipelineModule::InitRBGAntiSpoofing(InspireModel &model) {
     auto input_size = model.Config().get<std::vector<int>>("input_size");
-#ifdef INFERENCE_HELPER_ENABLE_RKNN2
+#ifdef INFERENCE_WRAPPER_ENABLE_RKNN2
     m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofingAdapt>(input_size[0], true);
 #else
     m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofingAdapt>(input_size[0]);
 #endif
     auto ret = m_rgb_anti_spoofing_->loadData(model, model.modelType);
-    if (ret != InferenceHelper::kRetOk) {
+    if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
@@ -258,7 +258,7 @@ int32_t FacePipelineModule::InitRBGAntiSpoofing(InspireModel &model) {
 int32_t FacePipelineModule::InitBlinkFromLivenessInteraction(InspireModel &model) {
     m_blink_predict_ = std::make_shared<BlinkPredictAdapt>();
     auto ret = m_blink_predict_->loadData(model, model.modelType);
-    if (ret != InferenceHelper::kRetOk) {
+    if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
     return HSUCCEED;
