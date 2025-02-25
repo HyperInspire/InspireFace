@@ -13,10 +13,7 @@
 #include <vector>
 #include <array>
 #include <memory>
-
-/* for RKNN */
 #include <rknn_api.h>
-
 #include "inference_wrapper.h"
 
 class InferenceWrapperRKNN : public InferenceWrapper {

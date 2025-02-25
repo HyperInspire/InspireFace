@@ -2,11 +2,7 @@
  * Created by Jingyu Yan
  * @date 2024-10-01
  */
-/*** Include ***/
-/* for general */
-
 #ifdef INFERENCE_WRAPPER_ENABLE_RKNN
-
 #include <iostream>
 #include <cstdint>
 #include <cstdlib>
@@ -17,7 +13,6 @@
 #include <array>
 #include <algorithm>
 #include <chrono>
-
 #include "inference_wrapper_rknn.h"
 #include "inference_wrapper_log.h"
 #include "log.h"
