@@ -8,13 +8,13 @@
 
 #include <utility>
 #include <inspirecv/inspirecv.h>
-#include "../data_type.h"
+#include "data_type.h"
 #include "inference_wrapper/inference_wrapper.h"
 #include "configurable.h"
-#include "../log.h"
+#include "log.h"
 #include "model_archive/inspire_archive.h"
 #include "nexus_processor/image_processor.h"
-#include "../initialization_module/launch.h"
+#include "initialization_module/launch.h"
 
 namespace inspire {
 

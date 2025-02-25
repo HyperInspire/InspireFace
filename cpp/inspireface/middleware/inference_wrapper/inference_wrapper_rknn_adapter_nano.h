@@ -8,14 +8,12 @@
 
 #ifdef INFERENCE_WRAPPER_ENABLE_RKNN2
 
-/* for general */
 #include <cstdint>
 #include <cmath>
 #include <string>
 #include <vector>
 #include <array>
 #include <memory>
-/* for My modules */
 #include "inference_wrapper.h"
 
 #include "customized/rknn_adapter_nano.h"
