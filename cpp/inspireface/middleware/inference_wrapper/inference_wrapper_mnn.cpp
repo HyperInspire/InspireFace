@@ -248,7 +248,6 @@ int32_t InferenceWrapperMNN::PreProcess(const std::vector<InputTensorInfo>& inpu
             /* Do pre-process */
             std::shared_ptr<MNN::CV::ImageProcess> pretreat(MNN::CV::ImageProcess::create(image_processconfig));
             pretreat->setMatrix(trans);
-            //            LOGD("k1");
             pretreat->convert(static_cast<uint8_t*>(input_tensor_info.data), input_tensor_info.image_info.crop_width,
                               input_tensor_info.image_info.crop_height, 0, input_tensor);
 
