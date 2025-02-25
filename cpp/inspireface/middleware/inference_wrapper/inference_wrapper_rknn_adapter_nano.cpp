@@ -54,15 +54,6 @@ int32_t InferenceWrapperRKNNAdapter::Process(std::vector<OutputTensorInfo> &outp
     }
     auto outputs_size = net_->GetOutputAttrs().size();
 
-    //    INSPIRE_LOGD("==================");
-    //    auto f = net_->GetOutputData(0);
-    //    for (int i = 0; i < 512; ++i) {
-    //        std::cout << f[i] << ", ";
-    //    }
-    //    std::cout << std::endl;
-    //
-    //    INSPIRE_LOGD("==================");
-
     assert(outputs_size == output_tensor_info_list.size());
 
     for (int index = 0; index < outputs_size; ++index) {
@@ -77,20 +68,12 @@ int32_t InferenceWrapperRKNNAdapter::Process(std::vector<OutputTensorInfo> &outp
         }
     }
 
-    // net_->ReleaseOutputs();
-
     return WrapperOk;
 }
 
 int32_t InferenceWrapperRKNNAdapter::PreProcess(const std::vector<InputTensorInfo> &input_tensor_info_list) {
     for (int i = 0; i < input_tensor_info_list.size(); ++i) {
         auto &input_tensor_info = input_tensor_info_list[i];
-        //        cv::Mat mat(input_tensor_info.GetHeight(), input_tensor_info.GetWidth(), CV_8UC3, input_tensor_info.data);
-        //        INSPIRE_LOGD("decode : %d", input_tensor_info.GetHeight());
-        //        INSPIRE_LOGD("decode : %d", input_tensor_info.GetWidth());
-        //        cv::Mat bgr;
-        //        cv::cvtColor(mat, bgr, cv::COLOR_RGB2BGR);
-        //        cv::imwrite("dec.jpg", bgr);
         rknn_tensor_format fmt = RKNN_TENSOR_NHWC;
         if (input_tensor_info.is_nchw) {
             fmt = RKNN_TENSOR_NCHW;
