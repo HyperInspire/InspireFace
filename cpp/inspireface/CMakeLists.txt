@@ -43,7 +43,6 @@ if (ISF_ENABLE_RKNN)
             set(RKNN_USE_STATIC_LIBS TRUE)
         endif()
     endif()
-
     
 endif()
 
@@ -65,7 +64,7 @@ set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/sqlite/)
 
 if (ISF_ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${RKNN_LINKED} dl)
-    # InferenceHelp use RkNN
+    # InferenceWrapper use RkNN
     if (ISF_RKNPU_MAJOR STREQUAL "rknpu1")
         add_definitions("-DINFERENCE_WRAPPER_ENABLE_RKNN")
     elseif(ISF_RKNPU_MAJOR STREQUAL "rknpu2")

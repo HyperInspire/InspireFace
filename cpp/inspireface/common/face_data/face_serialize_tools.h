@@ -11,6 +11,7 @@
 #include "herror.h"
 #include "data_type.h"
 #include "track_module/landmark/all.h"
+#include <log.h>
 
 // Define the namespace "inspire" for encapsulation
 namespace inspire {
@@ -20,14 +21,9 @@ namespace inspire {
  * @param matrix The transformation matrix to print.
  */
 inline void PrintTransformMatrix(const TransMatrix& matrix) {
-    std::cout << "Transformation Matrix:" << std::endl;
-    std::cout << "a: " << matrix.m00 << "\t";
-    std::cout << "b: " << matrix.m01 << "\t";
-    std::cout << "tx: " << matrix.tx << std::endl;
-
-    std::cout << "c: " << matrix.m10 << "\t";
-    std::cout << "d: " << matrix.m11 << "\t";
-    std::cout << "ty: " << matrix.ty << std::endl;
+    INSPIRE_LOGI("Transformation Matrix:");
+    INSPIRE_LOGI("a: %f\tb: %f\ttx: %f", matrix.m00, matrix.m01, matrix.tx);
+    INSPIRE_LOGI("c: %f\td: %f\tty: %f", matrix.m10, matrix.m11, matrix.ty);
 }
 
 /**
@@ -35,16 +31,13 @@ inline void PrintTransformMatrix(const TransMatrix& matrix) {
  * @param data The HyperFaceData structure to print.
  */
 inline void INSPIRE_API PrintHyperFaceDataDetail(const HyperFaceData& data) {
-    std::cout << "Track State: " << data.trackState << std::endl;
-    std::cout << "In Group Index: " << data.inGroupIndex << std::endl;
-    std::cout << "Track ID: " << data.trackId << std::endl;
-    std::cout << "Track Count: " << data.trackCount << std::endl;
+    INSPIRE_LOGI("Track State: %d", data.trackState);
+    INSPIRE_LOGI("In Group Index: %d", data.inGroupIndex);
+    INSPIRE_LOGI("Track ID: %d", data.trackId);
+    INSPIRE_LOGI("Track Count: %d", data.trackCount);
 
-    std::cout << "Face Rectangle:" << std::endl;
-    std::cout << "x: " << data.rect.x << "\t";
-    std::cout << "y: " << data.rect.y << "\t";
-    std::cout << "width: " << data.rect.width << "\t";
-    std::cout << "height: " << data.rect.height << std::endl;
+    INSPIRE_LOGI("Face Rectangle:");
+    INSPIRE_LOGI("x: %f\ty: %f\twidth: %f\theight: %f", data.rect.x, data.rect.y, data.rect.width, data.rect.height);
 
     PrintTransformMatrix(data.trans);
 }
