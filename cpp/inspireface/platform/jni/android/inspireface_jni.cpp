@@ -1366,4 +1366,4 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetLogLevel)(JNIEnv *env, jobject th
 
 }  // extern "C"
 
-#endif
+#endif  // ANDROID
