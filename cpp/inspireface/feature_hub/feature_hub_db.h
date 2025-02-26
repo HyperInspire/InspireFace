@@ -34,8 +34,8 @@ typedef enum SearchMode {
 } SearchMode;
 
 typedef enum PrimaryKeyMode {
-    AUTO_INCREMENT = 0,
-    MANUAL_INPUT,
+    AUTO_INCREMENT = 0,  // Auto-increment primary key
+    MANUAL_INPUT,        // Manual input primary key
 } PrimaryKeyMode;
 
 /**
