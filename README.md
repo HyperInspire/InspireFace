@@ -579,6 +579,10 @@ For different scenarios, we currently provide several Packs, each containing mul
 | Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) |
 | Goku | APPLE | Supports CPU, Metal and ANE | - | - |
 
+## Plan
+
+- [ ] Added TensorRT back-end support
+
 ## Acknowledgement
 
 InspireFace is built on the following libraries:
