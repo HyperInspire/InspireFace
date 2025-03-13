@@ -19,7 +19,6 @@ string(CONCAT INSPIRE_FACE_VERSION_PATCH_STR ${INSPIRE_FACE_VERSION_PATCH})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/information.h)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/python/version.txt)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/android/InspireFaceExample/inspireface/src/main/assets/inspireface/version.txt)
 
 # Check that the 3rdparty folder exists
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty")

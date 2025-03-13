@@ -14,7 +14,3 @@
 .externalNativeBuild
 .cxx
 local.properties
-inspireface/src/main/assets/inspireface/*
-!inspireface/src/main/assets/inspireface/version.txt
-!inspireface/src/main/assets/inspireface/kun.jpg
-inspireface/libs/*

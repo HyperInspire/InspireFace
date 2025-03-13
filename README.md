@@ -456,7 +456,7 @@ Precompiled library support:
 
 We released InspireFace's Android SDK on JitPack, which you can incorporate into your android projects in the following ways.
 
-- Step 1. Add the JitPack repository to your build file.Add it in your root build.gradle at the end of repositories:
+- Step 1. Add the JitPack repository to your build file add it in your root **build.gradle** at the end of repositories:
 
   ```groovy
   allprojects {
@@ -477,10 +477,10 @@ We released InspireFace's Android SDK on JitPack, which you can incorporate into
 
 #### b. Use the Android example project
 
-We have prepared an Android sample project. You can download library from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs ` directory of the Android sample project. You can compile and run this project using Android Studio.
+We have prepared an  [Android SDK project](https://github.com/HyperInspire/inspireface-android-sdk). You can download library from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs ` directory of the Android sample project. You can compile and run this project using Android Studio.
 
 ```bash
-InspireFaceExample/inspireface/libs
+inspireface-android-sdk/inspireface/libs
 ├── arm64-v8a
 │   └── libInspireFace.so
 └── armeabi-v7a
