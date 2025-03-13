@@ -14,26 +14,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.insightface.sdk.inspireface.InspireFace;
-import com.insightface.sdk.inspireface.base.CustomParameter;
-import com.insightface.sdk.inspireface.base.FaceAttributeResult;
-import com.insightface.sdk.inspireface.base.FaceFeature;
-import com.insightface.sdk.inspireface.base.FaceFeatureIdentity;
-import com.insightface.sdk.inspireface.base.FaceInteractionState;
-import com.insightface.sdk.inspireface.base.FaceInteractionsActions;
-import com.insightface.sdk.inspireface.base.FaceMaskConfidence;
-import com.insightface.sdk.inspireface.base.FaceQualityConfidence;
-import com.insightface.sdk.inspireface.base.FeatureHubConfiguration;
-import com.insightface.sdk.inspireface.base.ImageStream;
-import com.insightface.sdk.inspireface.base.InspireFaceVersion;
-import com.insightface.sdk.inspireface.base.MultipleFaceData;
-import com.insightface.sdk.inspireface.base.Point2f;
-import com.insightface.sdk.inspireface.base.RGBLivenessConfidence;
-import com.insightface.sdk.inspireface.base.SearchTopKResults;
-import com.insightface.sdk.inspireface.base.Session;
+import com.insightface.sdk.inspireface.base.*;
 import com.insightface.sdk.inspireface.utils.SDKUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
