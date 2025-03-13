@@ -39,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "InspireFace";
 
-
-
     void test() {
         InspireFaceVersion version = InspireFace.QueryInspireFaceVersion();
         Log.i(TAG, "InspireFace Version: " + version.major + "." + version.minor + "." + version.patch + " " + version.information);
@@ -56,9 +54,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Enable feature hub data status: " + enableStatus);
         InspireFace.FeatureHubFaceSearchThresholdSetting(0.42f);
 
-        String folder = InspireFace.copyResourceFileToApplicationDir(this);
-        Log.d(TAG, "Path: "+ folder);
-        boolean launchStatus = InspireFace.GlobalLaunch(folder + "/Pikachu");
+        boolean launchStatus = InspireFace.GlobalLaunch(this, InspireFace.PIKACHU);
         Log.d(TAG, "Launch status: " + launchStatus);
         if (!launchStatus) {
             Log.e(TAG, "Failed to launch InspireFace");

@@ -3,6 +3,7 @@
 [![pypi](https://img.shields.io/pypi/v/inspireface.svg?style=for-the-badge&color=orange&label=PYPI+release&logo=python)](https://pypi.org/project/inspireface/)
 [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=building&logo=cmake)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml)
 [![test](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=testing&logo=c)](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml)
+[![JitPack](https://img.shields.io/jitpack/v/github/HyperInspire/inspireface-android-sdk?style=for-the-badge&color=green&label=JitPack&logo=android)](https://jitpack.io/#HyperInspire/inspireface-android-sdk)
 
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
 
@@ -13,6 +14,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 <img src="images/banner.jpg" alt="banner" style="zoom:80%;" />
 
 ## Change Logs
+
+**`2025-03-09`** Release of android sdk in JitPack.
 
 **`2025-02-20`** Upgrade the face landmark model.
 
@@ -441,6 +444,31 @@ In the project, more usage examples are provided:
 
 ### Java and Android platform API
 
+#### Quick to use in Android
+
+We released InspireFace's Android SDK on JitPack, which you can incorporate into your android projects in the following ways.
+
+- Step 1. Add the JitPack repository to your build file.Add it in your root build.gradle at the end of repositories:
+
+  ```groovy
+  allprojects {
+      repositories {
+         ...
+         maven { url 'https://jitpack.io' }
+      }
+  }
+  ```
+
+- Step 2. Add the dependency
+
+  ```groovy
+  dependencies {
+      implementation 'com.github.HyperInspire:inspireface-android-sdk:1.2.0'
+  }
+  ```
+
+#### Use the Android example project
+
 We have prepared an Android sample project. You can download library from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs ` directory of the Android sample project. You can compile and run this project using Android Studio.
 
 ```bash
@@ -459,11 +487,13 @@ asset/
     └── Pikachu
 ```
 
+#### How to use the Android/Java Api
+
 We provide a Java API for Android devices, which is implemented using Java Native Interface(JNI). 
 
 ```java
 // Launch InspireFace, only need to call once
-boolean launchStatus = InspireFace.GlobalLaunch(folder + "/Pikachu");
+boolean launchStatus = InspireFace.GlobalLaunch(this, InspireFace.PIKACHU);
 if (!launchStatus) {
     Log.e(TAG, "Failed to launch InspireFace");
 }
@@ -577,7 +607,6 @@ For different scenarios, we currently provide several Packs, each containing mul
 | Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
 | Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
 | Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) |
-| Goku | APPLE | Supports CPU, Metal and ANE | - | - |
 
 ## Plan
 
