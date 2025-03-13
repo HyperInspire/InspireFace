@@ -4,6 +4,7 @@
 [![JitPack](https://img.shields.io/jitpack/v/github/HyperInspire/inspireface-android-sdk?style=for-the-badge&color=green&label=JitPack&logo=android)](https://jitpack.io/#HyperInspire/inspireface-android-sdk)
 [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=building&logo=cmake)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml)
 [![test](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=testing&logo=c)](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml)
+[![Model](https://img.shields.io/github/v/release/HyperInspire/InspireFace.svg?style=for-the-badge&color=blue&label=Model+Zoo&logo=github)](https://github.com/HyperInspire/InspireFace/releases/tag/v1.x)
 
 
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
@@ -445,7 +446,13 @@ In the project, more usage examples are provided:
 
 ### Java and Android platform API
 
-#### Quick to use in Android
+We have an [Android SDK project](https://github.com/HyperInspire/inspireface-android-sdk) that integrates pre-compiled dynamic libraries, and you can use it directly.
+
+Precompiled library support: 
+- arm64-v8a
+- armeabi-v7a
+
+#### a. Quick to use in Android
 
 We released InspireFace's Android SDK on JitPack, which you can incorporate into your android projects in the following ways.
 
@@ -468,7 +475,7 @@ We released InspireFace's Android SDK on JitPack, which you can incorporate into
   }
   ```
 
-#### Use the Android example project
+#### b. Use the Android example project
 
 We have prepared an Android sample project. You can download library from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs ` directory of the Android sample project. You can compile and run this project using Android Studio.
 
@@ -611,7 +618,8 @@ For different scenarios, we currently provide several Packs, each containing mul
 
 ## Plan
 
-- [ ] Added TensorRT back-end support
+- [ ] Added TensorRT backend support.
+- [ ] Added support for the android sdk behind the rknpu.
 
 ## Acknowledgement
 
