@@ -227,6 +227,20 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitma
     return HSUCCEED;
 }
 
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, HFImageBitmap *handle, int is_rotate,
+                                                                           float scale) {
+    if (streamHandle == nullptr || handle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    auto bitmap = new HF_ImageBitmap();
+    auto img = ((HF_CameraStream *)streamHandle)->impl.ExecuteImageScaleProcessing(scale, is_rotate);
+    bitmap->impl.Reset(img.Width(), img.Height(), img.Channels(), img.Data());
+    *handle = (HFImageBitmap)bitmap;
+    // Record the creation of this image bitmap in the ResourceManager
+    RESOURCE_MANAGE->createImageBitmap((long)*handle);
+    return HSUCCEED;
+}
+
 HYPER_CAPI_EXPORT extern HResult HFImageBitmapWriteToFile(HFImageBitmap handle, HPath filePath) {
     if (handle == nullptr) {
         return HERR_INVALID_IMAGE_BITMAP_HANDLE;

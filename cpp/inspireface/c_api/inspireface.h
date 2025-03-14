@@ -188,6 +188,18 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseImageBitmap(HFImageBitmap handle);
 HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitmap handle, HFRotation rotation, HFImageStream *streamHandle);
 
 /**
+ * @brief Create a image bitmap from image stream.
+ *
+ * @param streamHandle Pointer to the image stream handle.
+ * @param handle Pointer to the image bitmap handle that will be returned.
+ * @param is_rotate Whether to rotate the image.
+ * @param scale The scale of the image.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, HFImageBitmap *handle, int is_rotate,
+                                                                           float scale);
+
+/**
  * @brief Write the image bitmap to a file.
  *
  * @param handle Pointer to the image bitmap handle.
