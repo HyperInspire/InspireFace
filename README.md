@@ -381,6 +381,8 @@ For more examples, you can refer to the `cpp/sample` sub-project located in the 
 
 ### Python Native Sample
 
+The Python implementation is compiled based on InspireFace source code, and is integrated using a native interface approach.
+
 #### Use pip to install InspireFace
 
 You can use pip to install the InspireFace Python package:
@@ -616,10 +618,11 @@ For different scenarios, we currently provide several Packs, each containing mul
 | Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
 | Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) |
 
-## Plan
+## Short-Term Plan
 
 - [ ] Added TensorRT backend support.
-- [ ] Added support for the android sdk behind the rknpu.
+- [ ] Add the RKNPU backend support for Android .
+- [ ] Example app project for Android and iOS samples.
 
 ## Acknowledgement
 
