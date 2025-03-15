@@ -193,7 +193,7 @@ int32_t InferenceWrapperCoreML::Process(std::vector<OutputTensorInfo>& output_te
 
         const std::vector<int>& output_shape = net_->getOutputShapeByName(output_tensor_info.name);
 
-        int size = 0;
+        int size = 1;
         for (int32_t dim = 0; dim < output_shape.size(); dim++) {
             output_tensor_info.tensor_dims.push_back(output_shape[dim]);
             size *= output_shape[dim];
