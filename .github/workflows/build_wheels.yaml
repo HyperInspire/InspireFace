@@ -2,9 +2,9 @@ name: Build Wheels
 
 on:
   push:
-    branches: ["feature/infer_custom_fix"]
+    branches: ["release/wheels"]
   pull_request:
-    branches: ["feature/infer_custom_fix"]
+    branches: ["release/wheels"]
 
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
