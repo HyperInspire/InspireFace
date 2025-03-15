@@ -8,6 +8,7 @@
 
 #include <cstdint>  // for uint8_t
 #include <limits>   // for std::numeric_limits
+#include <sstream>
 
 #define REQUIRE_EQ_IMAGE(a, b, h, w, c)                                                                                                \
     do {                                                                                                                               \
