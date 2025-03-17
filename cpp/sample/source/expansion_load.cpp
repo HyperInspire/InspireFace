@@ -100,7 +100,7 @@ void test_feature() {
 
 int main() {
     std::string archivePath = "test_res/pack/A";
-    std::string extensionPath = "test_res/pack/B";
+    std::string extensionPath = "test_res/pack/A";
     INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_ANE);
     INSPIRE_LAUNCH->SetExtensionPath(extensionPath);
     INSPIRE_LAUNCH->Load(archivePath);
