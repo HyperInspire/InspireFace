@@ -6,6 +6,7 @@ test_zip_*
 test_res/pack/*
 test_res/save/*
 !test_res/save/.pld
+!test_res/save/video_frames/.pld
 resource/*
 pack/*
 *.zip
