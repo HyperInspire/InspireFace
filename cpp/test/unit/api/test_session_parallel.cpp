@@ -85,7 +85,7 @@ TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
         float similaritySum = 0.0f;
         std::mutex similarityMutex;
 
-        inspirecv::TimeSpend timeSpend("Parallel loop: " + std::to_string(loop));
+        inspirecv::TimeSpend timeSpend("Parallel loop: " + std::to_string(loop) + ", thread: " + std::to_string(N));
         timeSpend.Start();
 
         // Start worker thread
