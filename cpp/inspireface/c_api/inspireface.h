@@ -324,8 +324,8 @@ HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HSt
 HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HPath path);
 
 /**
- * @brief Query the Apple CoreML model path. After executing HFLaunchInspireFace, it's typically your input filename plus the suffix '.mlmodelc', for
- * example: Pikachu and Pikachu.mlmodelc
+ * @brief Query the Apple CoreML model path. After executing HFLaunchInspireFace, it's typically your input filename plus the suffix '.expansive', for
+ * example: Pikachu and Pikachu.expansive
  * @param path Query the apple coreml model path
  * @return HResult indicating the success or failure of the operation.
  * */

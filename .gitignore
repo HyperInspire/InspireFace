@@ -6,6 +6,8 @@ test_zip_*
 test_res/pack/*
 test_res/save/*
 !test_res/save/.gitkeep
+!test_res/save/video_frames/
+test_res/save/video_frames/*
 !test_res/save/video_frames/.gitkeep
 resource/*
 pack/*
