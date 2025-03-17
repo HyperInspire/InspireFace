@@ -24,12 +24,7 @@ int32_t GeneralImageProcessor::Padding(const uint8_t* src_data, int src_width, i
     inspirecv::Image src_img(src_width, src_height, channels, src_data, false);
     dst_width = src_width + left + right;
     dst_height = src_height + top + bottom;
-    last_buffer_.image = src_img.Pad(top, bottom, left, right,
-                                     {
-                                       0.0f,
-                                       0.0f,
-                                       0.0f,
-                                     });
+    last_buffer_.image = src_img.Pad(top, bottom, left, right, inspirecv::Color::Black);
     *dst_data = last_buffer_.GetData();
     return 0;
 }
@@ -46,7 +41,7 @@ int32_t GeneralImageProcessor::ResizeAndPadding(const uint8_t* src_data, int src
     int hpad = dst_height - resized_h;
 
     inspirecv::Image resized_img = src_img.Resize(resized_w, resized_h);
-    last_buffer_.image = resized_img.Pad(0, hpad, 0, wpad, {0.0f, 0.0f, 0.0f});
+    last_buffer_.image = resized_img.Pad(0, hpad, 0, wpad, inspirecv::Color::Black);
     *dst_data = last_buffer_.GetData();
     return 0;
 }

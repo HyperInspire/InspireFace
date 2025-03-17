@@ -6,7 +6,7 @@
 #include "opencv2/opencv.hpp"
 
 #include "inspireface/middleware/costman.h"
-#include "middleware/inference_helper/customized/rknn_adapter.h"
+#include "middleware/inference_wrapper/customized/rknn_adapter.h"
 #include "inspireface/feature_hub/simd.h"
 #include <memory>
 #include "inspireface/recognition_module/extract/extract.h"
@@ -82,16 +82,16 @@ int main() {
         param.set<std::vector<int>>("input_size", {112, 112});
         param.set<std::vector<float>>("mean", {0.0f, 0.0f, 0.0f});
         param.set<std::vector<float>>("norm", {1.0f, 1.0f, 1.0f});
-        param.set<int>("data_type", InputTensorInfo::kDataTypeImage);
-        param.set<int>("input_tensor_type", InputTensorInfo::kTensorTypeUint8);
-        param.set<int>("output_tensor_type", InputTensorInfo::kTensorTypeFp32);
+        param.set<int>("data_type", InputTensorInfo::DataTypeImage);
+        param.set<int>("input_tensor_type", InputTensorInfo::TensorTypeUint8);
+        param.set<int>("output_tensor_type", InputTensorInfo::TensorTypeFp32);
         param.set<bool>("nchw", false);
         param.set<bool>("swap_color", true);  // RK requires rgb input
 
         m_extract_ = std::make_shared<Extract>();
         InspireModel model;
         loader.LoadModel("feature", model);
-        m_extract_->loadData(model, InferenceHelper::kRknn);
+        m_extract_->loadData(model, InferenceWrapper::INFER_RKNN);
 
         cv::Mat image = cv::imread(names[0]);
         //        cv::Mat rgb;

@@ -107,4 +107,27 @@ std::string Launch::GetRockchipDmaHeapPath() const {
     return m_rockchip_dma_heap_path_;
 }
 
+void Launch::SetExtensionPath(const std::string& path) {
+    m_extension_path_ = path;
+}
+
+std::string Launch::GetExtensionPath() const {
+    return m_extension_path_;
+}
+
+void Launch::SetGlobalCoreMLInferenceMode(InferenceWrapper::SpecialBackend mode) {
+    m_global_coreml_inference_mode_ = mode;
+    if (m_global_coreml_inference_mode_ == InferenceWrapper::COREML_CPU) {
+        INSPIRE_LOGW("Global CoreML Compute Units set to CPU Only.");
+    } else if (m_global_coreml_inference_mode_ == InferenceWrapper::COREML_GPU) {
+        INSPIRE_LOGW("Global CoreML Compute Units set to CPU and GPU.");
+    } else if (m_global_coreml_inference_mode_ == InferenceWrapper::COREML_ANE) {
+        INSPIRE_LOGW("Global CoreML Compute Units set to Auto Switch (ANE, GPU, CPU).");
+    }
+}
+
+InferenceWrapper::SpecialBackend Launch::GetGlobalCoreMLInferenceMode() const {
+    return m_global_coreml_inference_mode_;
+}
+
 }  // namespace inspire

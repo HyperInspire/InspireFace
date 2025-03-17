@@ -22,26 +22,33 @@ namespace nexus {
  * The backend implementation is selected at compile time based on which acceleration options
  * are enabled. Only one backend will be active at runtime.
  */
-
 class ImageProcessor {
 public:
     static std::unique_ptr<ImageProcessor> Create();
 
 public:
+    // Virtual destructor
     virtual ~ImageProcessor() = 0;
+
+    // Resize image to specified dimensions
     virtual int32_t Resize(const uint8_t* src_data, int src_width, int src_height, int channels, uint8_t** dst_data, int dst_width,
                            int dst_height) = 0;
 
+    // Swap color channels of the image
     virtual int32_t SwapColor(const uint8_t* src_data, int src_width, int src_height, int channels, uint8_t** dst_data) = 0;
 
+    // Add padding to image borders
     virtual int32_t Padding(const uint8_t* src_data, int src_width, int src_height, int channels, int top, int bottom, int left, int right,
                             uint8_t** dst_data, int& dst_width, int& dst_height) = 0;
 
+    // Resize image and add padding as needed
     virtual int32_t ResizeAndPadding(const uint8_t* src_data, int src_width, int src_height, int channels, int dst_width, int dst_height,
                                      uint8_t** dst_data, float& scale) = 0;
 
+    // Mark processing as complete
     virtual int32_t MarkDone() = 0;
 
+    // Display cache status information
     virtual void DumpCacheStatus() const = 0;
 
 };  // class ImageProcessor

@@ -1,8 +1,11 @@
 # InspireFace
 [![GitHub release](https://img.shields.io/github/v/release/HyperInspire/InspireFace.svg?style=for-the-badge&color=blue&label=Github+release&logo=github)](https://github.com/HyperInspire/InspireFace/releases/latest)
+[![Model](https://img.shields.io/github/v/release/HyperInspire/InspireFace.svg?style=for-the-badge&color=blue&label=Model+Zoo&logo=github)](https://github.com/HyperInspire/InspireFace/releases/tag/v1.x)
 [![pypi](https://img.shields.io/pypi/v/inspireface.svg?style=for-the-badge&color=orange&label=PYPI+release&logo=python)](https://pypi.org/project/inspireface/)
+[![JitPack](https://img.shields.io/jitpack/v/github/HyperInspire/inspireface-android-sdk?style=for-the-badge&color=green&label=JitPack&logo=android)](https://jitpack.io/#HyperInspire/inspireface-android-sdk)
 [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=building&logo=cmake)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml)
 [![test](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=testing&logo=c)](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml)
+
 
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
 
@@ -13,6 +16,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 <img src="images/banner.jpg" alt="banner" style="zoom:80%;" />
 
 ## Change Logs
+
+**`2025-03-09`** Release of android sdk in JitPack.
 
 **`2025-02-20`** Upgrade the face landmark model.
 
@@ -106,7 +111,7 @@ for model in ["Pikachu", "Megatron"]:
     inspireface.pull_latest_model(model)
 ```
 
-More examples can be found in the [python/](python/) directory.
+More examples can be found in the [python](python/) directory.
 
 ## Preparation
 ### Clone 3rdparty
@@ -369,13 +374,14 @@ if (ret != HSUCCEED) {
     printf("Release session error: %lu\n", ret);
     return ret;
 }
-
 ```
 For more examples, you can refer to the `cpp/sample` sub-project located in the root directory. You can compile these sample executables by enabling the `ISF_BUILD_WITH_SAMPLE` option during the compilation process.
 
 **Note**: For each error code feedback, you can click on this [link](doc/Error-Feedback-Codes.md) to view detailed explanations.
 
 ### Python Native Sample
+
+The Python implementation is compiled based on InspireFace source code, and is integrated using a native interface approach.
 
 #### Use pip to install InspireFace
 
@@ -387,7 +393,7 @@ pip install inspireface
 
 #### Python Native Sample
 
-We provide a Python API that allows for more efficient use of the InspireFace library. After compiling the dynamic link library, you need to either symlink or copy it to the `python/inspireface/modules/core` directory within the root directory. You can then start testing by navigating to the **[python/](python/)** directory. Your Python environment will need to have some dependencies installed:
+We provide a Python API that allows for more efficient use of the InspireFace library. After compiling the dynamic link library, you need to either symlink or copy it to the `python/inspireface/modules/core` directory within the root directory. You can then start testing by navigating to the **[python](python/)** directory. Your Python environment will need to have some dependencies installed:
 
 - python >= 3.7
 - opencv-python
@@ -397,10 +403,9 @@ We provide a Python API that allows for more efficient use of the InspireFace li
 - ctypes
 ```bash
 # Use a symbolic link
-ln -s YOUR_BUILD_DIR/install/InspireFace/lib/libInspireFace.so python/inspireface/modules/core
+ln -s YOUR_BUILD_DIR/install/InspireFace/lib/libInspireFace.so python/inspireface/modules/core/PLATFORM/ARCH/
 # Navigate to the sub-project directory
 cd python
-
 ```
 
 Import inspireface for a quick facial detection example:
@@ -443,21 +448,62 @@ In the project, more usage examples are provided:
 
 ### Java and Android platform API
 
-We have prepared an Android sample project. You can download library from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs directory` of the Android sample project. You can compile and run this project using Android Studio.
+We have an [Android SDK project](https://github.com/HyperInspire/inspireface-android-sdk) that integrates pre-compiled dynamic libraries, and you can use it directly.
+
+Precompiled library support: 
+- arm64-v8a
+- armeabi-v7a
+
+#### a. Quick to use in Android
+
+We released InspireFace's Android SDK on JitPack, which you can incorporate into your android projects in the following ways.
+
+- Step 1. Add the JitPack repository to your build file add it in your root **build.gradle** at the end of repositories:
+
+  ```groovy
+  allprojects {
+      repositories {
+         ...
+         maven { url 'https://jitpack.io' }
+      }
+  }
+  ```
+
+- Step 2. Add the dependency
+
+  ```groovy
+  dependencies {
+      implementation 'com.github.HyperInspire:inspireface-android-sdk:1.2.0'
+  }
+  ```
+
+#### b. Use the Android example project
+
+We have prepared an  [Android SDK project](https://github.com/HyperInspire/inspireface-android-sdk). You can download library from the [Release Page](https://github.com/HyperInspire/InspireFace/releases) or compile the Android library yourself and place it in the `inspireface/libs ` directory of the Android sample project. You can compile and run this project using Android Studio.
 
 ```bash
-InspireFaceExample/inspireface/libs
+inspireface-android-sdk/inspireface/libs
 ├── arm64-v8a
 │   └── libInspireFace.so
 └── armeabi-v7a
     └── libInspireFace.so
 ```
 
+You need to get the resource file from the release  [Release Page](https://github.com/HyperInspire/InspireFace/releases) and place it in the asset/inspireface in your android project:
+
+```
+asset/
+└── inspireface/
+    └── Pikachu
+```
+
+#### How to use the Android/Java Api
+
 We provide a Java API for Android devices, which is implemented using Java Native Interface(JNI). 
 
 ```java
 // Launch InspireFace, only need to call once
-boolean launchStatus = InspireFace.GlobalLaunch(folder + "/Pikachu");
+boolean launchStatus = InspireFace.GlobalLaunch(this, InspireFace.PIKACHU);
 if (!launchStatus) {
     Log.e(TAG, "Failed to launch InspireFace");
 }
@@ -495,7 +541,7 @@ InspireFace.GlobalRelease();
 
 ## Test
 
-In the project, there is a subproject called cpp/test. To compile it, you need to enable the ISF_BUILD_WITH_TEST switch, which will allow you to compile executable programs for testing.
+In the project, there is a subproject called `cpp/test`. To compile it, you need to enable the **ISF_BUILD_WITH_TEST** switch, which will allow you to compile executable programs for testing.
 
 ```bash
 cmake -DISF_BUILD_WITH_TEST=ON ..
@@ -547,16 +593,17 @@ The following Features and technologies are currently supported.
 | Index | Feature | Adaptation | Note |
 | -- | --- | --- | --- |
 | 1 | Face Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | SCRFD |
-| 2 | Facial Landmark Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | HyperLandmark |
+| 2 | Facial Landmark Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | HyperLandmarkv2 |
 | 3 | Face Recognition | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | ArcFace |
-| 4 | Face Tracking | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 5 | Mask Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 6 | Silent Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | MiniVision |
-| 7 | Face Quality Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 8 | Face Pose Estimation | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 9 | Face Attribute Prediction | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Age, Race, Gender |
-| 10 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Expressions and head |
-| 11 | Face Embedding Management | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Memory and Persistence |
+| 4 | Face Alignment | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
+| 5 | Face Tracking | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Fast tracking and By-Detection |
+| 6 | Mask Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
+| 7 | Silent Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | MiniVision |
+| 8 | Face Quality Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
+| 9 | Face Pose Estimation | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
+| 10 | Face Attribute Prediction | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Age, Race, Gender |
+| 11 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Expressions and head |
+| 12 | Face Embedding Management | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Memory and Persistence |
 
 
 ## Resource Package List
@@ -570,6 +617,12 @@ For different scenarios, we currently provide several Packs, each containing mul
 | Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
 | Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
 | Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) |
+
+## Short-Term Plan
+
+- [ ] Added TensorRT backend support.
+- [ ] Add the RKNPU backend support for Android .
+- [ ] Example app project for Android and iOS samples.
 
 ## Acknowledgement
 

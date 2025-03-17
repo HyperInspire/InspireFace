@@ -43,7 +43,6 @@ if (ISF_ENABLE_RKNN)
             set(RKNN_USE_STATIC_LIBS TRUE)
         endif()
     endif()
-
     
 endif()
 
@@ -65,11 +64,11 @@ set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/sqlite/)
 
 if (ISF_ENABLE_RKNN)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${RKNN_LINKED} dl)
-    # InferenceHelp use RkNN
+    # InferenceWrapper use RkNN
     if (ISF_RKNPU_MAJOR STREQUAL "rknpu1")
-        add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN")
+        add_definitions("-DINFERENCE_WRAPPER_ENABLE_RKNN")
     elseif(ISF_RKNPU_MAJOR STREQUAL "rknpu2")
-        add_definitions("-DINFERENCE_HELPER_ENABLE_RKNN2")
+        add_definitions("-DINFERENCE_WRAPPER_ENABLE_RKNN2")
     endif()
     if (ISF_RK_COMPILER_TYPE STREQUAL "aarch64")
         set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} rknnrt)
@@ -84,6 +83,19 @@ set(CPP_YAML_INCLUDE ${ISF_THIRD_PARTY_DIR}/yaml-cpp/include)
 # archive
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/microtar/microtar.c)
 
+if(ISF_ENABLE_APPLE_EXTENSION)
+    # link apple libs
+    find_library(FOUNDATION_LIBRARY Foundation)
+    find_library(COREML_LIBRARY CoreML)
+    find_library(ACCELERATE_LIBRARY Accelerate)
+    find_package(OpenCV REQUIRED)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${FOUNDATION_LIBRARY} ${COREML_LIBRARY} ${ACCELERATE_LIBRARY})
+
+    # Add objective-c files
+    set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/inference_wrapper/coreml/CoreMLAdapter.mm)
+
+endif()
+
 # MNN
 link_directories(${MNN_LIBS})
 
@@ -94,7 +106,7 @@ else()
     add_library(InspireFace STATIC ${SOURCE_FILES} $<TARGET_OBJECTS:inspirecv>)
 endif()
 
-target_compile_definitions(InspireFace PUBLIC INFERENCE_HELPER_ENABLE_MNN)
+target_compile_definitions(InspireFace PUBLIC INFERENCE_WRAPPER_ENABLE_MNN)
 target_compile_definitions(InspireFace PUBLIC FEATURE_BLOCK_ENABLE_OPENCV)
 
 # Include files
@@ -150,6 +162,9 @@ elseif(IOS)
         "-framework CoreMedia"
         ${MNN_FRAMEWORK_PATH}
     )
+    if(ISF_ENABLE_APPLE_EXTENSION)
+        set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${ACCELERATE_LIBRARY})
+    endif()
     if(ISF_ENABLE_OPENCV)
         set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} "-framework opencv2")
     endif()
@@ -160,7 +175,7 @@ else()
     set_target_properties(InspireFace PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
             ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
-            )
+    )
 endif()
 
 # Print Message
@@ -188,7 +203,7 @@ endif ()
 install(TARGETS InspireFace
         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib
         ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib
-        )
+)
 
 # Install header file
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)

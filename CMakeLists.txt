@@ -9,8 +9,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 # Current version
 set(INSPIRE_FACE_VERSION_MAJOR 1)
-set(INSPIRE_FACE_VERSION_MINOR 1)
-set(INSPIRE_FACE_VERSION_PATCH 13)
+set(INSPIRE_FACE_VERSION_MINOR 2)
+set(INSPIRE_FACE_VERSION_PATCH 0)
 
 # Converts the version number to a string
 string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
@@ -19,6 +19,26 @@ string(CONCAT INSPIRE_FACE_VERSION_PATCH_STR ${INSPIRE_FACE_VERSION_PATCH})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/information.h)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/python/version.txt)
+
+# Check that the 3rdparty folder exists
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty")
+    message(STATUS "3rdparty directory not found, cloning from github...")
+    
+    # Execute git clone and directly specify it in the current directory
+    execute_process(
+        COMMAND git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        RESULT_VARIABLE GIT_RESULT
+    )
+    
+    if(NOT GIT_RESULT EQUAL "0")
+        message(FATAL_ERROR "Failed to clone 3rdparty repository")
+    else()
+        message(STATUS "Successfully cloned 3rdparty repository")
+    endif()
+else()
+    message(STATUS "3rdparty directory already exists")
+endif()
 
 # Set the ISF_THIRD_PARTY_DIR variable to allow it to be set externally from the command line, or use the default path if it is not set
 set(ISF_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty" CACHE PATH "Path to the third-party libraries directory")
@@ -100,6 +120,13 @@ endif()
 option(ISF_ENABLE_COST_TIME "Enable cost time." OFF)
 if(ISF_ENABLE_COST_TIME)
     add_definitions("-DISF_ENABLE_COST_TIME")
+endif()
+
+# Apple device dedicated expansion services, support for some models coreml reasoning and so on
+set(ISF_ENABLE_APPLE_EXTENSION OFF CACHE BOOL "Enable Apple device extension services, such as coreml, etc.")
+if(ISF_ENABLE_APPLE_EXTENSION)  
+    add_definitions("-DISF_ENABLE_APPLE_EXTENSION")
+    add_definitions("-DINFERENCE_WRAPPER_ENABLE_COREML")
 endif()
 
 # Platform configuration
@@ -244,12 +271,12 @@ elseif(DEFINED MNN_STATIC_PATH)
 elseif(IOS)
     message(Build iOS)
 
-elseif(DEFINED MNN_CUSTOM_SOURCE)
-    message("Using custom external MNN source path: ${MNN_CUSTOM_SOURCE}")
+elseif(DEFINED ISF_MNN_CUSTOM_SOURCE)
+    message("Using custom external MNN source path: ${ISF_MNN_CUSTOM_SOURCE}")
     # In particular, rknpu2 uses a lower version of mnn
     set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "Build MNN as a shared library")
-    add_subdirectory(${MNN_CUSTOM_SOURCE} EXCLUDE_FROM_ALL)
-    set(MNN_INCLUDE_DIRS "${MNN_CUSTOM_SOURCE}/include")
+    add_subdirectory(${ISF_MNN_CUSTOM_SOURCE} EXCLUDE_FROM_ALL)
+    set(MNN_INCLUDE_DIRS "${ISF_MNN_CUSTOM_SOURCE}/include")
     set(MNN_LIBS MNN)
     
 else ()
@@ -307,6 +334,10 @@ if(ISF_ENABLE_OPENCV)
     message(STATUS "\t OpenCV: Enabled")
 else()
     message(STATUS "\t OpenCV: Disabled")
+endif()
+
+if(ISF_ENABLE_APPLE_EXTENSION)
+    message(STATUS "\t ISF_ENABLE_APPLE_EXTENSION: ${ISF_ENABLE_APPLE_EXTENSION}")
 endif()
 
 message(STATUS "\t CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")

@@ -55,6 +55,10 @@ public:
             if (ret != 0) {
                 return ret;
             }
+            if (model.loadFilePath) {
+                // No model files are loaded, only configuration files are loaded for extension modules such as CoreML.
+                return SARC_SUCCESS;
+            }
             auto &buffer = GetFileContent(model.name);
             if (buffer.empty()) {
                 return ERROR_MODEL_BUFFER;

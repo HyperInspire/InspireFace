@@ -10,6 +10,7 @@
 #include "middleware/nexus_processor/rga/dma_alloc.h"
 #endif
 #include <mutex>
+#include "middleware/inference_wrapper/inference_wrapper.h"
 
 #ifndef INSPIRE_API
 #define INSPIRE_API
@@ -52,6 +53,18 @@ public:
     // Get the rockchip dma heap path
     std::string GetRockchipDmaHeapPath() const;
 
+    // Set the extension path
+    void SetExtensionPath(const std::string& path);
+
+    // Get the extension path
+    std::string GetExtensionPath() const;
+
+    // Set the global coreml inference mode
+    void SetGlobalCoreMLInferenceMode(InferenceWrapper::SpecialBackend mode);
+
+    // Get the global coreml inference mode
+    InferenceWrapper::SpecialBackend GetGlobalCoreMLInferenceMode() const;
+
 private:
     // Parameters
     std::string m_rockchip_dma_heap_path_;
@@ -71,8 +84,12 @@ private:
     static std::mutex mutex_;                  ///< Mutex for synchronizing access to the singleton instance.
     static std::shared_ptr<Launch> instance_;  ///< The singleton instance of Launch.
 
+    std::string m_extension_path_;
+
     std::unique_ptr<InspireArchive> m_archive_;  ///< The archive containing all necessary resources.
     bool m_load_;                                ///< Flag indicating whether the resources have been successfully loaded.
+
+    InferenceWrapper::SpecialBackend m_global_coreml_inference_mode_{InferenceWrapper::COREML_ANE};  ///< The global coreml inference mode
 };
 
 }  // namespace inspire

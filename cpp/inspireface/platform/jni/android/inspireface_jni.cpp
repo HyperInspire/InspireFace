@@ -38,6 +38,16 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_GlobalTerminate)(JNIEnv *env, jo
     return true;
 }
 
+JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_QueryLaunchStatus)(JNIEnv *env, jobject thiz) {
+    HInt32 status;
+    auto result = HFQueryInspireFaceLaunchStatus(&status);
+    if (result != 0) {
+        INSPIRE_LOGE("Failed to query InspireFace launch status, error code: %d", result);
+        return false;
+    }
+    return status;
+}
+
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateSession)(JNIEnv *env, jobject thiz, jobject customParameter, jint detectMode,
                                                               jint maxDetectFaceNum, jint detectPixelLevel, jint trackByDetectModeFPS) {
     // Get CustomParameter class and fields
@@ -945,6 +955,12 @@ JNIEXPORT jfloat INSPIRE_FACE_JNI(InspireFace_FaceComparison)(JNIEnv *env, jobje
     return compareResult;
 }
 
+JNIEXPORT jfloat INSPIRE_FACE_JNI(InspireFace_GetRecommendedCosineThreshold)(JNIEnv *env, jobject thiz) {
+    HFloat threshold;
+    HFGetRecommendedCosineThreshold(&threshold);
+    return threshold;
+}
+
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNIEnv *env, jobject thiz, jobject session, jobject streamHandle,
                                                                              jobject faces, jobject parameter) {
     // Get session handle
@@ -997,7 +1013,7 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNI
     jfieldID enableFaceQualityField = env->GetFieldID(paramClass, "enableFaceQuality", "I");
     jfieldID enableFaceAttributeField = env->GetFieldID(paramClass, "enableFaceAttribute", "I");
     jfieldID enableInteractionLivenessField = env->GetFieldID(paramClass, "enableInteractionLiveness", "I");
-
+    jfieldID enableDetectModeLandmarkField = env->GetFieldID(paramClass, "enableDetectModeLandmark", "I");
     // Get parameter values
     HFSessionCustomParameter customParam;
     customParam.enable_recognition = env->GetIntField(parameter, enableRecognitionField);
@@ -1007,7 +1023,7 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNI
     customParam.enable_face_quality = env->GetIntField(parameter, enableFaceQualityField);
     customParam.enable_face_attribute = env->GetIntField(parameter, enableFaceAttributeField);
     customParam.enable_interaction_liveness = env->GetIntField(parameter, enableInteractionLivenessField);
-
+    customParam.enable_detect_mode_landmark = env->GetIntField(parameter, enableDetectModeLandmarkField);
     // Call native function
     HResult ret = HFMultipleFacePipelineProcess((HFSession)sessionHandle, (HFImageStream)streamHandleValue, &faceData, customParam);
 
@@ -1364,6 +1380,10 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetLogLevel)(JNIEnv *env, jobject th
     HFSetLogLevel((HFLogLevel)level);
 }
 
+JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_LogDisable)(JNIEnv *env, jobject thiz) {
+    HFLogDisable();
+}
+
 }  // extern "C"
 
-#endif
+#endif  // ANDROID

@@ -9,6 +9,7 @@
 #include <spdlog/spdlog.h>
 #include <iostream>
 #include "enviro.h"
+#include "check.h"
 
 // Define the test model file
 #define TEST_MODEL_FILE Enviro::getInstance().getPackName()

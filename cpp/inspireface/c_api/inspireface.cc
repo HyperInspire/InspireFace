@@ -11,6 +11,7 @@
 #include "initialization_module/launch.h"
 #include "initialization_module/resource_manage.h"
 #include "recognition_module/similarity_converter.h"
+#include "middleware/inference_wrapper/inference_wrapper.h"
 
 using namespace inspire;
 
@@ -223,6 +224,20 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitma
 
     // Record the creation of this stream in the ResourceManager
     RESOURCE_MANAGE->createStream((long)*streamHandle);
+    return HSUCCEED;
+}
+
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, HFImageBitmap *handle, int is_rotate,
+                                                                           float scale) {
+    if (streamHandle == nullptr || handle == nullptr) {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
+    auto bitmap = new HF_ImageBitmap();
+    auto img = ((HF_CameraStream *)streamHandle)->impl.ExecuteImageScaleProcessing(scale, is_rotate);
+    bitmap->impl.Reset(img.Width(), img.Height(), img.Channels(), img.Data());
+    *handle = (HFImageBitmap)bitmap;
+    // Record the creation of this image bitmap in the ResourceManager
+    RESOURCE_MANAGE->createImageBitmap((long)*handle);
     return HSUCCEED;
 }
 
@@ -441,13 +456,25 @@ HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path) {
     return HSUCCEED;
 }
 
-HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HString path) {
-    // TODO: Implement this function
+HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HPath path) {
+    std::string modelPath(path);
+    INSPIRE_LAUNCH->SetExtensionPath(modelPath);
     return HSUCCEED;
 }
 
 HResult HFQueryExpansiveHardwareAppleCoreMLModelPath(HString path) {
-    // TODO: Implement this function
+    strcpy(path, INSPIRE_LAUNCH->GetExtensionPath().c_str());
+    return HSUCCEED;
+}
+
+HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode) {
+    if (mode == HF_APPLE_COREML_INFERENCE_MODE_CPU) {
+        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_CPU);
+    } else if (mode == HF_APPLE_COREML_INFERENCE_MODE_GPU) {
+        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_GPU);
+    } else if (mode == HF_APPLE_COREML_INFERENCE_MODE_ANE) {
+        INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_ANE);
+    }
     return HSUCCEED;
 }
 

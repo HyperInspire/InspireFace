@@ -14,5 +14,3 @@
 .externalNativeBuild
 .cxx
 local.properties
-inspireface/src/main/assets/inspireface/*
-inspireface/libs/*

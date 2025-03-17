@@ -8,12 +8,13 @@
 
 #include <utility>
 #include <inspirecv/inspirecv.h>
-#include "../data_type.h"
-#include "inference_helper/inference_helper.h"
+#include "data_type.h"
+#include "inference_wrapper/inference_wrapper.h"
 #include "configurable.h"
-#include "../log.h"
+#include "log.h"
 #include "model_archive/inspire_archive.h"
 #include "nexus_processor/image_processor.h"
+#include "initialization_module/launch.h"
 
 namespace inspire {
 
@@ -46,10 +47,10 @@ public:
      * @brief Loads parameters and initializes the model for inference.
      * @param param Parameters for network configuration.
      * @param model Pointer to the model.
-     * @param type Type of the inference helper (default: kMnn).
+     * @param type Type of the inference helper (default: INFER_MNN).
      * @return int32_t Status of the loading and initialization process.
      */
-    int32_t loadData(InspireModel &model, InferenceHelper::HelperType type = InferenceHelper::kMnn, bool dynamic = false) {
+    int32_t loadData(InspireModel &model, InferenceWrapper::EngineType type = InferenceWrapper::INFER_MNN, bool dynamic = false) {
         m_infer_type_ = type;
         // must
         pushData<int>(model.Config(), "model_index", 0);
@@ -66,19 +67,24 @@ public:
         pushData<int>(model.Config(), "input_image_channel", 3);
         pushData<bool>(model.Config(), "nchw", true);
         pushData<bool>(model.Config(), "swap_color", false);
-        pushData<int>(model.Config(), "data_type", InputTensorInfo::InputTensorInfo::kDataTypeImage);
-        pushData<int>(model.Config(), "input_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
-        pushData<int>(model.Config(), "output_tensor_type", InputTensorInfo::TensorInfo::kTensorTypeFp32);
+        pushData<int>(model.Config(), "data_type", InputTensorInfo::InputTensorInfo::DataTypeImage);
+        pushData<int>(model.Config(), "input_tensor_type", InputTensorInfo::TensorInfo::TensorTypeFp32);
+        pushData<int>(model.Config(), "output_tensor_type", InputTensorInfo::TensorInfo::TensorTypeFp32);
         pushData<int>(model.Config(), "infer_backend", 0);
         pushData<int>(model.Config(), "threads", 1);
 
-        m_nn_inference_.reset(InferenceHelper::Create(m_infer_type_));
+        m_nn_inference_.reset(InferenceWrapper::Create(m_infer_type_));
         m_nn_inference_->SetNumThreads(getData<int>("threads"));
 
 #if defined(ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA) && !defined(ISF_ENABLE_RKNN)
         INSPIRE_LOGW("You have forced the global use of MNN_CUDA as the neural network inference backend");
-        m_nn_inference_->SetSpecialBackend(InferenceHelper::kMnnCuda);
+        m_nn_inference_->SetSpecialBackend(InferenceWrapper::MMM_CUDA);
 #endif
+
+#if defined(ISF_ENABLE_APPLE_EXTENSION)
+        m_nn_inference_->SetSpecialBackend(INSPIRE_LAUNCH->GetGlobalCoreMLInferenceMode());
+#endif
+
         m_output_tensor_info_list_.clear();
         std::vector<std::string> outputs_layers = getData<std::vector<std::string>>("outputs_layers");
         int tensor_type = getData<int>("input_tensor_type");
@@ -86,8 +92,24 @@ public:
         for (auto &name : outputs_layers) {
             m_output_tensor_info_list_.push_back(OutputTensorInfo(name, out_tensor_type));
         }
-        auto ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);
-        if (ret != InferenceHelper::kRetOk) {
+        int32_t ret;
+        if (model.loadFilePath) {
+            auto extensionPath = INSPIRE_LAUNCH->GetExtensionPath();
+            if (extensionPath.empty()) {
+                INSPIRE_LOGE("Extension path is empty");
+                return InferenceWrapper::WrapperError;
+            }
+            std::string filePath = extensionPath + "/" + model.fullname;
+            ret = m_nn_inference_->Initialize(filePath, m_input_tensor_info_list_, m_output_tensor_info_list_);
+        } else {
+            ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);
+        }
+        if (ret != InferenceWrapper::WrapperOk) {
+            INSPIRE_LOGE("NN Initialize fail");
+            return ret;
+        }
+
+        if (ret != InferenceWrapper::WrapperOk) {
             INSPIRE_LOGE("NN Initialize fail");
             return ret;
         }
@@ -139,7 +161,7 @@ public:
 
     void Forward(const inspirecv::Image &image, AnyTensorOutputs &outputs) {
         InputTensorInfo &input_tensor_info = getMInputTensorInfoList()[0];
-        if (m_infer_type_ == InferenceHelper::kRknn) {
+        if (m_infer_type_ == InferenceWrapper::INFER_RKNN) {
             if (getData<bool>("swap_color")) {
                 m_cache_ = image.SwapRB();
                 input_tensor_info.data = (uint8_t *)m_cache_.Data();
@@ -158,11 +180,11 @@ public:
      */
     void Forward(AnyTensorOutputs &outputs) {
         //        LOGD("ppPreProcess");
-        if (m_nn_inference_->PreProcess(m_input_tensor_info_list_) != InferenceHelper::kRetOk) {
+        if (m_nn_inference_->PreProcess(m_input_tensor_info_list_) != InferenceWrapper::WrapperOk) {
             INSPIRE_LOGD("PreProcess error");
         }
         //        LOGD("PreProcess");
-        if (m_nn_inference_->Process(m_output_tensor_info_list_) != InferenceHelper::kRetOk) {
+        if (m_nn_inference_->Process(m_output_tensor_info_list_) != InferenceWrapper::WrapperOk) {
             INSPIRE_LOGD("Process error");
         }
         //        LOGD("Process");
@@ -230,8 +252,8 @@ protected:
     std::unique_ptr<nexus::ImageProcessor> m_processor_;  ///< Assign a nexus processor to each anynet object
 
 private:
-    InferenceHelper::HelperType m_infer_type_;                 ///< Inference engine type
-    std::shared_ptr<InferenceHelper> m_nn_inference_;          ///< Shared pointer to the inference helper.
+    InferenceWrapper::EngineType m_infer_type_;                ///< Inference engine type
+    std::shared_ptr<InferenceWrapper> m_nn_inference_;         ///< Shared pointer to the inference helper.
     std::vector<InputTensorInfo> m_input_tensor_info_list_;    ///< List of input tensor information.
     std::vector<OutputTensorInfo> m_output_tensor_info_list_;  ///< List of output tensor information.
     inspirecv::Size<int> m_input_image_size_{};                ///< Size of the input image.
