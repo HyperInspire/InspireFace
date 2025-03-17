@@ -68,6 +68,10 @@ public:
      */
     int32_t Process(inspirecv::InspireImageProcess &processor, const HyperFaceData &face, FaceProcessFunctionOption proc);
 
+    /**
+     * @brief Get Rgb AntiSpoofing module
+     * @return AntiSpoofing module
+     */
     const std::shared_ptr<RBGAntiSpoofingAdapt> &getMRgbAntiSpoofing() const;
 
 private:

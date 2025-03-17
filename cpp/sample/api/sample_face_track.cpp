@@ -148,7 +148,7 @@ int main(int argc, char* argv[]) {
             return -1;
         }
         for (size_t i = 0; i < numOfLmk; i++) {
-            HFImageBitmapDrawCircleF(drawImage, {denseLandmarkPoints[i].x, denseLandmarkPoints[i].y}, 0, {100, 100, 0}, 1);
+            HFImageBitmapDrawCircleF(drawImage, {denseLandmarkPoints[i].x, denseLandmarkPoints[i].y}, 0, {100, 100, 0}, 2);
         }
         auto& rt = multipleFaceData.rects[index];
         float area = ((float)(rt.height * rt.width)) / (data.width * data.height);
