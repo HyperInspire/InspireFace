@@ -21,13 +21,6 @@ int main(int argc, char* argv[]) {
     HFLogPrint(HF_LOG_INFO, "Source file Path 1: %s", imgPath1);
     HFLogPrint(HF_LOG_INFO, "Source file Path 2: %s", imgPath2);
 
-#ifdef ISF_ENABLE_APPLE_EXTENSION
-    std::string modelPath = std::string(packPath) + ".mlmodelc";
-    HFSetExpansiveHardwareAppleCoreMLModelPath(modelPath.c_str());
-    HFSetAppleCoreMLInferenceMode(HF_APPLE_COREML_INFERENCE_MODE_ANE);
-    HFLogPrint(HF_LOG_INFO, "Using Apple Extension: %s", modelPath.c_str());
-#endif
-
     HResult ret;
     // The resource file must be loaded before it can be used
     ret = HFLaunchInspireFace(packPath);

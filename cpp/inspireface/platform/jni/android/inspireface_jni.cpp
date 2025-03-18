@@ -15,10 +15,21 @@
 #include "log.h"
 #include "herror.h"
 
+/**
+ * Java Native Interface (JNI) macro for generating JNI function names.
+ */
 #define INSPIRE_FACE_JNI(sig) Java_com_insightface_sdk_inspireface_##sig
 
 extern "C" {
 
+/**
+ * @brief Launch InspireFace.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param resourcePath The resource path.
+ * @return True if the launch is successful, false otherwise.
+ */
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_GlobalLaunch)(JNIEnv *env, jobject thiz, jstring resourcePath) {
     std::string path = jstring2str(env, resourcePath);
     auto result = HFLaunchInspireFace(path.c_str());
@@ -29,6 +40,13 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_GlobalLaunch)(JNIEnv *env, jobje
     return true;
 }
 
+/**
+ * @brief Terminate InspireFace.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @return True if the termination is successful, false otherwise.
+ */
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_GlobalTerminate)(JNIEnv *env, jobject thiz) {
     auto result = HFTerminateInspireFace();
     if (result != 0) {
@@ -38,6 +56,13 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_GlobalTerminate)(JNIEnv *env, jo
     return true;
 }
 
+/**
+ * @brief Query InspireFace launch status.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @return True if the launch status is successful, false otherwise.
+ */
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_QueryLaunchStatus)(JNIEnv *env, jobject thiz) {
     HInt32 status;
     auto result = HFQueryInspireFaceLaunchStatus(&status);
@@ -48,6 +73,18 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_QueryLaunchStatus)(JNIEnv *env, 
     return status;
 }
 
+/**
+ * @brief Create a new InspireFace session.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param customParameter The custom parameter object.
+ * @param detectMode The detection mode.
+ * @param maxDetectFaceNum The maximum number of detected faces.
+ * @param detectPixelLevel The detection pixel level.
+ * @param trackByDetectModeFPS The tracking frame rate.
+ * @return The new InspireFace session object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateSession)(JNIEnv *env, jobject thiz, jobject customParameter, jint detectMode,
                                                               jint maxDetectFaceNum, jint detectPixelLevel, jint trackByDetectModeFPS) {
     // Get CustomParameter class and fields
@@ -92,6 +129,13 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateSession)(JNIEnv *env, jobje
     return session;
 }
 
+/**
+ * @brief Release an InspireFace session.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The InspireFace session object.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_ReleaseSession)(JNIEnv *env, jobject thiz, jobject session) {
     jclass sessionClass = env->GetObjectClass(session);
     jfieldID handleField = env->GetFieldID(sessionClass, "handle", "J");
@@ -102,6 +146,15 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_ReleaseSession)(JNIEnv *env, jobject
     }
 }
 
+/**
+ * @brief Create an InspireFace image stream from a bitmap.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param bitmap The bitmap object.
+ * @param rotation The rotation.
+ * @return The InspireFace image stream object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateImageStreamFromBitmap)(JNIEnv *env, jobject thiz, jobject bitmap, jint rotation) {
     AndroidBitmapInfo info;
     void *pixels = nullptr;
@@ -148,6 +201,18 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateImageStreamFromBitmap)(JNIE
     return imageStreamObj;
 }
 
+/**
+ * @brief Create an InspireFace image stream from a byte buffer.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param data The byte buffer.
+ * @param width The width.
+ * @param height The height.
+ * @param format The format.
+ * @param rotation The rotation.
+ * @return The InspireFace image stream object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateImageStreamFromByteBuffer)(JNIEnv *env, jobject thiz, jbyteArray data, jint width, jint height,
                                                                                 jint format, jint rotation) {
     // Convert jbyteArray to byte*
@@ -175,6 +240,14 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateImageStreamFromByteBuffer)(
     return imageStreamObj;
 }
 
+/**
+ * @brief Write an InspireFace image stream to a file.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param imageStream The InspireFace image stream object.
+ * @param filePath The file path.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_WriteImageStreamToFile)(JNIEnv *env, jobject thiz, jobject imageStream, jstring filePath) {
     jclass streamClass = env->GetObjectClass(imageStream);
     jfieldID streamHandleField = env->GetFieldID(streamClass, "handle", "J");
@@ -184,6 +257,13 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_WriteImageStreamToFile)(JNIEnv *env,
     HFDeBugImageStreamDecodeSave(streamHandle, path.c_str());
 }
 
+/**
+ * @brief Release an InspireFace image stream.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param imageStream The InspireFace image stream object.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_ReleaseImageStream)(JNIEnv *env, jobject thiz, jobject imageStream) {
     jclass streamClass = env->GetObjectClass(imageStream);
     jfieldID streamHandleField = env->GetFieldID(streamClass, "handle", "J");
@@ -194,6 +274,15 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_ReleaseImageStream)(JNIEnv *env, job
     }
 }
 
+/**
+ * @brief Execute face track.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The InspireFace session object.
+ * @param streamHandle The InspireFace image stream object.
+ * @return The face track results.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_ExecuteFaceTrack)(JNIEnv *env, jobject thiz, jobject session, jobject streamHandle) {
     // Get session handle
     jclass sessionClass = env->GetObjectClass(session);
@@ -295,6 +384,14 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_ExecuteFaceTrack)(JNIEnv *env, jo
     return multipleFaceData;
 }
 
+/**
+ * @brief Get face dense landmark from face token.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param token The face token object.
+ * @return The face dense landmark array.
+ */
 JNIEXPORT jobjectArray INSPIRE_FACE_JNI(InspireFace_GetFaceDenseLandmarkFromFaceToken)(JNIEnv *env, jobject thiz, jobject token) {
     // Get token handle and size from FaceBasicToken object
     jclass tokenClass = env->GetObjectClass(token);
@@ -343,6 +440,16 @@ JNIEXPORT jobjectArray INSPIRE_FACE_JNI(InspireFace_GetFaceDenseLandmarkFromFace
     return landmarkArray;
 }
 
+/**
+ * @brief Extract face feature from a face token.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The InspireFace session object.
+ * @param streamHandle The InspireFace image stream object.
+ * @param token The face token object.
+ * @return The face feature object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_ExtractFaceFeature)(JNIEnv *env, jobject thiz, jobject session, jobject streamHandle, jobject token) {
     // Get session handle
     jclass sessionClass = env->GetObjectClass(session);
@@ -391,6 +498,16 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_ExtractFaceFeature)(JNIEnv *env, 
     return faceFeature;
 }
 
+/**
+ * @brief Get face alignment image.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The InspireFace session object.
+ * @param streamHandle The InspireFace image stream object.
+ * @param token The face token object.
+ * @return The face alignment image object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceAlignmentImage)(JNIEnv *env, jobject thiz, jobject session, jobject streamHandle,
                                                                       jobject token) {
     // Get session handle
@@ -473,6 +590,14 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceAlignmentImage)(JNIEnv *en
     return bitmap;
 }
 
+/**
+ * @brief Set track preview size.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The InspireFace session object.
+ * @param previewSize The preview size.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackPreviewSize)(JNIEnv *env, jobject thiz, jobject session, jint previewSize) {
     jclass sessionClass = env->GetObjectClass(session);
     jfieldID sessionHandleField = env->GetFieldID(sessionClass, "handle", "J");
@@ -483,6 +608,14 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackPreviewSize)(JNIEnv *env, jo
     }
 }
 
+/**
+ * @brief Set filter minimum face pixel size.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The InspireFace session object.
+ * @param minSize The minimum face pixel size.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetFilterMinimumFacePixelSize)(JNIEnv *env, jobject thiz, jobject session, jint minSize) {
     jclass sessionClass = env->GetObjectClass(session);
     jfieldID sessionHandleField = env->GetFieldID(sessionClass, "handle", "J");
@@ -493,6 +626,14 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetFilterMinimumFacePixelSize)(JNIEn
     }
 }
 
+/**
+ * @brief Set face detect threshold.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The InspireFace session object.
+ * @param threshold The face detect threshold.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetFaceDetectThreshold)(JNIEnv *env, jobject thiz, jobject session, jfloat threshold) {
     jclass sessionClass = env->GetObjectClass(session);
     jfieldID sessionHandleField = env->GetFieldID(sessionClass, "handle", "J");
@@ -503,6 +644,14 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetFaceDetectThreshold)(JNIEnv *env,
     }
 }
 
+/**
+ * @brief Set track mode smooth ratio.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The InspireFace session object.
+ * @param ratio The track mode smooth ratio.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackModeSmoothRatio)(JNIEnv *env, jobject thiz, jobject session, jfloat ratio) {
     jclass sessionClass = env->GetObjectClass(session);
     jfieldID sessionHandleField = env->GetFieldID(sessionClass, "handle", "J");
@@ -513,6 +662,14 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackModeSmoothRatio)(JNIEnv *env
     }
 }
 
+/**
+ * @brief Set track mode num smooth cache frame.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The InspireFace session object.
+ * @param num The track mode num smooth cache frame.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackModeNumSmoothCacheFrame)(JNIEnv *env, jobject thiz, jobject session, jint num) {
     jclass sessionClass = env->GetObjectClass(session);
     jfieldID sessionHandleField = env->GetFieldID(sessionClass, "handle", "J");
@@ -523,6 +680,14 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackModeNumSmoothCacheFrame)(JNI
     }
 }
 
+/**
+ * @brief Set track mode detect interval.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The InspireFace session object.
+ * @param interval The track mode detect interval.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackModeDetectInterval)(JNIEnv *env, jobject thiz, jobject session, jint interval) {
     jclass sessionClass = env->GetObjectClass(session);
     jfieldID sessionHandleField = env->GetFieldID(sessionClass, "handle", "J");
@@ -533,6 +698,13 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetTrackModeDetectInterval)(JNIEnv *
     }
 }
 
+/**
+ * @brief Enable feature hub data.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param configuration The configuration object.
+ */
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubDataEnable)(JNIEnv *env, jobject thiz, jobject configuration) {
     jclass configClass = env->GetObjectClass(configuration);
 
@@ -571,6 +743,13 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubDataEnable)(JNIEnv *en
     return true;
 }
 
+/**
+ * @brief Disable feature hub data.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @return True if the feature hub data is disabled successfully, false otherwise.
+ */
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubDataDisable)(JNIEnv *env, jobject thiz) {
     auto result = HFFeatureHubDataDisable();
     if (result != HSUCCEED) {
@@ -581,6 +760,14 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubDataDisable)(JNIEnv *e
     return true;
 }
 
+/**
+ * @brief Insert a feature into the feature hub.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param newIdentity The new identity object.
+ * @return True if the feature is inserted successfully, false otherwise.
+ */
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubInsertFeature)(JNIEnv *env, jobject thiz, jobject newIdentity) {
     // Get FaceFeatureIdentity class and fields
     jclass identityClass = env->GetObjectClass(newIdentity);
@@ -636,6 +823,15 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubInsertFeature)(JNIEnv 
     return true;
 }
 
+/**
+ * @brief Search for a feature in the feature hub.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param searchFeature The search feature object.
+ * @param confidence The confidence.
+ * @return The search result object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceSearch)(JNIEnv *env, jobject thiz, jobject searchFeature, jfloat confidence) {
     // Get FaceFeature class and fields
     jclass featureClass = env->GetObjectClass(searchFeature);
@@ -700,6 +896,15 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceSearch)(JNIEnv *env
     return identityObj;
 }
 
+/**
+ * @brief Search for top-k features in the feature hub.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param searchFeature The search feature object.
+ * @param topK The top-k.
+ * @return The search results object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceSearchTopK)(JNIEnv *env, jobject thiz, jobject searchFeature, jint topK) {
     // Get feature data array
     jclass faceFeatureClass = env->GetObjectClass(searchFeature);
@@ -749,6 +954,14 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceSearchTopK)(JNIEnv 
     return searchResultsObj;
 }
 
+/**
+ * @brief Remove a feature from the feature hub.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param id The id of the feature to remove.
+ * @return True if the feature is removed successfully, false otherwise.
+ */
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceRemove)(JNIEnv *env, jobject thiz, jlong id) {
     auto result = HFFeatureHubFaceRemove(id);
     if (result != HSUCCEED) {
@@ -758,6 +971,14 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceRemove)(JNIEnv *en
     return true;
 }
 
+/**
+ * @brief Update a feature in the feature hub.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param featureIdentity The feature identity object.
+ * @return True if the feature is updated successfully, false otherwise.
+ */
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceUpdate)(JNIEnv *env, jobject thiz, jobject featureIdentity) {
     // Get FaceFeatureIdentity class and fields
     jclass identityClass = env->GetObjectClass(featureIdentity);
@@ -800,6 +1021,14 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceUpdate)(JNIEnv *en
     return true;
 }
 
+/**
+ * @brief Get a face identity from the feature hub.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param id The id of the face identity to get.
+ * @return The face identity object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubGetFaceIdentity)(JNIEnv *env, jobject thiz, jlong id) {
     // Create HFFaceFeatureIdentity
     HFFaceFeatureIdentity identity;
@@ -834,6 +1063,13 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubGetFaceIdentity)(JNIEnv
     return identityObj;
 }
 
+/**
+ * @brief Get the number of faces in the feature hub.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @return The number of faces in the feature hub.
+ */
 JNIEXPORT jint INSPIRE_FACE_JNI(InspireFace_FeatureHubGetFaceCount)(JNIEnv *env, jobject thiz) {
     HInt32 count;
     auto result = HFFeatureHubGetFaceCount(&count);
@@ -844,6 +1080,13 @@ JNIEXPORT jint INSPIRE_FACE_JNI(InspireFace_FeatureHubGetFaceCount)(JNIEnv *env,
     return count;
 }
 
+/**
+ * @brief Set the face search threshold.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param threshold The face search threshold.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceSearchThresholdSetting)(JNIEnv *env, jobject thiz, jfloat threshold) {
     auto result = HFFeatureHubFaceSearchThresholdSetting(threshold);
     if (result != HSUCCEED) {
@@ -851,12 +1094,26 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceSearchThresholdSetting
     }
 }
 
+/**
+ * @brief Get the length of the feature.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @return The length of the feature.
+ */
 JNIEXPORT jint INSPIRE_FACE_JNI(InspireFace_GetFeatureLength)(JNIEnv *env, jobject thiz) {
     HInt32 length;
     auto result = HFGetFeatureLength(&length);
     return length;
 }
 
+/**
+ * @brief Update the cosine similarity converter.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param config The cosine similarity converter configuration object.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_UpdateCosineSimilarityConverter)(JNIEnv *env, jobject thiz, jobject config) {
     jclass configClass = env->GetObjectClass(config);
     jfieldID thresholdField = env->GetFieldID(configClass, "threshold", "F");
@@ -874,6 +1131,13 @@ JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_UpdateCosineSimilarityConverter)(JNI
     HFUpdateCosineSimilarityConverter(converterConfig);
 }
 
+/**
+ * @brief Get the cosine similarity converter.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @return The cosine similarity converter object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetCosineSimilarityConverter)(JNIEnv *env, jobject thiz) {
     HFSimilarityConverterConfig converterConfig;
     HFGetCosineSimilarityConverter(&converterConfig);
@@ -898,12 +1162,29 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetCosineSimilarityConverter)(JNI
     return configObj;
 }
 
+/**
+ * @brief Convert cosine similarity to percentage.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param similarity The cosine similarity.
+ * @return The percentage.
+ */
 JNIEXPORT jfloat INSPIRE_FACE_JNI(InspireFace_CosineSimilarityConvertToPercentage)(JNIEnv *env, jobject thiz, jfloat similarity) {
     HFloat result;
     HFCosineSimilarityConvertToPercentage(similarity, &result);
     return result;
 }
 
+/**
+ * @brief Compare two face features.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param feature1 The first face feature.
+ * @param feature2 The second face feature.
+ * @return The similarity between the two face features.
+ */
 JNIEXPORT jfloat INSPIRE_FACE_JNI(InspireFace_FaceComparison)(JNIEnv *env, jobject thiz, jobject feature1, jobject feature2) {
     if (feature1 == nullptr || feature2 == nullptr) {
         return -1.0f;
@@ -955,12 +1236,30 @@ JNIEXPORT jfloat INSPIRE_FACE_JNI(InspireFace_FaceComparison)(JNIEnv *env, jobje
     return compareResult;
 }
 
+/**
+ * @brief Get the recommended cosine threshold.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @return The recommended cosine threshold.
+ */
 JNIEXPORT jfloat INSPIRE_FACE_JNI(InspireFace_GetRecommendedCosineThreshold)(JNIEnv *env, jobject thiz) {
     HFloat threshold;
     HFGetRecommendedCosineThreshold(&threshold);
     return threshold;
 }
 
+/**
+ * @brief Process multiple faces in the pipeline.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The session object.
+ * @param streamHandle The stream handle object.
+ * @param faces The faces object.
+ * @param parameter The parameter object.
+ * @return True if the multiple faces are processed successfully, false otherwise.
+ */
 JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNIEnv *env, jobject thiz, jobject session, jobject streamHandle,
                                                                              jobject faces, jobject parameter) {
     // Get session handle
@@ -1040,6 +1339,14 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNI
     return true;
 }
 
+/**
+ * @brief Get the RGB liveness confidence.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The session object.
+ * @return The RGB liveness confidence object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetRGBLivenessConfidence)(JNIEnv *env, jobject thiz, jobject session) {
     // Get session handle
     jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
@@ -1073,6 +1380,14 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetRGBLivenessConfidence)(JNIEnv 
     return confidenceObj;
 }
 
+/**
+ * @brief Get the face quality confidence.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The session object.
+ * @return The face quality confidence object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceQualityConfidence)(JNIEnv *env, jobject thiz, jobject session) {
     // Get session handle
     jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
@@ -1106,6 +1421,14 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceQualityConfidence)(JNIEnv 
     return confidenceObj;
 }
 
+/**
+ * @brief Get the face mask confidence.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The session object.
+ * @return The face mask confidence object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceMaskConfidence)(JNIEnv *env, jobject thiz, jobject session) {
     // Get session handle
     jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
@@ -1139,6 +1462,14 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceMaskConfidence)(JNIEnv *en
     return confidenceObj;
 }
 
+/**
+ * @brief Get the face interaction state result.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The session object.
+ * @return The face interaction state result object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceInteractionStateResult)(JNIEnv *env, jobject thiz, jobject session) {
     // Get session handle
     jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
@@ -1179,6 +1510,14 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceInteractionStateResult)(JN
     return stateObj;
 }
 
+/**
+ * @brief Get the face interaction actions result.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The session object.
+ * @return The face interaction actions result object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceInteractionActionsResult)(JNIEnv *env, jobject thiz, jobject session) {
     // Get session handle
     jclass sessionClass = env->FindClass("com/insightface/sdk/inspireface/base/Session");
@@ -1240,6 +1579,14 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceInteractionActionsResult)(
     return actionsObj;
 }
 
+/**
+ * @brief Get the face attribute result.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The session object.
+ * @return The face attribute result object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceAttributeResult)(JNIEnv *env, jobject thiz, jobject session) {
     // Validate input parameters
     if (!env || !session) {
@@ -1312,6 +1659,14 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceAttributeResult)(JNIEnv *e
 
     return attributeObj;
 }
+
+/**
+ * @brief Query the InspireFace version.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @return The InspireFace version object.
+ */
 JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_QueryInspireFaceVersion)(JNIEnv *env, jobject thiz) {
     // Get version info
     HFInspireFaceVersion versionInfo;
@@ -1376,10 +1731,23 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_QueryInspireFaceVersion)(JNIEnv *
     return version;
 }
 
+/**
+ * @brief Set the log level.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param level The log level.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_SetLogLevel)(JNIEnv *env, jobject thiz, jint level) {
     HFSetLogLevel((HFLogLevel)level);
 }
 
+/**
+ * @brief Disable the log.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ */
 JNIEXPORT void INSPIRE_FACE_JNI(InspireFace_LogDisable)(JNIEnv *env, jobject thiz) {
     HFLogDisable();
 }

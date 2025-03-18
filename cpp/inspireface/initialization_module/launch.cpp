@@ -6,6 +6,9 @@
 #include "launch.h"
 #include "log.h"
 #include "herror.h"
+#include "isf_check.h"
+
+#define APPLE_EXTENSION_SUFFIX ".bundle"
 
 namespace inspire {
 
@@ -30,6 +33,10 @@ std::shared_ptr<Launch> Launch::GetInstance() {
 
 int32_t Launch::Load(const std::string& path) {
     std::lock_guard<std::mutex> lock(mutex_);
+    INSPIREFACE_CHECK_MSG(os::IsExists(path), "The package path does not exist because the launch failed.");
+#if defined(ISF_ENABLE_APPLE_EXTENSION)
+    BuildAppleExtensionPath(path);
+#endif
     if (!m_load_) {
         try {
             m_archive_ = std::make_unique<InspireArchive>();
@@ -57,6 +64,10 @@ int32_t Launch::Load(const std::string& path) {
 
 int32_t Launch::Reload(const std::string& path) {
     std::lock_guard<std::mutex> lock(mutex_);
+    INSPIREFACE_CHECK_MSG(os::IsExists(path), "The package path does not exist because the launch failed.");
+#if defined(ISF_ENABLE_APPLE_EXTENSION)
+    BuildAppleExtensionPath(path);
+#endif
     try {
         // Clean up existing archive if it exists
         if (m_archive_) {
@@ -107,7 +118,11 @@ std::string Launch::GetRockchipDmaHeapPath() const {
     return m_rockchip_dma_heap_path_;
 }
 
-void Launch::SetExtensionPath(const std::string& path) {
+void Launch::ConfigurationExtensionPath(const std::string& path) {
+#if defined(ISF_ENABLE_APPLE_EXTENSION)
+    INSPIREFACE_CHECK_MSG(os::IsDir(path), "The apple extension path is not a directory, please check.");
+#endif
+    INSPIREFACE_CHECK_MSG(os::IsExists(path), "The extension path is not exists, please check.");
     m_extension_path_ = path;
 }
 
@@ -128,6 +143,13 @@ void Launch::SetGlobalCoreMLInferenceMode(InferenceWrapper::SpecialBackend mode)
 
 InferenceWrapper::SpecialBackend Launch::GetGlobalCoreMLInferenceMode() const {
     return m_global_coreml_inference_mode_;
+}
+
+void Launch::BuildAppleExtensionPath(const std::string& resource_path) {
+    std::string basename = os::Basename(resource_path);
+    m_extension_path_ = os::PathJoin(os::Dirname(resource_path), basename + APPLE_EXTENSION_SUFFIX);
+    INSPIREFACE_CHECK_MSG(os::IsExists(m_extension_path_), "The apple extension path is not exists, please check.");
+    INSPIREFACE_CHECK_MSG(os::IsDir(m_extension_path_), "The apple extension path is not a directory, please check.");
 }
 
 }  // namespace inspire

@@ -96,12 +96,6 @@ int main(int argc, char* argv[]) {
     }
 
     TEST_PRINT("Launching InspireFace with path: {}", fullPath);
-#ifdef ISF_ENABLE_APPLE_EXTENSION
-    std::string modelPath = fullPath + ".mlmodelc";
-    HFSetExpansiveHardwareAppleCoreMLModelPath(modelPath.c_str());
-    HFSetAppleCoreMLInferenceMode(HF_APPLE_COREML_INFERENCE_MODE_ANE);
-    TEST_PRINT("Using Apple Extension: {}", modelPath);
-#endif
     auto ret = HFLaunchInspireFace(fullPath.c_str());
     if (ret != HSUCCEED) {
         TEST_ERROR_PRINT("An error occurred while starting InspireFace: {}", ret);

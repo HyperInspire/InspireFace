@@ -262,8 +262,6 @@ if (ISF_BUILD_SAMPLE_CLUTTERED)
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cluttered/"
             )
 
-
-
     # C_API Demo
     add_executable(LoopTracker cluttered/standard/loop_tracker.cpp)
     target_link_libraries(LoopTracker InspireFace ${DEPEND})
@@ -271,8 +269,6 @@ if (ISF_BUILD_SAMPLE_CLUTTERED)
     set_target_properties(LoopTracker PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cluttered/"
             )
-
-
 
     add_executable(ArchTracker cluttered/standard/archive_tracker.cpp)
     target_link_libraries(ArchTracker InspireFace)
@@ -288,7 +284,6 @@ if (ISF_BUILD_SAMPLE_CLUTTERED)
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cluttered/"
             )
 endif ()
-
 
 # Print Message
 message(STATUS "InspireFace Sample:")

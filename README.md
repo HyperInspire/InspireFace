@@ -164,7 +164,7 @@ bash command/download_models_general.sh
 ```
 
 ### Installing OpenCV(Optional)
-For **InspireFace v1.1.8** and above, **OpenCV is optional and not required by default**. If you need OpenCV support, you can enable it using the cmake option ` INSPIRECV_BACKEND_OPENCV`.
+For **InspireFace v1.1.8** and above, **OpenCV is optional and not required by default**. If you need OpenCV support, you can enable it using the cmake option `INSPIRECV_BACKEND_OPENCV`.
 
 ### Installing MNN
 The '**3rdparty**' directory already includes the MNN library and specifies a particular version as the stable version. If you need to enable or disable additional configuration options during compilation, you can refer to the CMake Options provided by MNN. If you need to use your own precompiled version, feel free to replace it.
@@ -377,6 +377,8 @@ if (ret != HSUCCEED) {
 ```
 For more examples, you can refer to the `cpp/sample` sub-project located in the root directory. You can compile these sample executables by enabling the `ISF_BUILD_WITH_SAMPLE` option during the compilation process.
 
+- **More detailed cases**: [C/C++ Sample](cpp/sample/api/)
+
 **Note**: For each error code feedback, you can click on this [link](doc/Error-Feedback-Codes.md) to view detailed explanations.
 
 ### Python Native Sample
@@ -442,9 +444,9 @@ for idx, face in enumerate(faces):
 ```
 In the project, more usage examples are provided:
 
-- sample_face_detection.py: Facial detection example
-- sample_face_recognition.py: Facial recognition example
-- sample_face_track_from_video.py: Facial tracking from video stream example
+- `sample_face_detection.py`: Facial detection example
+- `sample_face_recognition.py`: Facial recognition example
+- `sample_face_track_from_video.py`: Facial tracking from video stream example
 
 ### Java and Android platform API
 
@@ -541,7 +543,7 @@ InspireFace.GlobalRelease();
 
 ## Test
 
-In the project, there is a subproject called `cpp/test`. To compile it, you need to enable the **ISF_BUILD_WITH_TEST** switch, which will allow you to compile executable programs for testing.
+In the project, there is a subproject called `cpp/test`. To compile it, you need to enable the `ISF_BUILD_WITH_TEST` switch, which will allow you to compile executable programs for testing.
 
 ```bash
 cmake -DISF_BUILD_WITH_TEST=ON ..
@@ -590,20 +592,20 @@ Every time code is committed, tests are run on GitHub Actions.
 ## Features
 The following Features and technologies are currently supported.
 
-| Index | Feature | Adaptation | Note |
-| -- | --- | --- | --- |
-| 1 | Face Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | SCRFD |
-| 2 | Facial Landmark Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | HyperLandmarkv2 |
-| 3 | Face Recognition | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | ArcFace |
-| 4 | Face Alignment | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 5 | Face Tracking | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Fast tracking and By-Detection |
-| 6 | Mask Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 7 | Silent Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | MiniVision |
-| 8 | Face Quality Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 9 | Face Pose Estimation | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 10 | Face Attribute Prediction | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Age, Race, Gender |
-| 11 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Expressions and head |
-| 12 | Face Embedding Management | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Memory and Persistence |
+| Feature | CPU | RKNPU<sup><br/>(RV1109/1126) | RKNPU<sup><br/>(RV1103/1106) | RKNPU<sup><br/>(RK3566/3568) | ANE<sup><br/>(MacOS/iOS) | GPU<sup><br/>(TensorRT) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Face Detection | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - |
+| Landmark | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - |
+| Recognition | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - |
+| Alignment | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - | - | - | - |
+| Tracking | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - |
+| Mask Detection | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - | - | - | - |
+| Silent Liveness | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - | - | - | - |
+| Face Quality | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - |
+| Pose Estimation | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - |
+| Face Attribute | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - |
+| Cooperative Liveness | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - | - | - | - |
+| Embedding Management | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - | - | - | - |
 
 
 ## Resource Package List
@@ -620,9 +622,10 @@ For different scenarios, we currently provide several Packs, each containing mul
 
 ## Short-Term Plan
 
-- [ ] Added TensorRT backend support.
+- [ ] Add TensorRT backend support.
 - [ ] Add the RKNPU backend support for Android .
 - [ ] Example app project for Android and iOS samples.
+- [ ] Add the batch forward feature.
 
 ## Acknowledgement
 

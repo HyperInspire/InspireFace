@@ -456,17 +456,6 @@ HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path) {
     return HSUCCEED;
 }
 
-HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HPath path) {
-    std::string modelPath(path);
-    INSPIRE_LAUNCH->SetExtensionPath(modelPath);
-    return HSUCCEED;
-}
-
-HResult HFQueryExpansiveHardwareAppleCoreMLModelPath(HString path) {
-    strcpy(path, INSPIRE_LAUNCH->GetExtensionPath().c_str());
-    return HSUCCEED;
-}
-
 HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode) {
     if (mode == HF_APPLE_COREML_INFERENCE_MODE_CPU) {
         INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_CPU);

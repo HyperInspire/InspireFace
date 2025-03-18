@@ -316,22 +316,6 @@ HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareRockchipDmaHeapPath(HPath
 HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path);
 
 /**
- * @brief Set the Apple CoreML model path. In normal circumstances, manual modification is not needed.
- *      If you need to set the model path manually, you can call this API before HFLaunchInspireFace.
- * @param path The path to the apple coreml model
- * @return HResult indicating the success or failure of the operation.
- * */
-HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareAppleCoreMLModelPath(HPath path);
-
-/**
- * @brief Query the Apple CoreML model path. After executing HFLaunchInspireFace, it's typically your input filename plus the suffix '.mlmodelc', for
- * example: Pikachu and Pikachu.mlmodelc
- * @param path Query the apple coreml model path
- * @return HResult indicating the success or failure of the operation.
- * */
-HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareAppleCoreMLModelPath(HString path);
-
-/**
  * @brief Enum for Apple CoreML inference mode.
  */
 typedef enum HFAppleCoreMLInferenceMode {
