@@ -593,7 +593,7 @@ Every time code is committed, tests are run on GitHub Actions.
 The following Features and technologies are currently supported.
 
 | Feature | CPU | RKNPU<sup><br/>(RV1109/1126) | RKNPU<sup><br/>(RV1103/1106) | RKNPU<sup><br/>(RK3566/3588) | ANE<sup><br/>(MacOS/iOS) | GPU<sup><br/>(TensorRT) |
-| --- | --- | --- | --- | --- | --- | --- |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | Face Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |
 | Facial Landmark Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |
 | Face Recognition | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - |
