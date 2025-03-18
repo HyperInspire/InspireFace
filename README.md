@@ -622,9 +622,10 @@ For different scenarios, we currently provide several Packs, each containing mul
 
 ## Short-Term Plan
 
-- [ ] Added TensorRT backend support.
+- [ ] Add TensorRT backend support.
 - [ ] Add the RKNPU backend support for Android .
 - [ ] Example app project for Android and iOS samples.
+- [ ] Add the batch forward feature.
 
 ## Acknowledgement
 
