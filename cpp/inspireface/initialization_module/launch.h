@@ -11,6 +11,7 @@
 #endif
 #include <mutex>
 #include "middleware/inference_wrapper/inference_wrapper.h"
+#include "middleware/system.h"
 
 #ifndef INSPIRE_API
 #define INSPIRE_API
@@ -54,7 +55,7 @@ public:
     std::string GetRockchipDmaHeapPath() const;
 
     // Set the extension path
-    void SetExtensionPath(const std::string& path);
+    void ConfigurationExtensionPath(const std::string& path);
 
     // Get the extension path
     std::string GetExtensionPath() const;
@@ -64,6 +65,9 @@ public:
 
     // Get the global coreml inference mode
     InferenceWrapper::SpecialBackend GetGlobalCoreMLInferenceMode() const;
+
+    // Build the extension path
+    void BuildAppleExtensionPath(const std::string& resource_path);
 
 private:
     // Parameters

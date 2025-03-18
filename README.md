@@ -164,7 +164,7 @@ bash command/download_models_general.sh
 ```
 
 ### Installing OpenCV(Optional)
-For **InspireFace v1.1.8** and above, **OpenCV is optional and not required by default**. If you need OpenCV support, you can enable it using the cmake option ` INSPIRECV_BACKEND_OPENCV`.
+For **InspireFace v1.1.8** and above, **OpenCV is optional and not required by default**. If you need OpenCV support, you can enable it using the cmake option `INSPIRECV_BACKEND_OPENCV`.
 
 ### Installing MNN
 The '**3rdparty**' directory already includes the MNN library and specifies a particular version as the stable version. If you need to enable or disable additional configuration options during compilation, you can refer to the CMake Options provided by MNN. If you need to use your own precompiled version, feel free to replace it.
