@@ -592,20 +592,20 @@ Every time code is committed, tests are run on GitHub Actions.
 ## Features
 The following Features and technologies are currently supported.
 
-| Index | Feature | Adaptation | Note |
-| -- | --- | --- | --- |
-| 1 | Face Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | SCRFD |
-| 2 | Facial Landmark Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | HyperLandmarkv2 |
-| 3 | Face Recognition | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | ArcFace |
-| 4 | Face Alignment | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 5 | Face Tracking | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Fast tracking and By-Detection |
-| 6 | Mask Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 7 | Silent Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | MiniVision |
-| 8 | Face Quality Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 9 | Face Pose Estimation | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) |  |
-| 10 | Face Attribute Prediction | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Age, Race, Gender |
-| 11 | Cooperative Liveness Detection | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Expressions and head |
-| 12 | Face Embedding Management | ![Static Badge](https://img.shields.io/badge/STABLE-blue?style=for-the-badge) | Memory and Persistence |
+| Index | Feature | CPU | RKNPU<sup><br/>(RV1109/1126) | RKNPU<sup><br/>(RV1103/1106) | RKNPU<sup><br/>(RK3566/3588) | ANE<sup><br/>(MacOS/iOS) | GPU<sup><br/>(TensorRT) | Note |
+| -- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Face Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | SCRFD |
+| 2 | Facial Landmark Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | HyperLandmarkv2 |
+| 3 | Face Recognition | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | ArcFace |
+| 4 | Face Alignment | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - |  |
+| 5 | Face Tracking | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | Fast tracking and By-Detection |
+| 6 | Mask Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - |  |
+| 7 | Silent Liveness Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - | MiniVision |
+| 8 | Face Quality Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |  |
+| 9 | Face Pose Estimation | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |  |
+| 10 | Face Attribute Prediction | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | Age, Race, Gender |
+| 11 | Cooperative Liveness Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - | Expressions and head |
+| 12 | Face Embedding Management | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - | Memory and Persistence |
 
 
 ## Resource Package List
