@@ -377,6 +377,8 @@ if (ret != HSUCCEED) {
 ```
 For more examples, you can refer to the `cpp/sample` sub-project located in the root directory. You can compile these sample executables by enabling the `ISF_BUILD_WITH_SAMPLE` option during the compilation process.
 
+- **More detailed cases**: [C/C++ Sample](cpp/sample/api/)
+
 **Note**: For each error code feedback, you can click on this [link](doc/Error-Feedback-Codes.md) to view detailed explanations.
 
 ### Python Native Sample
@@ -442,9 +444,9 @@ for idx, face in enumerate(faces):
 ```
 In the project, more usage examples are provided:
 
-- sample_face_detection.py: Facial detection example
-- sample_face_recognition.py: Facial recognition example
-- sample_face_track_from_video.py: Facial tracking from video stream example
+- `sample_face_detection.py`: Facial detection example
+- `sample_face_recognition.py`: Facial recognition example
+- `sample_face_track_from_video.py`: Facial tracking from video stream example
 
 ### Java and Android platform API
 
@@ -541,7 +543,7 @@ InspireFace.GlobalRelease();
 
 ## Test
 
-In the project, there is a subproject called `cpp/test`. To compile it, you need to enable the **ISF_BUILD_WITH_TEST** switch, which will allow you to compile executable programs for testing.
+In the project, there is a subproject called `cpp/test`. To compile it, you need to enable the `ISF_BUILD_WITH_TEST` switch, which will allow you to compile executable programs for testing.
 
 ```bash
 cmake -DISF_BUILD_WITH_TEST=ON ..

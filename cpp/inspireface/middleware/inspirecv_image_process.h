@@ -24,8 +24,8 @@ enum DATA_FORMAT { NV21 = 0, NV12 = 1, RGBA = 2, RGB = 3, BGR = 4, BGRA = 5 };
  */
 class InspireImageProcess {
 public:
-
-    static InspireImageProcess Create(const uint8_t *data_buffer, int height, int width, DATA_FORMAT data_format = BGR, ROTATION_MODE rotation_mode = ROTATION_0) {
+    static InspireImageProcess Create(const uint8_t *data_buffer, int height, int width, DATA_FORMAT data_format = BGR,
+                                      ROTATION_MODE rotation_mode = ROTATION_0) {
         InspireImageProcess process;
         process.SetDataBuffer(data_buffer, height, width);
         process.SetDataFormat(data_format);
@@ -145,8 +145,7 @@ public:
      * @param height_out Height of the output image.
      * @return cv::Mat Affine-transformed image.
      */
-    inspirecv::Image ExecuteImageAffineProcessing(inspirecv::TransformMatrix &affine_matrix,
-                                                  const int width_out, const int height_out) const {
+    inspirecv::Image ExecuteImageAffineProcessing(inspirecv::TransformMatrix &affine_matrix, const int width_out, const int height_out) const {
         int sw = width_;
         int sh = height_;
         int rot_sw = sw;
@@ -160,8 +159,7 @@ public:
         std::shared_ptr<MNN::CV::ImageProcess> process(MNN::CV::ImageProcess::create(config_));
         process->setMatrix(tr_inv);
         auto img_out = inspirecv::Image::Create(width_out, height_out, 3);
-        std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
-          std::vector<int>{1, height_out, width_out, 3}, (uint8_t *)img_out.Data()));
+        std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(std::vector<int>{1, height_out, width_out, 3}, (uint8_t *)img_out.Data()));
         auto ret = process->convert(buffer_, sw, sh, 0, tensor.get());
         INSPIREFACE_CHECK_MSG(ret == MNN::ErrorCode::NO_ERROR, "ImageProcess::convert failed");
         return img_out;
@@ -186,139 +184,101 @@ public:
         return preview_scale_;
     }
 
+    /**
+     * @brief Execute image scale processing.
+     *
+     * @param scale Scale factor.
+     * @param with_rotation True if rotation is applied, false otherwise.
+     * @return inspirecv::Image Scaled image.
+     */
     inspirecv::Image ExecuteImageScaleProcessing(const float scale, bool with_rotation) {
         int sw = width_;
         int sh = height_;
         int rot_sw = sw;
         int rot_sh = sh;
         // MNN::CV::Matrix tr;
-        std::shared_ptr<MNN::CV::ImageProcess> process(
-                MNN::CV::ImageProcess::create(config_));
+        std::shared_ptr<MNN::CV::ImageProcess> process(MNN::CV::ImageProcess::create(config_));
         if (rotation_mode_ == ROTATION_270 && with_rotation) {
             float srcPoints[] = {
-                    0.0f,
-                    0.0f,
-                    0.0f,
-                    (float)(height_ - 1),
-                    (float)(width_ - 1),
-                    0.0f,
-                    (float)(width_ - 1),
-                    (float)(height_ - 1),
+              0.0f, 0.0f, 0.0f, (float)(height_ - 1), (float)(width_ - 1), 0.0f, (float)(width_ - 1), (float)(height_ - 1),
             };
-            float dstPoints[] = {(float)(height_ * scale - 1),
-                                 0.0f,
-                                 0.0f,
-                                 0.0f,
-                                 (float)(height_ * scale - 1),
-                                 (float)(width_ * scale - 1),
-                                 0.0f,
+            float dstPoints[] = {(float)(height_ * scale - 1), 0.0f, 0.0f, 0.0f, (float)(height_ * scale - 1), (float)(width_ * scale - 1), 0.0f,
                                  (float)(width_ * scale - 1)};
 
-            tr_.setPolyToPoly((MNN::CV::Point *)dstPoints,
-                              (MNN::CV::Point *)srcPoints, 4);
+            tr_.setPolyToPoly((MNN::CV::Point *)dstPoints, (MNN::CV::Point *)srcPoints, 4);
             process->setMatrix(tr_);
             int scaled_height = static_cast<int>(width_ * scale);
             int scaled_width = static_cast<int>(height_ * scale);
             inspirecv::Image img_out(scaled_width, scaled_height, 3);
-            std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
-                    std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
+            std::shared_ptr<MNN::Tensor> tensor(
+              MNN::Tensor::create<uint8_t>(std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
             auto ret = process->convert(buffer_, sw, sh, 0, tensor.get());
             INSPIREFACE_CHECK_MSG(ret == MNN::ErrorCode::NO_ERROR, "ImageProcess::convert failed");
             return img_out;
         } else if (rotation_mode_ == ROTATION_90 && with_rotation) {
             float srcPoints[] = {
-                    0.0f,
-                    0.0f,
-                    0.0f,
-                    (float)(height_ - 1),
-                    (float)(width_ - 1),
-                    0.0f,
-                    (float)(width_ - 1),
-                    (float)(height_ - 1),
+              0.0f, 0.0f, 0.0f, (float)(height_ - 1), (float)(width_ - 1), 0.0f, (float)(width_ - 1), (float)(height_ - 1),
             };
             float dstPoints[] = {
-                    0.0f,
-                    (float)(width_ * scale - 1),
-                    (float)(height_ * scale - 1),
-                    (float)(width_ * scale - 1),
-                    0.0f,
-                    0.0f,
-                    (float)(height_ * scale - 1),
-                    0.0f,
+              0.0f, (float)(width_ * scale - 1), (float)(height_ * scale - 1), (float)(width_ * scale - 1), 0.0f, 0.0f, (float)(height_ * scale - 1),
+              0.0f,
             };
-            tr_.setPolyToPoly((MNN::CV::Point *)dstPoints,
-                              (MNN::CV::Point *)srcPoints, 4);
+            tr_.setPolyToPoly((MNN::CV::Point *)dstPoints, (MNN::CV::Point *)srcPoints, 4);
             process->setMatrix(tr_);
             int scaled_height = static_cast<int>(width_ * scale);
             int scaled_width = static_cast<int>(height_ * scale);
             inspirecv::Image img_out(scaled_width, scaled_height, 3);
-            std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
-                    std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
-            auto ret =  process->convert(buffer_, sw, sh, 0, tensor.get());
+            std::shared_ptr<MNN::Tensor> tensor(
+              MNN::Tensor::create<uint8_t>(std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
+            auto ret = process->convert(buffer_, sw, sh, 0, tensor.get());
             INSPIREFACE_CHECK_MSG(ret == MNN::ErrorCode::NO_ERROR, "ImageProcess::convert failed");
             return img_out;
         } else if (rotation_mode_ == ROTATION_180 && with_rotation) {
             float srcPoints[] = {
-                    0.0f,
-                    0.0f,
-                    0.0f,
-                    (float)(height_ - 1),
-                    (float)(width_ - 1),
-                    0.0f,
-                    (float)(width_ - 1),
-                    (float)(height_ - 1),
+              0.0f, 0.0f, 0.0f, (float)(height_ - 1), (float)(width_ - 1), 0.0f, (float)(width_ - 1), (float)(height_ - 1),
             };
             float dstPoints[] = {
-                    (float)(width_ * scale - 1),
-                    (float)(height_ * scale - 1),
-                    (float)(width_ * scale - 1),
-                    0.0f,
-                    0.0f,
-                    (float)(height_ * scale - 1),
-                    0.0f,
-                    0.0f,
+              (float)(width_ * scale - 1),
+              (float)(height_ * scale - 1),
+              (float)(width_ * scale - 1),
+              0.0f,
+              0.0f,
+              (float)(height_ * scale - 1),
+              0.0f,
+              0.0f,
             };
-            tr_.setPolyToPoly((MNN::CV::Point *)dstPoints,
-                              (MNN::CV::Point *)srcPoints, 4);
+            tr_.setPolyToPoly((MNN::CV::Point *)dstPoints, (MNN::CV::Point *)srcPoints, 4);
             process->setMatrix(tr_);
             int scaled_height = static_cast<int>(height_ * scale);
             int scaled_width = static_cast<int>(width_ * scale);
             inspirecv::Image img_out(scaled_width, scaled_height, 3);
-            std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
-                    std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
+            std::shared_ptr<MNN::Tensor> tensor(
+              MNN::Tensor::create<uint8_t>(std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
             auto ret = process->convert(buffer_, sw, sh, 0, tensor.get());
             INSPIREFACE_CHECK_MSG(ret == MNN::ErrorCode::NO_ERROR, "ImageProcess::convert failed");
             return img_out;
         } else {
             float srcPoints[] = {
-                    0.0f,
-                    0.0f,
-                    0.0f,
-                    (float)(height_ - 1),
-                    (float)(width_ - 1),
-                    0.0f,
-                    (float)(width_ - 1),
-                    (float)(height_ - 1),
+              0.0f, 0.0f, 0.0f, (float)(height_ - 1), (float)(width_ - 1), 0.0f, (float)(width_ - 1), (float)(height_ - 1),
             };
             float dstPoints[] = {
-                    0.0f,
-                    0.0f,
-                    0.0f,
-                    (float)(height_ * scale - 1),
-                    (float)(width_ * scale - 1),
-                    0.0f,
-                    (float)(width_ * scale - 1),
-                    (float)(height_ * scale - 1),
+              0.0f,
+              0.0f,
+              0.0f,
+              (float)(height_ * scale - 1),
+              (float)(width_ * scale - 1),
+              0.0f,
+              (float)(width_ * scale - 1),
+              (float)(height_ * scale - 1),
             };
-            tr_.setPolyToPoly((MNN::CV::Point *)dstPoints,
-                              (MNN::CV::Point *)srcPoints, 4);
+            tr_.setPolyToPoly((MNN::CV::Point *)dstPoints, (MNN::CV::Point *)srcPoints, 4);
             process->setMatrix(tr_);
             int scaled_height = static_cast<int>(height_ * scale);
             int scaled_width = static_cast<int>(width_ * scale);
-            
+
             inspirecv::Image img_out(scaled_width, scaled_height, 3);
-            std::shared_ptr<MNN::Tensor> tensor(MNN::Tensor::create<uint8_t>(
-                    std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
+            std::shared_ptr<MNN::Tensor> tensor(
+              MNN::Tensor::create<uint8_t>(std::vector<int>{1, scaled_height, scaled_width, 3}, (uint8_t *)img_out.Data()));
             auto ret = process->convert(buffer_, sw, sh, 0, tensor.get());
             INSPIREFACE_CHECK_MSG(ret == MNN::ErrorCode::NO_ERROR, "ImageProcess::convert failed");
             return img_out;
@@ -365,14 +325,7 @@ public:
 
 private:
     void UpdateTransformMatrix() {
-        float srcPoints[] = {0.0f,
-                             0.0f,
-                             0.0f,
-                             (float)(height_ - 1),
-                             (float)(width_ - 1),
-                             0.0f,
-                             (float)(width_ - 1),
-                             (float)(height_ - 1)};
+        float srcPoints[] = {0.0f, 0.0f, 0.0f, (float)(height_ - 1), (float)(width_ - 1), 0.0f, (float)(width_ - 1), (float)(height_ - 1)};
 
         float dstPoints[8];
         if (rotation_mode_ == ROTATION_270) {

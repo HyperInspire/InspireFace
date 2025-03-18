@@ -102,7 +102,6 @@ int main() {
     std::string archivePath = "test_res/pack/A";
     std::string extensionPath = "test_res/pack/A";
     INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_ANE);
-    INSPIRE_LAUNCH->ConfigurationExtensionPath(extensionPath);
     INSPIRE_LAUNCH->Load(archivePath);
 
     // Test face detect
