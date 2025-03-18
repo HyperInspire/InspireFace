@@ -592,20 +592,20 @@ Every time code is committed, tests are run on GitHub Actions.
 ## Features
 The following Features and technologies are currently supported.
 
-| Index | Feature | CPU | RKNPU<sup><br/>(RV1109/1126) | RKNPU<sup><br/>(RV1103/1106) | RKNPU<sup><br/>(RK3566/3588) | ANE<sup><br/>(MacOS/iOS) | GPU<sup><br/>(TensorRT) | Note |
-| -- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Face Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | SCRFD |
-| 2 | Facial Landmark Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | HyperLandmarkv2 |
-| 3 | Face Recognition | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | ArcFace |
-| 4 | Face Alignment | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - |  |
-| 5 | Face Tracking | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | Fast tracking and By-Detection |
-| 6 | Mask Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - |  |
-| 7 | Silent Liveness Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - | MiniVision |
-| 8 | Face Quality Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |  |
-| 9 | Face Pose Estimation | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |  |
-| 10 | Face Attribute Prediction | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | Age, Race, Gender |
-| 11 | Cooperative Liveness Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - | Expressions and head |
-| 12 | Face Embedding Management | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - | Memory and Persistence |
+| Feature | CPU | RKNPU<sup><br/>(RV1109/1126) | RKNPU<sup><br/>(RV1103/1106) | RKNPU<sup><br/>(RK3566/3588) | ANE<sup><br/>(MacOS/iOS) | GPU<sup><br/>(TensorRT) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Face Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |
+| Facial Landmark Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |
+| Face Recognition | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - |
+| Face Alignment | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - |
+| Face Tracking | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |
+| Mask Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - |
+| Silent Liveness Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - |
+| Face Quality Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |
+| Face Pose Estimation | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - |
+| Face Attribute Prediction | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | ![](https://img.shields.io/badge/%E2%9C%93-green) | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - |
+| Cooperative Liveness Detection | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - |
+| Face Embedding Management | ![](https://img.shields.io/badge/%E2%9C%93-green) | - | - | - | - | - |
 
 
 ## Resource Package List
