@@ -63,35 +63,35 @@ inline static int32_t _PrintCudaDeviceInfo() {
         }
 
         // print device detailed information
-        INSPIRE_LOGI("\nCUDA device details:");
-        INSPIRE_LOGI("device name: %s", prop.name);
-        INSPIRE_LOGI("compute capability: %d.%d", prop.major, prop.minor);
-        INSPIRE_LOGI("global memory: %d MB", prop.totalGlobalMem / (1024 * 1024));
-        INSPIRE_LOGI("max shared memory/block: %d KB", prop.sharedMemPerBlock / 1024);
-        INSPIRE_LOGI("max threads/block: %d", prop.maxThreadsPerBlock);
-        INSPIRE_LOGI("max block dimensions: (%d, %d, %d)", prop.maxThreadsDim[0], prop.maxThreadsDim[1], prop.maxThreadsDim[2]);
-        INSPIRE_LOGI("max grid size: (%d, %d, %d)", prop.maxGridSize[0], prop.maxGridSize[1], prop.maxGridSize[2]);
-        INSPIRE_LOGI("total constant memory: %d KB", prop.totalConstMem / 1024);
-        INSPIRE_LOGI("multi-processor count: %d", prop.multiProcessorCount);
-        INSPIRE_LOGI("max blocks per multi-processor: %d", prop.maxBlocksPerMultiProcessor);
-        INSPIRE_LOGI("clock frequency: %d MHz", prop.clockRate / 1000);
-        INSPIRE_LOGI("memory frequency: %d MHz", prop.memoryClockRate / 1000);
-        INSPIRE_LOGI("memory bus width: %d bits", prop.memoryBusWidth);
-        INSPIRE_LOGI("L2 cache size: %d KB", prop.l2CacheSize / 1024);
-        INSPIRE_LOGI("theoretical memory bandwidth: %f GB/s", 2.0 * prop.memoryClockRate * (prop.memoryBusWidth / 8) / 1.0e6);
+        INSPIRE_LOGW("\nCUDA device details:");
+        INSPIRE_LOGW("device name: %s", prop.name);
+        INSPIRE_LOGW("compute capability: %d.%d", prop.major, prop.minor);
+        INSPIRE_LOGW("global memory: %d MB", prop.totalGlobalMem / (1024 * 1024));
+        INSPIRE_LOGW("max shared memory/block: %d KB", prop.sharedMemPerBlock / 1024);
+        INSPIRE_LOGW("max threads/block: %d", prop.maxThreadsPerBlock);
+        INSPIRE_LOGW("max block dimensions: (%d, %d, %d)", prop.maxThreadsDim[0], prop.maxThreadsDim[1], prop.maxThreadsDim[2]);
+        INSPIRE_LOGW("max grid size: (%d, %d, %d)", prop.maxGridSize[0], prop.maxGridSize[1], prop.maxGridSize[2]);
+        INSPIRE_LOGW("total constant memory: %d KB", prop.totalConstMem / 1024);
+        INSPIRE_LOGW("multi-processor count: %d", prop.multiProcessorCount);
+        INSPIRE_LOGW("max blocks per multi-processor: %d", prop.maxBlocksPerMultiProcessor);
+        INSPIRE_LOGW("clock frequency: %d MHz", prop.clockRate / 1000);
+        INSPIRE_LOGW("memory frequency: %d MHz", prop.memoryClockRate / 1000);
+        INSPIRE_LOGW("memory bus width: %d bits", prop.memoryBusWidth);
+        INSPIRE_LOGW("L2 cache size: %d KB", prop.l2CacheSize / 1024);
+        INSPIRE_LOGW("theoretical memory bandwidth: %f GB/s", 2.0 * prop.memoryClockRate * (prop.memoryBusWidth / 8) / 1.0e6);
 
         // check if FP16 is supported
         bool supportsFP16 = prop.major >= 6 || (prop.major == 5 && prop.minor >= 3);
-        INSPIRE_LOGI("FP16 support: %s", supportsFP16 ? "yes" : "no");
+        INSPIRE_LOGW("FP16 support: %s", supportsFP16 ? "yes" : "no");
 
         // check if unified memory is supported
-        INSPIRE_LOGI("unified memory support: %s", prop.unifiedAddressing ? "yes" : "no");
+        INSPIRE_LOGW("unified memory support: %s", prop.unifiedAddressing ? "yes" : "no");
 
         // check if concurrent kernel execution is supported
-        INSPIRE_LOGI("concurrent kernel execution: %s", prop.concurrentKernels ? "yes" : "no");
+        INSPIRE_LOGW("concurrent kernel execution: %s", prop.concurrentKernels ? "yes" : "no");
 
         // check if asynchronous engine is supported
-        INSPIRE_LOGI("asynchronous engine count: %d", prop.asyncEngineCount);
+        INSPIRE_LOGW("asynchronous engine count: %d", prop.asyncEngineCount);
 
         return HSUCCEED;
     } catch (const std::exception &e) {
