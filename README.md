@@ -184,8 +184,9 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
         - Recommended Clang version is 3.9 or higher
     - arm-linux-gnueabihf (for RV1109/RV1126) [**Optional**]
         - Prepare the cross-compilation toolchain in advance, such as gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
-- CUDA (version 10.1 or higher) [**Optional**]
+- CUDA (version 11.x or higher) [**Optional**]
     - GPU-based inference requires installing NVIDIA's CUDA dependencies on the device.
+- TensorRT (version 10 or higher) [**Optional**]
 - Eigen3
   
 - RKNN [**Optional**]
