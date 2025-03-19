@@ -34,7 +34,7 @@ inline static int32_t CheckCudaUsability(int32_t *is_support) {
 
 inline static int32_t _PrintCudaDeviceInfo() {
     try {
-        INSPIRE_LOGI("TensorRT version: %d.%d.%d", NV_TENSORRT_MAJOR, NV_TENSORRT_MINOR, NV_TENSORRT_PATCH);
+        INSPIRE_LOGW("TensorRT version: %d.%d.%d", NV_TENSORRT_MAJOR, NV_TENSORRT_MINOR, NV_TENSORRT_PATCH);
 
         // check if CUDA is available
         int device_count;
@@ -43,7 +43,7 @@ inline static int32_t _PrintCudaDeviceInfo() {
             INSPIRE_LOGE("CUDA error: %s", cudaGetErrorString(error));
             return HERR_DEVICE_CUDA_UNKNOWN_ERROR;
         }
-        INSPIRE_LOGI("available CUDA devices: %d", device_count);
+        INSPIRE_LOGW("available CUDA devices: %d", device_count);
 
         // get current CUDA device
         int currentDevice;
@@ -52,7 +52,7 @@ inline static int32_t _PrintCudaDeviceInfo() {
             INSPIRE_LOGE("[CUDA error] failed to get current CUDA device: %s", cudaGetErrorString(error));
             return HERR_DEVICE_CUDA_UNKNOWN_ERROR;
         }
-        INSPIRE_LOGI("current CUDA device ID: %d", currentDevice);
+        INSPIRE_LOGW("current CUDA device ID: %d", currentDevice);
 
         // get GPU device properties
         cudaDeviceProp prop;
@@ -101,9 +101,9 @@ inline static int32_t _PrintCudaDeviceInfo() {
 }
 
 inline static int32_t PrintCudaDeviceInfo() {
-    INSPIRE_LOGI("================================================");
+    INSPIRE_LOGW("================================================");
     auto ret = _PrintCudaDeviceInfo();
-    INSPIRE_LOGI("================================================");
+    INSPIRE_LOGW("================================================");
     return ret;
 }
 
