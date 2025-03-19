@@ -61,6 +61,7 @@ public:
             }
             auto &buffer = GetFileContent(model.name);
             if (buffer.empty()) {
+                std::cout << "buffer is empty" << std::endl;
                 return ERROR_MODEL_BUFFER;
             }
             model.SetBuffer(buffer, buffer.size());
