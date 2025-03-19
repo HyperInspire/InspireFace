@@ -75,6 +75,12 @@ set_target_properties(FaceTrackerSample PROPERTIES
 #         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 # )
 
+add_executable(TensorRTLoadSample source/tensorrt_load.cpp)
+target_link_libraries(TensorRTLoadSample InspireFace ${ext})
+set_target_properties(TensorRTLoadSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
+
 add_executable(FaceTrackPipelineSample source/tracker_pipeline.cpp)
 target_link_libraries(FaceTrackPipelineSample InspireFace ${ext})
 set_target_properties(FaceTrackPipelineSample PROPERTIES
