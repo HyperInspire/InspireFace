@@ -34,6 +34,14 @@ std::shared_ptr<Launch> Launch::GetInstance() {
 
 int32_t Launch::Load(const std::string& path) {
     std::lock_guard<std::mutex> lock(mutex_);
+#if defined(ISF_ENABLE_TENSORRT)
+    HInt32 support_cuda;
+    ret = HFCheckCudaDeviceSupport(&support_cuda);
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("An error occurred while checking CUDA device support. Please ensure that your environment supports CUDA!");
+        return ret;
+    }
+#endif
     INSPIREFACE_CHECK_MSG(os::IsExists(path), "The package path does not exist because the launch failed.");
 #if defined(ISF_ENABLE_APPLE_EXTENSION)
     BuildAppleExtensionPath(path);
