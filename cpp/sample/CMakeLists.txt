@@ -69,11 +69,11 @@ set_target_properties(FaceTrackerSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
-# add_executable(ExpansionLoadSample source/expansion_load.cpp)
-# target_link_libraries(ExpansionLoadSample InspireFace ${ext})
-# set_target_properties(ExpansionLoadSample PROPERTIES
-#         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
-# )
+add_executable(ExpansionLoadSample source/expansion_load.cpp)
+target_link_libraries(ExpansionLoadSample InspireFace ${ext})
+set_target_properties(ExpansionLoadSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
+)
 
 add_executable(FaceTrackPipelineSample source/tracker_pipeline.cpp)
 target_link_libraries(FaceTrackPipelineSample InspireFace ${ext})
@@ -286,6 +286,7 @@ if (ISF_BUILD_SAMPLE_CLUTTERED)
 endif ()
 
 # Print Message
+message(STATUS ">>>>>>>>>>>>>")
 message(STATUS "InspireFace Sample:")
 message(STATUS "\t ISF_BUILD_SAMPLE_CLUTTERED: ${ISF_BUILD_SAMPLE_CLUTTERED}")
 

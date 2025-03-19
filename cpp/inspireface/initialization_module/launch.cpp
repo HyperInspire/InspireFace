@@ -7,6 +7,10 @@
 #include "log.h"
 #include "herror.h"
 #include "isf_check.h"
+#include "middleware/cuda_toolkit.h"
+#if defined(ISF_ENABLE_TENSORRT)
+#include "middleware/cuda_toolkit.h"
+#endif
 
 #define APPLE_EXTENSION_SUFFIX ".bundle"
 
@@ -33,6 +37,18 @@ std::shared_ptr<Launch> Launch::GetInstance() {
 
 int32_t Launch::Load(const std::string& path) {
     std::lock_guard<std::mutex> lock(mutex_);
+#if defined(ISF_ENABLE_TENSORRT)
+    int32_t support_cuda;
+    auto ret = CheckCudaUsability(&support_cuda);
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("An error occurred while checking CUDA device support. Please ensure that your environment supports CUDA!");
+        return ret;
+    }
+    if (!support_cuda) {
+        INSPIRE_LOGE("Your environment does not support CUDA! Please ensure that your environment supports CUDA!");
+        return HERR_DEVICE_CUDA_NOT_SUPPORT;
+    }
+#endif
     INSPIREFACE_CHECK_MSG(os::IsExists(path), "The package path does not exist because the launch failed.");
 #if defined(ISF_ENABLE_APPLE_EXTENSION)
     BuildAppleExtensionPath(path);
@@ -150,6 +166,14 @@ void Launch::BuildAppleExtensionPath(const std::string& resource_path) {
     m_extension_path_ = os::PathJoin(os::Dirname(resource_path), basename + APPLE_EXTENSION_SUFFIX);
     INSPIREFACE_CHECK_MSG(os::IsExists(m_extension_path_), "The apple extension path is not exists, please check.");
     INSPIREFACE_CHECK_MSG(os::IsDir(m_extension_path_), "The apple extension path is not a directory, please check.");
+}
+
+void Launch::SetCudaDeviceId(int32_t device_id) {
+    m_cuda_device_id_ = device_id;
+}
+
+int32_t Launch::GetCudaDeviceId() const {
+    return m_cuda_device_id_;
 }
 
 }  // namespace inspire

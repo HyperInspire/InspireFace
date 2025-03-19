@@ -86,6 +86,7 @@ set_target_properties(Test PROPERTIES
 
 
 # Print Message
+message(STATUS ">>>>>>>>>>>>>")
 message(STATUS "InspireFace Test:")
 message(STATUS "\t ISF_ENABLE_BENCHMARK: ${ISF_ENABLE_BENCHMARK}")
 message(STATUS "\t ISF_ENABLE_USE_LFW_DATA: ${ISF_ENABLE_USE_LFW_DATA}")

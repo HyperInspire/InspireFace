@@ -15,6 +15,7 @@
 #include "model_archive/inspire_archive.h"
 #include "nexus_processor/image_processor.h"
 #include "initialization_module/launch.h"
+#include "system.h"
 
 namespace inspire {
 
@@ -76,6 +77,10 @@ public:
         m_nn_inference_.reset(InferenceWrapper::Create(m_infer_type_));
         m_nn_inference_->SetNumThreads(getData<int>("threads"));
 
+        if (m_infer_type_ == InferenceWrapper::INFER_TENSORRT) {
+            m_nn_inference_->SetDevice(INSPIRE_LAUNCH->GetCudaDeviceId());
+        }
+
 #if defined(ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA) && !defined(ISF_ENABLE_RKNN)
         INSPIRE_LOGW("You have forced the global use of MNN_CUDA as the neural network inference backend");
         m_nn_inference_->SetSpecialBackend(InferenceWrapper::MMM_CUDA);
@@ -99,7 +104,7 @@ public:
                 INSPIRE_LOGE("Extension path is empty");
                 return InferenceWrapper::WrapperError;
             }
-            std::string filePath = extensionPath + "/" + model.fullname;
+            std::string filePath = os::PathJoin(extensionPath, model.fullname);
             ret = m_nn_inference_->Initialize(filePath, m_input_tensor_info_list_, m_output_tensor_info_list_);
         } else {
             ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);

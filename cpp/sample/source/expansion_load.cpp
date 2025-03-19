@@ -8,18 +8,18 @@
 
 void test_face_detect() {
     inspire::InspireModel model;
-    INSPIRE_LAUNCH->getMArchive().LoadModel("face_detect_160", model);
-    auto input_size = 160;
+    INSPIRE_LAUNCH->getMArchive().LoadModel("face_detect_640", model);
+    auto input_size = 640;
     inspire::FaceDetectAdapt faceDetectAdapt(input_size);
     faceDetectAdapt.loadData(model, model.modelType);
     inspirecv::Image image = inspirecv::Image::Create("test_res/data/bulk/kun.jpg");
     inspire::FaceLocList faces;
     inspirecv::TimeSpend timeSpend("Face Detect@" + std::to_string(input_size));
-    timeSpend.Start();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 1000; i++) {
+        timeSpend.Start();
         faces = faceDetectAdapt(image);
+        timeSpend.Stop();
     }
-    timeSpend.Stop();
     std::cout << timeSpend << std::endl;
     std::cout << "faces size: " << faces.size() << std::endl;
     for (auto &face : faces) {
@@ -99,11 +99,8 @@ void test_feature() {
 }
 
 int main() {
-    std::string archivePath = "test_res/pack/A";
-    std::string extensionPath = "test_res/pack/A";
-    INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_ANE);
+    std::string archivePath = "test_res/pack/Megatron_TRT";
     INSPIRE_LAUNCH->Load(archivePath);
-
     // Test face detect
     test_face_detect();
 

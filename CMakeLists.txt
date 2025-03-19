@@ -67,6 +67,13 @@ endif()
 
 set(TARGET_PLATFORM "drawin-x86" CACHE STRING "Target platform")
 
+# TensorRT dependency configuration
+set(ISF_ENABLE_TENSORRT OFF CACHE BOOL "Enable TensorRT Inference")
+set(TENSORRT_ROOT "/usr/local/TensorRT" CACHE PATH "Path to TensorRT installation")
+if(ISF_ENABLE_TENSORRT)
+    add_definitions("-DISF_ENABLE_TENSORRT")
+    add_definitions("-DINFERENCE_WRAPPER_ENABLE_TENSORRT")
+endif()
 
 # RKNN dependency configuration
 option(ISF_ENABLE_RKNN "Use RKNPU." OFF)
@@ -310,6 +317,7 @@ if (ISF_BUILD_WITH_TEST)
 endif ()
 
 # Print Message
+message(STATUS ">>>>>>>>>>>>>")
 message(STATUS "InspireFace Project Global:")
 message(STATUS "\t CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "\t CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")

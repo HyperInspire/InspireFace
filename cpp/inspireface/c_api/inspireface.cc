@@ -12,6 +12,9 @@
 #include "initialization_module/resource_manage.h"
 #include "recognition_module/similarity_converter.h"
 #include "middleware/inference_wrapper/inference_wrapper.h"
+#if defined(ISF_ENABLE_TENSORRT)
+#include "middleware/cuda_toolkit.h"
+#endif
 
 using namespace inspire;
 
@@ -465,6 +468,43 @@ HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode) {
         INSPIRE_LAUNCH->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_ANE);
     }
     return HSUCCEED;
+}
+
+HResult HFSetCudaDeviceId(int32_t device_id) {
+    INSPIRE_LAUNCH->SetCudaDeviceId(device_id);
+    return HSUCCEED;
+}
+
+HResult HFGetCudaDeviceId(int32_t *device_id) {
+    *device_id = INSPIRE_LAUNCH->GetCudaDeviceId();
+    return HSUCCEED;
+}
+
+HResult HFPrintCudaDeviceInfo() {
+#if defined(ISF_ENABLE_TENSORRT)
+    return inspire::PrintCudaDeviceInfo();
+#else
+    INSPIRE_LOGW("CUDA is not supported, you need to enable the compile option that supports TensorRT");
+    return HERR_DEVICE_CUDA_DISABLE;
+#endif
+}
+
+HResult HFGetNumCudaDevices(int32_t *num_devices) {
+#if defined(ISF_ENABLE_TENSORRT)
+    return inspire::GetCudaDeviceCount(num_devices);
+#else
+    INSPIRE_LOGW("CUDA is not supported, you need to enable the compile option that supports TensorRT");
+    return HERR_DEVICE_CUDA_DISABLE;
+#endif
+}
+
+HResult HFCheckCudaDeviceSupport(int32_t *is_support) {
+#if defined(ISF_ENABLE_TENSORRT)
+    return inspire::CheckCudaUsability(is_support);
+#else
+    INSPIRE_LOGW("CUDA is not supported, you need to enable the compile option that supports TensorRT");
+    return HERR_DEVICE_CUDA_DISABLE;
+#endif
 }
 
 HResult HFFeatureHubDataEnable(HFFeatureHubConfiguration configuration) {

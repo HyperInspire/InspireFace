@@ -127,6 +127,35 @@ if (ISF_BUILD_LINUX_ARM7 OR ISF_BUILD_LINUX_AARCH64)
     set(NEED_INCLUDE ${NEED_INCLUDE} ${OpenCV_STATIC_INCLUDE_DIR})
 endif ()
 
+if (ISF_ENABLE_TENSORRT)
+    # Find CUDA include directory
+    find_package(CUDA REQUIRED)
+    include_directories(${CUDA_INCLUDE_DIRS})
+    link_directories(${CUDA_TOOLKIT_ROOT_DIR}/lib64)
+    # Find TensorRT include directory
+    find_path(TENSORRT_INCLUDE_DIR NvInfer.h
+        HINTS ${TENSORRT_ROOT}
+        PATH_SUFFIXES include)
+    set(NEED_INCLUDE ${NEED_INCLUDE} ${TENSORRT_INCLUDE_DIR})
+
+    # Find TensorRT library directory
+    find_library(TENSORRT_LIBRARY_INFER nvinfer
+        HINTS ${TENSORRT_ROOT}
+        PATH_SUFFIXES lib lib64)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${TENSORRT_LIBRARY_INFER})
+
+    find_library(TENSORRT_LIBRARY_RUNTIME nvinfer_plugin
+        HINTS ${TENSORRT_ROOT}
+        PATH_SUFFIXES lib lib64)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${TENSORRT_LIBRARY_RUNTIME})
+
+    find_library(CUDA_RUNTIME_LIBRARY cudart
+        HINTS ${CUDA_TOOLKIT_ROOT_DIR}
+        PATH_SUFFIXES lib64 lib lib64/stubs lib/stubs)  
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${CUDA_RUNTIME_LIBRARY})
+
+endif()
+
 # add cpp yaml header
 set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE} ${SQLITE_INCLUDE})
 
@@ -137,7 +166,6 @@ endif()
 
 # set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} inspirecv)
 set(NEED_INCLUDE ${NEED_INCLUDE} ${INSPIRECV_INCLUDE_PATH})
-message("INSPIRECV_INCLUDE_PATH: ${INSPIRECV_INCLUDE_PATH}")
 
 target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
@@ -179,6 +207,7 @@ else()
 endif()
 
 # Print Message
+message(STATUS ">>>>>>>>>>>>>")
 message(STATUS "InspireFace Core:")
 message(STATUS "\t Version: ${INSPIRE_FACE_VERSION_MAJOR}.${INSPIRE_FACE_VERSION_MINOR}.${INSPIRE_FACE_VERSION_PATCH}")
 message(STATUS "\t MNN_INCLUDE_DIRS: ${MNN_INCLUDE_DIRS}")
@@ -197,6 +226,15 @@ endif ()
 if (ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA)
     message(STATUS "\t ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA: ${ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA}")
 endif ()
+
+message(STATUS "\t ISF_ENABLE_TENSORRT: ${ISF_ENABLE_TENSORRT}")
+if (ISF_ENABLE_TENSORRT)
+    message(STATUS "\t TENSORRT_INCLUDE_DIR: ${TENSORRT_INCLUDE_DIR}")
+    message(STATUS "\t TENSORRT_LIBRARY_INFER: ${TENSORRT_LIBRARY_INFER}")
+    message(STATUS "\t TENSORRT_LIBRARY_RUNTIME: ${TENSORRT_LIBRARY_RUNTIME}")
+    message(STATUS "\t CUDA_RUNTIME_LIBRARY: ${CUDA_RUNTIME_LIBRARY}")
+endif()
+
 
 # Install lib
 install(TARGETS InspireFace
