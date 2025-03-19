@@ -15,6 +15,7 @@
 #include "model_archive/inspire_archive.h"
 #include "nexus_processor/image_processor.h"
 #include "initialization_module/launch.h"
+#include "system.h"
 
 namespace inspire {
 
@@ -103,7 +104,7 @@ public:
                 INSPIRE_LOGE("Extension path is empty");
                 return InferenceWrapper::WrapperError;
             }
-            std::string filePath = extensionPath + "/" + model.fullname;
+            std::string filePath = os::PathJoin(extensionPath, model.fullname);
             ret = m_nn_inference_->Initialize(filePath, m_input_tensor_info_list_, m_output_tensor_info_list_);
         } else {
             ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);

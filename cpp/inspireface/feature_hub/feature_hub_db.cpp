@@ -8,6 +8,7 @@
 #include "herror.h"
 #include <thread>
 #include "middleware/utils.h"
+#include "middleware/system.h"
 
 namespace inspire {
 
@@ -76,7 +77,7 @@ int32_t FeatureHubDB::EnableHub(const DatabaseConfiguration &configuration) {
     std::string dbFile = ":memory:";
     if (m_db_configuration_.enable_persistence) {
         if (IsDirectory(m_db_configuration_.persistence_db_path)) {
-            dbFile = m_db_configuration_.persistence_db_path + "/" + DB_FILE_NAME;
+            dbFile = os::PathJoin(m_db_configuration_.persistence_db_path, DB_FILE_NAME);
         } else {
             dbFile = m_db_configuration_.persistence_db_path;
         }
