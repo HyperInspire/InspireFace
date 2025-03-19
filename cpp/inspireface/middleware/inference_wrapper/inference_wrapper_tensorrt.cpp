@@ -37,8 +37,13 @@ int32_t InferenceWrapperTensorRT::ParameterInitialization(std::vector<InputTenso
 
 int32_t InferenceWrapperTensorRT::Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list,
                                              std::vector<OutputTensorInfo>& output_tensor_info_list) {
-    PRINT_E("CoreML does not yet support buffer initialization of the model\n");
-    return WrapperError;
+    net_.reset(new TensorRTAdapter());
+    auto ret = net_->readFromBin(model_buffer, model_size);
+    if (ret != WrapperOk) {
+        PRINT_E("Failed to load TensorRT model\n");
+        return WrapperError;
+    }
+    return WrapperOk;
 }
 
 int32_t InferenceWrapperTensorRT::Initialize(const std::string& model_filename, std::vector<InputTensorInfo>& input_tensor_info_list,
