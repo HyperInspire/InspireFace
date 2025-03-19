@@ -18,12 +18,14 @@ typedef enum {
     InspireInferBackendAuto = 10,
     InspireInferBackendCPU = 0,
     InspireInferBackendRKNPU = 1,
+    InspireInferBackendCUDA = 2,
 } InspireInferBackend;
 
 typedef enum {
     InspireInferEngineMNN = 0,
     InspireInferEngineRKNN = 1,
     InspireInferEngineCoreML = 2,
+    InspireInferEngineTensorRT = 3,
 } InspireInferEngine;
 
 class INSPIRE_API InspireModel {
@@ -57,6 +59,8 @@ public:
                 modelType = InferenceWrapper::INFER_COREML;
                 // Special handling, the binary model is not loaded by default
                 loadFilePath = 1;
+            } else if (type == "TensorRT") {
+                modelType = InferenceWrapper::INFER_TENSORRT;
             }
         }
         if (node["infer_engine"]) {
@@ -67,6 +71,8 @@ public:
                 inferEngine = InferenceWrapper::INFER_RKNN;
             } else if (type == "COREML") {
                 inferEngine = InferenceWrapper::INFER_COREML;
+            } else if (type == "TensorRT") {
+                inferEngine = InferenceWrapper::INFER_TENSORRT;
             }
         }
         if (node["infer_device"]) {
@@ -77,6 +83,8 @@ public:
                 inferDevice = InspireInferEngineRKNN;
             } else if (type == "COREML") {
                 inferDevice = InspireInferEngineCoreML;
+            } else if (type == "CUDA") {
+                inferDevice = InspireInferEngineTensorRT;
             }
         }
         if (node["infer_backend"]) {
@@ -87,6 +95,8 @@ public:
                 inferBackend = InspireInferBackendRKNPU;
             } else if (type == "AUTO") {
                 inferBackend = InspireInferBackendAuto;
+            } else if (type == "CUDA") {
+                inferBackend = InspireInferBackendCUDA;
             }
         }
         return decode(node);

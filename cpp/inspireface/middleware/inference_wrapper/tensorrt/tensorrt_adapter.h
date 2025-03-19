@@ -1,6 +1,6 @@
 /**
  * Created by Jingyu Yan
- * @date 2025-03-02
+ * @date 2025-03-16
  */
 
 #ifndef INSPIRE_TENSORRT_ADAPTER_H
@@ -160,6 +160,12 @@ public:
      * @return 0 means success, -1 means failure
      */
     static int32_t printCudaDeviceInfo();
+
+    /**
+     * @brief set CUDA device
+     * @param deviceId CUDA device id
+     */
+    void setDevice(int32_t deviceId);
 
 private:
     // use PIMPL pattern to hide implementation details

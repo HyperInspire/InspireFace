@@ -23,6 +23,9 @@
 #ifdef INFERENCE_WRAPPER_ENABLE_COREML
 #include "inference_wrapper_coreml.h"
 #endif
+#ifdef INFERENCE_WRAPPER_ENABLE_TENSORRT
+#include "inference_wrapper_tensorrt.h"
+#endif
 
 #define TAG "InferenceWrapper"
 #define PRINT(...) INFERENCE_WRAPPER_LOG_PRINT(TAG, __VA_ARGS__)
@@ -54,6 +57,12 @@ InferenceWrapper* InferenceWrapper::Create(const InferenceWrapper::EngineType he
         case INFER_COREML:
             // PRINT("Use CoreML\n");
             p = new InferenceWrapperCoreML();
+            break;
+#endif
+#ifdef INFERENCE_WRAPPER_ENABLE_TENSORRT
+        case INFER_TENSORRT:
+            // PRINT("Use TensorRT\n");
+            p = new InferenceWrapperTensorRT();
             break;
 #endif
         default:

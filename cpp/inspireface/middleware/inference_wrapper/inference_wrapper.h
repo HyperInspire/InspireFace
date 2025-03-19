@@ -198,12 +198,14 @@ public:
         COREML_CPU,
         COREML_GPU,
         COREML_ANE,
+        TENSORRT_CUDA,
     } SpecialBackend;
 
     typedef enum {
         INFER_MNN,
         INFER_RKNN,
         INFER_COREML,
+        INFER_TENSORRT,
     } EngineType;
 
 public:

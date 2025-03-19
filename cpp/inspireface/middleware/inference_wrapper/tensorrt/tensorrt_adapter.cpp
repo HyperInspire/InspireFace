@@ -1,6 +1,6 @@
 /**
  * Created by Claude
- * @date 2025-03-18
+ * @date 2025-03-16
  */
 #include "tensorrt_adapter.h"
 #include <fstream>
@@ -87,9 +87,22 @@ static std::vector<char> readModelFile(const std::string &filename) {
 // TensorRT adapter implementation class
 class TensorRTAdapter::Impl {
 public:
-    Impl() : m_ownStream(false), m_inferenceMode(TensorRTAdapter::InferenceMode::FP32) {
+    Impl() : m_ownStream(false), m_inferenceMode(TensorRTAdapter::InferenceMode::FP32), m_deviceId(0) {
         // create Logger with smart pointer
         m_logger = std::make_unique<TRTLogger>();
+    }
+
+    int32_t initDevice() {
+        cudaError_t error = cudaSetDevice(m_deviceId);
+        if (error != cudaSuccess) {
+            std::cerr << "The device fails to use CUDA:" << m_deviceId << ", " << cudaGetErrorString(error) << std::endl;
+            return TENSORRT_HFAIL;
+        }
+        return TENSORRT_HSUCCEED;
+    }
+
+    void setDevice(int32_t deviceId) {
+        m_deviceId = deviceId;
     }
 
     ~Impl() {
@@ -136,6 +149,8 @@ public:
 
     // create and deserialize engine
     int32_t deserializeEngine(const std::vector<char> &modelData) {
+        // init device
+        initDevice();
         // create runtime
         m_runtime.reset(nvinfer1::createInferRuntime(*m_logger));
         if (!m_runtime) {
@@ -535,6 +550,8 @@ private:
     bool m_ownStream;
     std::unique_ptr<cudaStream_t, CUDAStreamDeleter> m_stream;
 
+    int32_t m_deviceId{0};
+
     std::vector<std::string> m_inputNames;
     std::vector<std::string> m_outputNames;
     std::map<std::string, void *> m_deviceBuffers;
@@ -627,6 +644,10 @@ void TensorRTAdapter::setCudaStream(void *streamPtr) {
 
 void TensorRTAdapter::printModelInfo() const {
     pImpl->printModelInfo();
+}
+
+void TensorRTAdapter::setDevice(int32_t deviceId) {
+    pImpl->setDevice(deviceId);
 }
 
 // add static method to TensorRTAdapter class
