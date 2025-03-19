@@ -10,7 +10,7 @@ inline static int32_t GetCudaDeviceCount() {
     cudaError_t error = cudaGetDeviceCount(&device_count);
     if (error != cudaSuccess) {
         INSPIRE_LOGE("CUDA error: %s", cudaGetErrorString(error));
-        return TENSORRT_HFAIL;
+        return -1;
     }
     return device_count;
 }
@@ -19,9 +19,9 @@ inline static int32_t CheckCudaUsability() {
     int device_count = GetCudaDeviceCount();
     if (device_count == 0) {
         INSPIRE_LOGE("No CUDA devices found");
-        return TENSORRT_HFAIL;
+        return -1;
     }
-    return TENSORRT_HSUCCEED;
+    return 0;
 }
 
 inline static int32_t PrintCudaDeviceInfo() {
@@ -34,7 +34,7 @@ inline static int32_t PrintCudaDeviceInfo() {
         cudaError_t error = cudaGetDeviceCount(&device_count);
         if (error != cudaSuccess) {
             INSPIRE_LOGE("CUDA error: %s", cudaGetErrorString(error));
-            return TENSORRT_HFAIL;
+            return -1;
         }
         INSPIRE_LOGI("available CUDA devices: %d", device_count);
 
@@ -42,8 +42,8 @@ inline static int32_t PrintCudaDeviceInfo() {
         int currentDevice;
         error = cudaGetDevice(&currentDevice);
         if (error != cudaSuccess) {
-            std::cerr << "failed to get current CUDA device: " << cudaGetErrorString(error) << std::endl;
-            return TENSORRT_HFAIL;
+            INSPIRE_LOGE("[CUDA error] failed to get current CUDA device: %s", cudaGetErrorString(error));
+            return -1;
         }
         INSPIRE_LOGI("current CUDA device ID: %d", currentDevice);
 
@@ -52,7 +52,7 @@ inline static int32_t PrintCudaDeviceInfo() {
         error = cudaGetDeviceProperties(&prop, currentDevice);
         if (error != cudaSuccess) {
             INSPIRE_LOGE("[CUDA error] failed to get CUDA device properties: %s", cudaGetErrorString(error));
-            return TENSORRT_HFAIL;
+            return -1;
         }
 
         // print device detailed information
@@ -86,10 +86,10 @@ inline static int32_t PrintCudaDeviceInfo() {
         // check if asynchronous engine is supported
         INSPIRE_LOGI("asynchronous engine count: %d", prop.asyncEngineCount);
 
-        return TENSORRT_HSUCCEED;
+        return 0;
     } catch (const std::exception &e) {
         INSPIRE_LOGE("error when printing CUDA device info: %s", e.what());
-        return TENSORRT_HFAIL;
+        return -1;
     }
     INSPIRE_LOGI("================================================");
 }
