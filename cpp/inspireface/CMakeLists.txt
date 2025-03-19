@@ -166,7 +166,6 @@ endif()
 
 # set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} inspirecv)
 set(NEED_INCLUDE ${NEED_INCLUDE} ${INSPIRECV_INCLUDE_PATH})
-message("INSPIRECV_INCLUDE_PATH: ${INSPIRECV_INCLUDE_PATH}")
 
 target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
@@ -208,6 +207,7 @@ else()
 endif()
 
 # Print Message
+message(STATUS ">>>>>>>>>>>>>")
 message(STATUS "InspireFace Core:")
 message(STATUS "\t Version: ${INSPIRE_FACE_VERSION_MAJOR}.${INSPIRE_FACE_VERSION_MINOR}.${INSPIRE_FACE_VERSION_PATCH}")
 message(STATUS "\t MNN_INCLUDE_DIRS: ${MNN_INCLUDE_DIRS}")
