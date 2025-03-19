@@ -498,9 +498,9 @@ HResult HFGetNumCudaDevices(int32_t *num_devices) {
 #endif
 }
 
-HResult HFCheckCudaDeviceSupport(int32_t support) {
+HResult HFCheckCudaDeviceSupport(int32_t *is_support) {
 #if defined(ISF_ENABLE_TENSORRT)
-    return inspire::CheckCudaUsability(support);
+    return inspire::CheckCudaUsability(is_support);
 #else
     INSPIRE_LOGW("CUDA is not supported, you need to enable the compile option that supports TensorRT");
     return HERR_DEVICE_CUDA_DISABLE;

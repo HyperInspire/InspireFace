@@ -363,7 +363,7 @@ HYPER_CAPI_EXPORT extern HResult HFGetNumCudaDevices(int32_t *num_devices);
  * @param support The support flag to be checked.
  * @return HResult indicating the success or failure of the operation.
  * */
-HYPER_CAPI_EXPORT extern HResult HFCheckCudaDeviceSupport(int32_t support);
+HYPER_CAPI_EXPORT extern HResult HFCheckCudaDeviceSupport(int32_t *is_support);
 
 /************************************************************************
  * FaceSession
