@@ -9,7 +9,7 @@ Here are the translation details for the compilation parameters as per your requ
 | ISF_SANITIZE_LEAK                         | OFF | Enable LeakSanitizer to detect memory leaks                                                                                                                |
 | ISF_ENABLE_RKNN                           | OFF | Enable RKNN for Rockchip embedded devices                                                                                                                  |
 | ISF_RK_DEVICE_TYPE                        | RV1109RV1126 | Target device model for Rockchip(Supports RV1109RV1126, RV1106, RV356X) |
-| ISF_RK_COMPILER_TYPE | armhf | The **armhf**、**armhf-uclibc** and aarch64 compilers are supported. Select one based on the actual situation |
+| ISF_RK_COMPILER_TYPE | armhf | The **armhf**, **armhf-uclibc** and aarch64 compilers are supported. Select one based on the actual situation |
 | ISF_ENABLE_RGA | OFF | Enable **RGA** image acceleration on Rockchip devices (currently only supported on devices using **RKNPU2**) |
 | ISF_BUILD_LINUX_ARM7                      | OFF | Compile for ARM7 architecture                                                                                                                              |
 | ISF_BUILD_LINUX_AARCH64                   | OFF | Compile for AARCH64 architecture                                                                                                                           |
