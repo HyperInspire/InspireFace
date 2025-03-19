@@ -8,6 +8,9 @@
 #include "herror.h"
 #include "isf_check.h"
 #include "middleware/cuda_toolkit.h"
+#if defined(ISF_ENABLE_TENSORRT)
+#include "middleware/cuda_toolkit.h"
+#endif
 
 #define APPLE_EXTENSION_SUFFIX ".bundle"
 
@@ -35,11 +38,15 @@ std::shared_ptr<Launch> Launch::GetInstance() {
 int32_t Launch::Load(const std::string& path) {
     std::lock_guard<std::mutex> lock(mutex_);
 #if defined(ISF_ENABLE_TENSORRT)
-    HInt32 support_cuda;
-    ret = HFCheckCudaDeviceSupport(&support_cuda);
+    int32_t support_cuda;
+    auto ret = CheckCudaUsability(&support_cuda);
     if (ret != HSUCCEED) {
         INSPIRE_LOGE("An error occurred while checking CUDA device support. Please ensure that your environment supports CUDA!");
         return ret;
+    }
+    if (!support_cuda) {
+        INSPIRE_LOGE("Your environment does not support CUDA! Please ensure that your environment supports CUDA!");
+        return HERR_DEVICE_CUDA_NOT_SUPPORT;
     }
 #endif
     INSPIREFACE_CHECK_MSG(os::IsExists(path), "The package path does not exist because the launch failed.");
