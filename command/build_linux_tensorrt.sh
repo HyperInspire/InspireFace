@@ -29,16 +29,14 @@ else
     TAG=""
 fi
 
-# 获取项目根目录的绝对路径
-SCRIPT_DIR=$(pwd)  # Project dir
-BUILD_FOLDER_PATH="${SCRIPT_DIR}/build/inspireface-linux-tensorrt${TAG}"
+SCRIPT_DIR=$(pwd)  
+BUILD_FOLDER_NAME="inspireface-linux-tensorrt${TAG}"
 
-mkdir -p ${BUILD_FOLDER_PATH}
-cd ${BUILD_FOLDER_PATH}
+# 创建两层嵌套的目录结构
+mkdir -p build/${BUILD_FOLDER_NAME}
+cd build/${BUILD_FOLDER_NAME}
 
 echo "TENSORRT_ROOT: ${TENSORRT_ROOT}"
-# 明确指定CUDA路径
-CUDA_PATH="/usr/local/cuda"  # 请替换为您系统上的实际CUDA路径
 
 cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DCMAKE_BUILD_TYPE=Release \
@@ -48,9 +46,13 @@ cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DISF_ENABLE_USE_LFW_DATA=OFF \
   -DISF_ENABLE_TEST_EVALUATION=OFF \
   -DTENSORRT_ROOT=/home/tunm/software/TensorRT-10.8.0.43 \
-  -DCUDA_TOOLKIT_ROOT_DIR=${CUDA_PATH} \
-  -DISF_ENABLE_TENSORRT=ON ${SCRIPT_DIR}
+  -DISF_ENABLE_TENSORRT=ON ../..
 
 make -j4
 
-move_install_files "$(pwd)"
+if [ $? -eq 0 ] && [ -d "$(pwd)/install" ]; then
+  move_install_files "$(pwd)"
+else
+  echo "Build failed or the installation directory does not exist"
+  exit 1
+fi
