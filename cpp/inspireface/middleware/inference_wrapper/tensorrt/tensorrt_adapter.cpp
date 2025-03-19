@@ -1,5 +1,5 @@
 /**
- * Created by Claude
+ * Created by Jingyu Yan
  * @date 2025-03-16
  */
 #include "tensorrt_adapter.h"
@@ -7,10 +7,13 @@
 #include <iostream>
 #include <chrono>
 #include <memory>
-#include <cstring>      // for std::memcpy
-#include <cuda_fp16.h>  // for half type support
+#include <cstring>
+#include <cuda_fp16.h>
 #include <NvInfer.h>
 #include <cuda_runtime_api.h>
+
+#include <log.h>
+#include <isf_check.h>
 
 // define specific deleters for TensorRT objects
 struct TRTRuntimeDeleter {
@@ -49,7 +52,7 @@ class TRTLogger : public nvinfer1::ILogger {
 public:
     void log(Severity severity, const char *msg) noexcept override {
         if (severity <= Severity::kWARNING) {
-            std::cout << "[TensorRT] " << msg << std::endl;
+            INSPIRE_LOGI("[TensorRT] %s", msg);
         }
     }
 };
@@ -58,7 +61,7 @@ public:
 static std::vector<char> readModelFile(const std::string &filename) {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
     if (!file) {
-        std::cerr << "failed to open model file: " << filename << std::endl;
+        INSPIRE_LOGE("failed to open model file: %s", filename.c_str());
         return {};
     }
 
@@ -67,7 +70,7 @@ static std::vector<char> readModelFile(const std::string &filename) {
 
     std::vector<char> buffer(size);
     if (!file.read(buffer.data(), size)) {
-        std::cerr << "failed to read model file" << std::endl;
+        INSPIRE_LOGE("failed to read model file: %s", filename.c_str());
         return {};
     }
 
@@ -75,13 +78,13 @@ static std::vector<char> readModelFile(const std::string &filename) {
 }
 
 // CUDA error check macro
-#define CHECK_CUDA(call)                                                           \
-    do {                                                                           \
-        cudaError_t error = call;                                                  \
-        if (error != cudaSuccess) {                                                \
-            std::cerr << "CUDA error: " << cudaGetErrorString(error) << std::endl; \
-            return TENSORRT_HFAIL;                                                 \
-        }                                                                          \
+#define CHECK_CUDA(call)                                                \
+    do {                                                                \
+        cudaError_t error = call;                                       \
+        if (error != cudaSuccess) {                                     \
+            INSPIRE_LOGE("[CUDA error] %s", cudaGetErrorString(error)); \
+            return TENSORRT_HFAIL;                                      \
+        }                                                               \
     } while (0)
 
 // TensorRT adapter implementation class
@@ -95,7 +98,7 @@ public:
     int32_t initDevice() {
         cudaError_t error = cudaSetDevice(m_deviceId);
         if (error != cudaSuccess) {
-            std::cerr << "The device fails to use CUDA:" << m_deviceId << ", " << cudaGetErrorString(error) << std::endl;
+            INSPIRE_LOGE("[CUDA error] The device fails to use CUDA: %d, %s", m_deviceId, cudaGetErrorString(error));
             return TENSORRT_HFAIL;
         }
         return TENSORRT_HSUCCEED;
@@ -137,7 +140,7 @@ public:
 
     int32_t readFromBin(void *model_data, unsigned int model_size) {
         if (!model_data || model_size == 0) {
-            std::cerr << "invalid model data or size" << std::endl;
+            INSPIRE_LOGE("[TensorRT error] invalid model data or size");
             return TENSORRT_HFAIL;
         }
 
@@ -154,21 +157,21 @@ public:
         // create runtime
         m_runtime.reset(nvinfer1::createInferRuntime(*m_logger));
         if (!m_runtime) {
-            std::cerr << "failed to create TensorRT runtime" << std::endl;
+            INSPIRE_LOGE("[TensorRT error] failed to create TensorRT runtime");
             return TENSORRT_HFAIL;
         }
 
         // deserialize engine
         m_engine.reset(m_runtime->deserializeCudaEngine(modelData.data(), modelData.size()));
         if (!m_engine) {
-            std::cerr << "failed to deserialize engine" << std::endl;
+            INSPIRE_LOGE("[TensorRT error] failed to deserialize engine");
             return TENSORRT_HFAIL;
         }
 
         // create execution context
         m_context.reset(m_engine->createExecutionContext());
         if (!m_context) {
-            std::cerr << "failed to create execution context" << std::endl;
+            INSPIRE_LOGE("[TensorRT error] failed to create execution context");
             return TENSORRT_HFAIL;
         }
 
@@ -254,7 +257,7 @@ public:
                 newDims.d[0] = batchSize;
 
                 if (!m_context->setInputShape(name.c_str(), newDims)) {
-                    std::cerr << "为输入 " << name << " 设置批处理大小失败" << std::endl;
+                    INSPIRE_LOGE("[TensorRT error] failed to set input shape for %s", name.c_str());
                     return TENSORRT_HFAIL;
                 }
 
@@ -275,14 +278,14 @@ public:
         // check if all tensors are bound to addresses
         for (const auto &name : m_inputNames) {
             if (!m_context->setTensorAddress(name.c_str(), m_deviceBuffers[name])) {
-                std::cerr << "failed to set input tensor " << name << " address" << std::endl;
+                INSPIRE_LOGE("[TensorRT error] failed to set input tensor %s address", name.c_str());
                 return TENSORRT_FORWARD_FAILED;
             }
         }
 
         for (const auto &name : m_outputNames) {
             if (!m_context->setTensorAddress(name.c_str(), m_deviceBuffers[name])) {
-                std::cerr << "failed to set output tensor " << name << " address" << std::endl;
+                INSPIRE_LOGE("[TensorRT error] failed to set output tensor %s address", name.c_str());
                 return TENSORRT_FORWARD_FAILED;
             }
         }
@@ -423,42 +426,43 @@ public:
 
     // print model info
     void printModelInfo() const {
+        INSPIRE_LOGI("================================================");
         if (!m_engine) {
-            std::cerr << "engine not initialized" << std::endl;
+            INSPIRE_LOGE("[TensorRT error] engine not initialized");
             return;
         }
+        INSPIRE_LOGI("\nengine info:");
+        INSPIRE_LOGI("engine layers: %d", m_engine->getNbLayers());
+        INSPIRE_LOGI("input/output tensors: %d", m_engine->getNbIOTensors());
 
-        std::cout << "\nengine info:" << std::endl;
-        std::cout << "engine layers: " << m_engine->getNbLayers() << std::endl;
-        std::cout << "input/output tensors: " << m_engine->getNbIOTensors() << std::endl;
-
-        std::cout << "\ninput tensors:" << std::endl;
+        INSPIRE_LOGI("\ninput tensors:");
         for (const auto &name : m_inputNames) {
             nvinfer1::Dims dims = m_engine->getTensorShape(name.c_str());
             nvinfer1::DataType dtype = m_engine->getTensorDataType(name.c_str());
 
-            std::cout << "name: " << name << ", shape: (";
+            INSPIRE_LOGI("name: %s, shape: (", name.c_str());
             for (int d = 0; d < dims.nbDims; ++d) {
-                std::cout << dims.d[d];
+                INSPIRE_LOGI("%d", dims.d[d]);
                 if (d < dims.nbDims - 1)
-                    std::cout << ", ";
+                    INSPIRE_LOGI(", ");
             }
-            std::cout << "), type: " << getDataTypeString(dtype) << std::endl;
+            INSPIRE_LOGI("), type: %s", getDataTypeString(dtype).c_str());
         }
 
-        std::cout << "\noutput tensors:" << std::endl;
+        INSPIRE_LOGI("\noutput tensors:");
         for (const auto &name : m_outputNames) {
             nvinfer1::Dims dims = m_engine->getTensorShape(name.c_str());
             nvinfer1::DataType dtype = m_engine->getTensorDataType(name.c_str());
 
-            std::cout << "name: " << name << ", shape: (";
+            INSPIRE_LOGI("name: %s, shape: (", name.c_str());
             for (int d = 0; d < dims.nbDims; ++d) {
-                std::cout << dims.d[d];
+                INSPIRE_LOGI("%d", dims.d[d]);
                 if (d < dims.nbDims - 1)
-                    std::cout << ", ";
+                    INSPIRE_LOGI(", ");
             }
-            std::cout << "), type: " << getDataTypeString(dtype) << std::endl;
+            INSPIRE_LOGI("), type: %s", getDataTypeString(dtype).c_str());
         }
+        INSPIRE_LOGI("================================================");
     }
 
     // get input tensor names list
@@ -652,18 +656,18 @@ void TensorRTAdapter::setDevice(int32_t deviceId) {
 
 // add static method to TensorRTAdapter class
 int32_t TensorRTAdapter::printCudaDeviceInfo() {
+    INSPIRE_LOGI("================================================");
     try {
-        // print TensorRT version
-        std::cout << "TensorRT version: " << NV_TENSORRT_MAJOR << "." << NV_TENSORRT_MINOR << "." << NV_TENSORRT_PATCH << std::endl;
+        INSPIRE_LOGI("TensorRT version: %d.%d.%d", NV_TENSORRT_MAJOR, NV_TENSORRT_MINOR, NV_TENSORRT_PATCH);
 
         // check if CUDA is available
         int device_count;
         cudaError_t error = cudaGetDeviceCount(&device_count);
         if (error != cudaSuccess) {
-            std::cerr << "CUDA error: " << cudaGetErrorString(error) << std::endl;
+            INSPIRE_LOGE("CUDA error: %s", cudaGetErrorString(error));
             return TENSORRT_HFAIL;
         }
-        std::cout << "available CUDA devices: " << device_count << std::endl;
+        INSPIRE_LOGI("available CUDA devices: %d", device_count);
 
         // get current CUDA device
         int currentDevice;
@@ -672,51 +676,51 @@ int32_t TensorRTAdapter::printCudaDeviceInfo() {
             std::cerr << "failed to get current CUDA device: " << cudaGetErrorString(error) << std::endl;
             return TENSORRT_HFAIL;
         }
-        std::cout << "current CUDA device ID: " << currentDevice << std::endl;
+        INSPIRE_LOGI("current CUDA device ID: %d", currentDevice);
 
         // get GPU device properties
         cudaDeviceProp prop;
         error = cudaGetDeviceProperties(&prop, currentDevice);
         if (error != cudaSuccess) {
-            std::cerr << "failed to get CUDA device properties: " << cudaGetErrorString(error) << std::endl;
+            INSPIRE_LOGE("[CUDA error] failed to get CUDA device properties: %s", cudaGetErrorString(error));
             return TENSORRT_HFAIL;
         }
 
         // print device detailed information
-        std::cout << "\nCUDA device details:" << std::endl;
-        std::cout << "device name: " << prop.name << std::endl;
-        std::cout << "compute capability: " << prop.major << "." << prop.minor << std::endl;
-        std::cout << "global memory: " << prop.totalGlobalMem / (1024 * 1024) << " MB" << std::endl;
-        std::cout << "max shared memory/block: " << prop.sharedMemPerBlock / 1024 << " KB" << std::endl;
-        std::cout << "max threads/block: " << prop.maxThreadsPerBlock << std::endl;
-        std::cout << "max block dimensions: (" << prop.maxThreadsDim[0] << ", " << prop.maxThreadsDim[1] << ", " << prop.maxThreadsDim[2] << ")"
-                  << std::endl;
-        std::cout << "max grid size: (" << prop.maxGridSize[0] << ", " << prop.maxGridSize[1] << ", " << prop.maxGridSize[2] << ")" << std::endl;
-        std::cout << "total constant memory: " << prop.totalConstMem / 1024 << " KB" << std::endl;
-        std::cout << "multi-processor count: " << prop.multiProcessorCount << std::endl;
-        std::cout << "max blocks per multi-processor: " << prop.maxBlocksPerMultiProcessor << std::endl;
-        std::cout << "clock frequency: " << prop.clockRate / 1000 << " MHz" << std::endl;
-        std::cout << "memory frequency: " << prop.memoryClockRate / 1000 << " MHz" << std::endl;
-        std::cout << "memory bus width: " << prop.memoryBusWidth << " bits" << std::endl;
-        std::cout << "L2 cache size: " << prop.l2CacheSize / 1024 << " KB" << std::endl;
-        std::cout << "theoretical memory bandwidth: " << 2.0 * prop.memoryClockRate * (prop.memoryBusWidth / 8) / 1.0e6 << " GB/s" << std::endl;
+        INSPIRE_LOGI("\nCUDA device details:");
+        INSPIRE_LOGI("device name: %s", prop.name);
+        INSPIRE_LOGI("compute capability: %d.%d", prop.major, prop.minor);
+        INSPIRE_LOGI("global memory: %d MB", prop.totalGlobalMem / (1024 * 1024));
+        INSPIRE_LOGI("max shared memory/block: %d KB", prop.sharedMemPerBlock / 1024);
+        INSPIRE_LOGI("max threads/block: %d", prop.maxThreadsPerBlock);
+        INSPIRE_LOGI("max block dimensions: (%d, %d, %d)", prop.maxThreadsDim[0], prop.maxThreadsDim[1], prop.maxThreadsDim[2]);
+        INSPIRE_LOGI("max grid size: (%d, %d, %d)", prop.maxGridSize[0], prop.maxGridSize[1], prop.maxGridSize[2]);
+        INSPIRE_LOGI("total constant memory: %d KB", prop.totalConstMem / 1024);
+        INSPIRE_LOGI("multi-processor count: %d", prop.multiProcessorCount);
+        INSPIRE_LOGI("max blocks per multi-processor: %d", prop.maxBlocksPerMultiProcessor);
+        INSPIRE_LOGI("clock frequency: %d MHz", prop.clockRate / 1000);
+        INSPIRE_LOGI("memory frequency: %d MHz", prop.memoryClockRate / 1000);
+        INSPIRE_LOGI("memory bus width: %d bits", prop.memoryBusWidth);
+        INSPIRE_LOGI("L2 cache size: %d KB", prop.l2CacheSize / 1024);
+        INSPIRE_LOGI("theoretical memory bandwidth: %f GB/s", 2.0 * prop.memoryClockRate * (prop.memoryBusWidth / 8) / 1.0e6);
 
         // check if FP16 is supported
         bool supportsFP16 = prop.major >= 6 || (prop.major == 5 && prop.minor >= 3);
-        std::cout << "FP16 support: " << (supportsFP16 ? "yes" : "no") << std::endl;
+        INSPIRE_LOGI("FP16 support: %s", supportsFP16 ? "yes" : "no");
 
         // check if unified memory is supported
-        std::cout << "unified memory support: " << (prop.unifiedAddressing ? "yes" : "no") << std::endl;
+        INSPIRE_LOGI("unified memory support: %s", prop.unifiedAddressing ? "yes" : "no");
 
         // check if concurrent kernel execution is supported
-        std::cout << "concurrent kernel execution: " << (prop.concurrentKernels ? "yes" : "no") << std::endl;
+        INSPIRE_LOGI("concurrent kernel execution: %s", prop.concurrentKernels ? "yes" : "no");
 
         // check if asynchronous engine is supported
-        std::cout << "asynchronous engine count: " << prop.asyncEngineCount << std::endl;
+        INSPIRE_LOGI("asynchronous engine count: %d", prop.asyncEngineCount);
 
         return TENSORRT_HSUCCEED;
     } catch (const std::exception &e) {
-        std::cerr << "error when printing CUDA device info: " << e.what() << std::endl;
+        INSPIRE_LOGE("error when printing CUDA device info: %s", e.what());
         return TENSORRT_HFAIL;
     }
+    INSPIRE_LOGI("================================================");
 }
