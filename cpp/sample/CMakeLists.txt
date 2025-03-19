@@ -69,15 +69,9 @@ set_target_properties(FaceTrackerSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
-# add_executable(ExpansionLoadSample source/expansion_load.cpp)
-# target_link_libraries(ExpansionLoadSample InspireFace ${ext})
-# set_target_properties(ExpansionLoadSample PROPERTIES
-#         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
-# )
-
-add_executable(TensorRTLoadSample source/tensorrt_load.cpp)
-target_link_libraries(TensorRTLoadSample InspireFace ${ext})
-set_target_properties(TensorRTLoadSample PROPERTIES
+add_executable(ExpansionLoadSample source/expansion_load.cpp)
+target_link_libraries(ExpansionLoadSample InspireFace ${ext})
+set_target_properties(ExpansionLoadSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/"
 )
 
