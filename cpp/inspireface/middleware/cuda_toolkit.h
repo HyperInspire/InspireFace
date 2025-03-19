@@ -1,4 +1,4 @@
-#ifdef ISF_ENABLE_CUDA
+#ifdef ISF_ENABLE_TENSORRT
 #ifndef INSPIRE_CUDA_TOOLKIT_H
 #define INSPIRE_CUDA_TOOLKIT_H
 #include <cuda_runtime_api.h>
@@ -106,4 +106,4 @@ inline static int32_t PrintCudaDeviceInfo() {
 }  // namespace inspire
 
 #endif  // INSPIRE_CUDA_TOOLKIT_H
-#endif  // ISF_ENABLE_CUDA
+#endif  // ISF_ENABLE_TENSORRT
