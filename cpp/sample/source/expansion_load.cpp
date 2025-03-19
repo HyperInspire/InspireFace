@@ -101,7 +101,6 @@ void test_feature() {
 int main() {
     std::string archivePath = "test_res/pack/Megatron_TRT";
     INSPIRE_LAUNCH->Load(archivePath);
-    INSPIRE_LAUNCH->SetCudaDeviceId(0);
     // Test face detect
     test_face_detect();
 
