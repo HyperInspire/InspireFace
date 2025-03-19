@@ -291,7 +291,7 @@ We have completed the adaptation and testing of the software across various oper
 - **Device**: Some special device support, primarily focused on computing power devices.
 - **Supported**: The solution has been fully developed and successfully verified on offline devices.
 - **Passed Tests**: The feature has at least **passed unit tests** on offline devices.
-- **Release**: The solution is already supported and has been successfully compiled and released through **GitHub Actions**.
+- **Release**: The solution is already supported and has been successfully compiled and released through **[GitHub Actions](https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml)**.
 
 ### Multi-platform compilation using Docker
 
