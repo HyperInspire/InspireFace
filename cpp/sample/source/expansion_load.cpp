@@ -103,10 +103,10 @@ int main() {
     INSPIRE_LAUNCH->Load(archivePath);
 
     // Test face detect
-    test_face_detect();
+    // test_face_detect();
 
     // Test landmark
-    // test_landmark();
+    test_landmark();
 
     // Test quality
     // test_quality();
