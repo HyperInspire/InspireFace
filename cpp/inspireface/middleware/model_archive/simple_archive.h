@@ -74,7 +74,7 @@ public:
 
     std::vector<char>& GetFileContent(const std::string& filename) {
         auto index = filenameFuzzyMatching(filename);
-        std::cout << "index: " << index << std::endl;
+        std::cout << "index: " << index << " filename: " << filename << std::endl;
         if (index != std::string::npos) {
             auto fullFilename = m_subfiles_names_[index];
             auto ret = lazyReadFile(fullFilename);
