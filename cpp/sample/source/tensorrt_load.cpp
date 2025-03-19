@@ -9,4 +9,5 @@
 int main() {
     std::string archivePath = "test_res/pack/Megatron_TRT";
     INSPIRE_LAUNCH->Load(archivePath);
+    return 0;
 }
