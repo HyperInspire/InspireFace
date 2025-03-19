@@ -99,7 +99,7 @@ public:
     int32_t initDevice() {
         cudaError_t error = cudaSetDevice(m_deviceId);
         if (error != cudaSuccess) {
-            INSPIRE_LOGE("[CUDA error] The device fails to use CUDA: %d, %s", m_deviceId, cudaGetErrorString(error));
+            INSPIRE_LOGE("[CUDA error] The device fails to use CUDA:%d, %s", m_deviceId, cudaGetErrorString(error));
             return TENSORRT_HFAIL;
         }
         return TENSORRT_HSUCCEED;
