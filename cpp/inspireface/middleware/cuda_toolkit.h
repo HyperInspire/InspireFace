@@ -1,6 +1,7 @@
 #ifndef INSPIRE_CUDA_TOOLKIT_H
 #define INSPIRE_CUDA_TOOLKIT_H
 #include <cuda_runtime_api.h>
+#include <NvInfer.h>
 #include <log.h>
 
 namespace inspire {
