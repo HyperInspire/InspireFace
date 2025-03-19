@@ -8,7 +8,7 @@
 
 void test_face_detect() {
     inspire::InspireModel model;
-    INSPIRE_LAUNCH->getMArchive().LoadModel("face_detect_320", model);
+    INSPIRE_LAUNCH->getMArchive().LoadModel("face_detect_640", model);
     auto input_size = 160;
     inspire::FaceDetectAdapt faceDetectAdapt(input_size);
     faceDetectAdapt.loadData(model, model.modelType);
