@@ -17,6 +17,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
+**`2025-03-16`** Supports NVIDIA device-based(**TensorRT-10**) deployment.
+
 **`2025-03-09`** Release of android sdk in JitPack.
 
 **`2025-02-20`** Upgrade the face landmark model.
@@ -52,8 +54,6 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 **`2024-06-27`** Verified iOS usability and fixed some bugs.
 
 **`2024-06-18`** Added face detection feature with tracking-by-detection mode.
-
-**`2024-06-01`** Adapted for accelerated inference on CUDA-enabled devices.
 
 ## Quick Start
 
@@ -246,10 +246,26 @@ bash command/build_android.sh
 
 After the compilation is complete, arm64-v8a and armeabi-v7a libraries will be placed in the `build/inspireface-android` directory.
 
+### Linux-based NVIDIA GPU Acceleration with TensorRT Compilation
+
+If you want to use NVIDIA GPU devices for accelerated inference on Linux, you need to install **CUDA**, **cuDNN**, and **TensorRT-10** on your device, and configure the relevant environment variables.
+
+```bash
+# Example, Change to your TensorRT-10 path
+export TENSORRT_ROOT=/user/tunm/software/TensorRT-10
+```
+
+Before compiling, please ensure that your related environments such as CUDA and TensorRT-10 are available. If you encounter issues with finding CUDA libraries during the compilation process, you may need to check whether the relevant environment variables have been configured: `CUDA_TOOLKIT_ROOT_DIR`, `CUDA_CUDART_LIBRARY`.
+
+```bash
+bash command/build_linux_tensorrt.sh
+```
+
 ### Supported Platforms and Architectures
+
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
 
-| **No.** | **Platform** | **CPU Architecture** | **Special Device Support** | **Adapted** | **Passed Tests** |
+| **No.** | **Platform** | **Architecture** | **Device Support** | **Adapted** | **Passed Tests** |
 | ------- | -------------------- | --------------------- | -------------------------- | ----------- | ---------------- |
 | 1       | **Linux<sup><br/>(CPU)**        | ARMv7                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
 | 2       |                      | ARMv8                 | -                          | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=build)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) | ![test](https://img.shields.io/badge/OFFLINE-PASSING-blue?style=for-the-badge) |
@@ -605,7 +621,7 @@ The following Features and technologies are currently supported.
 | Silent Liveness | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - | - | - | - |
 | Face Quality | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
 | Pose Estimation | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
-| Face Attribute | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - |
+| Face Attribute | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
 | Cooperative Liveness | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
 | Embedding Management | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - | - | - | - |
 
@@ -618,13 +634,14 @@ For different scenarios, we currently provide several Packs, each containing mul
 | --- | --- | --- | --- | --- |
 | Pikachu | CPU | Lightweight edge-side models | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu) |
 | Megatron | CPU, GPU | Mobile and server models | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron) |
+| Megatron_TRT | NVIDIA-GPU | Supports CUDA device | Mar 16, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron_TRT) |
 | Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
 | Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
 | Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) |
 
 ## Short-Term Plan
 
-- [ ] Add TensorRT backend support.
+- [x] Add TensorRT backend support.
 - [ ] Add the RKNPU backend support for Android .
 - [ ] Example app project for Android and iOS samples.
 - [ ] Add the batch forward feature.
@@ -642,3 +659,4 @@ InspireFace is built on the following libraries:
 - [sqlite-vec](https://github.com/asg017/sqlite-vec)
 - [Catch2](https://github.com/catchorg/Catch2)
 - [yaml-cpp](https://github.com/jbeder/yaml-cpp)
+- [TensorRT](https://github.com/NVIDIA/TensorRT)

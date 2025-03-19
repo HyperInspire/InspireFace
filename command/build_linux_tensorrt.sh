@@ -32,7 +32,6 @@ fi
 SCRIPT_DIR=$(pwd)  
 BUILD_FOLDER_NAME="inspireface-linux-tensorrt${TAG}"
 
-# 创建两层嵌套的目录结构
 mkdir -p build/${BUILD_FOLDER_NAME}
 cd build/${BUILD_FOLDER_NAME}
 
