@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
         TEST_ERROR_PRINT("An error occurred while checking CUDA device support: {}", ret);
         return ret;
     }
-    if (support_cuda) {
+    if (!support_cuda) {
         TEST_ERROR_PRINT("CUDA device support is not available");
         return HERR_DEVICE_CUDA_NOT_SUPPORT;
     }
