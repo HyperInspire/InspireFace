@@ -325,11 +325,45 @@ typedef enum HFAppleCoreMLInferenceMode {
 } HFAppleCoreMLInferenceMode;
 
 /**
- * @brief Set the Apple CoreML inference mode, must be called before HFLaunchInspireFace.
+ * @brief Set the Apple CoreML inference mode, must be called before HFCreateInspireFaceSession.
  * @param mode The inference mode to be set.
  * @return HResult indicating the success or failure of the operation.
  * */
 HYPER_CAPI_EXPORT extern HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode);
+
+/**
+ * @brief Set the CUDA device id, must be called before HFCreateInspireFaceSession.
+ * @param device_id The device id to be set.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSetCudaDeviceId(int32_t device_id);
+
+/**
+ * @brief Get the CUDA device id, must be called after HFCreateInspireFaceSession.
+ * @param device_id Pointer to the device id to be returned.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFGetCudaDeviceId(int32_t *device_id);
+
+/**
+ * @brief Print the CUDA device information.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFPrintCudaDeviceInfo();
+
+/**
+ * @brief Get the number of CUDA devices.
+ * @param num_devices Pointer to the number of CUDA devices to be returned.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFGetNumCudaDevices(int32_t *num_devices);
+
+/**
+ * @brief Check if the CUDA device is supported.
+ * @param support The support flag to be checked.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFCheckCudaDeviceSupport(int32_t support);
 
 /************************************************************************
  * FaceSession

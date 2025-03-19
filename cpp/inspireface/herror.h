@@ -73,7 +73,7 @@
 #define HERR_DEVICE_CUDA_NOT_SUPPORT (HERR_DEVICE_BASE + 1)           // CUDA not supported
 #define HERR_DEVICE_CUDA_TENSORRT_NOT_SUPPORT (HERR_DEVICE_BASE + 2)  // CUDA TensorRT not supported
 #define HERR_DEVICE_CUDA_UNKNOWN_ERROR (HERR_DEVICE_BASE + 20)        // CUDA unknown error
-
+#define HERR_DEVICE_CUDA_DISABLE (HERR_DEVICE_BASE + 21)              // CUDA support is disabled
 // [Anchor-End]
 
 #endif  // INSPIRE_FACE_HERROR_H

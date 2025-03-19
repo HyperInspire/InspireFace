@@ -8,22 +8,23 @@
 
 namespace inspire {
 
-inline static int32_t GetCudaDeviceCount() {
-    int device_count;
-    cudaError_t error = cudaGetDeviceCount(&device_count);
+inline static int32_t GetCudaDeviceCount(int32_t *device_count) {
+    cudaError_t error = cudaGetDeviceCount(device_count);
     if (error != cudaSuccess) {
         INSPIRE_LOGE("CUDA error: %s", cudaGetErrorString(error));
         return HERR_DEVICE_CUDA_UNKNOWN_ERROR;
     }
-    return device_count;
+    return HSUCCEED;
 }
 
-inline static int32_t CheckCudaUsability() {
+inline static int32_t CheckCudaUsability(int32_t *is_support) {
     int device_count = GetCudaDeviceCount();
     if (device_count == 0) {
+        *is_support = 1;
         INSPIRE_LOGE("No CUDA devices found");
         return HERR_DEVICE_CUDA_NOT_SUPPORT;
     }
+    *is_support = device_count > 0;
     return HSUCCEED;
 }
 
