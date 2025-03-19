@@ -79,4 +79,16 @@ The benchmark tests will be continuously updated.
 | Face alignment & Extract | 1000      | 9070ms          | **9.07ms**       |
 | Face Comparison          | 1000      | 9us             | **0.009us**      |
 
+## Megatron_TRT(CUDA)
+### Device: NVIDIA RTX3060 12G
+### Precision: FP16
+| **Benchmark** | **Loops** | **Total Time** | **Average Time** |
+| --- | --- | --- | --- |
+| Face Detect@160          | 1000      | 16946ms         | **0.15ms**      |
+| Face Detect@320          | 1000      | 25108ms         | **0.30ms**      |
+| Face Detect@640          | 1000      | 68778ms         | **0.85ms**      |
+| Face Light-Track         | 1000      | 11215ms         | **0.09ms**      |
+| Face alignment & Extract | 1000      | 9070ms          | **9.07ms**       |
+| Face Comparison          | 1000      | 9us             | **0.009us**      |
+
 **Note**: The test results are all calculated by the test programs in the '**cpp/test**' subproject.

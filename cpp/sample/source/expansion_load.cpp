@@ -16,7 +16,7 @@ void test_face_detect() {
     inspire::FaceLocList faces;
     inspirecv::TimeSpend timeSpend("Face Detect@" + std::to_string(input_size));
     timeSpend.Start();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 1000; i++) {
         faces = faceDetectAdapt(image);
     }
     timeSpend.Stop();
@@ -105,12 +105,12 @@ int main() {
     test_face_detect();
 
     // Test landmark
-    test_landmark();
+    // test_landmark();
 
     // Test quality
-    test_quality();
+    // test_quality();
 
     // Test feature
-    test_feature();
+    // test_feature();
     return 0;
 }
