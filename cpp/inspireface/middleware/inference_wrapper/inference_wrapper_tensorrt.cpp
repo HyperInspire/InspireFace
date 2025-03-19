@@ -40,6 +40,7 @@ int32_t InferenceWrapperTensorRT::Initialize(char* model_buffer, int model_size,
     net_.reset(new TensorRTAdapter());
     auto ret = net_->readFromBin(model_buffer, model_size);
     if (ret != WrapperOk) {
+        std::cout << "model_size: " << model_size << std::endl;
         PRINT_E("Failed to load TensorRT model\n");
         return WrapperError;
     }
