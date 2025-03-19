@@ -18,9 +18,13 @@ inline static int32_t GetCudaDeviceCount(int32_t *device_count) {
 }
 
 inline static int32_t CheckCudaUsability(int32_t *is_support) {
-    int device_count = GetCudaDeviceCount();
+    int device_count;
+    auto ret = GetCudaDeviceCount(&device_count);
+    if (ret != HSUCCEED) {
+        return ret;
+    }
     if (device_count == 0) {
-        *is_support = 1;
+        *is_support = 0;
         INSPIRE_LOGE("No CUDA devices found");
         return HERR_DEVICE_CUDA_NOT_SUPPORT;
     }
