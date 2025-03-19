@@ -7,6 +7,7 @@
 #include "log.h"
 #include "herror.h"
 #include "isf_check.h"
+#include "cuda_toolkit.h"
 
 #define APPLE_EXTENSION_SUFFIX ".bundle"
 
@@ -32,6 +33,7 @@ std::shared_ptr<Launch> Launch::GetInstance() {
 }
 
 int32_t Launch::Load(const std::string& path) {
+    inspire::PrintCudaDeviceInfo();
     std::lock_guard<std::mutex> lock(mutex_);
     INSPIREFACE_CHECK_MSG(os::IsExists(path), "The package path does not exist because the launch failed.");
 #if defined(ISF_ENABLE_APPLE_EXTENSION)

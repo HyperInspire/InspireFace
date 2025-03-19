@@ -5,7 +5,6 @@
 #include "inspireface/track_module/landmark/face_landmark_adapt.h"
 #include "inspireface/track_module/quality/face_pose_quality_adapt.h"
 #include "inspireface/recognition_module/extract/extract_adapt.h"
-#include "inspireface/middleware/cuda_toolkit.h"
 
 void test_face_detect() {
     inspire::InspireModel model;
