@@ -69,6 +69,12 @@ public:
     // Build the extension path
     void BuildAppleExtensionPath(const std::string& resource_path);
 
+    // Set the cuda device id
+    void SetCudaDeviceId(int32_t device_id);
+
+    // Get the cuda device id
+    int32_t GetCudaDeviceId() const;
+
 private:
     // Parameters
     std::string m_rockchip_dma_heap_path_;
@@ -92,6 +98,8 @@ private:
 
     std::unique_ptr<InspireArchive> m_archive_;  ///< The archive containing all necessary resources.
     bool m_load_;                                ///< Flag indicating whether the resources have been successfully loaded.
+
+    int32_t m_cuda_device_id_{0};
 
     InferenceWrapper::SpecialBackend m_global_coreml_inference_mode_{InferenceWrapper::COREML_ANE};  ///< The global coreml inference mode
 };

@@ -1,8 +1,10 @@
+#ifdef ISF_ENABLE_CUDA
 #ifndef INSPIRE_CUDA_TOOLKIT_H
 #define INSPIRE_CUDA_TOOLKIT_H
 #include <cuda_runtime_api.h>
 #include <NvInfer.h>
 #include <log.h>
+#include "herror.h"
 
 namespace inspire {
 
@@ -11,7 +13,7 @@ inline static int32_t GetCudaDeviceCount() {
     cudaError_t error = cudaGetDeviceCount(&device_count);
     if (error != cudaSuccess) {
         INSPIRE_LOGE("CUDA error: %s", cudaGetErrorString(error));
-        return -1;
+        return HERR_DEVICE_CUDA_UNKNOWN_ERROR;
     }
     return device_count;
 }
@@ -20,9 +22,9 @@ inline static int32_t CheckCudaUsability() {
     int device_count = GetCudaDeviceCount();
     if (device_count == 0) {
         INSPIRE_LOGE("No CUDA devices found");
-        return -1;
+        return HERR_DEVICE_CUDA_NOT_SUPPORT;
     }
-    return 0;
+    return HSUCCEED;
 }
 
 inline static int32_t _PrintCudaDeviceInfo() {
@@ -34,7 +36,7 @@ inline static int32_t _PrintCudaDeviceInfo() {
         cudaError_t error = cudaGetDeviceCount(&device_count);
         if (error != cudaSuccess) {
             INSPIRE_LOGE("CUDA error: %s", cudaGetErrorString(error));
-            return -1;
+            return HERR_DEVICE_CUDA_UNKNOWN_ERROR;
         }
         INSPIRE_LOGI("available CUDA devices: %d", device_count);
 
@@ -43,7 +45,7 @@ inline static int32_t _PrintCudaDeviceInfo() {
         error = cudaGetDevice(&currentDevice);
         if (error != cudaSuccess) {
             INSPIRE_LOGE("[CUDA error] failed to get current CUDA device: %s", cudaGetErrorString(error));
-            return -1;
+            return HERR_DEVICE_CUDA_UNKNOWN_ERROR;
         }
         INSPIRE_LOGI("current CUDA device ID: %d", currentDevice);
 
@@ -52,7 +54,7 @@ inline static int32_t _PrintCudaDeviceInfo() {
         error = cudaGetDeviceProperties(&prop, currentDevice);
         if (error != cudaSuccess) {
             INSPIRE_LOGE("[CUDA error] failed to get CUDA device properties: %s", cudaGetErrorString(error));
-            return -1;
+            return HERR_DEVICE_CUDA_UNKNOWN_ERROR;
         }
 
         // print device detailed information
@@ -86,20 +88,21 @@ inline static int32_t _PrintCudaDeviceInfo() {
         // check if asynchronous engine is supported
         INSPIRE_LOGI("asynchronous engine count: %d", prop.asyncEngineCount);
 
-        return 0;
+        return HSUCCEED;
     } catch (const std::exception &e) {
         INSPIRE_LOGE("error when printing CUDA device info: %s", e.what());
-        return -1;
+        return HERR_DEVICE_CUDA_UNKNOWN_ERROR;
     }
 }
 
 inline static int32_t PrintCudaDeviceInfo() {
     INSPIRE_LOGI("================================================");
-    _PrintCudaDeviceInfo();
+    auto ret = _PrintCudaDeviceInfo();
     INSPIRE_LOGI("================================================");
-    return 0;
+    return ret;
 }
 
 }  // namespace inspire
 
 #endif  // INSPIRE_CUDA_TOOLKIT_H
+#endif  // ISF_ENABLE_CUDA

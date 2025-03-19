@@ -33,7 +33,6 @@ std::shared_ptr<Launch> Launch::GetInstance() {
 }
 
 int32_t Launch::Load(const std::string& path) {
-    inspire::PrintCudaDeviceInfo();
     std::lock_guard<std::mutex> lock(mutex_);
     INSPIREFACE_CHECK_MSG(os::IsExists(path), "The package path does not exist because the launch failed.");
 #if defined(ISF_ENABLE_APPLE_EXTENSION)
@@ -152,6 +151,14 @@ void Launch::BuildAppleExtensionPath(const std::string& resource_path) {
     m_extension_path_ = os::PathJoin(os::Dirname(resource_path), basename + APPLE_EXTENSION_SUFFIX);
     INSPIREFACE_CHECK_MSG(os::IsExists(m_extension_path_), "The apple extension path is not exists, please check.");
     INSPIREFACE_CHECK_MSG(os::IsDir(m_extension_path_), "The apple extension path is not a directory, please check.");
+}
+
+void Launch::SetCudaDeviceId(int32_t device_id) {
+    m_cuda_device_id_ = device_id;
+}
+
+int32_t Launch::GetCudaDeviceId() const {
+    return m_cuda_device_id_;
 }
 
 }  // namespace inspire

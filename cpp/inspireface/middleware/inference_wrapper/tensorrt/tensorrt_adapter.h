@@ -2,7 +2,7 @@
  * Created by Jingyu Yan
  * @date 2025-03-16
  */
-
+#if ISF_ENABLE_TENSORRT
 #ifndef INSPIRE_TENSORRT_ADAPTER_H
 #define INSPIRE_TENSORRT_ADAPTER_H
 
@@ -156,12 +156,6 @@ public:
     void printModelInfo() const;
 
     /**
-     * @brief print CUDA device and TensorRT version info
-     * @return 0 means success, -1 means failure
-     */
-    static int32_t printCudaDeviceInfo();
-
-    /**
      * @brief set CUDA device
      * @param deviceId CUDA device id
      */
@@ -178,3 +172,4 @@ private:
 };
 
 #endif  // INSPIRE_TENSORRT_ADAPTER_H
+#endif  // ISF_ENABLE_TENSORRT

@@ -76,6 +76,10 @@ public:
         m_nn_inference_.reset(InferenceWrapper::Create(m_infer_type_));
         m_nn_inference_->SetNumThreads(getData<int>("threads"));
 
+        if (m_infer_type_ == InferenceWrapper::INFER_TENSORRT) {
+            m_nn_inference_->SetDevice(INSPIRE_LAUNCH->GetCudaDeviceId());
+        }
+
 #if defined(ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA) && !defined(ISF_ENABLE_RKNN)
         INSPIRE_LOGW("You have forced the global use of MNN_CUDA as the neural network inference backend");
         m_nn_inference_->SetSpecialBackend(InferenceWrapper::MMM_CUDA);

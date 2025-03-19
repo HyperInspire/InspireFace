@@ -229,6 +229,11 @@ public:
         return WrapperOk;
     };
 
+    virtual int32_t SetDevice(int32_t device_id) {
+        device_id_ = device_id;
+        return WrapperOk;
+    };
+
     virtual int32_t ResizeInput(const std::vector<InputTensorInfo>& input_tensor_info_list) = 0;
 
     virtual std::vector<std::string> GetInputNames() = 0;
@@ -246,6 +251,7 @@ protected:
 protected:
     EngineType helper_type_;
     SpecialBackend special_backend_ = DEFAULT_CPU;
+    int32_t device_id_ = 0;
 };
 
 #endif

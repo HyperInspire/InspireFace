@@ -1,6 +1,6 @@
 #ifndef INFERENCE_WRAPPER_COREML_
 #define INFERENCE_WRAPPER_COREML_
-
+#if INFERENCE_WRAPPER_ENABLE_TENSORRT
 #include <cstdint>
 #include <cmath>
 #include <string>
@@ -41,3 +41,4 @@ private:
 };
 
 #endif  // INFERENCE_WRAPPER_COREML_
+#endif  // INFERENCE_WRAPPER_ENABLE_TENSORRT

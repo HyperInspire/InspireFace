@@ -1,5 +1,4 @@
-// #ifdef INFERENCE_WRAPPER_ENABLE_COREML
-
+#if INFERENCE_WRAPPER_ENABLE_TENSORRT
 #include <cstdint>
 #include <cstdlib>
 #include <cmath>
@@ -38,6 +37,7 @@ int32_t InferenceWrapperTensorRT::ParameterInitialization(std::vector<InputTenso
 int32_t InferenceWrapperTensorRT::Initialize(char* model_buffer, int model_size, std::vector<InputTensorInfo>& input_tensor_info_list,
                                              std::vector<OutputTensorInfo>& output_tensor_info_list) {
     net_.reset(new TensorRTAdapter());
+    net_->setDevice(device_id_);
     auto ret = net_->readFromBin(model_buffer, model_size);
     if (ret != WrapperOk) {
         std::cout << "model_size: " << model_size << std::endl;
@@ -52,6 +52,7 @@ int32_t InferenceWrapperTensorRT::Initialize(const std::string& model_filename, 
     //    LOG_INFO("init MNN");
     /*** Create network ***/
     net_.reset(new TensorRTAdapter());
+    net_->setDevice(device_id_);
     auto ret = net_->readFromFile(model_filename);
     if (ret != WrapperOk) {
         PRINT_E("Failed to load model file (%s)\n", model_filename.c_str());
@@ -204,4 +205,4 @@ int32_t InferenceWrapperTensorRT::ResizeInput(const std::vector<InputTensorInfo>
     return 0;
 }
 
-// #endif  // INFERENCE_WRAPPER_ENABLE_COREML
+#endif  // INFERENCE_WRAPPER_ENABLE_TENSORRT
