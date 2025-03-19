@@ -116,7 +116,7 @@ public:
 protected:
     size_t filenameFuzzyMatching(const std::string& filename) {
         for (size_t i = 0; i < m_subfiles_names_.size(); ++i) {
-            std::cout << "m_subfiles_names_[i]: " << m_subfiles_names_[i] << std::endl;
+            std::cout << "m_subfiles_names_[" << i << "]: " << m_subfiles_names_[i] << std::endl;
             if (m_subfiles_names_[i].find(filename) != std::string::npos) {
                 return i;
             }
