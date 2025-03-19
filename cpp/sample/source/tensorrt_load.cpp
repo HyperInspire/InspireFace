@@ -8,7 +8,11 @@
 
 void test_face_detect() {
     inspire::InspireModel model;
-    INSPIRE_LAUNCH->getMArchive().LoadModel("face_detect_160", model);
+    auto ret = INSPIRE_LAUNCH->getMArchive().LoadModel("face_detect_160", model);
+    if (ret != inspire::SARC_SUCCESS) {
+        std::cout << "Failed to load model" << std::endl;
+        return;
+    }
     auto input_size = 160;
     inspire::FaceDetectAdapt faceDetectAdapt(input_size);
     faceDetectAdapt.loadData(model, model.modelType);
