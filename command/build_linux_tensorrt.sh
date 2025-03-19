@@ -36,6 +36,8 @@ mkdir -p ${BUILD_FOLDER_PATH}
 # shellcheck disable=SC2164
 cd ${BUILD_FOLDER_PATH}
 
+echo "TENSORRT_ROOT: ${TENSORRT_ROOT}"
+
 cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DCMAKE_BUILD_TYPE=Release \
   -DISF_BUILD_WITH_SAMPLE=ON \
