@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
     HInt32 support_cuda;
     ret = HFCheckCudaDeviceSupport(&support_cuda);
     std::cout << "ret: " << ret << std::endl;
-    // REQUIRE(ret == HSUCCEED);
+    REQUIRE(ret == HSUCCEED);
     // REQUIRE(support_cuda == true);
     HFPrintCudaDeviceInfo();
 #endif
