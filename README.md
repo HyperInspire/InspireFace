@@ -158,6 +158,8 @@ bash command/download_models_general.sh Gundam_RV1109
 bash command/download_models_general.sh Gundam_RV1106
 # Download resource files for RK356X
 bash command/download_models_general.sh Gundam_RV356X
+# Download resource files for NVIDIA-GPU Device(TensorRT)
+bash command/download_models_general.sh Megatron_TRT
 
 # Download all model files
 bash command/download_models_general.sh
