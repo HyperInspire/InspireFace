@@ -27,6 +27,12 @@ inline static int32_t CheckCudaUsability() {
 
 inline static int32_t PrintCudaDeviceInfo() {
     INSPIRE_LOGI("================================================");
+    _PrintCudaDeviceInfo();
+    INSPIRE_LOGI("================================================");
+    return 0;
+}
+
+inline static int32_t _PrintCudaDeviceInfo() {
     try {
         INSPIRE_LOGI("TensorRT version: %d.%d.%d", NV_TENSORRT_MAJOR, NV_TENSORRT_MINOR, NV_TENSORRT_PATCH);
 
@@ -92,7 +98,6 @@ inline static int32_t PrintCudaDeviceInfo() {
         INSPIRE_LOGE("error when printing CUDA device info: %s", e.what());
         return -1;
     }
-    INSPIRE_LOGI("================================================");
 }
 
 }  // namespace inspire
