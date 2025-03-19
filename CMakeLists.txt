@@ -67,6 +67,12 @@ endif()
 
 set(TARGET_PLATFORM "drawin-x86" CACHE STRING "Target platform")
 
+# TensorRT dependency configuration
+set(ISF_ENABLE_TENSORRT OFF CACHE BOOL "Enable TensorRT Inference")
+set(TENSORRT_ROOT "/usr/local/TensorRT" CACHE PATH "Path to TensorRT installation")
+if(ISF_ENABLE_TENSORRT)
+    add_definitions("-DISF_ENABLE_TENSORRT")
+endif()
 
 # RKNN dependency configuration
 option(ISF_ENABLE_RKNN "Use RKNPU." OFF)
