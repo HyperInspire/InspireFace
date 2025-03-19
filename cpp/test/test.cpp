@@ -82,8 +82,8 @@ int main(int argc, char* argv[]) {
 
 #if defined(ISF_ENABLE_TENSORRT)
     HInt32 support_cuda;
-    // ret = HFCheckCudaDeviceSupport(&support_cuda);
-    // REQUIRE(ret == HSUCCEED);
+    ret = HFCheckCudaDeviceSupport(&support_cuda);
+    REQUIRE(ret == HSUCCEED);
     // REQUIRE(support_cuda == true);
     HFPrintCudaDeviceInfo();
 #endif
