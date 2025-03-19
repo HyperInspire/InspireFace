@@ -128,6 +128,10 @@ if (ISF_BUILD_LINUX_ARM7 OR ISF_BUILD_LINUX_AARCH64)
 endif ()
 
 if (ISF_ENABLE_TENSORRT)
+    # Find CUDA include directory
+    find_package(CUDA REQUIRED)
+    include_directories(${CUDA_INCLUDE_DIRS})
+    link_directories(${CUDA_TOOLKIT_ROOT_DIR}/lib64)
     # Find TensorRT include directory
     find_path(TENSORRT_INCLUDE_DIR NvInfer.h
         HINTS ${TENSORRT_ROOT}
