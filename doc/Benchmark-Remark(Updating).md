@@ -84,7 +84,7 @@ The benchmark tests will be continuously updated.
 ### Precision: FP16
 | **Benchmark** | **Loops** | **Total Time** | **Average Time** |
 | --- | --- | --- | --- |
-| Face Detect@160          | 1000      | 16946ms         | **0.15ms**      |
+| Face Detect@160          | 1000      | 911ms           | **0.91ms**      |
 | Face Detect@320          | 1000      | 25108ms         | **0.30ms**      |
 | Face Detect@640          | 1000      | 68778ms         | **0.85ms**      |
 | Face Light-Track         | 1000      | 11215ms         | **0.09ms**      |
