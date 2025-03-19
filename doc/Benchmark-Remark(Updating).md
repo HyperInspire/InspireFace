@@ -85,7 +85,7 @@ The benchmark tests will be continuously updated.
 | **Benchmark** | **Loops** | **Total Time** | **Average Time** |
 | --- | --- | --- | --- |
 | Face Detect@160          | 1000      | 911ms           | **0.91ms**      |
-| Face Detect@320          | 1000      | 1311ms          | **1.31ms**      |
+| Face Detect@320          | 1000      | 2374ms          | **2.37ms**      |
 | Face Detect@640          | 1000      | 68778ms         | **0.85ms**      |
 | Face Light-Track         | 1000      | 11215ms         | **0.09ms**      |
 | Face alignment & Extract | 1000      | 9070ms          | **9.07ms**       |

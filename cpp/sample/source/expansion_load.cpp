@@ -8,8 +8,8 @@
 
 void test_face_detect() {
     inspire::InspireModel model;
-    INSPIRE_LAUNCH->getMArchive().LoadModel("face_detect_320", model);
-    auto input_size = 320;
+    INSPIRE_LAUNCH->getMArchive().LoadModel("face_detect_640", model);
+    auto input_size = 640;
     inspire::FaceDetectAdapt faceDetectAdapt(input_size);
     faceDetectAdapt.loadData(model, model.modelType);
     inspirecv::Image image = inspirecv::Image::Create("test_res/data/bulk/kun.jpg");
