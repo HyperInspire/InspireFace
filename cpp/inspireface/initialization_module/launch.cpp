@@ -7,7 +7,7 @@
 #include "log.h"
 #include "herror.h"
 #include "isf_check.h"
-#include "cuda_toolkit.h"
+#include "middleware/cuda_toolkit.h"
 
 #define APPLE_EXTENSION_SUFFIX ".bundle"
 
