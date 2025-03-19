@@ -50,7 +50,7 @@ cmake  \
 
 make -j4
 
-cd ../..
+make install
 
 if [ $? -eq 0 ] && [ -d "$(pwd)/install" ]; then
   move_install_files "$(pwd)"
