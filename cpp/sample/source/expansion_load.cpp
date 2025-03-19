@@ -78,7 +78,6 @@ void test_quality() {
 }
 
 void test_feature() {
-    inspire::PrintCudaDeviceInfo();
     inspire::InspireModel model;
     INSPIRE_LAUNCH->getMArchive().LoadModel("feature", model);
     auto input_size = 112;
