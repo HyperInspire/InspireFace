@@ -17,7 +17,7 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
-**`2025-03-16`** Supports NVIDIA device-based(**TensorRT-10**) deployment.
+**`2025-03-16`** Acceleration using NVIDIA-GPU (**CUDA**) devices is already supported.
 
 **`2025-03-09`** Release of android sdk in JitPack.
 
@@ -520,7 +520,7 @@ asset/
     └── Pikachu
 ```
 
-#### How to use the Android/Java Api
+#### How to use the Android/Java API
 
 We provide a Java API for Android devices, which is implemented using Java Native Interface(JNI). 
 
