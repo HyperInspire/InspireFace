@@ -19,8 +19,8 @@ Here are the translation details for the compilation parameters as per your requ
 | ISF_ENABLE_BENCHMARK                      | OFF | Enable Benchmark tests for test cases                                                                                                                      |
 | ISF_ENABLE_USE_LFW_DATA                   | OFF | Enable using LFW data for test cases                                                                                                                       |
 | ISF_ENABLE_TEST_EVALUATION                | OFF | Enable evaluation functionality for test cases, must be used together with ISF_ENABLE_USE_LFW_DATA                                                         |
-| ISF_ENABLE_TENSORRT | OFF | Enable the backend of inference using TensorRT, Linux must be on **NVIDIA devices**, and **CUDA**, **TensorRT10** must be installed |
-| TENSORRT_ROOT | /usr/local/TensorRT | **TensorRT10** installation path |
+| ISF_ENABLE_TENSORRT | OFF | Enable the backend of inference using TensorRT, Linux must be on **NVIDIA devices**, and **CUDA**, **TensorRT-10** must be installed |
+| TENSORRT_ROOT | /usr/local/TensorRT | **TensorRT-10** installation path |
 | ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA | OFF | Enable global MNN_CUDA inference mode, requires device support for CUDA                                                                                    |
 | ISF_LINUX_MNN_CUDA                        | "" | Specific MNN library path, requires pre-compiled MNN library supporting MNN_CUDA, only effective when ISF_GLOBAL_INFERENCE_BACKEND_USE_MNN_CUDA is enabled |
 | ISF_ENABLE_APPLE_EXTENSION | OFF | If you are using an **Apple device (MacOS/iOS)**, you can enable it to allow some parts of the SDK's models to switch to certain backend neural network acceleration inference on Apple devices, such as Metal and ANE |
