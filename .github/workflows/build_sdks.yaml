@@ -2,7 +2,7 @@ name: Build SDKs
 
 on:
   push:
-    branches: ["feature/rk"]
+    branches: ["master"]
   pull_request:
     branches: ["master"]
 
