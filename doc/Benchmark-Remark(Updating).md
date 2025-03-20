@@ -2,6 +2,19 @@
 
 The benchmark tests will be continuously updated.
 
+## Pikachu_Apple(ANE, Apple Neural Engine)
+
+### Device: Mac mini 2023 , Apple M2[FP32]
+| **Benchmark**   | **Loops** | **Total Time** | **Average Time** |
+| --------------- | --------- | -------------- | ---------------- |
+| Face Detect@160 | 1000      | 553 ms         | **0.53 ms**      |
+| Face Detect@320 | 1000      | 1635ms         | **1.64ms**       |
+| Face Detect@640 | 1000      | 5903ms         | **5.90ms**       |
+| Face Comparison | 1000      | 1ms            | **0.001ms**      |
+
+**Note**: The above data inference backend uses CoreML.
+
+
 ## Megatron_Apple(ANE, Apple Neural Engine)
 
 ### Device: iPhone13, Apple A15[FP32]
@@ -65,7 +78,7 @@ The benchmark tests will be continuously updated.
 | Face Detect@640          | 1000      | 58631ms         | **58.63ms**      |
 | Face Light-Track         | 1000      | 15642ms         | **15.64ms**      |
 | Face alignment & Extract | 1000      | 15178ms         | **15.18ms**      |
-| Face Comparison          | 1000      | 23us            | **0.023us**      |
+| Face Comparison          | 1000      | 23ms          | **0.023us**      |
 
 ## Gundam_RK356X(RKNPU2)
 ### Device: RK3568[INT8]
@@ -76,7 +89,7 @@ The benchmark tests will be continuously updated.
 | Face Detect@640          | 1000      | 68778ms         | **68.78ms**      |
 | Face Light-Track         | 1000      | 11215ms         | **11.22ms**      |
 | Face alignment & Extract | 1000      | 9070ms          | **9.07ms**       |
-| Face Comparison          | 1000      | 9us             | **0.009ms**      |
+| Face Comparison          | 1000      | 9ms           | **0.009ms**      |
 
 ## Megatron_TRT(CUDA)
 ### Device: NVIDIA RTX3060 12G[FP16]
@@ -87,6 +100,6 @@ The benchmark tests will be continuously updated.
 | Face Detect@640          | 1000      | 8685ms          | **8.685ms**      |
 | Face Light-Track         | 1000      | 621ms           | **0.62ms**      |
 | Face alignment & Extract | 1000      | 1009ms          | **1.01ms**       |
-| Face Comparison          | 1000      | 1us             | **0.001ms**      |
+| Face Comparison          | 1000      | 1ms           | **0.001ms**      |
 
 **Note**: The test results are all calculated by the test programs in the '**cpp/test**' subproject.

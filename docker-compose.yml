@@ -70,6 +70,16 @@ services:
     volumes:
       - .:/workspace # Mount the project root directory to the container
     command: bash command/build_android.sh
+  build-cross-android-rk356x-rk3588:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.android # Use the arm-linux-gnueabihf tool chain
+    environment:
+      - VERSION=${VERSION}
+    working_dir: /workspace
+    volumes:
+      - .:/workspace # Mount the project root directory to the container
+    command: bash command/build_cross_rk356x_rk3588_aarch64.sh
   build-cuda-ubuntu20:
     build:
       context: .

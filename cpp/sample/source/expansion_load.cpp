@@ -8,8 +8,8 @@
 
 void test_face_detect() {
     inspire::InspireModel model;
-    INSPIRE_LAUNCH->getMArchive().LoadModel("face_detect_640", model);
-    auto input_size = 640;
+    INSPIRE_LAUNCH->getMArchive().LoadModel("face_detect_160", model);
+    auto input_size = 160;
     inspire::FaceDetectAdapt faceDetectAdapt(input_size);
     faceDetectAdapt.loadData(model, model.modelType);
     inspirecv::Image image = inspirecv::Image::Create("test_res/data/bulk/kun.jpg");
@@ -99,7 +99,7 @@ void test_feature() {
 }
 
 int main() {
-    std::string archivePath = "test_res/pack/Megatron_TRT";
+    std::string archivePath = "test_res/pack/Pikachu_Apple";
     INSPIRE_LAUNCH->Load(archivePath);
     // Test face detect
     test_face_detect();
