@@ -694,6 +694,7 @@ jobs:
             sdk_artifacts/sdk_files_linux_aarch64_rk356x/inspireface-linux-aarch64-rk356x-rk3588-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_linux_aarch64/inspireface-linux-aarch64-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_android/inspireface-android-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_android_rk356x_rk3588/inspireface-android-rk356x-rk3588-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_ios/inspireface-ios-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_macos_apple_silicon_arm64/inspireface-macos-apple-silicon-arm64-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_macos_intel_x86_64/inspireface-macos-intel-x86-64-${{ env.VERSION }}.zip
