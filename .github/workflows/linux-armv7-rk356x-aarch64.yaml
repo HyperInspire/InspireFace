@@ -42,8 +42,8 @@ jobs:
           echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
 
       # Step 6: Start building the SDK
-      - name: Start Building the InspireFace-Linux-AArch64-rk356x 
+      - name: Start Building the InspireFace-Linux-AArch64-rk356x-rk3588
         run: |
-          bash command/build_cross_rk356x_aarch64.sh
+          bash command/build_cross_rk356x_rk3588_aarch64.sh
           ls build
 

@@ -2,7 +2,7 @@ name: Build SDKs
 
 on:
   push:
-    branches: ["master"]
+    branches: ["feature/rk"]
   pull_request:
     branches: ["master"]
 
@@ -236,23 +236,50 @@ jobs:
           echo "ANDROID_NDK=/opt/android-ndk-r18b" >> $GITHUB_ENV
           echo "PATH=/opt/android-ndk-r18b/bin:${PATH}" >> $GITHUB_ENV
 
-      # Step 6: Download and Extract OpenCV Android SDK
-      - name: Download and Extract OpenCV Android SDK
-        run: |
-          mkdir -p /opt/opencv-android-sdk
-          wget -qO /tmp/opencv-android-sdk.zip https://github.com/opencv/opencv/releases/download/4.5.1/opencv-4.5.1-android-sdk.zip
-          unzip /tmp/opencv-android-sdk.zip -d /opt/opencv-android-sdk
-          rm /tmp/opencv-android-sdk.zip
-
-      # Step 7: Set OpenCV Environment Variables
-      - name: Set OpenCV Environment Variables
-        run: |
-          echo "OPENCV_DIR=/opt/opencv-android-sdk/OpenCV-android-sdk/sdk/native/jni" >> $GITHUB_ENV
-
-      # Step 8: Start building the SDK
+      # Step 6: Start building the SDK
       - name: Start Building the InspireFace-Android
         run: |
           bash command/build_android.sh
+          ls build
+
+  build_android_rk356x_rk3588:
+    name: Compile Android RK356X RK3588
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip xz-utils
+
+      # Step 4: Download and Extract Android NDK
+      - name: Download and Extract Android NDK
+        run: |
+          mkdir -p /opt/android-ndk-r18b
+          wget -qO /tmp/android-ndk.zip https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip
+          unzip /tmp/android-ndk.zip -d /opt
+          rm /tmp/android-ndk.zip
+
+      # Step 5: Install Android NDK Environment Variables
+      - name: Set Android NDK Environment Variables
+        run: |
+          echo "ANDROID_NDK=/opt/android-ndk-r18b" >> $GITHUB_ENV
+          echo "PATH=/opt/android-ndk-r18b/bin:${PATH}" >> $GITHUB_ENV
+
+      # Step 6: Start building the SDK
+      - name: Start Building the InspireFace-Android
+        run: |
+          bash command/build_android_rk356x_rk3588.sh
           ls build
 
   build_ios:
@@ -338,7 +365,7 @@ jobs:
           bash command/build_cross_rv1106_armhf_uclibc.sh
           ls build
 
-  build_rk356x_aarch64:
+  build_rk356x_rk3588_aarch64:
     name: Compile Linux-AArch64 RK356X
     runs-on: ubuntu-latest
 
@@ -371,7 +398,7 @@ jobs:
           echo "PATH=/opt/linaro-toolchain/bin:${PATH}" >> $GITHUB_ENV
 
       # Step 6: Start building the SDK
-      - name: Start Building the InspireFace-Linux-AArch64-rk356x 
+      - name: Start Building the InspireFace-Linux-AArch64-rk356x-rk3588
         run: |
-          bash command/build_cross_rk356x_aarch64.sh
+          bash command/build_cross_rk356x_rk3588_aarch64.sh
           ls build
