@@ -35,9 +35,8 @@ SCRIPT_DIR=$(pwd)  # Project dir
 
 cd ${SCRIPT_DIR}
 
-# export ARM_CROSS_COMPILE_TOOLCHAIN=/root/arm-rockchip830-linux-uclibcgnueabihf/
 
-BUILD_FOLDER_PATH="build/inspireface-linux-aarch64-rk356x${TAG}"
+BUILD_FOLDER_PATH="build/inspireface-linux-aarch64-rk356x-rk3588${TAG}"
 
 mkdir -p ${BUILD_FOLDER_PATH}
 # shellcheck disable=SC2164
