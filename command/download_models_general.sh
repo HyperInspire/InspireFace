@@ -10,6 +10,7 @@ URL3="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_
 URL4="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106"
 URL5="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X"
 URL6="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron_TRT"
+URL7="https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK3588"
 
 # Color codes
 YELLOW='\033[1;33m'
@@ -47,10 +48,12 @@ if [ $# -eq 0 ]; then
     download_file "$URL4"
     download_file "$URL5"
     download_file "$URL6"
+    download_file "$URL7"
     # Check all files
     if [ -f "$DOWNLOAD_DIR/Megatron" ] && [ -f "$DOWNLOAD_DIR/Pikachu" ] && \
        [ -f "$DOWNLOAD_DIR/Gundam_RV1109" ] && [ -f "$DOWNLOAD_DIR/Gundam_RV1106" ] && \
-       [ -f "$DOWNLOAD_DIR/Gundam_RK356X" ] && [ -f "$DOWNLOAD_DIR/Megatron_TRT" ]; then
+       [ -f "$DOWNLOAD_DIR/Gundam_RK356X" ] && [ -f "$DOWNLOAD_DIR/Megatron_TRT" ] && \
+       [ -f "$DOWNLOAD_DIR/Gundam_RK3588" ]; then
         echo "All downloads completed successfully!"
         print_file_path "Megatron"
         print_file_path "Pikachu"
@@ -58,13 +61,14 @@ if [ $# -eq 0 ]; then
         print_file_path "Gundam_RV1106"
         print_file_path "Gundam_RK356X"
         print_file_path "Megatron_TRT"
+        print_file_path "Gundam_RK3588"
     else
         echo "Download failed!"
         exit 1
     fi
 else
     case "$1" in
-        "Megatron"|"Pikachu"|"Gundam_RV1109"|"Gundam_RV1106"|"Gundam_RK356X"|"Megatron_TRT")
+        "Megatron"|"Pikachu"|"Gundam_RV1109"|"Gundam_RV1106"|"Gundam_RK356X"|"Megatron_TRT"|"Gundam_RK3588")
             echo "Downloading $1..."
             case "$1" in
                 "Megatron") url="$URL1" ;;
@@ -73,6 +77,7 @@ else
                 "Gundam_RV1106") url="$URL4" ;;
                 "Gundam_RK356X") url="$URL5" ;;
                 "Megatron_TRT") url="$URL6" ;;
+                "Gundam_RK3588") url="$URL7" ;;
             esac
             download_file "$url"
             # Check file
@@ -85,7 +90,7 @@ else
             fi
             ;;
         *)
-            echo "Invalid argument. Please use 'Megatron', 'Pikachu', 'Gundam_RV1109', 'Gundam_RV1106', 'Gundam_RK356X' or 'Megatron_TRT'"
+            echo "Invalid argument. Please use 'Megatron', 'Pikachu', 'Gundam_RV1109', 'Gundam_RV1106', 'Gundam_RK356X', 'Megatron_TRT' or 'Gundam_RK3588'"
             exit 1
             ;;
     esac
