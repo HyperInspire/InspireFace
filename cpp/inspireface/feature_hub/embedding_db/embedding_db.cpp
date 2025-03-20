@@ -101,7 +101,8 @@ std::vector<float> EmbeddingDB::GetVector(int64_t id) const {
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_ROW) {
         sqlite3_finalize(stmt);
-        throw std::runtime_error("Vector with id " + std::to_string(id) + " not found");
+        // throw std::runtime_error("Vector with id " + std::to_string(id) + " not found");
+        return {};
     }
 
     const float *blob_data = static_cast<const float *>(sqlite3_column_blob(stmt, 0));

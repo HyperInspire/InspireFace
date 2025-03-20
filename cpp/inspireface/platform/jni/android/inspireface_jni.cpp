@@ -1034,7 +1034,6 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubGetFaceIdentity)(JNIEnv
     HFFaceFeatureIdentity identity;
     auto result = HFFeatureHubGetFaceIdentity(id, &identity);
     if (result != HSUCCEED) {
-        INSPIRE_LOGE("Failed to get face identity, error code: %d", result);
         return nullptr;
     }
 

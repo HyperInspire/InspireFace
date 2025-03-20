@@ -266,15 +266,13 @@ int32_t FeatureHubDB::GetFaceFeature(int32_t id) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
     }
-    try {
-        auto vec = EMBEDDING_DB::GetInstance().GetVector(id);
-        m_getter_face_feature_cache_ = vec;
-        m_face_feature_ptr_cache_->data = m_getter_face_feature_cache_.data();
-        m_face_feature_ptr_cache_->dataSize = m_getter_face_feature_cache_.size();
-    } catch (const std::exception &e) {
-        INSPIRE_LOGW("Failed to get face feature, id: %d", id);
+    auto vec = EMBEDDING_DB::GetInstance().GetVector(id);
+    if (vec.empty()) {
         return HERR_FT_HUB_NOT_FOUND_FEATURE;
     }
+    m_getter_face_feature_cache_ = vec;
+    m_face_feature_ptr_cache_->data = m_getter_face_feature_cache_.data();
+    m_face_feature_ptr_cache_->dataSize = m_getter_face_feature_cache_.size();
 
     return HSUCCEED;
 }
