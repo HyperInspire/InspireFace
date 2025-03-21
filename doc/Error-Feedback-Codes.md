@@ -57,3 +57,8 @@ During the use of InspireFace, some error feedback codes may be generated. Here 
  | 51 | HERR_ARCHIVE_FILE_FORMAT_ERROR | 1362 | The archive format is incorrect | 
  | 52 | HERR_ARCHIVE_REPETITION_LOAD | 1363 | Do not reload the model | 
  | 53 | HERR_ARCHIVE_NOT_LOAD | 1364 | Model not loaded | 
+ | 54 | HERR_DEVICE_BASE | 2304 | hardware error | 
+ | 55 | HERR_DEVICE_CUDA_NOT_SUPPORT | 2305 | CUDA not supported | 
+ | 56 | HERR_DEVICE_CUDA_TENSORRT_NOT_SUPPORT | 2306 | CUDA TensorRT not supported | 
+ | 57 | HERR_DEVICE_CUDA_UNKNOWN_ERROR | 2324 | CUDA unknown error | 
+ | 58 | HERR_DEVICE_CUDA_DISABLE | 2325 | CUDA support is disabled | 
