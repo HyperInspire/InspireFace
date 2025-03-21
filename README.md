@@ -271,6 +271,8 @@ Additionally, you can use **NVIDIA's Docker images** for compilation. For exampl
 docker-compose up build-tensorrt-cuda12-ubuntu22
 ```
 
+If you want to use pre-compiled libraries, you can use **[FindTensorRT.cmake](toolchain/FindTensorRT.cmake)** to create links to CUDA and TensorRT.
+
 ### Supported Platforms and Architectures
 
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
