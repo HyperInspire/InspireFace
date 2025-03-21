@@ -2,7 +2,8 @@ name: Build Linux-TensorRT-CUDA12-Ubuntu22
 
 on:
   push:
-    branches: ["feature/cuda"]
+    tags:
+      - "DONT_BUILD"
 
 # Set the global GitHub token environment variable
 env:
@@ -35,7 +36,7 @@ jobs:
         run: |
           docker --version
           docker-compose --version
-          
+
       # Step 5: Start building the SDK
       - name: Start Building the InspireFace-Linux-TensorRT-CUDA12-Ubuntu22
         run: |

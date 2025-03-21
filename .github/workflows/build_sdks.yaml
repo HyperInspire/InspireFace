@@ -402,3 +402,36 @@ jobs:
         run: |
           bash command/build_cross_rk356x_rk3588_aarch64.sh
           ls build
+
+  build_linux_tensorrt_cuda12_ubuntu22:
+    name: Compile Linux-TensorRT-CUDA12-Ubuntu22 from Docker
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+
+      # Step 3: Install Docker Compose
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      # Step 4: Print some information
+      - name: Print some information
+        id: print_info
+        run: |
+          docker --version
+          docker-compose --version
+
+      # Step 5: Start building the SDK
+      - name: Start Building the InspireFace-Linux-TensorRT-CUDA12-Ubuntu22
+        run: |
+          docker-compose up build-tensorrt-cuda12-ubuntu22
+          ls build

@@ -134,30 +134,34 @@ endif ()
 
 if (ISF_ENABLE_TENSORRT)
     # Find CUDA include directory
-    find_package(CUDA REQUIRED)
-    include_directories(${CUDA_INCLUDE_DIRS})
-    link_directories(${CUDA_TOOLKIT_ROOT_DIR}/lib64)
-    # Find TensorRT include directory
-    find_path(TENSORRT_INCLUDE_DIR NvInfer.h
-        HINTS ${TENSORRT_ROOT}
-        PATH_SUFFIXES include)
-    set(NEED_INCLUDE ${NEED_INCLUDE} ${TENSORRT_INCLUDE_DIR})
+    # find_package(CUDA REQUIRED)
+    # include_directories(${CUDA_INCLUDE_DIRS})
+    # link_directories(${CUDA_TOOLKIT_ROOT_DIR}/lib64)
+    # # Find TensorRT include directory
+    # find_path(TENSORRT_INCLUDE_DIR NvInfer.h
+    #     HINTS ${TENSORRT_ROOT}
+    #     PATH_SUFFIXES include)
+    # set(NEED_INCLUDE ${NEED_INCLUDE} ${TENSORRT_INCLUDE_DIR})
 
-    # Find TensorRT library directory
-    find_library(TENSORRT_LIBRARY_INFER nvinfer
-        HINTS ${TENSORRT_ROOT}
-        PATH_SUFFIXES lib lib64)
-    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${TENSORRT_LIBRARY_INFER})
+    # # Find TensorRT library directory
+    # find_library(TENSORRT_LIBRARY_INFER nvinfer
+    #     HINTS ${TENSORRT_ROOT}
+    #     PATH_SUFFIXES lib lib64)
+    # set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${TENSORRT_LIBRARY_INFER})
 
-    find_library(TENSORRT_LIBRARY_RUNTIME nvinfer_plugin
-        HINTS ${TENSORRT_ROOT}
-        PATH_SUFFIXES lib lib64)
-    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${TENSORRT_LIBRARY_RUNTIME})
+    # find_library(TENSORRT_LIBRARY_RUNTIME nvinfer_plugin
+    #     HINTS ${TENSORRT_ROOT}
+    #     PATH_SUFFIXES lib lib64)
+    # set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${TENSORRT_LIBRARY_RUNTIME})
 
-    find_library(CUDA_RUNTIME_LIBRARY cudart
-        HINTS ${CUDA_TOOLKIT_ROOT_DIR}
-        PATH_SUFFIXES lib64 lib lib64/stubs lib/stubs)  
-    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${CUDA_RUNTIME_LIBRARY})
+    # find_library(CUDA_RUNTIME_LIBRARY cudart
+    #     HINTS ${CUDA_TOOLKIT_ROOT_DIR}
+    #     PATH_SUFFIXES lib64 lib lib64/stubs lib/stubs)  
+    # set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${CUDA_RUNTIME_LIBRARY})
+
+    # include(FindTensorRT)
+    set(NEED_INCLUDE ${NEED_INCLUDE} ${TENSORRT_INCLUDE_DIRS})
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${TENSORRT_LIBRARIES})
 
 endif()
 
