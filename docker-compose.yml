@@ -106,6 +106,7 @@ services:
       dockerfile: docker/Dockerfile.cuda12_ubuntu22
     environment:
       - VERSION=${VERSION}
+      - CUDA_TAG=cuda12.2_ubuntu22.04
     working_dir: /workspace
     volumes:
       - .:/workspace # Mount the project root directory to the container
