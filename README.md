@@ -265,6 +265,12 @@ Before compiling, please ensure that your related environments such as CUDA and 
 bash command/build_linux_tensorrt.sh
 ```
 
+Additionally, you can use **NVIDIA's Docker images** for compilation. For example, to compile using a **CUDA 12** and **TensorRT-10** image on Ubuntu 22.04, you can execute the following commands:
+
+```bash
+docker-compose up build-tensorrt-cuda12-ubuntu22
+```
+
 ### Supported Platforms and Architectures
 
 We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
@@ -316,6 +322,9 @@ docker-compose up build-cross-rk356x-aarch64
 
 # Build Android with support arm64-v8a and armeabi-v7a
 docker-compose up build-cross-android
+
+# Compile the tensorRT back-end based on CUDA12 and then Ubuntu22.04
+docker-compose up build-tensorrt-cuda12-ubuntu22
 
 # Build all
 docker-compose up
