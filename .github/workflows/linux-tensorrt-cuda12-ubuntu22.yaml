@@ -23,6 +23,13 @@ jobs:
         run: |
           git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
+      - name: Print some information
+        id: print_info
+        run: |
+          docker --version
+          docker-compose --version
+          
+
       # Step 3: Start building the SDK
       - name: Start Building the InspireFace-Linux-TensorRT-CUDA12-Ubuntu22
         run: |
