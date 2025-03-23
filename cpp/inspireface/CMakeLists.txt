@@ -20,6 +20,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/information.h.in ${CMAKE_CURRENT_SOUR
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
 
+
 if (ISF_ENABLE_RKNN)
     if (ISF_RKNPU_MAJOR STREQUAL "rknpu1")
         set(ISF_RKNN_API_INCLUDE_DIRS ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/include)
@@ -86,7 +87,10 @@ set(SOURCE_FILES ${SOURCE_FILES} ${CPP_YAML_SRC})
 set(CPP_YAML_INCLUDE ${ISF_THIRD_PARTY_DIR}/yaml-cpp/include)
 
 # archive
-set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/microtar/microtar.c)
+set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/core_archive/microtar/microtar.c)
+# CoreArchive source file
+set(CORE_ARCHIVE_SOURCE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/middleware/model_archive/core_archive/core_archive.cc CACHE PATH "")
+set(SOURCE_FILES ${SOURCE_FILES} ${CORE_ARCHIVE_SOURCE_FILE})
 
 if(ISF_ENABLE_APPLE_EXTENSION)
     # link apple libs
