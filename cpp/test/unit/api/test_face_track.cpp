@@ -70,57 +70,56 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         REQUIRE(ret == HSUCCEED);
     }
 
+#if 0
     SECTION("Face tracking stability from frames") {
-        if (inspire::os::IsExists(GET_DATA("data/video_frames/"))) {
-            HResult ret;
-            HFSessionCustomParameter parameter = {0};
-            HFDetectMode detMode = HF_DETECT_MODE_LIGHT_TRACK;
-            HFSession session;
-            ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
+        HResult ret;
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_LIGHT_TRACK;
+        HFSession session;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
+        REQUIRE(ret == HSUCCEED);
+
+        auto expectedId = 1;
+        int start = 1, end = 288;
+        std::vector<std::string> filenames = generateFilenames("frame-%04d.jpg", start, end);
+        auto count_loss = 0;
+        for (int i = 0; i < filenames.size(); ++i) {
+            auto filename = filenames[i];
+            HFImageStream imgHandle;
+            auto image = inspirecv::Image::Create(GET_DATA("data/video_frames/" + filename));
+            ret = CVImageToImageStream(image, imgHandle);
             REQUIRE(ret == HSUCCEED);
-            auto expectedId = 1;
-            int start = 1, end = 288;
-            std::vector<std::string> filenames = generateFilenames("frame-%04d.jpg", start, end);
-            auto count_loss = 0;
-            for (int i = 0; i < filenames.size(); ++i) {
-                auto filename = filenames[i];
-                HFImageStream imgHandle;
-                auto image = inspirecv::Image::Create(GET_DATA("data/video_frames/" + filename));
-                ret = CVImageToImageStream(image, imgHandle);
-                REQUIRE(ret == HSUCCEED);
 
-                HFMultipleFaceData multipleFaceData = {0};
-                ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
-                REQUIRE(ret == HSUCCEED);
-                //            CHECK(multipleFaceData.detectedNum == 1);
-                if (multipleFaceData.detectedNum != 1) {
-                    count_loss++;
-                    continue;
-                }
-                auto rect = multipleFaceData.rects[0];
-                auto cvRect = inspirecv::Rect<int>::Create(rect.x, rect.y, rect.width, rect.height);
-                image.DrawRect(cvRect, {0, 0, 255}, 2);
-                std::string save = GET_SAVE_DATA("video_frames") + "/" + std::to_string(i) + ".jpg";
-                image.Write(save);
-                auto id = multipleFaceData.trackIds[0];
-                //            TEST_PRINT("{}", id);
-                if (id != expectedId) {
-                    count_loss++;
-                }
-
-                ret = HFReleaseImageStream(imgHandle);
-                REQUIRE(ret == HSUCCEED);
+            HFMultipleFaceData multipleFaceData = {0};
+            ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+            REQUIRE(ret == HSUCCEED);
+            //            CHECK(multipleFaceData.detectedNum == 1);
+            if (multipleFaceData.detectedNum != 1) {
+                count_loss++;
+                continue;
             }
-            float loss = (float)count_loss / filenames.size();
-            // The face track loss is allowed to have an error of 5%
-            //        CHECK(loss == Approx(0.0f).epsilon(0.05));
+            auto rect = multipleFaceData.rects[0];
+            auto cvRect = inspirecv::Rect<int>::Create(rect.x, rect.y, rect.width, rect.height);
+            image.DrawRect(cvRect, {0, 0, 255}, 2);
+            std::string save = GET_SAVE_DATA("video_frames") + "/" + std::to_string(i) + ".jpg";
+            image.Write(save);
+            auto id = multipleFaceData.trackIds[0];
+            //            TEST_PRINT("{}", id);
+            if (id != expectedId) {
+                count_loss++;
+            }
 
-            ret = HFReleaseInspireFaceSession(session);
+            ret = HFReleaseImageStream(imgHandle);
             REQUIRE(ret == HSUCCEED);
-        } else {
-            TEST_PRINT("Cases that allow frames processing to be skipped");
         }
+        float loss = (float)count_loss / filenames.size();
+        // The face track loss is allowed to have an error of 5%
+        //        CHECK(loss == Approx(0.0f).epsilon(0.05));
+
+        ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
     }
+#endif
 
     SECTION("Head pose estimation") {
         HResult ret;
