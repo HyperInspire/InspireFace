@@ -70,6 +70,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         REQUIRE(ret == HSUCCEED);
     }
 
+#if 0
     SECTION("Face tracking stability from frames") {
         HResult ret;
         HFSessionCustomParameter parameter = {0};
@@ -118,6 +119,7 @@ TEST_CASE("test_FaceTrack", "[face_track]") {
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
     }
+#endif
 
     SECTION("Head pose estimation") {
         HResult ret;

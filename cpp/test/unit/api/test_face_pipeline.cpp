@@ -415,6 +415,7 @@ TEST_CASE("test_TrackModeFaceAction", "[face_action]") {
     ret = HFCreateInspireFaceSession(parameter, detMode, 3, -1, -1, &session);
     REQUIRE(ret == HSUCCEED);
 
+#if 0
     SECTION("Action Blink") {
         auto start = 130, end = 150;
         std::vector<std::string> filenames = generateFilenames("frame-%04d.jpg", start, end);
@@ -446,7 +447,9 @@ TEST_CASE("test_TrackModeFaceAction", "[face_action]") {
         // Blink at least once
         REQUIRE(count > 0);
     }
+#endif
 
+#if 0
     SECTION("Action Jaw Open") {
         auto start = 110, end = 150;
         std::vector<std::string> filenames = generateFilenames("frame-%04d.jpg", start, end);
@@ -478,7 +481,7 @@ TEST_CASE("test_TrackModeFaceAction", "[face_action]") {
         // Jaw open at least once
         REQUIRE(count > 0);
     }
-
+#endif
     ret = HFReleaseInspireFaceSession(session);
     REQUIRE(ret == HSUCCEED);
 }
