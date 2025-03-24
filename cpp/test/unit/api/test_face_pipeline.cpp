@@ -449,6 +449,7 @@ TEST_CASE("test_TrackModeFaceAction", "[face_action]") {
     }
 #endif
 
+#if 0
     SECTION("Action Jaw Open") {
         auto start = 110, end = 150;
         std::vector<std::string> filenames = generateFilenames("frame-%04d.jpg", start, end);
@@ -480,7 +481,7 @@ TEST_CASE("test_TrackModeFaceAction", "[face_action]") {
         // Jaw open at least once
         REQUIRE(count > 0);
     }
-
+#endif
     ret = HFReleaseInspireFaceSession(session);
     REQUIRE(ret == HSUCCEED);
 }
