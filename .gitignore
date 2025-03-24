@@ -6,7 +6,7 @@ test_zip_*
 test_res/pack/*
 test_res/save/*
 !test_res/save/.gitkeep
-!test_res/save/video_frames/
+# !test_res/save/video_frames/
 test_res/save/video_frames/*
 !test_res/save/video_frames/.gitkeep
 resource/*
@@ -26,3 +26,5 @@ cpp/inspireface/version.txt
 **/.DS_Store
 **/._.DS_Store
 .rknpu2_cache/
+test_res/data/video_frames/
+*.mp4
