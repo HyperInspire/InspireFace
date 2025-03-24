@@ -33,8 +33,6 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 **`2024-12-10`** Added support for quick installation via Python package manager.
 
-**`2024-11-19`** Project has been made lighter by removing mandatory dependency on OpenCV.
-
 **`2024-10-09`** Added system resource monitoring and session statistics.
 
 **`2024-09-30`** Fixed some bugs in the feature hub.
@@ -167,17 +165,12 @@ bash command/download_models_general.sh Megatron_TRT
 bash command/download_models_general.sh
 ```
 
-### Installing OpenCV(Optional)
-For **InspireFace v1.1.8** and above, **OpenCV is optional and not required by default**. If you need OpenCV support, you can enable it using the cmake option `INSPIRECV_BACKEND_OPENCV`.
-
 ### Installing MNN
 The '**3rdparty**' directory already includes the MNN library and specifies a particular version as the stable version. If you need to enable or disable additional configuration options during compilation, you can refer to the CMake Options provided by MNN. If you need to use your own precompiled version, feel free to replace it.
 
 ### Requirements
 
 - CMake (version 3.10 or higher)
-- OpenCV (version 3.5 or higher) [**Optional**: If the version **>= 1.1.8**, opencv is not used by default]
-    - Use the specific OpenCV-SDK supported by each target platform such as Android, iOS, and Linux.
 - NDK (version 16 or higher, only required for Android) [**Optional**]
 - MNN (version 1.4.0 or higher)
 - C++ Compiler
@@ -192,7 +185,7 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
     - GPU-based inference requires installing NVIDIA's CUDA dependencies on the device.
 - TensorRT (version 10 or higher) [**Optional**]
 - Eigen3
-  
+
 - RKNN [**Optional**]
     - Adjust and select versions currently supported for specific requirements.
 
@@ -200,7 +193,7 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 CMake option are used to control the various details of the compilation phase. Please select according to your actual requirements. [CMake Option](doc/CMake-Option.md).
 
 ### Local Compilation
-Make sure OpenCV is installed, you can begin the compilation process.  If you are using macOS or Linux, you can quickly compile using the shell scripts provided in the `command` folder at the project root:
+If you are using macOS or Linux, you can quickly compile using the shell scripts provided in the `command` folder at the project root:
 ```bash
 cd InspireFace/
 # Execute the local compilation script
