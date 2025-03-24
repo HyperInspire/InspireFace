@@ -169,7 +169,9 @@ static int file_seek(mtar_t *tar, unsigned offset) {
 }
 
 static int file_close(mtar_t *tar) {
-  fclose(tar->stream);
+  if (tar->source_type == FROM_FILE) {
+    fclose(tar->stream);
+  }
   return MTAR_ESUCCESS;
 }
 
@@ -184,7 +186,7 @@ int mtar_open(mtar_t *tar, const char *filename, const char *mode) {
   tar->read = file_read;
   tar->seek = file_seek;
   tar->close = file_close;
-
+  tar->source_type = FROM_FILE;
   /* Assure mode is always binary */
   if ( strchr(mode, 'r') ) mode = "rb";
   if ( strchr(mode, 'w') ) mode = "wb";
@@ -373,4 +375,40 @@ int mtar_write_data(mtar_t *tar, const void *data, unsigned size) {
 int mtar_finalize(mtar_t *tar) {
   /* Write two NULL records */
   return write_null_bytes(tar, sizeof(mtar_raw_header_t) * 2);
+}
+
+
+static int memory_read(mtar_t *tar, void *data, unsigned size) {
+    if (tar->pos + size > tar->stream_size) {
+        return MTAR_EREADFAIL;
+    }
+    memcpy(data, (char *)tar->stream + tar->pos, size);
+    tar->pos += size;
+    return MTAR_ESUCCESS;
+}
+
+static int memory_seek(mtar_t *tar, unsigned pos) {
+    if (pos > tar->stream_size) {
+        return MTAR_ESEEKFAIL;
+    }
+    tar->pos = pos;
+    return MTAR_ESUCCESS;
+}
+
+int mtar_open_memory(mtar_t *tar, void *data, size_t size) {
+    memset(tar, 0, sizeof(*tar));
+    tar->read = memory_read;
+    tar->seek = memory_seek;
+    tar->stream = data;
+    tar->stream_size = size;  // Add a field to store the data size
+    tar->source_type = FROM_MEMORY;
+    tar->close = file_close;
+
+    // Read the first header to verify the data
+    mtar_header_t h;
+    int err = mtar_read_header(tar, &h);
+    if (err != MTAR_ESUCCESS) {
+        return err;
+    }
+    return mtar_rewind(tar);
 }

@@ -5,7 +5,8 @@
 
 #ifndef MODELLOADERTAR_INSPIREARCHIVE_H
 #define MODELLOADERTAR_INSPIREARCHIVE_H
-#include "simple_archive.h"
+
+#include "core_archive/core_archive.h"
 #include "inspire_model/inspire_model.h"
 #include "yaml-cpp/yaml.h"
 #include "fstream"
@@ -21,23 +22,45 @@ enum {
     NOT_READ = -15,
 };
 
-class INSPIRE_API InspireArchive : SimpleArchive {
+class INSPIRE_API InspireArchive {
 public:
-    InspireArchive() : SimpleArchive() {
+    InspireArchive() : m_archive_(std::make_shared<CoreArchive>()) {
         m_status_ = NOT_READ;
     }
 
-    explicit InspireArchive(const std::string &archiveFile) : SimpleArchive(archiveFile) {
-        m_status_ = QueryStatus();
+    explicit InspireArchive(const std::string& archiveFile) : m_archive_(std::make_shared<CoreArchive>(archiveFile)) {
+        m_status_ = m_archive_->QueryLoadStatus();
         if (m_status_ == SARC_SUCCESS) {
             m_status_ = loadManifestFile();
         }
     }
 
-    int32_t ReLoad(const std::string &archiveFile) {
-        auto ret = Reset(archiveFile);
+    InspireArchive(const InspireArchive& other)
+    : m_archive_(other.m_archive_),
+      m_config_(other.m_config_),
+      m_status_(other.m_status_),
+      m_tag_(other.m_tag_),
+      m_version_(other.m_version_),
+      m_major_(other.m_major_),
+      m_release_time_(other.m_release_time_) {}
+
+    InspireArchive& operator=(const InspireArchive& other) {
+        if (this != &other) {
+            m_archive_ = other.m_archive_;
+            m_config_ = other.m_config_;
+            m_status_ = other.m_status_;
+            m_tag_ = other.m_tag_;
+            m_version_ = other.m_version_;
+            m_major_ = other.m_major_;
+            m_release_time_ = other.m_release_time_;
+        }
+        return *this;
+    }
+
+    int32_t ReLoad(const std::string& archiveFile) {
+        auto ret = m_archive_->Reset(archiveFile);
         if (ret != SARC_SUCCESS) {
-            Close();
+            m_archive_->Close();
             m_status_ = ret;
             return ret;
         }
@@ -49,7 +72,7 @@ public:
         return m_status_;
     }
 
-    int32_t LoadModel(const std::string &name, InspireModel &model) {
+    int32_t LoadModel(const std::string& name, InspireModel& model) {
         if (m_config_[name]) {
             auto ret = model.Reset(m_config_[name]);
             if (ret != 0) {
@@ -59,7 +82,7 @@ public:
                 // No model files are loaded, only configuration files are loaded for extension modules such as CoreML.
                 return SARC_SUCCESS;
             }
-            auto &buffer = GetFileContent(model.name);
+            auto& buffer = m_archive_->GetFileContent(model.name);
             if (buffer.empty()) {
                 return ERROR_MODEL_BUFFER;
             }
@@ -70,19 +93,27 @@ public:
         }
     }
 
-    void PublicPrintSubFiles() {
-        PrintSubFiles();
+    void PrintSubFiles() {
+        m_archive_->PrintSubFiles();
+    }
+
+    const std::vector<std::string>& GetSubfilesNames() const {
+        return m_archive_->GetSubfilesNames();
     }
 
     void Release() {
         m_status_ = NOT_READ;
-        Close();
+        m_archive_->Close();
+    }
+
+    std::vector<char>& GetFileContent(const std::string& filename) {
+        return m_archive_->GetFileContent(filename);
     }
 
 private:
     int32_t loadManifestFile() {
-        if (QueryLoadStatus() == SARC_SUCCESS) {
-            auto configBuffer = GetFileContent(MANIFEST_FILE);
+        if (m_archive_->QueryLoadStatus() == SARC_SUCCESS) {
+            auto configBuffer = m_archive_->GetFileContent(MANIFEST_FILE);
             configBuffer.push_back('\0');
             if (configBuffer.empty()) {
                 return MISS_MANIFEST;
@@ -130,6 +161,7 @@ private:
     }
 
 private:
+    std::shared_ptr<CoreArchive> m_archive_;
     YAML::Node m_config_;
 
     int32_t m_status_;
