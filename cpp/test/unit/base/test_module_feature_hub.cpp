@@ -2,7 +2,7 @@
 #include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
 #include "unit/test_helper/help.h"
-#include "feature_hub/feature_hub_db.h"
+#include <inspireface/include/inspireface/feature_hub_db.h>
 #include "middleware/costman.h"
 
 using namespace inspire;

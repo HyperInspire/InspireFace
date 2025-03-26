@@ -1,5 +1,5 @@
 #include <inspirecv/inspirecv.h>
-#include "inspireface/initialization_module/launch.h"
+#include <inspireface/include/inspireface/launch.h>
 #include "inspireface/middleware/model_archive/inspire_archive.h"
 #include "inspireface/track_module/face_detect/face_detect_adapt.h"
 #include "inspireface/track_module/landmark/face_landmark_adapt.h"
@@ -8,7 +8,7 @@
 
 void test_face_detect() {
     inspire::InspireModel model;
-    APP_CONTEXT->getMArchive().LoadModel("face_detect_160", model);
+    INSPIREFACE_CONTEXT->getMArchive().LoadModel("face_detect_160", model);
     auto input_size = 160;
     inspire::FaceDetectAdapt faceDetectAdapt(input_size);
     faceDetectAdapt.LoadData(model, model.modelType);
@@ -31,7 +31,7 @@ void test_face_detect() {
 
 void test_landmark() {
     inspire::InspireModel model;
-    APP_CONTEXT->getMArchive().LoadModel("landmark", model);
+    INSPIREFACE_CONTEXT->getMArchive().LoadModel("landmark", model);
     auto input_size = 112;
     inspire::FaceLandmarkAdapt landmarkAdapt(input_size);
     landmarkAdapt.LoadData(model, model.modelType);
@@ -54,7 +54,7 @@ void test_landmark() {
 
 void test_quality() {
     inspire::InspireModel model;
-    APP_CONTEXT->getMArchive().LoadModel("pose_quality", model);
+    INSPIREFACE_CONTEXT->getMArchive().LoadModel("pose_quality", model);
     auto input_size = 96;
     inspire::FacePoseQualityAdapt poseQualityAdapt;
     poseQualityAdapt.LoadData(model, model.modelType);
@@ -79,7 +79,7 @@ void test_quality() {
 
 void test_feature() {
     inspire::InspireModel model;
-    APP_CONTEXT->getMArchive().LoadModel("feature", model);
+    INSPIREFACE_CONTEXT->getMArchive().LoadModel("feature", model);
     auto input_size = 112;
     inspire::ExtractAdapt extractAdapt;
     extractAdapt.LoadData(model, model.modelType);
@@ -100,7 +100,7 @@ void test_feature() {
 
 int main() {
     std::string archivePath = "test_res/pack/Pikachu_Apple";
-    APP_CONTEXT->Load(archivePath);
+    INSPIREFACE_CONTEXT->Load(archivePath);
     // Test face detect
     test_face_detect();
 

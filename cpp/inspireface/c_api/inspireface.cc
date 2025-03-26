@@ -7,8 +7,8 @@
 #include "intypedef.h"
 #include "inspireface_internal.h"
 #include "information.h"
-#include "feature_hub/feature_hub_db.h"
-#include "initialization_module/launch.h"
+#include "feature_hub_db.h"
+#include <launch.h>
 #include "initialization_module/resource_manage.h"
 #include "recognition_module/similarity_converter.h"
 #include "middleware/inference_wrapper/inference_wrapper.h"
@@ -427,21 +427,21 @@ HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode de
 
 HResult HFLaunchInspireFace(HPath resourcePath) {
     std::string path(resourcePath);
-    return APP_CONTEXT->Load(resourcePath);
+    return INSPIREFACE_CONTEXT->Load(resourcePath);
 }
 
 HResult HFReloadInspireFace(HPath resourcePath) {
     std::string path(resourcePath);
-    return APP_CONTEXT->Reload(resourcePath);
+    return INSPIREFACE_CONTEXT->Reload(resourcePath);
 }
 
 HResult HFTerminateInspireFace() {
-    APP_CONTEXT->Unload();
+    INSPIREFACE_CONTEXT->Unload();
     return HSUCCEED;
 }
 
 HResult HFQueryInspireFaceLaunchStatus(HInt32 *status) {
-    *status = APP_CONTEXT->isMLoad();
+    *status = INSPIREFACE_CONTEXT->isMLoad();
     return HSUCCEED;
 }
 
@@ -450,33 +450,33 @@ HResult HFFeatureHubDataDisable() {
 }
 
 HResult HFSetExpansiveHardwareRockchipDmaHeapPath(HPath path) {
-    APP_CONTEXT->SetRockchipDmaHeapPath(path);
+    INSPIREFACE_CONTEXT->SetRockchipDmaHeapPath(path);
     return HSUCCEED;
 }
 
 HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path) {
-    strcpy(path, APP_CONTEXT->GetRockchipDmaHeapPath().c_str());
+    strcpy(path, INSPIREFACE_CONTEXT->GetRockchipDmaHeapPath().c_str());
     return HSUCCEED;
 }
 
 HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode) {
     if (mode == HF_APPLE_COREML_INFERENCE_MODE_CPU) {
-        APP_CONTEXT->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_CPU);
+        INSPIREFACE_CONTEXT->SetGlobalCoreMLInferenceMode(inspire::Launch::NN_INFERENCE_CPU);
     } else if (mode == HF_APPLE_COREML_INFERENCE_MODE_GPU) {
-        APP_CONTEXT->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_GPU);
+        INSPIREFACE_CONTEXT->SetGlobalCoreMLInferenceMode(inspire::Launch::NN_INFERENCE_COREML_GPU);
     } else if (mode == HF_APPLE_COREML_INFERENCE_MODE_ANE) {
-        APP_CONTEXT->SetGlobalCoreMLInferenceMode(InferenceWrapper::COREML_ANE);
+        INSPIREFACE_CONTEXT->SetGlobalCoreMLInferenceMode(inspire::Launch::NN_INFERENCE_COREML_ANE);
     }
     return HSUCCEED;
 }
 
 HResult HFSetCudaDeviceId(int32_t device_id) {
-    APP_CONTEXT->SetCudaDeviceId(device_id);
+    INSPIREFACE_CONTEXT->SetCudaDeviceId(device_id);
     return HSUCCEED;
 }
 
 HResult HFGetCudaDeviceId(int32_t *device_id) {
-    *device_id = APP_CONTEXT->GetCudaDeviceId();
+    *device_id = INSPIREFACE_CONTEXT->GetCudaDeviceId();
     return HSUCCEED;
 }
 
@@ -841,7 +841,7 @@ HResult HFFaceComparison(HFFaceFeature feature1, HFFaceFeature feature2, HPFloat
 }
 
 HResult HFGetRecommendedCosineThreshold(HPFloat threshold) {
-    if (!APP_CONTEXT->isMLoad()) {
+    if (!INSPIREFACE_CONTEXT->isMLoad()) {
         INSPIRE_LOGW("Inspireface is not launched, using default threshold 0.48");
     }
     *threshold = SIMILARITY_CONVERTER_GET_RECOMMENDED_COSINE_THRESHOLD();
@@ -849,7 +849,7 @@ HResult HFGetRecommendedCosineThreshold(HPFloat threshold) {
 }
 
 HResult HFCosineSimilarityConvertToPercentage(HFloat similarity, HPFloat result) {
-    if (!APP_CONTEXT->isMLoad()) {
+    if (!INSPIREFACE_CONTEXT->isMLoad()) {
         INSPIRE_LOGW("Inspireface is not launched.");
     }
     *result = SIMILARITY_CONVERTER_RUN(similarity);
@@ -857,7 +857,7 @@ HResult HFCosineSimilarityConvertToPercentage(HFloat similarity, HPFloat result)
 }
 
 HResult HFUpdateCosineSimilarityConverter(HFSimilarityConverterConfig config) {
-    if (!APP_CONTEXT->isMLoad()) {
+    if (!INSPIREFACE_CONTEXT->isMLoad()) {
         INSPIRE_LOGW("Inspireface is not launched.");
     }
     inspire::SimilarityConverterConfig cfg;
@@ -871,7 +871,7 @@ HResult HFUpdateCosineSimilarityConverter(HFSimilarityConverterConfig config) {
 }
 
 HResult HFGetCosineSimilarityConverter(PHFSimilarityConverterConfig config) {
-    if (!APP_CONTEXT->isMLoad()) {
+    if (!INSPIREFACE_CONTEXT->isMLoad()) {
         INSPIRE_LOGW("Inspireface is not launched.");
     }
     inspire::SimilarityConverterConfig cfg = SIMILARITY_CONVERTER_GET_CONFIG();

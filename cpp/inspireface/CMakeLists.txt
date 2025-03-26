@@ -15,7 +15,7 @@ else()
     set(EXTENDED_INFORMATION "${EXTENDED_INFORMATION}@General")
 endif()
 set(EXTENDED_INFORMATION "${EXTENDED_INFORMATION} - Build Time: ${BUILD_TIMESTAMP}")
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/information.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface/information.h)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
@@ -128,6 +128,9 @@ if (ISF_ENABLE_RKNN)
     endif()
 endif ()
 
+# Add include directory
+set(NEED_INCLUDE ${NEED_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface)
+
 if (ISF_BUILD_LINUX_ARM7 OR ANDROID)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=neon")
 endif()
@@ -233,7 +236,7 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.h DESTINATION ${CMAK
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/intypedef.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/herror.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface/herror.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/version.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/)
 

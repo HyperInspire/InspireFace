@@ -2,19 +2,18 @@
 #include <iostream>
 #include "settings/test_settings.h"
 #include "unit/test_helper/help.h"
-#include "feature_hub/feature_hub_db.h"
+#include <inspireface/include/inspireface/feature_hub_db.h>
 #include "middleware/costman.h"
 #include "track_module/face_detect/all.h"
-#include "inspireface/initialization_module/launch.h"
 #include "track_module/face_track_module.h"
-#include "image_process/frame_process.h"
+#include <inspireface/include/inspireface/frame_process.h>
 
 using namespace inspire;
 
 TEST_CASE("test_FaceDetect", "[track_module") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
-    auto archive = APP_CONTEXT->getMArchive();
+    auto archive = INSPIREFACE_CONTEXT->getMArchive();
     const std::vector<int32_t> supported_sizes = {160, 320, 640};
     const std::vector<std::string> scheme_names = {"face_detect_160", "face_detect_320", "face_detect_640"};
     for (size_t i = 0; i < scheme_names.size(); i++) {
@@ -33,7 +32,7 @@ TEST_CASE("test_FaceDetect", "[track_module") {
 TEST_CASE("test_RefineNet", "[track_module") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
-    auto archive = APP_CONTEXT->getMArchive();
+    auto archive = INSPIREFACE_CONTEXT->getMArchive();
     InspireModel model;
     auto ret = archive.LoadModel("refine_net", model);
     REQUIRE(ret == 0);
@@ -52,7 +51,7 @@ TEST_CASE("test_RefineNet", "[track_module") {
 TEST_CASE("test_Landmark", "[track_module") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
-    auto archive = APP_CONTEXT->getMArchive();
+    auto archive = INSPIREFACE_CONTEXT->getMArchive();
     InspireModel model;
     auto ret = archive.LoadModel("landmark", model);
     REQUIRE(ret == 0);
@@ -68,7 +67,7 @@ TEST_CASE("test_Landmark", "[track_module") {
 TEST_CASE("test_Quality", "[track_module") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
-    auto archive = APP_CONTEXT->getMArchive();
+    auto archive = INSPIREFACE_CONTEXT->getMArchive();
     InspireModel model;
     auto ret = archive.LoadModel("pose_quality", model);
     REQUIRE(ret == 0);
@@ -85,7 +84,7 @@ TEST_CASE("test_Quality", "[track_module") {
 TEST_CASE("test_FaceTrackModule", "[track_module") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
-    auto archive = APP_CONTEXT->getMArchive();
+    auto archive = INSPIREFACE_CONTEXT->getMArchive();
 
     SECTION("Test face detect rotate 0") {
         auto mode = DetectModuleMode::DETECT_MODE_ALWAYS_DETECT;
