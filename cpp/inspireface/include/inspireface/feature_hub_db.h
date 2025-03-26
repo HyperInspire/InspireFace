@@ -56,7 +56,6 @@ public:
      */
     ~FeatureHubDB();
 
-    // 禁用复制和赋值
     FeatureHubDB(const FeatureHubDB&) = delete;
     FeatureHubDB& operator=(const FeatureHubDB&) = delete;
 
@@ -229,7 +228,6 @@ public:
     std::vector<int64_t>& GetExistingIds();
 
 private:
-    // 前置声明私有实现类
     class Impl;
 
     // 指向实现的唯一指针

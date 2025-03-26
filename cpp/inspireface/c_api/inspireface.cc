@@ -13,7 +13,7 @@
 #include "recognition_module/similarity_converter.h"
 #include "middleware/inference_wrapper/inference_wrapper.h"
 #if defined(ISF_ENABLE_TENSORRT)
-#include "middleware/cuda_toolkit.h"
+#include "cuda_toolkit.h"
 #endif
 
 using namespace inspire;

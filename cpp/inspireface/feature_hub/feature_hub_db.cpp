@@ -66,7 +66,7 @@ int32_t FeatureHubDB::DisableHub() {
 
     pImpl->m_search_face_feature_cache_.clear();
 
-    pImpl->m_db_configuration_ = DatabaseConfiguration();  // 重置为默认值
+    pImpl->m_db_configuration_ = DatabaseConfiguration();
     pImpl->m_recognition_threshold_ = 0.0f;
     pImpl->m_search_mode_ = SEARCH_MODE_EAGER;
 
@@ -116,7 +116,7 @@ int32_t FeatureHubDB::EnableHub(const DatabaseConfiguration &configuration) {
 
 int32_t FeatureHubDB::CosineSimilarity(const std::vector<float> &v1, const std::vector<float> &v2, float &res, bool normalize) {
     if (v1.size() != v2.size() || v1.empty()) {
-        return HERR_SESS_REC_CONTRAST_FEAT_ERR;  // 向量长度不相等或为空时无法计算相似度
+        return HERR_SESS_REC_CONTRAST_FEAT_ERR;
     }
 
     if (normalize) {
@@ -206,7 +206,6 @@ int32_t FeatureHubDB::SearchFaceFeature(const Embedded &queryFeature, FaceSearch
         searchResult.id = searched.id;
         if (returnFeature) {
             searchResult.feature = searched.feature;
-            // 复制特征到缓存
             pImpl->m_search_face_feature_cache_ = searched.feature;
             pImpl->m_face_feature_ptr_cache_->data = pImpl->m_search_face_feature_cache_.data();
             pImpl->m_face_feature_ptr_cache_->dataSize = pImpl->m_search_face_feature_cache_.size();

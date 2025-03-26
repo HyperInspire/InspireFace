@@ -16,9 +16,8 @@
 #include <mutex>
 #include "middleware/inference_wrapper/inference_wrapper.h"
 #include "middleware/system.h"
-#include "middleware/cuda_toolkit.h"
 #if defined(ISF_ENABLE_TENSORRT)
-#include "middleware/cuda_toolkit.h"
+#include "cuda_toolkit.h"
 #endif
 
 #define APPLE_EXTENSION_SUFFIX ".bundle"
