@@ -1,4 +1,3 @@
-#ifdef ISF_ENABLE_TENSORRT
 #ifndef INSPIRE_CUDA_TOOLKIT_H
 #define INSPIRE_CUDA_TOOLKIT_H
 
@@ -21,4 +20,3 @@ int32_t INSPIRE_API PrintCudaDeviceInfo();
 }  // namespace inspire
 
 #endif  // INSPIRE_CUDA_TOOLKIT_H
-#endif  // ISF_ENABLE_TENSORRT
