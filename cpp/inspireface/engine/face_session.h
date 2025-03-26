@@ -14,28 +14,10 @@
 #include "pipeline_module/face_pipeline_module.h"
 #include "middleware/model_archive/inspire_archive.h"
 #include "recognition_module/face_feature_extraction_module.h"
-#include "middleware/frame_process.h"
+#include "frame_process.h"
 #include "common/face_data/face_serialize_tools.h"
 
 namespace inspire {
-
-/**
- * @struct CustomPipelineParameter
- * @brief Structure to hold custom parameters for the face detection and processing pipeline.
- *
- * Includes options for enabling various features such as recognition, liveness detection, and quality assessment.
- */
-typedef struct CustomPipelineParameter {
-    bool enable_recognition = false;           ///< Enable face recognition feature
-    bool enable_liveness = false;              ///< Enable RGB liveness detection feature
-    bool enable_ir_liveness = false;           ///< Enable IR (Infrared) liveness detection feature
-    bool enable_mask_detect = false;           ///< Enable mask detection feature
-    bool enable_face_attribute = false;        ///< Enable face attribute prediction feature
-    bool enable_face_quality = false;          ///< Enable face quality assessment feature
-    bool enable_interaction_liveness = false;  ///< Enable interactive liveness detection feature
-    bool enable_detect_mode_landmark = false;  ///< Enable landmark detection in detection mode
-
-} ContextCustomParameter;
 
 /**
  * @class FaceContext
@@ -116,7 +98,15 @@ public:
      * @param data FaceBasicData to store extracted features.
      * @return int32_t Status code of the feature extraction.
      */
-    int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, FaceBasicData& data);
+    int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, FaceBasicData& data, bool normalize = true);
+
+    /**
+     * @brief Extracts features of a face from an image.
+     * @param image Camera stream containing the face.
+     * @param data HyperFaceData to store extracted features.
+     * @return int32_t Status code of the feature extraction.
+     */
+    int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, HyperFaceData& data, bool normalize = true);
 
     /**
      * @brief Gets the face alignment image.

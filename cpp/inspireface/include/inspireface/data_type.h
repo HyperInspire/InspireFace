@@ -152,6 +152,34 @@ typedef std::string String;
  */
 typedef std::vector<int> IndexList;
 
+/**
+ * @enum DetectMode
+ * @brief Enumeration for different detection modes.
+ */
+enum DetectModuleMode {
+    DETECT_MODE_ALWAYS_DETECT = 0,  ///< Detection mode: Always detect
+    DETECT_MODE_LIGHT_TRACK,        ///< Detection mode: Light face track
+    DETECT_MODE_TRACK_BY_DETECT,    ///< Detection mode: Tracking by detection
+};
+
+/**
+ * @struct CustomPipelineParameter
+ * @brief Structure to hold custom parameters for the face detection and processing pipeline.
+ *
+ * Includes options for enabling various features such as recognition, liveness detection, and quality assessment.
+ */
+typedef struct CustomPipelineParameter {
+    bool enable_recognition = false;           ///< Enable face recognition feature
+    bool enable_liveness = false;              ///< Enable RGB liveness detection feature
+    bool enable_ir_liveness = false;           ///< Enable IR (Infrared) liveness detection feature
+    bool enable_mask_detect = false;           ///< Enable mask detection feature
+    bool enable_face_attribute = false;        ///< Enable face attribute prediction feature
+    bool enable_face_quality = false;          ///< Enable face quality assessment feature
+    bool enable_interaction_liveness = false;  ///< Enable interactive liveness detection feature
+    bool enable_detect_mode_landmark = false;  ///< Enable landmark detection in detection mode
+
+} ContextCustomParameter;
+
 /** @struct FaceLoc
  *  @brief Struct representing standardized face landmarks for detection.
  *
@@ -190,6 +218,24 @@ typedef struct FaceFeatureEntity {
     int32_t dataSize;
     float* data;
 } FaceFeaturePtr;
+
+// Search for most similar vectors
+struct FaceSearchResult {
+    int64_t id;
+    double similarity;
+    std::vector<float> feature;
+};
+
+/** @struct FaceEmbedding
+ *  @brief Struct for face embedding data.
+ *
+ *  Contains the isNormal flag and the embedding vector.
+ */
+struct FaceEmbedding {
+    int32_t isNormal;
+    float norm;
+    Embedded embedding;
+};
 
 /** @} */
 

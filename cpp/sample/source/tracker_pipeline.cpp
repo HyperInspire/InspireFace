@@ -1,7 +1,7 @@
 #include <inspirecv/inspirecv.h>
 #include <inspireface/track_module/face_track_module.h>
-#include "inspireface/initialization_module/launch.h"
-#include <inspireface/middleware/frame_process.h>
+#include <inspireface/include/inspireface/launch.h>
+#include <inspireface/include/inspireface/frame_process.h>
 #include <inspireface/pipeline_module/face_pipeline_module.h>
 #include <inspireface/common/face_data/face_serialize_tools.h>
 
@@ -9,8 +9,8 @@ using namespace inspire;
 
 int main() {
     std::string expansion_path = "";
-    APP_CONTEXT->Load("test_res/pack/Pikachu");
-    auto archive = APP_CONTEXT->getMArchive();
+    INSPIREFACE_CONTEXT->Load("test_res/pack/Pikachu");
+    auto archive = INSPIREFACE_CONTEXT->getMArchive();
     auto mode = inspire::DetectModuleMode::DETECT_MODE_LIGHT_TRACK;
     FaceTrackModule tracker(mode, 10, 20, 320, -1);
     tracker.Configuration(archive, expansion_path);

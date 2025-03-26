@@ -6,14 +6,14 @@
 #ifndef INSPIRE_FACE_PIPELINE_MODULE_H
 #define INSPIRE_FACE_PIPELINE_MODULE_H
 
-#include "middleware/frame_process.h"
+#include "frame_process.h"
 #include "common/face_info/face_object_internal.h"
 #include "attribute/face_attribute_adapt.h"
 #include "attribute/mask_predict_adapt.h"
 #include "liveness/rgb_anti_spoofing_adapt.h"
 #include "liveness/blink_predict_adapt.h"
 #include "middleware/model_archive/inspire_archive.h"
-#include "common/face_data/face_data_type.h"
+#include "face_data_type.h"
 
 namespace inspire {
 

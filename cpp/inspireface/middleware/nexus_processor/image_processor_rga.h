@@ -25,7 +25,7 @@
 #include "RgaUtils.h"
 #include "rga/utils.h"
 #include "rga/dma_alloc.h"
-#include "initialization_module/launch.h"
+#include <launch.h>
 
 namespace inspire {
 
@@ -109,7 +109,7 @@ private:
             channels = c;
             buffer_size = width * height * channels;
 
-            int ret = dma_buf_alloc(APP_CONTEXT->GetRockchipDmaHeapPath().c_str(), buffer_size, &dma_fd, &virtual_addr);
+            int ret = dma_buf_alloc(INSPIREFACE_CONTEXT->GetRockchipDmaHeapPath().c_str(), buffer_size, &dma_fd, &virtual_addr);
             if (ret < 0) {
                 INSPIRECV_LOG(ERROR) << "Failed to allocate DMA buffer: " << ret;
                 return false;

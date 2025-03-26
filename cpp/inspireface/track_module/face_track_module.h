@@ -10,23 +10,13 @@
 #include "face_detect/rnet_adapt.h"
 #include "landmark/face_landmark_adapt.h"
 #include "common/face_info/face_object_internal.h"
-#include "middleware/frame_process.h"
+#include "frame_process.h"
 #include "quality/face_pose_quality_adapt.h"
 #include "middleware/model_archive/inspire_archive.h"
 #include "tracker_optional/bytetrack/BYTETracker.h"
+#include <data_type.h>
 
 namespace inspire {
-
-/**
- * @enum DetectMode
- * @brief Enumeration for different detection modes.
- */
-enum DetectModuleMode {
-    DETECT_MODE_ALWAYS_DETECT = 0,  ///< Detection mode: Always detect
-    DETECT_MODE_LIGHT_TRACK,        ///< Detection mode: Light face track
-    DETECT_MODE_TRACK_BY_DETECT,    ///< Detection mode: Tracking by detection
-
-};
 
 /**
  * @class FaceTrack

@@ -2,6 +2,9 @@
 #include "sqlite-vec.h"
 #include "isf_check.h"
 #include <algorithm>
+#if defined(__ANDROID__)
+#include <android/log.h>
+#endif
 
 namespace inspire {
 

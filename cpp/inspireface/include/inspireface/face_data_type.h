@@ -8,11 +8,8 @@
 #ifndef INSPIRE_FACE_FACEDATATYPE_H
 #define INSPIRE_FACE_FACEDATATYPE_H
 
-// Include the necessary header files
-#include "../../data_type.h"
-#include "../face_info/face_object_internal.h"
+#include <data_type.h>
 
-// Define the namespace "inspire" for encapsulation
 namespace inspire {
 
 /**

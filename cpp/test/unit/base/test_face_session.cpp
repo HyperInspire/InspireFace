@@ -2,12 +2,11 @@
 #include <iostream>
 #include "settings/test_settings.h"
 #include "unit/test_helper/help.h"
-#include "feature_hub/feature_hub_db.h"
 #include "middleware/costman.h"
-#include "inspireface/initialization_module/launch.h"
-#include "middleware/frame_process.h"
-#include "inspireface/face_session.h"
-#include "inspireface/feature_hub/feature_hub_db.h"
+#include <inspireface/include/inspireface/launch.h>
+#include "frame_process.h"
+#include "inspireface/engine/face_session.h"
+#include <inspireface/include/inspireface/feature_hub_db.h>
 
 using namespace inspire;
 
