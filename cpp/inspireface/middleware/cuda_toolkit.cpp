@@ -1,23 +1,29 @@
 #ifdef ISF_ENABLE_TENSORRT
-
 #include <cuda_toolkit.h>
 #include <cuda_runtime_api.h>
 #include <NvInfer.h>
+#endif  // ISF_ENABLE_TENSORRT
 #include <log.h>
 #include <herror.h>
 
 namespace inspire {
 
 int32_t INSPIRE_API GetCudaDeviceCount(int32_t *device_count) {
+#ifdef ISF_ENABLE_TENSORRT
     cudaError_t error = cudaGetDeviceCount(device_count);
     if (error != cudaSuccess) {
         INSPIRE_LOGE("CUDA error: %s", cudaGetErrorString(error));
         return HERR_DEVICE_CUDA_UNKNOWN_ERROR;
     }
     return HSUCCEED;
+#else
+    *device_count = 0;
+    return HERR_DEVICE_CUDA_NOT_SUPPORT;
+#endif
 }
 
 int32_t INSPIRE_API CheckCudaUsability(int32_t *is_support) {
+#ifdef ISF_ENABLE_TENSORRT
     int device_count;
     auto ret = GetCudaDeviceCount(&device_count);
     if (ret != HSUCCEED) {
@@ -30,9 +36,14 @@ int32_t INSPIRE_API CheckCudaUsability(int32_t *is_support) {
     }
     *is_support = device_count > 0;
     return HSUCCEED;
+#else
+    *is_support = 0;
+    return HERR_DEVICE_CUDA_NOT_SUPPORT;
+#endif
 }
 
 int32_t INSPIRE_API _PrintCudaDeviceInfo() {
+#ifdef ISF_ENABLE_TENSORRT
     try {
         INSPIRE_LOGW("TensorRT version: %d.%d.%d", NV_TENSORRT_MAJOR, NV_TENSORRT_MINOR, NV_TENSORRT_PATCH);
 
@@ -98,15 +109,22 @@ int32_t INSPIRE_API _PrintCudaDeviceInfo() {
         INSPIRE_LOGE("error when printing CUDA device info: %s", e.what());
         return HERR_DEVICE_CUDA_UNKNOWN_ERROR;
     }
+#else
+    INSPIRE_LOGE("CUDA/TensorRT support is not enabled");
+    return HERR_DEVICE_CUDA_NOT_SUPPORT;
+#endif
 }
 
 int32_t INSPIRE_API PrintCudaDeviceInfo() {
+#ifdef ISF_ENABLE_TENSORRT
     INSPIRE_LOGW("================================================");
     auto ret = _PrintCudaDeviceInfo();
     INSPIRE_LOGW("================================================");
     return ret;
+#else
+    INSPIRE_LOGE("CUDA/TensorRT support is not enabled");
+    return HERR_DEVICE_CUDA_NOT_SUPPORT;
+#endif
 }
 
 }  // namespace inspire
-
-#endif  // ISF_ENABLE_TENSORRT
