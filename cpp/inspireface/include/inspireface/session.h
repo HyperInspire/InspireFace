@@ -7,7 +7,7 @@
 
 namespace inspire {
 
-class Session {
+class INSPIRE_API Session {
 public:
     static Session Create(DetectModuleMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param, int32_t detect_level_px = -1,
                           int32_t track_by_detect_mode_fps = -1);
