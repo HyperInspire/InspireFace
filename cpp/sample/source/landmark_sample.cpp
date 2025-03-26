@@ -1,7 +1,7 @@
 #include <iostream>
 #include <inspirecv/inspirecv.h>
 #include "inspireface/initialization_module/launch.h"
-#include <inspireface/middleware/frame_process.h>
+#include <inspireface/image_process/frame_process.h>
 #include "inspireface/track_module/landmark/face_landmark_adapt.h"
 int main() {
     std::string expansion_path = "";
@@ -16,7 +16,7 @@ int main() {
     }
 
     inspire::FaceLandmarkAdapt lmk;
-    lmk.loadData(lmkModel, lmkModel.modelType);
+    lmk.LoadData(lmkModel, lmkModel.modelType);
 
     auto image = inspirecv::Image::Create("test_res/data/crop/crop.png");
     auto data = image.Resize(112, 112);

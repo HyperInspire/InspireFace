@@ -6,7 +6,7 @@
 #ifndef INSPIREFACE_INTERNAL_H
 #define INSPIREFACE_INTERNAL_H
 
-#include "face_session.h"
+#include "engine/face_session.h"
 
 typedef struct HF_FaceAlgorithmSession {
     inspire::FaceSession impl;  ///< Implementation of the face context.

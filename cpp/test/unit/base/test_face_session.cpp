@@ -5,8 +5,8 @@
 #include "feature_hub/feature_hub_db.h"
 #include "middleware/costman.h"
 #include "inspireface/initialization_module/launch.h"
-#include "middleware/frame_process.h"
-#include "inspireface/face_session.h"
+#include "image_process/frame_process.h"
+#include "inspireface/engine/face_session.h"
 #include "inspireface/feature_hub/feature_hub_db.h"
 
 using namespace inspire;

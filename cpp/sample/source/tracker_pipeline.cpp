@@ -1,7 +1,7 @@
 #include <inspirecv/inspirecv.h>
 #include <inspireface/track_module/face_track_module.h>
 #include "inspireface/initialization_module/launch.h"
-#include <inspireface/middleware/frame_process.h>
+#include <inspireface/image_process/frame_process.h>
 #include <inspireface/pipeline_module/face_pipeline_module.h>
 #include <inspireface/common/face_data/face_serialize_tools.h>
 

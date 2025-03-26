@@ -51,7 +51,7 @@ public:
      * @param type Type of the inference helper (default: INFER_MNN).
      * @return int32_t Status of the loading and initialization process.
      */
-    int32_t loadData(InspireModel &model, InferenceWrapper::EngineType type = InferenceWrapper::INFER_MNN, bool dynamic = false) {
+    int32_t LoadData(InspireModel &model, InferenceWrapper::EngineType type = InferenceWrapper::INFER_MNN, bool dynamic = false) {
         m_infer_type_ = type;
         // must
         pushData<int>(model.Config(), "model_index", 0);

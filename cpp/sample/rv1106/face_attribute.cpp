@@ -1,7 +1,7 @@
 #include <inspirecv/inspirecv.h>
 #include <inspireface/pipeline_module/attribute/face_attribute_adapt.h>
 #include "inspireface/initialization_module/launch.h"
-#include <inspireface/middleware/frame_process.h>
+#include <inspireface/image_process/frame_process.h>
 #include <inspirecv/time_spend.h>
 #include <log.h>
 
@@ -20,7 +20,7 @@ int main() {
     }
 
     FaceAttributePredictAdapt face_attribute;
-    face_attribute.loadData(detModel, detModel.modelType, false);
+    face_attribute.LoadData(detModel, detModel.modelType, false);
 
     auto img = inspirecv::Image::Create("test_res/data/crop/crop.png");
     auto result = face_attribute(img);

@@ -7,7 +7,7 @@
 #include "track_module/face_detect/all.h"
 #include "inspireface/initialization_module/launch.h"
 #include "track_module/face_track_module.h"
-#include "middleware/frame_process.h"
+#include "image_process/frame_process.h"
 
 using namespace inspire;
 
@@ -22,7 +22,7 @@ TEST_CASE("test_FaceDetect", "[track_module") {
         auto ret = archive.LoadModel(scheme_names[i], model);
         REQUIRE(ret == 0);
         FaceDetectAdapt face_detector(supported_sizes[i]);
-        face_detector.loadData(model, model.modelType, false);
+        face_detector.LoadData(model, model.modelType, false);
 
         inspirecv::Image img = inspirecv::Image::Create(GET_DATA("data/bulk/kun.jpg"));
         auto result = face_detector(img);
@@ -38,7 +38,7 @@ TEST_CASE("test_RefineNet", "[track_module") {
     auto ret = archive.LoadModel("refine_net", model);
     REQUIRE(ret == 0);
     RNetAdapt rnet;
-    rnet.loadData(model, model.modelType, false);
+    rnet.LoadData(model, model.modelType, false);
 
     inspirecv::Image face = inspirecv::Image::Create(GET_DATA("data/crop/crop.png"));
     auto result1 = rnet(face);
@@ -58,7 +58,7 @@ TEST_CASE("test_Landmark", "[track_module") {
     REQUIRE(ret == 0);
 
     FaceLandmarkAdapt face_landmark(112);
-    face_landmark.loadData(model, model.modelType);
+    face_landmark.LoadData(model, model.modelType);
 
     inspirecv::Image img = inspirecv::Image::Create(GET_DATA("data/crop/crop.png"));
     auto result = face_landmark(img);
@@ -73,7 +73,7 @@ TEST_CASE("test_Quality", "[track_module") {
     auto ret = archive.LoadModel("pose_quality", model);
     REQUIRE(ret == 0);
     FacePoseQualityAdapt quality;
-    ret = quality.loadData(model, model.modelType);
+    ret = quality.LoadData(model, model.modelType);
     REQUIRE(ret == 0);
 
     inspirecv::Image img = inspirecv::Image::Create(GET_DATA("data/crop/crop.png"));

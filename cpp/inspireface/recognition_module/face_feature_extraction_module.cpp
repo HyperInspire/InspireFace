@@ -29,7 +29,7 @@ int32_t FeatureExtractionModule::InitExtractInteraction(InspireModel &model) {
     try {
         auto input_size = model.Config().get<std::vector<int>>("input_size");
         m_extract_ = std::make_shared<ExtractAdapt>();
-        auto ret = m_extract_->loadData(model, model.modelType);
+        auto ret = m_extract_->LoadData(model, model.modelType);
         if (ret != InferenceWrapper::WrapperOk) {
             return HERR_ARCHIVE_LOAD_FAILURE;
         }

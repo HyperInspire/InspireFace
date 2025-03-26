@@ -1,7 +1,7 @@
 #include <inspirecv/inspirecv.h>
 #include <inspireface/track_module/face_track_module.h>
 #include "inspireface/initialization_module/launch.h"
-#include <inspireface/middleware/frame_process.h>
+#include <inspireface/image_process/frame_process.h>
 
 using namespace inspire;
 

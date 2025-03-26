@@ -6,7 +6,7 @@
 #ifndef INSPIRE_FACE_PIPELINE_MODULE_H
 #define INSPIRE_FACE_PIPELINE_MODULE_H
 
-#include "middleware/frame_process.h"
+#include "image_process/frame_process.h"
 #include "common/face_info/face_object_internal.h"
 #include "attribute/face_attribute_adapt.h"
 #include "attribute/mask_predict_adapt.h"

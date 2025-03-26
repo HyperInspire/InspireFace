@@ -10,7 +10,7 @@
 #include "face_detect/rnet_adapt.h"
 #include "landmark/face_landmark_adapt.h"
 #include "common/face_info/face_object_internal.h"
-#include "middleware/frame_process.h"
+#include "image_process/frame_process.h"
 #include "quality/face_pose_quality_adapt.h"
 #include "middleware/model_archive/inspire_archive.h"
 #include "tracker_optional/bytetrack/BYTETracker.h"

@@ -10,7 +10,7 @@
 #include "common/face_info/face_object_internal.h"
 #include "common/face_data/face_data_type.h"
 #include "middleware/model_archive/inspire_archive.h"
-#include "middleware/frame_process.h"
+#include "image_process/frame_process.h"
 
 namespace inspire {
 

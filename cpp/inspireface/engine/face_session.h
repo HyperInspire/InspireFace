@@ -14,7 +14,7 @@
 #include "pipeline_module/face_pipeline_module.h"
 #include "middleware/model_archive/inspire_archive.h"
 #include "recognition_module/face_feature_extraction_module.h"
-#include "middleware/frame_process.h"
+#include "image_process/frame_process.h"
 #include "common/face_data/face_serialize_tools.h"
 
 namespace inspire {

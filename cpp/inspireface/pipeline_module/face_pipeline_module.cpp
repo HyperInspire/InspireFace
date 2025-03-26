@@ -225,7 +225,7 @@ int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, FaceObje
 
 int32_t FacePipelineModule::InitFaceAttributePredict(InspireModel &model) {
     m_attribute_predict_ = std::make_shared<FaceAttributePredictAdapt>();
-    auto ret = m_attribute_predict_->loadData(model, model.modelType);
+    auto ret = m_attribute_predict_->LoadData(model, model.modelType);
     if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
@@ -234,7 +234,7 @@ int32_t FacePipelineModule::InitFaceAttributePredict(InspireModel &model) {
 
 int32_t FacePipelineModule::InitMaskPredict(InspireModel &model) {
     m_mask_predict_ = std::make_shared<MaskPredictAdapt>();
-    auto ret = m_mask_predict_->loadData(model, model.modelType);
+    auto ret = m_mask_predict_->LoadData(model, model.modelType);
     if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
@@ -248,7 +248,7 @@ int32_t FacePipelineModule::InitRBGAntiSpoofing(InspireModel &model) {
 #else
     m_rgb_anti_spoofing_ = std::make_shared<RBGAntiSpoofingAdapt>(input_size[0]);
 #endif
-    auto ret = m_rgb_anti_spoofing_->loadData(model, model.modelType);
+    auto ret = m_rgb_anti_spoofing_->LoadData(model, model.modelType);
     if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
@@ -257,7 +257,7 @@ int32_t FacePipelineModule::InitRBGAntiSpoofing(InspireModel &model) {
 
 int32_t FacePipelineModule::InitBlinkFromLivenessInteraction(InspireModel &model) {
     m_blink_predict_ = std::make_shared<BlinkPredictAdapt>();
-    auto ret = m_blink_predict_->loadData(model, model.modelType);
+    auto ret = m_blink_predict_->LoadData(model, model.modelType);
     if (ret != InferenceWrapper::WrapperOk) {
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
