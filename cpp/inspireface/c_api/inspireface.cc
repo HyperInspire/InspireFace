@@ -15,6 +15,7 @@
 #if defined(ISF_ENABLE_TENSORRT)
 #include "cuda_toolkit.h"
 #endif
+#include <cstdarg>
 
 using namespace inspire;
 
