@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <data_type.h>
+#include <mutex>
 
 #define FEATURE_HUB_DB FeatureHubDB::GetInstance()
 
@@ -230,10 +231,8 @@ public:
 private:
     class Impl;
 
-    // 指向实现的唯一指针
     std::unique_ptr<Impl> pImpl;
 
-    // 静态成员，用于单例模式
     static std::mutex mutex_;
     static std::shared_ptr<FeatureHubDB> instance_;
 };
