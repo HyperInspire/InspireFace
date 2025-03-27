@@ -237,6 +237,56 @@ struct FaceEmbedding {
     Embedded embedding;
 };
 
+/** @struct FaceInteractionState
+ *  @brief Struct for face interaction state data.
+ *
+ *  Contains the confidence scores for face interaction.
+ */
+struct FaceInteractionState {
+    float left_eye_status_confidence;
+    float right_eye_status_confidence;
+};
+
+/** @struct FaceInteractionAction
+ *  @brief Struct for face interaction action data.
+ *
+ *  Contains the actions for face interaction.
+ */
+struct FaceInteractionAction {
+    int32_t normal;     ///< Normal action.
+    int32_t shake;      ///< Shake action.
+    int32_t jawOpen;    ///< Jaw open action.
+    int32_t headRaise;  ///< Head raise action.
+    int32_t blink;      ///< Blink action.
+};
+
+/** @struct FaceAttributeResult
+ *  @brief Struct for face attribute result data.
+ *
+ *  Contains the results for face attribute.
+ */
+struct FaceAttributeResult {
+    int32_t race;        ///< Race of the detected face.
+                         ///< 0: Black;
+                         ///< 1: Asian;
+                         ///< 2: Latino/Hispanic;
+                         ///< 3: Middle Eastern;
+                         ///< 4: White;
+    int32_t gender;      ///< Gender of the detected face.
+                         ///< 0: Female;
+                         ///< 1: Male;
+    int32_t ageBracket;  ///< Age bracket of the detected face.
+                         ///< 0: 0-2 years old;
+                         ///< 1: 3-9 years old;
+                         ///< 2: 10-19 years old;
+                         ///< 3: 20-29 years old;
+                         ///< 4: 30-39 years old;
+                         ///< 5: 40-49 years old;
+                         ///< 6: 50-59 years old;
+                         ///< 7: 60-69 years old;
+                         ///< 8: more than 70 years old;
+};
+
 /** @} */
 
 }  // namespace inspire

@@ -9,10 +9,10 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <data_type.h>
+#include "data_type.h"
 #include <mutex>
 
-#define FEATURE_HUB_DB FeatureHubDB::GetInstance()
+#define INSPIREFACE_FEATURE_HUB FeatureHubDB::GetInstance()
 
 namespace inspire {
 

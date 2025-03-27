@@ -326,10 +326,15 @@ docker-compose up
 ```
 
 ## Example
-### C/C++ Sample
-To integrate InspireFace into a C/C++ project, you simply need to link the InspireFace library and include the appropriate header files. Below is a basic example demonstrating face detection:
+### C/C++ Sample: Use the recommended CAPI interface
+To integrate InspireFace into a C/C++ project, you simply need to link the InspireFace library and include the appropriate header files(We recommend using the more compatible **CAPI** headers). Below is a basic example demonstrating face detection:
 
 ```c
+#include <inspireface.h>
+#include <herror.h>
+
+...
+  
 HResult ret;
 // The resource file must be loaded before it can be used
 ret = HFLaunchInspireFace(packPath);
@@ -401,12 +406,89 @@ if (ret != HSUCCEED) {
     printf("Release session error: %lu\n", ret);
     return ret;
 }
+
+...
 ```
 For more examples, you can refer to the `cpp/sample` sub-project located in the root directory. You can compile these sample executables by enabling the `ISF_BUILD_WITH_SAMPLE` option during the compilation process.
 
 - **More detailed cases**: [C/C++ Sample](cpp/sample/api/)
 
 **Note**: For each error code feedback, you can click on this [link](doc/Error-Feedback-Codes.md) to view detailed explanations.
+
+### C++ Sample: Use the C++ version of the header files
+
+If you want to use C++ header files, then you need to enable **ISF_INSTALL_CPP_HEADER** during compilation. Executing the install command will add the C++ header files.
+
+```c++
+#include <iostream>
+#include <memory>
+#include <inspireface/inspireface.hpp>
+
+...
+
+// Set log level to info
+INSPIRE_SET_LOG_LEVEL(inspire::LogLevel::ISF_LOG_INFO);
+
+int32_t ret = 0;
+// Global init(you only need to call once)
+ret = INSPIREFACE_CONTEXT->Load("Pikachu");
+INSPIREFACE_CHECK_MSG(ret == HSUCCEED, "Load model failed");
+
+// Create face algorithm session
+inspire::ContextCustomParameter custom_param;
+custom_param.enable_recognition = true;
+custom_param.enable_detect_mode_landmark = true;
+auto max_detect_face = 5;
+auto detect_level_px = 320; // 160, 320, 640
+
+// Create a face algorithm session
+std::shared_ptr<inspire::Session> session(
+    inspire::Session::CreatePtr(inspire::DETECT_MODE_ALWAYS_DETECT, max_detect_face, custom_param, detect_level_px));
+
+// Load image(default format is BGR)
+inspirecv::Image image = inspirecv::Image::Create("face.jpg");
+
+// Create frame process
+inspirecv::FrameProcess process =
+    inspirecv::FrameProcess::Create(image, inspirecv::BGR, inspirecv::ROTATION_0);
+
+// Detect face
+std::vector<inspire::FaceTrackWrap> detect_results;
+ret = session->FaceDetectAndTrack(process, detect_results);
+INSPIRE_LOGI("Number of faces detected: %d", detect_results.size());
+if (detect_results.size() == 0)
+{
+    INSPIRE_LOGW("No face detected");
+    return -1;
+}
+
+// Copy image
+inspirecv::Image image_copy = image.Clone();
+// Draw face
+auto thickness = 2;
+for (auto &face : detect_results)
+{
+    auto rect = session->GetFaceBoundingBox(face);
+    auto lmk = session->GetNumOfFaceDenseLandmark(face);
+    image_copy.DrawRect(rect, inspirecv::Color::Red, thickness);
+    for (auto &point : lmk)
+    {
+        image_copy.DrawCircle(point.As<int>(), 0, inspirecv::Color::Orange, thickness);
+    }
+}
+// Save draw image
+image_copy.Write("result.jpg");
+
+// Face Embedding extract
+inspire::FaceEmbedding face_embedding;
+// Extract the first face feature
+ret = session->FaceFeatureExtract(process, detect_results[0], face_embedding);
+INSPIRE_LOGI("Length of face embedding: %d", face_embedding.embedding.size());
+
+...
+```
+
+Please note that the C++ interface has not been fully tested. It is recommended to use the **CAPI** interface as the primary option.
 
 ### Python Native Sample
 
@@ -655,7 +737,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 ## Short-Term Plan
 
 - [x] Add TensorRT backend support.
-- [ ] Add Add c++ style header files.
+- [x] Add Add c++ style header files.
 - [ ] Add the RKNPU backend support for Android .
 - [ ] Example app project for Android and iOS samples.
 - [ ] Add the batch forward feature.

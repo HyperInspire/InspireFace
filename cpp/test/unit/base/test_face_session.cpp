@@ -42,7 +42,7 @@ TEST_CASE("test_FaceSession", "[face_session") {
             const auto &faces = session.GetTrackingFaceList();
             REQUIRE(faces.size() > 0);
             Embedded feature;
-            HyperFaceData hyper_face_data = FaceObjectInternalToHyperFaceData(faces[0]);
+            FaceTrackWrap hyper_face_data = FaceObjectInternalToHyperFaceData(faces[0]);
             float norm;
             ret = session.FaceRecognitionModule()->FaceExtract(process, hyper_face_data, feature, norm);
             REQUIRE(ret == HSUCCEED);
@@ -66,7 +66,7 @@ TEST_CASE("test_FaceSession", "[face_session") {
         auto faces = session.GetTrackingFaceList();
         REQUIRE(ret == HSUCCEED);
         Embedded feature;
-        HyperFaceData hyper_face_data = FaceObjectInternalToHyperFaceData(faces[0]);
+        FaceTrackWrap hyper_face_data = FaceObjectInternalToHyperFaceData(faces[0]);
         float norm;
         ret = session.FaceRecognitionModule()->FaceExtract(proc3, hyper_face_data, feature, norm);
         REQUIRE(ret == HSUCCEED);

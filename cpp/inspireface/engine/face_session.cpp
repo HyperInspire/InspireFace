@@ -81,7 +81,7 @@ int32_t FaceSession::FaceDetectAndTrack(inspirecv::FrameProcess& process) {
     m_face_track_->UpdateStream(process);
     for (int i = 0; i < m_face_track_->trackingFace.size(); ++i) {
         auto& face = m_face_track_->trackingFace[i];
-        HyperFaceData data = FaceObjectInternalToHyperFaceData(face, i);
+        FaceTrackWrap data = FaceObjectInternalToHyperFaceData(face, i);
         ByteArray byteArray;
         auto ret = RunSerializeHyperFaceData(data, byteArray);
         if (ret != HSUCCEED) {
@@ -139,7 +139,7 @@ const int32_t FaceSession::GetNumberOfFacesCurrentlyDetected() const {
     return m_face_track_->trackingFace.size();
 }
 
-int32_t FaceSession::FacesProcess(inspirecv::FrameProcess& process, const std::vector<HyperFaceData>& faces, const CustomPipelineParameter& param) {
+int32_t FaceSession::FacesProcess(inspirecv::FrameProcess& process, const std::vector<FaceTrackWrap>& faces, const CustomPipelineParameter& param) {
     std::lock_guard<std::mutex> lock(m_mtx_);
     m_mask_results_cache_.resize(faces.size(), -1.0f);
     m_rgb_liveness_results_cache_.resize(faces.size(), -1.0f);
@@ -326,7 +326,7 @@ const std::vector<int>& FaceSession::GetFaceRaiseHeadAactionsResultCache() const
 int32_t FaceSession::FaceFeatureExtract(inspirecv::FrameProcess& process, FaceBasicData& data, bool normalize) {
     std::lock_guard<std::mutex> lock(m_mtx_);
     int32_t ret;
-    HyperFaceData face = {0};
+    FaceTrackWrap face = {0};
     ret = RunDeserializeHyperFaceData((char*)data.data, data.dataSize, face);
     if (ret != HSUCCEED) {
         return ret;
@@ -337,7 +337,7 @@ int32_t FaceSession::FaceFeatureExtract(inspirecv::FrameProcess& process, FaceBa
     return ret;
 }
 
-int32_t FaceSession::FaceFeatureExtract(inspirecv::FrameProcess& process, HyperFaceData& data, bool normalize) {
+int32_t FaceSession::FaceFeatureExtract(inspirecv::FrameProcess& process, FaceTrackWrap& data, bool normalize) {
     std::lock_guard<std::mutex> lock(m_mtx_);
     int32_t ret;
     m_face_feature_cache_.clear();
@@ -352,7 +352,7 @@ int32_t FaceSession::FaceFeatureExtract(inspirecv::FrameProcess& process, HyperF
 int32_t FaceSession::FaceGetFaceAlignmentImage(inspirecv::FrameProcess& process, FaceBasicData& data, inspirecv::Image& image) {
     std::lock_guard<std::mutex> lock(m_mtx_);
     int32_t ret;
-    HyperFaceData face = {0};
+    FaceTrackWrap face = {0};
     ret = RunDeserializeHyperFaceData((char*)data.data, data.dataSize, face);
     if (ret != HSUCCEED) {
         return ret;
@@ -372,7 +372,7 @@ const CustomPipelineParameter& FaceSession::getMParameter() const {
 
 int32_t FaceSession::FaceQualityDetect(FaceBasicData& data, float& result) {
     int32_t ret;
-    HyperFaceData face = {0};
+    FaceTrackWrap face = {0};
     ret = RunDeserializeHyperFaceData((char*)data.data, data.dataSize, face);
     //    PrintHyperFaceData(face);
     if (ret != HSUCCEED) {

@@ -13,7 +13,7 @@
 #include "configurable.h"
 #include "log.h"
 #include "model_archive/inspire_archive.h"
-#include "nexus_processor/image_processor.h"
+#include "image_process/nexus_processor/image_processor.h"
 #include <launch.h>
 #include "system.h"
 

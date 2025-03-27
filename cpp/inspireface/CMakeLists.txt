@@ -224,7 +224,6 @@ if (ISF_ENABLE_TENSORRT)
     message(STATUS "\t CUDA_RUNTIME_LIBRARY: ${CUDA_RUNTIME_LIBRARY}")
 endif()
 
-
 # Install lib
 install(TARGETS InspireFace
         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib
@@ -239,6 +238,13 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/intypedef.h DESTINATION ${CMAKE_
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface/herror.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/version.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/)
+
+if(ISF_INSTALL_CPP_HEADER)
+    # Install cpp api header file
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface/ DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include/inspireface/)
+
+    install(DIRECTORY ${INSPIRECV_INCLUDE_PATH}/inspirecv DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include/)
+endif()
 
 if (ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu1")
     # Install rknn 3rd lib

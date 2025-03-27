@@ -1,7 +1,7 @@
 #ifndef INSPIRE_CUDA_TOOLKIT_H
 #define INSPIRE_CUDA_TOOLKIT_H
 
-#include <data_type.h>
+#include "data_type.h"
 
 namespace inspire {
 

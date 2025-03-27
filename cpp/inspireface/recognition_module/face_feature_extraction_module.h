@@ -8,7 +8,7 @@
 #include <mutex>
 #include "extract/extract_adapt.h"
 #include "common/face_info/face_object_internal.h"
-#include "face_data_type.h"
+#include "face_token.h"
 #include "middleware/model_archive/inspire_archive.h"
 #include "frame_process.h"
 
@@ -46,11 +46,11 @@ public:
      * @brief Extracts a facial feature from an image and stores it in the provided 'embedded'.
      *
      * @param processor inspirecv::FrameProcess instance containing the image.
-     * @param face HyperFaceData representing the detected face.
+     * @param face FaceTrackWrap representing the detected face.
      * @param embedded Output parameter to store the extracted facial feature.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t FaceExtract(inspirecv::FrameProcess &processor, const HyperFaceData &face, Embedded &embedded, float &norm, bool normalize = true);
+    int32_t FaceExtract(inspirecv::FrameProcess &processor, const FaceTrackWrap &face, Embedded &embedded, float &norm, bool normalize = true);
 
     /**
      * @brief Gets the Extract instance associated with this FaceRecognition.

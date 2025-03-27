@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include <mutex>
+#include "data_type.h"
 
 #define SIMILARITY_CONVERTER_UPDATE_CONFIG(config) inspire::SimilarityConverter::getInstance().updateConfig(config)
 #define SIMILARITY_CONVERTER_RUN(cosine) inspire::SimilarityConverter::getInstance().convert(cosine)
@@ -22,7 +23,7 @@ struct SimilarityConverterConfig {
     double outputMax = 1.0;    // Maximum value of output range
 };
 
-class SimilarityConverter {
+class INSPIRE_API SimilarityConverter {
 private:
     SimilarityConverterConfig config;
     double outputScale;              // Scale of output range

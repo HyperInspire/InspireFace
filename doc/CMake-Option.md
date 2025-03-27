@@ -7,6 +7,7 @@ Here are the translation details for the compilation parameters as per your requ
 | ISF_THIRD_PARTY_DIR                   | 3rdparty | Path for required third-party libraries                                                                                                                    |
 | ISF_SANITIZE_ADDRESS                      | OFF | Enable AddressSanitizer for memory error detection                                                                                                         |
 | ISF_SANITIZE_LEAK                         | OFF | Enable LeakSanitizer to detect memory leaks                                                                                                                |
+| ISF_INSTALL_CPP_HEADER | OFF | Whether to install the headers file for **CPP-API** (the default **C-API** with wider compatibility is recommended) |
 | ISF_ENABLE_RKNN                           | OFF | Enable RKNN for Rockchip embedded devices                                                                                                                  |
 | ISF_RK_DEVICE_TYPE                        | RV1109RV1126 | Target device model for Rockchip(Supports RV1109RV1126, RV1106, RV356X) |
 | ISF_RK_COMPILER_TYPE | armhf | The **armhf**, **armhf-uclibc** and aarch64 compilers are supported. Select one based on the actual situation |

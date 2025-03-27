@@ -13,7 +13,7 @@
 #include "liveness/rgb_anti_spoofing_adapt.h"
 #include "liveness/blink_predict_adapt.h"
 #include "middleware/model_archive/inspire_archive.h"
-#include "face_data_type.h"
+#include "face_token.h"
 
 namespace inspire {
 
@@ -62,11 +62,11 @@ public:
      * @brief Processes a face using the specified FaceProcessFunction.
      *
      * @param image CameraStream instance containing the image.
-     * @param face HyperFaceData representing the detected face.
+     * @param face FaceTrackWrap representing the detected face.
      * @param proc The FaceProcessFunction to apply to the face.
      * @return int32_t Status code indicating success (0) or failure.
      */
-    int32_t Process(inspirecv::FrameProcess &processor, const HyperFaceData &face, FaceProcessFunctionOption proc);
+    int32_t Process(inspirecv::FrameProcess &processor, const FaceTrackWrap &face, FaceProcessFunctionOption proc);
 
     /**
      * @brief Get Rgb AntiSpoofing module

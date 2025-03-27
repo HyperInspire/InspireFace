@@ -68,11 +68,11 @@ public:
     /**
      * @brief Processes faces using the provided pipeline parameters.
      * @param image Camera stream containing faces.
-     * @param faces Vector of HyperFaceData for detected faces.
+     * @param faces Vector of FaceTrackWrap for detected faces.
      * @param param Custom pipeline parameters.
      * @return int32_t Status code of the processing.
      */
-    int32_t FacesProcess(inspirecv::FrameProcess& process, const std::vector<HyperFaceData>& faces, const CustomPipelineParameter& param);
+    int32_t FacesProcess(inspirecv::FrameProcess& process, const std::vector<FaceTrackWrap>& faces, const CustomPipelineParameter& param);
 
     /**
      * @brief Retrieves the face recognition module.
@@ -103,10 +103,10 @@ public:
     /**
      * @brief Extracts features of a face from an image.
      * @param image Camera stream containing the face.
-     * @param data HyperFaceData to store extracted features.
+     * @param data FaceTrackWrap to store extracted features.
      * @return int32_t Status code of the feature extraction.
      */
-    int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, HyperFaceData& data, bool normalize = true);
+    int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, FaceTrackWrap& data, bool normalize = true);
 
     /**
      * @brief Gets the face alignment image.
