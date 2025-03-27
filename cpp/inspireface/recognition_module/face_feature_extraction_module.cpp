@@ -45,7 +45,7 @@ int32_t FeatureExtractionModule::QueryStatus() const {
     return m_status_code_;
 }
 
-int32_t FeatureExtractionModule::FaceExtract(inspirecv::FrameProcess &processor, const HyperFaceData &face, Embedded &embedded, float &norm,
+int32_t FeatureExtractionModule::FaceExtract(inspirecv::FrameProcess &processor, const FaceTrackWrap &face, Embedded &embedded, float &norm,
                                              bool normalize) {
     if (m_extract_ == nullptr) {
         return HERR_SESS_REC_EXTRACT_FAILURE;

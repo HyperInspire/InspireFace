@@ -11,7 +11,7 @@
 // Include the implementation details here, hidden from public header
 #include "middleware/model_archive/inspire_archive.h"
 #if defined(ISF_ENABLE_RGA)
-#include "middleware/nexus_processor/rga/dma_alloc.h"
+#include "image_process/nexus_processor/rga/dma_alloc.h"
 #endif
 #include <mutex>
 #include "middleware/inference_wrapper/inference_wrapper.h"

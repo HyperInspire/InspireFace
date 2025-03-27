@@ -123,6 +123,10 @@ FrameProcess FrameProcess::Create(const uint8_t *data_buffer, int height, int wi
     return process;
 }
 
+FrameProcess FrameProcess::Create(const inspirecv::Image &image, DATA_FORMAT data_format, ROTATION_MODE rotation_mode) {
+    return Create(image.Data(), image.Height(), image.Width(), data_format, rotation_mode);
+}
+
 FrameProcess::FrameProcess() : pImpl(std::make_unique<Impl>()) {
     pImpl->UpdateTransformMatrix();
 }

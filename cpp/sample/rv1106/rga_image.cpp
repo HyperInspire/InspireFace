@@ -1,5 +1,5 @@
 #include <inspirecv/inspirecv.h>
-#include <inspireface/middleware/nexus_processor/image_processor.h>
+#include <inspireface/image_process/nexus_processor/image_processor.h>
 #include "log.h"
 #include <inspirecv/time_spend.h>
 

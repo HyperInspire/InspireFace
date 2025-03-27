@@ -34,6 +34,20 @@ public:
                           int32_t track_by_detect_mode_fps = -1);
 
     /**
+     * @brief Create a new session pointer with the given parameters.
+     * @param detect_mode The mode of face detection.
+     * @param max_detect_face The maximum number of faces to detect.
+     * @param param The custom pipeline parameter.
+     * @param detect_level_px The detection level in pixels.
+     * @param track_by_detect_mode_fps The tracking frame rate.
+     * @return A raw pointer to new session. The caller is responsible for memory management.
+     */
+    static Session* CreatePtr(DetectModuleMode detect_mode, int32_t max_detect_face, const CustomPipelineParameter& param,
+                              int32_t detect_level_px = -1, int32_t track_by_detect_mode_fps = -1) {
+        return new Session(Create(detect_mode, max_detect_face, param, detect_level_px, track_by_detect_mode_fps));
+    }
+
+    /**
      * @brief Set the track preview size.
      * @param preview_size The preview size.
      */
@@ -74,21 +88,28 @@ public:
      * @param process The frame process.
      * @param results The detected faces.
      */
-    int32_t FaceDetectAndTrack(inspirecv::FrameProcess& process, std::vector<HyperFaceData>& results);
+    int32_t FaceDetectAndTrack(inspirecv::FrameProcess& process, std::vector<FaceTrackWrap>& results);
+
+    /**
+     * @brief Get the face bounding box.
+     * @param face_data The face data.
+     * @return The face bounding box.
+     */
+    inspirecv::Rect2i GetFaceBoundingBox(const FaceTrackWrap& face_data);
 
     /**
      * @brief Get the number of face dense landmark.
      * @param face_data The face data.
      * @return The number of face dense landmark.
      */
-    std::vector<inspirecv::Point2f> GetNumOfFaceDenseLandmark(const HyperFaceData& face_data);
+    std::vector<inspirecv::Point2f> GetNumOfFaceDenseLandmark(const FaceTrackWrap& face_data);
 
     /**
      * @brief Get the face five key points.
      * @param face_data The face data.
      * @return The face five key points.
      */
-    std::vector<inspirecv::Point2f> GetFaceFiveKeyPoints(const HyperFaceData& face_data);
+    std::vector<inspirecv::Point2f> GetFaceFiveKeyPoints(const FaceTrackWrap& face_data);
 
     /**
      * @brief Extract the face feature.
@@ -97,7 +118,7 @@ public:
      * @param embedding The face embedding.
      * @param normalize The normalize flag.
      */
-    int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, HyperFaceData& data, FaceEmbedding& embedding, bool normalize = true);
+    int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, FaceTrackWrap& data, FaceEmbedding& embedding, bool normalize = true);
 
     /**
      * @brief Get the face alignment image.
@@ -105,7 +126,7 @@ public:
      * @param data The face data.
      * @param wrapped The wrapped image.
      */
-    void GetFaceAlignmentImage(inspirecv::FrameProcess& process, HyperFaceData& data, inspirecv::Image& wrapped);
+    void GetFaceAlignmentImage(inspirecv::FrameProcess& process, FaceTrackWrap& data, inspirecv::Image& wrapped);
 
     /**
      * @brief Multiple face pipeline process.
@@ -114,7 +135,7 @@ public:
      * @param face_data_list The face data list.
      */
     int32_t MultipleFacePipelineProcess(inspirecv::FrameProcess& process, const CustomPipelineParameter& param,
-                                        const std::vector<HyperFaceData>& face_data_list);
+                                        const std::vector<FaceTrackWrap>& face_data_list);
 
     /**
      * @brief Get the RGB liveness confidence.

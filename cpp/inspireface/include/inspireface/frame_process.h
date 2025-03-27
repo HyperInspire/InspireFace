@@ -36,6 +36,16 @@ public:
                                ROTATION_MODE rotation_mode = ROTATION_0);
 
     /**
+     * @brief Create a FrameProcess instance from an inspirecv::Image.
+     *
+     * @param image The image to process.
+     * @param data_format Data format (e.g., NV21, RGBA).
+     * @param rotation_mode Rotation mode (e.g., ROTATION_0, ROTATION_90).
+     * @return FrameProcess instance.
+     */
+    static FrameProcess Create(const inspirecv::Image& image, DATA_FORMAT data_format = BGR, ROTATION_MODE rotation_mode = ROTATION_0);
+
+    /**
      * @brief Default constructor.
      */
     FrameProcess();

@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     param.enable_face_quality = true;
     inspire::Session session = inspire::Session::Create(inspire::DetectModuleMode::DETECT_MODE_ALWAYS_DETECT, 1, param);
 
-    std::vector<inspire::HyperFaceData> results;
+    std::vector<inspire::FaceTrackWrap> results;
     int32_t ret;
     ret = session.FaceDetectAndTrack(process, results);
     if (ret != 0) {

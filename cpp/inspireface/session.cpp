@@ -40,7 +40,7 @@ public:
         m_face_session_->SetTrackModeDetectInterval(detect_interval);
     }
 
-    int32_t FaceDetectAndTrack(inspirecv::FrameProcess& process, std::vector<HyperFaceData>& results) {
+    int32_t FaceDetectAndTrack(inspirecv::FrameProcess& process, std::vector<FaceTrackWrap>& results) {
         int32_t ret = m_face_session_->FaceDetectAndTrack(process);
         if (ret < 0) {
             return ret;
@@ -48,7 +48,7 @@ public:
 
         const auto& face_data = m_face_session_->GetDetectCache();
         for (const auto& data : face_data) {
-            HyperFaceData hyper_face_data;
+            FaceTrackWrap hyper_face_data;
             RunDeserializeHyperFaceData(data, hyper_face_data);
             results.emplace_back(hyper_face_data);
         }
@@ -56,7 +56,11 @@ public:
         return ret;
     }
 
-    std::vector<inspirecv::Point2f> GetNumOfFaceDenseLandmark(const HyperFaceData& face_data) {
+    inspirecv::Rect2i GetFaceBoundingBox(const FaceTrackWrap& face_data) {
+        return inspirecv::Rect2i{face_data.rect.x, face_data.rect.y, face_data.rect.width, face_data.rect.height};
+    }
+
+    std::vector<inspirecv::Point2f> GetNumOfFaceDenseLandmark(const FaceTrackWrap& face_data) {
         std::vector<inspirecv::Point2f> points;
         for (const auto& p : face_data.densityLandmark) {
             points.emplace_back(inspirecv::Point2f(p.x, p.y));
@@ -64,7 +68,7 @@ public:
         return points;
     }
 
-    std::vector<inspirecv::Point2f> GetFaceFiveKeyPoints(const HyperFaceData& face_data) {
+    std::vector<inspirecv::Point2f> GetFaceFiveKeyPoints(const FaceTrackWrap& face_data) {
         std::vector<inspirecv::Point2f> points;
         for (const auto& p : face_data.keyPoints) {
             points.emplace_back(inspirecv::Point2f(p.x, p.y));
@@ -72,7 +76,7 @@ public:
         return points;
     }
 
-    int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, HyperFaceData& data, FaceEmbedding& embedding, bool normalize) {
+    int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, FaceTrackWrap& data, FaceEmbedding& embedding, bool normalize) {
         int32_t ret = m_face_session_->FaceFeatureExtract(process, data, normalize);
         if (ret < 0) {
             return ret;
@@ -84,7 +88,7 @@ public:
         return ret;
     }
 
-    void GetFaceAlignmentImage(inspirecv::FrameProcess& process, HyperFaceData& data, inspirecv::Image& wrapped) {
+    void GetFaceAlignmentImage(inspirecv::FrameProcess& process, FaceTrackWrap& data, inspirecv::Image& wrapped) {
         std::vector<inspirecv::Point2f> pointsFive;
         for (const auto& p : data.keyPoints) {
             pointsFive.push_back(inspirecv::Point2f(p.x, p.y));
@@ -94,7 +98,7 @@ public:
     }
 
     int32_t MultipleFacePipelineProcess(inspirecv::FrameProcess& process, const CustomPipelineParameter& param,
-                                        const std::vector<HyperFaceData>& face_data_list) {
+                                        const std::vector<FaceTrackWrap>& face_data_list) {
         int32_t ret = m_face_session_->FacesProcess(process, face_data_list, param);
         return ret;
     }
@@ -189,28 +193,32 @@ void Session::SetTrackModeDetectInterval(int32_t detect_interval) {
     pImpl->SetTrackModeDetectInterval(detect_interval);
 }
 
-int32_t Session::FaceDetectAndTrack(inspirecv::FrameProcess& process, std::vector<HyperFaceData>& results) {
+int32_t Session::FaceDetectAndTrack(inspirecv::FrameProcess& process, std::vector<FaceTrackWrap>& results) {
     return pImpl->FaceDetectAndTrack(process, results);
 }
 
-std::vector<inspirecv::Point2f> Session::GetNumOfFaceDenseLandmark(const HyperFaceData& face_data) {
+inspirecv::Rect2i Session::GetFaceBoundingBox(const FaceTrackWrap& face_data) {
+    return pImpl->GetFaceBoundingBox(face_data);
+}
+
+std::vector<inspirecv::Point2f> Session::GetNumOfFaceDenseLandmark(const FaceTrackWrap& face_data) {
     return pImpl->GetNumOfFaceDenseLandmark(face_data);
 }
 
-std::vector<inspirecv::Point2f> Session::GetFaceFiveKeyPoints(const HyperFaceData& face_data) {
+std::vector<inspirecv::Point2f> Session::GetFaceFiveKeyPoints(const FaceTrackWrap& face_data) {
     return pImpl->GetFaceFiveKeyPoints(face_data);
 }
 
-int32_t Session::FaceFeatureExtract(inspirecv::FrameProcess& process, HyperFaceData& data, FaceEmbedding& embedding, bool normalize) {
+int32_t Session::FaceFeatureExtract(inspirecv::FrameProcess& process, FaceTrackWrap& data, FaceEmbedding& embedding, bool normalize) {
     return pImpl->FaceFeatureExtract(process, data, embedding, normalize);
 }
 
-void Session::GetFaceAlignmentImage(inspirecv::FrameProcess& process, HyperFaceData& data, inspirecv::Image& wrapped) {
+void Session::GetFaceAlignmentImage(inspirecv::FrameProcess& process, FaceTrackWrap& data, inspirecv::Image& wrapped) {
     pImpl->GetFaceAlignmentImage(process, data, wrapped);
 }
 
 int32_t Session::MultipleFacePipelineProcess(inspirecv::FrameProcess& process, const CustomPipelineParameter& param,
-                                             const std::vector<HyperFaceData>& face_data_list) {
+                                             const std::vector<FaceTrackWrap>& face_data_list) {
     return pImpl->MultipleFacePipelineProcess(process, param, face_data_list);
 }
 

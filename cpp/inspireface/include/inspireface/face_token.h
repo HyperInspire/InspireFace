@@ -52,9 +52,9 @@ typedef struct TransMatrix {
 } TransMatrix;
 
 /**
- * Struct to represent hyper face data.
+ * Struct to represent basic face data.
  */
-typedef struct HyperFaceData {
+typedef struct FaceTrackWrap {
     int trackState;                ///< Track state
     int inGroupIndex;              ///< Index within a group
     int trackId;                   ///< Track ID
@@ -66,7 +66,7 @@ typedef struct HyperFaceData {
     float quality[5];              ///< Quality values for key points
     Point2F densityLandmark[106];  ///< Face density landmark
     int densityLandmarkEnable;     ///< Density landmark enable
-} HyperFaceData;
+} FaceTrackWrap;
 
 }  // namespace inspire
 

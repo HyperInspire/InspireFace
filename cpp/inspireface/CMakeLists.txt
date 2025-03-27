@@ -6,7 +6,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
-option(ISF_INSTALL_CPP_HEADER "Install cpp api header file." OFF)
 
 string(TIMESTAMP BUILD_TIMESTAMP "%Y-%m-%d")
 set(EXTENDED_INFORMATION "InspireFace[Community Edition]")
@@ -224,10 +223,6 @@ if (ISF_ENABLE_TENSORRT)
     message(STATUS "\t TENSORRT_LIBRARY_RUNTIME: ${TENSORRT_LIBRARY_RUNTIME}")
     message(STATUS "\t CUDA_RUNTIME_LIBRARY: ${CUDA_RUNTIME_LIBRARY}")
 endif()
-if(ISF_INSTALL_CPP_HEADER)
-    message(STATUS "\t ISF_INSTALL_CPP_HEADER: ${ISF_INSTALL_CPP_HEADER}")
-endif()
-
 
 # Install lib
 install(TARGETS InspireFace

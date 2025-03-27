@@ -73,7 +73,7 @@ FacePipelineModule::FacePipelineModule(InspireArchive &archive, bool enableLiven
     }
 }
 
-int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const HyperFaceData &face, FaceProcessFunctionOption proc) {
+int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const FaceTrackWrap &face, FaceProcessFunctionOption proc) {
     inspirecv::Image originImage;
     inspirecv::Image scaleImage;
     switch (proc) {
