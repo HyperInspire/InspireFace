@@ -10,7 +10,7 @@
 #include "feature_hub_db.h"
 #include <launch.h>
 #include "initialization_module/resource_manage.h"
-#include "recognition_module/similarity_converter.h"
+#include "similarity_converter.h"
 #include "middleware/inference_wrapper/inference_wrapper.h"
 #if defined(ISF_ENABLE_TENSORRT)
 #include "cuda_toolkit.h"

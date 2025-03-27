@@ -10,7 +10,7 @@
 #include "inspire_model/inspire_model.h"
 #include "yaml-cpp/yaml.h"
 #include "fstream"
-#include "recognition_module/similarity_converter.h"
+#include "similarity_converter.h"
 
 namespace inspire {
 

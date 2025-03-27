@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <inspirecv/inspirecv.h>
-#include <data_type.h>
+#include "data_type.h"
 
 namespace inspirecv {
 

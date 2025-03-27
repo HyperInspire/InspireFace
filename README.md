@@ -655,7 +655,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 ## Short-Term Plan
 
 - [x] Add TensorRT backend support.
-- [ ] Add Add c++ style header files.
+- [x] Add Add c++ style header files.
 - [ ] Add the RKNPU backend support for Android .
 - [ ] Example app project for Android and iOS samples.
 - [ ] Add the batch forward feature.

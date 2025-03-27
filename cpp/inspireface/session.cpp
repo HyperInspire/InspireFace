@@ -56,6 +56,22 @@ public:
         return ret;
     }
 
+    std::vector<inspirecv::Point2f> GetNumOfFaceDenseLandmark(const HyperFaceData& face_data) {
+        std::vector<inspirecv::Point2f> points;
+        for (const auto& p : face_data.densityLandmark) {
+            points.emplace_back(inspirecv::Point2f(p.x, p.y));
+        }
+        return points;
+    }
+
+    std::vector<inspirecv::Point2f> GetFaceFiveKeyPoints(const HyperFaceData& face_data) {
+        std::vector<inspirecv::Point2f> points;
+        for (const auto& p : face_data.keyPoints) {
+            points.emplace_back(inspirecv::Point2f(p.x, p.y));
+        }
+        return points;
+    }
+
     int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, HyperFaceData& data, FaceEmbedding& embedding, bool normalize) {
         int32_t ret = m_face_session_->FaceFeatureExtract(process, data, normalize);
         if (ret < 0) {
@@ -77,6 +93,60 @@ public:
         wrapped = process.ExecuteImageAffineProcessing(trans, FACE_CROP_SIZE, FACE_CROP_SIZE);
     }
 
+    int32_t MultipleFacePipelineProcess(inspirecv::FrameProcess& process, const CustomPipelineParameter& param,
+                                        const std::vector<HyperFaceData>& face_data_list) {
+        int32_t ret = m_face_session_->FacesProcess(process, face_data_list, param);
+        return ret;
+    }
+
+    std::vector<float> GetRGBLivenessConfidence() {
+        return m_face_session_->GetDetConfidenceCache();
+    }
+
+    std::vector<float> GetFaceMaskConfidence() {
+        return m_face_session_->GetMaskResultsCache();
+    }
+
+    std::vector<float> GetFaceQualityConfidence() {
+        return m_face_session_->GetFaceQualityScoresResultsCache();
+    }
+
+    std::vector<FaceInteractionState> GetFaceInteractionState() {
+        auto left_eyes_confidence = m_face_session_->GetFaceInteractionLeftEyeStatusCache();
+        auto right_eyes_confidence = m_face_session_->GetFaceInteractionRightEyeStatusCache();
+        std::vector<FaceInteractionState> face_interaction_state;
+        for (size_t i = 0; i < left_eyes_confidence.size(); ++i) {
+            face_interaction_state.emplace_back(FaceInteractionState{left_eyes_confidence[i], right_eyes_confidence[i]});
+        }
+        return face_interaction_state;
+    }
+
+    std::vector<FaceInteractionAction> GetFaceInteractionAction() {
+        auto num = m_face_session_->GetFaceNormalAactionsResultCache().size();
+        std::vector<FaceInteractionAction> face_interaction_action;
+        face_interaction_action.resize(num);
+        for (size_t i = 0; i < num; ++i) {
+            face_interaction_action[i].normal = m_face_session_->GetFaceNormalAactionsResultCache()[i];
+            face_interaction_action[i].shake = m_face_session_->GetFaceShakeAactionsResultCache()[i];
+            face_interaction_action[i].jawOpen = m_face_session_->GetFaceJawOpenAactionsResultCache()[i];
+            face_interaction_action[i].headRaise = m_face_session_->GetFaceRaiseHeadAactionsResultCache()[i];
+            face_interaction_action[i].blink = m_face_session_->GetFaceBlinkAactionsResultCache()[i];
+        }
+        return face_interaction_action;
+    }
+
+    std::vector<FaceAttributeResult> GetFaceAttributeResult() {
+        auto num = m_face_session_->GetFaceNormalAactionsResultCache().size();
+        std::vector<FaceAttributeResult> face_attribute_result;
+        face_attribute_result.resize(num);
+        for (size_t i = 0; i < num; ++i) {
+            face_attribute_result[i].race = m_face_session_->GetFaceRaceResultsCache()[i];
+            face_attribute_result[i].gender = m_face_session_->GetFaceGenderResultsCache()[i];
+            face_attribute_result[i].ageBracket = m_face_session_->GetFaceAgeBracketResultsCache()[i];
+        }
+        return face_attribute_result;
+    }
+
     std::unique_ptr<FaceSession> m_face_session_;
 };
 
@@ -88,7 +158,7 @@ Session::Session(Session&&) noexcept = default;
 
 Session& Session::operator=(Session&&) noexcept = default;
 
-Session Session::Create(DetectModuleMode detect_mode, int32_t max_detect_face, CustomPipelineParameter param, int32_t detect_level_px,
+Session Session::Create(DetectModuleMode detect_mode, int32_t max_detect_face, const CustomPipelineParameter& param, int32_t detect_level_px,
                         int32_t track_by_detect_mode_fps) {
     Session session;
     session.pImpl->Configure(detect_mode, max_detect_face, param, detect_level_px, track_by_detect_mode_fps);
@@ -123,12 +193,49 @@ int32_t Session::FaceDetectAndTrack(inspirecv::FrameProcess& process, std::vecto
     return pImpl->FaceDetectAndTrack(process, results);
 }
 
+std::vector<inspirecv::Point2f> Session::GetNumOfFaceDenseLandmark(const HyperFaceData& face_data) {
+    return pImpl->GetNumOfFaceDenseLandmark(face_data);
+}
+
+std::vector<inspirecv::Point2f> Session::GetFaceFiveKeyPoints(const HyperFaceData& face_data) {
+    return pImpl->GetFaceFiveKeyPoints(face_data);
+}
+
 int32_t Session::FaceFeatureExtract(inspirecv::FrameProcess& process, HyperFaceData& data, FaceEmbedding& embedding, bool normalize) {
     return pImpl->FaceFeatureExtract(process, data, embedding, normalize);
 }
 
 void Session::GetFaceAlignmentImage(inspirecv::FrameProcess& process, HyperFaceData& data, inspirecv::Image& wrapped) {
     pImpl->GetFaceAlignmentImage(process, data, wrapped);
+}
+
+int32_t Session::MultipleFacePipelineProcess(inspirecv::FrameProcess& process, const CustomPipelineParameter& param,
+                                             const std::vector<HyperFaceData>& face_data_list) {
+    return pImpl->MultipleFacePipelineProcess(process, param, face_data_list);
+}
+
+std::vector<float> Session::GetRGBLivenessConfidence() {
+    return pImpl->GetRGBLivenessConfidence();
+}
+
+std::vector<float> Session::GetFaceMaskConfidence() {
+    return pImpl->GetFaceMaskConfidence();
+}
+
+std::vector<float> Session::GetFaceQualityConfidence() {
+    return pImpl->GetFaceQualityConfidence();
+}
+
+std::vector<FaceInteractionState> Session::GetFaceInteractionState() {
+    return pImpl->GetFaceInteractionState();
+}
+
+std::vector<FaceInteractionAction> Session::GetFaceInteractionAction() {
+    return pImpl->GetFaceInteractionAction();
+}
+
+std::vector<FaceAttributeResult> Session::GetFaceAttributeResult() {
+    return pImpl->GetFaceAttributeResult();
 }
 
 }  // namespace inspire

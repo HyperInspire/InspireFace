@@ -8,7 +8,7 @@
 #ifndef INSPIRE_FACE_FACEDATATYPE_H
 #define INSPIRE_FACE_FACEDATATYPE_H
 
-#include <data_type.h>
+#include "data_type.h"
 
 namespace inspire {
 
