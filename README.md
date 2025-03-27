@@ -330,6 +330,11 @@ docker-compose up
 To integrate InspireFace into a C/C++ project, you simply need to link the InspireFace library and include the appropriate header files(We recommend using the more compatible **CAPI** headers). Below is a basic example demonstrating face detection:
 
 ```c
+#include <inspireface.h>
+#include <herror.h>
+
+...
+  
 HResult ret;
 // The resource file must be loaded before it can be used
 ret = HFLaunchInspireFace(packPath);
@@ -401,6 +406,8 @@ if (ret != HSUCCEED) {
     printf("Release session error: %lu\n", ret);
     return ret;
 }
+
+...
 ```
 For more examples, you can refer to the `cpp/sample` sub-project located in the root directory. You can compile these sample executables by enabling the `ISF_BUILD_WITH_SAMPLE` option during the compilation process.
 
