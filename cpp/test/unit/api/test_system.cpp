@@ -1,9 +1,7 @@
-#if 0
 #include <iostream>
 #include "settings/test_settings.h"
 #include "inspireface/c_api/inspireface.h"
-#include "inspireface/herror.h"
-#include "opencv2/opencv.hpp"
+#include "inspireface/include/inspireface/herror.h"
 #include "unit/test_helper/test_tools.h"
 #include <cstdio>
 
@@ -178,7 +176,7 @@ TEST_CASE("test_SystemStreamReleaseCase", "[system]") {
 
         for (int i = 0; i < createCount; ++i) {
             HFImageStream imgHandle;
-            auto image = cv::imread(GET_DATA("data/bulk/pedestrian.png"));
+            auto image = inspirecv::Image::Create(GET_DATA("data/bulk/pedestrian.png"));
             ret = CVImageToImageStream(image, imgHandle);
             REQUIRE(ret == HSUCCEED);
             streams[i] = imgHandle;
@@ -267,5 +265,3 @@ TEST_CASE("test_SystemStreamReleaseCase", "[system]") {
         REQUIRE(count == 0);
     }
 }
-
-#endif
