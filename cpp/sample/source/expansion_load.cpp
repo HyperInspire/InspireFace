@@ -5,6 +5,7 @@
 #include "inspireface/track_module/landmark/face_landmark_adapt.h"
 #include "inspireface/track_module/quality/face_pose_quality_adapt.h"
 #include "inspireface/recognition_module/extract/extract_adapt.h"
+#include "inspireface/include/inspireface/spend_timer.h"
 
 void test_face_detect() {
     inspire::InspireModel model;
@@ -14,13 +15,14 @@ void test_face_detect() {
     faceDetectAdapt.LoadData(model, model.modelType);
     inspirecv::Image image = inspirecv::Image::Create("test_res/data/bulk/kun.jpg");
     inspire::FaceLocList faces;
-    inspirecv::TimeSpend timeSpend("Face Detect@" + std::to_string(input_size));
+    inspire::SpendTimer timeSpend("Face Detect@" + std::to_string(input_size));
     for (int i = 0; i < 1000; i++) {
         timeSpend.Start();
         faces = faceDetectAdapt(image);
         timeSpend.Stop();
     }
     std::cout << timeSpend << std::endl;
+    ;
     std::cout << "faces size: " << faces.size() << std::endl;
     for (auto &face : faces) {
         inspirecv::Rect2i rect = inspirecv::Rect2i::Create(face.x1, face.y1, face.x2 - face.x1, face.y2 - face.y1);
@@ -38,13 +40,14 @@ void test_landmark() {
     inspirecv::Image image = inspirecv::Image::Create("test_res/data/crop/crop.png");
     image = image.Resize(input_size, input_size);
     std::vector<float> lmk;
-    inspirecv::TimeSpend timeSpend("Landmark@" + std::to_string(input_size));
+    inspire::SpendTimer timeSpend("Landmark@" + std::to_string(input_size));
     timeSpend.Start();
     for (int i = 0; i < 10; i++) {
         lmk = landmarkAdapt(image);
     }
     timeSpend.Stop();
     std::cout << timeSpend << std::endl;
+    ;
     for (int i = 0; i < inspire::FaceLandmarkAdapt::NUM_OF_LANDMARK; i++) {
         auto p = inspirecv::Point2i::Create(lmk[i * 2] * input_size, lmk[i * 2 + 1] * input_size);
         image.DrawCircle(p, 5, {0, 0, 255});
@@ -61,13 +64,14 @@ void test_quality() {
     inspirecv::Image image = inspirecv::Image::Create("test_res/data/crop/crop.png");
     image = image.Resize(input_size, input_size);
     inspire::FacePoseQualityAdaptResult quality;
-    inspirecv::TimeSpend timeSpend("Pose Quality@" + std::to_string(input_size));
+    inspire::SpendTimer timeSpend("Pose Quality@" + std::to_string(input_size));
     timeSpend.Start();
     for (int i = 0; i < 10; i++) {
         quality = poseQualityAdapt(image);
     }
     timeSpend.Stop();
     std::cout << timeSpend << std::endl;
+    ;
     std::cout << "quality: " << quality.pitch << ", " << quality.yaw << ", " << quality.roll << std::endl;
     for (int i = 0; i < quality.lmk.size(); i++) {
         std::cout << "lmk: " << quality.lmk[i].GetX() << ", " << quality.lmk[i].GetY() << std::endl;
@@ -87,7 +91,7 @@ void test_feature() {
     image = image.Resize(input_size, input_size);
     float norm;
     bool normalize = true;
-    inspirecv::TimeSpend timeSpend("Extract@" + std::to_string(input_size));
+    inspire::SpendTimer timeSpend("Extract@" + std::to_string(input_size));
     timeSpend.Start();
     inspire::Embedded feature;
     for (int i = 0; i < 10; i++) {
@@ -95,6 +99,7 @@ void test_feature() {
     }
     timeSpend.Stop();
     std::cout << timeSpend << std::endl;
+    ;
     std::cout << "feature: " << feature.size() << std::endl;
 }
 

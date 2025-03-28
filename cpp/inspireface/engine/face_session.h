@@ -16,6 +16,7 @@
 #include "recognition_module/face_feature_extraction_module.h"
 #include "frame_process.h"
 #include "common/face_data/face_serialize_tools.h"
+#include "spend_timer.h"
 
 namespace inspire {
 
@@ -380,7 +381,7 @@ private:
     std::mutex m_mtx_;  ///< Mutex for thread safety.
 
     // cost spend
-    std::shared_ptr<inspirecv::TimeSpend> m_face_track_cost_;
+    std::shared_ptr<inspire::SpendTimer> m_face_track_cost_;
 
     int m_enable_track_cost_spend_ = 0;
 };

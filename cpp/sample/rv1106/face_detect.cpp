@@ -31,7 +31,7 @@ int main() {
 
     auto img = inspirecv::Image::Create("data/bulk/kun.jpg");
 
-    inspirecv::TimeSpend time_spend("Detect");
+    inspire::SpendTimer time_spend("Detect");
     FaceLocList results;
     for (int i = 0; i < 10; i++) {
         time_spend.Start();
