@@ -2,7 +2,7 @@
 #include <inspireface/pipeline_module/attribute/face_attribute_adapt.h>
 #include <inspireface/include/inspireface/launch.h>
 #include <inspireface/include/inspireface/frame_process.h>
-#include <inspirecv/time_spend.h>
+#include <inspireface/include/inspireface/spend_timer.h>
 #include <log.h>
 
 using namespace inspire;

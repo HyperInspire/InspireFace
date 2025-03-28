@@ -5,7 +5,7 @@
 
 #include "face_detect_adapt.h"
 #include "cost_time.h"
-#include <inspirecv/time_spend.h>
+#include "spend_timer.h"
 
 namespace inspire {
 
