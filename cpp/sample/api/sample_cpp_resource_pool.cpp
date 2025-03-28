@@ -92,5 +92,9 @@ int main(int argc, char** argv) {
     timer.Stop();
     std::cout << timer << std::endl;
 
+    // Convert microseconds to milliseconds and print
+    double milliseconds = timer.Total() / 1000.0;
+    std::cout << "Total execution time: " << milliseconds << " ms" << std::endl;
+
     return 0;
 }
