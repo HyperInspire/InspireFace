@@ -54,7 +54,6 @@ int main(int argc, char** argv) {
     int remainingTasks = loop % thread_num;
 
     // Run the task in parallel
-    inspire::SpendTimer timer("Number of threads: " + std::to_string(thread_num) + ", Number of tasks: " + std::to_string(loop));
     for (int i = 0; i < thread_num; ++i) {
         int taskCount = tasksPerThread + (i < remainingTasks ? 1 : 0);
         threads.emplace_back([&, taskCount]() {
@@ -75,9 +74,12 @@ int main(int argc, char** argv) {
         });
     }
 
+    inspire::SpendTimer timer("Number of threads: " + std::to_string(thread_num) + ", Number of tasks: " + std::to_string(loop));
+    timer.Start();
     for (auto& thread : threads) {
         thread.join();
     }
+    timer.Stop();
     std::cout << timer << std::endl;
 
     return 0;
