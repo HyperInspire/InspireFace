@@ -44,7 +44,7 @@ TEST_CASE("test_BenchmarkFaceDetect", "[benchmark]") {
             REQUIRE(multipleFaceData.detectedNum == 1);
             timeSpend.Stop();
         }
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
 
         ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
@@ -78,7 +78,7 @@ TEST_CASE("test_BenchmarkFaceDetect", "[benchmark]") {
             REQUIRE(multipleFaceData.detectedNum == 1);
             timeSpend.Stop();
         }
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
 
         ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
@@ -112,7 +112,7 @@ TEST_CASE("test_BenchmarkFaceDetect", "[benchmark]") {
             REQUIRE(multipleFaceData.detectedNum == 1);
             timeSpend.Stop();
         }
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
 
         ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
@@ -151,7 +151,7 @@ TEST_CASE("test_BenchmarkFaceTrack", "[benchmark]") {
         REQUIRE(multipleFaceData.detectedNum == 1);
         timeSpend.Stop();
     }
-    std::cout << timeSpend;
+    std::cout << timeSpend << std::endl;
 
     ret = HFReleaseImageStream(imgHandle);
     REQUIRE(ret == HSUCCEED);
@@ -195,7 +195,7 @@ TEST_CASE("test_BenchmarkFaceExtractWithAlign", "[benchmark]") {
         REQUIRE(ret == HSUCCEED);
         timeSpend.Stop();
     }
-    std::cout << timeSpend;
+    std::cout << timeSpend << std::endl;
 
     ret = HFReleaseImageStream(imgHandle);
     REQUIRE(ret == HSUCCEED);
@@ -265,7 +265,7 @@ TEST_CASE("test_BenchmarkFaceComparison", "[benchmark]") {
         REQUIRE(ret == HSUCCEED);
         timeSpend.Stop();
     }
-    std::cout << timeSpend;
+    std::cout << timeSpend << std::endl;
 
     ret = HFReleaseImageStream(imgHandle);
     REQUIRE(ret == HSUCCEED);
@@ -342,7 +342,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchPersistence", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -410,7 +410,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchPersistence", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -478,7 +478,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchPersistence", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -543,7 +543,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchMemory", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -601,7 +601,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchMemory", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -660,7 +660,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchMemory", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);

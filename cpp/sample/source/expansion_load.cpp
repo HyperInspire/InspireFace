@@ -21,7 +21,8 @@ void test_face_detect() {
         faces = faceDetectAdapt(image);
         timeSpend.Stop();
     }
-    std::cout << timeSpend;
+    std::cout << timeSpend << std::endl;
+    ;
     std::cout << "faces size: " << faces.size() << std::endl;
     for (auto &face : faces) {
         inspirecv::Rect2i rect = inspirecv::Rect2i::Create(face.x1, face.y1, face.x2 - face.x1, face.y2 - face.y1);
@@ -45,7 +46,8 @@ void test_landmark() {
         lmk = landmarkAdapt(image);
     }
     timeSpend.Stop();
-    std::cout << timeSpend;
+    std::cout << timeSpend << std::endl;
+    ;
     for (int i = 0; i < inspire::FaceLandmarkAdapt::NUM_OF_LANDMARK; i++) {
         auto p = inspirecv::Point2i::Create(lmk[i * 2] * input_size, lmk[i * 2 + 1] * input_size);
         image.DrawCircle(p, 5, {0, 0, 255});
@@ -68,7 +70,8 @@ void test_quality() {
         quality = poseQualityAdapt(image);
     }
     timeSpend.Stop();
-    std::cout << timeSpend;
+    std::cout << timeSpend << std::endl;
+    ;
     std::cout << "quality: " << quality.pitch << ", " << quality.yaw << ", " << quality.roll << std::endl;
     for (int i = 0; i < quality.lmk.size(); i++) {
         std::cout << "lmk: " << quality.lmk[i].GetX() << ", " << quality.lmk[i].GetY() << std::endl;
@@ -95,7 +98,8 @@ void test_feature() {
         feature = extractAdapt(image, norm, normalize);
     }
     timeSpend.Stop();
-    std::cout << timeSpend;
+    std::cout << timeSpend << std::endl;
+    ;
     std::cout << "feature: " << feature.size() << std::endl;
 }
 

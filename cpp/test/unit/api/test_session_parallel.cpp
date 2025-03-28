@@ -51,7 +51,8 @@ TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
             REQUIRE(similarity == Approx(expectedSimilarity).epsilon(0.01));
         }
         timeSpend.Stop();
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
+        ;
 
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
@@ -118,7 +119,8 @@ TEST_CASE("test_SessionParallel", "[Session][Parallel]") {
         }
 
         timeSpend.Stop();
-        std::cout << timeSpend;
+        std::cout << timeSpend << std::endl;
+        ;
 
         // Optional: Output average similarity(stability)
         TEST_PRINT("Average similarity: {}", (similaritySum / loop));
