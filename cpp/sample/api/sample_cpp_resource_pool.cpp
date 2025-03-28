@@ -65,11 +65,11 @@ int main(int argc, char** argv) {
                 ret = sessionGuard->FaceDetectAndTrack(process, results);
                 if (ret != 0) {
                     std::cerr << "FaceDetectAndTrack failed" << std::endl;
-                    return ret;
+                    break;
                 }
                 if (results.size() == 0) {
                     std::cerr << "Not found face" << std::endl;
-                    return -1;
+                    break;
                 }
             }
         });
