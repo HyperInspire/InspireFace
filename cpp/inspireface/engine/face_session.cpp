@@ -43,7 +43,7 @@ int32_t FaceSession::Configuration(DetectModuleMode detect_mode, int32_t max_det
 
     m_face_pipeline_ = std::make_shared<FacePipelineModule>(INSPIREFACE_CONTEXT->getMArchive(), param.enable_liveness, param.enable_mask_detect,
                                                             param.enable_face_attribute, param.enable_interaction_liveness);
-    m_face_track_cost_ = std::make_shared<inspirecv::TimeSpend>("FaceTrack");
+    m_face_track_cost_ = std::make_shared<inspire::SpendTimer>("FaceTrack");
 
     return HSUCCEED;
 }

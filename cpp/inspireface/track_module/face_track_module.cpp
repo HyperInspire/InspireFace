@@ -213,7 +213,7 @@ bool FaceTrackModule::TrackFace(inspirecv::FrameProcess &image, FaceObjectIntern
 }
 
 void FaceTrackModule::UpdateStream(inspirecv::FrameProcess &image) {
-    inspirecv::TimeSpend total("UpdateStream");
+    inspire::SpendTimer total("UpdateStream");
     total.Start();
     COST_TIME_SIMPLE(FaceTrackUpdateStream);
     detection_index_ += 1;

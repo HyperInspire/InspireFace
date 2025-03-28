@@ -13,7 +13,7 @@ FaceDetectAdapt::FaceDetectAdapt(int input_size, float nms_threshold, float cls_
 : AnyNetAdapter("FaceDetectAdapt"), m_nms_threshold_(nms_threshold), m_cls_threshold_(cls_threshold), m_input_size_(input_size) {}
 
 FaceLocList FaceDetectAdapt::operator()(const inspirecv::Image &bgr) {
-    inspirecv::TimeSpend time_image_process("Image process");
+    inspire::SpendTimer time_image_process("Image process");
     time_image_process.Start();
     int ori_w = bgr.Width();
     int ori_h = bgr.Height();
@@ -31,14 +31,14 @@ FaceLocList FaceDetectAdapt::operator()(const inspirecv::Image &bgr) {
     // pad.Write("pad.jpg");
     //    LOGD("Prepare");
     AnyTensorOutputs outputs;
-    inspirecv::TimeSpend time_forward("Forward");
+    inspire::SpendTimer time_forward("Forward");
     time_forward.Start();
     Forward(pad, outputs);
     time_forward.Stop();
     // std::cout << time_forward << std::endl;
     //    LOGD("Forward");
 
-    inspirecv::TimeSpend time_decode("Decode");
+    inspire::SpendTimer time_decode("Decode");
     time_decode.Start();
     std::vector<FaceLoc> results;
     std::vector<int> strides = {8, 16, 32};

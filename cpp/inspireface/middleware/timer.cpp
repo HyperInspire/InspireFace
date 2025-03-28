@@ -90,9 +90,9 @@ const std::string &SpendTimer::name() const {
 
 std::string SpendTimer::Report() const {
     if (is_enable) {
-        INSPIRE_LOGD("[Time(us) total:%llu ave:%llu min:%llu max:%llu count:%llu %s]", Total(), Average(), Min(), Max(), Count(), name_.c_str());
+        INSPIRE_LOGW("[Time(us) Total:%llu Ave:%llu Min:%llu Max:%llu Count:%llu <%s>]", Total(), Average(), Min(), Max(), Count(), name_.c_str());
     } else {
-        INSPIRE_LOGD("Timer Disabled.");
+        INSPIRE_LOGW("Timer Disabled.");
     }
     return "";
 }

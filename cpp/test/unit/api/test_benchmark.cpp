@@ -34,7 +34,7 @@ TEST_CASE("test_BenchmarkFaceDetect", "[benchmark]") {
         ret = CVImageToImageStream(image, imgHandle);
         REQUIRE(ret == HSUCCEED);
 
-        inspirecv::TimeSpend timeSpend("Face Detect@160");
+        inspire::SpendTimer timeSpend("Face Detect@160");
         for (size_t i = 0; i < loop; i++) {
             timeSpend.Start();
             // Extract basic face information from photos
@@ -44,7 +44,7 @@ TEST_CASE("test_BenchmarkFaceDetect", "[benchmark]") {
             REQUIRE(multipleFaceData.detectedNum == 1);
             timeSpend.Stop();
         }
-        std::cout << timeSpend << std::endl;
+        std::cout << timeSpend;
 
         ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
@@ -68,7 +68,7 @@ TEST_CASE("test_BenchmarkFaceDetect", "[benchmark]") {
         ret = CVImageToImageStream(image, imgHandle);
         REQUIRE(ret == HSUCCEED);
 
-        inspirecv::TimeSpend timeSpend("Face Detect@320");
+        inspire::SpendTimer timeSpend("Face Detect@320");
         for (size_t i = 0; i < loop; i++) {
             timeSpend.Start();
             // Extract basic face information from photos
@@ -78,7 +78,7 @@ TEST_CASE("test_BenchmarkFaceDetect", "[benchmark]") {
             REQUIRE(multipleFaceData.detectedNum == 1);
             timeSpend.Stop();
         }
-        std::cout << timeSpend << std::endl;
+        std::cout << timeSpend;
 
         ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
@@ -102,7 +102,7 @@ TEST_CASE("test_BenchmarkFaceDetect", "[benchmark]") {
         ret = CVImageToImageStream(image, imgHandle);
         REQUIRE(ret == HSUCCEED);
 
-        inspirecv::TimeSpend timeSpend("Face Detect@640");
+        inspire::SpendTimer timeSpend("Face Detect@640");
         for (size_t i = 0; i < loop; i++) {
             timeSpend.Start();
             // Extract basic face information from photos
@@ -112,7 +112,7 @@ TEST_CASE("test_BenchmarkFaceDetect", "[benchmark]") {
             REQUIRE(multipleFaceData.detectedNum == 1);
             timeSpend.Stop();
         }
-        std::cout << timeSpend << std::endl;
+        std::cout << timeSpend;
 
         ret = HFReleaseImageStream(imgHandle);
         REQUIRE(ret == HSUCCEED);
@@ -141,7 +141,7 @@ TEST_CASE("test_BenchmarkFaceTrack", "[benchmark]") {
     ret = CVImageToImageStream(image, imgHandle);
     REQUIRE(ret == HSUCCEED);
 
-    inspirecv::TimeSpend timeSpend("Face Track");
+    inspire::SpendTimer timeSpend("Face Track");
     for (size_t i = 0; i < loop; i++) {
         timeSpend.Start();
         // Extract basic face information from photos
@@ -151,7 +151,7 @@ TEST_CASE("test_BenchmarkFaceTrack", "[benchmark]") {
         REQUIRE(multipleFaceData.detectedNum == 1);
         timeSpend.Stop();
     }
-    std::cout << timeSpend << std::endl;
+    std::cout << timeSpend;
 
     ret = HFReleaseImageStream(imgHandle);
     REQUIRE(ret == HSUCCEED);
@@ -186,7 +186,7 @@ TEST_CASE("test_BenchmarkFaceExtractWithAlign", "[benchmark]") {
     ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
     REQUIRE(ret == HSUCCEED);
 
-    inspirecv::TimeSpend timeSpend("Face Extract With Align");
+    inspire::SpendTimer timeSpend("Face Extract With Align");
     for (size_t i = 0; i < loop; i++) {
         timeSpend.Start();
         // Extract basic face information from photos
@@ -195,7 +195,7 @@ TEST_CASE("test_BenchmarkFaceExtractWithAlign", "[benchmark]") {
         REQUIRE(ret == HSUCCEED);
         timeSpend.Stop();
     }
-    std::cout << timeSpend << std::endl;
+    std::cout << timeSpend;
 
     ret = HFReleaseImageStream(imgHandle);
     REQUIRE(ret == HSUCCEED);
@@ -257,7 +257,7 @@ TEST_CASE("test_BenchmarkFaceComparison", "[benchmark]") {
     featureZyQuery.size = featureNum;
     REQUIRE(ret == HSUCCEED);
 
-    inspirecv::TimeSpend timeSpend("Face Comparison");
+    inspire::SpendTimer timeSpend("Face Comparison");
     for (int i = 0; i < loop; ++i) {
         timeSpend.Start();
         HFloat compRes;
@@ -265,7 +265,7 @@ TEST_CASE("test_BenchmarkFaceComparison", "[benchmark]") {
         REQUIRE(ret == HSUCCEED);
         timeSpend.Stop();
     }
-    std::cout << timeSpend << std::endl;
+    std::cout << timeSpend;
 
     ret = HFReleaseImageStream(imgHandle);
     REQUIRE(ret == HSUCCEED);
@@ -333,7 +333,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchPersistence", "[benchmark]") {
         searchFeature.data = searchFeat.data();
         HFloat confidence = 0.0f;
         HFFaceFeatureIdentity mostSimilar = {0};
-        inspirecv::TimeSpend timeSpend("Face Search 1k@Persistence");
+        inspire::SpendTimer timeSpend("Face Search 1k@Persistence");
         for (size_t i = 0; i < loop; i++) {
             timeSpend.Start();
             ret = HFFeatureHubFaceSearch(searchFeature, &confidence, &mostSimilar);
@@ -342,7 +342,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchPersistence", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend << std::endl;
+        std::cout << timeSpend;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -401,7 +401,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchPersistence", "[benchmark]") {
         searchFeature.data = searchFeat.data();
         HFloat confidence = 0.0f;
         HFFaceFeatureIdentity mostSimilar = {0};
-        inspirecv::TimeSpend timeSpend("Face Search 5k@Persistence");
+        inspire::SpendTimer timeSpend("Face Search 5k@Persistence");
         for (size_t i = 0; i < loop; i++) {
             timeSpend.Start();
             ret = HFFeatureHubFaceSearch(searchFeature, &confidence, &mostSimilar);
@@ -410,7 +410,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchPersistence", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend << std::endl;
+        std::cout << timeSpend;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -469,7 +469,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchPersistence", "[benchmark]") {
         searchFeature.data = searchFeat.data();
         HFloat confidence = 0.0f;
         HFFaceFeatureIdentity mostSimilar = {0};
-        inspirecv::TimeSpend timeSpend("Face Search 10k@Persistence");
+        inspire::SpendTimer timeSpend("Face Search 10k@Persistence");
         for (size_t i = 0; i < loop; i++) {
             timeSpend.Start();
             ret = HFFeatureHubFaceSearch(searchFeature, &confidence, &mostSimilar);
@@ -478,7 +478,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchPersistence", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend << std::endl;
+        std::cout << timeSpend;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -534,7 +534,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchMemory", "[benchmark]") {
         searchFeature.data = searchFeat.data();
         HFloat confidence = 0.0f;
         HFFaceFeatureIdentity mostSimilar = {0};
-        inspirecv::TimeSpend timeSpend("Face Search 1k@Memory");
+        inspire::SpendTimer timeSpend("Face Search 1k@Memory");
         for (size_t i = 0; i < loop; i++) {
             timeSpend.Start();
             ret = HFFeatureHubFaceSearch(searchFeature, &confidence, &mostSimilar);
@@ -543,7 +543,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchMemory", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend << std::endl;
+        std::cout << timeSpend;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -592,7 +592,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchMemory", "[benchmark]") {
         searchFeature.data = searchFeat.data();
         HFloat confidence = 0.0f;
         HFFaceFeatureIdentity mostSimilar = {0};
-        inspirecv::TimeSpend timeSpend("Face Search 5k@Memory");
+        inspire::SpendTimer timeSpend("Face Search 5k@Memory");
         for (size_t i = 0; i < loop; i++) {
             timeSpend.Start();
             ret = HFFeatureHubFaceSearch(searchFeature, &confidence, &mostSimilar);
@@ -601,7 +601,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchMemory", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend << std::endl;
+        std::cout << timeSpend;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
@@ -651,7 +651,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchMemory", "[benchmark]") {
         searchFeature.data = searchFeat.data();
         HFloat confidence = 0.0f;
         HFFaceFeatureIdentity mostSimilar = {0};
-        inspirecv::TimeSpend timeSpend("Face Search 10k@Memory");
+        inspire::SpendTimer timeSpend("Face Search 10k@Memory");
         for (size_t i = 0; i < loop; i++) {
             timeSpend.Start();
             ret = HFFeatureHubFaceSearch(searchFeature, &confidence, &mostSimilar);
@@ -660,7 +660,7 @@ TEST_CASE("test_BenchmarkFaceHubSearchMemory", "[benchmark]") {
             REQUIRE(confidence > 0.88f);
             timeSpend.Stop();
         }
-        std::cout << timeSpend << std::endl;
+        std::cout << timeSpend;
 
         ret = HFFeatureHubDataDisable();
         REQUIRE(ret == HSUCCEED);
