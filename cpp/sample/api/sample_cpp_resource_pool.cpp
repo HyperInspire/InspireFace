@@ -6,13 +6,29 @@
 #include <inspireface/include/inspireface/session.h>
 #include <inspireface/include/inspireface/launch.h>
 #include <inspireface/middleware/thread/resource_pool.h>
+#include <inspireface/include/inspireface/spend_timer.h>
 #include <thread>
 
 int main(int argc, char** argv) {
+    if (argc != 5) {
+        std::cerr << "Usage: " << argv[0] << " <model_path> <image_path> <loop_count> <thread_num>" << std::endl;
+        return -1;
+    }
+
     std::string model_path = argv[1];
     std::string image_path = argv[2];
-    int loop = 100000;
-    int thread_num = 4;
+    int loop = std::stoi(argv[3]);
+    int thread_num = std::stoi(argv[4]);
+
+    if (thread_num > 10) {
+        std::cerr << "Error: thread_num cannot be greater than 10" << std::endl;
+        return -1;
+    }
+    if (loop < 1000) {
+        std::cerr << "Error: loop count must be at least 1000" << std::endl;
+        return -1;
+    }
+
     INSPIREFACE_CONTEXT->Load(model_path);
     inspirecv::Image image = inspirecv::Image::Create(image_path);
     inspirecv::FrameProcess process =
@@ -37,6 +53,8 @@ int main(int argc, char** argv) {
     int tasksPerThread = loop / thread_num;
     int remainingTasks = loop % thread_num;
 
+    // Run the task in parallel
+    inspire::SpendTimer timer("Number of threads: " + std::to_string(thread_num) + ", Number of tasks: " + std::to_string(loop));
     for (int i = 0; i < thread_num; ++i) {
         int taskCount = tasksPerThread + (i < remainingTasks ? 1 : 0);
         threads.emplace_back([&, taskCount]() {
@@ -56,6 +74,7 @@ int main(int argc, char** argv) {
             }
         });
     }
+    std::cout << timer << std::endl;
 
     for (auto& thread : threads) {
         thread.join();
