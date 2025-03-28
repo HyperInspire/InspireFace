@@ -9,10 +9,7 @@
 #include <memory>
 #include <string>
 #include <cstdint>
-
-#ifndef INSPIRE_API
-#define INSPIRE_API
-#endif
+#include "data_type.h"
 
 #define INSPIREFACE_CONTEXT inspire::Launch::GetInstance()
 
@@ -23,7 +20,7 @@ class InspireArchive;
 
 // The Launch class acts as the main entry point for the InspireFace system.
 // It is responsible for loading static resources such as models, configurations, and parameters.
-class INSPIRE_API Launch {
+class INSPIRE_API_EXPORT Launch {
 public:
     // Special Backend enum for CoreML
     enum NNInferenceBackend {

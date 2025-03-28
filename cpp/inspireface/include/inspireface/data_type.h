@@ -6,6 +6,8 @@
 #ifndef INSPIRE_FACE_DATATYPE_H
 #define INSPIRE_FACE_DATATYPE_H
 
+#include <inspirecv/inspirecv.h>
+
 #include <cstdint>
 #if defined(_WIN32) && (defined(_DEBUG) || defined(DEBUG))
 #define _CRTDBG_MAP_ALLOC
@@ -16,7 +18,15 @@
 #define INSPIRE_API
 #endif
 
-#include <inspirecv/inspirecv.h>
+#if defined(_WIN32)
+#ifdef ISF_BUILD_SHARED_LIBS
+#define INSPIRE_API_EXPORT __declspec(dllexport)
+#else
+#define INSPIRE_API_EXPORT
+#endif
+#else
+#define INSPIRE_API_EXPORT __attribute__((visibility("default")))
+#endif  // _WIN32
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264338327950288

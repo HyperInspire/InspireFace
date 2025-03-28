@@ -3,10 +3,7 @@
 
 #include <memory>
 #include <string>
-
-#ifndef INSPIRE_API
-#define INSPIRE_API
-#endif
+#include "data_type.h"
 
 // Macro to extract the filename from the full path
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
@@ -46,7 +43,7 @@ enum LogLevel { ISF_LOG_NONE = 0, ISF_LOG_DEBUG, ISF_LOG_INFO, ISF_LOG_WARN, ISF
  *
  * Implementation details are hidden using the PIMPL (Pointer to Implementation) pattern.
  */
-class INSPIRE_API LogManager {
+class INSPIRE_API_EXPORT LogManager {
 public:
     // Get the singleton instance
     static LogManager* getInstance();

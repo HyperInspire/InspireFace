@@ -20,7 +20,7 @@ enum DATA_FORMAT { NV21 = 0, NV12 = 1, RGBA = 2, RGB = 3, BGR = 4, BGRA = 5 };
 /**
  * @brief A class to handle camera stream and image processing.
  */
-class INSPIRE_API FrameProcess {
+class INSPIRE_API_EXPORT FrameProcess {
 public:
     /**
      * @brief Create a FrameProcess instance.

@@ -164,6 +164,7 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateImageStreamFromBitmap)(JNIE
         return nullptr;
     }
     if (AndroidBitmap_lockPixels(env, bitmap, &pixels) < 0) {
+        AndroidBitmap_unlockPixels(env, bitmap);
         INSPIRE_LOGE("Failed to lock pixels");
         return nullptr;
     }
@@ -236,6 +237,7 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateImageStreamFromByteBuffer)(
     jfieldID streamHandleField = env->GetFieldID(streamClass, "handle", "J");
     jobject imageStreamObj = env->NewObject(streamClass, constructor);
     env->SetLongField(imageStreamObj, streamHandleField, (jlong)streamHandle);
+    env->ReleaseByteArrayElements(data, (jbyte *)buf, JNI_ABORT);
 
     return imageStreamObj;
 }
@@ -365,6 +367,9 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_ExecuteFaceTrack)(JNIEnv *env, jo
             env->SetLongField(token, tokenHandleField, (jlong)results.tokens[i].data);
             env->SetIntField(token, sizeField, results.tokens[i].size);
             env->SetObjectArrayElement(tokenArray, i, token);
+            env->DeleteLocalRef(rect);
+            env->DeleteLocalRef(angle);
+            env->DeleteLocalRef(token);
         }
 
         // Set arrays to MultipleFaceData
@@ -1645,6 +1650,12 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceAttributeResult)(JNIEnv *e
 
     if (!raceArray || !genderArray || !ageBracketArray) {
         INSPIRE_LOGE("Failed to create arrays");
+        if (raceArray)
+            env->DeleteLocalRef(raceArray);
+        if (genderArray)
+            env->DeleteLocalRef(genderArray);
+        if (ageBracketArray)
+            env->DeleteLocalRef(ageBracketArray);
         return nullptr;
     }
 
@@ -1655,6 +1666,10 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceAttributeResult)(JNIEnv *e
     env->SetObjectField(attributeObj, raceField, raceArray);
     env->SetObjectField(attributeObj, genderField, genderArray);
     env->SetObjectField(attributeObj, ageBracketField, ageBracketArray);
+
+    env->DeleteLocalRef(raceArray);
+    env->DeleteLocalRef(genderArray);
+    env->DeleteLocalRef(ageBracketArray);
 
     return attributeObj;
 }
@@ -1689,9 +1704,8 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_QueryInspireFaceVersion)(JNIEnv *
     jfieldID majorField = env->GetFieldID(versionClass, "major", "I");
     jfieldID minorField = env->GetFieldID(versionClass, "minor", "I");
     jfieldID patchField = env->GetFieldID(versionClass, "patch", "I");
-    jfieldID infoField = env->GetFieldID(versionClass, "information", "Ljava/lang/String;");
 
-    if (!majorField || !minorField || !patchField || !infoField) {
+    if (!majorField || !minorField || !patchField) {
         INSPIRE_LOGE("Failed to get InspireFaceVersion field IDs");
         return nullptr;
     }
@@ -1700,32 +1714,6 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_QueryInspireFaceVersion)(JNIEnv *
     env->SetIntField(version, majorField, versionInfo.major);
     env->SetIntField(version, minorField, versionInfo.minor);
     env->SetIntField(version, patchField, versionInfo.patch);
-
-    // Get extended information
-    HFInspireFaceExtendedInformation extendedInfo;
-    HFQueryInspireFaceExtendedInformation(&extendedInfo);
-
-    // Sanitize the information string to ensure valid UTF-8
-    std::string sanitizedInfo;
-    const char *rawInfo = extendedInfo.information;
-    while (*rawInfo) {
-        unsigned char c = static_cast<unsigned char>(*rawInfo);
-        if (c < 0x80 || (c >= 0xC0 && c <= 0xF4)) {
-            // Valid UTF-8 start byte
-            sanitizedInfo += *rawInfo;
-        }
-        rawInfo++;
-    }
-
-    // Convert sanitized string to Java string
-    jstring infoString = env->NewStringUTF(sanitizedInfo.c_str());
-    if (infoString) {
-        env->SetObjectField(version, infoField, infoString);
-    } else {
-        // Fallback to a safe string if conversion fails
-        jstring fallbackString = env->NewStringUTF("Version information unavailable");
-        env->SetObjectField(version, infoField, fallbackString);
-    }
 
     return version;
 }

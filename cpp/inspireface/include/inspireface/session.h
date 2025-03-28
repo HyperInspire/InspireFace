@@ -10,7 +10,7 @@ namespace inspire {
 /**
  * @brief The face algorithm session class.
  */
-class INSPIRE_API Session {
+class INSPIRE_API_EXPORT Session {
 public:
     Session();
     ~Session();
