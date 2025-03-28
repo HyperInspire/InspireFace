@@ -74,10 +74,11 @@ int main(int argc, char** argv) {
             }
         });
     }
-    std::cout << timer << std::endl;
 
     for (auto& thread : threads) {
         thread.join();
     }
+    std::cout << timer << std::endl;
+
     return 0;
 }
