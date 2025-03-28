@@ -49,6 +49,10 @@ int main(int argc, char** argv) {
                     std::cerr << "FaceDetectAndTrack failed" << std::endl;
                     return ret;
                 }
+                if (results.size() == 0) {
+                    std::cerr << "Not found face" << std::endl;
+                    return -1;
+                }
             }
         });
     }
