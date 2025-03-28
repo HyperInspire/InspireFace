@@ -75,7 +75,15 @@ int main(int argc, char** argv) {
         });
     }
 
-    std::cout << "Start" << std::endl;
+    // Print basic information before starting
+    std::cout << "\n=== Configuration Information ===" << std::endl;
+    std::cout << "Model Path: " << model_path << std::endl;
+    std::cout << "Image Path: " << image_path << std::endl;
+    std::cout << "Total Loop Count: " << loop << std::endl;
+    std::cout << "Number of Threads: " << thread_num << std::endl;
+    std::cout << "Tasks per Thread: " << tasksPerThread << std::endl;
+    std::cout << "Remaining Tasks: " << remainingTasks << std::endl;
+    std::cout << "==============================\n" << std::endl;
 
     inspire::SpendTimer timer("Number of threads: " + std::to_string(thread_num) + ", Number of tasks: " + std::to_string(loop));
     timer.Start();
