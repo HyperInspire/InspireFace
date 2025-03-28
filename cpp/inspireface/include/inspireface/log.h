@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <cstring>
 #include "data_type.h"
 
 // Macro to extract the filename from the full path
