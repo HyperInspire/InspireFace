@@ -24,6 +24,9 @@
 extern "C" {
 #endif
 
+#define HF_STATUS_ENABLE 1   ///< The status of the feature is enabled.
+#define HF_STATUS_DISABLE 0  ///< The status of the feature is disabled.
+
 #define HF_ENABLE_NONE 0x00000000                  ///< Flag to enable no features.
 #define HF_ENABLE_FACE_RECOGNITION 0x00000002      ///< Flag to enable face recognition feature.
 #define HF_ENABLE_LIVENESS 0x00000004              ///< Flag to enable RGB liveness detection feature.
