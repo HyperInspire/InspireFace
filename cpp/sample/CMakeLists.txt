@@ -71,6 +71,12 @@ set_target_properties(CppSessionSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
+add_executable(CppResourcePoolSample api/sample_cpp_resource_pool.cpp)
+target_link_libraries(CppResourcePoolSample InspireFace ${ext})
+set_target_properties(CppResourcePoolSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
+)
+
 if(ISF_BUILD_SAMPLE_INTERNAL)
         add_executable(FaceTrackerSample source/tracker_sample.cpp)
         target_link_libraries(FaceTrackerSample InspireFace ${ext})
