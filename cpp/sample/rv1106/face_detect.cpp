@@ -2,7 +2,7 @@
 #include <inspireface/track_module/face_track_module.h>
 #include <inspireface/include/inspireface/launch.h>
 #include <inspireface/include/inspireface/frame_process.h>
-#include <inspirecv/time_spend.h>
+#include <inspireface/include/inspireface/spend_timer.h>
 
 using namespace inspire;
 

@@ -8,7 +8,7 @@
 
 namespace inspire {
 
-int32_t INSPIRE_API GetCudaDeviceCount(int32_t *device_count) {
+int32_t INSPIRE_API_EXPORT GetCudaDeviceCount(int32_t *device_count) {
 #ifdef ISF_ENABLE_TENSORRT
     cudaError_t error = cudaGetDeviceCount(device_count);
     if (error != cudaSuccess) {
@@ -22,7 +22,7 @@ int32_t INSPIRE_API GetCudaDeviceCount(int32_t *device_count) {
 #endif
 }
 
-int32_t INSPIRE_API CheckCudaUsability(int32_t *is_support) {
+int32_t INSPIRE_API_EXPORT CheckCudaUsability(int32_t *is_support) {
 #ifdef ISF_ENABLE_TENSORRT
     int device_count;
     auto ret = GetCudaDeviceCount(&device_count);
@@ -42,7 +42,7 @@ int32_t INSPIRE_API CheckCudaUsability(int32_t *is_support) {
 #endif
 }
 
-int32_t INSPIRE_API _PrintCudaDeviceInfo() {
+int32_t INSPIRE_API_EXPORT _PrintCudaDeviceInfo() {
 #ifdef ISF_ENABLE_TENSORRT
     try {
         INSPIRE_LOGW("TensorRT version: %d.%d.%d", NV_TENSORRT_MAJOR, NV_TENSORRT_MINOR, NV_TENSORRT_PATCH);
@@ -115,7 +115,7 @@ int32_t INSPIRE_API _PrintCudaDeviceInfo() {
 #endif
 }
 
-int32_t INSPIRE_API PrintCudaDeviceInfo() {
+int32_t INSPIRE_API_EXPORT PrintCudaDeviceInfo() {
 #ifdef ISF_ENABLE_TENSORRT
     INSPIRE_LOGW("================================================");
     auto ret = _PrintCudaDeviceInfo();

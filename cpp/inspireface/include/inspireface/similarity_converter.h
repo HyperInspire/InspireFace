@@ -23,7 +23,7 @@ struct SimilarityConverterConfig {
     double outputMax = 1.0;    // Maximum value of output range
 };
 
-class INSPIRE_API SimilarityConverter {
+class INSPIRE_API_EXPORT SimilarityConverter {
 private:
     SimilarityConverterConfig config;
     double outputScale;              // Scale of output range

@@ -3,14 +3,14 @@
 #include <memory>
 #include "data_type.h"
 #include "frame_process.h"
-#include "face_token.h"
+#include "face_warpper.h"
 
 namespace inspire {
 
 /**
  * @brief The face algorithm session class.
  */
-class INSPIRE_API Session {
+class INSPIRE_API_EXPORT Session {
 public:
     Session();
     ~Session();

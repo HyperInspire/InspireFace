@@ -1,7 +1,7 @@
 #include <inspirecv/inspirecv.h>
 #include <inspireface/image_process/nexus_processor/image_processor.h>
 #include "log.h"
-#include <inspirecv/time_spend.h>
+#include <inspireface/include/inspireface/spend_timer.h>
 
 using namespace inspire;
 

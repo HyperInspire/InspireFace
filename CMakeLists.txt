@@ -7,6 +7,20 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
+# Hide symbols
+option(ISF_ENABLE_SYMBOL_HIDING "Enable symbol hiding." ON)
+if(ISF_ENABLE_SYMBOL_HIDING)
+    if(NOT WIN32)
+        set(CMAKE_C_VISIBILITY_PRESET hidden)
+        set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+        set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
+    endif()
+else()
+    set(CMAKE_C_VISIBILITY_PRESET default)
+    set(CMAKE_CXX_VISIBILITY_PRESET default)
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN NO)
+endif()
+
 # Current version
 set(INSPIRE_FACE_VERSION_MAJOR 1)
 set(INSPIRE_FACE_VERSION_MINOR 2)

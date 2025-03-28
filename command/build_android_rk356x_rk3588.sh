@@ -117,7 +117,8 @@ build() {
         -DISF_ENABLE_BENCHMARK=OFF \
         -DISF_ENABLE_USE_LFW_DATA=OFF \
         -DISF_ENABLE_TEST_EVALUATION=OFF \
-        -DISF_BUILD_SHARED_LIBS=ON 
+        -DISF_BUILD_SHARED_LIBS=ON \
+        -Wno-dev
     make -j4
     make install
     popd

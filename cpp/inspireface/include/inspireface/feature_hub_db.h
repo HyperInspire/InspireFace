@@ -45,7 +45,7 @@ using DatabaseConfiguration = struct DatabaseConfiguration {
  * This class provides methods for face feature extraction, registration, update, search, and more.
  * It uses the PIMPL (Pointer to Implementation) pattern to hide implementation details.
  */
-class INSPIRE_API FeatureHubDB {
+class INSPIRE_API_EXPORT FeatureHubDB {
 public:
     /**
      * @brief Constructor for FeatureHubDB class.
