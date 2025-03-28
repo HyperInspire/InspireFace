@@ -58,6 +58,7 @@ int main(int argc, char** argv) {
         int taskCount = tasksPerThread + (i < remainingTasks ? 1 : 0);
         threads.emplace_back([&, taskCount]() {
             for (int j = 0; j < taskCount; ++j) {
+                std::cout << j << std::endl;
                 auto sessionGuard = sessionPool.AcquireResource();
                 std::vector<inspire::FaceTrackWrap> results;
                 int32_t ret;
@@ -73,6 +74,8 @@ int main(int argc, char** argv) {
             }
         });
     }
+
+    std::cout << "Start" << std::endl;
 
     inspire::SpendTimer timer("Number of threads: " + std::to_string(thread_num) + ", Number of tasks: " + std::to_string(loop));
     timer.Start();
