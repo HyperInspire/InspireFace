@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
         int taskCount = tasksPerThread + (i < remainingTasks ? 1 : 0);
         threads.emplace_back([&, taskCount]() {
             for (int j = 0; j < taskCount; ++j) {
-                std::cout << j << std::endl;
+                std::cout << j << "/" << taskCount << std::endl;
                 auto sessionGuard = sessionPool.AcquireResource();
                 std::vector<inspire::FaceTrackWrap> results;
                 int32_t ret;
