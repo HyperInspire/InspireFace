@@ -63,7 +63,7 @@ public:
      * @brief Set the face detect threshold.
      * @param threshold The face detect threshold.
      */
-    void SetFaceDetectThreshold(int32_t threshold);
+    void SetFaceDetectThreshold(float threshold);
 
     /**
      * @brief Set the track mode smooth ratio.

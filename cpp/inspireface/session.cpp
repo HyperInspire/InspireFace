@@ -24,7 +24,7 @@ public:
         m_face_session_->SetTrackFaceMinimumSize(min_face_pixel_size);
     }
 
-    void SetFaceDetectThreshold(int32_t threshold) {
+    void SetFaceDetectThreshold(float threshold) {
         m_face_session_->SetFaceDetectThreshold(threshold);
     }
 
@@ -177,7 +177,7 @@ void Session::SetFilterMinimumFacePixelSize(int32_t min_face_pixel_size) {
     pImpl->SetFilterMinimumFacePixelSize(min_face_pixel_size);
 }
 
-void Session::SetFaceDetectThreshold(int32_t threshold) {
+void Session::SetFaceDetectThreshold(float threshold) {
     pImpl->SetFaceDetectThreshold(threshold);
 }
 
