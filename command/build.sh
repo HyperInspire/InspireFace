@@ -75,6 +75,7 @@ cd "$BUILD_DIR" || exit 1
 
 # Run CMake configuration (adjust the options as needed)
 cmake -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -DISF_BUILD_WITH_SAMPLE=ON \
   -DISF_BUILD_WITH_TEST=OFF \
   -DISF_ENABLE_BENCHMARK=OFF \

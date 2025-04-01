@@ -98,6 +98,7 @@ build() {
     cmake ${SCRIPT_DIR} \
         -G "Unix Makefiles" \
         -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
         -DCMAKE_C_FLAGS="-g0 ${CMAKE_C_FLAGS}" \
         -DCMAKE_CXX_FLAGS="-g0 ${CMAKE_CXX_FLAGS}" \
         -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK}/build/cmake/android.toolchain.cmake \

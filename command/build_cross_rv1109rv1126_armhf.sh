@@ -39,6 +39,7 @@ cd ${BUILD_FOLDER_PATH}
 # export cross_compile_toolchain=/home/jingyuyan/software/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
 cmake -DCMAKE_SYSTEM_NAME=Linux \
   -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -DCMAKE_SYSTEM_VERSION=1 \
   -DCMAKE_SYSTEM_PROCESSOR=armv7 \
   -DCMAKE_C_COMPILER=$ARM_CROSS_COMPILE_TOOLCHAIN/bin/arm-linux-gnueabihf-gcc \
