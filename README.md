@@ -266,9 +266,9 @@ docker-compose up build-tensorrt-cuda12-ubuntu22
 
 If you want to use pre-compiled libraries, you can use **[FindTensorRT.cmake](toolchain/FindTensorRT.cmake)** to create links to CUDA and TensorRT.
 
-### React Native Nitro
+### React Native
 
-For Android or iOS using InspireFace, besides using the native interface approach, you can also use nitro modules (JSI) for React Native bindings, which eliminates the need for native mobile bindings. For more details, check out the repository:[react-native-nitro-inspire-face](https://github.com/ronickg/react-native-nitro-inspire-face). Author: ronickg.
+For Android and iOS, in addition to the native interface, you can use the React Native library powered by Nitro Modules and JSI—providing ultra-fast, seamless bindings to the InspireFace SDK. For more details, check out the [react-native-nitro-inspire-face](https://github.com/ronickg/react-native-nitro-inspire-face) repository or the [documentation](https://ronickg.github.io/react-native-nitro-inspire-face). Author: ronickg.
 
 ### Supported Platforms and Architectures
 
