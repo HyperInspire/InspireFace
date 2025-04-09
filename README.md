@@ -17,7 +17,7 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ---
 
-📘 [Documentation]([https://hyperinspire.github.io/InspireFace/](https://doc.inspireface.online/)) is a **work in progress**.  
+📘 [Documentation](https://doc.inspireface.online/) is a **work in progress**.  
 We welcome your questions💬, they help guide and accelerate its development.
 
 ## Change Logs
