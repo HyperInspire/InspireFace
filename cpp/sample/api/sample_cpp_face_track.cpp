@@ -41,4 +41,9 @@ int main(int argc, char** argv) {
     inspirecv::Image wrapped;
     session.GetFaceAlignmentImage(process, results[0], wrapped);
     wrapped.Write("wrapped.jpg");
+
+    inspire::FaceEmbedding feature;
+    session.FaceFeatureExtract(process, results[0], feature, true);
+    std::cout << "feature: " << feature.embedding.size() << std::endl;
+
 }

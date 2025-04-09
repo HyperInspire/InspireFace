@@ -15,6 +15,11 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 <img src="images/banner.jpg" alt="banner" style="zoom:80%;" />
 
+---
+
+📘 [Documentation](https://hyperinspire.github.io/InspireFace/) is a **work in progress**.  
+We welcome your questions💬, they help guide and accelerate its development.
+
 ## Change Logs
 
 **`2025-03-16`** Acceleration using NVIDIA-GPU (**CUDA**) devices is already supported.
