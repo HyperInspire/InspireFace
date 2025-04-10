@@ -29,8 +29,7 @@ int main(int argc, char** argv) {
     param.enable_mask_detect = true;
     param.enable_face_attribute = true;
     param.enable_face_quality = true;
-    std::shared_ptr<inspire::Session> session(
-        inspire::Session::CreatePtr(inspire::DETECT_MODE_ALWAYS_DETECT, 1, param, 320));
+    std::shared_ptr<inspire::Session> session(inspire::Session::CreatePtr(inspire::DETECT_MODE_ALWAYS_DETECT, 1, param, 320));
 
     INSPIREFACE_CHECK_MSG(session != nullptr, "Session is not valid");
 
@@ -39,8 +38,7 @@ int main(int argc, char** argv) {
     int32_t ret;
     ret = session->FaceDetectAndTrack(process, results);
     INSPIREFACE_CHECK_MSG(ret == 0, "FaceDetectAndTrack failed");
-    
-    
+
     for (auto& result : results) {
         std::cout << "result: " << result.trackId << std::endl;
         std::cout << "quality: " << result.quality[0] << ", " << result.quality[1] << ", " << result.quality[2] << ", " << result.quality[3] << ", "

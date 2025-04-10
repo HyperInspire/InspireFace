@@ -32,7 +32,7 @@ def case_face_detection_image(image_path, show):
     h, w = image.shape[:2]
     scale = max(w, h) / 1000.0
     line_thickness = max(1, int(2 * scale))
-    circle_radius = max(1, int(2.5 * scale))
+    circle_radius = max(1, int(1.5 * scale))
     font_scale = 0.5 * scale
 
     # Detect faces

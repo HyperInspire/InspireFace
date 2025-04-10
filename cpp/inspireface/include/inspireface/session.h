@@ -98,11 +98,11 @@ public:
     inspirecv::Rect2i GetFaceBoundingBox(const FaceTrackWrap& face_data);
 
     /**
-     * @brief Get the number of face dense landmark.
+     * @brief Get the face dense landmark.
      * @param face_data The face data.
-     * @return The number of face dense landmark.
+     * @return The face dense landmark.
      */
-    std::vector<inspirecv::Point2f> GetNumOfFaceDenseLandmark(const FaceTrackWrap& face_data);
+    std::vector<inspirecv::Point2f> GetFaceDenseLandmark(const FaceTrackWrap& face_data);
 
     /**
      * @brief Get the face five key points.

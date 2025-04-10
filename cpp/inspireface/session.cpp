@@ -60,7 +60,7 @@ public:
         return inspirecv::Rect2i{face_data.rect.x, face_data.rect.y, face_data.rect.width, face_data.rect.height};
     }
 
-    std::vector<inspirecv::Point2f> GetNumOfFaceDenseLandmark(const FaceTrackWrap& face_data) {
+    std::vector<inspirecv::Point2f> GetFaceDenseLandmark(const FaceTrackWrap& face_data) {
         std::vector<inspirecv::Point2f> points;
         for (const auto& p : face_data.densityLandmark) {
             points.emplace_back(inspirecv::Point2f(p.x, p.y));
@@ -221,8 +221,8 @@ inspirecv::Rect2i Session::GetFaceBoundingBox(const FaceTrackWrap& face_data) {
     return pImpl->GetFaceBoundingBox(face_data);
 }
 
-std::vector<inspirecv::Point2f> Session::GetNumOfFaceDenseLandmark(const FaceTrackWrap& face_data) {
-    return pImpl->GetNumOfFaceDenseLandmark(face_data);
+std::vector<inspirecv::Point2f> Session::GetFaceDenseLandmark(const FaceTrackWrap& face_data) {
+    return pImpl->GetFaceDenseLandmark(face_data);
 }
 
 std::vector<inspirecv::Point2f> Session::GetFaceFiveKeyPoints(const FaceTrackWrap& face_data) {
