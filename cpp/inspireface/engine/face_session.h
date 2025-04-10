@@ -110,6 +110,22 @@ public:
     int32_t FaceFeatureExtract(inspirecv::FrameProcess& process, FaceTrackWrap& data, bool normalize = true);
 
     /**
+     * @brief Extracts features of a face from an image.
+     * @param image Camera stream containing the face.
+     * @param data FaceTrackWrap to store extracted features.
+     * @return int32_t Status code of the feature extraction.
+     */
+    int32_t FaceFeatureExtractWithAlignmentImage(inspirecv::FrameProcess& process, Embedded& embedding, float& norm, bool normalize = true);
+
+    /**
+     * @brief Extracts features of a face from an image.
+     * @param image Camera stream containing the face.
+     * @param data FaceTrackWrap to store extracted features.
+     * @return int32_t Status code of the feature extraction.
+     */
+    int32_t FaceFeatureExtractWithAlignmentImage(const inspirecv::Image& wrapped, FaceEmbedding& embedding, float& norm, bool normalize = true);
+
+    /**
      * @brief Gets the face alignment image.
      * @param process The image process object.
      * @param data The face basic data.

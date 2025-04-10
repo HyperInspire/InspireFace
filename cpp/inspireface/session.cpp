@@ -45,7 +45,7 @@ public:
         if (ret < 0) {
             return ret;
         }
-
+        results.clear();
         const auto& face_data = m_face_session_->GetDetectCache();
         for (const auto& data : face_data) {
             FaceTrackWrap hyper_face_data;
@@ -85,6 +85,26 @@ public:
         embedding.embedding = m_face_session_->GetFaceFeatureCache();
         embedding.norm = m_face_session_->GetFaceFeatureNormCache();
 
+        return ret;
+    }
+
+    int32_t FaceFeatureExtractWithAlignmentImage(inspirecv::FrameProcess& process, FaceEmbedding& embedding, bool normalize) {
+        int32_t ret = m_face_session_->FaceFeatureExtractWithAlignmentImage(process, embedding.embedding, embedding.norm, normalize);
+        if (ret < 0) {
+            return ret;
+        }
+        embedding.isNormal = normalize;
+        embedding.norm = embedding.norm;
+        return ret;
+    }
+
+    int32_t FaceFeatureExtractWithAlignmentImage(const inspirecv::Image& wrapped, FaceEmbedding& embedding, bool normalize) {
+        int32_t ret = m_face_session_->FaceFeatureExtractWithAlignmentImage(wrapped, embedding, embedding.norm, normalize);
+        if (ret < 0) {
+            return ret;
+        }
+        embedding.isNormal = normalize;
+        embedding.norm = embedding.norm;
         return ret;
     }
 
@@ -211,6 +231,14 @@ std::vector<inspirecv::Point2f> Session::GetFaceFiveKeyPoints(const FaceTrackWra
 
 int32_t Session::FaceFeatureExtract(inspirecv::FrameProcess& process, FaceTrackWrap& data, FaceEmbedding& embedding, bool normalize) {
     return pImpl->FaceFeatureExtract(process, data, embedding, normalize);
+}
+
+int32_t Session::FaceFeatureExtractWithAlignmentImage(inspirecv::FrameProcess& process, FaceEmbedding& embedding, bool normalize) {
+    return pImpl->FaceFeatureExtractWithAlignmentImage(process, embedding, normalize);
+}
+
+int32_t Session::FaceFeatureExtractWithAlignmentImage(const inspirecv::Image& wrapped, FaceEmbedding& embedding, bool normalize) {
+    return pImpl->FaceFeatureExtractWithAlignmentImage(wrapped, embedding, normalize);
 }
 
 void Session::GetFaceAlignmentImage(inspirecv::FrameProcess& process, FaceTrackWrap& data, inspirecv::Image& wrapped) {

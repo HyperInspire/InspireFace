@@ -12,7 +12,8 @@
 #include "data_type.h"
 #include <mutex>
 
-#define INSPIREFACE_FEATURE_HUB FeatureHubDB::GetInstance()
+#define INSPIREFACE_FEATURE_HUB inspire::FeatureHubDB::GetInstance()
+#define INSPIRE_INVALID_ID -1
 
 namespace inspire {
 

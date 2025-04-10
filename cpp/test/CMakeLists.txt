@@ -72,8 +72,7 @@ endif()
 
 # =======================External API Testing===========================
 file(GLOB_RECURSE TEST_INTERNAL_FILES unit/api/*.cpp)
-add_executable(Test ${CMAKE_CURRENT_SOURCE_DIR}/test.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES}
-        unit/api/test_evaluation.cpp)
+add_executable(Test ${CMAKE_CURRENT_SOURCE_DIR}/test.cpp ${TEST_INTERNAL_FILES} ${TEST_COMMON_FILES})
 target_link_libraries(Test InspireFace ${DEPEND})
 target_include_directories(Test PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/
@@ -86,6 +85,20 @@ target_include_directories(Test PUBLIC
 set_target_properties(Test PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test/")
 
+# =======================CPP API Testing===========================
+file(GLOB_RECURSE TEST_CPP_FILES unit/cpp_api/*.cpp)
+add_executable(TestCPP ${CMAKE_CURRENT_SOURCE_DIR}/test_cpp.cpp ${TEST_CPP_FILES} ${TEST_COMMON_FILES})
+target_link_libraries(TestCPP InspireFace ${DEPEND})
+target_include_directories(TestCPP PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/
+        ${ISF_THIRD_PARTY_DIR}/spdlog/include
+        ${ISF_THIRD_PARTY_DIR}/Catch2/single_include/
+        ${ISF_THIRD_PARTY_DIR}/indicators/include/
+        ${SRC_DIR}
+        )
+
+set_target_properties(TestCPP PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test/")
 
 # Print Message
 message(STATUS ">>>>>>>>>>>>>")

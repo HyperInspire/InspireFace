@@ -53,6 +53,24 @@ public:
     int32_t FaceExtract(inspirecv::FrameProcess &processor, const FaceTrackWrap &face, Embedded &embedded, float &norm, bool normalize = true);
 
     /**
+     * @brief Extracts a facial feature from an image and stores it in the provided 'embedded'.
+     *
+     * @param processor inspirecv::FrameProcess instance containing the image.
+     * @param embedded Output parameter to store the extracted facial feature.
+     * @return int32_t Status code indicating success (0) or failure.
+     */
+    int32_t FaceExtractWithAlignmentImage(inspirecv::FrameProcess &processor, Embedded &embedding, float &norm, bool normalize = true);
+
+    /**
+     * @brief Extracts a facial feature from an image and stores it in the provided 'embedding'.
+     *
+     * @param wrapped inspirecv::Image instance containing the image.
+     * @param embedding Output parameter to store the extracted facial feature.
+     * @return int32_t Status code indicating success (0) or failure.
+     */
+    int32_t FaceExtractWithAlignmentImage(const inspirecv::Image& wrapped, Embedded &embedding, float &norm, bool normalize = true);
+
+    /**
      * @brief Gets the Extract instance associated with this FaceRecognition.
      *
      * @return const std::shared_ptr<Extract>& Pointer to the Extract instance.

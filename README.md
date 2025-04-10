@@ -5,6 +5,8 @@
 [![JitPack](https://img.shields.io/jitpack/v/github/HyperInspire/inspireface-android-sdk?style=for-the-badge&color=green&label=JitPack&logo=android)](https://jitpack.io/#HyperInspire/inspireface-android-sdk)
 [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=building&logo=cmake)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml)
 [![test](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=testing&logo=c)](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml)
+[![Document](https://img.shields.io/badge/Document-Building-blue?style=for-the-badge&logo=readthedocs)](https://doc.inspireface.online/)
+
 
 
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
@@ -209,7 +211,10 @@ After compilation, you can find the local file in the build directory, which con
 inspireface-linux
    ├── include
    │   ├── herror.h
-   │   └── inspireface.h
+   │   ├── intypedef.h
+   │   ├── inspireface.h
+   │   ├── inspirecv/
+   │   └── inspireface/
    └── lib
        └── libInspireFace.so
 ```
@@ -217,6 +222,9 @@ inspireface-linux
 - **libInspireFace.so**：Compiled dynamic linking library.
 - **inspireface.h**：Header file definition.
 - **herror.h**：Reference error number definition.
+- **intypedef.h**: Type definition file.
+- **inspirecv**: Simple cv library CPP header file folder.
+- **inspireface**: inspireface cpp header folder.
 ### Cross Compilation
 Cross compilation requires you to prepare the target platform's cross-compilation toolchain on the host machine in advance. Here, compiling for Rockchip's embedded devices RV1106 is used as an example:
 ```bash
@@ -348,7 +356,7 @@ HResult ret;
 // The resource file must be loaded before it can be used
 ret = HFLaunchInspireFace(packPath);
 if (ret != HSUCCEED) {
-    std::cout << "Load Resource error: " << ret << std::endl;
+    HFLogPrint(HF_LOG_ERROR, "Load Resource error: %d", ret);
     return ret;
 }
 
@@ -366,10 +374,11 @@ HInt32 detectPixelLevel = 160;
 HFSession session = {0};
 ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, detectPixelLevel, -1, &session);
 if (ret != HSUCCEED) {
-    std::cout << "Create FaceContext error: " << ret << std::endl;
+    HFLogPrint(HF_LOG_ERROR, "Create FaceContext error: %d", ret);
     return ret;
 }
 
+// Configure some detection parameters
 HFSessionSetTrackPreviewSize(session, detectPixelLevel);
 HFSessionSetFilterMinimumFacePixelSize(session, 4);
 
@@ -377,14 +386,14 @@ HFSessionSetFilterMinimumFacePixelSize(session, 4);
 HFImageBitmap image;
 ret = HFCreateImageBitmapFromFilePath(sourcePath, 3, &image);
 if (ret != HSUCCEED) {
-    std::cout << "The source entered is not a picture or read error." << std::endl;
+    HFLogPrint(HF_LOG_ERROR, "The source entered is not a picture or read error.");
     return ret;
 }
 // Prepare an image parameter structure for configuration
 HFImageStream imageHandle = {0};
 ret = HFCreateImageStreamFromImageBitmap(image, rotation_enum, &imageHandle);
 if (ret != HSUCCEED) {
-    std::cout << "Create ImageStream error: " << ret << std::endl;
+    HFLogPrint(HF_LOG_ERROR, "Create ImageStream error: %d", ret);
     return ret;
 }
 
@@ -392,27 +401,29 @@ if (ret != HSUCCEED) {
 HFMultipleFaceData multipleFaceData = {0};
 ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
 if (ret != HSUCCEED) {
-    std::cout << "Execute HFExecuteFaceTrack error: " << ret << std::endl;
+    HFLogPrint(HF_LOG_ERROR, "Execute HFExecuteFaceTrack error: %d", ret);
     return ret;
 }
+
 // Print the number of faces detected
 auto faceNum = multipleFaceData.detectedNum;
-std::cout << "Num of face: " << faceNum << std::endl;
+HFLogPrint(HF_LOG_INFO, "Num of face: %d", faceNum);
 
 // The memory must be freed at the end of the program
 ret = HFReleaseImageBitmap(image);
 if (ret != HSUCCEED) {
-    printf("Release image bitmap error: %lu\n", ret);
+    HFLogPrint(HF_LOG_ERROR, "Release image bitmap error: %d", ret);
     return ret;
 }
 
 ret = HFReleaseImageStream(imageHandle);
 if (ret != HSUCCEED) {
-    printf("Release image stream error: %lu\n", ret);
+    HFLogPrint(HF_LOG_ERROR, "Release image stream error: %d", ret);
 }
+
 ret = HFReleaseInspireFaceSession(session);
 if (ret != HSUCCEED) {
-    printf("Release session error: %lu\n", ret);
+    HFLogPrint(HF_LOG_ERROR, "Release session error: %d", ret);
     return ret;
 }
 

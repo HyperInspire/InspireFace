@@ -129,6 +129,22 @@ public:
     void GetFaceAlignmentImage(inspirecv::FrameProcess& process, FaceTrackWrap& data, inspirecv::Image& wrapped);
 
     /**
+     * @brief Extract the face feature with alignment image.
+     * @param process The frame process.
+     * @param embedding The face embedding.
+     * @param normalize The normalize flag.
+     */
+    int32_t FaceFeatureExtractWithAlignmentImage(inspirecv::FrameProcess& process, FaceEmbedding& embedding, bool normalize = true);
+
+    /**
+     * @brief Extract the face feature with alignment image.
+     * @param wrapped The wrapped image.
+     * @param embedding The face embedding.
+     * @param normalize The normalize flag.
+     */
+    int32_t FaceFeatureExtractWithAlignmentImage(const inspirecv::Image& wrapped, FaceEmbedding& embedding, bool normalize = true);
+
+    /**
      * @brief Multiple face pipeline process.
      * @param process The frame process.
      * @param param The custom pipeline parameter.

@@ -3,32 +3,44 @@
 #include <string>
 #include <memory>
 #include <inspirecv/inspirecv.h>
-#include <inspireface/include/inspireface/session.h>
-#include <inspireface/include/inspireface/launch.h>
+#include <inspireface/inspireface.hpp>
 
 int main(int argc, char** argv) {
+    if (argc != 3) {
+        std::cout << "Usage: " << argv[0] << " <model_path> <image_path>" << std::endl;
+        return -1;
+    }
+
     std::string model_path = argv[1];
     std::string image_path = argv[2];
-    INSPIREFACE_CONTEXT->Load(model_path);
+
+    // Global init(only once)
+    INSPIREFACE_CONTEXT->Reload(model_path);
+
+    // Create image and frame process
     inspirecv::Image image = inspirecv::Image::Create(image_path);
     inspirecv::FrameProcess process =
       inspirecv::FrameProcess::Create(image.Data(), image.Height(), image.Width(), inspirecv::BGR, inspirecv::ROTATION_0);
 
+    // Create session
     inspire::CustomPipelineParameter param;
     param.enable_recognition = true;
     param.enable_liveness = true;
     param.enable_mask_detect = true;
     param.enable_face_attribute = true;
     param.enable_face_quality = true;
-    inspire::Session session = inspire::Session::Create(inspire::DetectModuleMode::DETECT_MODE_ALWAYS_DETECT, 1, param);
+    std::shared_ptr<inspire::Session> session(
+        inspire::Session::CreatePtr(inspire::DETECT_MODE_ALWAYS_DETECT, 1, param, 320));
 
+    INSPIREFACE_CHECK_MSG(session != nullptr, "Session is not valid");
+
+    // Detect and track
     std::vector<inspire::FaceTrackWrap> results;
     int32_t ret;
-    ret = session.FaceDetectAndTrack(process, results);
-    if (ret != 0) {
-        std::cerr << "FaceDetectAndTrack failed" << std::endl;
-        return ret;
-    }
+    ret = session->FaceDetectAndTrack(process, results);
+    INSPIREFACE_CHECK_MSG(ret == 0, "FaceDetectAndTrack failed");
+    
+    
     for (auto& result : results) {
         std::cout << "result: " << result.trackId << std::endl;
         std::cout << "quality: " << result.quality[0] << ", " << result.quality[1] << ", " << result.quality[2] << ", " << result.quality[3] << ", "
@@ -38,12 +50,5 @@ int main(int argc, char** argv) {
     }
     image.Write("result.jpg");
 
-    inspirecv::Image wrapped;
-    session.GetFaceAlignmentImage(process, results[0], wrapped);
-    wrapped.Write("wrapped.jpg");
-
-    inspire::FaceEmbedding feature;
-    session.FaceFeatureExtract(process, results[0], feature, true);
-    std::cout << "feature: " << feature.embedding.size() << std::endl;
-
+    return 0;
 }

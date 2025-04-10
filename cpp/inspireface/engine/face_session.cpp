@@ -349,6 +349,22 @@ int32_t FaceSession::FaceFeatureExtract(inspirecv::FrameProcess& process, FaceTr
     return ret;
 }
 
+int32_t FaceSession::FaceFeatureExtractWithAlignmentImage(inspirecv::FrameProcess& process, Embedded& embedding, float& norm, bool normalize) {
+    std::lock_guard<std::mutex> lock(m_mtx_);
+    int32_t ret;
+    m_face_feature_cache_.clear();
+    ret = m_face_recognition_->FaceExtractWithAlignmentImage(process, embedding, norm, normalize);
+
+    return ret;
+}
+
+int32_t FaceSession::FaceFeatureExtractWithAlignmentImage(const inspirecv::Image& wrapped, FaceEmbedding& embedding, float& norm, bool normalize) {
+    std::lock_guard<std::mutex> lock(m_mtx_);
+    int32_t ret;
+    ret = m_face_recognition_->FaceExtractWithAlignmentImage(wrapped, embedding.embedding, norm, normalize);
+    return ret;
+}   
+
 int32_t FaceSession::FaceGetFaceAlignmentImage(inspirecv::FrameProcess& process, FaceBasicData& data, inspirecv::Image& image) {
     std::lock_guard<std::mutex> lock(m_mtx_);
     int32_t ret;

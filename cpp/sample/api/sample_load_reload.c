@@ -1,9 +1,8 @@
-#include <iostream>
 #include <inspireface.h>
 
 int main() {
-    std::string resourcePath = "test_res/pack/Pikachu";
-    HResult ret = HFReloadInspireFace(resourcePath.c_str());
+    const char* resourcePath = "test_res/pack/Pikachu";
+    HResult ret = HFReloadInspireFace(resourcePath);
     if (ret != HSUCCEED) {
         HFLogPrint(HF_LOG_ERROR, "Failed to launch InspireFace: %d", ret);
         return 1;
