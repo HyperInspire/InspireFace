@@ -1,8 +1,6 @@
-#include <iostream>
 #include <inspireface.h>
-#include <vector>
 
-static std::vector<float> FT = {
+static float FT[] = {
   0.0706566,   0.00640248,  0.0418103,   -0.00597861, 0.0269879,   0.0187478,   0.0486305,   0.0349162,   -0.0080779,  -0.0550556,  0.0229963,
   -0.00683422, -0.0338589,  0.0533989,   -0.0371725,  0.000972469, 0.0612415,   0.0389846,   -0.00126743, -0.0128782,  0.0935529,   0.0588179,
   0.0164787,   -0.00732871, -0.0458209,  -0.0100137,  -0.0372892,  0.000871123, 0.0245121,   -0.0811471,  -0.00481095, 0.0266868,   0.0712961,
@@ -73,12 +71,10 @@ int main() {
         return ret;
     }
 
-    // std::vector<float> feature(512, 0.0f);
-
     int64_t result_id = 0;
     HFFaceFeature feature = {0};
-    feature.data = FT.data();
-    feature.size = FT.size();
+    feature.data = FT;
+    feature.size = sizeof(FT) / sizeof(FT[0]);
     HFFaceFeatureIdentity identity = {0};
     identity.feature = &feature;
     ret = HFFeatureHubInsertFeature(identity, &result_id);
@@ -87,10 +83,9 @@ int main() {
         return ret;
     }
 
-    // std::vector<float> query_feature(512, 20.0f);
     HFFaceFeature query_feature = {0};
-    query_feature.data = FT.data();
-    query_feature.size = FT.size();
+    query_feature.data = FT;
+    query_feature.size = sizeof(FT) / sizeof(FT[0]);
     HFloat confidence;
     HFFaceFeatureIdentity search_result = {0};
     ret = HFFeatureHubFaceSearch(query_feature, &confidence, &search_result);

@@ -343,7 +343,7 @@ HResult ret;
 // The resource file must be loaded before it can be used
 ret = HFLaunchInspireFace(packPath);
 if (ret != HSUCCEED) {
-    std::cout << "Load Resource error: " << ret << std::endl;
+    HFLogPrint(HF_LOG_ERROR, "Load Resource error: %d", ret);
     return ret;
 }
 
@@ -361,10 +361,11 @@ HInt32 detectPixelLevel = 160;
 HFSession session = {0};
 ret = HFCreateInspireFaceSessionOptional(option, detMode, maxDetectNum, detectPixelLevel, -1, &session);
 if (ret != HSUCCEED) {
-    std::cout << "Create FaceContext error: " << ret << std::endl;
+    HFLogPrint(HF_LOG_ERROR, "Create FaceContext error: %d", ret);
     return ret;
 }
 
+// Configure some detection parameters
 HFSessionSetTrackPreviewSize(session, detectPixelLevel);
 HFSessionSetFilterMinimumFacePixelSize(session, 4);
 
@@ -372,14 +373,14 @@ HFSessionSetFilterMinimumFacePixelSize(session, 4);
 HFImageBitmap image;
 ret = HFCreateImageBitmapFromFilePath(sourcePath, 3, &image);
 if (ret != HSUCCEED) {
-    std::cout << "The source entered is not a picture or read error." << std::endl;
+    HFLogPrint(HF_LOG_ERROR, "The source entered is not a picture or read error.");
     return ret;
 }
 // Prepare an image parameter structure for configuration
 HFImageStream imageHandle = {0};
 ret = HFCreateImageStreamFromImageBitmap(image, rotation_enum, &imageHandle);
 if (ret != HSUCCEED) {
-    std::cout << "Create ImageStream error: " << ret << std::endl;
+    HFLogPrint(HF_LOG_ERROR, "Create ImageStream error: %d", ret);
     return ret;
 }
 
@@ -387,27 +388,29 @@ if (ret != HSUCCEED) {
 HFMultipleFaceData multipleFaceData = {0};
 ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
 if (ret != HSUCCEED) {
-    std::cout << "Execute HFExecuteFaceTrack error: " << ret << std::endl;
+    HFLogPrint(HF_LOG_ERROR, "Execute HFExecuteFaceTrack error: %d", ret);
     return ret;
 }
+
 // Print the number of faces detected
 auto faceNum = multipleFaceData.detectedNum;
-std::cout << "Num of face: " << faceNum << std::endl;
+HFLogPrint(HF_LOG_INFO, "Num of face: %d", faceNum);
 
 // The memory must be freed at the end of the program
 ret = HFReleaseImageBitmap(image);
 if (ret != HSUCCEED) {
-    printf("Release image bitmap error: %lu\n", ret);
+    HFLogPrint(HF_LOG_ERROR, "Release image bitmap error: %d", ret);
     return ret;
 }
 
 ret = HFReleaseImageStream(imageHandle);
 if (ret != HSUCCEED) {
-    printf("Release image stream error: %lu\n", ret);
+    HFLogPrint(HF_LOG_ERROR, "Release image stream error: %d", ret);
 }
+
 ret = HFReleaseInspireFaceSession(session);
 if (ret != HSUCCEED) {
-    printf("Release session error: %lu\n", ret);
+    HFLogPrint(HF_LOG_ERROR, "Release session error: %d", ret);
     return ret;
 }
 

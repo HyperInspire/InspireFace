@@ -145,7 +145,9 @@ public:
     // Method to print resource management statistics
     void printResourceStatistics() {
         std::lock_guard<std::mutex> lock(mutex);
+        INSPIRE_LOGI("================================================================");
         INSPIRE_LOGI("%-15s%-15s%-15s%-15s", "Resource Name", "Total Created", "Total Released", "Not Released");
+        INSPIRE_LOGI("----------------------------------------------------------------");
 
         // Print session statistics
         int totalSessionsCreated = sessionMap.size();
@@ -182,6 +184,7 @@ public:
                 ++bitmapsNotReleased;
         }
         INSPIRE_LOGI("%-15s%-15d%-15d%-15d", "Bitmap", totalBitmapsCreated, totalBitmapsReleased, bitmapsNotReleased);
+        INSPIRE_LOGI("================================================================");
     }
 };
 

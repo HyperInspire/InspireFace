@@ -6,6 +6,7 @@ option(ISF_BUILD_SAMPLE_INTERNAL "Whether to compile the internal sample program
 
 include_directories(${SRC_DIR})
 include_directories(${SRC_DIR}/inspireface/c_api)
+include_directories(${SRC_DIR}/inspireface/include)
 
 if (ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu1")
         set(ISF_RKNN_API_LIB ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/${ISF_RKNPU_MAJOR}/runtime/${ISF_RK_DEVICE_TYPE}/Linux/librknn_api/${CPU_ARCH}/)
@@ -25,49 +26,42 @@ if (ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu2" AND ISF_RK_COMPILER_TY
     set(ext rknnrt dl)
 endif ()
 
-add_executable(Leak api/leak.cpp)
+add_executable(Leak api/leak.c)
 target_link_libraries(Leak InspireFace ${ext})
 set_target_properties(Leak PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
 # # Examples of face detection and tracking
-add_executable(FaceTrackSample api/sample_face_track.cpp)
+add_executable(FaceTrackSample api/sample_face_track.c)
 target_link_libraries(FaceTrackSample InspireFace ${ext})
 set_target_properties(FaceTrackSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
-add_executable(FaceTrackBenchmarkSample api/sample_face_track_benchmark.cpp)
+add_executable(FaceTrackBenchmarkSample api/sample_face_track_benchmark.c)
 target_link_libraries(FaceTrackBenchmarkSample InspireFace ${ext})
 set_target_properties(FaceTrackBenchmarkSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
 # Examples of face recognition
-add_executable(FaceComparisonSample api/sample_face_comparison.cpp)
+add_executable(FaceComparisonSample api/sample_face_comparison.c)
 target_link_libraries(FaceComparisonSample InspireFace ${ext})
 set_target_properties(FaceComparisonSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
-add_executable(FaceFeatureHubSample api/sample_feature_hub.cpp)
+add_executable(FaceFeatureHubSample api/sample_feature_hub.c)
 target_link_libraries(FaceFeatureHubSample InspireFace ${ext})
 set_target_properties(FaceFeatureHubSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
 
-add_executable(FaceLoadReloadSample api/sample_load_reload.cpp)
+add_executable(FaceLoadReloadSample api/sample_load_reload.c)
 target_link_libraries(FaceLoadReloadSample InspireFace ${ext})
 set_target_properties(FaceLoadReloadSample PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
-)
-
-
-add_executable(CppSessionSample api/sample_cpp_face_track.cpp)
-target_link_libraries(CppSessionSample InspireFace ${ext})
-set_target_properties(CppSessionSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
@@ -75,6 +69,32 @@ add_executable(CppResourcePoolSample api/sample_cpp_resource_pool.cpp)
 target_link_libraries(CppResourcePoolSample InspireFace ${ext})
 set_target_properties(CppResourcePoolSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
+)
+
+add_executable(FaceCrudSample api/sample_face_crud.c)
+target_link_libraries(FaceCrudSample InspireFace ${ext})
+set_target_properties(FaceCrudSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
+)
+
+# --- C++ API ---
+
+add_executable(CppSessionSample cpp_api/cpp_sample_face_track.cpp)
+target_link_libraries(CppSessionSample InspireFace ${ext})
+set_target_properties(CppSessionSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cpp_api/"
+)
+
+add_executable(CppFaceComparisonSample cpp_api/cpp_sample_face_comparison.cpp)
+target_link_libraries(CppFaceComparisonSample InspireFace ${ext})
+set_target_properties(CppFaceComparisonSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cpp_api/"
+)
+
+add_executable(CppFaceCrudSample cpp_api/cpp_sample_face_crud.cpp)
+target_link_libraries(CppFaceCrudSample InspireFace ${ext})
+set_target_properties(CppFaceCrudSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cpp_api/"
 )
 
 if(ISF_BUILD_SAMPLE_INTERNAL)
