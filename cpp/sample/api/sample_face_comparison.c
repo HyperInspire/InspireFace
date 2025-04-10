@@ -7,7 +7,6 @@
 #include <string.h>
 #include <inspireface.h>
 
-#define FEATURE_SIZE 512
 #define NUM_IMAGES 2
 
 int main(int argc, char* argv[]) {
