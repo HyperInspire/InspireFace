@@ -325,12 +325,13 @@ message(STATUS ">>>>>>>>>>>>>")
 message(STATUS "InspireFace Sample:")
 message(STATUS "\t ISF_BUILD_SAMPLE_CLUTTERED: ${ISF_BUILD_SAMPLE_CLUTTERED}")
 
-# Install bin
+# Install c bin
 install(TARGETS Leak RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 install(TARGETS FaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-# install(TARGETS FaceTrackSampleCost RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-# install(TARGETS MTFaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-# install(TARGETS FaceRecognitionSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-# install(TARGETS FaceSearchSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 install(TARGETS FaceComparisonSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS FaceCrudSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
 
+# Install cpp bin
+install(TARGETS CppSessionSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS CppFaceComparisonSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS CppFaceCrudSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)

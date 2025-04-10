@@ -64,6 +64,27 @@ int32_t FeatureExtractionModule::FaceExtract(inspirecv::FrameProcess &processor,
     return 0;
 }
 
+int32_t FeatureExtractionModule::FaceExtractWithAlignmentImage(inspirecv::FrameProcess &processor, Embedded &embedded, float &norm,
+                                             bool normalize) {
+    if (m_extract_ == nullptr) {
+        return HERR_SESS_REC_EXTRACT_FAILURE;
+    }
+    auto crop = processor.ExecuteImageScaleProcessing(1.0f, false);
+    embedded = (*m_extract_)(crop, norm, normalize);
+
+    return 0;
+}
+
+int32_t FeatureExtractionModule::FaceExtractWithAlignmentImage(const inspirecv::Image& wrapped, Embedded &embedded, float &norm,
+                                             bool normalize) {
+    if (m_extract_ == nullptr) {
+        return HERR_SESS_REC_EXTRACT_FAILURE;
+    }
+    embedded = (*m_extract_)(wrapped, norm, normalize);
+
+    return 0;
+}
+
 int32_t FeatureExtractionModule::FaceExtract(inspirecv::FrameProcess &processor, const FaceObjectInternal &face, Embedded &embedded, float &norm,
                                              bool normalize) {
     if (m_extract_ == nullptr) {

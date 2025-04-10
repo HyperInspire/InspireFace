@@ -35,6 +35,7 @@ private:
     std::unordered_map<long, bool> sessionMap;
     std::unordered_map<long, bool> streamMap;
     std::unordered_map<long, bool> imageBitmapMap;
+    std::unordered_map<long, bool> faceFeatureMap;
 
     // The private constructor guarantees singletons
     ResourceManager() {}
@@ -106,6 +107,23 @@ public:
         return false;  // Release failed, possibly because the handle could not be found or was released
     }
 
+    // Create and record face features
+    void createFaceFeature(long handle) {
+        std::lock_guard<std::mutex> lock(mutex);
+        faceFeatureMap[handle] = false;  // false indicates that it is not released
+    }
+
+    // Release face feature
+    bool releaseFaceFeature(long handle) {
+        std::lock_guard<std::mutex> lock(mutex);
+        auto it = faceFeatureMap.find(handle);
+        if (it != faceFeatureMap.end() && !it->second) {
+            it->second = true;  // Mark as released
+            return true;
+        }
+        return false;  // Release failed, possibly because the handle could not be found or was released
+    }
+
     // Gets a list of unreleased session handles
     std::vector<long> getUnreleasedSessions() {
         std::lock_guard<std::mutex> lock(mutex);
@@ -140,6 +158,18 @@ public:
             }
         }
         return unreleasedImageBitmaps;
+    }
+
+    // Gets a list of unreleased face feature handles
+    std::vector<long> getUnreleasedFaceFeatures() {
+        std::lock_guard<std::mutex> lock(mutex);
+        std::vector<long> unreleasedFaceFeatures;
+        for (const auto& entry : faceFeatureMap) {
+            if (!entry.second) {
+                unreleasedFaceFeatures.push_back(entry.first);
+            }
+        }
+        return unreleasedFaceFeatures;
     }
 
     // Method to print resource management statistics
@@ -184,6 +214,18 @@ public:
                 ++bitmapsNotReleased;
         }
         INSPIRE_LOGI("%-15s%-15d%-15d%-15d", "Bitmap", totalBitmapsCreated, totalBitmapsReleased, bitmapsNotReleased);
+
+        // Print face feature statistics
+        int totalFeaturesCreated = faceFeatureMap.size();
+        int totalFeaturesReleased = 0;
+        int featuresNotReleased = 0;
+        for (const auto& entry : faceFeatureMap) {
+            if (entry.second)
+                ++totalFeaturesReleased;
+            if (!entry.second)
+                ++featuresNotReleased;
+        }
+        INSPIRE_LOGI("%-15s%-15d%-15d%-15d", "FaceFeature", totalFeaturesCreated, totalFeaturesReleased, featuresNotReleased);
         INSPIRE_LOGI("================================================================");
     }
 };

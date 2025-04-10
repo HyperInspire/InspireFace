@@ -50,6 +50,14 @@ int main(int argc, char** argv) {
     session->FaceFeatureExtract(process1, results1[0], feature1);
     session->FaceFeatureExtract(process2, results2[0], feature2);
 
+    // Compare
+    float similarity;
+    INSPIREFACE_FEATURE_HUB->CosineSimilarity(feature1.embedding, feature2.embedding, similarity);
+    std::cout << "cosine of similarity: " << similarity << std::endl;
+    std::cout << "percentage of similarity: " << SIMILARITY_CONVERTER_RUN(similarity) << std::endl;
+
+    std::cout << "== using alignment image ==" << std::endl;
+
     // Get face alignment image
     inspirecv::Image wrapped1;
     inspirecv::Image wrapped2;
@@ -58,11 +66,13 @@ int main(int argc, char** argv) {
     wrapped1.Write("wrapped1.jpg");
     wrapped2.Write("wrapped2.jpg");
 
-    // Compare
-    float similarity;
-    INSPIREFACE_FEATURE_HUB->CosineSimilarity(feature1.embedding, feature2.embedding, similarity);
+    inspire::FaceEmbedding feature1_alignment;
+    inspire::FaceEmbedding feature2_alignment;
+    session->FaceFeatureExtractWithAlignmentImage(wrapped1, feature1_alignment);
+    session->FaceFeatureExtractWithAlignmentImage(wrapped2, feature2_alignment);
+
+    INSPIREFACE_FEATURE_HUB->CosineSimilarity(feature1_alignment.embedding, feature2_alignment.embedding, similarity);
     std::cout << "cosine of similarity: " << similarity << std::endl;
     std::cout << "percentage of similarity: " << SIMILARITY_CONVERTER_RUN(similarity) << std::endl;
-
     return 0;
 }

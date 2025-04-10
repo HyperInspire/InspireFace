@@ -55,7 +55,7 @@ else()
 endif()
 
 # Install cpp api header file
-option(ISF_INSTALL_CPP_HEADER "Install cpp api header file." OFF)
+option(ISF_INSTALL_CPP_HEADER "Install cpp api header file." ON)
 
 # Set the ISF_THIRD_PARTY_DIR variable to allow it to be set externally from the command line, or use the default path if it is not set
 set(ISF_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty" CACHE PATH "Path to the third-party libraries directory")

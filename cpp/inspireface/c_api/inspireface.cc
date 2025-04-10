@@ -17,6 +17,8 @@
 #endif
 #include <cstdarg>
 
+#define FACE_FEATURE_SIZE 512       ///< Temporary setup
+
 using namespace inspire;
 
 HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, HFImageStream *handle) {
@@ -763,6 +765,37 @@ HResult HFFaceFeatureExtract(HFSession session, HFImageStream streamHandle, HFFa
     return ret;
 }
 
+HResult HFFaceFeatureExtractTo(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HFFaceFeature feature) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (streamHandle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_CameraStream *stream = (HF_CameraStream *)streamHandle;
+    if (stream == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    if (singleFace.data == nullptr || singleFace.size <= 0) {
+        return HERR_INVALID_FACE_TOKEN;
+    }
+    inspire::FaceBasicData data;
+    data.dataSize = singleFace.size;
+    data.data = singleFace.data;
+    auto ret = ctx->impl.FaceFeatureExtract(stream->impl, data);
+    for (int i = 0; i < ctx->impl.GetFaceFeatureCache().size(); ++i) {
+        feature.data[i] = ctx->impl.GetFaceFeatureCache()[i];
+    }
+
+    return HSUCCEED;
+}
+
+
+
 HResult HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HPFloat feature) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
@@ -790,6 +823,25 @@ HResult HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, H
     }
 
     return ret;
+}
+
+HResult HFCreateFaceFeature(PHFFaceFeature feature) {
+    if (feature == nullptr) {
+        return HERR_INVALID_FACE_FEATURE;
+    }
+    feature->size = FACE_FEATURE_SIZE;
+    feature->data = new HFloat[FACE_FEATURE_SIZE];
+    RESOURCE_MANAGE->createFaceFeature((long)feature);
+    return HSUCCEED;
+}
+
+HResult HFReleaseFaceFeature(PHFFaceFeature feature) {
+    if (feature == nullptr) {
+        return HERR_INVALID_FACE_FEATURE;
+    }
+    delete[] feature->data;
+    RESOURCE_MANAGE->releaseFaceFeature((long)feature);
+    return HSUCCEED;
 }
 
 HResult HFFaceGetFaceAlignmentImage(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HFImageBitmap *handle) {
@@ -823,6 +875,30 @@ HResult HFFaceGetFaceAlignmentImage(HFSession session, HFImageStream streamHandl
     // Record the creation of this image bitmap in the ResourceManager
     RESOURCE_MANAGE->createImageBitmap((long)*handle);
     return HSUCCEED;
+}
+
+HResult HFFaceFeatureExtractWithAlignmentImage(HFSession session, HFImageStream streamHandle, HFFaceFeature feature) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    if (streamHandle == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_CameraStream *stream = (HF_CameraStream *)streamHandle;
+    if (stream == nullptr) {
+        return HERR_INVALID_IMAGE_STREAM_HANDLE;
+    }
+    Embedded embedded;
+    float norm;
+    auto ret = ctx->impl.FaceRecognitionModule()->FaceExtractWithAlignmentImage(stream->impl, embedded, norm);
+    for (int i = 0; i < embedded.size(); ++i) {
+        feature.data[i] = embedded[i];
+    }
+    return ret;
 }
 
 HResult HFFaceComparison(HFFaceFeature feature1, HFFaceFeature feature2, HPFloat result) {
@@ -885,7 +961,7 @@ HResult HFGetCosineSimilarityConverter(PHFSimilarityConverterConfig config) {
 }
 
 HResult HFGetFeatureLength(HPInt32 num) {
-    *num = 512;
+    *num = FACE_FEATURE_SIZE;
 
     return HSUCCEED;
 }

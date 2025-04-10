@@ -645,6 +645,17 @@ HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtract(HFSession session, HFImage
                                                       PHFFaceFeature feature);
 
 /**
+ * @brief Extract face features to the HFFaceFeature that has applied for memory in advance.
+ * @param session Handle to the session.
+ * @param streamHandle Handle to the data buffer representing the camera stream component.
+ * @param singleFace Basic token representing a single face.
+ * @param feature Pointer to the buffer where the extracted feature will be copied.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtractTo(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace,
+                                                      HFFaceFeature feature);
+
+/**
  * @brief Extract a face feature from a given face and copy it to the provided feature buffer.
  *
  * @param session Handle to the session.
@@ -656,6 +667,20 @@ HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtract(HFSession session, HFImage
 HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HPFloat feature);
 
 /**
+ * @brief Create a face feature. Will allocate memory.
+ * @param feature Pointer to the face feature.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFCreateFaceFeature(PHFFaceFeature feature);
+
+/**
+ * @brief Release a face feature. Only the features created through the HFCreateFaceFeature need to be processed.
+ * @param feature Pointer to the face feature.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFReleaseFaceFeature(PHFFaceFeature feature);
+
+/**
  * @brief Get the face alignment image.
  * @param session Handle to the session.
  * @param streamHandle Handle to the data buffer representing the camera stream component.
@@ -665,6 +690,15 @@ HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtractCpy(HFSession session, HFIm
  */
 HYPER_CAPI_EXPORT extern HResult HFFaceGetFaceAlignmentImage(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace,
                                                              HFImageBitmap *handle);
+
+/**
+ * @brief Use the aligned face image to extract face features to the HFFaceFeature that has applied memory in advance.
+ * @param session Handle to the session.
+ * @param streamHandle Handle to the data buffer representing the camera stream component.
+ * @param feature Pointer to the buffer where the extracted feature will be copied.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtractWithAlignmentImage(HFSession session, HFImageStream streamHandle, HFFaceFeature feature);
 
 /************************************************************************
  * Feature Hub

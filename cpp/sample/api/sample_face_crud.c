@@ -63,20 +63,19 @@ int main() {
     if (multipleFaceData.detectedNum > 0) {
         HFLogPrint(HF_LOG_INFO, "Face detected: %d", multipleFaceData.detectedNum);
     }
-    
-    HInt32 embedding_size;
-    HFGetFeatureLength(&embedding_size);
 
-    // Extract face feature
-    HFloat embedding[embedding_size];
-    ret = HFFaceFeatureExtractCpy(session, imageHandle, multipleFaceData.tokens[0], embedding);
+    HFFaceFeature feature;
+    ret = HFCreateFaceFeature(&feature);
+    if (ret != HSUCCEED) {
+        HFLogPrint(HF_LOG_ERROR, "Create face feature error: %d", ret);
+        return ret;
+    }
+
+    ret = HFFaceFeatureExtractCpy(session, imageHandle, multipleFaceData.tokens[0], feature.data);
     if (ret != HSUCCEED) {
         HFLogPrint(HF_LOG_ERROR, "Extract feature error: %d", ret);
         return ret;
     }
-    HFFaceFeature feature;
-    feature.data = embedding;
-    feature.size = embedding_size;
 
     // Insert face feature into the hub
     HFFaceFeatureIdentity featureIdentity;
@@ -116,15 +115,19 @@ int main() {
         HFLogPrint(HF_LOG_INFO, "Face detected: %d", multipleFaceData.detectedNum);
     }
 
+    HFFaceFeature query_feature;
+    ret = HFCreateFaceFeature(&query_feature);
+    if (ret != HSUCCEED) {
+        HFLogPrint(HF_LOG_ERROR, "Create face feature error: %d", ret);
+        return ret;
+    }
+    
     // Extract face feature
-    ret = HFFaceFeatureExtractCpy(session, query_imageHandle, multipleFaceData.tokens[0], embedding);
+    ret = HFFaceFeatureExtractTo(session, query_imageHandle, multipleFaceData.tokens[0], query_feature);
     if (ret != HSUCCEED) {
         HFLogPrint(HF_LOG_ERROR, "Extract feature error: %d", ret);
         return ret;
     }
-    HFFaceFeature query_feature;
-    query_feature.data = embedding;
-    query_feature.size = embedding_size;
 
     // Search face feature
     HFFaceFeatureIdentity query_featureIdentity;
@@ -161,6 +164,8 @@ int main() {
     }
 
     // Release resources
+    HFReleaseFaceFeature(&feature);
+    HFReleaseFaceFeature(&query_feature);
     HFReleaseImageStream(imageHandle);
     HFReleaseImageStream(query_imageHandle);
     HFReleaseImageBitmap(image);
@@ -168,5 +173,6 @@ int main() {
     HFReleaseInspireFaceSession(session);
 
     HFDeBugShowResourceStatistics();
+
     return 0;
 }

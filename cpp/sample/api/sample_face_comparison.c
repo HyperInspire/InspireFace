@@ -17,11 +17,9 @@ int main(int argc, char* argv[]) {
     const char* imgPath2;
     HOption option;
     HFSession session;
-    float* features[NUM_IMAGES];
+    HFFaceFeature features[NUM_IMAGES];
     const char* imgPaths[NUM_IMAGES];
     int i;
-    HFFaceFeature feature1;
-    HFFaceFeature feature2;
     HFloat similarity;
     HFloat recommended_cosine_threshold;
     HFloat percentage;
@@ -36,16 +34,15 @@ int main(int argc, char* argv[]) {
     imgPath1 = argv[2];
     imgPath2 = argv[3];
 
+    /* Initialize features array to NULL */
+    memset(features, 0, sizeof(features));
+
     /* Allocate memory for feature vectors */
     for (i = 0; i < NUM_IMAGES; i++) {
-        features[i] = (float*)malloc(FEATURE_SIZE * sizeof(float));
-        if (features[i] == NULL) {
-            HFLogPrint(HF_LOG_ERROR, "Memory allocation failed for features[%d]", i);
-            /* Clean up the allocated memory */
-            while (--i >= 0) {
-                free(features[i]);
-            }
-            return -1;
+        ret = HFCreateFaceFeature(&features[i]);
+        if (ret != HSUCCEED) {
+            HFLogPrint(HF_LOG_ERROR, "Create face feature error: %d", ret);
+            goto cleanup;
         }
     }
 
@@ -108,7 +105,7 @@ int main(int argc, char* argv[]) {
             goto cleanup;
         }
 
-        ret = HFFaceFeatureExtractCpy(session, stream, multipleFaceData.tokens[0], features[i]);
+        ret = HFFaceFeatureExtractTo(session, stream, multipleFaceData.tokens[0], features[i]);
         if (ret != HSUCCEED) {
             HFReleaseImageStream(stream);
             HFReleaseImageBitmap(imageBitmap);
@@ -120,11 +117,8 @@ int main(int argc, char* argv[]) {
         HFReleaseImageBitmap(imageBitmap);
     }
 
-    /* Set the feature structure */
-    feature1.data = features[0];
-    feature1.size = FEATURE_SIZE;
-    feature2.data = features[1];
-    feature2.size = FEATURE_SIZE;
+    HFFaceFeature feature1 = features[0];
+    HFFaceFeature feature2 = features[1];
 
     /* Run comparison */
     ret = HFFaceComparison(feature1, feature2, &similarity);
@@ -158,12 +152,16 @@ int main(int argc, char* argv[]) {
     if (ret != HSUCCEED) {
         HFLogPrint(HF_LOG_ERROR, "Release session error: %d", ret);
     }
-
+    
 cleanup:
     /* Release the feature vector memory */
     for (i = 0; i < NUM_IMAGES; i++) {
-        free(features[i]);
+        if (features[i].data != NULL) {  // Only release features that were successfully created
+            HFReleaseFaceFeature(&features[i]);
+        }
     }
-
+    
+    HFDeBugShowResourceStatistics();
+    
     return ret;
 }
