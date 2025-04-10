@@ -3,7 +3,7 @@ name: Build Linux-TensorRT-CUDA12-Ubuntu22
 on:
   push:
     tags:
-      - "DONT_BUILD"
+      - "feature/arch"
 
 # Set the global GitHub token environment variable
 env:
