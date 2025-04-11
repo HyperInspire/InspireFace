@@ -332,4 +332,64 @@ inspirecv::Image FrameProcess::ExecuteImageScaleProcessing(const float scale, bo
     }
 }
 
+inspirecv::TransformMatrix FrameProcess::GetRotationModeAffineMatrix() const {
+    float srcPoints[] = {0.0f, 0.0f, 0.0f, (float)(pImpl->height_ - 1), (float)(pImpl->width_ - 1), 0.0f, (float)(pImpl->width_ - 1), (float)(pImpl->height_ - 1)};
+    float dstPoints[8];
+    
+    if (pImpl->rotation_mode_ == ROTATION_270) {
+        float points[] = {(float)(pImpl->height_ - 1),
+                         0.0f,
+                         0.0f,
+                         0.0f,
+                         (float)(pImpl->height_ - 1),
+                         (float)(pImpl->width_ - 1),
+                         0.0f,
+                         (float)(pImpl->width_ - 1)};
+        memcpy(dstPoints, points, sizeof(points));
+    } else if (pImpl->rotation_mode_ == ROTATION_90) {
+        float points[] = {0.0f,
+                         (float)(pImpl->width_ - 1),
+                         (float)(pImpl->height_ - 1),
+                         (float)(pImpl->width_ - 1),
+                         0.0f,
+                         0.0f,
+                         (float)(pImpl->height_ - 1),
+                         0.0f};
+        memcpy(dstPoints, points, sizeof(points));
+    } else if (pImpl->rotation_mode_ == ROTATION_180) {
+        float points[] = {(float)(pImpl->width_ - 1),
+                         (float)(pImpl->height_ - 1),
+                         (float)(pImpl->width_ - 1),
+                         0.0f,
+                         0.0f,
+                         (float)(pImpl->height_ - 1),
+                         0.0f,
+                         0.0f};
+        memcpy(dstPoints, points, sizeof(points));
+    } else {  // ROTATION_0
+        float points[] = {0.0f,
+                         0.0f,
+                         0.0f,
+                         (float)(pImpl->height_ - 1),
+                         (float)(pImpl->width_ - 1),
+                         0.0f,
+                         (float)(pImpl->width_ - 1),
+                         (float)(pImpl->height_ - 1)};
+        memcpy(dstPoints, points, sizeof(points));
+    }
+
+    MNN::CV::Matrix tr;
+    tr.setPolyToPoly((MNN::CV::Point *)dstPoints, (MNN::CV::Point *)srcPoints, 4);
+    
+    auto affine_matrix = inspirecv::TransformMatrix::Create();
+    affine_matrix[0] = tr[0];
+    affine_matrix[1] = tr[1];
+    affine_matrix[2] = tr[2];
+    affine_matrix[3] = tr[3];
+    affine_matrix[4] = tr[4];
+    affine_matrix[5] = tr[5];
+    
+    return affine_matrix;
+}
+
 }  // namespace inspirecv
