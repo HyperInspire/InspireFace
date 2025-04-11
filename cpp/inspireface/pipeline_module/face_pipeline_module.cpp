@@ -114,6 +114,7 @@ int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const Fa
                 return HERR_SESS_PIPELINE_FAILURE;  // uninitialized
             }
             if (originImage.Empty()) {
+                // Very bad practice
                 originImage = processor.ExecuteImageScaleProcessing(1.0, true);
             }
             std::vector<std::vector<int>> order_list = {HLMK_LEFT_EYE_POINTS_INDEX, HLMK_RIGHT_EYE_POINTS_INDEX};
