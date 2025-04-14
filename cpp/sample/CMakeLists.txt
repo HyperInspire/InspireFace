@@ -77,6 +77,12 @@ set_target_properties(FaceCrudSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
+add_executable(FeatureHubPersistenceSample api/sample_feature_hub_persistence.c)
+target_link_libraries(FeatureHubPersistenceSample InspireFace ${ext})
+set_target_properties(FeatureHubPersistenceSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
+)
+
 
 # --- C++ API ---
 
