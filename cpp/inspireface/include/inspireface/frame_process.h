@@ -161,6 +161,13 @@ public:
     inspirecv::TransformMatrix GetAffineMatrix() const;
 
     /**
+     * @brief Get the rotation mode affine transformation matrix, scale coefficient is not included.
+     *
+     * @return inspirecv::TransformMatrix Rotation mode affine transformation matrix.
+     */
+    inspirecv::TransformMatrix GetRotationModeAffineMatrix() const;
+
+    /**
      * @brief Get the height of the camera stream image.
      *
      * @return int Height.

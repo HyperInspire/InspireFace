@@ -2,6 +2,7 @@
 #include <inspireface/image_process/nexus_processor/image_processor.h>
 #include "log.h"
 #include <inspireface/include/inspireface/spend_timer.h>
+#include <inspireface/include/inspireface/herror.h>
 
 using namespace inspire;
 

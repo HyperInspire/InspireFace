@@ -29,7 +29,8 @@ int main(int argc, char** argv) {
     param.enable_mask_detect = true;
     param.enable_face_attribute = true;
     param.enable_face_quality = true;
-    std::shared_ptr<inspire::Session> session(inspire::Session::CreatePtr(inspire::DETECT_MODE_ALWAYS_DETECT, 1, param, 320));
+    std::shared_ptr<inspire::Session> session(inspire::Session::CreatePtr(inspire::DETECT_MODE_ALWAYS_DETECT, 100, param, 640));
+    session->SetTrackPreviewSize(640);
 
     INSPIREFACE_CHECK_MSG(session != nullptr, "Session is not valid");
 
