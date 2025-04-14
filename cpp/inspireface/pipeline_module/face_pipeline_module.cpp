@@ -113,62 +113,35 @@ int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const Fa
             if (m_blink_predict_ == nullptr) {
                 return HERR_SESS_PIPELINE_FAILURE;  // uninitialized
             }
-            if (originImage.Empty()) {
-                // Very bad practice
-                originImage = processor.ExecuteImageScaleProcessing(1.0, true);
-            }
             std::vector<std::vector<int>> order_list = {HLMK_LEFT_EYE_POINTS_INDEX, HLMK_RIGHT_EYE_POINTS_INDEX};
             eyesStatusCache = {0, 0};
             inspirecv::Point2f left_eye = inspirecv::Point2f(face.keyPoints[0].x, face.keyPoints[0].y);
             inspirecv::Point2f right_eye = inspirecv::Point2f(face.keyPoints[1].x, face.keyPoints[1].y);
             std::vector<inspirecv::Point2f> eyes = {left_eye, right_eye};
-            auto new_eyes_points = inspirecv::ApplyTransformToPoints(eyes, processor.GetAffineMatrix().GetInverse());
+            // Get affine matrix
+            inspirecv::TransformMatrix rotation_mode_affine = processor.GetAffineMatrix();
+            std::vector<inspirecv::Point2f> lmk;
+            for (const auto &p : face.densityLandmark) {
+                lmk.emplace_back(p.x, p.y);
+            }
+            // Get stand landmark
+            std::vector<inspirecv::Point2f> stand_lmk = inspirecv::ApplyTransformToPoints(lmk, rotation_mode_affine.GetInverse());
             for (size_t i = 0; i < order_list.size(); i++) {
                 const auto &index = order_list[i];
                 std::vector<inspirecv::Point2i> points;
                 for (const auto &idx : index) {
-                    points.emplace_back(face.densityLandmark[idx].x, face.densityLandmark[idx].y);
+                    points.emplace_back(stand_lmk[idx].GetX(), stand_lmk[idx].GetY());
                 }
-                auto rect = inspirecv::MinBoundingRect(points);
-                auto mat = processor.GetAffineMatrix();
-                auto new_rect = inspirecv::ApplyTransformToRect(rect, mat.GetInverse()).Square(1.3f);
-                // Use more accurate 5 key point calibration
-                auto cx = new_eyes_points[i].GetX();
-                auto cy = new_eyes_points[i].GetY();
-                new_rect.SetX(cx - new_rect.GetWidth() / 2);
-                new_rect.SetY(cy - new_rect.GetHeight() / 2);
+                auto rect_eye = inspirecv::MinBoundingRect(points).Square(1.5f);
+                auto rect_pts_eye = rect_eye.As<float>().ToFourVertices();
+                std::vector<inspirecv::Point2f> dst_pts_eye = {{0, 0}, {64, 0}, {64, 64}, {0, 64}};
+                std::vector<inspirecv::Point2f> camera_pts_eye = inspirecv::ApplyTransformToPoints(rect_pts_eye, rotation_mode_affine);
 
-                // Ensure rect stays within image bounds while maintaining aspect ratio
-                float originalAspectRatio = new_rect.GetWidth() / new_rect.GetHeight();
-
-                // Adjust position and size to fit within image bounds
-                if (new_rect.GetX() < 0) {
-                    new_rect.SetWidth(new_rect.GetWidth() + new_rect.GetX());  // Reduce width by overflow amount
-                    new_rect.SetX(0);
-                }
-                if (new_rect.GetY() < 0) {
-                    new_rect.SetHeight(new_rect.GetHeight() + new_rect.GetY());  // Reduce height by overflow amount
-                    new_rect.SetY(0);
-                }
-
-                float rightOverflow = (new_rect.GetX() + new_rect.GetWidth()) - originImage.Width();
-                if (rightOverflow > 0) {
-                    new_rect.SetWidth(new_rect.GetWidth() - rightOverflow);
-                }
-
-                float bottomOverflow = (new_rect.GetY() + new_rect.GetHeight()) - originImage.Height();
-                if (bottomOverflow > 0) {
-                    new_rect.SetHeight(new_rect.GetHeight() - bottomOverflow);
-                }
-
-                // Maintain minimum size (e.g., 20x20 ixels)
-                const float minSize = 20.0f;
-                if (new_rect.GetWidth() < minSize || new_rect.GetHeight() < minSize) {
-                    continue;  // Skip this eye if the crop region is too small
-                }
-
-                auto crop = originImage.Crop(new_rect);
-                auto score = (*m_blink_predict_)(crop);
+                auto affine_eye = inspirecv::SimilarityTransformEstimate(camera_pts_eye, dst_pts_eye);
+                auto eye_affine = processor.ExecuteImageAffineProcessing(affine_eye, 64, 64);
+                // eye_affine.Write("eye_"+std::to_string(i)+".jpg");
+                // auto crop = originImage.Crop(new_rect);
+                auto score = (*m_blink_predict_)(eye_affine);
                 eyesStatusCache[i] = score;
             }
             break;

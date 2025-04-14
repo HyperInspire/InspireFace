@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
     // Create image and frame process
     inspirecv::Image image = inspirecv::Image::Create(image_path);
     inspirecv::FrameProcess process =
-      inspirecv::FrameProcess::Create(image.Data(), image.Height(), image.Width(), inspirecv::BGR, inspirecv::ROTATION_90);
+      inspirecv::FrameProcess::Create(image.Data(), image.Height(), image.Width(), inspirecv::BGR, inspirecv::ROTATION_0);
 
     // Create session
     inspire::CustomPipelineParameter param;
@@ -31,6 +31,7 @@ int main(int argc, char** argv) {
     param.enable_face_attribute = true;
     param.enable_face_quality = true;
     param.enable_detect_mode_landmark = true;
+    param.enable_interaction_liveness = true;
     std::shared_ptr<inspire::Session> session(inspire::Session::CreatePtr(inspire::DETECT_MODE_ALWAYS_DETECT, 1, param, 320));
 
     INSPIREFACE_CHECK_MSG(session != nullptr, "Session is not valid");
@@ -44,9 +45,9 @@ int main(int argc, char** argv) {
     auto first = results[0];
     auto lmk = session->GetFaceDenseLandmark(first);
     std::cout << "lmk: " << lmk.size() << std::endl;
-    // for (size_t i = 0; i < lmk.size(); i++) {
-    //     image.DrawCircle(lmk[i].As<int>(), 5, inspirecv::Color::Red);
-    // }
+    for (size_t i = 0; i < lmk.size(); i++) {
+        image.DrawCircle(lmk[i].As<int>(), 5, inspirecv::Color::Red);
+    }
 
     inspirecv::TransformMatrix rotation_mode_affine = process.GetAffineMatrix();
 
@@ -70,10 +71,9 @@ int main(int argc, char** argv) {
         points.emplace_back(stand_lmk[idx].GetX(), stand_lmk[idx].GetY());
     }
     std::cout << "points: " << points.size() << std::endl;
-    auto rect_eye = inspirecv::MinBoundingRect(points).Square(1.3f);
+    auto rect_eye = inspirecv::MinBoundingRect(points).Square(1.4f);
     // draw debug
     image.DrawRect(rect_eye.As<int>(), inspirecv::Color::Red);
-    image.Show();
     auto rect_pts_eye = rect_eye.As<float>().ToFourVertices();
     std::vector<inspirecv::Point2f> dst_pts_eye = {{0, 0}, {64, 0}, {64, 64}, {0, 64}};
     std::vector<inspirecv::Point2f> camera_pts_eye = ApplyTransformToPoints(rect_pts_eye, rotation_mode_affine);
