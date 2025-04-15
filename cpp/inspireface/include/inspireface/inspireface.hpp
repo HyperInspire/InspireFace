@@ -10,3 +10,5 @@
 #include "log.h"
 #include "similarity_converter.h"
 #include "spend_timer.h"
+#include "information.h"
+#include "face_warpper.h"

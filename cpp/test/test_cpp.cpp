@@ -52,6 +52,12 @@ int main(int argc, char* argv[]) {
     init_test_evaluation_record();
     TEST_PRINT_OUTPUT(true);
 
+    TEST_PRINT("InspireFace Version: v{}.{}.{}", 
+                INSPIRE_FACE_VERSION_MAJOR_STR, 
+                INSPIRE_FACE_VERSION_MINOR_STR, 
+                INSPIRE_FACE_VERSION_PATCH_STR);
+    TEST_PRINT("Extended Information: {}", INSPIRE_FACE_EXTENDED_INFORMATION);
+
     Catch::Session session;
     // Pack file name and test directory
     std::string pack;
