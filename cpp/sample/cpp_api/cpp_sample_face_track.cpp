@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     // Create image and frame process
     inspirecv::Image image = inspirecv::Image::Create(image_path);
     inspirecv::FrameProcess process =
-      inspirecv::FrameProcess::Create(image.Data(), image.Height(), image.Width(), inspirecv::BGR, inspirecv::ROTATION_0);
+      inspirecv::FrameProcess::Create(image.Data(), image.Height(), image.Width(), inspirecv::BGR, inspirecv::ROTATION_90);
 
     // Create session
     inspire::CustomPipelineParameter param;
@@ -45,7 +45,10 @@ int main(int argc, char** argv) {
         std::cout << "quality: " << result.quality[0] << ", " << result.quality[1] << ", " << result.quality[2] << ", " << result.quality[3] << ", "
                   << result.quality[4] << std::endl;
         inspirecv::Rect2i rect = inspirecv::Rect2i::Create(result.rect.x, result.rect.y, result.rect.width, result.rect.height);
+        std::cout << rect << std::endl;
         image.DrawRect(rect, inspirecv::Color::Red);
+        inspirecv::TransformMatrix trans = inspirecv::TransformMatrix::Create(result.trans.m00, result.trans.m01, result.trans.tx, result.trans.m10, result.trans.m11, result.trans.ty);
+        std::cout << "trans: " << trans.GetInverse() << std::endl;
     }
     image.Write("result.jpg");
 
