@@ -84,6 +84,7 @@ set_target_properties(FeatureHubPersistenceSample PROPERTIES
 )
 
 
+
 # --- C++ API ---
 
 add_executable(CppSessionSample cpp_api/cpp_sample_face_track.cpp)
@@ -107,6 +108,12 @@ set_target_properties(CppFaceCrudSample PROPERTIES
 add_executable(CppSampleAffine cpp_api/cpp_sample_affine.cpp)
 target_link_libraries(CppSampleAffine InspireFace ${ext})
 set_target_properties(CppSampleAffine PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cpp_api/"
+)
+
+add_executable(CppSampleInspireCV cpp_api/cpp_sample_inspirecv.cpp)
+target_link_libraries(CppSampleInspireCV InspireFace ${ext})
+set_target_properties(CppSampleInspireCV PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cpp_api/"
 )
 
