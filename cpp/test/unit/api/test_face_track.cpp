@@ -319,6 +319,12 @@ TEST_CASE("test_MultipleLevelFaceDetect", "[face_detect]") {
         REQUIRE(ret == HSUCCEED);
         HFSessionSetTrackPreviewSize(session, detectPixelLevel);
         HFSessionSetFilterMinimumFacePixelSize(session, 0);
+        
+        // Check the preview size
+        HInt32 previewSize;
+        ret = HFSessionGetTrackPreviewSize(session, &previewSize);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(previewSize == detectPixelLevel);
 
         // Get a face picture
         HFImageStream imgHandle;
@@ -352,6 +358,12 @@ TEST_CASE("test_MultipleLevelFaceDetect", "[face_detect]") {
         HFSessionSetTrackPreviewSize(session, detectPixelLevel);
         HFSessionSetFilterMinimumFacePixelSize(session, 0);
 
+        // Check the preview size
+        HInt32 previewSize;
+        ret = HFSessionGetTrackPreviewSize(session, &previewSize);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(previewSize == detectPixelLevel);
+
         // Get a face picture
         HFImageStream imgHandle;
         auto image = inspirecv::Image::Create(GET_DATA("data/bulk/pedestrian.png"));
@@ -384,6 +396,12 @@ TEST_CASE("test_MultipleLevelFaceDetect", "[face_detect]") {
         HFSessionSetTrackPreviewSize(session, detectPixelLevel);
         HFSessionSetFilterMinimumFacePixelSize(session, 0);
 
+        // Check the preview size
+        HInt32 previewSize;
+        ret = HFSessionGetTrackPreviewSize(session, &previewSize);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(previewSize == detectPixelLevel);
+
         // Get a face picture
         HFImageStream imgHandle;
         auto image = inspirecv::Image::Create(GET_DATA("data/bulk/pedestrian.png"));
@@ -404,4 +422,133 @@ TEST_CASE("test_MultipleLevelFaceDetect", "[face_detect]") {
         ret = HFReleaseInspireFaceSession(session);
         REQUIRE(ret == HSUCCEED);
     }
+}
+
+TEST_CASE("test_FaceTrackPreviewSizeSetting", "[face_track]") {
+    DRAW_SPLIT_LINE
+    TEST_PRINT_OUTPUT(true);
+
+    SECTION("Default preview size and detection level size") {
+        HResult ret;
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
+        HFSession session;
+        HInt32 levelSize = -1;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 20, levelSize, -1, &session);
+        REQUIRE(ret == HSUCCEED);
+
+        // Check the preview size
+        HInt32 previewSize;
+        ret = HFSessionGetTrackPreviewSize(session, &previewSize);
+        REQUIRE(ret == HSUCCEED);
+        
+        CHECK(previewSize == 320);
+
+        // Get a face picture
+        HFImageStream imgHandle;
+        auto image = inspirecv::Image::Create(GET_DATA("data/bulk/pedestrian.png"));
+        ret = CVImageToImageStream(image, imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        // Extract basic face information from photos
+        HFMultipleFaceData multipleFaceData = {0};
+        ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+
+        CHECK(multipleFaceData.detectedNum > 0);
+        // Check the preview size
+        HInt32 debugPreviewSize;
+        ret = HFSessionLastFaceDetectionGetDebugPreviewImageSize(session, &debugPreviewSize);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(debugPreviewSize == 320);
+
+        ret = HFReleaseImageStream(imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
+    }
+
+    SECTION("Set preview size to 320px") {
+        HResult ret;
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
+        HFSession session;
+        HInt32 levelSize = 320;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 20, levelSize, -1, &session);
+        REQUIRE(ret == HSUCCEED);
+
+        // Check the preview size
+        HInt32 previewSize;
+        ret = HFSessionGetTrackPreviewSize(session, &previewSize);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(previewSize == levelSize);
+
+        ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
+    }
+
+    SECTION("Set the detect level to an invalid value") {
+        HResult ret;
+        HFSessionCustomParameter parameter = {0};
+        HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
+        HFSession session;
+        HInt32 levelSize = 1000;
+        ret = HFCreateInspireFaceSession(parameter, detMode, 20, levelSize, -1, &session);
+        REQUIRE(ret == HSUCCEED);
+
+        // Check the preview size
+        HInt32 previewSize;
+        ret = HFSessionGetTrackPreviewSize(session, &previewSize);
+        REQUIRE(ret == HSUCCEED);
+        // If the detect level value is invalid, the value will be automatically adjusted to the nearest legal size. 
+        // If the default value of preview_size is -1, the value will also be adjusted
+        CHECK(previewSize == 640);
+
+        // Get a face picture
+        HFImageStream imgHandle;
+        auto image = inspirecv::Image::Create(GET_DATA("data/bulk/pedestrian.png"));
+        ret = CVImageToImageStream(image, imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        // Extract basic face information from photos
+        HFMultipleFaceData multipleFaceData = {0};
+        ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+
+        CHECK(multipleFaceData.detectedNum > 0);
+        
+        // Check the preview size
+        HInt32 debugPreviewSize;
+        ret = HFSessionLastFaceDetectionGetDebugPreviewImageSize(session, &debugPreviewSize);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(debugPreviewSize == 640);
+
+        // Set a value manually
+        ret = HFSessionSetTrackPreviewSize(session, 192);
+        REQUIRE(ret == HSUCCEED);
+
+        // Check the preview size
+        ret = HFSessionGetTrackPreviewSize(session, &previewSize);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(previewSize == 192);
+        
+        ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
+        REQUIRE(ret == HSUCCEED);
+
+        CHECK(multipleFaceData.detectedNum > 0);
+
+        // Check the preview size
+        ret = HFSessionLastFaceDetectionGetDebugPreviewImageSize(session, &debugPreviewSize);
+        REQUIRE(ret == HSUCCEED);
+        CHECK(debugPreviewSize == 192);
+
+
+        ret = HFReleaseImageStream(imgHandle);
+        REQUIRE(ret == HSUCCEED);
+
+        ret = HFReleaseInspireFaceSession(session);
+        REQUIRE(ret == HSUCCEED);
+    }
+    
 }
