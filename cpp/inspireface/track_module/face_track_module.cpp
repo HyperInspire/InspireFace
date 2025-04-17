@@ -223,6 +223,7 @@ void FaceTrackModule::UpdateStream(inspirecv::FrameProcess &image) {
         m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
         image.SetPreviewSize(track_preview_size_);
         inspirecv::Image image_detect = image.ExecutePreviewImageProcessing(true);
+        m_debug_preview_image_size_ = image_detect.Width();
 
         nms();
         for (auto const &face : trackingFace) {
@@ -354,7 +355,7 @@ int FaceTrackModule::Configuration(inspire::InspireArchive &archive, const std::
     // Initialize the detection model
     m_expansion_path_ = std::move(expansion_path);
     InspireModel detModel;
-    auto scheme = ChoiceMultiLevelDetectModel(m_dynamic_detection_input_level_);
+    auto scheme = ChoiceMultiLevelDetectModel(m_dynamic_detection_input_level_, track_preview_size_);
     auto ret = archive.LoadModel(scheme, detModel);
     if (ret != SARC_SUCCESS) {
         INSPIRE_LOGE("Load %s error: %d", scheme.c_str(), ret);
@@ -441,20 +442,32 @@ void FaceTrackModule::SetMinimumFacePxSize(float value) {
 
 void FaceTrackModule::SetTrackPreviewSize(int preview_size) {
     track_preview_size_ = preview_size;
+    if (track_preview_size_ == -1) {
+        track_preview_size_ = m_face_detector_->GetInputSize();
+    } else if (track_preview_size_ < 192) {
+        INSPIRE_LOGW("Track preview size %d is less than the minimum input size %d", track_preview_size_, 192);
+        track_preview_size_ = 192;
+    }
 }
 
-std::string FaceTrackModule::ChoiceMultiLevelDetectModel(const int32_t pixel_size) {
+int32_t FaceTrackModule::GetTrackPreviewSize() const {
+    return track_preview_size_;
+}
+
+std::string FaceTrackModule::ChoiceMultiLevelDetectModel(const int32_t pixel_size, int32_t& final_size) {
     const int32_t supported_sizes[] = {160, 320, 640};
     const std::string scheme_names[] = {"face_detect_160", "face_detect_320", "face_detect_640"};
     const int32_t num_sizes = sizeof(supported_sizes) / sizeof(supported_sizes[0]);
 
     if (pixel_size == -1) {
+        final_size = supported_sizes[1];
         return scheme_names[1];
     }
 
     // Check for exact match
     for (int i = 0; i < num_sizes; ++i) {
         if (pixel_size == supported_sizes[i]) {
+            final_size = supported_sizes[i];
             return scheme_names[i];
         }
     }
@@ -477,6 +490,7 @@ std::string FaceTrackModule::ChoiceMultiLevelDetectModel(const int32_t pixel_siz
       "Input pixel size %d is not supported. Choosing the closest scheme: %s closest_scheme for "
       "size %d.",
       pixel_size, closest_scheme.c_str(), closest_size);
+    final_size = closest_size;
 
     return closest_scheme;
 }
@@ -495,6 +509,10 @@ void FaceTrackModule::SetTrackModeNumSmoothCacheFrame(int value) {
 
 void FaceTrackModule::SetTrackModeDetectInterval(int value) {
     detection_interval_ = value;
+}
+
+int32_t FaceTrackModule::GetDebugPreviewImageSize() const {
+    return m_debug_preview_image_size_;
 }
 
 }  // namespace inspire
