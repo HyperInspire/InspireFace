@@ -365,6 +365,16 @@ class InspireFaceSession(object):
 
         return np.asarray(landmark).reshape(-1, 2)
     
+    def print_track_cost_spend(self):
+        ret = HFSessionPrintTrackCostSpend(self._sess)
+        if ret != 0:
+            logger.error(f"Print track cost spend error: {ret}")
+
+    def set_enable_track_cost_spend(self, enable: bool):
+        ret = HFSessionSetEnableTrackCostSpend(self._sess, enable)
+        if ret != 0:
+            logger.error(f"Set enable track cost spend error: {ret}")
+    
     def set_detection_confidence_threshold(self, threshold: float):
         """
         Sets the detection confidence threshold for the face detection session.

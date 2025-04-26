@@ -4,7 +4,7 @@ import click
 import cv2
 import inspireface as isf
 import numpy as np
-
+import time
 
 def generate_color(id):
     """
@@ -49,14 +49,15 @@ def case_face_tracker_from_video(source, show, out):
         out (str): Path to save the processed video.
     """
     # Optional features, loaded during session creation based on the modules specified.
-    isf.reload(None, resource_path="../test_res/pack/Pikachu_Apple")
+    isf.reload(None, resource_path="../test_res/pack/Tracking_Apple")
     opt = isf.HF_ENABLE_NONE | isf.HF_ENABLE_INTERACTION
     session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_LIGHT_TRACK, max_detect_num=25, detect_pixel_level=320)    # Use video mode
-    session.set_track_mode_smooth_ratio(0.06)
-    session.set_track_mode_num_smooth_cache_frame(15)
+    session.set_track_mode_smooth_ratio(9999)
+    session.set_track_mode_num_smooth_cache_frame(1)
     session.set_filter_minimum_face_pixel_size(0)
     session.set_track_model_detect_interval(0)
-    session.set_landmark_augmentation_num(4)
+    session.set_landmark_augmentation_num(3)
+    session.set_enable_track_cost_spend(True)
     # Determine if the source is a digital webcam index or a video file path.
     try:
         source_index = int(source)  # Try to convert source to an integer.
@@ -80,6 +81,8 @@ def case_face_tracker_from_video(source, show, out):
         out_video = cv2.VideoWriter(out, fourcc, fps, (frame_width, frame_height))
         print(f"Saving video to: {out}")
 
+    flag = "[SDK]0.25, no filtering, N=4"
+
     # Main loop to process video frames.
     while True:
         ret, frame = cap.read()
@@ -87,8 +90,11 @@ def case_face_tracker_from_video(source, show, out):
             break  # Exit loop if no more frames or error occurs.
 
         # Process frame here (e.g., face detection/tracking).
+        t1 = time.time()
         faces = session.face_detection(frame)
-
+        t2 = time.time()
+        # print(f"Face detection time: {t2 - t1} seconds")
+        session.print_track_cost_spend()
         exts = session.face_pipeline(frame, faces, isf.HF_ENABLE_INTERACTION)
 
         for idx, face in enumerate(faces):
@@ -131,6 +137,8 @@ def case_face_tracker_from_video(source, show, out):
             five_key_points = session.get_face_five_key_points(face)
             for x, y in five_key_points.astype(int):
                 cv2.circle(frame, (x, y), 0, (255-color[0], 255-color[1], 255-color[2]), 6)
+
+            cv2.putText(frame, flag, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
             # Draw track ID at the top of the bounding box
             text = f"ID: {face.track_id}"
