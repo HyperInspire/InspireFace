@@ -30,7 +30,6 @@ int main(int argc, char** argv) {
     param.enable_mask_detect = true;
     param.enable_face_attribute = true;
     param.enable_face_quality = true;
-    param.enable_detect_mode_landmark = true;
     param.enable_interaction_liveness = true;
     std::shared_ptr<inspire::Session> session(inspire::Session::CreatePtr(inspire::DETECT_MODE_ALWAYS_DETECT, 1, param, 320));
 

@@ -83,6 +83,18 @@ public:
     // Get the cuda device id
     int32_t GetCudaDeviceId() const;
 
+    // Set the face detect pixel list
+    void SetFaceDetectPixelList(const std::vector<int32_t>& pixel_list);
+
+    // Get the face detect pixel list
+    std::vector<int32_t> GetFaceDetectPixelList() const;
+
+    // Set the face detect model list
+    void SetFaceDetectModelList(const std::vector<std::string>& model_list);
+
+    // Get the face detect model list
+    std::vector<std::string> GetFaceDetectModelList() const;
+
 private:
     // Private constructor for the singleton pattern
     Launch();

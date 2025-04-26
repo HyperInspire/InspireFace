@@ -17,7 +17,7 @@
 #endif
 #include <cstdarg>
 
-#define FACE_FEATURE_SIZE 512       ///< Temporary setup
+#define FACE_FEATURE_SIZE 512  ///< Temporary setup
 
 using namespace inspire;
 
@@ -358,7 +358,7 @@ HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectM
     param.enable_ir_liveness = parameter.enable_ir_liveness;
     param.enable_recognition = parameter.enable_recognition;
     param.enable_face_attribute = parameter.enable_face_attribute;
-    param.enable_detect_mode_landmark = parameter.enable_detect_mode_landmark;
+    param.enable_face_pose = parameter.enable_face_pose;
     inspire::DetectModuleMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
     if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
         detMode = inspire::DETECT_MODE_LIGHT_TRACK;
@@ -404,8 +404,8 @@ HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode de
     if (customOption & HF_ENABLE_INTERACTION) {
         param.enable_interaction_liveness = true;
     }
-    if (customOption & HF_ENABLE_DETECT_MODE_LANDMARK) {
-        param.enable_detect_mode_landmark = true;
+    if (customOption & HF_ENABLE_FACE_POSE) {
+        param.enable_face_pose = true;
     }
     inspire::DetectModuleMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
     if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
@@ -618,6 +618,17 @@ HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num) {
     return ctx->impl.SetTrackModeDetectInterval(num);
 }
 
+HResult HFSessionSetLandmarkAugmentationNum(HFSession session, HInt32 num) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetLandmarkAugmentationNum(num);
+}
+
 HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMultipleFaceData results) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
@@ -793,8 +804,6 @@ HResult HFFaceFeatureExtractTo(HFSession session, HFImageStream streamHandle, HF
 
     return HSUCCEED;
 }
-
-
 
 HResult HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HPFloat feature) {
     if (session == nullptr) {
@@ -1087,7 +1096,6 @@ HResult HFMultipleFacePipelineProcess(HFSession session, HFImageStream streamHan
     param.enable_ir_liveness = parameter.enable_ir_liveness;
     param.enable_recognition = parameter.enable_recognition;
     param.enable_face_attribute = parameter.enable_face_attribute;
-    param.enable_detect_mode_landmark = parameter.enable_detect_mode_landmark;
 
     HResult ret;
     std::vector<inspire::FaceTrackWrap> data;
@@ -1149,8 +1157,8 @@ HResult HFMultipleFacePipelineProcessOptional(HFSession session, HFImageStream s
     if (customOption & HF_ENABLE_INTERACTION) {
         param.enable_interaction_liveness = true;
     }
-    if (customOption & HF_ENABLE_DETECT_MODE_LANDMARK) {
-        param.enable_detect_mode_landmark = true;
+    if (customOption & HF_ENABLE_FACE_POSE) {
+        param.enable_face_pose = true;
     }
 
     HResult ret;

@@ -9,6 +9,7 @@
 #include "face_detect/face_detect_adapt.h"
 #include "face_detect/rnet_adapt.h"
 #include "landmark/face_landmark_adapt.h"
+#include "landmark/landmark_tools.h"
 #include "common/face_info/face_object_internal.h"
 #include "frame_process.h"
 #include "quality/face_pose_quality_adapt.h"
@@ -43,7 +44,7 @@ public:
      * @param expansion_path Expand the path if you need it.
      * @return int Status of the configuration.
      */
-    int Configuration(InspireArchive &archive, const std::string &expansion_path = "");
+    int Configuration(InspireArchive &archive, const std::string &expansion_path = "", bool enable_face_pose_and_quality = false);
 
     /**
      * @brief Updates the video stream for face tracking.
@@ -119,11 +120,11 @@ private:
     int InitRNetModel(InspireModel &model);
 
     /**
-     * @brief Initializes the face pose estimation model.
-     * @param model Pointer to the face pose model to be initialized.
+     * @brief Initializes the face pose and quality estimation model.
+     * @param model Pointer to the face pose and quality model to be initialized.
      * @return int Status of the initialization process. Returns 0 for success.
      */
-    int InitFacePoseModel(InspireModel &model);
+    int InitFacePoseAndQualityModel(InspireModel &model);
 
     /**
      * @brief Select the detection model scheme to be used according to the input pixel level.
@@ -167,6 +168,12 @@ public:
      */
     void SetTrackModeDetectInterval(int value);
 
+    /**
+     * @brief Set the multiscale landmark augment num
+     * @param value Multiscale landmark augment num
+     */
+    void SetMultiscaleLandmarkAugmentNum(int value);
+
 public:
     std::vector<FaceObjectInternal> trackingFace;  ///< Vector of FaceObjects currently being tracked.
 
@@ -202,6 +209,12 @@ private:
     int m_track_mode_num_smooth_cache_frame_ = 5;  ///< Track mode number of smooth cache frame
 
     float m_track_mode_smooth_ratio_ = 0.05;  ///< Track mode smooth ratio
+
+    int m_multiscale_landmark_augment_num_ = 1;  ///< Multiscale landmark augment num
+
+    float m_landmark_crop_ratio_ = 1.1f;
+
+    std::vector<float> m_multiscale_landmark_scales_;
 };
 
 }  // namespace inspire

@@ -27,13 +27,8 @@ int32_t FaceSession::Configuration(DetectModuleMode detect_mode, int32_t max_det
         return HERR_ARCHIVE_LOAD_FAILURE;
     }
 
-    if (m_parameter_.enable_interaction_liveness) {
-        m_parameter_.enable_detect_mode_landmark = true;
-    }
-
-    m_face_track_ = std::make_shared<FaceTrackModule>(m_detect_mode_, m_max_detect_face_, 20, 192, detect_level_px, track_by_detect_mode_fps,
-                                                      m_parameter_.enable_detect_mode_landmark);
-    m_face_track_->Configuration(INSPIREFACE_CONTEXT->getMArchive());
+    m_face_track_ = std::make_shared<FaceTrackModule>(m_detect_mode_, m_max_detect_face_, 20, 192, detect_level_px, track_by_detect_mode_fps, true);
+    m_face_track_->Configuration(INSPIREFACE_CONTEXT->getMArchive(), "", m_parameter_.enable_face_pose || m_parameter_.enable_face_quality);
     // SetDetectMode(m_detect_mode_);
 
     m_face_recognition_ = std::make_shared<FeatureExtractionModule>(INSPIREFACE_CONTEXT->getMArchive(), m_parameter_.enable_recognition);
@@ -115,6 +110,11 @@ int32_t FaceSession::FaceDetectAndTrack(inspirecv::FrameProcess& process) {
         m_face_track_cost_->Stop();
     }
     //    LOGD("Track COST: %f", m_face_track_->GetTrackTotalUseTime());
+    return HSUCCEED;
+}
+
+int32_t FaceSession::SetLandmarkAugmentationNum(int32_t value) {
+    m_face_track_->SetMultiscaleLandmarkAugmentNum(value);
     return HSUCCEED;
 }
 
@@ -363,7 +363,7 @@ int32_t FaceSession::FaceFeatureExtractWithAlignmentImage(const inspirecv::Image
     int32_t ret;
     ret = m_face_recognition_->FaceExtractWithAlignmentImage(wrapped, embedding.embedding, norm, normalize);
     return ret;
-}   
+}
 
 int32_t FaceSession::FaceGetFaceAlignmentImage(inspirecv::FrameProcess& process, FaceBasicData& data, inspirecv::Image& image) {
     std::lock_guard<std::mutex> lock(m_mtx_);

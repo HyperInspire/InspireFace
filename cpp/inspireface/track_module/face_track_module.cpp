@@ -15,6 +15,7 @@
 #include "middleware/costman.h"
 #include "cost_time.h"
 #include "spend_timer.h"
+#include "launch.h"
 
 namespace inspire {
 
@@ -35,11 +36,14 @@ FaceTrackModule::FaceTrackModule(DetectModuleMode mode, int max_detected_faces, 
         // In lightweight tracking mode, landmark detection is always required
         m_detect_mode_landmark_ = true;
     } else {
-        m_detect_mode_landmark_ = detect_mode_landmark;
+        // This version uses lmk106 to replace five key points, so lmk must be forcibly enabled!
+        m_detect_mode_landmark_ = true;
     }
     if (m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
         m_TbD_tracker_ = std::make_shared<BYTETracker>(TbD_mode_fps, 30);
     }
+
+    m_multiscale_landmark_scales_ = GenerateCropScales(m_landmark_crop_ratio_, m_multiscale_landmark_augment_num_);
 }
 
 void FaceTrackModule::SparseLandmarkPredict(const inspirecv::Image &raw_face_crop, std::vector<inspirecv::Point2f> &landmarks_output, float &score,
@@ -113,23 +117,65 @@ bool FaceTrackModule::TrackFace(inspirecv::FrameProcess &image, FaceObjectIntern
         std::vector<inspirecv::Point2f> lmk_extensive = ApplyTransformToPoints(res.lmk, affine_extensive_inv);
         res.lmk = lmk_extensive;
         face.high_result = res;
+    } else {
+        // If face pose and quality model is not initialized, set the default value
+        FacePoseQualityAdaptResult empty_result;
+        empty_result.lmk = std::vector<inspirecv::Point2f>(5, inspirecv::Point2f(0, 0));
+        empty_result.lmk_quality = std::vector<float>(5, 2.0f);
+        empty_result.pitch = 0.0f;
+        empty_result.yaw = 0.0f;
+        empty_result.roll = 0.0f;
+        face.high_result = empty_result;
     }
 
     if (m_detect_mode_landmark_) {
         // If Landmark need to be extracted in detection mode,
         // Landmark must be detected when fast tracing is enabled
         affine = face.getTransMatrix();
-        inspirecv::Image crop;
-        // Get the RGB image after affine transformation
-        crop = image.ExecuteImageAffineProcessing(affine, 112, 112);
         inspirecv::TransformMatrix affine_inv = affine.GetInverse();
-
         std::vector<inspirecv::Point2f> landmark_rawout;
-        std::vector<float> bbox;
+        std::vector<std::vector<inspirecv::Point2f>> multiscale_landmark_back;
 
-        Timer lmk_cost_time;
-        // Predicted sparse key point
-        SparseLandmarkPredict(crop, landmark_rawout, score, 112);
+        for (int i = 0; i < m_multiscale_landmark_scales_.size(); i++) {
+            inspirecv::Image crop;
+            // Get the RGB image after affine transformation
+            auto affine_scale = ScaleAffineMatrixPreserveCenter(affine, m_multiscale_landmark_scales_[i], 112);
+            crop = image.ExecuteImageAffineProcessing(affine_scale, 112, 112);
+
+            std::vector<inspirecv::Point2f> lmk_predict;
+
+            // Predicted sparse key point
+            SparseLandmarkPredict(crop, lmk_predict, score, 112);
+
+            // Draw
+            // for (int j = 0; j < lmk_predict.size(); j++) {
+            //     crop.DrawCircle(lmk_predict[j].As<int>(), 0, inspirecv::Color::Red);
+            // }
+            // crop.Show();
+
+            // Save the first scale landmark
+            if (i == 0) {
+                landmark_rawout = lmk_predict;
+            }
+
+            std::vector<inspirecv::Point2f> lmk_back;
+            // Convert key points back to the original coordinate system
+            lmk_back.resize(lmk_predict.size());
+            lmk_back = inspirecv::ApplyTransformToPoints(lmk_predict, affine_scale.GetInverse());
+
+            multiscale_landmark_back.push_back(lmk_back);
+
+            // Draw
+            // auto img = image.ExecuteImageScaleProcessing(1.0f, false);
+            // for (int j = 0; j < lmk_back.size(); j++) {
+            //     img.DrawCircle(lmk_back[j].As<int>(), 0, inspirecv::Color::Red);
+            // }
+            // img.Show();
+            // std::cout << "multiscale: " << m_multiscale_landmark_scales_[i] << std::endl;
+        }
+
+        landmark_back = MultiFrameLandmarkMean(multiscale_landmark_back);
+
         // Extract 5 key points
         std::vector<inspirecv::Point2f> lmk_5 = {
           landmark_rawout[FaceLandmarkAdapt::LEFT_EYE_CENTER], landmark_rawout[FaceLandmarkAdapt::RIGHT_EYE_CENTER],
@@ -137,9 +183,6 @@ bool FaceTrackModule::TrackFace(inspirecv::FrameProcess &image, FaceObjectIntern
           landmark_rawout[FaceLandmarkAdapt::MOUTH_RIGHT_CORNER]};
         face.setAlignMeanSquareError(lmk_5);
 
-        // Convert key points back to the original coordinate system
-        landmark_back.resize(landmark_rawout.size());
-        landmark_back = inspirecv::ApplyTransformToPoints(landmark_rawout, affine_inv);
         int MODE = 1;
 
         if (MODE > 0) {
@@ -187,21 +230,17 @@ bool FaceTrackModule::TrackFace(inspirecv::FrameProcess &image, FaceObjectIntern
                 // INSPIRE_LOGD("Extensive Affine Cost %f", extensive_cost_time.GetCostTimeUpdate());
             }
         }
-        // Add five key points to landmark_back
-        for (int i = 0; i < 5; i++) {
-            landmark_back.push_back(face.high_result.lmk[i]);
-        }
         // Update face key points
         face.SetLandmark(landmark_back, true, true, m_track_mode_smooth_ratio_, m_track_mode_num_smooth_cache_frame_,
-                         (FaceLandmarkAdapt::NUM_OF_LANDMARK + 10) * 2);
+                         FaceLandmarkAdapt::NUM_OF_LANDMARK * 2);
         // Get the smoothed landmark
         auto &landmark_smooth = face.landmark_smooth_aux_.back();
         // Update the face key points
-        face.high_result.lmk[0] = landmark_smooth[FaceLandmarkAdapt::NUM_OF_LANDMARK + 0];
-        face.high_result.lmk[1] = landmark_smooth[FaceLandmarkAdapt::NUM_OF_LANDMARK + 1];
-        face.high_result.lmk[2] = landmark_smooth[FaceLandmarkAdapt::NUM_OF_LANDMARK + 2];
-        face.high_result.lmk[3] = landmark_smooth[FaceLandmarkAdapt::NUM_OF_LANDMARK + 3];
-        face.high_result.lmk[4] = landmark_smooth[FaceLandmarkAdapt::NUM_OF_LANDMARK + 4];
+        face.high_result.lmk[0] = landmark_smooth[FaceLandmarkAdapt::LEFT_EYE_CENTER];
+        face.high_result.lmk[1] = landmark_smooth[FaceLandmarkAdapt::RIGHT_EYE_CENTER];
+        face.high_result.lmk[2] = landmark_smooth[FaceLandmarkAdapt::NOSE_CORNER];
+        face.high_result.lmk[3] = landmark_smooth[FaceLandmarkAdapt::MOUTH_LEFT_CORNER];
+        face.high_result.lmk[4] = landmark_smooth[FaceLandmarkAdapt::MOUTH_RIGHT_CORNER];
     }
 
     // If tracking status, update the confidence level
@@ -219,7 +258,7 @@ void FaceTrackModule::UpdateStream(inspirecv::FrameProcess &image) {
     detection_index_ += 1;
     if (m_mode_ == DETECT_MODE_ALWAYS_DETECT || m_mode_ == DETECT_MODE_TRACK_BY_DETECT)
         trackingFace.clear();
-    if (trackingFace.empty() || detection_index_ % detection_interval_ == 0 || m_mode_ == DETECT_MODE_ALWAYS_DETECT ||
+    if (trackingFace.empty() || (detection_interval_ > 0 && detection_index_ % detection_interval_ == 0) || m_mode_ == DETECT_MODE_ALWAYS_DETECT ||
         m_mode_ == DETECT_MODE_TRACK_BY_DETECT) {
         image.SetPreviewSize(track_preview_size_);
         inspirecv::Image image_detect = image.ExecutePreviewImageProcessing(true);
@@ -350,7 +389,7 @@ void FaceTrackModule::DetectFace(const inspirecv::Image &input, float scale) {
     }
 }
 
-int FaceTrackModule::Configuration(inspire::InspireArchive &archive, const std::string &expansion_path) {
+int FaceTrackModule::Configuration(inspire::InspireArchive &archive, const std::string &expansion_path, bool enable_face_pose_and_quality) {
     // Initialize the detection model
     m_expansion_path_ = std::move(expansion_path);
     InspireModel detModel;
@@ -379,15 +418,16 @@ int FaceTrackModule::Configuration(inspire::InspireArchive &archive, const std::
         return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
     }
     InitRNetModel(rnetModel);
-
-    // Initialize the pose quality model
-    InspireModel pquModel;
-    ret = archive.LoadModel("pose_quality", pquModel);
-    if (ret != SARC_SUCCESS) {
-        INSPIRE_LOGE("Load %s error: %d", "pose_quality", ret);
-        return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
+    if (enable_face_pose_and_quality) {
+        // Initialize the pose quality model
+        InspireModel pquModel;
+        ret = archive.LoadModel("pose_quality", pquModel);
+        if (ret != SARC_SUCCESS) {
+            INSPIRE_LOGE("Load %s error: %d", "pose_quality", ret);
+            return HERR_ARCHIVE_LOAD_MODEL_FAILURE;
+        }
+        InitFacePoseAndQualityModel(pquModel);
     }
-    InitFacePoseModel(pquModel);
 
     return 0;
 }
@@ -422,7 +462,7 @@ int FaceTrackModule::InitRNetModel(InspireModel &model) {
     return HSUCCEED;
 }
 
-int FaceTrackModule::InitFacePoseModel(InspireModel &model) {
+int FaceTrackModule::InitFacePoseAndQualityModel(InspireModel &model) {
     m_face_quality_ = std::make_shared<FacePoseQualityAdapt>();
     auto ret = m_face_quality_->LoadData(model, model.modelType);
     if (ret != InferenceWrapper::WrapperOk) {
@@ -444,32 +484,31 @@ void FaceTrackModule::SetTrackPreviewSize(int preview_size) {
 }
 
 std::string FaceTrackModule::ChoiceMultiLevelDetectModel(const int32_t pixel_size) {
-    const int32_t supported_sizes[] = {160, 320, 640};
-    const std::string scheme_names[] = {"face_detect_160", "face_detect_320", "face_detect_640"};
-    const int32_t num_sizes = sizeof(supported_sizes) / sizeof(supported_sizes[0]);
-
+    const auto face_detect_pixel_list = Launch::GetInstance()->GetFaceDetectPixelList();
+    const auto face_detect_model_list = Launch::GetInstance()->GetFaceDetectModelList();
+    const int32_t num_sizes = face_detect_pixel_list.size();
     if (pixel_size == -1) {
-        return scheme_names[1];
+        return face_detect_model_list[1];
     }
 
     // Check for exact match
     for (int i = 0; i < num_sizes; ++i) {
-        if (pixel_size == supported_sizes[i]) {
-            return scheme_names[i];
+        if (pixel_size == face_detect_pixel_list[i]) {
+            return face_detect_model_list[i];
         }
     }
 
     // Find the closest match
-    int32_t closest_size = supported_sizes[0];
-    std::string closest_scheme = scheme_names[0];
-    int32_t min_diff = std::abs(pixel_size - supported_sizes[0]);
+    int32_t closest_size = face_detect_pixel_list[0];
+    std::string closest_scheme = face_detect_model_list[0];
+    int32_t min_diff = std::abs(pixel_size - face_detect_pixel_list[0]);
 
     for (int i = 1; i < num_sizes; ++i) {
-        int32_t diff = std::abs(pixel_size - supported_sizes[i]);
+        int32_t diff = std::abs(pixel_size - face_detect_pixel_list[i]);
         if (diff < min_diff) {
             min_diff = diff;
-            closest_size = supported_sizes[i];
-            closest_scheme = scheme_names[i];
+            closest_size = face_detect_pixel_list[i];
+            closest_scheme = face_detect_model_list[i];
         }
     }
 
@@ -495,6 +534,11 @@ void FaceTrackModule::SetTrackModeNumSmoothCacheFrame(int value) {
 
 void FaceTrackModule::SetTrackModeDetectInterval(int value) {
     detection_interval_ = value;
+}
+
+void FaceTrackModule::SetMultiscaleLandmarkAugmentNum(int value) {
+    m_multiscale_landmark_augment_num_ = value;
+    m_multiscale_landmark_scales_ = GenerateCropScales(m_landmark_crop_ratio_, m_multiscale_landmark_augment_num_);
 }
 
 }  // namespace inspire

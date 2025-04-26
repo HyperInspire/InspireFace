@@ -49,9 +49,14 @@ def case_face_tracker_from_video(source, show, out):
         out (str): Path to save the processed video.
     """
     # Optional features, loaded during session creation based on the modules specified.
+    isf.reload(None, resource_path="../test_res/pack/Pikachu_Apple")
     opt = isf.HF_ENABLE_NONE | isf.HF_ENABLE_INTERACTION
     session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_LIGHT_TRACK, max_detect_num=25, detect_pixel_level=320)    # Use video mode
+    session.set_track_mode_smooth_ratio(0.06)
+    session.set_track_mode_num_smooth_cache_frame(15)
     session.set_filter_minimum_face_pixel_size(0)
+    session.set_track_model_detect_interval(0)
+    session.set_landmark_augmentation_num(4)
     # Determine if the source is a digital webcam index or a video file path.
     try:
         source_index = int(source)  # Try to convert source to an integer.
