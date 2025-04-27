@@ -16,6 +16,7 @@
 #include "middleware/model_archive/inspire_archive.h"
 #include "tracker_optional/bytetrack/BYTETracker.h"
 #include <data_type.h>
+#include "landmark/landmark_param.h"
 
 namespace inspire {
 
@@ -215,6 +216,9 @@ private:
     float m_landmark_crop_ratio_ = 1.1f;
 
     std::vector<float> m_multiscale_landmark_scales_;
+
+    std::shared_ptr<LandmarkParam> m_landmark_param_;
+
 };
 
 }  // namespace inspire

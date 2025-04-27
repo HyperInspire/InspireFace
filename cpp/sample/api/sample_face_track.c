@@ -77,12 +77,14 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
+    HFSwitchLandmarkEngine(HF_LANDMARK_INSIGHTFACE_2D106_TRACK);
+
     /* Enable the functions in the pipeline: mask detection, live detection, and face quality
      * detection */
     option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     /* Non-video or frame sequence mode uses IMAGE-MODE, which is always face detection without
      * tracking */
-    detMode = HF_DETECT_MODE_ALWAYS_DETECT;
+    detMode = HF_DETECT_MODE_LIGHT_TRACK;
     /* Maximum number of faces detected */
     maxDetectNum = 20;
     /* Face detection image input level */
@@ -112,10 +114,13 @@ int main(int argc, char* argv[]) {
     }
 
     /* Execute HF_FaceContextRunFaceTrack captures face information in an image */
-    ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
-    if (ret != HSUCCEED) {
-        HFLogPrint(HF_LOG_ERROR, "Execute HFExecuteFaceTrack error: %d", ret);
-        return ret;
+    int loop = 20;
+    for (int i = 0; i < loop; i++) {
+        ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
+        if (ret != HSUCCEED) {
+            HFLogPrint(HF_LOG_ERROR, "Execute HFExecuteFaceTrack error: %d", ret);
+            return ret;
+        }
     }
 
     /* Print the number of faces detected */

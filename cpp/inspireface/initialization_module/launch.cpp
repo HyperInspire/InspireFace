@@ -273,4 +273,22 @@ std::vector<std::string> Launch::GetFaceDetectModelList() const {
     return pImpl->m_face_detect_model_list_;
 }
 
+void Launch::SwitchLandmarkEngine(LandmarkEngine engine) {
+    std::lock_guard<std::mutex> lock(pImpl->mutex_);
+    if (pImpl->m_archive_->QueryStatus() != SARC_SUCCESS) {
+        INSPIRE_LOGE("The InspireFace is not initialized, please call launch first.");
+        return;
+    }
+    auto landmark_param = pImpl->m_archive_->GetLandmarkParam();
+    bool ret = false;
+    if (engine == LANDMARK_HYPLMV2_0_25) {
+        ret = landmark_param->ReLoad("landmark");
+    } else if (engine == LANDMARK_HYPLMV2_0_50) {
+        ret = landmark_param->ReLoad("landmark_0_50");
+    } else if (engine == LANDMARK_INSIGHTFACE_2D106_TRACK) {
+        ret = landmark_param->ReLoad("landmark_insightface_2d106");
+    }
+    INSPIREFACE_CHECK_MSG(ret, "Failed to switch landmark engine");
+}
+
 }  // namespace inspire

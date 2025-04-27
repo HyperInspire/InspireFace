@@ -404,6 +404,24 @@ typedef enum HFDetectMode {
                                         //   to use it).
 } HFDetectMode;
 
+
+/**
+ * @brief Enum for landmark engine.
+ */
+typedef enum HFSessionLandmarkEngine {
+    HF_LANDMARK_HYPLMV2_0_25 = 0,               ///< Hyplmkv2 0.25, default
+    HF_LANDMARK_HYPLMV2_0_50 = 1,               ///< Hyplmkv2 0.50
+    HF_LANDMARK_INSIGHTFACE_2D106_TRACK = 2,    ///< InsightFace 2d106 track
+} HFSessionLandmarkEngine;
+
+/**
+ * @brief Global switch the landmark engine. Set it globally before creating a session. 
+ *  If it is changed, a new session needs to be created for it to be effective.
+ * @param engine The landmark engine to be set.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSwitchLandmarkEngine(HFSessionLandmarkEngine engine);
+
 /**
  * @brief Create a session from a resource file.
  *

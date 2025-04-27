@@ -12,6 +12,7 @@
 #include "fstream"
 #include "similarity_converter.h"
 #include "launch.h"
+#include "track_module/landmark/landmark_param.h"
 
 namespace inspire {
 
@@ -119,6 +120,9 @@ public:
         return m_face_detect_model_list_;
     }
 
+    const std::shared_ptr<LandmarkParam>& GetLandmarkParam() const {
+        return m_landmark_param_;
+    }
 private:
     int32_t loadManifestFile() {
         if (m_archive_->QueryLoadStatus() == SARC_SUCCESS) {
@@ -182,9 +186,11 @@ private:
                 m_face_detect_pixel_list_ = {160, 320, 640};
                 m_face_detect_model_list_ = {"face_detect_160", "face_detect_320", "face_detect_640"};
             }
+            m_landmark_param_ = std::make_shared<LandmarkParam>(m_config_["landmark_table"]);
         }
         return 0;
     }
+
 
 private:
     std::shared_ptr<CoreArchive> m_archive_;
@@ -201,6 +207,8 @@ private:
 
     std::vector<int> m_face_detect_pixel_list_;
     std::vector<std::string> m_face_detect_model_list_;
+
+    std::shared_ptr<LandmarkParam> m_landmark_param_;
 };
 
 }  // namespace inspire

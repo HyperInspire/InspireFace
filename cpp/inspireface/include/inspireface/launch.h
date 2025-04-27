@@ -32,6 +32,12 @@ public:
         NN_INFERENCE_TENSORRT_CUDA,
     };
 
+    enum LandmarkEngine {
+        LANDMARK_HYPLMV2_0_25 = 0,
+        LANDMARK_HYPLMV2_0_50,
+        LANDMARK_INSIGHTFACE_2D106_TRACK,
+    };
+
     Launch(const Launch&) = delete;             // Delete the copy constructor to prevent copying.
     Launch& operator=(const Launch&) = delete;  // Delete the assignment operator to prevent assignment.
     ~Launch();                                  // Destructor needs to be defined where the implementation is complete
@@ -94,6 +100,9 @@ public:
 
     // Get the face detect model list
     std::vector<std::string> GetFaceDetectModelList() const;
+
+    // Switch the landmark engine
+    void SwitchLandmarkEngine(LandmarkEngine engine);
 
 private:
     // Private constructor for the singleton pattern

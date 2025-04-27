@@ -348,6 +348,19 @@ HResult HFReleaseInspireFaceSession(HFSession handle) {
     return HSUCCEED;
 }
 
+HResult HFSwitchLandmarkEngine(HFSessionLandmarkEngine engine) {
+    inspire::Launch::LandmarkEngine type;
+    if (engine == HF_LANDMARK_HYPLMV2_0_25) {
+        type = inspire::Launch::LANDMARK_HYPLMV2_0_25;
+    } else if (engine == HF_LANDMARK_HYPLMV2_0_50) {
+        type = inspire::Launch::LANDMARK_HYPLMV2_0_50;
+    } else if (engine == HF_LANDMARK_INSIGHTFACE_2D106_TRACK) {
+        type = inspire::Launch::LANDMARK_INSIGHTFACE_2D106_TRACK;
+    }
+    INSPIREFACE_CONTEXT->SwitchLandmarkEngine(type);
+    return HSUCCEED;
+}
+
 HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectMode detectMode, HInt32 maxDetectFaceNum, HInt32 detectPixelLevel,
                                    HInt32 trackByDetectModeFPS, HFSession *handle) {
     inspire::ContextCustomParameter param;

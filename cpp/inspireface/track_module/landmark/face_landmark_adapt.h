@@ -29,7 +29,7 @@ public:
      * @brief Constructor for the FaceLandmark class.
      * @param input_size The size of the input image for the neural network.
      */
-    explicit FaceLandmarkAdapt(int input_size = 112);
+    explicit FaceLandmarkAdapt(int input_size = 112, bool is_center_scaling = false);
 
     /**
      * @brief Gets the input size for the neural network model.
@@ -50,6 +50,7 @@ public:
 
 private:
     const int m_input_size_;  ///< The input size for the neural network model.
+    bool m_is_center_scaling_;  ///< Whether to use center scaling.
 };
 
 }  //  namespace inspire

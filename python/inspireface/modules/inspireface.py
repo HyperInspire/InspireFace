@@ -684,6 +684,13 @@ def query_launch_status() -> bool:
         return False
     return status.value == 1
 
+def switch_landmark_engine(engine: int):
+    ret = HFSwitchLandmarkEngine(engine)
+    if ret != 0:
+        logger.error(f"Switch landmark engine error: {ret}")
+        return False
+    return True
+
 @dataclass
 class FeatureHubConfiguration:
     """
