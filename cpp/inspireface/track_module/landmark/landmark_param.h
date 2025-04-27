@@ -5,6 +5,7 @@
 #include "yaml-cpp/yaml.h"
 #include "mean_shape.h"
 #include "log.h"
+#include "landmark_tools.h"
 
 namespace inspire {
 
@@ -65,37 +66,36 @@ public:
         semantic_index.mouth_right_corner = semanic_index["mouth_right_corner"].as<int>();
         semantic_index.mouth_lower = semanic_index["mouth_lower"].as<int>();
         semantic_index.mouth_upper = semanic_index["mouth_upper"].as<int>();
-        auto norm_track_index_from_112x = landmark_table["norm_track_index_from_112x"];
-        LoadDefaultMeshShape();
-        if (norm_track_index_from_112x.size()> 0) {
-            std::vector<int> sorted_index = norm_track_index_from_112x.as<std::vector<int>>();
-                if (sorted_index.size() == num_of_landmark) {
-                    // Sort the index
-                    std::vector<inspirecv::Point2f> sorted_mean_shape_points(num_of_landmark);
-                    for (int i = 0; i < num_of_landmark; i++) {
-                        if (input_size == 112) {
-                            sorted_mean_shape_points[i] = mean_shape_points[sorted_index[i]];
-                        } else {
-                            auto new_point = mean_shape_points[sorted_index[i]];
-                            new_point.SetX(new_point.GetX() / 112.0f * input_size);
-                            new_point.SetY(new_point.GetY() / 112.0f * input_size);
-                            sorted_mean_shape_points[i] = new_point;
-                        }
-                    }
-                    mean_shape_points = sorted_mean_shape_points;
-                } else {
-                    INSPIRE_LOGE("norm_track_index_from_112x size is not equal to num_of_landmark: %s", name.c_str());
+        auto mesh_shape = landmark_table["mesh_shape"];
+        if (mesh_shape.size() > 0) {
+            std::vector<float> mesh_shape_data = mesh_shape.as<std::vector<float>>();
+            mean_shape_points.clear();
+            mean_shape_points.resize(num_of_landmark);
+            if (mesh_shape_data.size() == num_of_landmark * 2) {
+                for (int i = 0; i < num_of_landmark; i++) {
+                    mean_shape_points[i].SetX(mesh_shape_data[i * 2]);
+                    mean_shape_points[i].SetY(mesh_shape_data[i * 2 + 1]);
+                }
+                mean_shape_points = LandmarkCropped(mean_shape_points);
+                // auto img = inspirecv::Image::Create(192, 192, 3);
+                // img.Fill(0);
+                // for (int i = 0; i < num_of_landmark; i++) {
+                //     auto point = mean_shape_points[i];
+                //     img.DrawCircle(inspirecv::Point2i(point.GetX(), point.GetY()), 2, inspirecv::Color::Red);
+                // }
+                // img.Show("mean_shape");
+            } else {
+                INSPIRE_LOGE("norm_track_index_from_112x size is not equal to num_of_landmark: %s", name.c_str());
                 return false;
             }
+        } else {
+            LoadDefaultMeshShape();
         }
-
         normalization_mode = landmark_table["normalization_mode"].as<std::string>();
         landmark_engine_name = name;
 
         return true;
     }
-
-
 
 public:
     int num_of_landmark{106};

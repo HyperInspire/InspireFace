@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
     }
 
     /* Execute HF_FaceContextRunFaceTrack captures face information in an image */
-    int loop = 20;
+    int loop = 200;
     for (int i = 0; i < loop; i++) {
         ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
         if (ret != HSUCCEED) {

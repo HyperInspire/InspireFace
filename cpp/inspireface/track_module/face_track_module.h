@@ -72,6 +72,13 @@ private:
                                float size = 112.0);
 
     /**
+     * @brief Predicts the tracking score for a cropped face image.
+     * @param raw_face_crop Cropped face image.
+     * @return float Tracking score.
+     */
+    float PredictTrackScore(const inspirecv::Image &raw_face_crop);
+
+    /**
      * @brief Tracks a face in the given image stream.
      * @param image Camera stream containing the face.
      * @param face FaceObject to be tracked.
@@ -218,7 +225,6 @@ private:
     std::vector<float> m_multiscale_landmark_scales_;
 
     std::shared_ptr<LandmarkParam> m_landmark_param_;
-
 };
 
 }  // namespace inspire

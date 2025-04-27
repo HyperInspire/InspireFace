@@ -104,6 +104,23 @@ inline std::vector<inspirecv::Point2f> MultiFrameLandmarkMean(const std::vector<
     return mean_points;
 }
 
+inline std::vector<inspirecv::Point2f> LandmarkCropped(const std::vector<inspirecv::Point2f>& points, int output_size = 192) {
+    inspirecv::Rect2f rect = inspirecv::MinBoundingRect(points);
+
+    // Calculate the scale
+    float scale = output_size / std::max(rect.GetWidth(), rect.GetHeight());
+
+    // Create the result vector and scale each point
+    std::vector<inspirecv::Point2f> result;
+    result.reserve(points.size());
+    for (const auto& pt : points) {
+        // Translate to the origin (subtract the top-left corner coordinates), then scale
+        result.push_back(inspirecv::Point2f((pt.GetX() - rect.GetX()) * scale, (pt.GetY() - rect.GetY()) * scale));
+    }
+
+    return result;
+}
+
 }  // namespace inspire
 
 #endif  // INSPIRE_FACE_TRACK_MODULE_LANDMARK_TOOLS_H

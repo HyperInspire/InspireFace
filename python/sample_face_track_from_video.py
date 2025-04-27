@@ -51,6 +51,7 @@ def case_face_tracker_from_video(source, show, out):
     # Optional features, loaded during session creation based on the modules specified.
     isf.reload(None, resource_path="../test_res/pack/Tracking_Apple")
     opt = isf.HF_ENABLE_NONE | isf.HF_ENABLE_INTERACTION
+    # isf.switch_landmark_engine(isf.HF_LANDMARK_HYPLMV2_0_25)
     isf.switch_landmark_engine(isf.HF_LANDMARK_INSIGHTFACE_2D106_TRACK)
 
     session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_LIGHT_TRACK, max_detect_num=25, detect_pixel_level=320)    # Use video mode
