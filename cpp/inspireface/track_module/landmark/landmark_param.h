@@ -6,6 +6,7 @@
 #include "mean_shape.h"
 #include "log.h"
 #include "landmark_tools.h"
+#include "order_of_hyper_landmark.h"
 
 namespace inspire {
 
@@ -17,6 +18,8 @@ typedef struct {
     int32_t mouth_right_corner = 105;
     int32_t mouth_lower = 84;
     int32_t mouth_upper = 87;
+    std::vector<int32_t> left_eye_region = HLMK_LEFT_EYE_POINTS_INDEX;
+    std::vector<int32_t> right_eye_region = HLMK_RIGHT_EYE_POINTS_INDEX;
 } SemanticIndex;
 
 class INSPIRE_API LandmarkParam {
@@ -66,6 +69,14 @@ public:
         semantic_index.mouth_right_corner = semanic_index["mouth_right_corner"].as<int>();
         semantic_index.mouth_lower = semanic_index["mouth_lower"].as<int>();
         semantic_index.mouth_upper = semanic_index["mouth_upper"].as<int>();
+        auto left_eye_region = semanic_index["left_eye_region"];
+        if (left_eye_region) {
+            semantic_index.left_eye_region = left_eye_region.as<std::vector<int>>();
+        }
+        auto right_eye_region = semanic_index["right_eye_region"];
+        if (right_eye_region) {
+            semantic_index.right_eye_region = right_eye_region.as<std::vector<int>>();
+        }
         auto mesh_shape = landmark_table["mesh_shape"];
         if (mesh_shape.size() > 0) {
             std::vector<float> mesh_shape_data = mesh_shape.as<std::vector<float>>();

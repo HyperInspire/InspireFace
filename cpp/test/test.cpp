@@ -118,7 +118,9 @@ int main(int argc, char* argv[]) {
         TEST_ERROR_PRINT("An error occurred while starting InspireFace: {}", ret);
         return ret;
     }
-
+    
+    HFSwitchLandmarkEngine(HF_LANDMARK_INSIGHTFACE_2D106_TRACK);
+    
     // Set log level
     HFSetLogLevel(HF_LOG_INFO);
 

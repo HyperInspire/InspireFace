@@ -14,7 +14,7 @@
 #include "liveness/blink_predict_adapt.h"
 #include "middleware/model_archive/inspire_archive.h"
 #include "face_warpper.h"
-
+#include "track_module/landmark/landmark_param.h"
 namespace inspire {
 
 /**
@@ -125,6 +125,7 @@ private:
     std::shared_ptr<MaskPredictAdapt> m_mask_predict_;                ///< Pointer to MaskPredict instance.
     std::shared_ptr<RBGAntiSpoofingAdapt> m_rgb_anti_spoofing_;       ///< Pointer to RBGAntiSpoofing instance.
     std::shared_ptr<BlinkPredictAdapt> m_blink_predict_;              ///< Pointer to Blink predict instance.
+    std::shared_ptr<LandmarkParam> m_landmark_param_;                ///< Pointer to LandmarkParam instance.
 
 public:
     float faceMaskCache;                  ///< Cache for face mask detection result.

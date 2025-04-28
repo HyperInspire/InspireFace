@@ -204,7 +204,7 @@ int32_t FaceSession::FacesProcess(inspirecv::FrameProcess& process, const std::v
                             m_react_left_eye_results_cache_[i] = new_eye_left;
                             m_react_right_eye_results_cache_[i] = new_eye_right;
                         }
-                        const auto actions = target.UpdateFaceAction();
+                        const auto actions = target.UpdateFaceAction(INSPIREFACE_CONTEXT->getMArchive().GetLandmarkParam()->semantic_index);
                         m_action_normal_results_cache_[i] = actions.normal;
                         m_action_jaw_open_results_cache_[i] = actions.jawOpen;
                         m_action_blink_results_cache_[i] = actions.blink;

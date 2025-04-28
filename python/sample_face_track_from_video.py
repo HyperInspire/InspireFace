@@ -54,8 +54,8 @@ def case_face_tracker_from_video(source, show, out):
     # isf.switch_landmark_engine(isf.HF_LANDMARK_HYPLMV2_0_25)
     isf.switch_landmark_engine(isf.HF_LANDMARK_INSIGHTFACE_2D106_TRACK)
 
-    session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_LIGHT_TRACK, max_detect_num=25, detect_pixel_level=320)    # Use video mode
-    session.set_track_mode_smooth_ratio(9999)
+    session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_LIGHT_TRACK, max_detect_num=25, detect_pixel_level=160)    # Use video mode
+    session.set_track_mode_smooth_ratio(0.06)
     session.set_track_mode_num_smooth_cache_frame(1)
     session.set_filter_minimum_face_pixel_size(0)
     session.set_track_model_detect_interval(0)
@@ -84,7 +84,7 @@ def case_face_tracker_from_video(source, show, out):
         out_video = cv2.VideoWriter(out, fourcc, fps, (frame_width, frame_height))
         print(f"Saving video to: {out}")
 
-    flag = "[SDK]0.25, no filtering, N=4"
+    flag = "[SDK]2D106, no filtering, N=4"
 
     # Main loop to process video frames.
     while True:

@@ -4,7 +4,7 @@
 #include <memory>
 #include <inspirecv/inspirecv.h>
 #include <inspireface/inspireface.hpp>
-#include "inspireface/pipeline_module/liveness/order_of_hyper_landmark.h"
+#include "inspireface/track_module/landmark/order_of_hyper_landmark.h"
 
 int main(int argc, char** argv) {
     if (argc != 3) {

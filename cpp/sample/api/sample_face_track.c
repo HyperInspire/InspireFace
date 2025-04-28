@@ -77,8 +77,6 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
-    HFSwitchLandmarkEngine(HF_LANDMARK_INSIGHTFACE_2D106_TRACK);
-
     /* Enable the functions in the pipeline: mask detection, live detection, and face quality
      * detection */
     option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
@@ -114,13 +112,10 @@ int main(int argc, char* argv[]) {
     }
 
     /* Execute HF_FaceContextRunFaceTrack captures face information in an image */
-    int loop = 200;
-    for (int i = 0; i < loop; i++) {
-        ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
-        if (ret != HSUCCEED) {
-            HFLogPrint(HF_LOG_ERROR, "Execute HFExecuteFaceTrack error: %d", ret);
-            return ret;
-        }
+    ret = HFExecuteFaceTrack(session, imageHandle, &multipleFaceData);
+    if (ret != HSUCCEED) {
+        HFLogPrint(HF_LOG_ERROR, "Execute HFExecuteFaceTrack error: %d", ret);
+        return ret;
     }
 
     /* Print the number of faces detected */
