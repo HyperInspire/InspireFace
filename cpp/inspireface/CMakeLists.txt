@@ -97,7 +97,6 @@ if(ISF_ENABLE_APPLE_EXTENSION)
     find_library(FOUNDATION_LIBRARY Foundation)
     find_library(COREML_LIBRARY CoreML)
     find_library(ACCELERATE_LIBRARY Accelerate)
-    find_package(OpenCV REQUIRED)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${FOUNDATION_LIBRARY} ${COREML_LIBRARY} ${ACCELERATE_LIBRARY})
 
     # Add objective-c files
