@@ -3,7 +3,7 @@ name: Build InspireFace CoreML SDKs
 on:
   push:
     branches:
-      - feature/lmk_aug
+      - feature/coreml
 
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}

@@ -36,6 +36,8 @@ mkdir -p ${BUILD_FOLDER_PATH}
 # shellcheck disable=SC2164
 cd ${BUILD_FOLDER_PATH}
 
+cmake --version  
+
 cmake -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
   -DISF_BUILD_WITH_SAMPLE=OFF \

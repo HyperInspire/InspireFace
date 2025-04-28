@@ -2,7 +2,7 @@ name: Build iOS CoreML Arm64
 
 on:
   push:
-    branches: ["feature/lmk_aug"]
+    branches: ["feature/coreml"]
 
 # Set the global GitHub token environment variable
 env:
