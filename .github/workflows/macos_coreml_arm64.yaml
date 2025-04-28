@@ -1,0 +1,51 @@
+name: Build MacOS CoreML Arm64
+
+on:
+  push:
+    branches: ["feature/lmk_aug"]
+
+# Set the global GitHub token environment variable
+env:
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+jobs:
+  build:
+    name: Compile MacOS CoreML Arm64
+    runs-on: macos-14
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Synchronize and update submodules recursively
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+
+      # Step 3: Install necessary dependencies for building the CMake project
+      - name: Install Dependencies
+        run: |
+          brew install cmake
+
+      # Step 4: Start building the SDK
+      - name: Start Building the InspireFace-MacOS-arm64
+        run: |
+          bash command/build_macos_coreml_arm64.sh
+          ls build
+
+      # Step 5: Zip SDK directory
+      - name: Zip SDK directory
+        run: |
+          cd build
+          zip -r ../inspireface-macos-coreml-apple-silicon-arm64.zip inspireface-macos-coreml-apple-silicon-arm64
+          cd ..
+          stat inspireface-macos-coreml-apple-silicon-arm64.zip
+
+      # Step 7: Upload the zipped SDK files for the next job
+      - name: Upload SDK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk_files_macos_coreml_apple_silicon_arm64
+          path: |
+            inspireface-macos-coreml-apple-silicon-arm64.zip
