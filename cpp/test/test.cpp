@@ -119,8 +119,6 @@ int main(int argc, char* argv[]) {
         return ret;
     }
     
-    HFSwitchLandmarkEngine(HF_LANDMARK_INSIGHTFACE_2D106_TRACK);
-    
     // Set log level
     HFSetLogLevel(HF_LOG_INFO);
 

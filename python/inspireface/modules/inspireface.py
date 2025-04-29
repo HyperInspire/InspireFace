@@ -99,6 +99,14 @@ class ImageStream(object):
         if ret != 0:
             raise Exception("Error in creating ImageStream")
 
+    def write_to_file(self, file_path: str):
+        """
+        Write the image stream to a file. Like PATH/image.jpg
+        """
+        ret = HFDeBugImageStreamDecodeSave(self._handle, file_path)
+        if ret != 0:
+            logger.error(f"Write ImageStream to file error: {ret}")
+
     def release(self):
         """
         Release the resources associated with the ImageStream.
