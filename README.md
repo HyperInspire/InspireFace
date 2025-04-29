@@ -177,7 +177,7 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 
 ### Requirements
 
-- CMake (version 3.10 or higher)
+- CMake (version 3.20 or higher)
 - NDK (version 16 or higher, only required for Android) [**Optional**]
 - MNN (version 1.4.0 or higher)
 - C++ Compiler
