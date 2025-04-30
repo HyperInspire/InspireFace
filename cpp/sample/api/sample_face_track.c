@@ -27,6 +27,7 @@ int main(int argc, char* argv[]) {
     HFFaceMaskConfidence maskConfidence;
     HFFaceQualityConfidence qualityConfidence;
     HOption pipelineOption;
+    HFFaceDetectPixelList pixelLevels;
 
     /* Check whether the number of parameters is correct */
     if (argc < 3 || argc > 4) {
@@ -75,6 +76,16 @@ int main(int argc, char* argv[]) {
     if (ret != HSUCCEED) {
         HFLogPrint(HF_LOG_ERROR, "Load Resource error: %d", ret);
         return ret;
+    }
+
+    ret = HFQuerySupportedPixelLevelsForFaceDetection(&pixelLevels);
+    if (ret != HSUCCEED) {
+        HFLogPrint(HF_LOG_ERROR, "HFQuerySupportedPixelLevelsForFaceDetection error: %d", ret);
+        return ret;
+    }
+    HFLogPrint(HF_LOG_INFO, "Supported pixel levels for face detection: %d", pixelLevels.size);
+    for (int i = 0; i < pixelLevels.size; i++) {
+        HFLogPrint(HF_LOG_INFO, "Supported pixel level %d: %d", i + 1, pixelLevels.pixel_level[i]);
     }
 
     /* Enable the functions in the pipeline: mask detection, live detection, and face quality
@@ -249,6 +260,9 @@ int main(int argc, char* argv[]) {
         HFLogPrint(HF_LOG_ERROR, "Release draw image bitmap error: %d", ret);
         return ret;
     }
+
+    HFLogPrint(HF_LOG_INFO, "");
+    HFDeBugShowResourceStatistics();
 
     return 0;
 }

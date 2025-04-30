@@ -9,7 +9,7 @@
 #include "information.h"
 #include "feature_hub_db.h"
 #include <launch.h>
-#include "initialization_module/resource_manage.h"
+#include "runtime_module/resource_manage.h"
 #include "similarity_converter.h"
 #include "middleware/inference_wrapper/inference_wrapper.h"
 #if defined(ISF_ENABLE_TENSORRT)
@@ -358,6 +358,15 @@ HResult HFSwitchLandmarkEngine(HFSessionLandmarkEngine engine) {
         type = inspire::Launch::LANDMARK_INSIGHTFACE_2D106_TRACK;
     }
     INSPIREFACE_CONTEXT->SwitchLandmarkEngine(type);
+    return HSUCCEED;
+}
+
+HResult HFQuerySupportedPixelLevelsForFaceDetection(PHFFaceDetectPixelList pixel_levels) {
+    auto ret = INSPIREFACE_CONTEXT->GetFaceDetectPixelList();
+    pixel_levels->size = ret.size();
+    for (int i = 0; i < ret.size(); i++) {
+        pixel_levels->pixel_level[i] = ret[i];
+    }
     return HSUCCEED;
 }
 

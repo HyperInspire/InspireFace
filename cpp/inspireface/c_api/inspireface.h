@@ -423,6 +423,21 @@ typedef enum HFSessionLandmarkEngine {
 HYPER_CAPI_EXPORT extern HResult HFSwitchLandmarkEngine(HFSessionLandmarkEngine engine);
 
 /**
+ * @brief Enum for supported pixel levels for face detection.
+ */
+typedef struct HFFaceDetectPixelList {
+    HInt32 pixel_level[20];
+    HInt32 size;
+} HFFaceDetectPixelList, *PHFFaceDetectPixelList;
+
+/**
+ * @brief Query the supported pixel levels for face detection. It must be used before starting.
+ * @param pixel_levels Pointer to the array of supported pixel levels.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFQuerySupportedPixelLevelsForFaceDetection(PHFFaceDetectPixelList pixel_levels);
+
+/**
  * @brief Create a session from a resource file.
  *
  * @param parameter Custom parameters for session.

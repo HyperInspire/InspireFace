@@ -64,13 +64,11 @@ We welcome your questions💬, they help guide and accelerate its development.
 
 ## Quick Start
 
-For Python users on Linux and MacOS, InspireFace can be quickly installed via pip:
+For Python users on **Linux and MacOS**, InspireFace can be quickly installed via pip:
 
 ```bash
 pip install inspireface
 ```
-
-_⚠️Windows support is **not available yet**, but will be coming soon!_
 
 After installation, you can use inspireface like this:
 
@@ -459,7 +457,6 @@ INSPIREFACE_CHECK_MSG(ret == HSUCCEED, "Load model failed");
 // Create face algorithm session
 inspire::ContextCustomParameter custom_param;
 custom_param.enable_recognition = true;
-custom_param.enable_detect_mode_landmark = true;
 auto max_detect_face = 5;
 auto detect_level_px = 320; // 160, 320, 640
 
