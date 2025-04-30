@@ -8,8 +8,7 @@
 #include <iostream>
 #include "face_detect/face_detect_adapt.h"
 #include "face_detect/rnet_adapt.h"
-#include "landmark/face_landmark_adapt.h"
-#include "landmark/landmark_tools.h"
+#include "landmark/all.h"
 #include "common/face_info/face_object_internal.h"
 #include "frame_process.h"
 #include "quality/face_pose_quality_adapt.h"

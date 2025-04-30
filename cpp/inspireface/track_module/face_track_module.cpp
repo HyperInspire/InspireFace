@@ -5,7 +5,6 @@
 
 #include "face_track_module.h"
 #include "log.h"
-#include "landmark/mean_shape.h"
 #include <algorithm>
 #include <cstddef>
 #include "middleware/costman.h"

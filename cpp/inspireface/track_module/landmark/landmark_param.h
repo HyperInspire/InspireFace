@@ -38,8 +38,8 @@ public:
         mean_shape_points.clear();
         mean_shape_points.resize(num_of_landmark);
         for (int k = 0; k < num_of_landmark; k++) {
-            mean_shape_points[k].SetX(mean_shape[k * 2]);
-            mean_shape_points[k].SetY(mean_shape[k * 2 + 1]);
+            mean_shape_points[k].SetX(HYPLMK_MESH_SHAPE[k * 2]);
+            mean_shape_points[k].SetY(HYPLMK_MESH_SHAPE[k * 2 + 1]);
         }
     }
 

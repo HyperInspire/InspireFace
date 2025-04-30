@@ -356,6 +356,9 @@ HResult HFSwitchLandmarkEngine(HFSessionLandmarkEngine engine) {
         type = inspire::Launch::LANDMARK_HYPLMV2_0_50;
     } else if (engine == HF_LANDMARK_INSIGHTFACE_2D106_TRACK) {
         type = inspire::Launch::LANDMARK_INSIGHTFACE_2D106_TRACK;
+    } else {
+        INSPIRE_LOGE("Unsupported Landmark engine.");
+        return HERR_INVALID_PARAM;
     }
     INSPIREFACE_CONTEXT->SwitchLandmarkEngine(type);
     return HSUCCEED;
@@ -491,6 +494,9 @@ HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode) {
         INSPIREFACE_CONTEXT->SetGlobalCoreMLInferenceMode(inspire::Launch::NN_INFERENCE_COREML_GPU);
     } else if (mode == HF_APPLE_COREML_INFERENCE_MODE_ANE) {
         INSPIREFACE_CONTEXT->SetGlobalCoreMLInferenceMode(inspire::Launch::NN_INFERENCE_COREML_ANE);
+    } else {
+        INSPIRE_LOGE("Unsupported Apple CoreML inference mode.");
+        return HERR_INVALID_PARAM;
     }
     return HSUCCEED;
 }
