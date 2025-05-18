@@ -163,6 +163,12 @@ public:
     int32_t SetTrackPreviewSize(int32_t preview_size);
 
     /**
+     * @brief Gets the preview size for face tracking.
+     * @return int32_t The preview size.
+     */
+    int32_t GetTrackPreviewSize() const;
+
+    /**
      * @brief Filter the minimum face pixel size.
      * @param minSize The minimum pixel value.
      * @return int32_t Status code of the operation.
@@ -360,6 +366,12 @@ public:
      * @brief Print the cost spend
      * */
     void PrintTrackCostSpend();
+
+    /**
+     * @brief Get the debug preview image size
+     * @return int32_t The debug preview image size
+     * */
+    int32_t GetDebugPreviewImageSize() const;
 
 private:
     // Private member variables

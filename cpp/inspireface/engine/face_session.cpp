@@ -423,6 +423,10 @@ int32_t FaceSession::SetTrackPreviewSize(const int32_t preview_size) {
     return HSUCCEED;
 }
 
+int32_t FaceSession::GetTrackPreviewSize() const {
+    return m_face_track_->GetTrackPreviewSize();
+}
+
 int32_t FaceSession::SetTrackFaceMinimumSize(int32_t minSize) {
     m_face_track_->SetMinimumFacePxSize(minSize);
     return HSUCCEED;
@@ -453,6 +457,10 @@ void FaceSession::PrintTrackCostSpend() {
     if (m_enable_track_cost_spend_) {
         INSPIRE_LOGI("%s", m_face_track_cost_->Report().c_str());
     }
+}
+
+int32_t FaceSession::GetDebugPreviewImageSize() const {
+    return m_face_track_->GetDebugPreviewImageSize();
 }
 
 }  // namespace inspire

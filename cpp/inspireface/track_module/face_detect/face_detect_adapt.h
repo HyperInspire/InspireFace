@@ -41,6 +41,12 @@ public:
     /** @brief Set face classification threshold */
     void SetClsThreshold(float mClsThreshold);
 
+    /**
+     * @brief Get the input size
+     * @return int The input size
+     */
+    int GetInputSize() const;
+
 private:
     /**
      * @brief Applies non-maximum suppression to reduce overlapping detected faces.

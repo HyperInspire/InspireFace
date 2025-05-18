@@ -1,6 +1,7 @@
 #include <inspireface.h>
 #include <unistd.h>
 #include <stdio.h>
+
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         HFLogPrint(HF_LOG_ERROR, "Usage: %s <pack_path>", argv[0]);

@@ -154,4 +154,8 @@ bool SortBoxSizeAdapt(const FaceLoc &a, const FaceLoc &b) {
     return sq_a > sq_b;
 }
 
+int FaceDetectAdapt::GetInputSize() const {
+    return m_input_size_;
+}
+
 }  // namespace inspire

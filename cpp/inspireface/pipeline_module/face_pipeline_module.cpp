@@ -74,8 +74,10 @@ FacePipelineModule::FacePipelineModule(InspireArchive &archive, bool enableLiven
 }
 
 int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const FaceTrackWrap &face, FaceProcessFunctionOption proc) {
+    // Original image
     inspirecv::Image originImage;
     inspirecv::Image scaleImage;
+    std::vector<inspirecv::Point2f> stand_lmk;
     switch (proc) {
         case PROCESS_MASK: {
             if (m_mask_predict_ == nullptr) {
@@ -97,8 +99,29 @@ int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const Fa
             if (m_rgb_anti_spoofing_ == nullptr) {
                 return HERR_SESS_PIPELINE_FAILURE;  // uninitialized
             }
+            // New scheme: padding differences cause errors in inference results
+            // inspirecv::TransformMatrix rotation_mode_affine = processor.GetAffineMatrix();
+            // if (stand_lmk.empty()) {
+            //     std::vector<inspirecv::Point2f> lmk;
+            //     for (const auto &p : face.densityLandmark) {
+            //         lmk.emplace_back(p.x, p.y);
+            //     }
+            //     stand_lmk = inspirecv::ApplyTransformToPoints(lmk, rotation_mode_affine.GetInverse());
+            // }
+
+            // auto rect_face = inspirecv::MinBoundingRect(stand_lmk);
+            // auto rect_pts = rect_face.Square(2.7f).As<float>().ToFourVertices();
+            // std::vector<inspirecv::Point2f> dst_pts = {{0, 0}, {112, 0}, {112, 112}, {0, 112}};
+            // std::vector<inspirecv::Point2f> camera_pts = inspirecv::ApplyTransformToPoints(rect_pts, rotation_mode_affine);
+
+            // auto affine = inspirecv::SimilarityTransformEstimate(camera_pts, dst_pts);
+            // auto image_affine = processor.ExecuteImageAffineProcessing(affine, 112, 112);
+            // image_affine.Write("liveness_affine.jpg");
 
             if (originImage.Empty()) {
+                // This is a poor approach that impacts performance, 
+                // but in order to capture clearer images and improve liveness detection accuracy, 
+                // we have to keep it.
                 originImage = processor.ExecuteImageScaleProcessing(1.0, true);
             }
             inspirecv::Rect2i oriRect(face.rect.x, face.rect.y, face.rect.width, face.rect.height);
@@ -106,6 +129,7 @@ int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const Fa
             auto crop = originImage.Crop(rect);
             auto score = (*m_rgb_anti_spoofing_)(crop);
             // crop.Show();
+            // crop.Resize(112, 112).Write("liveness.jpg");
             faceLivenessCache = score;
             break;
         }
@@ -120,12 +144,14 @@ int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const Fa
             std::vector<inspirecv::Point2f> eyes = {left_eye, right_eye};
             // Get affine matrix
             inspirecv::TransformMatrix rotation_mode_affine = processor.GetAffineMatrix();
-            std::vector<inspirecv::Point2f> lmk;
-            for (const auto &p : face.densityLandmark) {
-                lmk.emplace_back(p.x, p.y);
-            }
             // Get stand landmark
-            std::vector<inspirecv::Point2f> stand_lmk = inspirecv::ApplyTransformToPoints(lmk, rotation_mode_affine.GetInverse());
+            if (stand_lmk.empty()) {
+                std::vector<inspirecv::Point2f> lmk;
+                for (const auto &p : face.densityLandmark) {
+                    lmk.emplace_back(p.x, p.y);
+                }
+                stand_lmk = inspirecv::ApplyTransformToPoints(lmk, rotation_mode_affine.GetInverse());
+            }
             for (size_t i = 0; i < order_list.size(); i++) {
                 const auto &index = order_list[i];
                 std::vector<inspirecv::Point2i> points;

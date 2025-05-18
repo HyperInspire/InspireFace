@@ -525,6 +525,14 @@ typedef struct HFMultipleFaceData {
 HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackPreviewSize(HFSession session, HInt32 previewSize);
 
 /**
+ * @brief Get the track preview size in the session.
+ * @param session Handle to the session.
+ * @param previewSize The size of the preview for tracking.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionGetTrackPreviewSize(HFSession session, HInt32 *previewSize);
+
+/**
  * @brief Set the minimum number of face pixels that the face detector can capture, and people below
  * this number will be filtered.
  *
@@ -588,6 +596,14 @@ HYPER_CAPI_EXPORT extern HResult HFSessionSetLandmarkAugmentationNum(HFSession s
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMultipleFaceData results);
+
+/**
+ * @brief Gets the size of the debug preview image for the last face detection in the session.
+ * @param session Handle to the session.
+ * @param size The size of the preview for tracking.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionLastFaceDetectionGetDebugPreviewImageSize(HFSession session, HInt32 *size);
 
 /**
  * @brief Copies the data from a HF_FaceBasicToken to a specified buffer.

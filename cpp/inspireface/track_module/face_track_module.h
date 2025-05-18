@@ -35,7 +35,7 @@ public:
      * @param track_preview_size Size of the preview for tracking.
      * @param dynamic_detection_input_level Change the detector input size.
      */
-    explicit FaceTrackModule(DetectModuleMode mode, int max_detected_faces = 1, int detection_interval = 20, int track_preview_size = 192,
+    explicit FaceTrackModule(DetectModuleMode mode, int max_detected_faces = 1, int detection_interval = 20, int track_preview_size = -1,
                              int dynamic_detection_input_level = -1, int TbD_mode_fps = 30, bool detect_mode_landmark = true);
 
     /**
@@ -57,7 +57,13 @@ public:
      * @brief Sets the preview size for tracking.
      * @param preview_size Size of the preview for tracking.
      */
-    void SetTrackPreviewSize(int preview_size = 192);
+    void SetTrackPreviewSize(int preview_size = -1);
+
+    /**
+     * @brief Gets the preview size for tracking.
+     * @return Size of the preview for tracking.
+     */
+    int32_t GetTrackPreviewSize() const;
 
 private:
     /**
@@ -138,7 +144,7 @@ private:
      * @param pixel_size Currently, only 160, 320, and 640 pixel sizes are supported.
      * @return Return the corresponding scheme name, only ”face_detect_160”, ”face_detect_320”, ”face_detect_640” are supported.
      */
-    std::string ChoiceMultiLevelDetectModel(const int32_t pixel_size);
+    std::string ChoiceMultiLevelDetectModel(const int32_t pixel_size, int32_t& final_size);
 
 public:
     /**
@@ -184,6 +190,9 @@ public:
 public:
     std::vector<FaceObjectInternal> trackingFace;  ///< Vector of FaceObjects currently being tracked.
 
+public:
+    int32_t GetDebugPreviewImageSize() const;
+
 private:
     const int max_detected_faces_;                     ///< Maximum number of faces to detect.
     std::vector<FaceObjectInternal> candidate_faces_;  ///< Vector of candidate FaceObjects for tracking.
@@ -192,6 +201,10 @@ private:
     int tracking_idx_;                                 ///< Current tracking index.
     int track_preview_size_;                           ///< Size of the tracking preview.
     int filter_minimum_face_px_size = 0;               ///< Minimum face pixel allowed to be retained (take the edge with the smallest Rect).
+
+private:
+    // Debug cache
+    int32_t m_debug_preview_image_size_{0};  ///< Debug preview image size
 
 private:
     std::shared_ptr<FaceDetectAdapt> m_face_detector_;         ///< Shared pointer to the face detector.

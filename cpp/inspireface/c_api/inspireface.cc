@@ -576,6 +576,20 @@ HResult HFSessionSetTrackPreviewSize(HFSession session, HInt32 previewSize) {
     return ctx->impl.SetTrackPreviewSize(previewSize);
 }
 
+HResult HFSessionGetTrackPreviewSize(HFSession session, HInt32 *previewSize) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    *previewSize = ctx->impl.GetTrackPreviewSize();
+    return HSUCCEED;
+}
+
+
+
 HResult HFSessionSetFilterMinimumFacePixelSize(HFSession session, HInt32 minSize) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
@@ -683,6 +697,18 @@ HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMul
     results->tokens = (HFFaceBasicToken *)ctx->impl.GetFaceBasicDataCache().data();
 
     return ret;
+}
+
+HResult HFSessionLastFaceDetectionGetDebugPreviewImageSize(HFSession session, HInt32 *size) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    *size = ctx->impl.GetDebugPreviewImageSize();
+    return HSUCCEED;
 }
 
 HResult HFCopyFaceBasicToken(HFFaceBasicToken token, HPBuffer buffer, HInt32 bufferSize) {
