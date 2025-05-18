@@ -144,7 +144,7 @@ private:
      * @param pixel_size Currently, only 160, 320, and 640 pixel sizes are supported.
      * @return Return the corresponding scheme name, only ”face_detect_160”, ”face_detect_320”, ”face_detect_640” are supported.
      */
-    std::string ChoiceMultiLevelDetectModel(const int32_t pixel_size, int32_t& final_size);
+    std::string ChoiceMultiLevelDetectModel(const int32_t pixel_size, int32_t &final_size);
 
 public:
     /**

@@ -16,7 +16,6 @@
 #include "spend_timer.h"
 #include "launch.h"
 
-
 namespace inspire {
 
 FaceTrackModule::FaceTrackModule(DetectModuleMode mode, int max_detected_faces, int detection_interval, int track_preview_size,
@@ -462,17 +461,19 @@ int32_t FaceTrackModule::GetTrackPreviewSize() const {
     return track_preview_size_;
 }
 
-std::string FaceTrackModule::ChoiceMultiLevelDetectModel(const int32_t pixel_size) {
+std::string FaceTrackModule::ChoiceMultiLevelDetectModel(const int32_t pixel_size, int32_t &final_size) {
     const auto face_detect_pixel_list = Launch::GetInstance()->GetFaceDetectPixelList();
     const auto face_detect_model_list = Launch::GetInstance()->GetFaceDetectModelList();
     const int32_t num_sizes = face_detect_pixel_list.size();
     if (pixel_size == -1) {
+        final_size = face_detect_pixel_list[1];
         return face_detect_model_list[1];
     }
 
     // Check for exact match
     for (int i = 0; i < num_sizes; ++i) {
         if (pixel_size == face_detect_pixel_list[i]) {
+            final_size = face_detect_pixel_list[i];
             return face_detect_model_list[i];
         }
     }
@@ -519,6 +520,10 @@ void FaceTrackModule::SetTrackModeDetectInterval(int value) {
 void FaceTrackModule::SetMultiscaleLandmarkAugmentNum(int value) {
     m_multiscale_landmark_augment_num_ = value;
     m_multiscale_landmark_scales_ = GenerateCropScales(m_landmark_crop_ratio_, m_multiscale_landmark_augment_num_);
+}
+
+int32_t FaceTrackModule::GetDebugPreviewImageSize() const {
+    return m_debug_preview_image_size_;
 }
 
 }  // namespace inspire
