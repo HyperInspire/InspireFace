@@ -863,7 +863,7 @@ class FaceIdentity(object):
         feature.size = HInt32(self.feature.size)
         feature.data = data_ptr
         return HFFaceFeatureIdentity(
-            customId=HFaceId(self.id),
+            id=HFaceId(self.id),
             feature=PHFFaceFeature(feature)
         )
 

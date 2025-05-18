@@ -49,10 +49,7 @@ def case_face_tracker_from_video(source, show, out):
         out (str): Path to save the processed video.
     """
     # Optional features, loaded during session creation based on the modules specified.
-    # isf.reload(None, resource_path="../test_res/pack/Tracking_Apple")
     opt = isf.HF_ENABLE_NONE | isf.HF_ENABLE_INTERACTION
-    # isf.switch_landmark_engine(isf.HF_LANDMARK_HYPLMV2_0_25)
-
     session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_LIGHT_TRACK, max_detect_num=25, detect_pixel_level=160)    # Use video mode
     session.set_track_mode_smooth_ratio(0.06)
     session.set_track_mode_num_smooth_cache_frame(15)
@@ -82,8 +79,6 @@ def case_face_tracker_from_video(source, show, out):
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         out_video = cv2.VideoWriter(out, fourcc, fps, (frame_width, frame_height))
         print(f"Saving video to: {out}")
-
-    flag = "[SDK]2D106, no filtering, N=4"
 
     # Main loop to process video frames.
     while True:
@@ -139,8 +134,6 @@ def case_face_tracker_from_video(source, show, out):
             five_key_points = session.get_face_five_key_points(face)
             for x, y in five_key_points.astype(int):
                 cv2.circle(frame, (x, y), 0, (255-color[0], 255-color[1], 255-color[2]), 6)
-
-            cv2.putText(frame, flag, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
             # Draw track ID at the top of the bounding box
             text = f"ID: {face.track_id}"
