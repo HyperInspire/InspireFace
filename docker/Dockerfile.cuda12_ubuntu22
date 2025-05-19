@@ -11,6 +11,7 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends build-essential
 RUN apt-get install -y --no-install-recommends software-properties-common
 RUN apt-get install -y --no-install-recommends curl
+RUN apt-get install -y --no-install-recommends wget
 
 # Install CMake
 RUN apt-get install -y --no-install-recommends
