@@ -1132,7 +1132,6 @@ def set_logging_level(level: int) -> None:
     """
     HFSetLogLevel(level)
 
-
 def disable_logging() -> None:
     """
     Disables all logging from the InspireFace library.
@@ -1144,4 +1143,35 @@ def show_system_resource_statistics():
     Displays the system resource information.
     """
     HFDeBugShowResourceStatistics()
+
+def switch_apple_coreml_inference_mode(mode: int):
+    """
+    Switches the Apple CoreML inference mode.
+    """
+    ret = HFSetAppleCoreMLInferenceMode(mode)
+    if ret != 0:
+        logger.error(f"Failed to set Apple CoreML inference mode: {ret}")
+        return False
+    return True
+
+def set_expansive_hardware_rockchip_dma_heap_path(path: str):
+    """
+    Sets the path to the expansive hardware Rockchip DMA heap.
+    """
+    ret = HFSetExpansiveHardwareRockchipDmaHeapPath(path)
+    if ret != 0:
+        logger.error(f"Failed to set expansive hardware Rockchip DMA heap path: {ret}")
+        return False
+    return True
+
+def query_expansive_hardware_rockchip_dma_heap_path() -> str:
+    """
+    Queries the path to the expansive hardware Rockchip DMA heap.
+    """
+    path = HString()
+    ret = HFQueryExpansiveHardwareRockchipDmaHeapPath(path)
+    if ret != 0:
+        logger.error(f"Failed to query expansive hardware Rockchip DMA heap path: {ret}")
+        return None
+    return str(path.value)
 
