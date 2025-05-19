@@ -2,7 +2,7 @@ name: Build Linux-Ubuntu-AArch64-rk356x
 
 on:
   push:
-    branches: ["feature/rk356x"]
+    branches: ["dev/py_api"]
 
 # Set the global GitHub token environment variable
 env:
@@ -47,3 +47,18 @@ jobs:
           bash command/build_cross_rk356x_rk3588_aarch64.sh
           ls build
 
+      # Step 7: Zip SDK directory
+      - name: Zip SDK directory
+        run: |
+          cd build
+          zip -r ../inspireface-linux-aarch64-rk356x-rk3588.zip inspireface-linux-aarch64-rk356x-rk3588
+          cd ..
+          stat inspireface-linux-aarch64-rk356x-rk3588.zip
+
+      # Step 8: Upload the zipped SDK files for the next job
+      - name: Upload SDK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk_files_linux_aarch64_rk356x
+          path: |
+            inspireface-linux-aarch64-rk356x-rk3588.zip
