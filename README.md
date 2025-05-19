@@ -552,7 +552,7 @@ ret = isf.reload()
 assert ret, "Launch failure. Please ensure the resource path is correct."
 
 # Optional features, loaded during session creation based on the modules specified.
-opt = isf.HF_ENABLE_NONE
+opt = isf.HF_ENABLE_FACE_POSE
 session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT)
 
 # Load the image using OpenCV.
