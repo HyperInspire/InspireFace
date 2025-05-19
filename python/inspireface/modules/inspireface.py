@@ -166,38 +166,6 @@ class FaceExtended:
     gender: int
     age_bracket: int
 
-    def __repr__(self):
-        return f"FaceExtended(rgb_liveness_confidence={self.rgb_liveness_confidence}, 
-                mask_confidence={self.mask_confidence}, 
-                quality_confidence={self.quality_confidence}, 
-                left_eye_status_confidence={self.left_eye_status_confidence}, 
-                right_eye_status_confidence={self.right_eye_status_confidence}, 
-                action_normal={self.action_normal}, action_jaw_open={self.action_jaw_open}, 
-                action_shake={self.action_shake}, action_blink={self.action_blink}, 
-                action_head_raise={self.action_head_raise}, 
-                race={self.race}, 
-                gender={self.gender}, 
-                age_bracket={self.age_bracket})"
-    
-
-    def to_dict(self):
-        return {
-            "rgb_liveness_confidence": self.rgb_liveness_confidence,
-            "mask_confidence": self.mask_confidence,
-            "quality_confidence": self.quality_confidence,
-            "left_eye_status_confidence": self.left_eye_status_confidence,
-            "right_eye_status_confidence": self.right_eye_status_confidence,
-            "action_normal": self.action_normal,
-            "action_jaw_open": self.action_jaw_open,
-            "action_shake": self.action_shake,
-            "action_blink": self.action_blink,
-            "action_head_raise": self.action_head_raise,
-            "race": self.race,
-            "gender": self.gender,
-            "age_bracket": self.age_bracket
-        }
-    
-
 
 class FaceInformation:
     """
@@ -245,24 +213,6 @@ class FaceInformation:
         self._token = HFFaceBasicToken()
         self._token.size = buffer_size
         self._token.data = cast(addressof(self.buffer), c_void_p)
-
-    def __repr__(self):
-        return f"FaceInformation(track_id={self.track_id}, 
-                                detection_confidence={self.detection_confidence}, 
-                                location={self.location}, 
-                                roll={self.roll}, 
-                                yaw={self.yaw}, 
-                                pitch={self.pitch})"
-
-    def to_dict(self):
-        return {
-            "track_id": self.track_id,
-            "detection_confidence": self.detection_confidence,
-            "location": self.location,
-            "roll": self.roll,
-            "yaw": self.yaw,
-            "pitch": self.pitch
-        }
 
 
 @dataclass
@@ -960,10 +910,8 @@ class SearchResult:
     """
     confidence: float
     similar_identity: FaceIdentity
-    
-    def __repr__(self):
-        return f"SearchResult(confidence={self.confidence}, similar_identity={self.similar_identity})"
-    
+
+
 def feature_hub_face_search(data: np.ndarray) -> SearchResult:
     """
     Searches for the most similar face identity in the feature hub based on provided facial features.
