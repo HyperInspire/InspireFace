@@ -2,9 +2,9 @@ name: Build Wheels
 
 on:
   push:
-    branches: ["feature/lmk_aug"]
+    branches: ["release/wheels"]
   pull_request:
-    branches: ["feature/lmk_aug"]
+    branches: ["release/wheels"]
 
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
