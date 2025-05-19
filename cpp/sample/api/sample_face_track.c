@@ -27,6 +27,7 @@ int main(int argc, char* argv[]) {
     HFFaceMaskConfidence maskConfidence;
     HFFaceQualityConfidence qualityConfidence;
     HOption pipelineOption;
+    HFFaceDetectPixelList pixelLevels;
 
     /* Check whether the number of parameters is correct */
     if (argc < 3 || argc > 4) {
@@ -68,7 +69,7 @@ int main(int argc, char* argv[]) {
     HFLogPrint(HF_LOG_INFO, "Source file Path: %s", sourcePath);
     HFLogPrint(HF_LOG_INFO, "Rotation: %d", rotation);
 
-    HFSetLogLevel(HF_LOG_INFO);
+    HFSetLogLevel(HF_LOG_DEBUG);
 
     /* The resource file must be loaded before it can be used */
     ret = HFLaunchInspireFace(packPath);
@@ -77,12 +78,22 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
+    ret = HFQuerySupportedPixelLevelsForFaceDetection(&pixelLevels);
+    if (ret != HSUCCEED) {
+        HFLogPrint(HF_LOG_ERROR, "HFQuerySupportedPixelLevelsForFaceDetection error: %d", ret);
+        return ret;
+    }
+    HFLogPrint(HF_LOG_INFO, "Supported pixel levels for face detection: %d", pixelLevels.size);
+    for (int i = 0; i < pixelLevels.size; i++) {
+        HFLogPrint(HF_LOG_INFO, "Supported pixel level %d: %d", i + 1, pixelLevels.pixel_level[i]);
+    }
+
     /* Enable the functions in the pipeline: mask detection, live detection, and face quality
      * detection */
-    option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS | HF_ENABLE_DETECT_MODE_LANDMARK;
+    option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS;
     /* Non-video or frame sequence mode uses IMAGE-MODE, which is always face detection without
      * tracking */
-    detMode = HF_DETECT_MODE_ALWAYS_DETECT;
+    detMode = HF_DETECT_MODE_LIGHT_TRACK;
     /* Maximum number of faces detected */
     maxDetectNum = 20;
     /* Face detection image input level */
@@ -249,6 +260,9 @@ int main(int argc, char* argv[]) {
         HFLogPrint(HF_LOG_ERROR, "Release draw image bitmap error: %d", ret);
         return ret;
     }
+
+    HFLogPrint(HF_LOG_INFO, "");
+    HFDeBugShowResourceStatistics();
 
     return 0;
 }

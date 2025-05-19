@@ -29,17 +29,16 @@ else
     TAG=""
 fi
 
-BUILD_FOLDER_PATH="build/inspireface-linux-x86-ubuntu18${TAG}/"
+BUILD_FOLDER_PATH="build/inspireface-macos-coreml-intel-x86-64${TAG}/"
 SCRIPT_DIR=$(pwd)  # Project dir
 
 mkdir -p ${BUILD_FOLDER_PATH}
 # shellcheck disable=SC2164
 cd ${BUILD_FOLDER_PATH}
 
-cmake --version  
-
 cmake -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+  -DISF_ENABLE_APPLE_EXTENSION=ON \
   -DISF_BUILD_WITH_SAMPLE=OFF \
   -DISF_BUILD_WITH_TEST=OFF \
   -DISF_ENABLE_BENCHMARK=OFF \

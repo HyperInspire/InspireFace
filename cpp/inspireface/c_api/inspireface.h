@@ -27,16 +27,16 @@ extern "C" {
 #define HF_STATUS_ENABLE 1   ///< The status of the feature is enabled.
 #define HF_STATUS_DISABLE 0  ///< The status of the feature is disabled.
 
-#define HF_ENABLE_NONE 0x00000000                  ///< Flag to enable no features.
-#define HF_ENABLE_FACE_RECOGNITION 0x00000002      ///< Flag to enable face recognition feature.
-#define HF_ENABLE_LIVENESS 0x00000004              ///< Flag to enable RGB liveness detection feature.
-#define HF_ENABLE_IR_LIVENESS 0x00000008           ///< Flag to enable IR (Infrared) liveness detection feature.
-#define HF_ENABLE_MASK_DETECT 0x00000010           ///< Flag to enable mask detection feature.
-#define HF_ENABLE_FACE_ATTRIBUTE 0x00000020        ///< Flag to enable face attribute prediction feature.
-#define HF_ENABLE_PLACEHOLDER_ 0x00000040          ///< -
-#define HF_ENABLE_QUALITY 0x00000080               ///< Flag to enable face quality assessment feature.
-#define HF_ENABLE_INTERACTION 0x00000100           ///< Flag to enable interaction feature.
-#define HF_ENABLE_DETECT_MODE_LANDMARK 0x00000200  ///< Flag to enable landmark detection in detection mode
+#define HF_ENABLE_NONE 0x00000000              ///< Flag to enable no features.
+#define HF_ENABLE_FACE_RECOGNITION 0x00000002  ///< Flag to enable face recognition feature.
+#define HF_ENABLE_LIVENESS 0x00000004          ///< Flag to enable RGB liveness detection feature.
+#define HF_ENABLE_IR_LIVENESS 0x00000008       ///< Flag to enable IR (Infrared) liveness detection feature.
+#define HF_ENABLE_MASK_DETECT 0x00000010       ///< Flag to enable mask detection feature.
+#define HF_ENABLE_FACE_ATTRIBUTE 0x00000020    ///< Flag to enable face attribute prediction feature.
+#define HF_ENABLE_PLACEHOLDER_ 0x00000040      ///< -
+#define HF_ENABLE_QUALITY 0x00000080           ///< Flag to enable face quality assessment feature.
+#define HF_ENABLE_INTERACTION 0x00000100       ///< Flag to enable interaction feature.
+#define HF_ENABLE_FACE_POSE 0x00000200         ///< Flag to enable face pose estimation feature.
 
 /**
  * Camera stream format.
@@ -388,6 +388,7 @@ typedef struct HFSessionCustomParameter {
     HInt32 enable_face_attribute;        ///< Enable face attribute prediction feature.
     HInt32 enable_interaction_liveness;  ///< Enable interaction for liveness detection feature.
     HInt32 enable_detect_mode_landmark;  ///< Enable landmark detection in detection mode
+    HInt32 enable_face_pose;             ///< Enable face pose estimation feature.
 } HFSessionCustomParameter, *PHFSessionCustomParameter;
 
 /**
@@ -402,6 +403,38 @@ typedef enum HFDetectMode {
                                         //   (You need a specific option turned on at compile time
                                         //   to use it).
 } HFDetectMode;
+
+/**
+ * @brief Enum for landmark engine.
+ */
+typedef enum HFSessionLandmarkEngine {
+    HF_LANDMARK_HYPLMV2_0_25 = 0,             ///< Hyplmkv2 0.25, default
+    HF_LANDMARK_HYPLMV2_0_50 = 1,             ///< Hyplmkv2 0.50
+    HF_LANDMARK_INSIGHTFACE_2D106_TRACK = 2,  ///< InsightFace 2d106 track
+} HFSessionLandmarkEngine;
+
+/**
+ * @brief Global switch the landmark engine. Set it globally before creating a session.
+ *  If it is changed, a new session needs to be created for it to be effective.
+ * @param engine The landmark engine to be set.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSwitchLandmarkEngine(HFSessionLandmarkEngine engine);
+
+/**
+ * @brief Enum for supported pixel levels for face detection.
+ */
+typedef struct HFFaceDetectPixelList {
+    HInt32 pixel_level[20];
+    HInt32 size;
+} HFFaceDetectPixelList, *PHFFaceDetectPixelList;
+
+/**
+ * @brief Query the supported pixel levels for face detection. It must be used before starting.
+ * @param pixel_levels Pointer to the array of supported pixel levels.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFQuerySupportedPixelLevelsForFaceDetection(PHFFaceDetectPixelList pixel_levels);
 
 /**
  * @brief Create a session from a resource file.
@@ -546,6 +579,15 @@ HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeNumSmoothCacheFrame(HFSess
 HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num);
 
 /**
+ * @brief Set the face landmark anti-shake enhancement, with the default being 1.
+ *
+ * @param session Handle to the session.
+ * @param num The landmark anti-shake enhancement value.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionSetLandmarkAugmentationNum(HFSession session, HInt32 num);
+
+/**
  * @brief Run face tracking in the session.
  *
  * @param session Handle to the session.
@@ -669,7 +711,7 @@ HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtract(HFSession session, HFImage
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtractTo(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace,
-                                                      HFFaceFeature feature);
+                                                        HFFaceFeature feature);
 
 /**
  * @brief Extract a face feature from a given face and copy it to the provided feature buffer.
@@ -904,7 +946,7 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceSearchTopK(HFFaceFeature search
 /**
  * @brief Remove a face feature from the features group based on custom ID.
  *
- * @param customId The custom ID of the feature to be removed.
+ * @param ID The custom ID of the feature to be removed.
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceRemove(HFaceId id);

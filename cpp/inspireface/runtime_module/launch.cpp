@@ -36,7 +36,14 @@ public:
 #endif
         INSPIRE_LOGW("Rockchip dma heap configured path: %s", m_rockchip_dma_heap_path_.c_str());
 #endif
+        m_face_detect_pixel_list_ = {160, 320, 640};
+        m_face_detect_model_list_ = {"face_detect_160", "face_detect_320", "face_detect_640"};
     }
+    // Face Detection pixel size
+    std::vector<int32_t> m_face_detect_pixel_list_;
+
+    // Face Detection model list
+    std::vector<std::string> m_face_detect_model_list_;
 
     // Static members
     static std::mutex mutex_;
@@ -99,6 +106,10 @@ int32_t Launch::Load(const std::string& path) {
         try {
             pImpl->m_archive_ = std::make_unique<InspireArchive>();
             pImpl->m_archive_->ReLoad(path);
+
+            // Update face detect pixel list and model list
+            pImpl->m_face_detect_pixel_list_ = pImpl->m_archive_->GetFaceDetectPixelList();
+            pImpl->m_face_detect_model_list_ = pImpl->m_archive_->GetFaceDetectModelList();
 
             if (pImpl->m_archive_->QueryStatus() == SARC_SUCCESS) {
                 pImpl->m_load_ = true;
@@ -240,6 +251,44 @@ void Launch::SetCudaDeviceId(int32_t device_id) {
 int32_t Launch::GetCudaDeviceId() const {
     std::lock_guard<std::mutex> lock(pImpl->mutex_);
     return pImpl->m_cuda_device_id_;
+}
+
+void Launch::SetFaceDetectPixelList(const std::vector<int32_t>& pixel_list) {
+    std::lock_guard<std::mutex> lock(pImpl->mutex_);
+    pImpl->m_face_detect_pixel_list_ = pixel_list;
+}
+
+std::vector<int32_t> Launch::GetFaceDetectPixelList() const {
+    std::lock_guard<std::mutex> lock(pImpl->mutex_);
+    return pImpl->m_face_detect_pixel_list_;
+}
+
+void Launch::SetFaceDetectModelList(const std::vector<std::string>& model_list) {
+    std::lock_guard<std::mutex> lock(pImpl->mutex_);
+    pImpl->m_face_detect_model_list_ = model_list;
+}
+
+std::vector<std::string> Launch::GetFaceDetectModelList() const {
+    std::lock_guard<std::mutex> lock(pImpl->mutex_);
+    return pImpl->m_face_detect_model_list_;
+}
+
+void Launch::SwitchLandmarkEngine(LandmarkEngine engine) {
+    std::lock_guard<std::mutex> lock(pImpl->mutex_);
+    if (pImpl->m_archive_->QueryStatus() != SARC_SUCCESS) {
+        INSPIRE_LOGE("The InspireFace is not initialized, please call launch first.");
+        return;
+    }
+    auto landmark_param = pImpl->m_archive_->GetLandmarkParam();
+    bool ret = false;
+    if (engine == LANDMARK_HYPLMV2_0_25) {
+        ret = landmark_param->ReLoad("landmark");
+    } else if (engine == LANDMARK_HYPLMV2_0_50) {
+        ret = landmark_param->ReLoad("landmark_0_50");
+    } else if (engine == LANDMARK_INSIGHTFACE_2D106_TRACK) {
+        ret = landmark_param->ReLoad("landmark_insightface_2d106");
+    }
+    INSPIREFACE_CHECK_MSG(ret, "Failed to switch landmark engine");
 }
 
 }  // namespace inspire

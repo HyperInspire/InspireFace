@@ -96,6 +96,7 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateSession)(JNIEnv *env, jobje
     jfieldID enableFaceQualityField = env->GetFieldID(customParamClass, "enableFaceQuality", "I");
     jfieldID enableFaceAttributeField = env->GetFieldID(customParamClass, "enableFaceAttribute", "I");
     jfieldID enableInteractionLivenessField = env->GetFieldID(customParamClass, "enableInteractionLiveness", "I");
+    jfieldID enableFacePoseField = env->GetFieldID(customParamClass, "enableFacePose", "I");
 
     // Create HFSessionCustomParameter struct
     HFSessionCustomParameter parameter;
@@ -106,6 +107,7 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateSession)(JNIEnv *env, jobje
     parameter.enable_face_quality = env->GetIntField(customParameter, enableFaceQualityField);
     parameter.enable_face_attribute = env->GetIntField(customParameter, enableFaceAttributeField);
     parameter.enable_interaction_liveness = env->GetIntField(customParameter, enableInteractionLivenessField);
+    parameter.enable_face_pose = env->GetIntField(customParameter, enableFacePoseField);
 
     // Create session
     HFSession handle;
@@ -1316,7 +1318,7 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNI
     jfieldID enableFaceQualityField = env->GetFieldID(paramClass, "enableFaceQuality", "I");
     jfieldID enableFaceAttributeField = env->GetFieldID(paramClass, "enableFaceAttribute", "I");
     jfieldID enableInteractionLivenessField = env->GetFieldID(paramClass, "enableInteractionLiveness", "I");
-    jfieldID enableDetectModeLandmarkField = env->GetFieldID(paramClass, "enableDetectModeLandmark", "I");
+    jfieldID enableFacePoseField = env->GetFieldID(paramClass, "enableFacePose", "I");
     // Get parameter values
     HFSessionCustomParameter customParam;
     customParam.enable_recognition = env->GetIntField(parameter, enableRecognitionField);
@@ -1326,7 +1328,7 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNI
     customParam.enable_face_quality = env->GetIntField(parameter, enableFaceQualityField);
     customParam.enable_face_attribute = env->GetIntField(parameter, enableFaceAttributeField);
     customParam.enable_interaction_liveness = env->GetIntField(parameter, enableInteractionLivenessField);
-    customParam.enable_detect_mode_landmark = env->GetIntField(parameter, enableDetectModeLandmarkField);
+    customParam.enable_face_pose = env->GetIntField(parameter, enableFacePoseField);
     // Call native function
     HResult ret = HFMultipleFacePipelineProcess((HFSession)sessionHandle, (HFImageStream)streamHandleValue, &faceData, customParam);
 

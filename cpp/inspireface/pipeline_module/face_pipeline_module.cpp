@@ -7,9 +7,9 @@
 
 #include "log.h"
 #include "track_module/landmark/face_landmark_adapt.h"
+#include "track_module/landmark/landmark_param.h"
 #include "recognition_module/dest_const.h"
 #include "herror.h"
-#include "liveness/order_of_hyper_landmark.h"
 
 namespace inspire {
 
@@ -31,7 +31,7 @@ FacePipelineModule::FacePipelineModule(InspireArchive &archive, bool enableLiven
             INSPIRE_LOGE("InitAgePredict error.");
         }
     }
-
+    m_landmark_param_ = archive.GetLandmarkParam();
     // Initialize the mask detection model
     if (m_enable_mask_detect_) {
         InspireModel maskModel;
@@ -137,7 +137,7 @@ int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const Fa
             if (m_blink_predict_ == nullptr) {
                 return HERR_SESS_PIPELINE_FAILURE;  // uninitialized
             }
-            std::vector<std::vector<int>> order_list = {HLMK_LEFT_EYE_POINTS_INDEX, HLMK_RIGHT_EYE_POINTS_INDEX};
+            std::vector<std::vector<int>> order_list = {m_landmark_param_->semantic_index.left_eye_region, m_landmark_param_->semantic_index.right_eye_region};
             eyesStatusCache = {0, 0};
             inspirecv::Point2f left_eye = inspirecv::Point2f(face.keyPoints[0].x, face.keyPoints[0].y);
             inspirecv::Point2f right_eye = inspirecv::Point2f(face.keyPoints[1].x, face.keyPoints[1].y);
@@ -193,9 +193,9 @@ int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const Fa
 int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, FaceObjectInternal &face) {
     // In the tracking state, the count meets the requirements or the pipeline is executed in the detection state
     auto lmk = face.keyPointFive;
-    std::vector<inspirecv::Point2f> lmk_5 = {lmk[FaceLandmarkAdapt::LEFT_EYE_CENTER], lmk[FaceLandmarkAdapt::RIGHT_EYE_CENTER],
-                                             lmk[FaceLandmarkAdapt::NOSE_CORNER], lmk[FaceLandmarkAdapt::MOUTH_LEFT_CORNER],
-                                             lmk[FaceLandmarkAdapt::MOUTH_RIGHT_CORNER]};
+    std::vector<inspirecv::Point2f> lmk_5 = {lmk[m_landmark_param_->semantic_index.left_eye_center], lmk[m_landmark_param_->semantic_index.right_eye_center],
+                                             lmk[m_landmark_param_->semantic_index.nose_corner], lmk[m_landmark_param_->semantic_index.mouth_left_corner],
+                                             lmk[m_landmark_param_->semantic_index.mouth_right_corner]};
     auto trans = inspirecv::SimilarityTransformEstimateUmeyama(SIMILARITY_TRANSFORM_DEST, lmk_5);
     auto crop = processor.ExecuteImageAffineProcessing(trans, FACE_CROP_SIZE, FACE_CROP_SIZE);
     if (m_mask_predict_ != nullptr) {

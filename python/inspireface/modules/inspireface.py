@@ -99,6 +99,14 @@ class ImageStream(object):
         if ret != 0:
             raise Exception("Error in creating ImageStream")
 
+    def write_to_file(self, file_path: str):
+        """
+        Write the image stream to a file. Like PATH/image.jpg
+        """
+        ret = HFDeBugImageStreamDecodeSave(self._handle, file_path)
+        if ret != 0:
+            logger.error(f"Write ImageStream to file error: {ret}")
+
     def release(self):
         """
         Release the resources associated with the ImageStream.
@@ -365,6 +373,16 @@ class InspireFaceSession(object):
 
         return np.asarray(landmark).reshape(-1, 2)
     
+    def print_track_cost_spend(self):
+        ret = HFSessionPrintTrackCostSpend(self._sess)
+        if ret != 0:
+            logger.error(f"Print track cost spend error: {ret}")
+
+    def set_enable_track_cost_spend(self, enable: bool):
+        ret = HFSessionSetEnableTrackCostSpend(self._sess, enable)
+        if ret != 0:
+            logger.error(f"Set enable track cost spend error: {ret}")
+    
     def set_detection_confidence_threshold(self, threshold: float):
         """
         Sets the detection confidence threshold for the face detection session.
@@ -412,6 +430,11 @@ class InspireFaceSession(object):
         ret = HFSessionSetTrackModeDetectInterval(self._sess, num)
         if ret != 0:
             logger.error(f"Set track model detect interval error: {ret}")
+
+    def set_landmark_augmentation_num(self, num=1):
+        ret = HFSessionSetLandmarkAugmentationNum(self._sess, num)
+        if ret != 0:
+            logger.error(f"Set landmark augmentation num error: {ret}")
 
     def face_pipeline(self, image, faces: List[FaceInformation], exec_param) -> List[FaceExtended]:
         """
@@ -669,6 +692,13 @@ def query_launch_status() -> bool:
         return False
     return status.value == 1
 
+def switch_landmark_engine(engine: int):
+    ret = HFSwitchLandmarkEngine(engine)
+    if ret != 0:
+        logger.error(f"Switch landmark engine error: {ret}")
+        return False
+    return True
+
 @dataclass
 class FeatureHubConfiguration:
     """
@@ -833,7 +863,7 @@ class FaceIdentity(object):
         feature.size = HInt32(self.feature.size)
         feature.data = data_ptr
         return HFFaceFeatureIdentity(
-            customId=HFaceId(self.id),
+            id=HFaceId(self.id),
             feature=PHFFaceFeature(feature)
         )
 

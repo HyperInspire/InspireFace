@@ -8,13 +8,14 @@
 #include <iostream>
 #include "face_detect/face_detect_adapt.h"
 #include "face_detect/rnet_adapt.h"
-#include "landmark/face_landmark_adapt.h"
+#include "landmark/all.h"
 #include "common/face_info/face_object_internal.h"
 #include "frame_process.h"
 #include "quality/face_pose_quality_adapt.h"
 #include "middleware/model_archive/inspire_archive.h"
 #include "tracker_optional/bytetrack/BYTETracker.h"
 #include <data_type.h>
+#include "landmark/landmark_param.h"
 
 namespace inspire {
 
@@ -43,7 +44,7 @@ public:
      * @param expansion_path Expand the path if you need it.
      * @return int Status of the configuration.
      */
-    int Configuration(InspireArchive &archive, const std::string &expansion_path = "");
+    int Configuration(InspireArchive &archive, const std::string &expansion_path = "", bool enable_face_pose_and_quality = false);
 
     /**
      * @brief Updates the video stream for face tracking.
@@ -74,6 +75,13 @@ private:
      */
     void SparseLandmarkPredict(const inspirecv::Image &raw_face_crop, std::vector<inspirecv::Point2f> &landmarks_output, float &score,
                                float size = 112.0);
+
+    /**
+     * @brief Predicts the tracking score for a cropped face image.
+     * @param raw_face_crop Cropped face image.
+     * @return float Tracking score.
+     */
+    float PredictTrackScore(const inspirecv::Image &raw_face_crop);
 
     /**
      * @brief Tracks a face in the given image stream.
@@ -125,18 +133,18 @@ private:
     int InitRNetModel(InspireModel &model);
 
     /**
-     * @brief Initializes the face pose estimation model.
-     * @param model Pointer to the face pose model to be initialized.
+     * @brief Initializes the face pose and quality estimation model.
+     * @param model Pointer to the face pose and quality model to be initialized.
      * @return int Status of the initialization process. Returns 0 for success.
      */
-    int InitFacePoseModel(InspireModel &model);
+    int InitFacePoseAndQualityModel(InspireModel &model);
 
     /**
      * @brief Select the detection model scheme to be used according to the input pixel level.
      * @param pixel_size Currently, only 160, 320, and 640 pixel sizes are supported.
      * @return Return the corresponding scheme name, only ”face_detect_160”, ”face_detect_320”, ”face_detect_640” are supported.
      */
-    std::string ChoiceMultiLevelDetectModel(const int32_t pixel_size, int32_t& final_size);
+    std::string ChoiceMultiLevelDetectModel(const int32_t pixel_size, int32_t &final_size);
 
 public:
     /**
@@ -172,6 +180,12 @@ public:
      * @param value Interval between detections
      */
     void SetTrackModeDetectInterval(int value);
+
+    /**
+     * @brief Set the multiscale landmark augment num
+     * @param value Multiscale landmark augment num
+     */
+    void SetMultiscaleLandmarkAugmentNum(int value);
 
 public:
     std::vector<FaceObjectInternal> trackingFace;  ///< Vector of FaceObjects currently being tracked.
@@ -215,6 +229,14 @@ private:
     int m_track_mode_num_smooth_cache_frame_ = 5;  ///< Track mode number of smooth cache frame
 
     float m_track_mode_smooth_ratio_ = 0.05;  ///< Track mode smooth ratio
+
+    int m_multiscale_landmark_augment_num_ = 1;  ///< Multiscale landmark augment num
+
+    float m_landmark_crop_ratio_ = 1.1f;
+
+    std::vector<float> m_multiscale_landmark_scales_;
+
+    std::shared_ptr<LandmarkParam> m_landmark_param_;
 };
 
 }  // namespace inspire

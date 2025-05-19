@@ -9,7 +9,7 @@
 #include "information.h"
 #include "feature_hub_db.h"
 #include <launch.h>
-#include "initialization_module/resource_manage.h"
+#include "runtime_module/resource_manage.h"
 #include "similarity_converter.h"
 #include "middleware/inference_wrapper/inference_wrapper.h"
 #if defined(ISF_ENABLE_TENSORRT)
@@ -17,7 +17,7 @@
 #endif
 #include <cstdarg>
 
-#define FACE_FEATURE_SIZE 512       ///< Temporary setup
+#define FACE_FEATURE_SIZE 512  ///< Temporary setup
 
 using namespace inspire;
 
@@ -348,6 +348,31 @@ HResult HFReleaseInspireFaceSession(HFSession handle) {
     return HSUCCEED;
 }
 
+HResult HFSwitchLandmarkEngine(HFSessionLandmarkEngine engine) {
+    inspire::Launch::LandmarkEngine type;
+    if (engine == HF_LANDMARK_HYPLMV2_0_25) {
+        type = inspire::Launch::LANDMARK_HYPLMV2_0_25;
+    } else if (engine == HF_LANDMARK_HYPLMV2_0_50) {
+        type = inspire::Launch::LANDMARK_HYPLMV2_0_50;
+    } else if (engine == HF_LANDMARK_INSIGHTFACE_2D106_TRACK) {
+        type = inspire::Launch::LANDMARK_INSIGHTFACE_2D106_TRACK;
+    } else {
+        INSPIRE_LOGE("Unsupported Landmark engine.");
+        return HERR_INVALID_PARAM;
+    }
+    INSPIREFACE_CONTEXT->SwitchLandmarkEngine(type);
+    return HSUCCEED;
+}
+
+HResult HFQuerySupportedPixelLevelsForFaceDetection(PHFFaceDetectPixelList pixel_levels) {
+    auto ret = INSPIREFACE_CONTEXT->GetFaceDetectPixelList();
+    pixel_levels->size = ret.size();
+    for (int i = 0; i < ret.size(); i++) {
+        pixel_levels->pixel_level[i] = ret[i];
+    }
+    return HSUCCEED;
+}
+
 HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectMode detectMode, HInt32 maxDetectFaceNum, HInt32 detectPixelLevel,
                                    HInt32 trackByDetectModeFPS, HFSession *handle) {
     inspire::ContextCustomParameter param;
@@ -358,7 +383,7 @@ HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectM
     param.enable_ir_liveness = parameter.enable_ir_liveness;
     param.enable_recognition = parameter.enable_recognition;
     param.enable_face_attribute = parameter.enable_face_attribute;
-    param.enable_detect_mode_landmark = parameter.enable_detect_mode_landmark;
+    param.enable_face_pose = parameter.enable_face_pose;
     inspire::DetectModuleMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
     if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
         detMode = inspire::DETECT_MODE_LIGHT_TRACK;
@@ -404,8 +429,8 @@ HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode de
     if (customOption & HF_ENABLE_INTERACTION) {
         param.enable_interaction_liveness = true;
     }
-    if (customOption & HF_ENABLE_DETECT_MODE_LANDMARK) {
-        param.enable_detect_mode_landmark = true;
+    if (customOption & HF_ENABLE_FACE_POSE) {
+        param.enable_face_pose = true;
     }
     inspire::DetectModuleMode detMode = inspire::DETECT_MODE_ALWAYS_DETECT;
     if (detectMode == HF_DETECT_MODE_LIGHT_TRACK) {
@@ -469,6 +494,9 @@ HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode) {
         INSPIREFACE_CONTEXT->SetGlobalCoreMLInferenceMode(inspire::Launch::NN_INFERENCE_COREML_GPU);
     } else if (mode == HF_APPLE_COREML_INFERENCE_MODE_ANE) {
         INSPIREFACE_CONTEXT->SetGlobalCoreMLInferenceMode(inspire::Launch::NN_INFERENCE_COREML_ANE);
+    } else {
+        INSPIRE_LOGE("Unsupported Apple CoreML inference mode.");
+        return HERR_INVALID_PARAM;
     }
     return HSUCCEED;
 }
@@ -630,6 +658,17 @@ HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
     return ctx->impl.SetTrackModeDetectInterval(num);
+}
+
+HResult HFSessionSetLandmarkAugmentationNum(HFSession session, HInt32 num) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    if (ctx == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    return ctx->impl.SetLandmarkAugmentationNum(num);
 }
 
 HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMultipleFaceData results) {
@@ -819,8 +858,6 @@ HResult HFFaceFeatureExtractTo(HFSession session, HFImageStream streamHandle, HF
 
     return HSUCCEED;
 }
-
-
 
 HResult HFFaceFeatureExtractCpy(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace, HPFloat feature) {
     if (session == nullptr) {
@@ -1113,7 +1150,6 @@ HResult HFMultipleFacePipelineProcess(HFSession session, HFImageStream streamHan
     param.enable_ir_liveness = parameter.enable_ir_liveness;
     param.enable_recognition = parameter.enable_recognition;
     param.enable_face_attribute = parameter.enable_face_attribute;
-    param.enable_detect_mode_landmark = parameter.enable_detect_mode_landmark;
 
     HResult ret;
     std::vector<inspire::FaceTrackWrap> data;
@@ -1175,8 +1211,8 @@ HResult HFMultipleFacePipelineProcessOptional(HFSession session, HFImageStream s
     if (customOption & HF_ENABLE_INTERACTION) {
         param.enable_interaction_liveness = true;
     }
-    if (customOption & HF_ENABLE_DETECT_MODE_LANDMARK) {
-        param.enable_detect_mode_landmark = true;
+    if (customOption & HF_ENABLE_FACE_POSE) {
+        param.enable_face_pose = true;
     }
 
     HResult ret;

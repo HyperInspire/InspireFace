@@ -24,6 +24,8 @@ We welcome your questions💬, they help guide and accelerate its development.
 
 ## Change Logs
 
+**`2025-04-27`** Optimize the internal Landmark tracking algorithm to improve tracking stability.
+
 **`2025-03-16`** Acceleration using NVIDIA-GPU (**CUDA**) devices is already supported.
 
 **`2025-03-09`** Release of android sdk in JitPack.
@@ -62,13 +64,11 @@ We welcome your questions💬, they help guide and accelerate its development.
 
 ## Quick Start
 
-For Python users on Linux and MacOS, InspireFace can be quickly installed via pip:
+For Python users on **Linux and MacOS**, InspireFace can be quickly installed via pip:
 
 ```bash
 pip install inspireface
 ```
-
-_⚠️Windows support is **not available yet**, but will be coming soon!_
 
 After installation, you can use inspireface like this:
 
@@ -177,7 +177,7 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 
 ### Requirements
 
-- CMake (version 3.10 or higher)
+- CMake (version 3.20 or higher)
 - NDK (version 16 or higher, only required for Android) [**Optional**]
 - MNN (version 1.4.0 or higher)
 - C++ Compiler
@@ -303,10 +303,11 @@ We have completed the adaptation and testing of the software across various oper
 | 12     | **iOS**              | ARM                   | CPU/Metal/**ANE**         | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
 | 13     | **Android**          | ARMv7                 | -                          | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
 | 14     |                      | ARMv8                 | -                          | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
-| 15 | **Android**<sup><br/>(Rockchip) | ARMv8 | RK3566/RK3568 | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
-| 16 |  | ARMv8 | RK3588 | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
-| 17 | **HarmonyOS** | ARMv8 | - | - | - | - |
-| 18 | **Linux**<sup><br/>(Jetson series) | ARMv8 | Jetson series | - | - | - |
+| 15 | | x86_64 | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
+| 16 | **Android**<sup><br/>(Rockchip) | ARMv8 | RK3566/RK3568 | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
+| 17 |  | ARMv8 | RK3588 | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
+| 18 | **HarmonyOS** | ARMv8 | - | - | - | - |
+| 19 | **Linux**<sup><br/>(Jetson series) | ARMv8 | Jetson series | - | - | - |
 
 - **Device**: Some special device support, primarily focused on computing power devices.
 - **Supported**: The solution has been fully developed and successfully verified on offline devices.
@@ -431,8 +432,6 @@ if (ret != HSUCCEED) {
 ```
 For more examples, you can refer to the `cpp/sample` sub-project located in the root directory. You can compile these sample executables by enabling the `ISF_BUILD_WITH_SAMPLE` option during the compilation process.
 
-- **More detailed cases**: [C/C++ Sample](cpp/sample/api/)
-
 **Note**: For each error code feedback, you can click on this [link](doc/Error-Feedback-Codes.md) to view detailed explanations.
 
 ### C++ Sample: Use the C++ version of the header files
@@ -457,7 +456,6 @@ INSPIREFACE_CHECK_MSG(ret == HSUCCEED, "Load model failed");
 // Create face algorithm session
 inspire::ContextCustomParameter custom_param;
 custom_param.enable_recognition = true;
-custom_param.enable_detect_mode_landmark = true;
 auto max_detect_face = 5;
 auto detect_level_px = 320; // 160, 320, 640
 
@@ -510,6 +508,11 @@ INSPIRE_LOGI("Length of face embedding: %d", face_embedding.embedding.size());
 
 Please note that the C++ interface has not been fully tested. It is recommended to use the **CAPI** interface as the primary option.
 
+**More detailed cases**:
+
+- [C Sample](cpp/sample/api/)
+- [C/C++ Sample](cpp/sample/cpp_api/)
+
 ### Python Native Sample
 
 The Python implementation is compiled based on InspireFace source code, and is integrated using a native interface approach.
@@ -549,7 +552,7 @@ ret = isf.reload()
 assert ret, "Launch failure. Please ensure the resource path is correct."
 
 # Optional features, loaded during session creation based on the modules specified.
-opt = isf.HF_ENABLE_NONE
+opt = isf.HF_ENABLE_FACE_POSE
 session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT)
 
 # Load the image using OpenCV.
@@ -584,6 +587,7 @@ We have an [Android SDK project](https://github.com/HyperInspire/inspireface-and
 Precompiled library support: 
 - arm64-v8a
 - armeabi-v7a
+- x86_64
 
 #### a. Quick to use in Android
 
@@ -748,7 +752,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 | --- | --- | --- | --- | --- |
 | Pikachu | CPU | Lightweight edge-side models | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu) |
 | Megatron | CPU, GPU | Mobile and server models | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron) |
-| Megatron_TRT | GPU | Cuda-based server models | Mar 16, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron_TRT) |
+| Megatron_TRT | GPU | CUDA-based server models | Mar 16, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron_TRT) |
 | Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
 | Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
 | Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | Feb 20, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) |

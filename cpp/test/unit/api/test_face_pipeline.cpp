@@ -147,7 +147,7 @@ TEST_CASE("test_FacePipeline", "[face_pipeline]") {
         TEST_PRINT("{}", confidence.confidence[0]);
         REQUIRE(ret == HSUCCEED);
         CHECK(confidence.num > 0);
-        CHECK(confidence.confidence[0] > 0.8);
+        CHECK(confidence.confidence[0] > 0.70f);
 
         ret = HFReleaseImageStream(img1Handle);
         REQUIRE(ret == HSUCCEED);

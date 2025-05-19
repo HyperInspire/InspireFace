@@ -1,0 +1,72 @@
+name: Build InspireFace CoreML SDKs
+
+on:
+  push:
+    branches:
+      - feature/coreml
+
+env:
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+jobs:
+  build:
+    name: Build SDKs
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - target: ios_coreml_arm64
+            os: macos-latest
+            build_script: command/build_ios_coreml.sh
+            artifact_name: sdk_files_ios_coreml_arm64
+            output_zip: inspireface-ios-coreml-arm64.zip
+            output_dir: inspireface-ios-coreml-arm64
+            need_cmake: false
+
+          - target: macos_coreml_arm64
+            os: macos-14
+            build_script: command/build_macos_coreml_arm64.sh
+            artifact_name: sdk_files_macos_coreml_apple_silicon_arm64
+            output_zip: inspireface-macos-coreml-apple-silicon-arm64.zip
+            output_dir: inspireface-macos-coreml-apple-silicon-arm64
+            need_cmake: true
+
+          - target: macos_coreml_x86
+            os: macos-13
+            build_script: command/build_macos_coreml_x86.sh
+            artifact_name: sdk_files_macos_coreml_intel_x86_64
+            output_zip: inspireface-macos-coreml-intel-x86-64.zip
+            output_dir: inspireface-macos-coreml-intel-x86-64
+            need_cmake: true
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Update Submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+
+      - name: Install Dependencies (only for macOS)
+        if: matrix.need_cmake == true
+        run: |
+          brew install cmake
+
+      - name: Start Building SDK
+        run: |
+          bash ${{ matrix.build_script }}
+          ls build
+
+      - name: Zip SDK directory
+        run: |
+          cd build
+          zip -r ../${{ matrix.output_zip }} ${{ matrix.output_dir }}
+          cd ..
+          stat ${{ matrix.output_zip }}
+
+      - name: Upload SDK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: |
+            ${{ matrix.output_zip }}

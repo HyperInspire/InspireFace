@@ -88,6 +88,7 @@ private:
 
 private:
     std::shared_ptr<ExtractAdapt> m_extract_;  ///< Pointer to the Extract instance.
+    std::shared_ptr<LandmarkParam> m_landmark_param_;  ///< Pointer to the LandmarkParam instance.
 
     int32_t m_status_code_;  ///< Status code
 };

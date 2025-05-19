@@ -186,8 +186,7 @@ typedef struct CustomPipelineParameter {
     bool enable_face_attribute = false;        ///< Enable face attribute prediction feature
     bool enable_face_quality = false;          ///< Enable face quality assessment feature
     bool enable_interaction_liveness = false;  ///< Enable interactive liveness detection feature
-    bool enable_detect_mode_landmark = false;  ///< Enable landmark detection in detection mode
-
+    bool enable_face_pose = false;             ///< Enable face pose estimation feature
 } ContextCustomParameter;
 
 /** @struct FaceLoc

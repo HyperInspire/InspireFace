@@ -4,7 +4,7 @@
 #include <memory>
 #include <inspirecv/inspirecv.h>
 #include <inspireface/inspireface.hpp>
-#include "inspireface/pipeline_module/liveness/order_of_hyper_landmark.h"
+#include "inspireface/track_module/landmark/order_of_hyper_landmark.h"
 
 int main(int argc, char** argv) {
     if (argc != 3) {
@@ -30,7 +30,6 @@ int main(int argc, char** argv) {
     param.enable_mask_detect = true;
     param.enable_face_attribute = true;
     param.enable_face_quality = true;
-    param.enable_detect_mode_landmark = true;
     param.enable_interaction_liveness = true;
     std::shared_ptr<inspire::Session> session(inspire::Session::CreatePtr(inspire::DETECT_MODE_ALWAYS_DETECT, 1, param, 320));
 

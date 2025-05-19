@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 project(InspireFaceSDK)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
@@ -97,7 +97,6 @@ if(ISF_ENABLE_APPLE_EXTENSION)
     find_library(FOUNDATION_LIBRARY Foundation)
     find_library(COREML_LIBRARY CoreML)
     find_library(ACCELERATE_LIBRARY Accelerate)
-    find_package(OpenCV REQUIRED)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${FOUNDATION_LIBRARY} ${COREML_LIBRARY} ${ACCELERATE_LIBRARY})
 
     # Add objective-c files
