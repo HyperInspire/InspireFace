@@ -14,7 +14,7 @@ def get_wheel_platform_tag():
     """Get wheel package platform tag"""
     system = platform.system().lower()
     machine = platform.machine().lower()
-    
+
     arch_mapping = {
         'x86_64': {
             'windows': 'win_amd64',
@@ -37,7 +37,10 @@ def get_wheel_platform_tag():
             'darwin': 'macosx_11_0_arm64'
         }
     }
-    platform_arch = arch_mapping.get(machine, {}).get(system)
+    if os.getenv('INSPIRE_FACE_TARGET_AARCH_MAPPING'):
+        platform_arch = os.getenv('INSPIRE_FACE_TARGET_AARCH_MAPPING')
+    else:
+        platform_arch = arch_mapping.get(machine, {}).get(system)
     if not platform_arch:
         print("Unsupported platform: {} {}".format(system, machine))
         raise RuntimeError("Unsupported platform: {} {}".format(system, machine))
