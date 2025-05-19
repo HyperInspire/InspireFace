@@ -29,6 +29,7 @@ def case_feature_hub():
     feature = isf.FaceIdentity(gen, -1)
     isf.feature_hub_face_insert(feature)
     result = isf.feature_hub_face_search(gen)
+    print(f"result: {result}")
     assert os.path.exists(db_path), "FeatureHub database file not found."
 
 
