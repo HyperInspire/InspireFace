@@ -24,6 +24,8 @@ We welcome your questions💬, they help guide and accelerate its development.
 
 ## Change Logs
 
+**`2025-05-18`** Optimize the tracking stability of facial landmark.
+
 **`2025-04-27`** Optimize the internal Landmark tracking algorithm to improve tracking stability.
 
 **`2025-03-16`** Acceleration using NVIDIA-GPU (**CUDA**) devices is already supported.
@@ -57,10 +59,6 @@ We welcome your questions💬, they help guide and accelerate its development.
 **`2024-07-03`** Add the blink detection algorithm of face interaction module.
 
 **`2024-07-02`** Fixed several bugs in the face detector with multi-level input.
-
-**`2024-06-27`** Verified iOS usability and fixed some bugs.
-
-**`2024-06-18`** Added face detection feature with tracking-by-detection mode.
 
 ## Quick Start
 
