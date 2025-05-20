@@ -24,8 +24,6 @@ We welcome your questions💬, they help guide and accelerate its development.
 
 ## Change Logs
 
-**`2025-05-18`** Optimize the tracking stability of facial landmark.
-
 **`2025-04-27`** Optimize the internal Landmark tracking algorithm to improve tracking stability.
 
 **`2025-03-16`** Acceleration using NVIDIA-GPU (**CUDA**) devices is already supported.
