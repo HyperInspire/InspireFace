@@ -7,8 +7,11 @@ import os
 def get_version():
     """Get version number"""
     version_path = os.path.join(os.path.dirname(__file__), 'version.txt')
-    with open(version_path, 'r') as f:
-        return f.read().strip()
+    try:
+        with open(version_path, 'r') as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        return "0.0.0"
 
 def get_wheel_platform_tag():
     """Get wheel package platform tag"""
