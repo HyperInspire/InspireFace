@@ -669,36 +669,42 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
+      # Step 2: Free up space
+      - name: Free up space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
+          df -h
+
+      # Step 3: Extract the version number from the tag (e.g., "v1.2.3" becomes "1.2.3")
       - name: Extract Version Number
         id: extract_version
         run: echo "VERSION=$(echo ${GITHUB_REF#refs/tags/} | sed 's/^v//')" >> $GITHUB_ENV
 
-      # Step 3: Synchronize and update submodules recursively
+      # Step 4: Synchronize and update submodules recursively
       - name: Update submodules
         run: |
           git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
 
-      # Step 4: Install Docker Compose
+      # Step 5: Install Docker Compose
       - name: Install Docker Compose
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
 
-      # Step 5: Print some information
+      # Step 6: Print some information
       - name: Print some information
         id: print_info
         run: |
           docker --version
           docker-compose --version
 
-      # Step 6: Start building the SDK
+      # Step 7: Start building the SDK
       - name: Start Building the InspireFace-Linux-TensorRT-CUDA12-Ubuntu22
         run: |
           docker-compose up build-tensorrt-cuda12-ubuntu22
           ls build
 
-      # Step 7: Zip SDK directory
+      # Step 8: Zip SDK directory
       - name: Zip SDK directory
         run: |
           cd build
@@ -706,7 +712,7 @@ jobs:
           cd ..
           stat inspireface-linux-tensorrt-cuda12.2_ubuntu22.04-${{ env.VERSION }}.zip
 
-      # Step 8: Upload the zipped SDK files for the next job
+      # Step 9: Upload the zipped SDK files for the next job
       - name: Upload SDK Artifacts
         uses: actions/upload-artifact@v4
         with:
