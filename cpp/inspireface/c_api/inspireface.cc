@@ -668,7 +668,7 @@ HResult HFSessionSetLandmarkAugmentationNum(HFSession session, HInt32 num) {
     if (ctx == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
-    return ctx->impl.SetLandmarkAugmentationNum(num);
+    return ctx->impl.SetLandmarkLoop(num);
 }
 
 HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMultipleFaceData results) {

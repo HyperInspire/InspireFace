@@ -24,7 +24,7 @@ We welcome your questions💬, they help guide and accelerate its development.
 
 ## Change Logs
 
-**`2025-04-27`** Optimize the internal Landmark tracking algorithm to improve tracking stability.
+**`2025-04-27`** Optimize some issues and provide a stable version.
 
 **`2025-03-16`** Acceleration using NVIDIA-GPU (**CUDA**) devices is already supported.
 
@@ -57,6 +57,10 @@ We welcome your questions💬, they help guide and accelerate its development.
 **`2024-07-03`** Add the blink detection algorithm of face interaction module.
 
 **`2024-07-02`** Fixed several bugs in the face detector with multi-level input.
+
+## License
+
+The licensing of the open-source models employed by InspireFace adheres to the same requirements as InsightFace, specifying their use solely for academic purposes and explicitly prohibiting commercial applications.
 
 ## Quick Start
 

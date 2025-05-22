@@ -113,8 +113,8 @@ int32_t FaceSession::FaceDetectAndTrack(inspirecv::FrameProcess& process) {
     return HSUCCEED;
 }
 
-int32_t FaceSession::SetLandmarkAugmentationNum(int32_t value) {
-    m_face_track_->SetMultiscaleLandmarkAugmentNum(value);
+int32_t FaceSession::SetLandmarkLoop(int32_t value) {
+    m_face_track_->SetMultiscaleLandmarkLoop(value);
     return HSUCCEED;
 }
 
