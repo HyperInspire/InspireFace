@@ -431,11 +431,6 @@ class InspireFaceSession(object):
         if ret != 0:
             logger.error(f"Set track model detect interval error: {ret}")
 
-    def set_landmark_augmentation_num(self, num=1):
-        ret = HFSessionSetLandmarkAugmentationNum(self._sess, num)
-        if ret != 0:
-            logger.error(f"Set landmark augmentation num error: {ret}")
-
     def face_pipeline(self, image, faces: List[FaceInformation], exec_param) -> List[FaceExtended]:
         """
         Processes detected faces to extract additional attributes based on the provided execution parameters.

@@ -578,14 +578,6 @@ HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeNumSmoothCacheFrame(HFSess
  */
 HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num);
 
-/**
- * @brief Set the face landmark anti-shake enhancement, with the default being 1.
- *
- * @param session Handle to the session.
- * @param num The landmark anti-shake enhancement value.
- * @return HResult indicating the success or failure of the operation.
- */
-HYPER_CAPI_EXPORT extern HResult HFSessionSetLandmarkAugmentationNum(HFSession session, HInt32 num);
 
 /**
  * @brief Run face tracking in the session.

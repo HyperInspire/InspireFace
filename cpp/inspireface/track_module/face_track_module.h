@@ -182,10 +182,10 @@ public:
     void SetTrackModeDetectInterval(int value);
 
     /**
-     * @brief Set the multiscale landmark augment num
-     * @param value Multiscale landmark augment num
+     * @brief Set the multiscale landmark loop num
+     * @param value Multiscale landmark loop num
      */
-    void SetMultiscaleLandmarkAugmentNum(int value);
+    void SetMultiscaleLandmarkLoop(int value);
 
 public:
     std::vector<FaceObjectInternal> trackingFace;  ///< Vector of FaceObjects currently being tracked.
@@ -230,7 +230,7 @@ private:
 
     float m_track_mode_smooth_ratio_ = 0.05;  ///< Track mode smooth ratio
 
-    int m_multiscale_landmark_augment_num_ = 1;  ///< Multiscale landmark augment num
+    int m_multiscale_landmark_loop_num_ = 1;  ///< Multiscale landmark loop num
 
     float m_landmark_crop_ratio_ = 1.1f;
 

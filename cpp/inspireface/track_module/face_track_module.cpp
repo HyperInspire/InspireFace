@@ -395,7 +395,7 @@ int FaceTrackModule::Configuration(inspire::InspireArchive &archive, const std::
         InitFacePoseAndQualityModel(pquModel);
     }
     m_landmark_crop_ratio_ = m_landmark_param_->expansion_scale;
-    m_multiscale_landmark_scales_ = GenerateCropScales(m_landmark_crop_ratio_, m_multiscale_landmark_augment_num_);
+    m_multiscale_landmark_scales_ = GenerateCropScales(m_landmark_crop_ratio_, m_multiscale_landmark_loop_num_);
     return 0;
 }
 
@@ -517,9 +517,9 @@ void FaceTrackModule::SetTrackModeDetectInterval(int value) {
     detection_interval_ = value;
 }
 
-void FaceTrackModule::SetMultiscaleLandmarkAugmentNum(int value) {
-    m_multiscale_landmark_augment_num_ = value;
-    m_multiscale_landmark_scales_ = GenerateCropScales(m_landmark_crop_ratio_, m_multiscale_landmark_augment_num_);
+void FaceTrackModule::SetMultiscaleLandmarkLoop(int value) {
+    m_multiscale_landmark_loop_num_ = value;
+    m_multiscale_landmark_scales_ = GenerateCropScales(m_landmark_crop_ratio_, m_multiscale_landmark_loop_num_);
 }
 
 int32_t FaceTrackModule::GetDebugPreviewImageSize() const {

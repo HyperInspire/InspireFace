@@ -660,16 +660,7 @@ HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num) {
     return ctx->impl.SetTrackModeDetectInterval(num);
 }
 
-HResult HFSessionSetLandmarkAugmentationNum(HFSession session, HInt32 num) {
-    if (session == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    return ctx->impl.SetLandmarkAugmentationNum(num);
-}
+
 
 HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMultipleFaceData results) {
     if (session == nullptr) {

@@ -54,11 +54,11 @@ public:
     int32_t FaceDetectAndTrack(inspirecv::FrameProcess& process);
 
     /**
-     * @brief Set the face landmark anti-shake enhancement
-     * @param value The landmark anti-shake enhancement value
+     * @brief Set the face landmark loop
+     * @param value The landmark loop value
      * @return int32_t Status code of the operation.
      * */
-    int32_t SetLandmarkAugmentationNum(int32_t value);
+    int32_t SetLandmarkLoop(int32_t value);
 
     /**
      * @brief Set the threshold of face detection function, which only acts on the detection model
