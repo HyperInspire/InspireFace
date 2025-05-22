@@ -700,14 +700,7 @@ HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMul
 }
 
 HResult HFSessionLastFaceDetectionGetDebugPreviewImageSize(HFSession session, HInt32 *size) {
-    if (session == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
-    if (ctx == nullptr) {
-        return HERR_INVALID_CONTEXT_HANDLE;
-    }
-    *size = ctx->impl.GetDebugPreviewImageSize();
+    // TODO: implement this function
     return HSUCCEED;
 }
 
