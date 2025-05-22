@@ -1482,11 +1482,6 @@ if _libs[_LIBRARY_FILENAME].has("HFSessionSetTrackModeDetectInterval", "cdecl"):
     HFSessionSetTrackModeDetectInterval.argtypes = [HFSession, HInt32]
     HFSessionSetTrackModeDetectInterval.restype = HResult
 
-# /Users/tunm/work/InspireFace/cpp/inspireface/c_api/inspireface.h: 566
-if _libs[_LIBRARY_FILENAME].has("HFSessionSetLandmarkAugmentationNum", "cdecl"):
-    HFSessionSetLandmarkAugmentationNum = _libs[_LIBRARY_FILENAME].get("HFSessionSetLandmarkAugmentationNum", "cdecl")
-    HFSessionSetLandmarkAugmentationNum.argtypes = [HFSession, HInt32]
-    HFSessionSetLandmarkAugmentationNum.restype = HResult
 
 # /Users/tunm/work/InspireFace/cpp/inspireface/c_api/inspireface.h: 576
 if _libs[_LIBRARY_FILENAME].has("HFExecuteFaceTrack", "cdecl"):
