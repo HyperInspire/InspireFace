@@ -165,6 +165,7 @@ class FaceExtended:
     race: int
     gender: int
     age_bracket: int
+    emotion: int
 
 
 class FaceInformation:
@@ -232,6 +233,7 @@ class SessionCustomParameter:
     enable_face_attribute: bool = False
     enable_face_quality: bool = False
     enable_interaction_liveness: bool = False
+    enable_face_emotion: bool = False
 
     def _c_struct(self):
         """
@@ -247,7 +249,8 @@ class SessionCustomParameter:
             enable_mask_detect=int(self.enable_mask_detect),
             enable_face_attribute=int(self.enable_face_attribute),
             enable_face_quality=int(self.enable_face_quality),
-            enable_interaction_liveness=int(self.enable_interaction_liveness)
+            enable_interaction_liveness=int(self.enable_interaction_liveness),
+            enable_face_emotion=int(self.enable_face_emotion)
         )
 
         return custom_param
@@ -431,6 +434,11 @@ class InspireFaceSession(object):
         if ret != 0:
             logger.error(f"Set track model detect interval error: {ret}")
 
+    def set_landmark_augmentation_num(self, num=1):
+        ret = HFSessionSetLandmarkAugmentationNum(self._sess, num)
+        if ret != 0:
+            logger.error(f"Set landmark augmentation num error: {ret}")
+
     def face_pipeline(self, image, faces: List[FaceInformation], exec_param) -> List[FaceExtended]:
         """
         Processes detected faces to extract additional attributes based on the provided execution parameters.
@@ -461,12 +469,13 @@ class InspireFaceSession(object):
             logger.error(f"Face pipeline error: {ret}")
             return []
 
-        extends = [FaceExtended(-1.0, -1.0, -1.0, -1.0, -1.0, 0, 0, 0, 0, 0, -1, -1, -1) for _ in range(len(faces))]
+        extends = [FaceExtended(-1.0, -1.0, -1.0, -1.0, -1.0, 0, 0, 0, 0, 0, -1, -1, -1, -1) for _ in range(len(faces))]
         self._update_mask_confidence(exec_param, flag, extends)
         self._update_rgb_liveness_confidence(exec_param, flag, extends)
         self._update_face_quality_confidence(exec_param, flag, extends)
         self._update_face_attribute_confidence(exec_param, flag, extends)
         self._update_face_interact_confidence(exec_param, flag, extends)
+        self._update_face_emotion_confidence(exec_param, flag, extends)
 
         return extends
 
@@ -549,6 +558,17 @@ class InspireFaceSession(object):
                     extends[i].action_blink = actions.blink[i]
             else:
                 logger.error(f"Get face action result error: {ret}")
+
+    def _update_face_emotion_confidence(self, exec_param, flag, extends):
+        if (flag == "object" and exec_param.enable_face_emotion) or (
+                flag == "bitmask" and exec_param & HF_ENABLE_FACE_EMOTION):
+            emotion_results = HFFaceEmotionResult()
+            ret = HFGetFaceEmotionResult(self._sess, PHFFaceEmotionResult(emotion_results))
+            if ret == 0:
+                for i in range(emotion_results.num):
+                    extends[i].emotion = emotion_results.emotion[i]
+            else:
+                logger.error(f"Get face emotion result error: {ret}")
 
     def _update_rgb_liveness_confidence(self, exec_param, flag, extends: List[FaceExtended]):
         if (flag == "object" and exec_param.enable_liveness) or (
