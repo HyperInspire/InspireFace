@@ -60,6 +60,12 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, HFImageS
         case HF_STREAM_YUV_NV21:
             stream->impl.SetDataFormat(inspirecv::NV21);
             break;
+        case HF_STREAM_I420:
+            stream->impl.SetDataFormat(inspirecv::I420);
+            break;
+        case HF_STREAM_GRAY:
+            stream->impl.SetDataFormat(inspirecv::GRAY);
+            break;
         default:
             return HERR_INVALID_IMAGE_STREAM_PARAM;  // Assume there's a return code for unsupported
                                                      // formats
@@ -134,6 +140,12 @@ HYPER_CAPI_EXPORT extern HResult HFImageStreamSetFormat(HFImageStream handle, HF
             break;
         case HF_STREAM_YUV_NV21:
             ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::NV21);
+            break;
+        case HF_STREAM_I420:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::I420);
+            break;
+        case HF_STREAM_GRAY:
+            ((HF_CameraStream *)handle)->impl.SetDataFormat(inspirecv::GRAY);
             break;
         default:
             return HERR_INVALID_IMAGE_STREAM_PARAM;  // Assume there's a return code for unsupported

@@ -50,6 +50,8 @@ typedef enum HFImageFormat {
     HF_STREAM_BGRA = 3,      ///< Image in BGR format with alpha channel.
     HF_STREAM_YUV_NV12 = 4,  ///< Image in YUV NV12 format.
     HF_STREAM_YUV_NV21 = 5,  ///< Image in YUV NV21 format.
+    HF_STREAM_I420 = 6,      ///< Image in I420 format.
+    HF_STREAM_GRAY = 7,      ///< Image in GRAY format.
 } HFImageFormat;
 
 /**
