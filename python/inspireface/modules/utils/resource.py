@@ -28,37 +28,38 @@ class ResourceManager:
             "Pikachu": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu",
                 "filename": "Pikachu",
-                "md5": "f2983a2d884902229c1443fdc921b8e5f49cf2daba8a4f103cd127910dc9e7cd"
+                "md5": "3024649812ac8c921968444d6b57423fe1bbf66c0cb122c0d7f5f2a61a66bb27"
             },
             "Megatron": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron",
                 "filename": "Megatron",
-                "md5": "28f2284c5e7cf53b0e152ff524a416c966ab21e724002643b1304aedc4af6b06"
+                "md5": "83d2de0728ca5b311055c87784619086e1043fa3c5d70ed24c262e7971419d8e"
             },
             "Megatron_TRT": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron_TRT",
                 "filename": "Megatron_TRT",
-                "md5": "25fb4a585b73b0114ff0d64c2bc4071bd005a32a77149b66c474985077dc8f8a"
+                "md5": "99a50293213dea469e3b5875a6ed35ebe8341c255a5a4a62bc0894f97ee634e1"
             },
             "Gundam_RK356X": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X",
                 "filename": "Gundam_RK356X",
-                "md5": "69ea23b89851a38c729b32bb0ed33cf62ebd3c891ea5d596afeadeb1f1c79c69"
+                "md5": "d1e0aa465865c217c95c46685925cffc15043adad95ffabc23bdde91fc4f17bd"
             },
             "Gundam_RK3588": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK3588",
                 "filename": "Gundam_RK3588",
-                "md5": "030965798c5257aef11640657f85b89d82e9d170c3798d0b4f2b62ee6aa245ea"
-            },
+                "md5": "eeeb3a82bbdd909d782d4e416cae1112c39e2e75e1e7f5024101f85ecdd1493c"
+            }
         }
 
-    def get_model(self, name: str, re_download: bool = False) -> str:
+    def get_model(self, name: str, re_download: bool = False, ignore_verification: bool = False) -> str:
         """
         Get model path. Download if not exists or re_download is True.
         
         Args:
             name: Model name
             re_download: Force re-download if True
+            ignore_verification: Skip model hash verification if True
             
         Returns:
             str: Full path to model file
@@ -72,6 +73,10 @@ class ResourceManager:
         
         # Check if model exists and is complete
         if model_file.exists() and not downloading_flag.exists() and not re_download:
+            if ignore_verification:
+                print(f"Warning: Model verification skipped for '{name}' as requested.")
+                return str(model_file)
+                
             current_hash = get_file_hash_sha256(model_file)
             if current_hash == model_info["md5"]:
                 return str(model_file)

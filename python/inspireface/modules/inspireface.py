@@ -7,6 +7,13 @@ from dataclasses import dataclass
 from loguru import logger
 from .utils import ResourceManager
 
+# If True, the latest model will not be verified
+IGNORE_VERIFICATION_OF_THE_LATEST_MODEL = False
+
+def ignore_check_latest_model(ignore: bool):
+    global IGNORE_VERIFICATION_OF_THE_LATEST_MODEL
+    IGNORE_VERIFICATION_OF_THE_LATEST_MODEL = ignore
+
 class ImageStream(object):
     """
     ImageStream class handles the conversion of image data from various sources into a format compatible with the InspireFace library.
@@ -167,6 +174,9 @@ class FaceExtended:
     age_bracket: int
     emotion: int
 
+    def __repr__(self) -> str:
+        return f"FaceExtended(rgb_liveness_confidence={self.rgb_liveness_confidence}, mask_confidence={self.mask_confidence}, quality_confidence={self.quality_confidence}, left_eye_status_confidence={self.left_eye_status_confidence}, right_eye_status_confidence={self.right_eye_status_confidence}, action_normal={self.action_normal}, action_jaw_open={self.action_jaw_open}, action_shake={self.action_shake}, action_blink={self.action_blink}, action_head_raise={self.action_head_raise}, race={self.race}, gender={self.gender}, age_bracket={self.age_bracket}, emotion={self.emotion})"
+
 
 class FaceInformation:
     """
@@ -215,6 +225,9 @@ class FaceInformation:
         self._token.size = buffer_size
         self._token.data = cast(addressof(self.buffer), c_void_p)
 
+    def __repr__(self) -> str:
+        return f"FaceInformation(track_id={self.track_id}, detection_confidence={self.detection_confidence}, location={self.location}, roll={self.roll}, yaw={self.yaw}, pitch={self.pitch})"
+
 
 @dataclass
 class SessionCustomParameter:
@@ -254,6 +267,9 @@ class SessionCustomParameter:
         )
 
         return custom_param
+
+    def __repr__(self) -> str:
+        return f"SessionCustomParameter(enable_recognition={self.enable_recognition}, enable_liveness={self.enable_liveness}, enable_ir_liveness={self.enable_ir_liveness}, enable_mask_detect={self.enable_mask_detect}, enable_face_attribute={self.enable_face_attribute}, enable_face_quality={self.enable_face_quality}, enable_interaction_liveness={self.enable_interaction_liveness}, enable_face_emotion={self.enable_face_emotion})"
 
 
 class InspireFaceSession(object):
@@ -659,7 +675,7 @@ def launch(model_name: str = "Pikachu", resource_path: str = None) -> bool:
     """
     if resource_path is None:
         sm = ResourceManager()
-        resource_path = sm.get_model(model_name)
+        resource_path = sm.get_model(model_name, ignore_verification=IGNORE_VERIFICATION_OF_THE_LATEST_MODEL)
     path_c = String(bytes(resource_path, encoding="utf8"))
     ret = HFLaunchInspireFace(path_c)
     if ret != 0:
@@ -848,6 +864,9 @@ class FaceIdentity(object):
         self.feature = data
         self.id = id
 
+    def __repr__(self) -> str:
+        return f"FaceIdentity(id={self.id}, feature={self.feature})"
+
     @staticmethod
     def from_ctypes(raw_identity: HFFaceFeatureIdentity):
         """
@@ -926,6 +945,8 @@ class SearchResult:
     confidence: float
     similar_identity: FaceIdentity
 
+    def __repr__(self) -> str:
+        return f"SearchResult(confidence={self.confidence}, similar_identity={self.similar_identity})"
 
 def feature_hub_face_search(data: np.ndarray) -> SearchResult:
     """

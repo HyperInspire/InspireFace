@@ -38,6 +38,7 @@ def case_face_detection_image(image_path, show):
 
     # Detect faces
     faces = session.face_detection(image)
+    print(faces)
     print(f"face detection: {len(faces)} found")
 
     draw = image.copy()
@@ -70,7 +71,7 @@ def case_face_detection_image(image_path, show):
     select_exec_func = isf.HF_ENABLE_QUALITY | isf.HF_ENABLE_MASK_DETECT | \
                        isf.HF_ENABLE_LIVENESS | isf.HF_ENABLE_INTERACTION | isf.HF_ENABLE_FACE_ATTRIBUTE | isf.HF_ENABLE_FACE_EMOTION
     extends = session.face_pipeline(image, faces, select_exec_func)
-
+    print(extends)
     for idx, ext in enumerate(extends):
         print(f"{'==' * 20}")
         print(f"idx: {idx}")
