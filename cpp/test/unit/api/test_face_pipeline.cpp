@@ -11,15 +11,15 @@
 TEST_CASE("test_FaceEmotion", "[face_emotion]") {
     DRAW_SPLIT_LINE
     TEST_PRINT_OUTPUT(true);
-    
+
     enum EMOTION {
-        NEUTRAL = 0,
-        HAPPY = 1,
-        SAD = 2,
-        SURPRISE = 3,
-        FEAR = 4,
-        DISGUST = 5,
-        ANGER = 6,
+        NEUTRAL = 0,   ///< Emotion: neutral
+        HAPPY = 1,     ///< Emotion: happy
+        SAD = 2,       ///< Emotion: sad
+        SURPRISE = 3,  ///< Emotion: surprise
+        FEAR = 4,      ///< Emotion: fear
+        DISGUST = 5,   ///< Emotion: disgust
+        ANGER = 6,     ///< Emotion: anger
     };
 
     HResult ret;
@@ -30,17 +30,17 @@ TEST_CASE("test_FaceEmotion", "[face_emotion]") {
     HInt32 option = HF_ENABLE_FACE_EMOTION;
     ret = HFCreateInspireFaceSessionOptional(option, detMode, 5, faceDetectPixelLevel, -1, &session);
     REQUIRE(ret == HSUCCEED);
-    
+
     std::vector<std::string> test_images = {
-        "data/emotion/anger.png",
-        "data/emotion/sad.png",
-        "data/emotion/happy.png",
+      "data/emotion/anger.png",
+      "data/emotion/sad.png",
+      "data/emotion/happy.png",
     };
 
     std::vector<EMOTION> expected_emotions = {
-        ANGER,
-        SAD,
-        HAPPY,
+      ANGER,
+      SAD,
+      HAPPY,
     };
     REQUIRE(test_images.size() == expected_emotions.size());
 
@@ -55,7 +55,7 @@ TEST_CASE("test_FaceEmotion", "[face_emotion]") {
         ret = HFExecuteFaceTrack(session, imgHandle, &multipleFaceData);
         REQUIRE(ret == HSUCCEED);
         REQUIRE(multipleFaceData.detectedNum == 1);
-        
+
         ret = HFMultipleFacePipelineProcessOptional(session, imgHandle, &multipleFaceData, option);
         REQUIRE(ret == HSUCCEED);
 

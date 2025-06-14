@@ -346,7 +346,7 @@ docker-compose up
 ```
 
 ## Example
-### C/C++ Sample: Use the recommended CAPI interface
+### C/C++ Sample: Use the recommended CAPI Interface
 To integrate InspireFace into a C/C++ project, you simply need to link the InspireFace library and include the appropriate header files(We recommend using the more compatible **CAPI** headers). Below is a basic example demonstrating face detection:
 
 ```c
