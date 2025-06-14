@@ -687,16 +687,31 @@ def launch(model_name: str = "Pikachu", resource_path: str = None) -> bool:
             return False
     return True
 
-
 def pull_latest_model(model_name: str = "Pikachu") -> str:
+    """
+    Pulls the latest model from the resource manager.
+
+    Args:
+        model_name (str): the name of the model to use.
+
+    Returns:
+    """
     sm = ResourceManager()
     resource_path = sm.get_model(model_name, re_download=True)
     return resource_path
 
 def reload(model_name: str = "Pikachu", resource_path: str = None) -> bool:
+    """
+    Reloads the InspireFace system with the specified resource directory.
+
+    Args:
+        model_name (str): the name of the model to use.
+        resource_path (str): if None, use the default model path.
+
+    Returns:
+    """
     if resource_path is None:
         sm = ResourceManager()
-        resource_path = sm.get_model(model_name)
     path_c = String(bytes(resource_path, encoding="utf8"))
     ret = HFReloadInspireFace(path_c)
     if ret != 0:
@@ -708,6 +723,20 @@ def reload(model_name: str = "Pikachu", resource_path: str = None) -> bool:
             return False
     return True
 
+def terminate() -> bool:
+    """
+    Terminates the InspireFace system.
+
+    Returns:
+        bool: True if the system was successfully terminated, False otherwise.
+
+    Notes:
+    """
+    ret = HFTerminateInspireFace()
+    if ret != 0:
+        logger.error(f"Terminate InspireFace failure: {ret}")
+        return False
+    return True
 
 def query_launch_status() -> bool:
     """
@@ -1089,6 +1118,20 @@ def feature_hub_get_face_count() -> int:
     return int(count.value)
 
 
+def feature_hub_get_face_id_list() -> List[int]:
+    """
+    Retrieves a list of face IDs from the feature hub.
+
+    Returns:
+        List[int]: A list of face IDs.
+    """
+    ids = HFFeatureHubExistingIds()
+    ptr = PHFFeatureHubExistingIds(ids)
+    ret = HFFeatureHubGetExistingIds(ptr)
+    if ret != 0:
+        logger.error(f"Failed to get face id list: {ret}")
+    return [int(ids.ids[i]) for i in range(ids.size)]
+
 def view_table_in_terminal():
     """
     Displays the database table of face identities in the terminal.
@@ -1211,3 +1254,47 @@ def query_expansive_hardware_rockchip_dma_heap_path() -> str:
         return None
     return str(path.value)
 
+
+def set_cuda_device_id(device_id: int):
+    """
+    Sets the CUDA device ID.
+    """
+    ret = HFSetCudaDeviceId(device_id)
+    if ret != 0:
+        logger.error(f"Failed to set CUDA device ID: {ret}")
+
+def get_cuda_device_id() -> int:
+    """
+    Gets the CUDA device ID.
+    """
+    id = HInt32()
+    ret = HFGetCudaDeviceId(id)
+    if ret != 0:
+        logger.error(f"Failed to get CUDA device ID: {ret}")
+    return int(id.value)
+
+def print_cuda_device_info():
+    """
+    Prints the CUDA device information.
+    """
+    HFPrintCudaDeviceInfo()
+    
+def get_num_cuda_devices() -> int:
+    """
+    Gets the number of CUDA devices.
+    """
+    num = HInt32()
+    ret = HFGetNumCudaDevices(num)
+    if ret != 0:
+        logger.error(f"Failed to get number of CUDA devices: {ret}")
+    return int(num.value)
+
+def check_cuda_device_support() -> bool:
+    """
+    Checks if the CUDA device is supported.
+    """
+    is_support = HInt32()
+    ret = HFCheckCudaDeviceSupport(is_support)
+    if ret != 0:
+        logger.error(f"Failed to check CUDA device support: {ret}")
+    return bool(is_support.value)

@@ -28,27 +28,27 @@ class ResourceManager:
             "Pikachu": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu",
                 "filename": "Pikachu",
-                "md5": "3024649812ac8c921968444d6b57423fe1bbf66c0cb122c0d7f5f2a61a66bb27"
+                "md5": "a7ca2d8de26fb1adc1114b437971d841e14afc894fa9869618139da10e0d4357"
             },
             "Megatron": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron",
                 "filename": "Megatron",
-                "md5": "83d2de0728ca5b311055c87784619086e1043fa3c5d70ed24c262e7971419d8e"
+                "md5": "709fddf024d9f34ec034d8ef79a4779e1543b867b05e428c1d4b766f69287050"
             },
             "Megatron_TRT": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron_TRT",
                 "filename": "Megatron_TRT",
-                "md5": "99a50293213dea469e3b5875a6ed35ebe8341c255a5a4a62bc0894f97ee634e1"
+                "md5": "bc9123bdc510954b28d703b8ffe6023f469fb81123fd0b0b27fd452dfa369bab"
             },
             "Gundam_RK356X": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X",
                 "filename": "Gundam_RK356X",
-                "md5": "d1e0aa465865c217c95c46685925cffc15043adad95ffabc23bdde91fc4f17bd"
+                "md5": "0fa12a425337ed98bd82610768a50de71cf93ef42a0929ba06cc94c86f4bd415"
             },
             "Gundam_RK3588": {
                 "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK3588",
                 "filename": "Gundam_RK3588",
-                "md5": "eeeb3a82bbdd909d782d4e416cae1112c39e2e75e1e7f5024101f85ecdd1493c"
+                "md5": "66070e8d654408b666a2210bd498a976bbad8b33aef138c623e652f8d956641e"
             }
         }
 

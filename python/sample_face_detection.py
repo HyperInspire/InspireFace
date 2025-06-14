@@ -24,7 +24,6 @@ def case_face_detection_image(image_path, show):
           isf.HF_ENABLE_LIVENESS | isf.HF_ENABLE_INTERACTION | isf.HF_ENABLE_FACE_ATTRIBUTE | isf.HF_ENABLE_FACE_EMOTION
     session = isf.InspireFaceSession(opt, isf.HF_DETECT_MODE_ALWAYS_DETECT)
     session.set_detection_confidence_threshold(0.5)
-
     # Load image
     image = cv2.imread(image_path)
     assert image is not None, "Please check that the image path is correct."

@@ -604,8 +604,6 @@ HResult HFSessionGetTrackPreviewSize(HFSession session, HInt32 *previewSize) {
     return HSUCCEED;
 }
 
-
-
 HResult HFSessionSetFilterMinimumFacePixelSize(HFSession session, HInt32 minSize) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
@@ -675,8 +673,6 @@ HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num) {
     }
     return ctx->impl.SetTrackModeDetectInterval(num);
 }
-
-
 
 HResult HFExecuteFaceTrack(HFSession session, HFImageStream streamHandle, PHFMultipleFaceData results) {
     if (session == nullptr) {
