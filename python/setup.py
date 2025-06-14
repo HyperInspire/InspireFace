@@ -105,7 +105,7 @@ lib_path = os.path.join('modules', 'core', 'libs', system, arch, '*')
 
 setup(
     name='inspireface',
-    version=get_version() + ".post1",
+    version=get_version(),
     packages=find_packages(),
     # package_data path should be relative to package directory
     package_data={
