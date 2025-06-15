@@ -2,7 +2,7 @@ name: Build Linux-Ubuntu-AArch64-rk356x
 
 on:
   push:
-    branches: ["feature/rk356x"]
+    branches: ["fbugfix/det_resize"]
 
 # Set the global GitHub token environment variable
 env:
