@@ -30,7 +30,6 @@ FaceLocList FaceDetectAdapt::operator()(const inspirecv::Image &bgr) {
     }
 
     pad = inspirecv::Image::Create(m_input_size_, m_input_size_, bgr.Channels(), resized_data, false);
-    pad.Write("pad.jpg");
 
     time_image_process.Stop();
     // std::cout << time_image_process << std::endl;
