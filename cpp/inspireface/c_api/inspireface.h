@@ -1147,6 +1147,7 @@ typedef struct HFFaceInteractionsActions {
  * @return HResult indicating success or failure of the function call.
  */
 HYPER_CAPI_EXPORT extern HResult HFGetFaceInteractionActionsResult(HFSession session, PHFFaceInteractionsActions actions);
+
 /**
  * @brief Struct representing face attribute results.
  *
