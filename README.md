@@ -24,6 +24,8 @@ We welcome your questions💬, they help guide and accelerate its development.
 
 ## Change Logs
 
+**`2025-06-15`** The [ErrorCode-Table](/doc/Error-Feedback-Codes.md) has been reorganized and streamlined.
+
 **`2025-06-08`** Add facial expression recognition.
 
 **`2025-04-27`** Optimize some issues and provide a stable version.
