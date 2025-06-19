@@ -2,6 +2,8 @@
 
 During the use of InspireFace, some error feedback codes may be generated. Here is a table of error feedback codes.
 
+- As of **June 19, 2025**, the error code definitions have been restructured. Some legacy codes from historical versions have been removed, and a more streamlined version has been reorganized and consolidated.
+
  | Index | Name | Code | Comment | 
  | --- | --- | --- | --- | 
  | 1 | HSUCCEED | 0 | Success | 
