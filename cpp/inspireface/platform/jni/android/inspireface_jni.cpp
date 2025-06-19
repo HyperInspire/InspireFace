@@ -97,6 +97,7 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateSession)(JNIEnv *env, jobje
     jfieldID enableFaceAttributeField = env->GetFieldID(customParamClass, "enableFaceAttribute", "I");
     jfieldID enableInteractionLivenessField = env->GetFieldID(customParamClass, "enableInteractionLiveness", "I");
     jfieldID enableFacePoseField = env->GetFieldID(customParamClass, "enableFacePose", "I");
+    jfieldID enableFaceEmotionField = env->GetFieldID(customParamClass, "enableFaceEmotion", "I");
 
     // Create HFSessionCustomParameter struct
     HFSessionCustomParameter parameter;
@@ -108,6 +109,7 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_CreateSession)(JNIEnv *env, jobje
     parameter.enable_face_attribute = env->GetIntField(customParameter, enableFaceAttributeField);
     parameter.enable_interaction_liveness = env->GetIntField(customParameter, enableInteractionLivenessField);
     parameter.enable_face_pose = env->GetIntField(customParameter, enableFacePoseField);
+    parameter.enable_face_emotion = env->GetIntField(customParameter, enableFaceEmotionField);
 
     // Create session
     HFSession handle;
@@ -1319,6 +1321,7 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNI
     jfieldID enableFaceAttributeField = env->GetFieldID(paramClass, "enableFaceAttribute", "I");
     jfieldID enableInteractionLivenessField = env->GetFieldID(paramClass, "enableInteractionLiveness", "I");
     jfieldID enableFacePoseField = env->GetFieldID(paramClass, "enableFacePose", "I");
+    jfieldID enableFaceEmotionField = env->GetFieldID(paramClass, "enableFaceEmotion", "I");
     // Get parameter values
     HFSessionCustomParameter customParam;
     customParam.enable_recognition = env->GetIntField(parameter, enableRecognitionField);
@@ -1329,6 +1332,7 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNI
     customParam.enable_face_attribute = env->GetIntField(parameter, enableFaceAttributeField);
     customParam.enable_interaction_liveness = env->GetIntField(parameter, enableInteractionLivenessField);
     customParam.enable_face_pose = env->GetIntField(parameter, enableFacePoseField);
+    customParam.enable_face_emotion = env->GetIntField(parameter, enableFaceEmotionField);
     // Call native function
     HResult ret = HFMultipleFacePipelineProcess((HFSession)sessionHandle, (HFImageStream)streamHandleValue, &faceData, customParam);
 
@@ -1677,6 +1681,79 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceAttributeResult)(JNIEnv *e
 }
 
 /**
+ * @brief Get the face emotion result.
+ *
+ * @param env The JNI environment.
+ * @param thiz The Java object.
+ * @param session The session object.
+ * @return The face emotion result object.
+ */
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceEmotionResult)(JNIEnv *env, jobject thiz, jobject session) {
+    // Validate input parameters
+    if (!env || !session) {
+        INSPIRE_LOGE("Invalid input parameters");
+        return nullptr;
+    }
+
+    // Get session handle
+    jclass sessionClass = env->GetObjectClass(session);
+    jfieldID handleField = env->GetFieldID(sessionClass, "handle", "J");
+    jlong sessionHandle = env->GetLongField(session, handleField);
+    if (!sessionHandle) {
+        INSPIRE_LOGE("Invalid session handle");
+        return nullptr;
+    }
+
+    // Get face emotion results
+    HFFaceEmotionResult results = {};
+    HResult ret = HFGetFaceEmotionResult((HFSession)sessionHandle, &results);
+    if (ret != HSUCCEED) {
+        INSPIRE_LOGE("Failed to get face emotion result, error code: %d", ret);
+        return nullptr;
+    }
+
+    // Create Java FaceEmotionResult object
+    jclass emotionClass = env->FindClass("com/insightface/sdk/inspireface/base/FaceEmotionResult");
+    if (!emotionClass) {
+        INSPIRE_LOGE("Failed to find FaceEmotionResult class");
+        return nullptr;
+    }
+
+    jmethodID constructor = env->GetMethodID(emotionClass, "<init>", "()V");
+    jobject emotionObj = env->NewObject(emotionClass, constructor);
+    if (!emotionObj) {
+        INSPIRE_LOGE("Failed to create FaceEmotionResult object");
+        return nullptr;
+    }
+
+    // Set fields
+    jfieldID numField = env->GetFieldID(emotionClass, "num", "I");
+    jfieldID emotionField = env->GetFieldID(emotionClass, "emotion", "[I");
+
+    if (!numField || !emotionField) {
+        INSPIRE_LOGE("Failed to get field IDs");
+        return nullptr;
+    }
+
+    // Set num
+    env->SetIntField(emotionObj, numField, results.num);
+
+    // Set emotion array
+    jintArray emotionArray = env->NewIntArray(results.num);
+    if (!emotionArray) {
+        INSPIRE_LOGE("Failed to create emotion array");
+        return nullptr;
+    }
+
+    env->SetIntArrayRegion(emotionArray, 0, results.num, results.emotion);
+    env->SetObjectField(emotionObj, emotionField, emotionArray);
+
+    env->DeleteLocalRef(emotionArray);
+
+    return emotionObj;
+}
+
+/**
  * @brief Query the InspireFace version.
  *
  * @param env The JNI environment.
@@ -1719,6 +1796,8 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_QueryInspireFaceVersion)(JNIEnv *
 
     return version;
 }
+
+
 
 /**
  * @brief Set the log level.
