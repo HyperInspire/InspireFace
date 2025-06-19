@@ -1797,8 +1797,6 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_QueryInspireFaceVersion)(JNIEnv *
     return version;
 }
 
-
-
 /**
  * @brief Set the log level.
  *

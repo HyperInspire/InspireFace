@@ -56,8 +56,12 @@ def parse_and_calculate_error_codes(header_content):
             # Calculate the actual error code value
             error_code_value = calculate_error_code_value(error_code_str, error_definitions)
 
-            # Store the calculated error code value
+            # Store the calculated error code value for later reference
             error_definitions[error_name] = error_code_value
+
+            # Skip base offset definitions (ending with _BASE)
+            if error_name.endswith('_BASE'):
+                continue
 
             # Append the extracted information to the error_codes list
             error_codes.append((error_name, error_code_value, comment_part))
