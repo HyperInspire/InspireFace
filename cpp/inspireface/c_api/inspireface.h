@@ -202,7 +202,7 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitma
  * @param scale The scale of the image.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, PHFImageBitmap handle, int is_rotate, float scale);
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, PHFImageBitmap handle, HInt32 is_rotate, HFloat scale);
 
 /**
  * @brief Write the image bitmap to a file.
@@ -341,7 +341,7 @@ HYPER_CAPI_EXPORT extern HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInfe
  * @param device_id The device id to be set.
  * @return HResult indicating the success or failure of the operation.
  * */
-HYPER_CAPI_EXPORT extern HResult HFSetCudaDeviceId(int32_t device_id);
+HYPER_CAPI_EXPORT extern HResult HFSetCudaDeviceId(HInt32 device_id);
 
 /**
  * @brief Get the CUDA device id, must be called after HFCreateInspireFaceSession.
@@ -661,14 +661,14 @@ HYPER_CAPI_EXPORT extern HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasic
 /**
  * @brief Set the enable cost spend
  * @param value The enable cost spend value
- * @return int32_t Status code of the operation.
+ * @return HResult Status code of the operation.
  * */
-HYPER_CAPI_EXPORT extern HResult HFSessionSetEnableTrackCostSpend(HFSession session, int value);
+HYPER_CAPI_EXPORT extern HResult HFSessionSetEnableTrackCostSpend(HFSession session, HInt32 value);
 
 /**
  * @brief Print the cost spend
  * @param session The session handle
- * @return int32_t Status code of the operation.
+ * @return HResult Status code of the operation.
  * */
 HYPER_CAPI_EXPORT extern HResult HFSessionPrintTrackCostSpend(HFSession session);
 
@@ -743,7 +743,7 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseFaceFeature(PHFFaceFeature feature);
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFFaceGetFaceAlignmentImage(HFSession session, HFImageStream streamHandle, HFFaceBasicToken singleFace,
-                                                             HFImageBitmap *handle);
+                                                             PHFImageBitmap handle);
 
 /**
  * @brief Use the aligned face image to extract face features to the HFFaceFeature that has applied memory in advance.
@@ -784,7 +784,7 @@ typedef struct HFFeatureHubConfiguration {
     HFPKMode primaryKeyMode;    ///< Primary key mode(The id increment mode is recommended)
     HInt32 enablePersistence;   ///< Flag to enable or disable the use of the database.
     HString persistenceDbPath;  ///< Path to the database file.
-    float searchThreshold;      ///< Threshold for face search
+    HFloat searchThreshold;      ///< Threshold for face search
     HFSearchMode searchMode;    ///< Mode of face search
 } HFFeatureHubConfiguration;
 
@@ -836,7 +836,7 @@ typedef struct HFSearchTopKResults {
  * access control scenarios).
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceSearchThresholdSetting(float threshold);
+HYPER_CAPI_EXPORT extern HResult HFFeatureHubFaceSearchThresholdSetting(HFloat threshold);
 
 /**
  * @brief Perform a one-to-one comparison of two face features.
@@ -1219,9 +1219,9 @@ HYPER_CAPI_EXPORT extern HResult HFGetFaceEmotionResult(HFSession session, PHFFa
  * @brief Structure representing the version information of the InspireFace library.
  */
 typedef struct HFInspireFaceVersion {
-    int major;  ///< Major version number.
-    int minor;  ///< Minor version number.
-    int patch;  ///< Patch version number.
+    HInt32 major;  ///< Major version number.
+    HInt32 minor;  ///< Minor version number.
+    HInt32 patch;  ///< Patch version number.
 } HFInspireFaceVersion, *PHFInspireFaceVersion;
 
 /**

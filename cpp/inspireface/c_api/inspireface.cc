@@ -245,7 +245,7 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitma
     return HSUCCEED;
 }
 
-HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, PHFImageBitmap handle, int is_rotate, float scale) {
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, PHFImageBitmap handle, HInt32 is_rotate, HFloat scale) {
     if (streamHandle == nullptr || handle == nullptr) {
         return HERR_INVALID_IMAGE_BITMAP_HANDLE;
     }
@@ -776,7 +776,7 @@ HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasicToken singleFace, PHPoint
     return HSUCCEED;
 }
 
-HResult HFSessionSetEnableTrackCostSpend(HFSession session, int value) {
+HResult HFSessionSetEnableTrackCostSpend(HFSession session, HInt32 value) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
@@ -800,7 +800,7 @@ HResult HFSessionPrintTrackCostSpend(HFSession session) {
     return HSUCCEED;
 }
 
-HResult HFFeatureHubFaceSearchThresholdSetting(float threshold) {
+HResult HFFeatureHubFaceSearchThresholdSetting(HFloat threshold) {
     INSPIREFACE_FEATURE_HUB->SetRecognitionThreshold(threshold);
     return HSUCCEED;
 }
@@ -1366,7 +1366,7 @@ HResult HFGetFaceEmotionResult(HFSession session, PHFFaceEmotionResult result) {
     return HSUCCEED;
 }
 
-HResult HFFeatureHubGetFaceCount(HInt32 *count) {
+HResult HFFeatureHubGetFaceCount(HPInt32 count) {
     *count = INSPIREFACE_FEATURE_HUB->GetFaceFeatureCount();
     return HSUCCEED;
 }
