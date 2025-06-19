@@ -6,6 +6,7 @@ from typing import Tuple, List
 from dataclasses import dataclass
 from loguru import logger
 from .utils import ResourceManager
+from .herror import *
 
 # If True, the latest model will not be verified
 IGNORE_VERIFICATION_OF_THE_LATEST_MODEL = False
@@ -551,7 +552,7 @@ class InspireFaceSession(object):
                 flag == "bitmask" and exec_param & HF_ENABLE_MASK_DETECT):
             mask_results = HFFaceMaskConfidence()
             ret = HFGetFaceMaskConfidence(self._sess, PHFFaceMaskConfidence(mask_results))
-            if ret == 0:
+            if ret == HSUCCEED:
                 for i in range(mask_results.num):
                     extends[i].mask_confidence = mask_results.confidence[i]
             else:
@@ -562,7 +563,7 @@ class InspireFaceSession(object):
                 flag == "bitmask" and exec_param & HF_ENABLE_INTERACTION):
             results = HFFaceInteractionState()
             ret = HFGetFaceInteractionStateResult(self._sess, PHFFaceInteractionState(results))
-            if ret == 0:
+            if ret == HSUCCEED:
                 for i in range(results.num):
                     extends[i].left_eye_status_confidence = results.leftEyeStatusConfidence[i]
                     extends[i].right_eye_status_confidence = results.rightEyeStatusConfidence[i]
@@ -570,7 +571,7 @@ class InspireFaceSession(object):
                 logger.error(f"Get face interact result error: {ret}")
             actions = HFFaceInteractionsActions()
             ret = HFGetFaceInteractionActionsResult(self._sess, PHFFaceInteractionsActions(actions))
-            if ret == 0:
+            if ret == HSUCCEED:
                 for i in range(results.num):
                     extends[i].action_normal = actions.normal[i]
                     extends[i].action_shake = actions.shake[i]
@@ -585,7 +586,7 @@ class InspireFaceSession(object):
                 flag == "bitmask" and exec_param & HF_ENABLE_FACE_EMOTION):
             emotion_results = HFFaceEmotionResult()
             ret = HFGetFaceEmotionResult(self._sess, PHFFaceEmotionResult(emotion_results))
-            if ret == 0:
+            if ret == HSUCCEED:
                 for i in range(emotion_results.num):
                     extends[i].emotion = emotion_results.emotion[i]
             else:
@@ -596,7 +597,7 @@ class InspireFaceSession(object):
                 flag == "bitmask" and exec_param & HF_ENABLE_LIVENESS):
             liveness_results = HFRGBLivenessConfidence()
             ret = HFGetRGBLivenessConfidence(self._sess, PHFRGBLivenessConfidence(liveness_results))
-            if ret == 0:
+            if ret == HSUCCEED:
                 for i in range(liveness_results.num):
                     extends[i].rgb_liveness_confidence = liveness_results.confidence[i]
             else:
@@ -607,7 +608,7 @@ class InspireFaceSession(object):
                 flag == "bitmask" and exec_param & HF_ENABLE_FACE_ATTRIBUTE):
             attribute_results = HFFaceAttributeResult()
             ret = HFGetFaceAttributeResult(self._sess, PHFFaceAttributeResult(attribute_results))
-            if ret == 0:
+            if ret == HSUCCEED:
                 for i in range(attribute_results.num):
                     extends[i].gender = attribute_results.gender[i]
                     extends[i].age_bracket = attribute_results.ageBracket[i]
@@ -620,7 +621,7 @@ class InspireFaceSession(object):
                 flag == "bitmask" and exec_param & HF_ENABLE_QUALITY):
             quality_results = HFFaceQualityConfidence()
             ret = HFGetFaceQualityConfidence(self._sess, PHFFaceQualityConfidence(quality_results))
-            if ret == 0:
+            if ret == HSUCCEED:
                 for i in range(quality_results.num):
                     extends[i].quality_confidence = quality_results.confidence[i]
             else:
@@ -690,7 +691,7 @@ def launch(model_name: str = "Pikachu", resource_path: str = None) -> bool:
     path_c = String(bytes(resource_path, encoding="utf8"))
     ret = HFLaunchInspireFace(path_c)
     if ret != 0:
-        if ret == 1363:
+        if ret == HERR_ARCHIVE_REPETITION_LOAD:
             logger.warning("Duplicate loading was found")
             return True
         else:
@@ -726,7 +727,7 @@ def reload(model_name: str = "Pikachu", resource_path: str = None) -> bool:
     path_c = String(bytes(resource_path, encoding="utf8"))
     ret = HFReloadInspireFace(path_c)
     if ret != 0:
-        if ret == 1363:
+        if ret == HERR_ARCHIVE_REPETITION_LOAD:
             logger.warning("Duplicate loading was found")
             return True
         else:
@@ -1041,7 +1042,7 @@ def feature_hub_face_search_top_k(data: np.ndarray, top_k: int) -> List[Tuple]:
     results = HFSearchTopKResults()
     ret = HFFeatureHubFaceSearchTopK(feature, top_k, PHFSearchTopKResults(results))
     outputs = []
-    if ret == 0:
+    if ret == HSUCCEED:
         for idx in range(results.size):
             confidence = results.confidence[idx]
             id_ = results.ids[idx]

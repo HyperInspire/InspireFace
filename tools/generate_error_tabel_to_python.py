@@ -1,5 +1,6 @@
 import click
 import re
+from datetime import datetime
 
 # Function to calculate the actual error code value based on the expressions
 def calculate_error_code_value(error_code_str, error_definitions):
@@ -68,7 +69,7 @@ def parse_and_calculate_error_codes(header_content):
 
     return error_codes
 
-# Click command for processing the header file and outputting Markdown table
+# Click command for processing the header file and outputting Python error table
 @click.command()
 @click.argument('header_path', type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True))
 @click.argument('output_path', type=click.Path(file_okay=True, dir_okay=False, writable=True))
@@ -80,28 +81,29 @@ def process_header(header_path, output_path):
     # Parse and calculate the error codes from the header content
     parsed_error_codes = parse_and_calculate_error_codes(header_content)
 
-    md_table = """# Error Feedback Codes
+    # Generate Python file content
+    python_content = f'''"""
+InspireFace Error Codes
 
-During the use of InspireFace, some error feedback codes may be generated. Here is a table of error feedback codes.
-
-- As of **June 15, 2025**, the error code definitions have been restructured. Some legacy codes from historical versions have been removed, and a more streamlined version has been reorganized and consolidated.
-
+Auto-generated error code definitions from {header_path}
+Generated on: {datetime.now().strftime("%Y-%m-%d")}
 """
 
-    # Prepare the Markdown table header
-    md_table += " | Index | Name | Code | Comment | \n"
-    md_table += " | --- | --- | --- | --- | \n"
+'''
 
-    # Fill the Markdown table with parsed error codes
-    for index, (name, code, comment) in enumerate(parsed_error_codes, start=1):
-        md_table += f" | {index} | {name} | {code} | {comment} | \n"
+    # Generate simple error code definitions
+    for name, code, comment in parsed_error_codes:
+        if comment:
+            python_content += f"{name} = {code}  # {comment}\n"
+        else:
+            python_content += f"{name} = {code}\n"
 
-    # Write the Markdown table to the output file
-    with open(output_path, 'w', encoding='utf-8') as md_file:
-        print(md_table)
-        md_file.write(md_table)
+    # Write the Python file
+    with open(output_path, 'w', encoding='utf-8') as py_file:
+        py_file.write(python_content)
 
-    click.echo(f"Markdown table of error codes has been written to {output_path}")
+    click.echo(f"Python error table has been written to {output_path}")
+    click.echo(f"Generated {len(parsed_error_codes)} error code definitions")
 
 if __name__ == '__main__':
     process_header()
