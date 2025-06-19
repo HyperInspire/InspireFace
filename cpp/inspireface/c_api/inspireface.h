@@ -86,7 +86,7 @@ typedef struct HFImageData {
  * @param handle Pointer to the stream handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, HFImageStream *handle);
+HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, PHFImageStream handle);
 
 /**
  * @brief Create an empty image stream instance.
@@ -96,7 +96,7 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStream(PHFImageData data, HFImageS
  * @param handle Pointer to the stream handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamEmpty(HFImageStream *handle);
+HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamEmpty(PHFImageStream handle);
 
 /**
  * @brief Set the buffer of the image stream.
@@ -141,7 +141,7 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseImageStream(HFImageStream streamHandle
  * @brief Struct for image bitmap data.
  */
 typedef struct HFImageBitmapData {
-    uint8_t *data;    ///< Pointer to the image data.
+    HPUInt8 data;    ///< Pointer to the image data.
     HInt32 width;     ///< Width of the image.
     HInt32 height;    ///< Height of the image.
     HInt32 channels;  ///< Number of channels in the image, only support 3 channels or 1 channel.
@@ -154,7 +154,7 @@ typedef struct HFImageBitmapData {
  * @param handle Pointer to the image bitmap handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmap(PHFImageBitmapData data, HFImageBitmap *handle);
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmap(PHFImageBitmapData data, PHFImageBitmap handle);
 
 /**
  * @brief Create a image bitmap from file path, default pixel format is BGR.
@@ -164,7 +164,7 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmap(PHFImageBitmapData data, HF
  * @param handle Pointer to the image bitmap handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromFilePath(HPath filePath, HInt32 channels, HFImageBitmap *handle);
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromFilePath(HPath filePath, HInt32 channels, PHFImageBitmap handle);
 
 /**
  * @brief Copy an image bitmap.
@@ -173,7 +173,7 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromFilePath(HPath filePath,
  * @param copyHandle Pointer to the image bitmap handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFImageBitmapCopy(HFImageBitmap handle, HFImageBitmap *copyHandle);
+HYPER_CAPI_EXPORT extern HResult HFImageBitmapCopy(HFImageBitmap handle, PHFImageBitmap copyHandle);
 
 /**
  * @brief Release the image bitmap.
@@ -191,7 +191,7 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseImageBitmap(HFImageBitmap handle);
  * @param streamHandle Pointer to the image stream handle that will be returned.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitmap handle, HFRotation rotation, HFImageStream *streamHandle);
+HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitmap handle, HFRotation rotation, PHFImageStream streamHandle);
 
 /**
  * @brief Create a image bitmap from image stream.
@@ -202,8 +202,7 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitma
  * @param scale The scale of the image.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, HFImageBitmap *handle, int is_rotate,
-                                                                           float scale);
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, PHFImageBitmap handle, int is_rotate, float scale);
 
 /**
  * @brief Write the image bitmap to a file.
@@ -293,7 +292,7 @@ HYPER_CAPI_EXPORT extern HResult HFTerminateInspireFace();
  * @param status Pointer to the status variable that will be returned.
  * @return HResult indicating the success or failure of the operation.
  * */
-HYPER_CAPI_EXPORT extern HResult HFQueryInspireFaceLaunchStatus(HInt32 *status);
+HYPER_CAPI_EXPORT extern HResult HFQueryInspireFaceLaunchStatus(HPInt32 status);
 
 /************************************************************************
  * Extended Interface Based on Third-party Hardware Devices
@@ -349,7 +348,7 @@ HYPER_CAPI_EXPORT extern HResult HFSetCudaDeviceId(int32_t device_id);
  * @param device_id Pointer to the device id to be returned.
  * @return HResult indicating the success or failure of the operation.
  * */
-HYPER_CAPI_EXPORT extern HResult HFGetCudaDeviceId(int32_t *device_id);
+HYPER_CAPI_EXPORT extern HResult HFGetCudaDeviceId(HPInt32 device_id);
 
 /**
  * @brief Print the CUDA device information.
@@ -362,14 +361,14 @@ HYPER_CAPI_EXPORT extern HResult HFPrintCudaDeviceInfo();
  * @param num_devices Pointer to the number of CUDA devices to be returned.
  * @return HResult indicating the success or failure of the operation.
  * */
-HYPER_CAPI_EXPORT extern HResult HFGetNumCudaDevices(int32_t *num_devices);
+HYPER_CAPI_EXPORT extern HResult HFGetNumCudaDevices(HPInt32 num_devices);
 
 /**
  * @brief Check if the CUDA device is supported.
  * @param support The support flag to be checked.
  * @return HResult indicating the success or failure of the operation.
  * */
-HYPER_CAPI_EXPORT extern HResult HFCheckCudaDeviceSupport(int32_t *is_support);
+HYPER_CAPI_EXPORT extern HResult HFCheckCudaDeviceSupport(HPInt32 is_support);
 
 /************************************************************************
  * FaceSession
@@ -455,7 +454,7 @@ HYPER_CAPI_EXPORT extern HResult HFQuerySupportedPixelLevelsForFaceDetection(PHF
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFCreateInspireFaceSession(HFSessionCustomParameter parameter, HFDetectMode detectMode, HInt32 maxDetectFaceNum,
-                                                            HInt32 detectPixelLevel, HInt32 trackByDetectModeFPS, HFSession *handle);
+                                                            HInt32 detectPixelLevel, HInt32 trackByDetectModeFPS, PHFSession handle);
 
 /**
  * @brief Create a session from a resource file with additional options.
@@ -472,7 +471,7 @@ HYPER_CAPI_EXPORT extern HResult HFCreateInspireFaceSession(HFSessionCustomParam
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFCreateInspireFaceSessionOptional(HOption customOption, HFDetectMode detectMode, HInt32 maxDetectFaceNum,
-                                                                    HInt32 detectPixelLevel, HInt32 trackByDetectModeFPS, HFSession *handle);
+                                                                    HInt32 detectPixelLevel, HInt32 trackByDetectModeFPS, PHFSession handle);
 
 /**
  * @brief Release the session.
@@ -498,9 +497,9 @@ typedef struct HFFaceBasicToken {
  * This struct represents the Euler angles (roll, yaw, pitch) for face orientation.
  */
 typedef struct HFFaceEulerAngle {
-    HFloat *roll;   ///< Roll angle of the face.
-    HFloat *yaw;    ///< Yaw angle of the face.
-    HFloat *pitch;  ///< Pitch angle of the face.
+    HPFloat roll;   ///< Roll angle of the face.
+    HPFloat yaw;    ///< Yaw angle of the face.
+    HPFloat pitch;  ///< Pitch angle of the face.
 } HFFaceEulerAngle;
 
 /**
@@ -511,10 +510,10 @@ typedef struct HFFaceEulerAngle {
  */
 typedef struct HFMultipleFaceData {
     HInt32 detectedNum;        ///< Number of faces detected.
-    HFaceRect *rects;          ///< Array of bounding rectangles for each face.
-    HInt32 *trackIds;          ///< Array of track IDs for each face.
-    HInt32 *trackCounts;       ///< Array of track counts for each face.
-    HFloat *detConfidence;     ///< Array of detection confidence for each face.
+    PHFaceRect rects;          ///< Array of bounding rectangles for each face.
+    HPInt32 trackIds;          ///< Array of track IDs for each face.
+    HPInt32 trackCounts;       ///< Array of track counts for each face.
+    HPFloat detConfidence;     ///< Array of detection confidence for each face.
     HFFaceEulerAngle angles;   ///< Euler angles for each face.
     PHFFaceBasicToken tokens;  ///< Tokens associated with each face.
 } HFMultipleFaceData, *PHFMultipleFaceData;
@@ -535,7 +534,7 @@ HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackPreviewSize(HFSession session,
  * @param previewSize The size of the preview for tracking.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFSessionGetTrackPreviewSize(HFSession session, HInt32 *previewSize);
+HYPER_CAPI_EXPORT extern HResult HFSessionGetTrackPreviewSize(HFSession session, HPInt32 previewSize);
 
 /**
  * @brief Set the minimum number of face pixels that the face detector can capture, and people below
@@ -600,7 +599,7 @@ HYPER_CAPI_EXPORT extern HResult HFExecuteFaceTrack(HFSession session, HFImageSt
  * @param size The size of the preview for tracking.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFSessionLastFaceDetectionGetDebugPreviewImageSize(HFSession session, HInt32 *size);
+HYPER_CAPI_EXPORT extern HResult HFSessionLastFaceDetectionGetDebugPreviewImageSize(HFSession session, HPInt32 size);
 
 /**
  * @brief Copies the data from a HF_FaceBasicToken to a specified buffer.
@@ -648,7 +647,7 @@ HYPER_CAPI_EXPORT extern HResult HFGetNumOfFaceDenseLandmark(HPInt32 num);
  * @param num Number of landmark points
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, HPoint2f *landmarks, HInt32 num);
+HYPER_CAPI_EXPORT extern HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, PHPoint2f landmarks, HInt32 num);
 
 /**
  * @brief Get the five key points from the face token.
@@ -657,7 +656,7 @@ HYPER_CAPI_EXPORT extern HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasic
  * @param num Number of landmark points
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasicToken singleFace, HPoint2f *landmarks, HInt32 num);
+HYPER_CAPI_EXPORT extern HResult HFGetFaceFiveKeyPointsFromFaceToken(HFFaceBasicToken singleFace, PHPoint2f landmarks, HInt32 num);
 
 /**
  * @brief Set the enable cost spend
@@ -903,6 +902,7 @@ HYPER_CAPI_EXPORT extern HResult HFUpdateCosineSimilarityConverter(HFSimilarityC
  */
 HYPER_CAPI_EXPORT extern HResult HFGetCosineSimilarityConverter(PHFSimilarityConverterConfig config);
 
+
 /**
  * @brief Get the length of the face feature.
  *
@@ -971,7 +971,7 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubGetFaceIdentity(HFaceId customId, P
  * @param count Pointer to an integer where the count of features will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFFeatureHubGetFaceCount(HInt32 *count);
+HYPER_CAPI_EXPORT extern HResult HFFeatureHubGetFaceCount(HPInt32 count);
 
 /**
  * @brief View the face database table.
@@ -1108,7 +1108,7 @@ HYPER_CAPI_EXPORT extern HResult HFGetFaceQualityConfidence(HFSession session, P
  * @param confidence Pointer to a floating-point value where the quality confidence will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFFaceQualityDetect(HFSession session, HFFaceBasicToken singleFace, HFloat *confidence);
+HYPER_CAPI_EXPORT extern HResult HFFaceQualityDetect(HFSession session, HFFaceBasicToken singleFace, HPFloat confidence);
 
 /**
  * @brief Facial states in the face interaction module.
@@ -1329,7 +1329,7 @@ HYPER_CAPI_EXPORT extern HResult HFDeBugShowResourceStatistics();
  * @param count Pointer to an integer where the count of unreleased sessions will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedSessionsCount(HInt32 *count);
+HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedSessionsCount(HPInt32 count);
 
 /**
  * @brief Get the list of unreleased sessions.
@@ -1340,7 +1340,7 @@ HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedSessionsCount(HInt32 *count
  * @param count The number of sessions to retrieve.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedSessions(HFSession *sessions, HInt32 count);
+HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedSessions(PHFSession sessions, HInt32 count);
 
 /**
  * @brief Get the count of unreleased image streams.
@@ -1350,7 +1350,7 @@ HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedSessions(HFSession *session
  * @param count Pointer to an integer where the count of unreleased image streams will be stored.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedStreamsCount(HInt32 *count);
+HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedStreamsCount(HPInt32 count);
 
 /**
  * @brief Get the list of unreleased image streams.
@@ -1361,7 +1361,7 @@ HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedStreamsCount(HInt32 *count)
  * @param count The number of image streams to retrieve.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedStreams(HFImageStream *streams, HInt32 count);
+HYPER_CAPI_EXPORT extern HResult HFDeBugGetUnreleasedStreams(PHFImageStream streams, HInt32 count);
 
 #ifdef __cplusplus
 }
