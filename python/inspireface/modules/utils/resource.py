@@ -26,27 +26,27 @@ class ResourceManager:
         # Model URLs
         self._MODEL_LIST = {
             "Pikachu": {
-                "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Pikachu",
+                "url": "https://inspireface-1259028827.cos.ap-singapore.myqcloud.com/inspireface_modelzoo/t4/Pikachu",
                 "filename": "Pikachu",
                 "md5": "a7ca2d8de26fb1adc1114b437971d841e14afc894fa9869618139da10e0d4357"
             },
             "Megatron": {
-                "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron",
+                "url": "https://inspireface-1259028827.cos.ap-singapore.myqcloud.com/inspireface_modelzoo/t4/Megatron",
                 "filename": "Megatron",
                 "md5": "709fddf024d9f34ec034d8ef79a4779e1543b867b05e428c1d4b766f69287050"
             },
             "Megatron_TRT": {
-                "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron_TRT",
+                "url": "https://inspireface-1259028827.cos.ap-singapore.myqcloud.com/inspireface_modelzoo/t4/Megatron_TRT",
                 "filename": "Megatron_TRT",
                 "md5": "bc9123bdc510954b28d703b8ffe6023f469fb81123fd0b0b27fd452dfa369bab"
             },
             "Gundam_RK356X": {
-                "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X",
+                "url": "https://inspireface-1259028827.cos.ap-singapore.myqcloud.com/inspireface_modelzoo/t4/Gundam_RK356X",
                 "filename": "Gundam_RK356X",
                 "md5": "0fa12a425337ed98bd82610768a50de71cf93ef42a0929ba06cc94c86f4bd415"
             },
             "Gundam_RK3588": {
-                "url": "https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK3588",
+                "url": "https://inspireface-1259028827.cos.ap-singapore.myqcloud.com/inspireface_modelzoo/t4/Gundam_RK3588",
                 "filename": "Gundam_RK3588",
                 "md5": "66070e8d654408b666a2210bd498a976bbad8b33aef138c623e652f8d956641e"
             }
