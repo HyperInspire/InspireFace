@@ -18,8 +18,7 @@ int main(int argc, char* argv[]) {
 
     // Enable the functions in the pipeline: mask detection, live detection, and face quality
     // detection
-    // HOption option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS | HF_ENABLE_IR_LIVENESS | HF_ENABLE_FACE_RECOGNITION;
-    HOption option = HF_ENABLE_NONE;
+    HOption option = HF_ENABLE_QUALITY | HF_ENABLE_MASK_DETECT | HF_ENABLE_LIVENESS | HF_ENABLE_IR_LIVENESS | HF_ENABLE_FACE_RECOGNITION;
     // Non-video or frame sequence mode uses IMAGE-MODE, which is always face detection without
     // tracking
     HFDetectMode detMode = HF_DETECT_MODE_ALWAYS_DETECT;
@@ -35,17 +34,14 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
-    // Sleep 2000 seconds
+    // Wait for 2000 seconds, watching the cpu usage
     sleep(2000);
-    // Configure some detection parameters
-    HFSessionSetTrackPreviewSize(session, detectPixelLevel);
-    HFSessionSetFilterMinimumFacePixelSize(session, 4);
 
-    HFloat recommended_cosine_threshold;
-    ret = HFGetRecommendedCosineThreshold(&recommended_cosine_threshold);
+    ret = HFReleaseInspireFaceSession(session);
     if (ret != HSUCCEED) {
-        HFLogPrint(HF_LOG_ERROR, "Get recommended cosine threshold error: %d", ret);
+        HFLogPrint(HF_LOG_ERROR, "Release InspireFaceSession error: %d", ret);
         return ret;
     }
+
     return 0;
 }

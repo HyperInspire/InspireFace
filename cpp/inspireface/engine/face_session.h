@@ -188,6 +188,11 @@ public:
      */
     bool IsDetectModeLandmark() const;
 
+    /**
+     * @brief Clear the tracking face
+     */
+    void ClearTrackingFace();
+
 public:
     // Accessor methods for various cached data
     /**

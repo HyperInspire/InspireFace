@@ -187,6 +187,11 @@ public:
      */
     void SetMultiscaleLandmarkLoop(int value);
 
+    /**
+     * @brief Clear the tracking face
+     */
+    void ClearTrackingFace();
+
 public:
     std::vector<FaceObjectInternal> trackingFace;  ///< Vector of FaceObjects currently being tracked.
 

@@ -28,7 +28,7 @@ class ResourceManager:
             "Pikachu": {
                 "url": "https://inspireface-1259028827.cos.ap-singapore.myqcloud.com/inspireface_modelzoo/t4/Pikachu",
                 "filename": "Pikachu",
-                "md5": "a7ca2d8de26fb1adc1114b437971d841e14afc894fa9869618139da10e0d4357"
+                "md5": "5037ba1f49905b783a1c973d5d58b834a645922cc2814c8e3ca630a38dc24431"
             },
             "Megatron": {
                 "url": "https://inspireface-1259028827.cos.ap-singapore.myqcloud.com/inspireface_modelzoo/t4/Megatron",
