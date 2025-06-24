@@ -83,6 +83,12 @@ set_target_properties(FeatureHubPersistenceSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
+add_executable(CPUWatchingSample api/sample_cpu_watching.c)
+target_link_libraries(CPUWatchingSample InspireFace ${ext})
+set_target_properties(CPUWatchingSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
+)
+
 
 
 # --- C++ API ---

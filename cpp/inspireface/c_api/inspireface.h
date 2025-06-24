@@ -482,6 +482,13 @@ HYPER_CAPI_EXPORT extern HResult HFCreateInspireFaceSessionOptional(HOption cust
 HYPER_CAPI_EXPORT extern HResult HFReleaseInspireFaceSession(HFSession handle);
 
 /**
+ * @brief Clear the tracking face
+ * @param session Handle to the session.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionClearTrackingFace(HFSession session);
+
+/**
  * @brief Struct representing a basic token for face data.
  *
  * This struct holds the size and data pointer for a basic token associated with face data.

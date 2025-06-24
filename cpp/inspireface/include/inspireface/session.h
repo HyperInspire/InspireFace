@@ -48,6 +48,11 @@ public:
     }
 
     /**
+     * @brief Clear the tracking face
+     */
+    void ClearTrackingFace();
+
+    /**
      * @brief Set the track preview size.
      * @param preview_size The preview size.
      */

@@ -14,6 +14,10 @@ public:
         return m_face_session_->Configuration(detect_mode, max_detect_face, param, detect_level_px, track_by_detect_mode_fps);
     }
 
+    void ClearTrackingFace() {
+        m_face_session_->ClearTrackingFace();
+    }
+
     ~Impl() = default;
 
     void SetTrackPreviewSize(int32_t preview_size) {
@@ -198,6 +202,10 @@ Session Session::Create(DetectModuleMode detect_mode, int32_t max_detect_face, c
     Session session;
     session.pImpl->Configure(detect_mode, max_detect_face, param, detect_level_px, track_by_detect_mode_fps);
     return session;
+}
+
+void Session::ClearTrackingFace() {
+    pImpl->ClearTrackingFace();
 }
 
 void Session::SetTrackPreviewSize(int32_t preview_size) {

@@ -530,6 +530,11 @@ void FaceTrackModule::SetMultiscaleLandmarkLoop(int value) {
     m_multiscale_landmark_scales_ = GenerateCropScales(m_landmark_crop_ratio_, m_multiscale_landmark_loop_num_);
 }
 
+void FaceTrackModule::ClearTrackingFace() {
+    trackingFace.clear();
+    candidate_faces_.clear();
+}
+
 int32_t FaceTrackModule::GetDebugPreviewImageSize() const {
     return m_debug_preview_image_size_;
 }

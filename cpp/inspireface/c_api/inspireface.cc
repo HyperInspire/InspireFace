@@ -359,6 +359,15 @@ HResult HFReleaseInspireFaceSession(HFSession handle) {
     return HSUCCEED;
 }
 
+HResult HFSessionClearTrackingFace(HFSession session) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    ctx->impl.ClearTrackingFace();
+    return HSUCCEED;
+}
+
 HResult HFSwitchLandmarkEngine(HFSessionLandmarkEngine engine) {
     inspire::Launch::LandmarkEngine type;
     if (engine == HF_LANDMARK_HYPLMV2_0_25) {
