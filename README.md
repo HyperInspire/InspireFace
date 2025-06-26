@@ -768,6 +768,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 - [x] Add TensorRT backend support.
 - [x] Add Add C++ style header files.
 - [x] Add the RKNPU backend support for Android .
+- [ ] Python packages that support more platforms.
 - [ ] Example app project for Android and iOS samples.
 - [ ] Add the batch forward feature.
 - [ ] Design a scheme that can be adapted to multiple CUDA devices.
