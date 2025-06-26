@@ -89,6 +89,13 @@ set_target_properties(CPUWatchingSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
+add_executable(CreateSessionSample api/sample_create_session.c)
+target_link_libraries(CreateSessionSample InspireFace ${ext})
+set_target_properties(CreateSessionSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
+)
+
+
 
 
 # --- C++ API ---
