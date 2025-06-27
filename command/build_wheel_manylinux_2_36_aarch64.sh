@@ -29,7 +29,7 @@ else
     TAG=""
 fi
 
-BUILD_FOLDER_PATH="build/inspireface-aarch64-manylinux_2_36${TAG}/"
+BUILD_FOLDER_PATH="build/inspireface-aarch64-manylinux_2_28${TAG}/"
 SCRIPT_DIR=$(pwd)  # Project dir
 
 mkdir -p ${BUILD_FOLDER_PATH}
