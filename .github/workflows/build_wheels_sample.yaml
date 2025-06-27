@@ -1,0 +1,66 @@
+name: Build Wheels
+
+on:
+  push:
+    branches: ["feature/cibuildwheel"]
+  pull_request:
+    branches: ["feature/cibuildwheel"]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+jobs:
+  build_manylinux2014_aarch64:
+    name: Compile manylinux2014_aarch64
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+          
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Update submodules
+        run: |
+          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+        
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+          
+      - name: Execute Docker Compose
+        run: |
+          docker-compose up build-manylinux2014-aarch64
+          
+      - name: Upload wheel artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: manylinux2014-wheels
+          path: python/dist/*
+          retention-days: 1
+
+  upload_artifacts:
+    name: Upload Wheels to GitHub Actions
+    needs: [build_manylinux2014_aarch64]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download all wheels
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+          
+      - name: Upload combined wheel artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-wheels
+          path: dist/*
+          retention-days: 30
