@@ -2,9 +2,9 @@ name: Build Wheels
 
 on:
   push:
-    branches: ["feature/cibuildwheel"]
+    branches: ["feature/1"]
   pull_request:
-    branches: ["feature/cibuildwheel"]
+    branches: ["feature/1"]
 
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}

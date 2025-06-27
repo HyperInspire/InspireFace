@@ -1,5 +1,5 @@
-# Use manylinux_2_28_aarch64 as the base image
-FROM quay.io/pypa/manylinux_2_28_aarch64
+# Use manylinux_2_36_aarch64 as the base image
+FROM quay.io/pypa/manylinux_2_36_aarch64
 
 ARG https_proxy
 ARG http_proxy
