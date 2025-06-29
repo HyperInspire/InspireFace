@@ -130,6 +130,15 @@ set_target_properties(CppSampleInspireCV PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cpp_api/"
 )
 
+
+add_executable(CppSampleGrayInput cpp_api/cpp_gray_input.cpp)
+target_link_libraries(CppSampleGrayInput InspireFace ${ext})
+set_target_properties(CppSampleGrayInput PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cpp_api/"
+)
+
+
+
 if(ISF_BUILD_SAMPLE_INTERNAL)
         add_executable(FaceTrackerSample source/tracker_sample.cpp)
         target_link_libraries(FaceTrackerSample InspireFace ${ext})
