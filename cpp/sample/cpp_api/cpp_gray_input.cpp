@@ -13,7 +13,7 @@ int main() {
     param.enable_face_quality = true;
     std::shared_ptr<inspire::Session> session(inspire::Session::CreatePtr(inspire::DETECT_MODE_ALWAYS_DETECT, 1, param, 320));
     // Prepare image
-    inspirecv::Image img = inspirecv::Image::Create("459828700-5987094e-880a-42d2-b692-95f365b135dc.jpg", 3);
+    inspirecv::Image img = inspirecv::Image::Create("data.jpg", 3);
     inspirecv::Image gray_img = img.ToGray();
 
     // Create image and frame process
