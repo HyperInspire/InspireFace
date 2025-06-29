@@ -299,7 +299,7 @@ elseif(DEFINED ISF_MNN_CUSTOM_SOURCE)
     message("Using custom external MNN source path: ${ISF_MNN_CUSTOM_SOURCE}")
     # In particular, rknpu2 uses a lower version of mnn
     set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "Build MNN as a shared library")
-    add_subdirectory(${ISF_MNN_CUSTOM_SOURCE} EXCLUDE_FROM_ALL)
+    add_subdirectory(${ISF_MNN_CUSTOM_SOURCE} ${CMAKE_BINARY_DIR}/MNN EXCLUDE_FROM_ALL)
     set(MNN_INCLUDE_DIRS "${ISF_MNN_CUSTOM_SOURCE}/include")
     set(MNN_LIBS MNN)
     
@@ -309,7 +309,8 @@ else ()
     # MNN Options
     set(MNN_BUILD_SHARED_LIBS OFF CACHE BOOL "Build MNN as a shared library")
 
-    add_subdirectory(${ISF_THIRD_PARTY_DIR}/MNN EXCLUDE_FROM_ALL)
+    # Set MNN build output directory to CMAKE_BINARY_DIR/MNN
+    add_subdirectory(${ISF_THIRD_PARTY_DIR}/MNN ${CMAKE_BINARY_DIR}/MNN EXCLUDE_FROM_ALL)
     set(MNN_INCLUDE_DIRS "${ISF_THIRD_PARTY_DIR}/MNN/include")
     set(MNN_LIBS MNN)
 
