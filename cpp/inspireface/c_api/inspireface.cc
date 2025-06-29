@@ -235,7 +235,11 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitma
             stream->impl.SetRotationMode(inspirecv::ROTATION_0);
             break;
     }
-    stream->impl.SetDataFormat(inspirecv::BGR);
+    if (((HF_ImageBitmap *)handle)->impl.Channels() == 1) {
+        stream->impl.SetDataFormat(inspirecv::GRAY);
+    } else {
+        stream->impl.SetDataFormat(inspirecv::BGR);
+    }
     stream->impl.SetDataBuffer(((HF_ImageBitmap *)handle)->impl.Data(), ((HF_ImageBitmap *)handle)->impl.Height(),
                                ((HF_ImageBitmap *)handle)->impl.Width());
     *streamHandle = (HFImageStream)stream;
@@ -245,7 +249,8 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitma
     return HSUCCEED;
 }
 
-HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, PHFImageBitmap handle, HInt32 is_rotate, HFloat scale) {
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, PHFImageBitmap handle, HInt32 is_rotate,
+                                                                           HFloat scale) {
     if (streamHandle == nullptr || handle == nullptr) {
         return HERR_INVALID_IMAGE_BITMAP_HANDLE;
     }
