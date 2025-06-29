@@ -95,8 +95,11 @@ set_target_properties(CreateSessionSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
-
-
+add_executable(GrayInput api/sample_gray_input.c)
+target_link_libraries(GrayInput InspireFace ${ext})
+set_target_properties(GrayInput PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
+)
 
 # --- C++ API ---
 
@@ -136,6 +139,7 @@ target_link_libraries(CppSampleGrayInput InspireFace ${ext})
 set_target_properties(CppSampleGrayInput PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cpp_api/"
 )
+
 
 
 

@@ -267,7 +267,12 @@ HYPER_CAPI_EXPORT extern HResult HFImageBitmapWriteToFile(HFImageBitmap handle, 
     if (handle == nullptr) {
         return HERR_INVALID_IMAGE_BITMAP_HANDLE;
     }
-    return ((HF_ImageBitmap *)handle)->impl.Write(filePath);
+    auto success = ((HF_ImageBitmap *)handle)->impl.Write(filePath);
+    if (success) {
+        return HSUCCEED;
+    } else {
+        return HERR_INVALID_IMAGE_BITMAP_HANDLE;
+    }
 }
 
 HYPER_CAPI_EXPORT extern HResult HFImageBitmapDrawRect(HFImageBitmap handle, HFaceRect rect, HColor color, HInt32 thickness) {
