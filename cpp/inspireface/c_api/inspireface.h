@@ -304,6 +304,13 @@ HYPER_CAPI_EXPORT extern HResult HFQueryInspireFaceLaunchStatus(HPInt32 status);
  ************************************************************************/
 
 /**
+ * @brief Check whether RGA is enabled during compilation
+ * @param status Pointer to the status variable that will be returned.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareRGACompileOption(HPInt32 enable);
+
+/**
  * @brief Set the rockchip dma heap path
  * By default, we have already configured the DMA Heap address used by RGA on RK devices.
  * If you wish to customize this address, you can modify it through this API.

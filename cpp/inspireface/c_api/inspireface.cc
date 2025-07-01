@@ -353,7 +353,7 @@ HResult HFDeBugImageStreamDecodeSave(HFImageStream streamHandle, HPath savePath)
         return HSUCCEED;
     } else {
         INSPIRE_LOGE("Failed to save image to %s", savePath);
-        return -1;
+        return HERR_IMAGE_STREAM_DECODE_FAILED;
     }
 }
 
@@ -509,6 +509,17 @@ HResult HFQueryInspireFaceLaunchStatus(HPInt32 status) {
 
 HResult HFFeatureHubDataDisable() {
     return INSPIREFACE_FEATURE_HUB->DisableHub();
+}
+
+HResult HFQueryExpansiveHardwareRGACompileOption(HPInt32 enable) {
+#if defined(ISF_ENABLE_RGA)
+    INSPIRE_LOGI("RGA is enabled during compilation");
+    *enable = 1;
+#else
+    INSPIRE_LOGW("RGA is not enabled during compilation");
+    *enable = 0;
+#endif
+    return HSUCCEED;
 }
 
 HResult HFSetExpansiveHardwareRockchipDmaHeapPath(HPath path) {
@@ -1405,9 +1416,9 @@ HResult HFFeatureHubGetExistingIds(PHFFeatureHubExistingIds ids) {
 }
 
 HResult HFQueryInspireFaceVersion(PHFInspireFaceVersion version) {
-    version->major = std::stoi(INSPIRE_FACE_VERSION_MAJOR_STR);
-    version->minor = std::stoi(INSPIRE_FACE_VERSION_MINOR_STR);
-    version->patch = std::stoi(INSPIRE_FACE_VERSION_PATCH_STR);
+    version->major = atoi(INSPIRE_FACE_VERSION_MAJOR_STR);
+    version->minor = atoi(INSPIRE_FACE_VERSION_MINOR_STR);
+    version->patch = atoi(INSPIRE_FACE_VERSION_PATCH_STR);
 
     return HSUCCEED;
 }

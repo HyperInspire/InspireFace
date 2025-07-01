@@ -101,6 +101,12 @@ set_target_properties(GrayInput PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
+add_executable(SearchFaceSample api/sample_search_face.cpp)
+target_link_libraries(SearchFaceSample InspireFace ${ext})
+set_target_properties(SearchFaceSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
+)
+
 # --- C++ API ---
 
 add_executable(CppSessionSample cpp_api/cpp_sample_face_track.cpp)
