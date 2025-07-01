@@ -2,7 +2,7 @@
 InspireFace Error Codes
 
 Auto-generated error code definitions from cpp/inspireface/include/inspireface/herror.h
-Generated on: 2025-06-19
+Generated on: 2025-07-01
 """
 
 HSUCCEED = 0  # Success
@@ -18,6 +18,7 @@ HERR_INVALID_IMAGE_STREAM_PARAM = 9  # Invalid image param (9)
 HERR_INVALID_SERIALIZATION_FAILED = 10  # Invalid face serialization failed (10)
 HERR_INVALID_DETECTION_INPUT = 11  # Failed to modify detector input size (11)
 HERR_INVALID_IMAGE_BITMAP_HANDLE = 12  # Invalid image bitmap handle (12)
+HERR_IMAGE_STREAM_DECODE_FAILED = 13  # ImageStream failed to decode the image (13)
 HERR_SESS_FUNCTION_UNUSABLE = 101  # Function not usable (101)
 HERR_SESS_TRACKER_FAILURE = 102  # Tracker module not initialized (102)
 HERR_SESS_PIPELINE_FAILURE = 103  # Pipeline module not initialized (103)

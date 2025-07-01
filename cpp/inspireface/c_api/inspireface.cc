@@ -343,7 +343,7 @@ HResult HFDeBugImageStreamDecodeSave(HFImageStream streamHandle, HPath savePath)
         return HSUCCEED;
     } else {
         INSPIRE_LOGE("Failed to save image to %s", savePath);
-        return -1;
+        return HERR_IMAGE_STREAM_DECODE_FAILED;
     }
 }
 
