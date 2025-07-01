@@ -19,6 +19,7 @@
 #if defined(ISF_ENABLE_TENSORRT)
 #include "cuda_toolkit.h"
 #endif
+#include "meta.h"
 
 #define APPLE_EXTENSION_SUFFIX ".bundle"
 
@@ -38,6 +39,7 @@ public:
 #endif
         m_face_detect_pixel_list_ = {160, 320, 640};
         m_face_detect_model_list_ = {"face_detect_160", "face_detect_320", "face_detect_640"};
+        INSPIRE_LOGI("%s", GetSDKInfo().GetFullVersionInfo().c_str());
     }
     // Face Detection pixel size
     std::vector<int32_t> m_face_detect_pixel_list_;
