@@ -7,6 +7,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
+set(INSPIRE_FACE_SERIES_NAME "Community Edition" CACHE STRING "Series name")
+
 # Hide symbols
 option(ISF_ENABLE_SYMBOL_HIDING "Enable symbol hiding." ON)
 if(ISF_ENABLE_SYMBOL_HIDING)
@@ -30,9 +32,9 @@ set(INSPIRE_FACE_VERSION_PATCH 3)
 string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
 string(CONCAT INSPIRE_FACE_VERSION_MINOR_STR ${INSPIRE_FACE_VERSION_MINOR})
 string(CONCAT INSPIRE_FACE_VERSION_PATCH_STR ${INSPIRE_FACE_VERSION_PATCH})
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/information.h.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/include/inspireface/information.h)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/version.txt)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/python/version.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/python/version.txt)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/meta.cpp.in ${CMAKE_CURRENT_SOURCE_DIR}/cpp/inspireface/meta.cpp)
 
 # Check that the 3rdparty folder exists
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty")
@@ -188,7 +190,9 @@ endif()
 option(ISF_ENABLE_OPENCV "Depends on opencv." OFF)
 if(INSPIRECV_BACKEND_OPENCV OR INSPIRECV_BACKEND_OKCV_USE_OPENCV OR INSPIRECV_BACKEND_OKCV_USE_OPENCV_IO OR INSPIRECV_BACKEND_OKCV_USE_OPENCV_GUI)
     set(ISF_ENABLE_OPENCV ON)
+    add_definitions("-DISF_ENABLE_OPENCV")
 endif()
+
 
 include_directories(${ISF_THIRD_PARTY_DIR}/InspireCV/3rdparty/Eigen-3.4.0-Headers)
 
