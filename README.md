@@ -515,7 +515,7 @@ Please note that the C++ interface has not been fully tested. It is recommended 
 **More detailed cases**:
 
 - [C Sample](cpp/sample/api/)
-- [C/C++ Sample](cpp/sample/cpp_api/)
+- [C++ Sample](cpp/sample/cpp_api/)
 
 ### Python Native Sample
 
