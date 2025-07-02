@@ -39,6 +39,51 @@ extern "C" {
 #define HF_ENABLE_FACE_POSE 0x00000200         ///< Flag to enable face pose estimation feature.
 #define HF_ENABLE_FACE_EMOTION 0x00000400      ///< Flag to enable face emotion recognition feature.
 
+/************************************************************************
+ * Image Stream Function
+ * 
+ * ImageStream directly interacts with algorithm modules, providing image data streams for algorithm module input;
+ * ImageStream provides automatic transformation to adapt camera stream rotation angles and common image encoding/decoding format conversion;
+  * Camera picture rotation mode.
+ * To accommodate the rotation of certain devices, four image rotation modes are provided.
+ * 
+ * 1. ROTATION_0 (No Rotation):
+ *    Original Image (w x h):               Scaled Image (w*s x h*s):
+ *    A(0,0) ----------- B(w-1,0)          A(0,0) ----------- B(w*s-1,0)
+ *    |                           |         |                           |
+ *    |        Original           |   =>    |        Scaled             |
+ *    |                           |         |                           |
+ *    C(0,h-1) --------- D(w-1,h-1)        C(0,h*s-1) ---- D(w*s-1,h*s-1)
+ *    Point Mapping: A->A(0,0), B->B(w*s-1,0), C->C(0,h*s-1), D->D(w*s-1,h*s-1)
+ * 
+ * 2. ROTATION_90 (90° Counter-Clockwise):
+ *    Original Image (w x h):               Rotated Image (h*s x w*s):
+ *    A(0,0) ----------- B(w-1,0)          B(0,0) ----------- A(h*s-1,0)
+ *    |                           |         |                           |
+ *    |        Original           |   =>    |        Rotated            |
+ *    |                           |         |                           |
+ *    C(0,h-1) --------- D(w-1,h-1)        D(0,w*s-1) ---- C(h*s-1,w*s-1)
+ *    Point Mapping: A->A(h*s-1,0), B->B(0,0), C->C(h*s-1,w*s-1), D->D(0,w*s-1)
+ * 
+ * 3. ROTATION_180 (180° Rotation):
+ *    Original Image (w x h):               Rotated Image (w*s x h*s):
+ *    A(0,0) ----------- B(w-1,0)          D(0,0) ----------- C(w*s-1,0)
+ *    |                           |         |                           |
+ *    |        Original           |   =>    |        Rotated            |
+ *    |                           |         |                           |
+ *    C(0,h-1) --------- D(w-1,h-1)        B(0,h*s-1) ---- A(w*s-1,h*s-1)
+ *    Point Mapping: A->A(w*s-1,h*s-1), B->B(0,h*s-1), C->C(w*s-1,0), D->D(0,0)
+ * 
+ * 4. ROTATION_270 (270° Counter-Clockwise):
+ *    Original Image (w x h):               Rotated Image (h*s x w*s):
+ *    A(0,0) ----------- B(w-1,0)          D(0,0) ----------- C(h*s-1,0)
+ *    |                           |         |                           |
+ *    |        Original           |   =>    |        Rotated            |
+ *    |                           |         |                           |
+ *    C(0,h-1) --------- D(w-1,h-1)        B(0,w*s-1) ---- A(h*s-1,w*s-1)
+ *    Point Mapping: A->A(h*s-1,w*s-1), B->B(0,w*s-1), C->C(h*s-1,0), D->D(0,0)
+ ************************************************************************/
+
 /**
  * Camera stream format.
  * Contains several common camera stream formats available in the market.
@@ -136,6 +181,13 @@ HYPER_CAPI_EXPORT extern HResult HFImageStreamSetFormat(HFImageStream handle, HF
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFReleaseImageStream(HFImageStream streamHandle);
+
+/************************************************************************
+ * Image Bitmap Function
+ * 
+ * Provides a simple Bitmap interface wrapper that copies image data when creating objects and requires manual release.
+ * Provides interfaces for copying, drawing, displaying (OpenCV-GUI), writing to files, and converting to/from ImageStream.
+ ************************************************************************/
 
 /**
  * @brief Struct for image bitmap data.
@@ -258,6 +310,9 @@ HYPER_CAPI_EXPORT extern HResult HFImageBitmapShow(HFImageBitmap handle, HString
 
 /************************************************************************
  * Resource Function
+ * 
+ * The resource module is a system-level module that manages the life cycle of all resources.
+ * It is responsible for loading and unloading resources, and managing the memory of resources.
  ************************************************************************/
 
 /**
@@ -378,7 +433,12 @@ HYPER_CAPI_EXPORT extern HResult HFGetNumCudaDevices(HPInt32 num_devices);
 HYPER_CAPI_EXPORT extern HResult HFCheckCudaDeviceSupport(HPInt32 is_support);
 
 /************************************************************************
- * FaceSession
+ * FaceSession Function
+ * 
+ * FaceSession is responsible for all face image algorithm-related functions, 
+ * including face detection, face alignment, face recognition, face quality detection, face attribute prediction, etc.
+ * FaceSession supports flexible configuration, allowing you to enable or disable certain functions, and also set parameters for certain functions.
+ * In concurrent scenarios, multiple sessions can be created, each session can run independently without interfering with each other.
  ************************************************************************/
 
 /**
@@ -487,6 +547,13 @@ HYPER_CAPI_EXPORT extern HResult HFCreateInspireFaceSessionOptional(HOption cust
  * @return HResult indicating the success or failure of the operation.
  */
 HYPER_CAPI_EXPORT extern HResult HFReleaseInspireFaceSession(HFSession handle);
+
+/************************************************************************
+ * FaceTrack Module
+ * 
+ * FaceTrack provides the most basic face image algorithm functions, such as face detection, tracking, landmark detection, etc.
+ * FaceTrack is independent of FaceSession, and can be used independently.
+ ************************************************************************/
 
 /**
  * @brief Clear the tracking face
@@ -687,7 +754,10 @@ HYPER_CAPI_EXPORT extern HResult HFSessionSetEnableTrackCostSpend(HFSession sess
 HYPER_CAPI_EXPORT extern HResult HFSessionPrintTrackCostSpend(HFSession session);
 
 /************************************************************************
- * Face Recognition
+ * Face Recognition Module
+ * 
+ * The interface of the face recognition module depends on FaceSession, 
+ * providing face feature extraction, face alignment image processing, and face comparison interfaces.
  ************************************************************************/
 
 /**
@@ -770,6 +840,11 @@ HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtractWithAlignmentImage(HFSessio
 
 /************************************************************************
  * Feature Hub
+ * 
+ * FeatureHub is a built-in global lightweight face feature vector management functionality
+ * provided in the InspireFace-SDK. It supports basic face feature search, deletion, and
+ * modification functions, and offers two optional data storage modes: an in-memory model and a
+ * persistence model. If you have simple storage needs, you can enable it.
  ************************************************************************/
 
 /**
@@ -1010,7 +1085,10 @@ typedef struct HFFeatureHubExistingIds {
 HYPER_CAPI_EXPORT extern HResult HFFeatureHubGetExistingIds(PHFFeatureHubExistingIds ids);
 
 /************************************************************************
- * Face Pipeline
+ * Face Pipeline Module
+ * 
+ * FacePipeline depends on FaceSession, providing extended business for face image algorithms, 
+ * supporting some face attributes, such as face mask detection, face quality detection, face attribute prediction, etc.
  ************************************************************************/
 
 /**
