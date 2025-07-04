@@ -612,7 +612,7 @@ We released InspireFace's Android SDK on JitPack, which you can incorporate into
 
   ```groovy
   dependencies {
-      implementation 'com.github.HyperInspire:inspireface-android-sdk:1.2.0'
+      implementation 'com.github.HyperInspire:inspireface-android-sdk:1.2.3.post4'
   }
   ```
 
@@ -633,7 +633,10 @@ You need to get the resource file from the release  [Release Page](https://githu
 ```
 asset/
 └── inspireface/
-    └── Pikachu
+    │── Pikachu
+    │── Megatron
+    │── Gundam_RK356X
+    └── Gundam_RK3588
 ```
 
 #### How to use the Android/Java API
