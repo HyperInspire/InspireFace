@@ -775,7 +775,7 @@ HResult HFGetFaceDenseLandmarkFromFaceToken(HFFaceBasicToken singleFace, PHPoint
     if (ret != HSUCCEED) {
         return ret;
     }
-    if (face.densityLandmarkEnable == 0) {
+    if (face.densityLandmarkEnable == HF_STATUS_DISABLE) {
         INSPIRE_LOGW("To get dense landmarks in always-detect mode, you need to enable HF_ENABLE_DETECT_MODE_LANDMARK");
         return HERR_SESS_LANDMARK_NOT_ENABLE;
     }
