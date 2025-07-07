@@ -762,7 +762,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 | Megatron | CPU, GPU | Mobile and server models | Jun 15, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron) |
 | Megatron_TRT | GPU | CUDA-based server models | Jun 15, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Megatron_TRT) |
 | Gundam-RV1109 | RKNPU | Supports RK1109 and RK1126 | Jun 15, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1109) |
-| Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | Jun 15, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
+| Gundam-RV1106 | RKNPU | Supports RV1103 and RV1106 | Jul 6, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RV1106) |
 | Gundam-RK356X | RKNPU | Supports RK3566 and RK3568 | Jun 15, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK356X) |
 | Gundam-RK3588 | RKNPU | Supports RK3588 | Jun 15, 2025 | [Download](https://github.com/HyperInspire/InspireFace/releases/download/v1.x/Gundam_RK3588) |
 
