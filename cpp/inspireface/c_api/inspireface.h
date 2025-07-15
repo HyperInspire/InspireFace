@@ -556,13 +556,6 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseInspireFaceSession(HFSession handle);
  ************************************************************************/
 
 /**
- * @brief Clear the tracking face
- * @param session Handle to the session.
- * @return HResult indicating the success or failure of the operation.
- */
-HYPER_CAPI_EXPORT extern HResult HFSessionClearTrackingFace(HFSession session);
-
-/**
  * @brief Struct representing a basic token for face data.
  *
  * This struct holds the size and data pointer for a basic token associated with face data.
@@ -598,6 +591,13 @@ typedef struct HFMultipleFaceData {
     HFFaceEulerAngle angles;   ///< Euler angles for each face.
     PHFFaceBasicToken tokens;  ///< Tokens associated with each face.
 } HFMultipleFaceData, *PHFMultipleFaceData;
+
+/**
+ * @brief Clear the tracking face
+ * @param session Handle to the session.
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionClearTrackingFace(HFSession session);
 
 /**
  * @brief Set the track preview size in the session, it works with face detection and tracking
