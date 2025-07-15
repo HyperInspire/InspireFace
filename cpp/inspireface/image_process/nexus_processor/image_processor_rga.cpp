@@ -38,14 +38,14 @@ int32_t RgaImageProcessor::Resize(const uint8_t* src_data, int src_width, int sr
     int ret = imcheck(src_buffer.buffer, dst_buffer.buffer, {}, {});
     if (IM_STATUS_NOERROR != ret) {
         INSPIRECV_LOG(ERROR) << "RGA parameter check failed: " << imStrError((IM_STATUS)ret);
-        return false;
+        return -1;
     }
 
     ret = imresize(src_buffer.buffer, dst_buffer.buffer);
 
     if (ret != IM_STATUS_SUCCESS) {
         INSPIRECV_LOG(ERROR) << "RGA resize failed: " << imStrError((IM_STATUS)ret);
-        return false;
+        return -1;
     }
 
     // 5. Return pointer to destination buffer
