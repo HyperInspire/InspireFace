@@ -193,6 +193,12 @@ public:
      */
     void ClearTrackingFace();
 
+    /**
+     * @brief Set the track lost recovery mode
+     * @param value Track lost recovery mode
+     */
+    void SetTrackLostRecoveryMode(bool value);
+
 public:
     // Accessor methods for various cached data
     /**

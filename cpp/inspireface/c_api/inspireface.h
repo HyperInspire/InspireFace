@@ -600,6 +600,14 @@ typedef struct HFMultipleFaceData {
 HYPER_CAPI_EXPORT extern HResult HFSessionClearTrackingFace(HFSession session);
 
 /**
+ * @brief Set the track lost recovery mode(only for LightTrack mode, default is false)
+ * @param session Handle to the session.
+ * @param value The track lost recovery mode value
+ * @return HResult indicating the success or failure of the operation.
+ */
+HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackLostRecoveryMode(HFSession session, HInt32 value);
+
+/**
  * @brief Set the track preview size in the session, it works with face detection and tracking
  * algorithms. Default preview size is 192(px).
  *
