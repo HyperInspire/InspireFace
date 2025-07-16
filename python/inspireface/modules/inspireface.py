@@ -794,6 +794,12 @@ def switch_landmark_engine(engine: int):
     check_error(ret, "Switch landmark engine", engine=engine)
     return True
 
+def switch_image_processing_backend(backend: int):
+    """Switch image processing backend"""
+    ret = HFSwitchImageProcessingBackend(backend)
+    check_error(ret, "Switch image processing backend", backend=backend)
+    return True
+
 @dataclass
 class FeatureHubConfiguration:
     """
