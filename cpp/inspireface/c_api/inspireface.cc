@@ -555,6 +555,18 @@ HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode) {
     return HSUCCEED;
 }
 
+HResult HFSwitchImageProcessingBackend(HFImageProcessingBackend backend) {
+    if (backend == HF_IMAGE_PROCESSING_CPU) {
+        INSPIREFACE_CONTEXT->SwitchImageProcessingBackend(inspire::Launch::IMAGE_PROCESSING_CPU);
+    } else if (backend == HF_IMAGE_PROCESSING_RGA) {
+        INSPIREFACE_CONTEXT->SwitchImageProcessingBackend(inspire::Launch::IMAGE_PROCESSING_RGA);
+    } else {
+        INSPIRE_LOGE("Unsupported image processing backend.");
+        return HERR_INVALID_PARAM;
+    }
+    return HSUCCEED;
+}
+
 HResult HFSetCudaDeviceId(HInt32 device_id) {
     INSPIREFACE_CONTEXT->SetCudaDeviceId(device_id);
     return HSUCCEED;

@@ -383,6 +383,21 @@ HYPER_CAPI_EXPORT extern HResult HFSetExpansiveHardwareRockchipDmaHeapPath(HPath
 HYPER_CAPI_EXPORT extern HResult HFQueryExpansiveHardwareRockchipDmaHeapPath(HString path);
 
 /**
+ * @brief Enum for image processing backend.
+ */
+typedef enum HFImageProcessingBackend {
+    HF_IMAGE_PROCESSING_CPU = 0,  ///< CPU backend(Default)
+    HF_IMAGE_PROCESSING_RGA = 1,  ///< Rockchip RGA backend(Hardware support is mandatory)
+} HFImageProcessingBackend;
+
+/**
+ * @brief Switch the image processing backend, must be called before HFCreateInspireFaceSession.
+ * @param backend The image processing backend to be set.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSwitchImageProcessingBackend(HFImageProcessingBackend backend);
+
+/**
  * @brief Enum for Apple CoreML inference mode.
  */
 typedef enum HFAppleCoreMLInferenceMode {

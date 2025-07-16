@@ -5,6 +5,7 @@
 #include <vector>
 #include <inspirecv/inspirecv.h>
 #include <memory>
+#include "launch.h"
 
 namespace inspire {
 
@@ -16,15 +17,13 @@ namespace nexus {
  * This interface provides common image processing operations like resize, color conversion,
  * padding etc. It can be implemented by different backends based on compile options:
  * - Default CPU-based implementation using InspireCV (always available)
- * - Hardware accelerated implementation like Rockchip RGA (enabled with ISF_ENABLE_RGA)
- * - Other potential hardware acceleration backends can be enabled via corresponding compile flags
+ * - Hardware accelerated implementation like Rockchip RGA (enabled with ISF_ENABLE_RGA) 
  *
- * The backend implementation is selected at compile time based on which acceleration options
- * are enabled. Only one backend will be active at runtime.
+ * The backend implementation is selected at runtime based on the backend parameter.
  */
 class ImageProcessor {
 public:
-    static std::unique_ptr<ImageProcessor> Create();
+    static std::unique_ptr<ImageProcessor> Create(inspire::Launch::ImageProcessingBackend backend = inspire::Launch::IMAGE_PROCESSING_CPU);
 
 public:
     // Virtual destructor
