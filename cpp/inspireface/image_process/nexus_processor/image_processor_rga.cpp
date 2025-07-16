@@ -15,6 +15,7 @@ int32_t RgaImageProcessor::Resize(const uint8_t* src_data, int src_width, int sr
     // Calculate width aligned to 4 bytes
     int aligned_src_width = (src_width + 3) & ~3;  // Round up to nearest multiple of 4
     int aligned_dst_width = (dst_width + 3) & ~3;
+    // std::cout << "aligned_src_width: " << aligned_src_width << ", aligned_dst_width: " << aligned_dst_width << std::endl;
 
     // 1. Get or create source buffer with aligned width
     BufferKey src_key{aligned_src_width, src_height, channels};

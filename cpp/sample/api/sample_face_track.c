@@ -79,13 +79,6 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
-    /* Switch the image processing backend to CPU */
-    ret = HFSwitchImageProcessingBackend(HF_IMAGE_PROCESSING_CPU);
-    if (ret != HSUCCEED) {
-        HFLogPrint(HF_LOG_ERROR, "Switch image processing backend error: %d", ret);
-        return ret;
-    }
-
     ret = HFQuerySupportedPixelLevelsForFaceDetection(&pixelLevels);
     if (ret != HSUCCEED) {
         HFLogPrint(HF_LOG_ERROR, "HFQuerySupportedPixelLevelsForFaceDetection error: %d", ret);
