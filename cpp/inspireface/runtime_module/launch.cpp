@@ -298,7 +298,16 @@ void Launch::SwitchLandmarkEngine(LandmarkEngine engine) {
 
 void Launch::SwitchImageProcessingBackend(ImageProcessingBackend backend) {
     std::lock_guard<std::mutex> lock(pImpl->mutex_);
-    pImpl->m_image_processing_backend_ = backend;
+    if (backend == IMAGE_PROCESSING_RGA) {
+        #if defined(ISF_ENABLE_RGA)
+        pImpl->m_image_processing_backend_ = backend;
+        #else
+        INSPIRE_LOGE("RKRGA is not enabled, please check the build configuration.");
+        #endif // ISF_ENABLE_RGA
+        return;
+    } else {
+        pImpl->m_image_processing_backend_ = backend;
+    }
 }
 
 Launch::ImageProcessingBackend Launch::GetImageProcessingBackend() const {

@@ -146,7 +146,11 @@ set_target_properties(CppSampleGrayInput PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cpp_api/"
 )
 
-
+add_executable(CppNexusProcessSample cpp_api/cpp_nexus_process.cpp)
+target_link_libraries(CppNexusProcessSample InspireFace ${ext})
+set_target_properties(CppNexusProcessSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/cpp_api/"
+)
 
 
 if(ISF_BUILD_SAMPLE_INTERNAL)

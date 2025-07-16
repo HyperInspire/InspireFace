@@ -6,6 +6,7 @@
 #include <inspirecv/inspirecv.h>
 #include <memory>
 #include "launch.h"
+#include "data_type.h"
 
 namespace inspire {
 
@@ -21,7 +22,7 @@ namespace nexus {
  *
  * The backend implementation is selected at runtime based on the backend parameter.
  */
-class ImageProcessor {
+class INSPIRE_API_EXPORT ImageProcessor {
 public:
     static std::unique_ptr<ImageProcessor> Create(inspire::Launch::ImageProcessingBackend backend = inspire::Launch::IMAGE_PROCESSING_CPU);
 
@@ -49,6 +50,12 @@ public:
 
     // Display cache status information
     virtual void DumpCacheStatus() const = 0;
+
+    // Get aligned width of the image
+    virtual int32_t GetAlignedWidth(int width) const = 0;
+
+    // Set aligned width of the image
+    virtual void SetAlignedWidth(int width) = 0;
 
 };  // class ImageProcessor
 
