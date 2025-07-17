@@ -84,7 +84,7 @@ std::string SDKInfo::GetFullVersionInfo() const {
     ss << "InspireFace SDK " << "[" << series << "]" << " v" << version_major << "." << version_minor << "." << version_patch
        << " (Built: " << build_date << " " << build_time << ")"
        << " [" << platform << "/" << architecture << "/" << compiler << "]"
-       << " Backend: " << inference_backend << " " << inspirecv_backend << "[" << (rga_backend_enabled ? "RGA" : "") << "]";
+       << " Backend: " << inference_backend << " " << inspirecv_backend << "[CPU" << (rga_backend_enabled ? ", RGA" : "") << "]";
     return ss.str();
 }
 

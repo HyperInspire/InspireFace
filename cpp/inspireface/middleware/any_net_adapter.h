@@ -37,7 +37,7 @@ public:
      * @param name Name of the neural network.
      */
     explicit AnyNetAdapter(std::string name) : m_name_(std::move(name)) {
-        m_processor_ = nexus::ImageProcessor::Create();
+        m_processor_ = nexus::ImageProcessor::Create(INSPIREFACE_CONTEXT->GetImageProcessingBackend());
     }
 
     ~AnyNetAdapter() {

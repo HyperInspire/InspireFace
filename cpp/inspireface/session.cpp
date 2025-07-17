@@ -44,6 +44,10 @@ public:
         m_face_session_->SetTrackModeDetectInterval(detect_interval);
     }
 
+    void SetTrackLostRecoveryMode(bool value) {
+        m_face_session_->SetTrackLostRecoveryMode(value);
+    }
+
     int32_t FaceDetectAndTrack(inspirecv::FrameProcess& process, std::vector<FaceTrackWrap>& results) {
         int32_t ret = m_face_session_->FaceDetectAndTrack(process);
         if (ret < 0) {
@@ -206,6 +210,10 @@ Session Session::Create(DetectModuleMode detect_mode, int32_t max_detect_face, c
 
 void Session::ClearTrackingFace() {
     pImpl->ClearTrackingFace();
+}
+
+void Session::SetTrackLostRecoveryMode(bool value) {
+    pImpl->SetTrackLostRecoveryMode(value);
 }
 
 void Session::SetTrackPreviewSize(int32_t preview_size) {
