@@ -478,6 +478,12 @@ class InspireFaceSession(object):
         ret = HFSessionSetLandmarkAugmentationNum(self._sess, num)
         check_error(ret, "Set landmark augmentation num", num=num)
 
+    def set_track_lost_recovery_mode(self, value=False):
+        """Set track lost recovery mode"""
+        validate_session_initialized(self, "Set track lost recovery mode")
+        ret = HFSessionSetTrackLostRecoveryMode(self._sess, value)
+        check_error(ret, "Set track lost recovery mode", value=value)
+
     @handle_c_api_errors("Face pipeline processing")
     def face_pipeline(self, image, faces: List[FaceInformation], exec_param) -> List[FaceExtended]:
         """
@@ -786,6 +792,12 @@ def switch_landmark_engine(engine: int):
     """Switch landmark engine"""
     ret = HFSwitchLandmarkEngine(engine)
     check_error(ret, "Switch landmark engine", engine=engine)
+    return True
+
+def switch_image_processing_backend(backend: int):
+    """Switch image processing backend"""
+    ret = HFSwitchImageProcessingBackend(backend)
+    check_error(ret, "Switch image processing backend", backend=backend)
     return True
 
 @dataclass

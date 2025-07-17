@@ -141,6 +141,10 @@ int32_t FacePipelineModule::Process(inspirecv::FrameProcess &processor, const Fa
             }
             inspirecv::Rect2i oriRect(face.rect.x, face.rect.y, face.rect.width, face.rect.height);
             auto rect = GetNewBox(originImage.Width(), originImage.Height(), oriRect, 2.7f);
+            if (Launch::GetInstance()->GetImageProcessingBackend() == Launch::IMAGE_PROCESSING_RGA) {
+                // RKRGA must be aligned to 16
+                rect = AlignmentBoxToStrideSquareBox(rect, 16);
+            }
             auto crop = originImage.Crop(rect);
             auto score = (*m_rgb_anti_spoofing_)(crop);
             // crop.Show();

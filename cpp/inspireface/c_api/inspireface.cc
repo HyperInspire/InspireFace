@@ -378,6 +378,15 @@ HResult HFSessionClearTrackingFace(HFSession session) {
     return HSUCCEED;
 }
 
+HResult HFSessionSetTrackLostRecoveryMode(HFSession session, HInt32 value) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    ctx->impl.SetTrackLostRecoveryMode(value);
+    return HSUCCEED;
+}
+
 HResult HFSwitchLandmarkEngine(HFSessionLandmarkEngine engine) {
     inspire::Launch::LandmarkEngine type;
     if (engine == HF_LANDMARK_HYPLMV2_0_25) {
@@ -541,6 +550,18 @@ HResult HFSetAppleCoreMLInferenceMode(HFAppleCoreMLInferenceMode mode) {
         INSPIREFACE_CONTEXT->SetGlobalCoreMLInferenceMode(inspire::Launch::NN_INFERENCE_COREML_ANE);
     } else {
         INSPIRE_LOGE("Unsupported Apple CoreML inference mode.");
+        return HERR_INVALID_PARAM;
+    }
+    return HSUCCEED;
+}
+
+HResult HFSwitchImageProcessingBackend(HFImageProcessingBackend backend) {
+    if (backend == HF_IMAGE_PROCESSING_CPU) {
+        INSPIREFACE_CONTEXT->SwitchImageProcessingBackend(inspire::Launch::IMAGE_PROCESSING_CPU);
+    } else if (backend == HF_IMAGE_PROCESSING_RGA) {
+        INSPIREFACE_CONTEXT->SwitchImageProcessingBackend(inspire::Launch::IMAGE_PROCESSING_RGA);
+    } else {
+        INSPIRE_LOGE("Unsupported image processing backend.");
         return HERR_INVALID_PARAM;
     }
     return HSUCCEED;
