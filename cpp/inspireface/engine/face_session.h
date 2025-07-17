@@ -199,6 +199,12 @@ public:
      */
     void SetTrackLostRecoveryMode(bool value);
 
+    /**
+     * @brief Set the light track confidence threshold
+     * @param value Light track confidence threshold
+     */
+    void SetLightTrackConfidenceThreshold(float value);
+
 public:
     // Accessor methods for various cached data
     /**
