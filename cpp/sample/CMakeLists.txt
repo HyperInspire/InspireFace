@@ -107,6 +107,12 @@ set_target_properties(SearchFaceSample PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
 )
 
+add_executable(CppMultithreadingSample api/sample_cpp_multithreading.cpp)
+target_link_libraries(CppMultithreadingSample InspireFace ${ext})
+set_target_properties(CppMultithreadingSample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/api/"
+)
+
 # --- C++ API ---
 
 add_executable(CppSessionSample cpp_api/cpp_sample_face_track.cpp)
