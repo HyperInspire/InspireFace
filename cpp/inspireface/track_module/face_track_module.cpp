@@ -62,8 +62,8 @@ float FaceTrackModule::PredictTrackScore(const inspirecv::Image &raw_face_crop) 
 bool FaceTrackModule::TrackFace(inspirecv::FrameProcess &image, FaceObjectInternal &face) {
     COST_TIME_SIMPLE(TrackFace);
     // If the track lost recovery mode is enabled,  the lag information of the previous frame will not be used in the current frame
-    if (face.GetConfidence() < 0.1 && !m_track_lost_recovery_mode_) {
-        // If the face confidence level is below 0.1, disable tracking
+    if (face.GetConfidence() < m_light_track_confidence_threshold_ && !m_track_lost_recovery_mode_) {
+        // If the face confidence level is below the threshold, disable tracking
         face.DisableTracking();
         return false;
     }
@@ -137,7 +137,7 @@ bool FaceTrackModule::TrackFace(inspirecv::FrameProcess &image, FaceObjectIntern
 
         // If the track lost recovery mode is enabled, 
         // it will determine whether to discard the invalid face that has been tracked in the current frame
-        if (score < 0.1 && m_track_lost_recovery_mode_) {
+        if (score < m_light_track_confidence_threshold_ && m_track_lost_recovery_mode_) {
             face.DisableTracking();
             return false;
         }
@@ -576,6 +576,10 @@ void FaceTrackModule::SetMultiscaleLandmarkLoop(int value) {
 
 void FaceTrackModule::SetTrackLostRecoveryMode(bool value) {
     m_track_lost_recovery_mode_ = value;
+}
+
+void FaceTrackModule::SetLightTrackConfidenceThreshold(float value) {
+    m_light_track_confidence_threshold_ = value;
 }
 
 void FaceTrackModule::ClearTrackingFace() {

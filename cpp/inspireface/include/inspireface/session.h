@@ -59,6 +59,12 @@ public:
     void SetTrackLostRecoveryMode(bool value);
 
     /**
+     * @brief Set the light track confidence threshold
+     * @param value Light track confidence threshold
+     */
+    void SetLightTrackConfidenceThreshold(float value);
+
+    /**
      * @brief Set the track preview size.
      * @param preview_size The preview size.
      */

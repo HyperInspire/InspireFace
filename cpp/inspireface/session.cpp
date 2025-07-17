@@ -48,6 +48,10 @@ public:
         m_face_session_->SetTrackLostRecoveryMode(value);
     }
 
+    void SetLightTrackConfidenceThreshold(float value) {
+        m_face_session_->SetLightTrackConfidenceThreshold(value);
+    }
+
     int32_t FaceDetectAndTrack(inspirecv::FrameProcess& process, std::vector<FaceTrackWrap>& results) {
         int32_t ret = m_face_session_->FaceDetectAndTrack(process);
         if (ret < 0) {
@@ -214,6 +218,10 @@ void Session::ClearTrackingFace() {
 
 void Session::SetTrackLostRecoveryMode(bool value) {
     pImpl->SetTrackLostRecoveryMode(value);
+}
+
+void Session::SetLightTrackConfidenceThreshold(float value) {
+    pImpl->SetLightTrackConfidenceThreshold(value);
 }
 
 void Session::SetTrackPreviewSize(int32_t preview_size) {
