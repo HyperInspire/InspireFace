@@ -194,6 +194,12 @@ public:
     void SetTrackLostRecoveryMode(bool value);
 
     /**
+     * @brief Set the light track confidence threshold
+     * @param value Light track confidence threshold
+     */
+    void SetLightTrackConfidenceThreshold(float value);
+
+    /**
      * @brief Clear the tracking face
      */
     void ClearTrackingFace();
@@ -244,6 +250,8 @@ private:
     int m_multiscale_landmark_loop_num_ = 1;  ///< Multiscale landmark loop num
 
     float m_landmark_crop_ratio_ = 1.1f;
+
+    float m_light_track_confidence_threshold_ = 0.1;  ///< Light track confidence threshold
 
     std::vector<float> m_multiscale_landmark_scales_;
 

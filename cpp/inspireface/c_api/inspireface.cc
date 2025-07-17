@@ -378,12 +378,21 @@ HResult HFSessionClearTrackingFace(HFSession session) {
     return HSUCCEED;
 }
 
-HResult HFSessionSetTrackLostRecoveryMode(HFSession session, HInt32 value) {
+HResult HFSessionSetTrackLostRecoveryMode(HFSession session, HInt32 enable) {
     if (session == nullptr) {
         return HERR_INVALID_CONTEXT_HANDLE;
     }
     HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
-    ctx->impl.SetTrackLostRecoveryMode(value);
+    ctx->impl.SetTrackLostRecoveryMode(enable);
+    return HSUCCEED;
+}
+
+HResult HFSessionSetLightTrackConfidenceThreshold(HFSession session, HFloat value) {
+    if (session == nullptr) {
+        return HERR_INVALID_CONTEXT_HANDLE;
+    }
+    HF_FaceAlgorithmSession *ctx = (HF_FaceAlgorithmSession *)session;
+    ctx->impl.SetLightTrackConfidenceThreshold(value);
     return HSUCCEED;
 }
 
