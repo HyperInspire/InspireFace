@@ -41,12 +41,12 @@ extern "C" {
 
 /************************************************************************
  * Image Stream Function
- * 
+ *
  * ImageStream directly interacts with algorithm modules, providing image data streams for algorithm module input;
  * ImageStream provides automatic transformation to adapt camera stream rotation angles and common image encoding/decoding format conversion;
-  * Camera picture rotation mode.
+ * Camera picture rotation mode.
  * To accommodate the rotation of certain devices, four image rotation modes are provided.
- * 
+ *
  * 1. ROTATION_0 (No Rotation):
  *    Original Image (w x h):               Scaled Image (w*s x h*s):
  *    A(0,0) ----------- B(w-1,0)          A(0,0) ----------- B(w*s-1,0)
@@ -55,7 +55,7 @@ extern "C" {
  *    |                           |         |                           |
  *    C(0,h-1) --------- D(w-1,h-1)        C(0,h*s-1) ---- D(w*s-1,h*s-1)
  *    Point Mapping: A->A(0,0), B->B(w*s-1,0), C->C(0,h*s-1), D->D(w*s-1,h*s-1)
- * 
+ *
  * 2. ROTATION_90 (90° Counter-Clockwise):
  *    Original Image (w x h):               Rotated Image (h*s x w*s):
  *    A(0,0) ----------- B(w-1,0)          B(0,0) ----------- A(h*s-1,0)
@@ -64,7 +64,7 @@ extern "C" {
  *    |                           |         |                           |
  *    C(0,h-1) --------- D(w-1,h-1)        D(0,w*s-1) ---- C(h*s-1,w*s-1)
  *    Point Mapping: A->A(h*s-1,0), B->B(0,0), C->C(h*s-1,w*s-1), D->D(0,w*s-1)
- * 
+ *
  * 3. ROTATION_180 (180° Rotation):
  *    Original Image (w x h):               Rotated Image (w*s x h*s):
  *    A(0,0) ----------- B(w-1,0)          D(0,0) ----------- C(w*s-1,0)
@@ -73,7 +73,7 @@ extern "C" {
  *    |                           |         |                           |
  *    C(0,h-1) --------- D(w-1,h-1)        B(0,h*s-1) ---- A(w*s-1,h*s-1)
  *    Point Mapping: A->A(w*s-1,h*s-1), B->B(0,h*s-1), C->C(w*s-1,0), D->D(0,0)
- * 
+ *
  * 4. ROTATION_270 (270° Counter-Clockwise):
  *    Original Image (w x h):               Rotated Image (h*s x w*s):
  *    A(0,0) ----------- B(w-1,0)          D(0,0) ----------- C(h*s-1,0)
@@ -184,7 +184,7 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseImageStream(HFImageStream streamHandle
 
 /************************************************************************
  * Image Bitmap Function
- * 
+ *
  * Provides a simple Bitmap interface wrapper that copies image data when creating objects and requires manual release.
  * Provides interfaces for copying, drawing, displaying (OpenCV-GUI), writing to files, and converting to/from ImageStream.
  ************************************************************************/
@@ -193,7 +193,7 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseImageStream(HFImageStream streamHandle
  * @brief Struct for image bitmap data.
  */
 typedef struct HFImageBitmapData {
-    HPUInt8 data;    ///< Pointer to the image data.
+    HPUInt8 data;     ///< Pointer to the image data.
     HInt32 width;     ///< Width of the image.
     HInt32 height;    ///< Height of the image.
     HInt32 channels;  ///< Number of channels in the image, only support 3 channels or 1 channel.
@@ -254,7 +254,8 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamFromImageBitmap(HFImageBitma
  * @param scale The scale of the image.
  * @return HResult indicating the success or failure of the operation.
  */
-HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, PHFImageBitmap handle, HInt32 is_rotate, HFloat scale);
+HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromImageStreamProcess(HFImageStream streamHandle, PHFImageBitmap handle, HInt32 is_rotate,
+                                                                           HFloat scale);
 
 /**
  * @brief Write the image bitmap to a file.
@@ -310,7 +311,7 @@ HYPER_CAPI_EXPORT extern HResult HFImageBitmapShow(HFImageBitmap handle, HString
 
 /************************************************************************
  * Resource Function
- * 
+ *
  * The resource module is a system-level module that manages the life cycle of all resources.
  * It is responsible for loading and unloading resources, and managing the memory of resources.
  ************************************************************************/
@@ -398,6 +399,13 @@ typedef enum HFImageProcessingBackend {
 HYPER_CAPI_EXPORT extern HResult HFSwitchImageProcessingBackend(HFImageProcessingBackend backend);
 
 /**
+ * @brief Set the image process aligned width, must be called before HFCreateInspireFaceSession.
+ * @param width The image process aligned width to be set.
+ * @return HResult indicating the success or failure of the operation.
+ * */
+HYPER_CAPI_EXPORT extern HResult HFSetImageProcessAlignedWidth(HInt32 width);
+
+/**
  * @brief Enum for Apple CoreML inference mode.
  */
 typedef enum HFAppleCoreMLInferenceMode {
@@ -449,8 +457,8 @@ HYPER_CAPI_EXPORT extern HResult HFCheckCudaDeviceSupport(HPInt32 is_support);
 
 /************************************************************************
  * FaceSession Function
- * 
- * FaceSession is responsible for all face image algorithm-related functions, 
+ *
+ * FaceSession is responsible for all face image algorithm-related functions,
  * including face detection, face alignment, face recognition, face quality detection, face attribute prediction, etc.
  * FaceSession supports flexible configuration, allowing you to enable or disable certain functions, and also set parameters for certain functions.
  * In concurrent scenarios, multiple sessions can be created, each session can run independently without interfering with each other.
@@ -565,7 +573,7 @@ HYPER_CAPI_EXPORT extern HResult HFReleaseInspireFaceSession(HFSession handle);
 
 /************************************************************************
  * FaceTrack Module
- * 
+ *
  * FaceTrack provides the most basic face image algorithm functions, such as face detection, tracking, landmark detection, etc.
  * FaceTrack is independent of FaceSession, and can be used independently.
  ************************************************************************/
@@ -694,7 +702,6 @@ HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeNumSmoothCacheFrame(HFSess
  */
 HYPER_CAPI_EXPORT extern HResult HFSessionSetTrackModeDetectInterval(HFSession session, HInt32 num);
 
-
 /**
  * @brief Run face tracking in the session.
  *
@@ -786,8 +793,8 @@ HYPER_CAPI_EXPORT extern HResult HFSessionPrintTrackCostSpend(HFSession session)
 
 /************************************************************************
  * Face Recognition Module
- * 
- * The interface of the face recognition module depends on FaceSession, 
+ *
+ * The interface of the face recognition module depends on FaceSession,
  * providing face feature extraction, face alignment image processing, and face comparison interfaces.
  ************************************************************************/
 
@@ -871,7 +878,7 @@ HYPER_CAPI_EXPORT extern HResult HFFaceFeatureExtractWithAlignmentImage(HFSessio
 
 /************************************************************************
  * Feature Hub
- * 
+ *
  * FeatureHub is a built-in global lightweight face feature vector management functionality
  * provided in the InspireFace-SDK. It supports basic face feature search, deletion, and
  * modification functions, and offers two optional data storage modes: an in-memory model and a
@@ -904,7 +911,7 @@ typedef struct HFFeatureHubConfiguration {
     HFPKMode primaryKeyMode;    ///< Primary key mode(The id increment mode is recommended)
     HInt32 enablePersistence;   ///< Flag to enable or disable the use of the database.
     HString persistenceDbPath;  ///< Path to the database file.
-    HFloat searchThreshold;      ///< Threshold for face search
+    HFloat searchThreshold;     ///< Threshold for face search
     HFSearchMode searchMode;    ///< Mode of face search
 } HFFeatureHubConfiguration;
 
@@ -1022,7 +1029,6 @@ HYPER_CAPI_EXPORT extern HResult HFUpdateCosineSimilarityConverter(HFSimilarityC
  */
 HYPER_CAPI_EXPORT extern HResult HFGetCosineSimilarityConverter(PHFSimilarityConverterConfig config);
 
-
 /**
  * @brief Get the length of the face feature.
  *
@@ -1117,8 +1123,8 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubGetExistingIds(PHFFeatureHubExistin
 
 /************************************************************************
  * Face Pipeline Module
- * 
- * FacePipeline depends on FaceSession, providing extended business for face image algorithms, 
+ *
+ * FacePipeline depends on FaceSession, providing extended business for face image algorithms,
  * supporting some face attributes, such as face mask detection, face quality detection, face attribute prediction, etc.
  ************************************************************************/
 
@@ -1315,15 +1321,15 @@ HYPER_CAPI_EXPORT extern HResult HFGetFaceAttributeResult(HFSession session, PHF
  * @brief Struct representing face emotion results.
  */
 typedef struct HFFaceEmotionResult {
-    HInt32 num;          ///< Number of faces detected.
-    HPInt32 emotion;     ///< Emotion of the detected face.
-                         ///< 0: Neutral;
-                         ///< 1: Happy;
-                         ///< 2: Sad;
-                         ///< 3: Surprise;
-                         ///< 4: Fear;
-                         ///< 5: Disgust;
-                         ///< 6: Anger;
+    HInt32 num;       ///< Number of faces detected.
+    HPInt32 emotion;  ///< Emotion of the detected face.
+                      ///< 0: Neutral;
+                      ///< 1: Happy;
+                      ///< 2: Sad;
+                      ///< 3: Surprise;
+                      ///< 4: Fear;
+                      ///< 5: Disgust;
+                      ///< 6: Anger;
 } HFFaceEmotionResult, *PHFFaceEmotionResult;
 
 /**

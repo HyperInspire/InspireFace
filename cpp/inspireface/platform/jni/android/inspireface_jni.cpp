@@ -347,8 +347,12 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_ExecuteFaceTrack)(JNIEnv *env, jo
         jclass tokenClass = env->FindClass("com/insightface/sdk/inspireface/base/FaceBasicToken");
         jobjectArray tokenArray = env->NewObjectArray(results.detectedNum, tokenClass, nullptr);
         jmethodID tokenConstructor = env->GetMethodID(tokenClass, "<init>", "()V");
-        jfieldID tokenHandleField = env->GetFieldID(tokenClass, "handle", "J");
+        jfieldID tokenDataField = env->GetFieldID(tokenClass, "data", "[B");
         jfieldID sizeField = env->GetFieldID(tokenClass, "size", "I");
+
+        // Get token size first
+        HInt32 tokenSize = 0;
+        HFGetFaceBasicTokenSize(&tokenSize);
 
         for (int i = 0; i < results.detectedNum; i++) {
             // Set face rect
@@ -366,11 +370,28 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_ExecuteFaceTrack)(JNIEnv *env, jo
             env->SetFloatField(angle, pitchField, *results.angles.pitch);
             env->SetObjectArrayElement(angleArray, i, angle);
 
-            // Set token
+            // Create token object
             jobject token = env->NewObject(tokenClass, tokenConstructor);
-            env->SetLongField(token, tokenHandleField, (jlong)results.tokens[i].data);
-            env->SetIntField(token, sizeField, results.tokens[i].size);
+            
+            // Create byte array to hold token data
+            jbyteArray dataArray = env->NewByteArray(tokenSize);
+            jbyte* buffer = env->GetByteArrayElements(dataArray, nullptr);
+            
+            // Copy token data using HFCopyFaceBasicToken
+            HResult copyResult = HFCopyFaceBasicToken(results.tokens[i], reinterpret_cast<char*>(buffer), tokenSize);
+            if (copyResult == HSUCCEED) {
+                // Set data and size fields
+                env->SetObjectField(token, tokenDataField, dataArray);
+                env->SetIntField(token, sizeField, tokenSize);
+                env->ReleaseByteArrayElements(dataArray, buffer, 0);
+            } else {
+                INSPIRE_LOGE("Failed to copy token data for face %d, error code: %d", i, copyResult);
+                env->ReleaseByteArrayElements(dataArray, buffer, JNI_ABORT);
+                env->DeleteLocalRef(dataArray);
+            }
             env->SetObjectArrayElement(tokenArray, i, token);
+
+            // Release local references
             env->DeleteLocalRef(rect);
             env->DeleteLocalRef(angle);
             env->DeleteLocalRef(token);
@@ -402,12 +423,17 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_ExecuteFaceTrack)(JNIEnv *env, jo
  * @return The face dense landmark array.
  */
 JNIEXPORT jobjectArray INSPIRE_FACE_JNI(InspireFace_GetFaceDenseLandmarkFromFaceToken)(JNIEnv *env, jobject thiz, jobject token) {
-    // Get token handle and size from FaceBasicToken object
+    // Get token data and size from FaceBasicToken object
     jclass tokenClass = env->GetObjectClass(token);
-    jfieldID handleField = env->GetFieldID(tokenClass, "handle", "J");
-    jfieldID sizeField = env->GetFieldID(tokenClass, "size", "I");
-    jlong handle = env->GetLongField(token, handleField);
-    jint size = env->GetIntField(token, sizeField);
+    jfieldID tokenDataField = env->GetFieldID(tokenClass, "data", "[B");
+    jfieldID tokenSizeField = env->GetFieldID(tokenClass, "size", "I");
+    jbyteArray tokenDataArray = (jbyteArray)env->GetObjectField(token, tokenDataField);
+    jint tokenSize = env->GetIntField(token, tokenSizeField);
+    
+    if (tokenDataArray == nullptr) {
+        INSPIRE_LOGE("Token data array is null");
+        return nullptr;
+    }
 
     // Get number of landmarks
     int32_t numLandmarks = 0;
@@ -416,13 +442,16 @@ JNIEXPORT jobjectArray INSPIRE_FACE_JNI(InspireFace_GetFaceDenseLandmarkFromFace
     // Allocate memory for landmarks
     HPoint2f *landmarks = new HPoint2f[numLandmarks];
 
-    // Create face token struct
+    // Create face token struct from byte array data
     HFFaceBasicToken faceToken;
-    faceToken.size = size;
-    faceToken.data = reinterpret_cast<void *>(handle);
+    faceToken.size = tokenSize;
+    faceToken.data = env->GetByteArrayElements(tokenDataArray, nullptr);
 
     // Get landmarks from token
     HResult result = HFGetFaceDenseLandmarkFromFaceToken(faceToken, landmarks, numLandmarks);
+
+    // Release byte array elements
+    env->ReleaseByteArrayElements(tokenDataArray, (jbyte*)faceToken.data, JNI_ABORT);
 
     if (result != HSUCCEED) {
         INSPIRE_LOGE("Failed to get face dense landmark from face token, error code: %d", result);
@@ -470,22 +499,30 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_ExtractFaceFeature)(JNIEnv *env, 
     jfieldID streamHandleField = env->GetFieldID(streamClass, "handle", "J");
     jlong streamHandleValue = env->GetLongField(streamHandle, streamHandleField);
 
-    // Get token handle and size
+    // Get token data and size from FaceBasicToken object
     jclass tokenClass = env->GetObjectClass(token);
-    jfieldID tokenHandleField = env->GetFieldID(tokenClass, "handle", "J");
+    jfieldID tokenDataField = env->GetFieldID(tokenClass, "data", "[B");
     jfieldID tokenSizeField = env->GetFieldID(tokenClass, "size", "I");
-    jlong tokenHandle = env->GetLongField(token, tokenHandleField);
+    jbyteArray tokenDataArray = (jbyteArray)env->GetObjectField(token, tokenDataField);
     jint tokenSize = env->GetIntField(token, tokenSizeField);
+    
+    if (tokenDataArray == nullptr) {
+        INSPIRE_LOGE("Token data array is null");
+        return nullptr;
+    }
 
-    // Create face token struct
+    // Create face token struct from byte array data
     HFFaceBasicToken faceToken;
     faceToken.size = tokenSize;
-    faceToken.data = reinterpret_cast<void *>(tokenHandle);
+    faceToken.data = env->GetByteArrayElements(tokenDataArray, nullptr);
 
     // Extract face feature
     HFFaceFeature feature;
     HResult result =
       HFFaceFeatureExtract(reinterpret_cast<HFSession>(sessionHandle), reinterpret_cast<HFImageStream>(streamHandleValue), faceToken, &feature);
+
+    // Release byte array elements
+    env->ReleaseByteArrayElements(tokenDataArray, (jbyte*)faceToken.data, JNI_ABORT);
 
     if (result != HSUCCEED) {
         INSPIRE_LOGE("Failed to extract face feature, error code: %d", result);
@@ -529,22 +566,30 @@ JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_GetFaceAlignmentImage)(JNIEnv *en
     jfieldID streamHandleField = env->GetFieldID(streamClass, "handle", "J");
     jlong streamHandleValue = env->GetLongField(streamHandle, streamHandleField);
 
-    // Get token handle and size
+    // Get token data and size from FaceBasicToken object
     jclass tokenClass = env->GetObjectClass(token);
-    jfieldID tokenHandleField = env->GetFieldID(tokenClass, "handle", "J");
+    jfieldID tokenDataField = env->GetFieldID(tokenClass, "data", "[B");
     jfieldID tokenSizeField = env->GetFieldID(tokenClass, "size", "I");
-    jlong tokenHandle = env->GetLongField(token, tokenHandleField);
+    jbyteArray tokenDataArray = (jbyteArray)env->GetObjectField(token, tokenDataField);
     jint tokenSize = env->GetIntField(token, tokenSizeField);
+    
+    if (tokenDataArray == nullptr) {
+        INSPIRE_LOGE("Token data array is null");
+        return nullptr;
+    }
 
-    // Create face token struct
+    // Create face token struct from byte array data
     HFFaceBasicToken faceToken;
     faceToken.size = tokenSize;
-    faceToken.data = reinterpret_cast<void *>(tokenHandle);
+    faceToken.data = env->GetByteArrayElements(tokenDataArray, nullptr);
 
     // Get face alignment image
     HFImageBitmap imageBitmap;
     HResult result = HFFaceGetFaceAlignmentImage(reinterpret_cast<HFSession>(sessionHandle), reinterpret_cast<HFImageStream>(streamHandleValue),
                                                  faceToken, &imageBitmap);
+
+    // Release byte array elements
+    env->ReleaseByteArrayElements(tokenDataArray, (jbyte*)faceToken.data, JNI_ABORT);
 
     if (result != HSUCCEED) {
         INSPIRE_LOGE("Failed to get face alignment image, error code: %d", result);
@@ -1294,16 +1339,34 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNI
 
     // Get token data
     HFFaceBasicToken *tokens = nullptr;
+    std::vector<jbyteArray> tokenDataArrays;
+    std::vector<jbyte*> tokenBuffers;
+    
     if (detectedNum > 0) {
         jclass tokenClass = env->FindClass("com/insightface/sdk/inspireface/base/FaceBasicToken");
-        jfieldID handleTokenField = env->GetFieldID(tokenClass, "handle", "J");
+        jfieldID tokenDataField = env->GetFieldID(tokenClass, "data", "[B");
         jfieldID sizeField = env->GetFieldID(tokenClass, "size", "I");
 
         tokens = new HFFaceBasicToken[detectedNum];
+        tokenDataArrays.resize(detectedNum);
+        tokenBuffers.resize(detectedNum);
+        
         for (int i = 0; i < detectedNum; i++) {
             jobject token = env->GetObjectArrayElement(tokenArray, i);
-            tokens[i].data = (void *)env->GetLongField(token, handleTokenField);
-            tokens[i].size = env->GetIntField(token, sizeField);
+            jbyteArray dataArray = (jbyteArray)env->GetObjectField(token, tokenDataField);
+            jint size = env->GetIntField(token, sizeField);
+            
+            if (dataArray != nullptr) {
+                tokens[i].size = size;
+                tokens[i].data = env->GetByteArrayElements(dataArray, nullptr);
+                tokenDataArrays[i] = dataArray;
+                tokenBuffers[i] = (jbyte*)tokens[i].data;
+            } else {
+                tokens[i].size = 0;
+                tokens[i].data = nullptr;
+                tokenDataArrays[i] = nullptr;
+                tokenBuffers[i] = nullptr;
+            }
             env->DeleteLocalRef(token);
         }
         faceData.tokens = tokens;
@@ -1338,6 +1401,11 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_MultipleFacePipelineProcess)(JNI
 
     // Clean up allocated memory
     if (tokens != nullptr) {
+        for (int i = 0; i < detectedNum; i++) {
+            if (tokenDataArrays[i] != nullptr && tokenBuffers[i] != nullptr) {
+                env->ReleaseByteArrayElements(tokenDataArrays[i], tokenBuffers[i], JNI_ABORT);
+            }
+        }
         delete[] tokens;
     }
 
