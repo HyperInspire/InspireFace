@@ -41,8 +41,8 @@ public:
 
     // Image processing backend engine
     enum ImageProcessingBackend {
-        IMAGE_PROCESSING_CPU = 0,   // CPU backend(Default)
-        IMAGE_PROCESSING_RGA,       // Rockchip RGA backend(Hardware support is mandatory)
+        IMAGE_PROCESSING_CPU = 0,  // CPU backend(Default)
+        IMAGE_PROCESSING_RGA,      // Rockchip RGA backend(Hardware support is mandatory)
     };
 
     Launch(const Launch&) = delete;             // Delete the copy constructor to prevent copying.
@@ -116,6 +116,12 @@ public:
 
     // Get the image processing backend
     ImageProcessingBackend GetImageProcessingBackend() const;
+
+    // Set the ImageProcess Aligned Width(It must be used before creating a session)
+    void SetImageProcessAlignedWidth(int32_t width);
+
+    // Get the ImageProcess Aligned Width
+    int32_t GetImageProcessAlignedWidth() const;
 
 private:
     // Private constructor for the singleton pattern

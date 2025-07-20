@@ -576,6 +576,11 @@ HResult HFSwitchImageProcessingBackend(HFImageProcessingBackend backend) {
     return HSUCCEED;
 }
 
+HResult HFSetImageProcessAlignedWidth(HInt32 width) {
+    INSPIREFACE_CONTEXT->SetImageProcessAlignedWidth(width);
+    return HSUCCEED;
+}
+
 HResult HFSetCudaDeviceId(HInt32 device_id) {
     INSPIREFACE_CONTEXT->SetCudaDeviceId(device_id);
     return HSUCCEED;

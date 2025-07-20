@@ -28,7 +28,12 @@ namespace inspire {
 // Implementation class definition
 class Launch::Impl {
 public:
-    Impl() : m_load_(false), m_archive_(nullptr), m_cuda_device_id_(0), m_global_coreml_inference_mode_(InferenceWrapper::COREML_ANE), m_image_processing_backend_(IMAGE_PROCESSING_CPU) {
+    Impl()
+    : m_load_(false),
+      m_archive_(nullptr),
+      m_cuda_device_id_(0),
+      m_global_coreml_inference_mode_(InferenceWrapper::COREML_ANE),
+      m_image_processing_backend_(IMAGE_PROCESSING_CPU) {
 #if defined(ISF_ENABLE_RGA)
         m_image_processing_backend_ = IMAGE_PROCESSING_RGA;
         INSPIRE_LOGW("Default image processing backend is RGA.");
@@ -61,6 +66,7 @@ public:
     int32_t m_cuda_device_id_;
     InferenceWrapper::SpecialBackend m_global_coreml_inference_mode_;
     Launch::ImageProcessingBackend m_image_processing_backend_;
+    int32_t m_image_process_aligned_width_{4};
 };
 
 // Initialize static members
@@ -299,11 +305,11 @@ void Launch::SwitchLandmarkEngine(LandmarkEngine engine) {
 void Launch::SwitchImageProcessingBackend(ImageProcessingBackend backend) {
     std::lock_guard<std::mutex> lock(pImpl->mutex_);
     if (backend == IMAGE_PROCESSING_RGA) {
-        #if defined(ISF_ENABLE_RGA)
+#if defined(ISF_ENABLE_RGA)
         pImpl->m_image_processing_backend_ = backend;
-        #else
+#else
         INSPIRE_LOGE("RKRGA is not enabled, please check the build configuration.");
-        #endif // ISF_ENABLE_RGA
+#endif  // ISF_ENABLE_RGA
         return;
     } else {
         pImpl->m_image_processing_backend_ = backend;
@@ -313,6 +319,16 @@ void Launch::SwitchImageProcessingBackend(ImageProcessingBackend backend) {
 Launch::ImageProcessingBackend Launch::GetImageProcessingBackend() const {
     std::lock_guard<std::mutex> lock(pImpl->mutex_);
     return pImpl->m_image_processing_backend_;
+}
+
+void Launch::SetImageProcessAlignedWidth(int32_t width) {
+    std::lock_guard<std::mutex> lock(pImpl->mutex_);
+    pImpl->m_image_process_aligned_width_ = width;
+}
+
+int32_t Launch::GetImageProcessAlignedWidth() const {
+    std::lock_guard<std::mutex> lock(pImpl->mutex_);
+    return pImpl->m_image_process_aligned_width_;
 }
 
 }  // namespace inspire
