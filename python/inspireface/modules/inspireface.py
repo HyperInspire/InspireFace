@@ -800,6 +800,12 @@ def switch_image_processing_backend(backend: int):
     check_error(ret, "Switch image processing backend", backend=backend)
     return True
 
+def set_image_process_aligned_width(width: int):
+    """Set the image process aligned width"""
+    ret = HFSetImageProcessAlignedWidth(width)
+    check_error(ret, "Set image process aligned width", width=width)
+    return True
+
 @dataclass
 class FeatureHubConfiguration:
     """
