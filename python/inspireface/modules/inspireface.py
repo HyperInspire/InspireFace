@@ -878,6 +878,8 @@ def feature_comparison(feature1: np.ndarray, feature2: np.ndarray) -> float:
     Returns:
         float: A similarity score, where -1.0 indicates an error during comparison.
     """
+    validate_feature_data(feature1, "Feature comparison")
+    validate_feature_data(feature2, "Feature comparison")
     faces = [feature1, feature2]
     feats = []
     for face in faces:
