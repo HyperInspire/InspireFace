@@ -122,7 +122,8 @@ setup(
     },
     install_requires=[
         'numpy',
-        'loguru'
+        'loguru',
+        'modelscope'
     ],
     author='Jingyu Yan',
     author_email='tunmxy@163.com',
