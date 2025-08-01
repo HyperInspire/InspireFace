@@ -6,9 +6,9 @@ name: Run Ubuntu-x86 Test Pikachu from Python Native
 # Trigger this workflow on push or pull request to the "feature/sub" branch
 on:
   push:
-    branches: ["master"]
+    branches: ["feature/modelscope"]
   pull_request:
-    branches: ["master"]
+    branches: ["feature/modelscope"]
 
 # Define environment variables shared across jobs
 env:
