@@ -27,4 +27,3 @@ share/python-wheels/
 .idea/
 *.db
 version.txt
-post
