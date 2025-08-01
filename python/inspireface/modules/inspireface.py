@@ -6,6 +6,7 @@ from typing import Tuple, List
 from dataclasses import dataclass
 from loguru import logger
 from .utils import ResourceManager
+from .utils.resource import set_use_oss_download
 from . import herror as errcode
 # Exception system
 from .exception import (
@@ -21,6 +22,14 @@ IGNORE_VERIFICATION_OF_THE_LATEST_MODEL = False
 def ignore_check_latest_model(ignore: bool):
     global IGNORE_VERIFICATION_OF_THE_LATEST_MODEL
     IGNORE_VERIFICATION_OF_THE_LATEST_MODEL = ignore
+
+def use_oss_download(use_oss: bool = True):
+    """Enable OSS download instead of ModelScope (for backward compatibility)
+    
+    Args:
+        use_oss (bool): If True, use OSS download; if False, use ModelScope (default)
+    """
+    set_use_oss_download(use_oss)
 
 class ImageStream(object):
     """
@@ -715,7 +724,9 @@ def launch(model_name: str = "Pikachu", resource_path: str = None) -> bool:
         SystemNotReadyError: If launch fails due to resource issues.
     """
     if resource_path is None:
-        sm = ResourceManager()
+        from .utils.resource import USE_OSS_DOWNLOAD
+        # Use ModelScope by default unless OSS is forced
+        sm = ResourceManager(use_modelscope=not USE_OSS_DOWNLOAD)
         resource_path = sm.get_model(model_name, ignore_verification=IGNORE_VERIFICATION_OF_THE_LATEST_MODEL)
     path_c = String(bytes(resource_path, encoding="utf8"))
     ret = HFLaunchInspireFace(path_c)
@@ -737,7 +748,8 @@ def pull_latest_model(model_name: str = "Pikachu") -> str:
     Returns:
         str: Path to the downloaded model.
     """
-    sm = ResourceManager()
+    from .utils.resource import USE_OSS_DOWNLOAD
+    sm = ResourceManager(use_modelscope=not USE_OSS_DOWNLOAD)
     resource_path = sm.get_model(model_name, re_download=True)
     return resource_path
 
@@ -753,7 +765,8 @@ def reload(model_name: str = "Pikachu", resource_path: str = None) -> bool:
         bool: True if reload was successful.
     """
     if resource_path is None:
-        sm = ResourceManager()
+        from .utils.resource import USE_OSS_DOWNLOAD
+        sm = ResourceManager(use_modelscope=not USE_OSS_DOWNLOAD)
         resource_path = sm.get_model(model_name, ignore_verification=IGNORE_VERIFICATION_OF_THE_LATEST_MODEL)
     path_c = String(bytes(resource_path, encoding="utf8"))
     ret = HFReloadInspireFace(path_c)
