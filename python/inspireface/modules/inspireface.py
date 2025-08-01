@@ -726,8 +726,10 @@ def _check_modelscope_availability():
     modelscope_available = True
     try:
         from modelscope.hub.snapshot_download import snapshot_download
-    except ImportError:
+        print("ModelScope import successful")
+    except Exception as e:
         modelscope_available = False
+        print(f"ModelScope import failed: {e}")
     
     if not USE_OSS_DOWNLOAD and not modelscope_available:
         print("❌ ModelScope is not installed, cannot download models!")
