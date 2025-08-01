@@ -312,15 +312,18 @@ class InspireFaceSession(object):
             SystemNotReadyError: If InspireFace is not launched.
             ProcessingError: If session creation fails.
         """
+        # Initialize _sess to None first to prevent AttributeError in __del__
+        self._sess = None
+        self.multiple_faces = None
+        self.param = param
+        
         # If InspireFace is not initialized, run launch() use Pikachu model
         if not query_launch_status():
             ret = launch()
             if not ret:
                 raise SystemNotReadyError("Failed to launch InspireFace automatically")
 
-        self.multiple_faces = None
         self._sess = HFSession()
-        self.param = param
         
         if isinstance(self.param, SessionCustomParameter):
             ret = HFCreateInspireFaceSession(self.param._c_struct(), detect_mode, max_detect_num, detect_pixel_level,
@@ -709,6 +712,27 @@ class InspireFaceSession(object):
 
 
 # == Global API ==
+
+def _check_modelscope_availability():
+    """
+    Check if ModelScope is available when needed and provide helpful error message if not.
+    
+    Exits the program if ModelScope is needed but not available and OSS is not enabled.
+    """
+    import sys
+    from .utils.resource import USE_OSS_DOWNLOAD, MODELSCOPE_AVAILABLE
+    
+    if not USE_OSS_DOWNLOAD and not MODELSCOPE_AVAILABLE:
+        print("❌ ModelScope is not installed, cannot download models!")
+        print("\nPlease choose one of the following solutions:")
+        print("1. Install ModelScope:")
+        print("   pip install modelscope")
+        print("\n2. Switch to OSS download mode:")
+        print("   import inspireface as isf")
+        print("   isf.use_oss_download(True)  # Execute before calling launch()")
+        print("\nNote: OSS download requires stable international network connection")
+        sys.exit(1)
+
 def launch(model_name: str = "Pikachu", resource_path: str = None) -> bool:
     """
     Launches the InspireFace system with the specified resource directory.
@@ -725,6 +749,10 @@ def launch(model_name: str = "Pikachu", resource_path: str = None) -> bool:
     """
     if resource_path is None:
         from .utils.resource import USE_OSS_DOWNLOAD
+        
+        # Check if ModelScope is available when needed
+        _check_modelscope_availability()
+        
         # Use ModelScope by default unless OSS is forced
         sm = ResourceManager(use_modelscope=not USE_OSS_DOWNLOAD)
         resource_path = sm.get_model(model_name, ignore_verification=IGNORE_VERIFICATION_OF_THE_LATEST_MODEL)
@@ -749,6 +777,10 @@ def pull_latest_model(model_name: str = "Pikachu") -> str:
         str: Path to the downloaded model.
     """
     from .utils.resource import USE_OSS_DOWNLOAD
+    
+    # Check if ModelScope is available when needed
+    _check_modelscope_availability()
+    
     sm = ResourceManager(use_modelscope=not USE_OSS_DOWNLOAD)
     resource_path = sm.get_model(model_name, re_download=True)
     return resource_path
@@ -766,6 +798,10 @@ def reload(model_name: str = "Pikachu", resource_path: str = None) -> bool:
     """
     if resource_path is None:
         from .utils.resource import USE_OSS_DOWNLOAD
+        
+        # Check if ModelScope is available when needed
+        _check_modelscope_availability()
+        
         sm = ResourceManager(use_modelscope=not USE_OSS_DOWNLOAD)
         resource_path = sm.get_model(model_name, ignore_verification=IGNORE_VERIFICATION_OF_THE_LATEST_MODEL)
     path_c = String(bytes(resource_path, encoding="utf8"))

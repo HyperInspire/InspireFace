@@ -70,7 +70,11 @@ class ResourceManager:
             
         # Check ModelScope availability
         if self.use_modelscope and not MODELSCOPE_AVAILABLE:
-            raise ImportError("ModelScope is not available. Please install it with: pip install modelscope")
+            raise ImportError(
+                "ModelScope is not available. You have two options:\n"
+                "1. Install ModelScope: pip install modelscope\n" 
+                "2. Switch to OSS download mode by calling: inspireface.use_oss_download(True) before using InspireFace"
+            )
         
         # Model URLs
         self._MODEL_LIST = {
