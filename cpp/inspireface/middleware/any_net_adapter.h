@@ -38,7 +38,9 @@ public:
      */
     explicit AnyNetAdapter(std::string name) : m_name_(std::move(name)) {
         m_processor_ = nexus::ImageProcessor::Create(INSPIREFACE_CONTEXT->GetImageProcessingBackend());
+#if defined(ISF_ENABLE_RKNN)
         m_processor_->SetAlignedWidth(INSPIREFACE_CONTEXT->GetImageProcessAlignedWidth());
+#endif
     }
 
     ~AnyNetAdapter() {
