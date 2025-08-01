@@ -732,11 +732,13 @@ def _check_modelscope_availability():
         print(f"ModelScope import failed: {e}")
     
     if not USE_OSS_DOWNLOAD and not modelscope_available:
-        print("❌ ModelScope is not installed, cannot download models!")
+        print("ModelScope is not available, cannot download models!")
         print("\nPlease choose one of the following solutions:")
-        print("1. Install ModelScope:")
-        print("   pip install modelscope")
-        print("\n2. Switch to OSS download mode:")
+        print("1. Reinstall ModelScope with all dependencies:")
+        print("   pip install --upgrade modelscope")
+        print("\n2. Install missing dependencies manually:")
+        print("   pip install filelock")
+        print("\n3. Switch to OSS download mode:")
         print("   import inspireface as isf")
         print("   isf.use_oss_download(True)  # Execute before calling launch()")
         print("\nNote: OSS download requires stable international network connection")

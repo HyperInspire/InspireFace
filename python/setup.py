@@ -123,6 +123,7 @@ setup(
     install_requires=[
         'numpy',
         'loguru',
+        'filelock',
         'modelscope'
     ],
     author='Jingyu Yan',
