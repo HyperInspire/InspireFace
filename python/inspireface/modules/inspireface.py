@@ -720,9 +720,16 @@ def _check_modelscope_availability():
     Exits the program if ModelScope is needed but not available and OSS is not enabled.
     """
     import sys
-    from .utils.resource import USE_OSS_DOWNLOAD, MODELSCOPE_AVAILABLE
+    from .utils.resource import USE_OSS_DOWNLOAD
     
-    if not USE_OSS_DOWNLOAD and not MODELSCOPE_AVAILABLE:
+    # Dynamic check for ModelScope availability (don't rely on cached MODELSCOPE_AVAILABLE)
+    modelscope_available = True
+    try:
+        from modelscope.hub.snapshot_download import snapshot_download
+    except ImportError:
+        modelscope_available = False
+    
+    if not USE_OSS_DOWNLOAD and not modelscope_available:
         print("❌ ModelScope is not installed, cannot download models!")
         print("\nPlease choose one of the following solutions:")
         print("1. Install ModelScope:")
