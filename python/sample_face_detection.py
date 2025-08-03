@@ -2,7 +2,6 @@ import os
 import cv2
 import inspireface as isf
 import click
-import numpy as np
 
 race_tags = ["Black", "Asian", "Latino/Hispanic", "Middle Eastern", "White"]
 gender_tags = ["Female", "Male"]
