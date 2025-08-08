@@ -24,6 +24,8 @@ We welcome your questions💬, they help guide and accelerate its development.
 
 ## Change Logs
 
+**`2025-08-03`** Add a multi-link model download channel for the Python-SDK.
+
 **`2025-06-15`** The [ErrorCode-Table](/doc/Error-Feedback-Codes.md) has been reorganized and streamlined.
 
 **`2025-06-08`** Add facial expression recognition.
@@ -71,7 +73,7 @@ The licensing of the open-source models employed by InspireFace adheres to the s
 For Python users on **Linux and MacOS**, InspireFace can be quickly installed via pip:
 
 ```bash
-pip install inspireface
+pip install -U inspireface
 ```
 
 After installation, you can use inspireface like this:
