@@ -267,7 +267,7 @@ if(ISF_ENABLE_OPENCV)
 endif ()
 
 # InspireCV dependency configuration
-set(INSPIRECV_BUILD_OBJECT_LIBS OFF CACHE BOOL "Build InspireCV as object library")
+set(INSPIRECV_BUILD_OBJECT_LIBS ON CACHE BOOL "Build InspireCV as object library")
 add_subdirectory(${ISF_THIRD_PARTY_DIR}/InspireCV EXCLUDE_FROM_ALL)
 set(INSPIRECV_INCLUDE_PATH "${ISF_THIRD_PARTY_DIR}/InspireCV/include")
 set(INSPIRECV_LIBS InspireCV)
