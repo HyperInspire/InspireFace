@@ -55,6 +55,7 @@ jobs:
       # Step 3: Install necessary dependencies for building the CMake project
       - name: Install Dependencies
         run: |
+          brew uninstall cmake
           brew install cmake
 
       # Step 4: Start building the SDK
@@ -80,6 +81,7 @@ jobs:
       # Step 3: Install necessary dependencies for building the CMake project
       - name: Install Dependencies
         run: |
+          brew uninstall cmake
           brew install cmake
 
       # Step 4: Start building the SDK

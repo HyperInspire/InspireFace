@@ -19,7 +19,10 @@ EmbeddingDB &EmbeddingDB::GetInstance() {
 
 void EmbeddingDB::Init(const std::string &dbPath, size_t vectorDim, IdMode idMode) {
     std::lock_guard<std::mutex> lock(instanceMutex_);
-    INSPIREFACE_CHECK_MSG(!instance_, "EmbeddingDB already initialized");
+    if (instance_) {
+        INSPIRE_LOGW("EmbeddingDB already initialized, skipping duplicate initialization");
+        return;
+    }
     instance_.reset(new EmbeddingDB(dbPath, vectorDim, "cosine", idMode));
 }
 
