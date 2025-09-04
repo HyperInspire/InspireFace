@@ -96,6 +96,7 @@ jobs:
           
       - name: Install Dependencies
         run: |
+          brew uninstall cmake
           brew install cmake
           
       - name: Build the SDK
@@ -132,6 +133,7 @@ jobs:
           
       - name: Install Dependencies
         run: |
+          brew uninstall cmake
           brew install cmake
           
       - name: Build the SDK
