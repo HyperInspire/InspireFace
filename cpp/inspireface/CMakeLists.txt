@@ -150,6 +150,10 @@ target_include_directories(InspireFace PUBLIC
 )
 
 if (ANDROID)
+    target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-Wl,-z,max-page-size=16384")
+    if(ANDROID_NDK_MAJOR LESS_EQUAL 22)
+        target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-Wl,-z,common-page-size=16384")
+    endif()
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS} jnigraphics log)
 
     set_target_properties(InspireFace PROPERTIES
