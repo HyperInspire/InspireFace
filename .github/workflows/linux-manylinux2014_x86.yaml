@@ -2,7 +2,7 @@ name: Build Linux-Ubuntu-x86
 
 on:
   push:
-    branches: ["feature/build_manylinux2014_x86"]
+    branches: ["feature/noexecstack"]
 
 # Set the global GitHub token environment variable
 env:
@@ -33,3 +33,24 @@ jobs:
       - name: Execute Docker Compose
         run: |
           docker-compose up build-manylinux2014-x86
+
+      # Step 5: Check 'Stack Protection Violation'
+      - name: Check 'Stack Protection Violation'
+        run: |
+          find build -name "*.so" -exec readelf -s {} | grep "Stack protection" \;
+
+      # Step 6: Zip SDK directory
+      - name: Zip SDK directory
+        run: |
+          cd build
+          zip -r ../inspireface-linux-x86-manylinux2014.zip inspireface-linux-x86-manylinux2014
+          cd ..
+          stat inspireface-linux-x86-manylinux2014.zip
+
+      # Step 6: Upload the zipped SDK files for the next job
+      - name: Upload SDK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk_files_manylinux2014_x86
+          path: |
+            inspireface-linux-x86-manylinux2014.zip
