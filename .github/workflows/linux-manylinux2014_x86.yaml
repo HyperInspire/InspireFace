@@ -37,7 +37,7 @@ jobs:
       # Step 5: Check GNU_STACK flag
       - name: Check GNU_STACK flag
         run: |
-          readelf -lW lib/libInspireFace.so | grep GNU_STACK
+          readelf -lW build/inspireface-linux-x86-manylinux2014/InspireFace/lib/libInspireFace.so | grep GNU_STACK
 
       # Step 6: Zip SDK directory
       - name: Zip SDK directory
