@@ -107,6 +107,17 @@ endif()
 target_compile_definitions(InspireFace PUBLIC INFERENCE_WRAPPER_ENABLE_MNN)
 target_compile_definitions(InspireFace PUBLIC FEATURE_BLOCK_ENABLE_OPENCV)
 
+# Enforce non-executable stack on Linux (addresses x86_64 loader failures)
+if(UNIX AND NOT APPLE AND NOT ANDROID)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_link_options(InspireFace PRIVATE "-Wl,-z,noexecstack")
+        target_compile_options(InspireFace PRIVATE "-Wa,--noexecstack")
+        if(TARGET inspirecv)
+            target_compile_options(inspirecv PRIVATE "-Wa,--noexecstack")
+        endif()
+    endif()
+endif()
+
 # Include files
 set(NEED_INCLUDE . ${MNN_INCLUDE_DIRS})
 if (ISF_ENABLE_RKNN)
