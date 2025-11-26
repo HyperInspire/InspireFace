@@ -9,10 +9,10 @@
 #endif
 
 static std::string GenerateUUID() {
-    thread_local std::random_device rd;
-    thread_local std::mt19937 gen(rd());
-    thread_local std::uniform_int_distribution<> dis(0, 15);
-    thread_local std::uniform_int_distribution<> dis2(8, 11);
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(0, 15);
+    static std::uniform_int_distribution<> dis2(8, 11);
 
     std::stringstream ss;
     ss << std::hex;
@@ -62,8 +62,7 @@ EmbeddingDB::EmbeddingDB(const std::string &dbPath, size_t vectorDim, const std:
     // std::string createTableSQL = "CREATE VIRTUAL TABLE IF NOT EXISTS " + tableName_ + " USING vec0(embedding float[" + std::to_string(vectorDim_) +
     //                              "], tname TEXT, distance_metric=" + distanceMetric + ")";
     std::string createTableSQL = "CREATE VIRTUAL TABLE IF NOT EXISTS " + tableName_ +
-        " USING vec0(embedding float[" + std::to_string(vectorDim_) + 
-        "], tname TEXT, uuid TEXT, distance_metric=" + distanceMetric + ")";
+        " USING vec0(embedding float[" + std::to_string(vectorDim_) + "], tname TEXT, uuid TEXT)";
 
     ExecuteSQL(createTableSQL);
     initialized_ = true;
@@ -75,29 +74,22 @@ EmbeddingDB::~EmbeddingDB() {
     }
 }
 
-bool EmbeddingDB::InsertVector(const std::vector<float> &vector, int64_t &allocId, const std::string &tName) {
+bool EmbeddingDB::InsertVector(const std::vector<float> &vector, int64_t &allocId, 
+                            const std::string &tName, const std::string &tUUID) {
     std::lock_guard<std::mutex> lock(dbMutex_);
-    return InsertVector(0, vector, allocId, tName);  // In auto-increment mode, the passed ID is ignored
+    return InsertVector(0, vector, allocId, tName, tUUID);
 }
 
-bool EmbeddingDB::InsertVector(int64_t id, const std::vector<float> &vector, int64_t &allocId, const std::string &tName) {
+bool EmbeddingDB::InsertVector(int64_t id, const std::vector<float> &vector, int64_t &allocId, 
+                            const std::string &tName, const std::string &tUUID) {
     CheckVectorDimension(vector);
-    // Normalize the vector
-    std::vector<float> normalized = vector;
-    float norm = 0.0f;
-    for (float v : normalized) {
-        norm += v * v;
-    }
-    norm = std::sqrt(norm);
-    if (norm > 1e-6) {
-        for (float &v : normalized) {
-            v /= norm;
-        }
-    }
-    
+
     sqlite3_stmt *stmt;
     std::string sql;
-    std::string uuid = GenerateUUID();
+    std::string uuid = tUUID;
+
+    if (uuid == "")
+        uuid = GenerateUUID();
 
     if (idMode_ == IdMode::AUTO_INCREMENT) {
         sql = "INSERT INTO " + tableName_ + " (tname, embedding, uuid) VALUES (?, ?, ?)";
@@ -114,12 +106,12 @@ bool EmbeddingDB::InsertVector(int64_t id, const std::vector<float> &vector, int
 
     if (idMode_ == IdMode::AUTO_INCREMENT) {
         sqlite3_bind_text(stmt, 1, tName.c_str(), -1, SQLITE_TRANSIENT);
-        sqlite3_bind_blob(stmt, 2, normalized.data(), vector.size() * sizeof(float), SQLITE_STATIC);
+        sqlite3_bind_blob(stmt, 2, vector.data(), vector.size() * sizeof(float), SQLITE_STATIC);
         sqlite3_bind_text(stmt, 3, uuid.c_str(), -1, SQLITE_TRANSIENT);
     } else {
         sqlite3_bind_int64(stmt, 1, id);
         sqlite3_bind_text(stmt, 2, tName.c_str(), -1, SQLITE_TRANSIENT);
-        sqlite3_bind_blob(stmt, 3, normalized.data(), vector.size() * sizeof(float), SQLITE_STATIC);
+        sqlite3_bind_blob(stmt, 3, vector.data(), vector.size() * sizeof(float), SQLITE_STATIC);
         sqlite3_bind_text(stmt, 4, uuid.c_str(), -1, SQLITE_TRANSIENT);
     }
 
@@ -162,19 +154,16 @@ std::vector<float> EmbeddingDB::GetVector(int64_t id) const {
     return result;
 }
 
-std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<VectorData> &vectors, const std::string &tName) {
+std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<VectorData> &vectors, 
+                        const std::string &tName, const std::string &tUUID) {
     ExecuteSQL("BEGIN");
     std::vector<int64_t> insertedIds;
     insertedIds.reserve(vectors.size());
 
     for (const auto &data : vectors) {
         int64_t id = 0;
-        bool ret = InsertVector(data.id, data.vector, id, tName);
-        if (!ret) {
-            ExecuteSQL("ROLLBACK");
-            INSPIRE_LOGE("Failed to batch insert vectors, transaction rolled back");
-            return {};
-        }
+        bool ret = InsertVector(data.id, data.vector, id, tName, tUUID);
+        INSPIREFACE_CHECK_MSG(ret, "Failed to insert vector");
         insertedIds.push_back(id);
     }
     ExecuteSQL("COMMIT");
@@ -182,14 +171,15 @@ std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<VectorDat
     return insertedIds;
 }
 
-std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<std::vector<float>> &vectors, const std::string &tName) {
+std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<std::vector<float>> &vectors, 
+                        const std::string &tName, const std::string &tUUID) {
     ExecuteSQL("BEGIN");
     std::vector<int64_t> insertedIds;
     insertedIds.reserve(vectors.size());
 
     for (const auto &vector : vectors) {
         int64_t id = 0;
-        bool ret = InsertVector(0, vector, id, tName);
+        bool ret = InsertVector(0, vector, id, tName, tUUID);
         INSPIREFACE_CHECK_MSG(ret, "Failed to insert vector");
         insertedIds.push_back(id);
     }
@@ -376,7 +366,6 @@ void EmbeddingDB::ShowTable() {
     std::lock_guard<std::mutex> lock(dbMutex_);
     sqlite3_stmt *stmt;
 
-    // Now include uuid column
     std::string sql = "SELECT rowid, tname, uuid, embedding FROM " + tableName_;
 
     int rc = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
@@ -385,11 +374,11 @@ void EmbeddingDB::ShowTable() {
     // Print header
 #ifdef __ANDROID__
     __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "=== Table Content ===");
-    __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "ID | tname | uuid | Vector (first 5 elements)");
+    __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "ID | tname | uuid | embedding_size");
     __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "-----------------------------------------------------------");
 #else
     printf("=== Table Content ===\n");
-    printf("ID | tname | uuid | Vector (first 5 elements)\n");
+    printf("ID | tname | uuid | embedding_size\n");
     printf("-----------------------------------------------------------\n");
 #endif
 
@@ -397,26 +386,20 @@ void EmbeddingDB::ShowTable() {
         int64_t id = sqlite3_column_int64(stmt, 0);
         const unsigned char *tname_text = sqlite3_column_text(stmt, 1);
         const unsigned char *uuid_text  = sqlite3_column_text(stmt, 2);
-        const float *vector_data = static_cast<const float *>(sqlite3_column_blob(stmt, 3));
-
-        size_t vector_size = std::min(size_t(5), sqlite3_column_bytes(stmt, 3) / sizeof(float));
+        const void *vector_blob = sqlite3_column_blob(stmt, 3);
+        int blob_bytes = sqlite3_column_bytes(stmt, 3);
 
         std::string tname_str = tname_text ? reinterpret_cast<const char*>(tname_text) : "";
         std::string uuid_str  = uuid_text  ? reinterpret_cast<const char*>(uuid_text)  : "";
 
-        std::string vector_str;
-        for (size_t i = 0; i < vector_size; ++i) {
-            vector_str += std::to_string(vector_data[i]);
-            if (i < vector_size - 1) vector_str += ", ";
-        }
-        vector_str += "...";
+        size_t vector_size = blob_bytes / sizeof(float);
 
 #ifdef __ANDROID__
-        __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "%" PRId64 " | %s | %s | %s",
-                            id, tname_str.c_str(), uuid_str.c_str(), vector_str.c_str());
+        __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "%" PRId64 " | %s | %s | %zu",
+                            id, tname_str.c_str(), uuid_str.c_str(), vector_size);
 #else
-        printf("%" PRId64 " | %s | %s | %s\n",
-               id, tname_str.c_str(), uuid_str.c_str(), vector_str.c_str());
+        printf("%" PRId64 " | %s | %s | %zu\n",
+               id, tname_str.c_str(), uuid_str.c_str(), vector_size);
 #endif
     }
 
