@@ -1106,10 +1106,7 @@ HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity, HPFaceI
     for (int i = 0; i < featureIdentity.feature->size; ++i) {
         feat.push_back(featureIdentity.feature->data[i]);
     }
-    const char* targetName = (featureIdentity.tname && strlen(featureIdentity.tname) > 0) 
-                         ? featureIdentity.tname : "Unknown";
-HInt32 ret = INSPIREFACE_FEATURE_HUB->FaceFeatureInsert(feat, featureIdentity.id, *allocId, targetName);
-
+    HInt32 ret = INSPIREFACE_FEATURE_HUB->FaceFeatureInsert(feat, featureIdentity.id, *allocId, "Target", "");
 
     return ret;
 }
