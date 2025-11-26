@@ -52,12 +52,12 @@ public:
     EmbeddingDB &operator=(EmbeddingDB &&) = delete;
 
     // Insert a single vector
-    bool InsertVector(int64_t id, const std::vector<float> &vector, int64_t &allocId, const std::string &tName);
-    bool InsertVector(const std::vector<float> &vector, int64_t &allocId, const std::string &tName);  // For auto-increment mode
+    bool InsertVector(int64_t id, const std::vector<float> &vector, int64_t &allocId, const std::string &tName, const std::string &tUUID);
+    bool InsertVector(const std::vector<float> &vector, int64_t &allocId, const std::string &tName, const std::string &tUUID);  // For auto-increment mode
 
     // Batch insert vectors
-    std::vector<int64_t> BatchInsertVectors(const std::vector<VectorData> &vectors, const std::string &tName);
-    std::vector<int64_t> BatchInsertVectors(const std::vector<std::vector<float>> &vectors, const std::string &tName);  // For auto-increment mode
+    std::vector<int64_t> BatchInsertVectors(const std::vector<VectorData> &vectors, const std::string &tName, const std::string &tUUID);
+    std::vector<int64_t> BatchInsertVectors(const std::vector<std::vector<float>> &vectors, const std::string &tName, const std::string &tUUID);  // For auto-increment mode
 
     // Update vector
     void UpdateVector(int64_t id, const std::vector<float> &newVector);
