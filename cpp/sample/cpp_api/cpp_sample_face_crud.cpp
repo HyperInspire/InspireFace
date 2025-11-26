@@ -43,7 +43,7 @@ int main() {
 
     // Insert face feature into the hub, because the id is INSPIRE_INVALID_ID, so input id is ignored
     int64_t result_id;
-    INSPIREFACE_FEATURE_HUB->FaceFeatureInsert(feature.embedding, INSPIRE_INVALID_ID, result_id, "None");
+    INSPIREFACE_FEATURE_HUB->FaceFeatureInsert(feature.embedding, INSPIRE_INVALID_ID, result_id, "Target", "");
 
     inspire::FaceEmbedding face_feature;
     INSPIREFACE_FEATURE_HUB->GetFaceFeature(result_id, face_feature);
