@@ -122,7 +122,8 @@ public:
      * @param result_id Output parameter to store the resulting ID.
      * @return int32_t Status code of the insertion operation.
      */
-    int32_t FaceFeatureInsert(const std::vector<float>& feature, int32_t id, int64_t& result_id, const std::string &tName);
+    int32_t FaceFeatureInsert(const std::vector<float>& feature, int32_t id, int64_t& result_id, 
+                                        const std::string &tName, const std::string &tUUID);
 
     /**
      * @brief Removes a face feature by its ID.
