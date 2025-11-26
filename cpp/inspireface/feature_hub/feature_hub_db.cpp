@@ -258,14 +258,15 @@ int32_t FeatureHubDB::SearchFaceFeatureTopK(const Embedded &queryFeature, std::v
     return HSUCCEED;
 }
 
-int32_t FeatureHubDB::FaceFeatureInsert(const std::vector<float> &feature, int32_t id, int64_t &result_id, const std::string &tName) {
+int32_t FeatureHubDB::FaceFeatureInsert(const std::vector<float> &feature, int32_t id, int64_t &result_id, 
+                                const std::string &tName, const std::string &tUUID) {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!pImpl->m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
     }
 
-    bool ret = EMBEDDING_DB::GetInstance().InsertVector(id, feature, result_id, tName);
+    bool ret = EMBEDDING_DB::GetInstance().InsertVector(id, feature, result_id, tName, tUUID);
     if (!ret) {
         result_id = -1;
         return HERR_FT_HUB_INSERT_FAILURE;
