@@ -86,6 +86,8 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageStreamEmpty(PHFImageStream handle)
     }
     auto stream = new HF_CameraStream();
     *handle = (HFImageStream)stream;
+    // Record the creation of this stream in the ResourceManager
+    RESOURCE_MANAGE->createStream((long)*handle);
     return HSUCCEED;
 }
 
