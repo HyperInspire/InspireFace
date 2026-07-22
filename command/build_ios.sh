@@ -90,6 +90,7 @@ mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
 cmake \
+    -DCMAKE_MAKE_PROGRAM="$(xcrun --find make)" \
     -DIOS_3RDPARTY="${MACOS_CACHE}" \
     -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN} \
     -DCMAKE_OSX_ARCHITECTURES=arm64 \
