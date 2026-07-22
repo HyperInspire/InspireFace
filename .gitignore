@@ -28,3 +28,4 @@ cpp/inspireface/version.txt
 .rknpu2_cache/
 test_res/data/video_frames/
 *.mp4
+build_*/
