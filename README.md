@@ -82,7 +82,7 @@ The licensing of the open-source models employed by InspireFace adheres to the s
 
 <p>
   <strong>Scan the QR code to download the Android example app</strong><br />
-  Or download it directly: <a href="http://fir.tunm.top/pro/pz7b3dgv">http://fir.tunm.top/pro/pz7b3dgv</a>
+  Or <a href="http://fir.tunm.top/pro/pz7b3dgv">download the app directly</a>.
 </p>
 
 ### Python Quick Start
