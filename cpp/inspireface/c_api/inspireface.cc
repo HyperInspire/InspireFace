@@ -95,7 +95,7 @@ HYPER_CAPI_EXPORT extern HResult HFImageStreamSetBuffer(HFImageStream handle, HP
     if (handle == nullptr) {
         return HERR_INVALID_IMAGE_STREAM_HANDLE;
     }
-    ((HF_CameraStream *)handle)->impl.SetDataBuffer(buffer, width, height);
+    ((HF_CameraStream *)handle)->impl.SetDataBuffer(buffer, height, width);
     return HSUCCEED;
 }
 
