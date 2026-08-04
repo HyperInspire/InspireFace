@@ -183,10 +183,10 @@ class ResourceManager:
             print(f"Downloading model '{name}'...")
             downloading_flag.touch()
 
-            # Create SSL context and headers
+            # Create SSL context and headers. Keep certificate and hostname
+            # verification enabled (the defaults) so the download cannot be
+            # silently MITM'd by a network attacker.
             ssl_context = ssl.create_default_context()
-            ssl_context.check_hostname = False
-            ssl_context.verify_mode = ssl.CERT_NONE
             headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
             
             req = urllib.request.Request(model_info["url"], headers=headers)
@@ -210,6 +210,21 @@ class ResourceManager:
                             sys.stdout.flush()
             
             print("\nDownload completed")
+
+            # Verify the integrity of the freshly downloaded file before
+            # handing it back to the caller. Without this check a corrupted or
+            # attacker-supplied payload would be loaded as-is.
+            if ignore_verification:
+                print(f"Warning: Model verification skipped for '{name}' as requested.")
+            else:
+                downloaded_hash = get_file_hash_sha256(model_file)
+                if downloaded_hash != model_info["md5"]:
+                    model_file.unlink()
+                    raise RuntimeError(
+                        f"Downloaded model hash mismatch for '{name}': "
+                        f"expected {model_info['md5']}, got {downloaded_hash}"
+                    )
+
             downloading_flag.unlink()  # Remove the downloading flag
             return str(model_file)
 
