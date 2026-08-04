@@ -38,7 +38,7 @@ import inspireface as isf
 
 # Create session with required features enabled
 session = isf.InspireFaceSession(
-    opt=isf.HF_ENABLE_NONE,  # Optional features
+    param=isf.HF_ENABLE_NONE,  # Optional features
     detect_mode=isf.HF_DETECT_MODE_ALWAYS_DETECT  # Detection mode
 )
 
