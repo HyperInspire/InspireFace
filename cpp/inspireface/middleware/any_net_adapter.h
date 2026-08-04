@@ -118,10 +118,6 @@ public:
         } else {
             ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);
         }
-        if (ret != InferenceWrapper::WrapperOk) {
-            INSPIRE_LOGE("NN Initialize fail");
-            return ret;
-        }
 
         if (ret != InferenceWrapper::WrapperOk) {
             INSPIRE_LOGE("NN Initialize fail");
