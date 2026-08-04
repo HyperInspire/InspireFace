@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <memory>
 #include <unordered_map>
-#include "im2d.hpp"
+#include "im2d.h"
 #include "im2d_single.h"
 #include "RgaUtils.h"
 #include "rga/utils.h"
