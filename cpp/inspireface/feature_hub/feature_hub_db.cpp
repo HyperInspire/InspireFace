@@ -85,6 +85,15 @@ int32_t FeatureHubDB::GetAllIds() {
     return HSUCCEED;
 }
 
+std::vector<std::pair<std::string, std::string>> FeatureHubDB::GetAllTargetsNames() {
+    if (!pImpl->m_enable_) {
+        INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
+        return {};
+    }
+
+    return EMBEDDING_DB::GetInstance().GetAllTNames();
+}
+
 int32_t FeatureHubDB::EnableHub(const DatabaseConfiguration &configuration) {
     if (pImpl->m_enable_) {
         INSPIRE_LOGW("You have enabled the FeatureHub feature. It is not valid to do so again");
@@ -195,15 +204,18 @@ int32_t FeatureHubDB::SearchFaceFeature(const Embedded &queryFeature, FaceSearch
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HSUCCEED;
     }
-
     pImpl->m_search_face_feature_cache_.clear();
     auto results = EMBEDDING_DB::GetInstance().SearchSimilarVectors(queryFeature, 1, pImpl->m_recognition_threshold_, returnFeature);
+    
+    // Initialize search result with default values
     searchResult.id = -1;
+    searchResult.similarity = 0.0f;
 
     if (!results.empty()) {
         auto &searched = results[0];
         searchResult.similarity = searched.similarity;
         searchResult.id = searched.id;
+        searchResult.tname = searched.tname;
         if (returnFeature) {
             searchResult.feature = searched.feature;
             pImpl->m_search_face_feature_cache_ = searched.feature;
@@ -246,14 +258,15 @@ int32_t FeatureHubDB::SearchFaceFeatureTopK(const Embedded &queryFeature, std::v
     return HSUCCEED;
 }
 
-int32_t FeatureHubDB::FaceFeatureInsert(const std::vector<float> &feature, int32_t id, int64_t &result_id) {
+int32_t FeatureHubDB::FaceFeatureInsert(const std::vector<float> &feature, int32_t id, int64_t &result_id, 
+                                const std::string &tName, const std::string &tUUID) {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!pImpl->m_enable_) {
         INSPIRE_LOGE("FeatureHub is disabled, please enable it before it can be served");
         return HERR_FT_HUB_DISABLE;
     }
 
-    bool ret = EMBEDDING_DB::GetInstance().InsertVector(id, feature, result_id);
+    bool ret = EMBEDDING_DB::GetInstance().InsertVector(id, feature, result_id, tName, tUUID);
     if (!ret) {
         result_id = -1;
         return HERR_FT_HUB_INSERT_FAILURE;

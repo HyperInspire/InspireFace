@@ -86,6 +86,8 @@ public:
      */
     int32_t GetAllIds();
 
+    std::vector<std::pair<std::string, std::string>> GetAllTargetsNames();
+
     /**
      * @brief Searches for a face feature within stored data.
      * @param queryFeature Embedded feature to search for.
@@ -120,7 +122,8 @@ public:
      * @param result_id Output parameter to store the resulting ID.
      * @return int32_t Status code of the insertion operation.
      */
-    int32_t FaceFeatureInsert(const std::vector<float>& feature, int32_t id, int64_t& result_id);
+    int32_t FaceFeatureInsert(const std::vector<float>& feature, int32_t id, int64_t& result_id, 
+                                        const std::string &tName, const std::string &tUUID);
 
     /**
      * @brief Removes a face feature by its ID.

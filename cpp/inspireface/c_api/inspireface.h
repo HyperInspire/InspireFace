@@ -939,10 +939,11 @@ HYPER_CAPI_EXPORT extern HResult HFFeatureHubDataDisable();
  * This struct associates a custom identifier and a tag with a specific face feature.
  */
 typedef struct HFFaceFeatureIdentity {
-    HFaceId id;              ///< If you use automatic assignment id mode when inserting, ignore it.
-    PHFFaceFeature feature;  ///< Pointer to the face feature.
-    // HString tag;                 ///< Not supported yet
+    HFaceId id;
+    PHFFaceFeature feature;
+    HString tname;  // ADD THIS LINE
 } HFFaceFeatureIdentity, *PHFFaceFeatureIdentity;
+
 
 /**
  * Search structure for top-k mode

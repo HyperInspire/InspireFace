@@ -2,9 +2,32 @@
 #include "sqlite-vec.h"
 #include "isf_check.h"
 #include <algorithm>
+#include <random>
+#include <sstream>
 #if defined(__ANDROID__)
 #include <android/log.h>
 #endif
+
+static std::string GenerateUUID() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(0, 15);
+    static std::uniform_int_distribution<> dis2(8, 11);
+
+    std::stringstream ss;
+    ss << std::hex;
+    for (int i = 0; i < 8; i++) ss << dis(gen);
+    ss << "-";
+    for (int i = 0; i < 4; i++) ss << dis(gen);
+    ss << "-4";
+    for (int i = 0; i < 3; i++) ss << dis(gen);
+    ss << "-";
+    ss << dis2(gen);
+    for (int i = 0; i < 3; i++) ss << dis(gen);
+    ss << "-";
+    for (int i = 0; i < 12; i++) ss << dis(gen);
+    return ss.str();
+}
 
 namespace inspire {
 
@@ -35,9 +58,11 @@ EmbeddingDB::EmbeddingDB(const std::string &dbPath, size_t vectorDim, const std:
     rc = sqlite3_open(dbPath.c_str(), &db_);
     CheckSQLiteError(rc, db_);
 
-    // Create vector table
-    std::string createTableSQL = "CREATE VIRTUAL TABLE IF NOT EXISTS " + tableName_ + " USING vec0(embedding float[" + std::to_string(vectorDim_) +
-                                 "] distance_metric=" + distanceMetric + ")";
+    // // Create vector table
+    // std::string createTableSQL = "CREATE VIRTUAL TABLE IF NOT EXISTS " + tableName_ + " USING vec0(embedding float[" + std::to_string(vectorDim_) +
+    //                              "], tname TEXT, distance_metric=" + distanceMetric + ")";
+    std::string createTableSQL = "CREATE VIRTUAL TABLE IF NOT EXISTS " + tableName_ +
+        " USING vec0(embedding float[" + std::to_string(vectorDim_) + "], tname TEXT, uuid TEXT)";
 
     ExecuteSQL(createTableSQL);
     initialized_ = true;
@@ -49,25 +74,30 @@ EmbeddingDB::~EmbeddingDB() {
     }
 }
 
-bool EmbeddingDB::InsertVector(const std::vector<float> &vector, int64_t &allocId) {
+bool EmbeddingDB::InsertVector(const std::vector<float> &vector, int64_t &allocId, 
+                            const std::string &tName, const std::string &tUUID) {
     std::lock_guard<std::mutex> lock(dbMutex_);
-    return InsertVector(0, vector, allocId);  // In auto-increment mode, the passed ID is ignored
+    return InsertVector(0, vector, allocId, tName, tUUID);
 }
 
-bool EmbeddingDB::InsertVector(int64_t id, const std::vector<float> &vector, int64_t &allocId) {
+bool EmbeddingDB::InsertVector(int64_t id, const std::vector<float> &vector, int64_t &allocId, 
+                            const std::string &tName, const std::string &tUUID) {
     CheckVectorDimension(vector);
 
     sqlite3_stmt *stmt;
     std::string sql;
+    std::string uuid = tUUID;
+
+    if (uuid == "")
+        uuid = GenerateUUID();
 
     if (idMode_ == IdMode::AUTO_INCREMENT) {
-        sql = "INSERT INTO " + tableName_ + "(embedding) VALUES (?)";
+        sql = "INSERT INTO " + tableName_ + " (tname, embedding, uuid) VALUES (?, ?, ?)";
     } else {
-        sql = "INSERT INTO " + tableName_ + "(rowid, embedding) VALUES (?, ?)";
+        sql = "INSERT INTO " + tableName_ + " (rowid, tname, embedding, uuid) VALUES (?, ?, ?, ?)";
     }
 
     int rc = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
-    // CheckSQLiteError(rc, db_);
     if (rc != SQLITE_OK) {
         INSPIRE_LOGE("Failed to prepare statement: %s", sqlite3_errmsg(db_));
         sqlite3_finalize(stmt);
@@ -75,23 +105,28 @@ bool EmbeddingDB::InsertVector(int64_t id, const std::vector<float> &vector, int
     }
 
     if (idMode_ == IdMode::AUTO_INCREMENT) {
-        sqlite3_bind_blob(stmt, 1, vector.data(), vector.size() * sizeof(float), SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 1, tName.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_blob(stmt, 2, vector.data(), vector.size() * sizeof(float), SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 3, uuid.c_str(), -1, SQLITE_TRANSIENT);
     } else {
         sqlite3_bind_int64(stmt, 1, id);
-        sqlite3_bind_blob(stmt, 2, vector.data(), vector.size() * sizeof(float), SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 2, tName.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_blob(stmt, 3, vector.data(), vector.size() * sizeof(float), SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 4, uuid.c_str(), -1, SQLITE_TRANSIENT);
     }
 
     rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
+
     if (rc != SQLITE_DONE) {
         INSPIRE_LOGE("Failed to insert vector: %s", sqlite3_errmsg(db_));
         return false;
     }
-    // CheckSQLiteError(rc == SQLITE_DONE ? SQLITE_OK : rc, db_);
 
     allocId = idMode_ == IdMode::AUTO_INCREMENT ? GetLastInsertRowId() : id;
     return true;
 }
+
 
 std::vector<float> EmbeddingDB::GetVector(int64_t id) const {
     std::lock_guard<std::mutex> lock(dbMutex_);
@@ -119,14 +154,15 @@ std::vector<float> EmbeddingDB::GetVector(int64_t id) const {
     return result;
 }
 
-std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<VectorData> &vectors) {
+std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<VectorData> &vectors, 
+                        const std::string &tName, const std::string &tUUID) {
     ExecuteSQL("BEGIN");
     std::vector<int64_t> insertedIds;
     insertedIds.reserve(vectors.size());
 
     for (const auto &data : vectors) {
         int64_t id = 0;
-        bool ret = InsertVector(data.id, data.vector, id);
+        bool ret = InsertVector(data.id, data.vector, id, tName, tUUID);
         INSPIREFACE_CHECK_MSG(ret, "Failed to insert vector");
         insertedIds.push_back(id);
     }
@@ -135,14 +171,15 @@ std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<VectorDat
     return insertedIds;
 }
 
-std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<std::vector<float>> &vectors) {
+std::vector<int64_t> EmbeddingDB::BatchInsertVectors(const std::vector<std::vector<float>> &vectors, 
+                        const std::string &tName, const std::string &tUUID) {
     ExecuteSQL("BEGIN");
     std::vector<int64_t> insertedIds;
     insertedIds.reserve(vectors.size());
 
     for (const auto &vector : vectors) {
         int64_t id = 0;
-        bool ret = InsertVector(0, vector, id);
+        bool ret = InsertVector(0, vector, id, tName, tUUID);
         INSPIREFACE_CHECK_MSG(ret, "Failed to insert vector");
         insertedIds.push_back(id);
     }
@@ -189,31 +226,30 @@ void EmbeddingDB::DeleteVector(int64_t id) {
     CheckSQLiteError(rc == SQLITE_DONE ? SQLITE_OK : rc, db_);
 }
 
-std::vector<FaceSearchResult> EmbeddingDB::SearchSimilarVectors(const std::vector<float> &queryVector, size_t top_k, float keep_similar_threshold,
-                                                                bool return_feature) {
+std::vector<FaceSearchResult> EmbeddingDB::SearchSimilarVectors(
+        const std::vector<float> &queryVector,
+        size_t top_k,
+        float keep_similar_threshold,
+        bool return_feature) {
+
     std::lock_guard<std::mutex> lock(dbMutex_);
     CheckVectorDimension(queryVector);
 
     sqlite3_stmt *stmt;
     std::string sql;
+
     if (return_feature) {
-        sql =
-          "SELECT rowid, embedding, 1.0 - distance as similarity "
-          "FROM " +
-          tableName_ +
-          " "
-          "WHERE embedding MATCH ? "
-          "ORDER BY distance "
-          "LIMIT ?";
+        sql = "SELECT rowid, distance, embedding, tname "
+              "FROM " + tableName_ + " "
+              "WHERE embedding MATCH ? "
+              "ORDER BY distance "
+              "LIMIT ?";
     } else {
-        sql =
-          "SELECT rowid, 1.0 - distance as similarity "
-          "FROM " +
-          tableName_ +
-          " "
-          "WHERE embedding MATCH ? "
-          "ORDER BY distance "
-          "LIMIT ?";
+        sql = "SELECT rowid, distance, tname "
+              "FROM " + tableName_ + " "
+              "WHERE embedding MATCH ? "
+              "ORDER BY distance "
+              "LIMIT ?";
     }
 
     int rc = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
@@ -226,27 +262,59 @@ std::vector<FaceSearchResult> EmbeddingDB::SearchSimilarVectors(const std::vecto
     while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
         FaceSearchResult result;
         result.id = sqlite3_column_int64(stmt, 0);
+
+        // Extract distance (col 1) and compute similarity
+        double distance_val = sqlite3_column_double(stmt, 1);
+        
+        // sqlite-vec returns L2 (Euclidean) distance for normalized vectors
+        // For normalized vectors: cosine_similarity = 1 - (L2_distance^2 / 2)
+        // This is because: L2_distance^2 = 2 * (1 - cosine_similarity)
+        float l2_dist = static_cast<float>(distance_val);
+        float similarity = 1.0f - (l2_dist * l2_dist / 2.0f);
+        
+        // Clamp for safety (embeddings should yield [0,1] similarity, but allow [-1,1])
+        similarity = std::max(-1.0f, std::min(1.0f, similarity));
+        result.similarity = similarity;
+
         if (return_feature) {
-            const float *blob_data = static_cast<const float *>(sqlite3_column_blob(stmt, 1));
-            size_t blob_size = sqlite3_column_bytes(stmt, 1) / sizeof(float);
-            result.feature.assign(blob_data, blob_data + blob_size);
-            result.similarity = sqlite3_column_double(stmt, 2);
+            // embedding is col 2, tname is col 3
+            const float *blob_data = static_cast<const float *>(sqlite3_column_blob(stmt, 2));
+            int blob_bytes = sqlite3_column_bytes(stmt, 2);
+            if (blob_data && blob_bytes > 0 && (blob_bytes % sizeof(float) == 0)) {
+                size_t blob_size = static_cast<size_t>(blob_bytes) / sizeof(float);
+                result.feature.assign(blob_data, blob_data + blob_size);
+            } else {
+                // Handle null/empty/invalid blob
+                INSPIRE_LOGW("Invalid embedding blob for ID %ld", result.id);
+                result.feature.clear();
+            }
+            const unsigned char *tname_text = sqlite3_column_text(stmt, 3);
+            if (tname_text) {
+                result.tname = reinterpret_cast<const char*>(tname_text);
+            }
         } else {
-            result.similarity = sqlite3_column_double(stmt, 1);
+            // tname is col 2 when not returning feature
+            const unsigned char *tname_text = sqlite3_column_text(stmt, 2);
+            if (tname_text) {
+                result.tname = reinterpret_cast<const char*>(tname_text);
+            }
         }
+
         results.push_back(result);
     }
 
     sqlite3_finalize(stmt);
-    CheckSQLiteError(rc == SQLITE_DONE ? SQLITE_OK : rc, db_);
 
-    // Filter results whose similarity is below the threshold
+    // Filter based on real similarity threshold
     results.erase(std::remove_if(results.begin(), results.end(),
-                                 [keep_similar_threshold](const FaceSearchResult &result) { return result.similarity < keep_similar_threshold; }),
+                                 [keep_similar_threshold](const FaceSearchResult &r) {
+                                     return r.similarity < keep_similar_threshold;
+                                 }),
                   results.end());
 
     return results;
 }
+
 
 int64_t EmbeddingDB::GetVectorCount() const {
     std::lock_guard<std::mutex> lock(dbMutex_);
@@ -294,9 +362,11 @@ void EmbeddingDB::ShowTable() {
         INSPIRE_LOGE("EmbeddingDB is not initialized");
         return;
     }
+
     std::lock_guard<std::mutex> lock(dbMutex_);
     sqlite3_stmt *stmt;
-    std::string sql = "SELECT rowid, embedding FROM " + tableName_;
+
+    std::string sql = "SELECT rowid, tname, uuid, embedding FROM " + tableName_;
 
     int rc = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
     CheckSQLiteError(rc, db_);
@@ -304,31 +374,32 @@ void EmbeddingDB::ShowTable() {
     // Print header
 #ifdef __ANDROID__
     __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "=== Table Content ===");
-    __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "ID | Vector (first 5 elements)");
-    __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "------------------------");
+    __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "ID | tname | uuid | embedding_size");
+    __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "-----------------------------------------------------------");
 #else
     printf("=== Table Content ===\n");
-    printf("ID | Vector (first 5 elements)\n");
-    printf("------------------------\n");
+    printf("ID | tname | uuid | embedding_size\n");
+    printf("-----------------------------------------------------------\n");
 #endif
 
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         int64_t id = sqlite3_column_int64(stmt, 0);
-        const float *vector_data = static_cast<const float *>(sqlite3_column_blob(stmt, 1));
-        size_t vector_size = std::min(size_t(5), sqlite3_column_bytes(stmt, 1) / sizeof(float));
+        const unsigned char *tname_text = sqlite3_column_text(stmt, 1);
+        const unsigned char *uuid_text  = sqlite3_column_text(stmt, 2);
+        const void *vector_blob = sqlite3_column_blob(stmt, 3);
+        int blob_bytes = sqlite3_column_bytes(stmt, 3);
 
-        std::string vector_str;
-        for (size_t i = 0; i < vector_size; ++i) {
-            vector_str += std::to_string(vector_data[i]);
-            if (i < vector_size - 1)
-                vector_str += ", ";
-        }
-        vector_str += "...";
+        std::string tname_str = tname_text ? reinterpret_cast<const char*>(tname_text) : "";
+        std::string uuid_str  = uuid_text  ? reinterpret_cast<const char*>(uuid_text)  : "";
+
+        size_t vector_size = blob_bytes / sizeof(float);
 
 #ifdef __ANDROID__
-        __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "%lld | %s", id, vector_str.c_str());
+        __android_log_print(ANDROID_LOG_INFO, "EmbeddingDB", "%" PRId64 " | %s | %s | %zu",
+                            id, tname_str.c_str(), uuid_str.c_str(), vector_size);
 #else
-        printf("%lld | %s\n", id, vector_str.c_str());
+        printf("%" PRId64 " | %s | %s | %zu\n",
+               id, tname_str.c_str(), uuid_str.c_str(), vector_size);
 #endif
     }
 
@@ -355,6 +426,35 @@ std::vector<int64_t> EmbeddingDB::GetAllIds() {
 
     sqlite3_finalize(stmt);
     return ids;
+}
+
+std::vector<std::pair<std::string, std::string>> EmbeddingDB::GetAllTNames() {
+    if (!initialized_) {
+        INSPIRE_LOGE("EmbeddingDB is not initialized");
+        return {};
+    }
+
+    std::lock_guard<std::mutex> lock(dbMutex_);
+    std::vector<std::pair<std::string, std::string>> results;
+
+    sqlite3_stmt *stmt;
+    std::string sql = "SELECT DISTINCT tname, uuid FROM " + tableName_;
+
+    int rc = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr);
+    CheckSQLiteError(rc, db_);
+
+    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+        const unsigned char *tname_text = sqlite3_column_text(stmt, 0);
+        const unsigned char *uuid_text  = sqlite3_column_text(stmt, 1);
+
+        std::string tname = tname_text ? reinterpret_cast<const char*>(tname_text) : "";
+        std::string uuid  = uuid_text  ? reinterpret_cast<const char*>(uuid_text)  : "";
+
+        results.emplace_back(tname, uuid);
+    }
+
+    sqlite3_finalize(stmt);
+    return results;
 }
 
 }  // namespace inspire

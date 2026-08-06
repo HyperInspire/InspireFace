@@ -1108,7 +1108,7 @@ HResult HFFeatureHubInsertFeature(HFFaceFeatureIdentity featureIdentity, HPFaceI
     for (int i = 0; i < featureIdentity.feature->size; ++i) {
         feat.push_back(featureIdentity.feature->data[i]);
     }
-    HInt32 ret = INSPIREFACE_FEATURE_HUB->FaceFeatureInsert(feat, featureIdentity.id, *allocId);
+    HInt32 ret = INSPIREFACE_FEATURE_HUB->FaceFeatureInsert(feat, featureIdentity.id, *allocId, "Target", "");
 
     return ret;
 }
