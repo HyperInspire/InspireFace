@@ -10,6 +10,7 @@ import pathlib
 import shutil
 import tempfile
 import unittest
+from unittest import mock
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -146,6 +147,61 @@ class ConversionReportTests(unittest.TestCase):
             (board / "results.json").write_text(json.dumps(results), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "duplicate board evidence ID"):
                 MODULE.build_report(root)
+
+    def test_ingestion_allows_missing_evidence_and_reports_failure_stages(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = pathlib.Path(temporary)
+            models = root / "models"
+            board = root / "board"
+            models.mkdir()
+            board.mkdir()
+            for sidecar in (ARTIFACTS / "models").glob("*_rv1126b.json"):
+                shutil.copy2(sidecar, models / sidecar.name)
+            results = json.loads((ARTIFACTS / "board" / "results.json").read_text(encoding="utf-8-sig"))
+            (board / "results.json").write_text(json.dumps(results), encoding="utf-8")
+
+            inventory = MODULE._inventory()
+            sidecars = {
+                json.loads(path.read_text(encoding="utf-8-sig"))["model_id"]: json.loads(path.read_text(encoding="utf-8-sig"))
+                for path in models.glob("*_rv1126b.json")
+            }
+
+            def fake_hash(path):
+                path = pathlib.Path(path)
+                relative = path.relative_to(root)
+                if relative.parts[0] == "source":
+                    source = pathlib.PurePath(*relative.parts[1:]).as_posix()
+                    return next(record["source_sha256"] for record in inventory if record["source"] == source)
+                if relative.parts[0] == "models":
+                    model_id = path.name[: -len("_rv1126b.rknn")]
+                    return sidecars.get(model_id, {}).get("output_sha256")
+                model_id = relative.parts[1]
+                if path.name == "dataset.txt":
+                    return sidecars.get(model_id, {}).get("dataset_sha256")
+                if path.name == "calibration.json":
+                    return sidecars.get(model_id, {}).get("calibration_manifest_sha256")
+                return None
+
+            with mock.patch.object(MODULE, "_sha256", side_effect=fake_hash):
+                (models / "attitude_rv1126b.json").unlink()
+                missing_sidecar = MODULE.build_report(root)
+                self.assertEqual(len(missing_sidecar["models"]), 18)
+                self.assertEqual(missing_sidecar["models"][0]["failure_stage"]["stage"], "conversion")
+                self.assertFalse(MODULE.can_start_pack_integration(missing_sidecar))
+
+                shutil.copy2(ARTIFACTS / "models" / "attitude_rv1126b.json", models / "attitude_rv1126b.json")
+                results = [result for result in results if result["model_id"] != "attitude"]
+                (board / "results.json").write_text(json.dumps(results), encoding="utf-8")
+                missing_board_row = MODULE.build_report(root)
+                self.assertEqual(len(missing_board_row["models"]), 18)
+                self.assertEqual(missing_board_row["models"][0]["failure_stage"]["stage"], "board")
+                self.assertFalse(MODULE.can_start_pack_integration(missing_board_row))
+
+                (board / "results.json").unlink()
+                missing_results_file = MODULE.build_report(root)
+                self.assertEqual(len(missing_results_file["models"]), 18)
+                self.assertEqual(missing_results_file["models"][0]["failure_stage"]["stage"], "board")
+                self.assertFalse(MODULE.can_start_pack_integration(missing_results_file))
 
     def test_report_marks_board_failures_at_the_specific_stage(self):
         inventory = MODULE._inventory()[0]

@@ -87,8 +87,9 @@ def _validate_evidence_ids(entries: Any, kind: str) -> dict[str, dict]:
         if model_id in evidence:
             raise ValueError(f"duplicate {kind} evidence ID: {model_id}")
         evidence[model_id] = entry
-    if set(evidence) != set(EXPECTED_IDS):
-        raise ValueError(f"{kind} evidence IDs must match the exact RV1126B inventory")
+    unknown_ids = set(evidence).difference(EXPECTED_IDS)
+    if unknown_ids:
+        raise ValueError(f"{kind} evidence IDs contain unknown RV1126B models: {sorted(unknown_ids)[0]}")
     return evidence
 
 
