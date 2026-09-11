@@ -7,6 +7,8 @@ import importlib.util
 import json
 import os
 import pathlib
+import shutil
+import tempfile
 import unittest
 
 
@@ -85,6 +87,27 @@ class ConversionReportTests(unittest.TestCase):
         nonfinite = copy.deepcopy(self.report)
         nonfinite["models"][0]["outputs"]["all_finite"] = False
         cases.append(nonfinite)
+        source_hash = copy.deepcopy(self.report)
+        source_hash["models"][0]["source"]["sha256"] = "0" * 64
+        cases.append(source_hash)
+        calibration_hash = copy.deepcopy(self.report)
+        calibration_hash["models"][0]["calibration"]["dataset_sha256"] = "0" * 64
+        cases.append(calibration_hash)
+        output_hash = copy.deepcopy(self.report)
+        output_hash["models"][0]["outputs"]["sha256"][0]["sha256"] = "0" * 64
+        cases.append(output_hash)
+        missing_contract = copy.deepcopy(self.report)
+        missing_contract["models"][0]["native_tensor_contracts"]["outputs"].pop()
+        cases.append(missing_contract)
+        changed_contract = copy.deepcopy(self.report)
+        changed_contract["models"][0]["native_tensor_contracts"]["inputs"][0]["dims"] = [1, 1, 1, 1]
+        cases.append(changed_contract)
+        bad_api_suffix = copy.deepcopy(self.report)
+        bad_api_suffix["models"][0]["board"]["api_version"] = "2.3.20"
+        cases.append(bad_api_suffix)
+        bad_api_text = copy.deepcopy(self.report)
+        bad_api_text["models"][0]["board"]["api_version"] = "2.3.2-not-a-version"
+        cases.append(bad_api_text)
         unexpected = copy.deepcopy(self.report)
         unexpected["models"].append(copy.deepcopy(unexpected["models"][0]))
         unexpected["models"][-1]["id"] = "unexpected"
@@ -93,6 +116,72 @@ class ConversionReportTests(unittest.TestCase):
         for report in cases:
             with self.subTest(report=report["models"][0]["id"]):
                 self.assertFalse(MODULE.can_start_pack_integration(report))
+
+    def test_ingestion_rejects_unknown_and_duplicate_evidence_ids(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = pathlib.Path(temporary)
+            models = root / "models"
+            board = root / "board"
+            models.mkdir()
+            board.mkdir()
+            for sidecar in (ARTIFACTS / "models").glob("*_rv1126b.json"):
+                shutil.copy2(sidecar, models / sidecar.name)
+            shutil.copy2(ARTIFACTS / "board" / "results.json", board / "results.json")
+
+            duplicate = json.loads((models / "attitude_rv1126b.json").read_text(encoding="utf-8-sig"))
+            (models / "duplicate_rv1126b.json").write_text(json.dumps(duplicate), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "duplicate conversion evidence ID"):
+                MODULE.build_report(root)
+            (models / "duplicate_rv1126b.json").unlink()
+
+            unknown = json.loads((models / "attitude_rv1126b.json").read_text(encoding="utf-8-sig"))
+            unknown["model_id"] = "unexpected"
+            (models / "unexpected_rv1126b.json").write_text(json.dumps(unknown), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "conversion evidence IDs"):
+                MODULE.build_report(root)
+            (models / "unexpected_rv1126b.json").unlink()
+
+            results = json.loads((board / "results.json").read_text(encoding="utf-8-sig"))
+            results.append(copy.deepcopy(results[0]))
+            (board / "results.json").write_text(json.dumps(results), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "duplicate board evidence ID"):
+                MODULE.build_report(root)
+
+    def test_report_marks_board_failures_at_the_specific_stage(self):
+        inventory = MODULE._inventory()[0]
+        sidecar = json.loads((ARTIFACTS / "models" / "attitude_rv1126b.json").read_text(encoding="utf-8-sig"))
+        board = json.loads((ARTIFACTS / "board" / "results.json").read_text(encoding="utf-8-sig"))[0]
+        board["status"] = "failed"
+        board["error"] = "forced board failure"
+        report = MODULE._model_report(ARTIFACTS, inventory, sidecar, board)
+        self.assertEqual(report["failure_stage"], {
+            "stage": "board", "message": "forced board failure",
+        })
+
+    def test_report_marks_hash_version_and_latency_failures_at_specific_stages(self):
+        inventory = MODULE._inventory()[0]
+        sidecar = json.loads((ARTIFACTS / "models" / "attitude_rv1126b.json").read_text(encoding="utf-8-sig"))
+        board = json.loads((ARTIFACTS / "board" / "results.json").read_text(encoding="utf-8-sig"))[0]
+        cases = []
+        bad_hash = copy.deepcopy(sidecar)
+        bad_hash["output_sha256"] = "0" * 64
+        cases.append((bad_hash, board, "model_hash"))
+        bad_toolkit = copy.deepcopy(sidecar)
+        bad_toolkit["toolkit_version"] = "2.3.1"
+        cases.append((bad_toolkit, board, "toolkit"))
+        bad_api = copy.deepcopy(board)
+        bad_api["api_version"] = "2.3.20"
+        cases.append((sidecar, bad_api, "api"))
+        bad_driver = copy.deepcopy(board)
+        bad_driver["driver_version"] = "0.9.7"
+        cases.append((sidecar, bad_driver, "driver"))
+        bad_latency = copy.deepcopy(board)
+        bad_latency["latency_ms"] = []
+        cases.append((sidecar, bad_latency, "latency"))
+        for selected_sidecar, selected_board, stage in cases:
+            with self.subTest(stage=stage):
+                report = MODULE._model_report(ARTIFACTS, inventory, selected_sidecar, selected_board)
+                self.assertEqual(report["failure_stage"]["stage"], stage)
 
     def test_json_and_markdown_are_stable(self):
         rendered = MODULE.render_markdown(self.report)

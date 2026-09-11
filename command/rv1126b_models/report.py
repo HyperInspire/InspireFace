@@ -12,6 +12,7 @@ import hashlib
 import json
 import math
 import pathlib
+import re
 import statistics
 import struct
 from typing import Any
@@ -66,6 +67,51 @@ def _error(stage: str, message: str) -> dict:
     return {"stage": stage, "message": message}
 
 
+def _is_sha256(value: Any) -> bool:
+    return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
+
+
+def _api_version_is_pinned(value: Any) -> bool:
+    """Accept exactly 2.3.2, optionally followed by the runner's parenthesized build."""
+    return isinstance(value, str) and re.fullmatch(r"2\.3\.2(?:\s+\([^\r\n]*\))?\s*", value) is not None
+
+
+def _validate_evidence_ids(entries: Any, kind: str) -> dict[str, dict]:
+    if not isinstance(entries, list):
+        raise ValueError(f"{kind} evidence must be a list")
+    evidence: dict[str, dict] = {}
+    for entry in entries:
+        if not isinstance(entry, dict) or not isinstance(entry.get("model_id"), str):
+            raise ValueError(f"{kind} evidence must contain object model IDs")
+        model_id = entry["model_id"]
+        if model_id in evidence:
+            raise ValueError(f"duplicate {kind} evidence ID: {model_id}")
+        evidence[model_id] = entry
+    if set(evidence) != set(EXPECTED_IDS):
+        raise ValueError(f"{kind} evidence IDs must match the exact RV1126B inventory")
+    return evidence
+
+
+def _tensor_contract_matches(inventory: dict, inputs: Any, outputs: Any) -> bool:
+    expected_inputs = [inventory["input"]]
+    expected_outputs = inventory["outputs"]
+    if not isinstance(inputs, list) or not isinstance(outputs, list):
+        return False
+    if len(inputs) != len(expected_inputs) or len(outputs) != len(expected_outputs):
+        return False
+    for index, (actual, expected) in enumerate(zip(inputs, expected_inputs)):
+        if not isinstance(actual, dict):
+            return False
+        if actual.get("index") != index or actual.get("name") != expected["name"] or actual.get("dims") != expected["shape"]:
+            return False
+    for index, (actual, expected) in enumerate(zip(outputs, expected_outputs)):
+        if not isinstance(actual, dict):
+            return False
+        if actual.get("index") != index or actual.get("name") != expected["name"] or actual.get("dims") != expected["shape"]:
+            return False
+    return True
+
+
 def _latency_stats(values: Any) -> dict:
     if not isinstance(values, list) or not values or not all(isinstance(value, (int, float)) and math.isfinite(value) and value > 0 for value in values):
         return {"count": 0, "min": None, "max": None, "mean": None, "median": None}
@@ -99,6 +145,11 @@ def _output_evidence(artifact_root: pathlib.Path, model_id: str, outputs: Any) -
     return {"count": len(evidence), "sha256": evidence, "all_finite": all_finite}, None
 
 
+def _board_error(board: dict, default: str) -> str:
+    error = board.get("error")
+    return error if isinstance(error, str) and error else default
+
+
 def _model_report(artifact_root: pathlib.Path, inventory: dict, sidecar: dict | None, board: dict | None) -> dict:
     model_id = inventory["id"]
     source_path = artifact_root / "source" / pathlib.PurePosixPath(inventory["source"])
@@ -115,6 +166,10 @@ def _model_report(artifact_root: pathlib.Path, inventory: dict, sidecar: dict | 
         failure = _error("conversion", "conversion sidecar is missing")
     elif sidecar.get("conversion_status") != "success":
         failure = _error("conversion", "conversion did not succeed")
+    elif sidecar.get("target") != TARGET:
+        failure = _error("target", "conversion sidecar target is not rv1126b")
+    elif sidecar.get("toolkit_version") != TOOLKIT_VERSION:
+        failure = _error("toolkit", "conversion sidecar Toolkit version is not 2.3.2")
     elif not model_sha or sidecar.get("output_sha256") != model_sha:
         failure = _error("model_hash", "RKNN artifact hash does not match conversion sidecar")
     elif source_sha != inventory.get("source_sha256") or sidecar.get("source_sha256") != source_sha:
@@ -123,6 +178,18 @@ def _model_report(artifact_root: pathlib.Path, inventory: dict, sidecar: dict | 
         failure = _error("calibration_hash", "calibration artifact hashes do not match conversion sidecar")
     elif not board:
         failure = _error("board", "board result is missing")
+    elif board.get("status") != "success":
+        failure = _error("board", _board_error(board, "board execution did not succeed"))
+    elif board.get("model_sha256") != model_sha:
+        failure = _error("model_hash", _board_error(board, "board model hash does not match RKNN artifact"))
+    elif not _api_version_is_pinned(board.get("api_version")):
+        failure = _error("api", _board_error(board, "board API version is not 2.3.2"))
+    elif board.get("driver_version") != DRIVER_VERSION:
+        failure = _error("driver", _board_error(board, "board driver version is not 0.9.8"))
+    elif _latency_stats(board.get("latency_ms")).get("count") != 10:
+        failure = _error("latency", _board_error(board, "board latency evidence must contain ten finite samples"))
+    elif not _tensor_contract_matches(inventory, board.get("inputs"), board.get("outputs")):
+        failure = _error("tensor_contract", _board_error(board, "board tensors do not match the inventory contract"))
     outputs, output_error = _output_evidence(artifact_root, model_id, board.get("outputs"))
     if failure is None and output_error:
         failure = _error("board_output", output_error)
@@ -160,17 +227,14 @@ def build_report(artifact_root: pathlib.Path) -> dict:
     inventory = _inventory()
     if tuple(record["id"] for record in inventory) != EXPECTED_IDS:
         raise ValueError("RV1126B inventory does not contain the exact expected model IDs")
-    sidecars: dict[str, dict] = {}
-    for path in (artifact_root / "models").glob("*_rv1126b.json") if (artifact_root / "models").is_dir() else ():
-        data = _read_json(path)
-        if isinstance(data, dict) and isinstance(data.get("model_id"), str):
-            sidecars[data["model_id"]] = data
-    board_results: dict[str, dict] = {}
+    sidecar_entries = []
+    for path in sorted((artifact_root / "models").glob("*_rv1126b.json")) if (artifact_root / "models").is_dir() else ():
+        sidecar_entries.append(_read_json(path))
+    sidecars = _validate_evidence_ids(sidecar_entries, "conversion")
     board_path = artifact_root / "board" / "results.json"
-    if board_path.is_file():
-        data = _read_json(board_path)
-        if isinstance(data, list):
-            board_results = {item.get("model_id"): item for item in data if isinstance(item, dict) and isinstance(item.get("model_id"), str)}
+    board_results = _validate_evidence_ids(
+        _read_json(board_path) if board_path.is_file() else [], "board"
+    )
     models = [_model_report(artifact_root, record, sidecars.get(record["id"]), board_results.get(record["id"])) for record in inventory]
     report = {
         "schema_version": 1, "target": TARGET, "toolkit_version": TOOLKIT_VERSION,
@@ -197,24 +261,65 @@ def can_start_pack_integration(report: dict) -> bool:
         return False
     if report.get("model_ids") != list(EXPECTED_IDS):
         return False
+    inventory_by_id = {record["id"]: record for record in _inventory()}
     for model in models:
         if model.get("failure_stage") is not None:
             return False
-        conversion, board, outputs, latency = model.get("model"), model.get("board"), model.get("outputs"), model.get("latency_ms")
+        inventory = inventory_by_id.get(model["id"])
+        source = model.get("source")
+        conversion = model.get("model")
+        calibration = model.get("calibration")
+        contracts = model.get("native_tensor_contracts")
+        board, outputs, latency = model.get("board"), model.get("outputs"), model.get("latency_ms")
+        if inventory is None or not isinstance(source, dict):
+            return False
+        if (
+            source.get("path") != inventory["source"]
+            or source.get("sha256") != inventory["source_sha256"]
+            or source.get("inventory_sha256") != inventory["source_sha256"]
+            or not _is_sha256(source.get("sha256"))
+        ):
+            return False
         if not isinstance(conversion, dict) or conversion.get("conversion_status") != "success":
             return False
         if conversion.get("target") != TARGET or conversion.get("toolkit_version") != TOOLKIT_VERSION:
             return False
-        if not conversion.get("sha256") or conversion.get("sha256") != conversion.get("record_sha256"):
+        if not _is_sha256(conversion.get("sha256")) or conversion.get("sha256") != conversion.get("record_sha256"):
+            return False
+        if not isinstance(calibration, dict) or calibration.get("status") != inventory["calibration_status"]:
+            return False
+        if (
+            not _is_sha256(calibration.get("dataset_sha256"))
+            or calibration.get("dataset_sha256") != calibration.get("record_dataset_sha256")
+            or not _is_sha256(calibration.get("manifest_sha256"))
+            or calibration.get("manifest_sha256") != calibration.get("record_manifest_sha256")
+        ):
             return False
         if not isinstance(board, dict) or board.get("status") != "success" or board.get("model_sha256") != conversion.get("sha256"):
             return False
-        if not isinstance(board.get("api_version"), str) or not board["api_version"].startswith(TOOLKIT_VERSION):
+        if not _api_version_is_pinned(board.get("api_version")):
             return False
         if board.get("driver_version") != DRIVER_VERSION:
             return False
-        if not isinstance(outputs, dict) or not outputs.get("all_finite") or outputs.get("count", 0) <= 0:
+        if not isinstance(contracts, dict) or not _tensor_contract_matches(inventory, contracts.get("inputs"), contracts.get("outputs")):
             return False
+        if not isinstance(outputs, dict) or not outputs.get("all_finite") or outputs.get("count") != len(inventory["outputs"]):
+            return False
+        output_hashes = outputs.get("sha256")
+        if not isinstance(output_hashes, list) or len(output_hashes) != len(inventory["outputs"]):
+            return False
+        for index, (output_hash, expected) in enumerate(zip(output_hashes, inventory["outputs"])):
+            if not isinstance(output_hash, dict):
+                return False
+            if (
+                output_hash.get("index") != index
+                or output_hash.get("name") != expected["name"]
+                or not output_hash.get("finite")
+                or not _is_sha256(output_hash.get("sha256"))
+                or output_hash.get("sha256") != output_hash.get("reported_sha256")
+                or output_hash.get("n_elems") != math.prod(expected["shape"])
+            ):
+                return False
         if not isinstance(latency, dict) or latency.get("count") != 10 or not all(isinstance(latency.get(key), (int, float)) and math.isfinite(latency[key]) and latency[key] > 0 for key in ("min", "max", "mean", "median")):
             return False
     return True
