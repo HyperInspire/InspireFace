@@ -8,6 +8,7 @@ import json
 import os
 import pathlib
 import shutil
+import sys
 import tempfile
 import unittest
 from unittest import mock
@@ -238,6 +239,26 @@ class ConversionReportTests(unittest.TestCase):
             with self.subTest(stage=stage):
                 report = MODULE._model_report(ARTIFACTS, inventory, selected_sidecar, selected_board)
                 self.assertEqual(report["failure_stage"]["stage"], stage)
+
+    def test_cli_exit_code_follows_integration_gate_for_success_and_evidence_failures(self):
+        missing_evidence = copy.deepcopy(self.report)
+        missing_evidence["models"][0]["failure_stage"] = {
+            "stage": "conversion", "message": "conversion sidecar is missing",
+        }
+        failed_evidence = copy.deepcopy(self.report)
+        failed_evidence["models"][0]["board"]["status"] = "failed"
+        failed_evidence["models"][0]["failure_stage"] = {
+            "stage": "board", "message": "forced board failure",
+        }
+        cases = ((self.report, 0), (missing_evidence, 1), (failed_evidence, 1))
+        with tempfile.TemporaryDirectory() as temporary:
+            for index, (report, expected_exit) in enumerate(cases):
+                output = pathlib.Path(temporary) / f"report-{index}.json"
+                with mock.patch.object(MODULE, "build_report", return_value=report), mock.patch.object(
+                    sys, "argv", ["report.py", "--artifacts", str(ARTIFACTS), "--json", str(output)]
+                ):
+                    self.assertEqual(MODULE.main(), expected_exit)
+                self.assertEqual(json.loads(output.read_text(encoding="utf-8")), report)
 
     def test_json_and_markdown_are_stable(self):
         rendered = MODULE.render_markdown(self.report)

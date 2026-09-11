@@ -375,7 +375,7 @@ def main() -> int:
         args.markdown.write_text(render_markdown(report), encoding="utf-8")
     if not args.json and not args.markdown:
         print(render_json(report), end="")
-    return 0
+    return 0 if can_start_pack_integration(report) else 1
 
 
 if __name__ == "__main__":
