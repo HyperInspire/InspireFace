@@ -30,3 +30,6 @@ test_res/data/video_frames/
 *.mp4
 build_*/
 /benchmark_logs/
+__pycache__/
+*.py[cod]
+.worktrees/

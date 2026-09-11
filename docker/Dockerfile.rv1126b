@@ -1,0 +1,14 @@
+# Build on the image supplied with Rockchip RKNN-Toolkit2 2.3.2.
+ARG RKNN_IMAGE=rknn-toolkit2:2.3.2-cp38
+FROM ${RKNN_IMAGE}
+
+RUN python3 -c "import importlib.metadata as m; assert m.version('rknn-toolkit2') == '2.3.2'"
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN sed -i 's|http://mirrors.tuna.tsinghua.edu.cn/ubuntu/|https://archive.ubuntu.com/ubuntu/|g' /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends g++-aarch64-linux-gnu g++-arm-linux-gnueabihf git make \
+    && python3 -m pip install --index-url https://pypi.org/simple cmake==3.31.6
+
+WORKDIR /workspace
+CMD ["/bin/bash"]
