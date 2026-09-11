@@ -12,9 +12,6 @@ import json
 import pathlib
 from typing import Iterable
 
-from PIL import Image, ImageOps
-
-
 IMAGE_SUFFIXES = frozenset({".bmp", ".jpeg", ".jpg", ".png", ".webp"})
 SPATIAL_PREPARATION_BY_MODEL = {
     "liveness": (
@@ -159,13 +156,18 @@ def _spatial_operation(record: dict) -> str:
 
 
 def _prepare_image(source: pathlib.Path, destination: pathlib.Path, width: int, height: int, spatial_operation: str) -> None:
-    with Image.open(source) as opened:
-        image = ImageOps.exif_transpose(opened)
-        if image.mode != "RGB":
-            image = image.convert("RGB")
-        if spatial_operation not in {operation for _, operation in SPATIAL_PREPARATION_BY_MODEL.values()}:
-            raise ValueError(f"unknown spatial preparation: {spatial_operation}")
-        image.resize((width, height), Image.Resampling.LANCZOS).save(destination, format="PNG")
+    import cv2
+
+    if spatial_operation not in {operation for _, operation in SPATIAL_PREPARATION_BY_MODEL.values()}:
+        raise ValueError(f"unknown spatial preparation: {spatial_operation}")
+    # OpenCV honors EXIF orientation on ordinary color reads. Its BGR decode
+    # and encode preserve file colors; Toolkit owns numeric/color preprocessing.
+    image = cv2.imread(str(source), cv2.IMREAD_COLOR)
+    if image is None:
+        raise ValueError(f"cannot read calibration image: {source}")
+    prepared = cv2.resize(image, (width, height), interpolation=cv2.INTER_LINEAR)
+    if not cv2.imwrite(str(destination), prepared):
+        raise ValueError(f"cannot write calibration image: {destination}")
 
 
 def _prepare_verified(record: dict, source_root: pathlib.Path, artifact_directory: pathlib.Path) -> pathlib.Path:

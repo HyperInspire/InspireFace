@@ -1,14 +1,19 @@
 """Tests for per-model RV1126B calibration material preparation."""
 
+from __future__ import annotations
+
 import copy
 import hashlib
 import json
 import pathlib
 import sys
 import tempfile
+import types
 import unittest
+from unittest.mock import patch
 
-from PIL import Image
+import cv2
+import numpy as np
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -20,10 +25,29 @@ from records import load_inventory  # noqa: E402
 
 
 class CalibrationPreparationTests(unittest.TestCase):
+    def test_provisional_read_and_write_failures_are_reported(self):
+        for failure in ("read", "write"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as directory:
+                root = pathlib.Path(directory)
+                source = root / "source"
+                self._write_image(source / "image.png", (20, 30, 40))
+                fake_cv2 = types.SimpleNamespace(
+                    IMREAD_COLOR=1, INTER_LINEAR=1,
+                    imread=lambda *a: None if failure == "read" else object(),
+                    resize=lambda *a, **k: object(),
+                    imwrite=lambda *a: False,
+                )
+                with patch.dict(sys.modules, {"cv2": fake_cv2}):
+                    with self.assertRaisesRegex(ValueError, failure):
+                        prepare_calibration(self._record("mask"), source, root / "artifacts")
+
     @staticmethod
     def _write_image(path: pathlib.Path, color: tuple[int, int, int]) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
-        Image.new("RGB", (14, 10), color).save(path)
+        image = np.empty((10, 14, 3), dtype=np.uint8)
+        image[:] = color[::-1]
+        if not cv2.imwrite(str(path), image):
+            raise ValueError(f"cannot write test fixture: {path}")
 
     @staticmethod
     def _checksum(path: pathlib.Path) -> str:
@@ -60,10 +84,8 @@ class CalibrationPreparationTests(unittest.TestCase):
             self.assertIn("mask", mask_dataset.as_posix())
             self.assertIn("recognition", recognition_dataset.as_posix())
             self.assertNotEqual(mask_dataset, recognition_dataset)
-            with Image.open(mask_dataset.read_text().strip()) as mask_image:
-                self.assertEqual(mask_image.size, (96, 96))
-            with Image.open(recognition_dataset.read_text().strip()) as recognition_image:
-                self.assertEqual(recognition_image.size, (112, 112))
+            self.assertEqual(cv2.imread(mask_dataset.read_text().strip()).shape, (96, 96, 3))
+            self.assertEqual(cv2.imread(recognition_dataset.read_text().strip()).shape, (112, 112, 3))
 
     def test_provisional_models_dispatch_their_declared_spatial_operations(self):
         with tempfile.TemporaryDirectory() as directory:

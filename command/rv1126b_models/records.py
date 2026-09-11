@@ -1,5 +1,7 @@
 """Strict validation for immutable RV1126B model conversion records."""
 
+from __future__ import annotations
+
 import json
 import pathlib
 import re
