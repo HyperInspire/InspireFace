@@ -65,6 +65,34 @@ class CalibrationPreparationTests(unittest.TestCase):
             with Image.open(recognition_dataset.read_text().strip()) as recognition_image:
                 self.assertEqual(recognition_image.size, (112, 112))
 
+    def test_provisional_models_dispatch_their_declared_spatial_operations(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            source = root / "source"
+            self._write_image(source / "faces" / "face.png", (20, 30, 40))
+
+            expected_operations = {
+                "mask": "caller_supplied_face_crop_resize",
+                "recognition": "aligned_face_crop_resize",
+                "rnet": "candidate_face_crop_resize",
+                "scrfd_500m_160": "full_frame_resize",
+            }
+            for model_id, expected_operation in expected_operations.items():
+                dataset = prepare_calibration(self._record(model_id), source, root / "artifacts")
+                manifest = json.loads((dataset.parent / "calibration.json").read_text(encoding="utf-8"))
+                self.assertEqual(manifest["spatial_operation"], expected_operation)
+
+    def test_unknown_provisional_spatial_preparation_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            source = root / "source"
+            self._write_image(source / "faces" / "face.png", (20, 30, 40))
+            record = self._record("mask")
+            record["preprocess"]["crop"] = "unrecognized crop contract"
+
+            with self.assertRaisesRegex(ValueError, "unknown spatial preparation"):
+                prepare_calibration(record, source, root / "artifacts")
+
     def test_empty_verified_list_fails(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

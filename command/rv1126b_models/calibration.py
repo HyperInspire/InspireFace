@@ -16,6 +16,65 @@ from PIL import Image, ImageOps
 
 
 IMAGE_SUFFIXES = frozenset({".bmp", ".jpeg", ".jpg", ".png", ".webp"})
+SPATIAL_PREPARATION_BY_MODEL = {
+    "liveness": (
+        "caller_supplied_face_crop; raw pixels required by original converter",
+        "caller_supplied_face_crop_resize",
+    ),
+    "mask": (
+        "caller_supplied_face_crop; convert BGR to RGB",
+        "caller_supplied_face_crop_resize",
+    ),
+    "quality": (
+        "caller_supplied_face_crop; convert BGR to RGB; raw pixels required by original converter",
+        "caller_supplied_face_crop_resize",
+    ),
+    "recognition": (
+        "aligned face crop; convert BGR to RGB; original converter sets quant_img_RGB2BGR",
+        "aligned_face_crop_resize",
+    ),
+    "rnet": ("candidate face crop", "candidate_face_crop_resize"),
+    "scrfd_500m_160": (
+        "full frame resize; original list converter sets quant_img_RGB2BGR",
+        "full_frame_resize",
+    ),
+    "scrfd_500m_192": (
+        "full frame resize; original list converter sets quant_img_RGB2BGR",
+        "full_frame_resize",
+    ),
+    "scrfd_500m_256": (
+        "full frame resize; original list converter sets quant_img_RGB2BGR",
+        "full_frame_resize",
+    ),
+    "scrfd_500m_320": (
+        "full frame resize; original list converter sets quant_img_RGB2BGR",
+        "full_frame_resize",
+    ),
+    "scrfd_500m_640": (
+        "full frame resize; original list converter sets quant_img_RGB2BGR",
+        "full_frame_resize",
+    ),
+    "scrfd_2_5g_160": (
+        "full frame resize; original list converter sets quant_img_RGB2BGR",
+        "full_frame_resize",
+    ),
+    "scrfd_2_5g_192": (
+        "full frame resize; original list converter sets quant_img_RGB2BGR",
+        "full_frame_resize",
+    ),
+    "scrfd_2_5g_256": (
+        "full frame resize; original list converter sets quant_img_RGB2BGR",
+        "full_frame_resize",
+    ),
+    "scrfd_2_5g_320": (
+        "full frame resize; original list converter sets quant_img_RGB2BGR",
+        "full_frame_resize",
+    ),
+    "scrfd_2_5g_640": (
+        "full frame resize; original list converter sets quant_img_RGB2BGR",
+        "full_frame_resize",
+    ),
+}
 
 
 def _sha256(path: pathlib.Path) -> str:
@@ -84,17 +143,19 @@ def _candidate_images(source_root: pathlib.Path, artifact_root: pathlib.Path) ->
             continue
         except ValueError:
             pass
-        relative_path = path.resolve().relative_to(source_root).as_posix()
         candidates.append((path.resolve(), _sha256(path)))
     candidates.sort(key=lambda item: (item[0].relative_to(source_root).as_posix().casefold(), item[1]))
     return candidates
 
 
 def _spatial_operation(record: dict) -> str:
-    crop = record["preprocess"]["crop"]
-    if "full frame resize" in crop:
-        return "full_frame_resize"
-    return "center_crop_then_resize"
+    try:
+        declared_crop, operation = SPATIAL_PREPARATION_BY_MODEL[record["id"]]
+    except KeyError as error:
+        raise ValueError(f"unknown spatial preparation for provisional model: {record['id']}") from error
+    if record["preprocess"]["crop"] != declared_crop:
+        raise ValueError(f"unknown spatial preparation for provisional model: {record['id']}")
+    return operation
 
 
 def _prepare_image(source: pathlib.Path, destination: pathlib.Path, width: int, height: int, spatial_operation: str) -> None:
@@ -102,18 +163,8 @@ def _prepare_image(source: pathlib.Path, destination: pathlib.Path, width: int, 
         image = ImageOps.exif_transpose(opened)
         if image.mode != "RGB":
             image = image.convert("RGB")
-        if spatial_operation == "center_crop_then_resize":
-            source_width, source_height = image.size
-            target_ratio = width / height
-            source_ratio = source_width / source_height
-            if source_ratio > target_ratio:
-                crop_width = round(source_height * target_ratio)
-                left = (source_width - crop_width) // 2
-                image = image.crop((left, 0, left + crop_width, source_height))
-            elif source_ratio < target_ratio:
-                crop_height = round(source_width / target_ratio)
-                top = (source_height - crop_height) // 2
-                image = image.crop((0, top, source_width, top + crop_height))
+        if spatial_operation not in {operation for _, operation in SPATIAL_PREPARATION_BY_MODEL.values()}:
+            raise ValueError(f"unknown spatial preparation: {spatial_operation}")
         image.resize((width, height), Image.Resampling.LANCZOS).save(destination, format="PNG")
 
 
