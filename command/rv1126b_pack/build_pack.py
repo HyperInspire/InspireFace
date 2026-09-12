@@ -59,6 +59,13 @@ def _report_path(output_path: pathlib.Path) -> pathlib.Path:
     return output_path.with_name(output_path.name + ".report.json")
 
 
+def _normalise_path(path: pathlib.Path) -> pathlib.Path:
+    try:
+        return pathlib.Path(path).expanduser().resolve(strict=False)
+    except OSError as error:
+        raise PackBuildError(f"cannot normalise path: {path}") from error
+
+
 def _remove_outputs(output_path: pathlib.Path) -> None:
     for path in (output_path, _report_path(output_path)):
         if path.is_dir():
@@ -91,6 +98,47 @@ def _model_path(artifact_root: pathlib.Path, record: Mapping[str, Any]) -> pathl
     if len(existing) != 1:
         raise PackBuildError(f"ambiguous selected model path: {record['id']}")
     return existing[0]
+
+
+def _declared_model_paths(artifact_root: pathlib.Path, record: Mapping[str, Any]) -> tuple[pathlib.Path, ...]:
+    output = pathlib.PurePosixPath(str(record["output"]))
+    candidates = (artifact_root / pathlib.Path(*output.parts), artifact_root / output.name)
+    return tuple(dict.fromkeys(_normalise_path(candidate) for candidate in candidates))
+
+
+def _evidence_files(evidence_root: pathlib.Path) -> list[pathlib.Path]:
+    if not evidence_root.exists():
+        return []
+    if not evidence_root.is_dir():
+        raise PackBuildError(f"evidence root must be a directory: {evidence_root}")
+    try:
+        return [_normalise_path(path) for path in evidence_root.rglob("*") if path.is_file() or path.is_symlink()]
+    except OSError as error:
+        raise PackBuildError(f"cannot inspect evidence root: {evidence_root}") from error
+
+
+def _paths_overlap(first: pathlib.Path, second: pathlib.Path) -> bool:
+    if first == second:
+        return True
+    try:
+        return first.exists() and second.exists() and os.path.samefile(first, second)
+    except OSError:
+        return False
+
+
+def _reject_output_input_overlap(
+    inventory_path: pathlib.Path, artifact_root: pathlib.Path, evidence_root: pathlib.Path,
+    records: list[dict], model_ids: tuple[str, ...], output_path: pathlib.Path,
+) -> None:
+    inputs = [_normalise_path(inventory_path), *_evidence_files(evidence_root)]
+    by_id = {record["id"]: record for record in records}
+    for model_id in model_ids:
+        record = by_id[model_id]
+        for model_path in _declared_model_paths(artifact_root, record):
+            inputs.extend((model_path, model_path.with_suffix(".json")))
+    for target in (output_path, _report_path(output_path)):
+        if any(_paths_overlap(target, source) for source in inputs):
+            raise PackBuildError(f"output target overlaps an input path: {target}")
 
 
 def _report_models(report: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
@@ -145,6 +193,9 @@ def _validate_selected_evidence(
             or conversion.get("record_sha256") != actual_hash
         ):
             raise PackBuildError(f"selected model hash/status evidence does not match: {model_id}")
+        required_contract_fields = ("source", "source_sha256", "input", "outputs", "preprocess")
+        if any(field not in sidecar or sidecar[field] != record[field] for field in required_contract_fields):
+            raise PackBuildError(f"selected model sidecar contract does not match inventory: {model_id}")
         expected_status = record["calibration_status"]
         if sidecar.get("calibration_status") != expected_status or calibration.get("status") != expected_status:
             raise PackBuildError(f"selected model calibration status does not match: {model_id}")
@@ -187,11 +238,10 @@ def build_resource_pack(
     detector_family: str = "scrfd_2_5g",
 ) -> dict:
     """Build an atomically replaced pack after validating every selected artifact."""
-    inventory_path = pathlib.Path(inventory_path)
-    artifact_root = pathlib.Path(artifact_root)
-    evidence_root = pathlib.Path(evidence_root)
-    output_path = pathlib.Path(output_path)
-    _remove_outputs(output_path)
+    inventory_path = _normalise_path(pathlib.Path(inventory_path))
+    artifact_root = _normalise_path(pathlib.Path(artifact_root))
+    evidence_root = _normalise_path(pathlib.Path(evidence_root))
+    output_path = _normalise_path(pathlib.Path(output_path))
     try:
         model_ids = selected_model_ids(detector_family)
     except PackContractError as error:
@@ -201,6 +251,13 @@ def build_resource_pack(
     try:
         records = load_inventory(inventory_path)
         names = _archive_names(model_ids)
+        _reject_output_input_overlap(inventory_path, artifact_root, evidence_root, records, model_ids, output_path)
+    except (OSError, PackContractError, ValueError) as error:
+        if isinstance(error, PackBuildError):
+            raise
+        raise PackBuildError(str(error)) from error
+    _remove_outputs(output_path)
+    try:
         model_paths, members = _validate_selected_evidence(records, artifact_root, evidence_root, model_ids)
         manifest = build_manifest(records, names)
     except (OSError, PackContractError, ValueError) as error:

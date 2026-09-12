@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import os
 import pathlib
 import tarfile
 import tempfile
@@ -27,6 +28,8 @@ class RV1126BPackBuildTests(unittest.TestCase):
         self.models = self.root / "models"
         self.evidence = self.root / "evidence"
         self.output = self.root / "pack" / "Gundam_RV1126B"
+        self.inventory = self.root / "model_inventory.json"
+        self.inventory.write_bytes(INVENTORY.read_bytes())
         self.records = load_inventory(INVENTORY)
         self.selected = selected_model_ids()
         self.by_id = {record["id"]: record for record in self.records}
@@ -50,6 +53,11 @@ class RV1126BPackBuildTests(unittest.TestCase):
                 "toolkit_version": "2.3.2",
                 "output_sha256": digest,
                 "calibration_status": self.by_id[model_id]["calibration_status"],
+                "source": self.by_id[model_id]["source"],
+                "source_sha256": self.by_id[model_id]["source_sha256"],
+                "input": self.by_id[model_id]["input"],
+                "outputs": self.by_id[model_id]["outputs"],
+                "preprocess": self.by_id[model_id]["preprocess"],
             }), encoding="utf-8")
 
     def _report(self):
@@ -66,10 +74,11 @@ class RV1126BPackBuildTests(unittest.TestCase):
             })
         return {"models": models, "can_start_pack_integration": True}
 
-    def _build(self, *, report=None, gate=True, **kwargs):
+    def _build(self, *, report=None, gate=True, output_path=None, **kwargs):
         with mock.patch.object(build_pack, "build_report", return_value=report or self.report), \
              mock.patch.object(build_pack, "can_start_pack_integration", return_value=gate):
-            return build_pack.build_resource_pack(INVENTORY, self.models, self.evidence, self.output, **kwargs)
+            return build_pack.build_resource_pack(self.inventory, self.models, self.evidence,
+                                                  output_path or self.output, **kwargs)
 
     def test_builds_deterministic_pack_and_sorted_report_from_exact_evidence(self):
         first = self._build()
@@ -137,6 +146,63 @@ class RV1126BPackBuildTests(unittest.TestCase):
         with mock.patch.object(build_pack, "build_resource_pack", side_effect=build_pack.PackBuildError("gate failed")):
             self.assertEqual(build_pack.main(["--inventory", str(INVENTORY), "--artifact-root", str(self.models),
                                               "--evidence-root", str(self.evidence), "--output", str(self.output)]), 1)
+
+    def test_rejects_tampered_or_missing_recognition_sidecar_contract_without_pack(self):
+        sidecar = self.models / "recognition_rv1126b.json"
+        mutations = {
+            "source_sha256": "0" * 64,
+            "input": {**self.by_id["recognition"]["input"], "shape": [1, 96, 96, 3]},
+            "outputs": [{**self.by_id["recognition"]["outputs"][0], "name": "wrong"}],
+            "preprocess": {**self.by_id["recognition"]["preprocess"], "mean": [0, 0, 0]},
+        }
+        for field, value in mutations.items():
+            with self.subTest(field=field):
+                self._write_selected_artifacts()
+                data = json.loads(sidecar.read_text(encoding="utf-8"))
+                data[field] = value
+                sidecar.write_text(json.dumps(data), encoding="utf-8")
+                with self.assertRaisesRegex(build_pack.PackBuildError, "contract"):
+                    self._build()
+                self.assertFalse(self.output.exists())
+
+        self._write_selected_artifacts()
+        data = json.loads(sidecar.read_text(encoding="utf-8"))
+        del data["preprocess"]
+        sidecar.write_text(json.dumps(data), encoding="utf-8")
+        with self.assertRaisesRegex(build_pack.PackBuildError, "contract"):
+            self._build()
+        self.assertFalse(self.output.exists())
+
+    def _assert_protected_input_is_not_removed(self, protected: pathlib.Path, output: pathlib.Path):
+        before = protected.read_bytes()
+        with self.assertRaisesRegex(build_pack.PackBuildError, "overlaps"):
+            self._build(output_path=output)
+        self.assertTrue(protected.exists())
+        self.assertEqual(protected.read_bytes(), before)
+
+    def test_rejects_output_that_is_selected_model_before_removal(self):
+        model = self.models / "recognition_rv1126b.rknn"
+        self._assert_protected_input_is_not_removed(model, model)
+
+    def test_rejects_hardlink_alias_of_selected_model_before_removal(self):
+        model = self.models / "recognition_rv1126b.rknn"
+        alias = self.root / "model-alias"
+        os.link(model, alias)
+        self._assert_protected_input_is_not_removed(alias, alias)
+
+    def test_rejects_report_path_that_is_a_sidecar_alias_before_removal(self):
+        sidecar = self.models / "recognition_rv1126b.json"
+        output = self.models / "Gundam_RV1126B"
+        report_alias = output.with_name(output.name + ".report.json")
+        os.link(sidecar, report_alias)
+        self._assert_protected_input_is_not_removed(report_alias, output)
+
+    def test_rejects_output_that_is_inventory_or_board_evidence_before_removal(self):
+        self._assert_protected_input_is_not_removed(self.inventory, self.inventory)
+        board_result = self.evidence / "board" / "results.json"
+        board_result.parent.mkdir()
+        board_result.write_text("{}", encoding="utf-8")
+        self._assert_protected_input_is_not_removed(board_result, board_result)
 
 
 if __name__ == "__main__":
