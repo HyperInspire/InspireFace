@@ -24,6 +24,44 @@
 #define PRINT(...) INFERENCE_WRAPPER_LOG_PRINT(TAG, __VA_ARGS__)
 #define PRINT_E(...) INFERENCE_WRAPPER_LOG_PRINT_E(TAG, __VA_ARGS__)
 
+namespace {
+
+bool ExactInputContract(const InputTensorInfo &input, const rknn_tensor_attr &normal) {
+    if (normal.n_dims != 4 || normal.fmt != RKNN_TENSOR_NHWC || normal.type != RKNN_TENSOR_INT8 ||
+        normal.dims[0] != 1 || input.name != normal.name || input.data == nullptr || input.is_nchw ||
+        input.tensor_type != TensorInfo::TensorTypeUint8 || input.tensor_dims.size() != normal.n_dims) {
+        return false;
+    }
+    for (size_t index = 0; index < input.tensor_dims.size(); ++index) {
+        if (input.tensor_dims[index] <= 0 || static_cast<uint32_t>(input.tensor_dims[index]) != normal.dims[index]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ExactOutputContracts(const std::vector<OutputTensorInfo> &outputs,
+                          const std::vector<rknn_tensor_attr> &normal_outputs) {
+    if (outputs.size() != normal_outputs.size()) {
+        return false;
+    }
+    for (size_t index = 0; index < outputs.size(); ++index) {
+        if (outputs[index].name != normal_outputs[index].name || outputs[index].tensor_type != TensorInfo::TensorTypeFp32) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void ClearOutputs(std::vector<OutputTensorInfo> &outputs) {
+    for (auto &output : outputs) {
+        output.data = nullptr;
+        output.tensor_dims.clear();
+    }
+}
+
+}  // namespace
+
 InferenceWrapperRKNNAdapter::InferenceWrapperRKNNAdapter() {
     num_threads_ = 1;
 }
@@ -39,24 +77,27 @@ int32_t InferenceWrapperRKNNAdapter::SetNumThreads(const int32_t num_threads) {
 
 int32_t InferenceWrapperRKNNAdapter::ParameterInitialization(std::vector<InputTensorInfo> &input_tensor_info_list,
                                                              std::vector<OutputTensorInfo> &output_tensor_info_list) {
+    (void)input_tensor_info_list;
+    if (net_ == nullptr || !ExactOutputContracts(output_tensor_info_list, net_->GetNormalOutputAttrs())) {
+        return WrapperError;
+    }
     return WrapperOk;
 }
 
 int32_t InferenceWrapperRKNNAdapter::Process(std::vector<OutputTensorInfo> &output_tensor_info_list) {
-    for (auto &output_tensor_info : output_tensor_info_list) {
-        output_tensor_info.data = nullptr;
-    }
-    if (net_ == nullptr || output_tensor_info_list.empty()) {
+    ClearOutputs(output_tensor_info_list);
+    if (net_ == nullptr || !ExactOutputContracts(output_tensor_info_list, net_->GetNormalOutputAttrs())) {
         INSPIRE_LOGE("RKNN2 runtime or output metadata is not initialized.");
         return WrapperError;
     }
+    net_->ClearOutputData();
 
     auto ret = net_->RunSession(true);
     if (ret != 0) {
         INSPIRE_LOGE("Run model error.");
         return WrapperError;
     }
-    auto outputs_size = net_->GetOutputAttrs().size();
+    auto outputs_size = net_->GetNormalOutputAttrs().size();
     if (outputs_size != output_tensor_info_list.size()) {
         INSPIRE_LOGE("RKNN2 output count mismatch: runtime=%zu, expected=%zu", outputs_size, output_tensor_info_list.size());
         return WrapperError;
@@ -98,36 +139,26 @@ int32_t InferenceWrapperRKNNAdapter::Process(std::vector<OutputTensorInfo> &outp
 }
 
 int32_t InferenceWrapperRKNNAdapter::PreProcess(const std::vector<InputTensorInfo> &input_tensor_info_list) {
-    if (net_ == nullptr || input_tensor_info_list.empty()) {
+    if (net_ == nullptr) {
+        return WrapperError;
+    }
+    net_->ClearOutputData();
+    const auto &normal_inputs = net_->GetNormalInputAttrs();
+    if (normal_inputs.size() != 1 || input_tensor_info_list.size() != normal_inputs.size() ||
+        !ExactInputContract(input_tensor_info_list.front(), normal_inputs.front())) {
         return WrapperError;
     }
     for (size_t i = 0; i < input_tensor_info_list.size(); ++i) {
-        auto &input_tensor_info = input_tensor_info_list[i];
-        rknn_tensor_format fmt = RKNN_TENSOR_NHWC;
-        if (input_tensor_info.is_nchw) {
-            fmt = RKNN_TENSOR_NCHW;
-        } else {
-            fmt = RKNN_TENSOR_NHWC;
-            //            INSPIRE_LOGD("NHWC!");
-        }
-        rknn_tensor_type type = RKNN_TENSOR_UINT8;
-        if (input_tensor_info.tensor_type == InputTensorInfo::TensorInfo::TensorTypeFp32) {
-            type = RKNN_TENSOR_FLOAT32;
-        } else if (input_tensor_info.tensor_type == InputTensorInfo::TensorInfo::TensorTypeUint8) {
-            type = RKNN_TENSOR_UINT8;
-        } else if (input_tensor_info.tensor_type == InputTensorInfo::TensorInfo::TensorTypeInt8) {
-            type = RKNN_TENSOR_INT8;
-        } else {
-            return WrapperError;
-        }
+        const auto &input_tensor_info = input_tensor_info_list[i];
         const int width = input_tensor_info.GetWidth();
         const int height = input_tensor_info.GetHeight();
         const int channel = input_tensor_info.GetChannel();
-        if (input_tensor_info.data == nullptr || width <= 0 || height <= 0 || channel <= 0) {
+        if (width <= 0 || height <= 0 || channel <= 0) {
             INSPIRE_LOGE("Invalid RKNN2 input tensor metadata.");
             return WrapperError;
         }
-        auto ret = net_->SetInputData(static_cast<int>(i), input_tensor_info.data, width, height, channel, type, fmt);
+        auto ret = net_->SetInputData(static_cast<int>(i), input_tensor_info.data, width, height, channel,
+                                      RKNN_TENSOR_UINT8, RKNN_TENSOR_NHWC);
         if (ret != 0) {
             INSPIRE_LOGE("Set data error.");
             return ret;

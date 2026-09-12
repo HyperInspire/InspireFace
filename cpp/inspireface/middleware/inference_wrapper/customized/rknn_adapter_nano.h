@@ -140,6 +140,14 @@ public:
                 return -1;
             }
             dump_tensor_attr(&m_input_attrs_[i]);
+
+            // Keep the queried attribute as the model's semantic contract.  RKNN
+            // conversion needs a separate uint8/NHWC binding descriptor when the
+            // queried model input is int8, so never mutate the queried copy.
+            m_input_binding_attrs_.push_back(m_input_attrs_[i]);
+            m_input_binding_attrs_.back().type = RKNN_TENSOR_UINT8;
+            m_input_binding_attrs_.back().fmt = RKNN_TENSOR_NHWC;
+            m_input_binding_attrs_.back().pass_through = 0;
         }
 
         INSPIRE_LOGD("output tensors:");
@@ -213,15 +221,17 @@ public:
     int32_t SetInputData(const int index, const void *data, int width, int height, int channel,
                          rknn_tensor_type type = RKNN_TENSOR_UINT8, rknn_tensor_format format = RKNN_TENSOR_NHWC) {
         if (!run_ || index < 0 || static_cast<size_t>(index) >= m_input_mems_.size() ||
-            static_cast<size_t>(index) >= m_input_attrs_.size() || data == nullptr || width <= 0 || height <= 0 || channel <= 0) {
+            static_cast<size_t>(index) >= m_input_attrs_.size() || static_cast<size_t>(index) >= m_input_binding_attrs_.size() ||
+            data == nullptr || width <= 0 || height <= 0 || channel <= 0 || type != RKNN_TENSOR_UINT8 || format != RKNN_TENSOR_NHWC) {
             INSPIRE_LOGE("Invalid RKNN input metadata");
             return -1;
         }
 
+        auto &binding_attr = m_input_binding_attrs_[index];
         const size_t element_bytes = TensorTypeBytes(type);
         size_t source_row_bytes = 0;
         size_t source_size = 0;
-        const uint32_t configured_stride = m_input_attrs_[index].w_stride;
+        const uint32_t configured_stride = binding_attr.w_stride;
         const size_t destination_width = configured_stride == 0 ? static_cast<size_t>(width) : configured_stride;
         size_t destination_row_bytes = 0;
         size_t destination_size = 0;
@@ -237,8 +247,6 @@ public:
             return -1;
         }
 
-        m_input_attrs_[index].type = type;
-        m_input_attrs_[index].fmt = format;
         const auto *source = static_cast<const uint8_t *>(data);
         auto *destination = static_cast<uint8_t *>(m_input_mems_[index]->virt_addr);
         if (source_row_bytes == destination_row_bytes) {
@@ -263,7 +271,7 @@ public:
             return -1;
         }
 
-        const auto ret = rknn_set_io_mem(m_rk_ctx_, m_input_mems_[index], &m_input_attrs_[index]);
+        const auto ret = rknn_set_io_mem(m_rk_ctx_, m_input_mems_[index], &binding_attr);
         if (ret < 0) {
             INSPIRE_LOGE("rknn_set_io_mem fail! ret = %d", ret);
             return -1;
@@ -273,6 +281,7 @@ public:
     }
 
     int32_t RunSession(bool use_raw_output = false) {
+        m_output_nchw_.clear();
         if (!run_ || m_output_mems_.size() != m_output_attrs_.size() ||
             m_output_attrs_.size() != m_orig_output_attrs_.size()) {
             return -1;
@@ -347,12 +356,28 @@ public:
         return m_output_nchw_[index];
     }
 
+    void ClearOutputData() {
+        m_output_nchw_.clear();
+    }
+
     rknn_tensor_mem *GetOutputRawData(size_t index) {
         return m_output_mems_[index];
     }
 
-    std::vector<rknn_tensor_attr> &GetOutputAttrs() {
+    const std::vector<rknn_tensor_attr> &GetNormalInputAttrs() const {
+        return m_input_attrs_;
+    }
+
+    const std::vector<rknn_tensor_attr> &GetInputBindingAttrs() const {
+        return m_input_binding_attrs_;
+    }
+
+    const std::vector<rknn_tensor_attr> &GetNativeOutputAttrs() const {
         return m_output_attrs_;
+    }
+
+    const std::vector<rknn_tensor_attr> &GetNormalOutputAttrs() const {
+        return m_orig_output_attrs_;
     }
 
     const float *GetOutputDataPtr(const int index) {
@@ -367,9 +392,7 @@ public:
             static_cast<size_t>(index) >= m_orig_output_attrs_.size()) {
             return {};
         }
-        const auto &attribute = m_output_attrs_[index].fmt == RKNN_TENSOR_NC1HWC2
-                                  ? m_orig_output_attrs_[index]
-                                  : m_output_attrs_[index];
+        const auto &attribute = m_orig_output_attrs_[index];
         std::vector<unsigned long> dims(attribute.dims, attribute.dims + attribute.n_dims);
         return dims;
     }
@@ -395,6 +418,7 @@ public:
         m_rk_ctx_ = 0;
         m_rk_io_num_ = {};
         m_input_attrs_.clear();
+        m_input_binding_attrs_.clear();
         m_output_attrs_.clear();
         m_orig_output_attrs_.clear();
         m_input_mems_.clear();
@@ -510,7 +534,10 @@ private:
     rknn_context m_rk_ctx_{};
 
     rknn_input_output_num m_rk_io_num_{};
+    // Queried normal attributes are immutable semantic contracts.  Binding and
+    // native attributes exist solely for RKNN memory registration/storage.
     std::vector<rknn_tensor_attr> m_input_attrs_;
+    std::vector<rknn_tensor_attr> m_input_binding_attrs_;
     std::vector<rknn_tensor_attr> m_output_attrs_;
     std::vector<rknn_tensor_attr> m_orig_output_attrs_;
 

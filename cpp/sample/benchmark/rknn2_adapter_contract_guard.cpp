@@ -49,7 +49,9 @@ void FillAttribute(rknn_tensor_attr &attribute, bool input, bool native_output) 
         attribute.size = 12;
         attribute.w_stride = 4;
         attribute.size_with_stride = 16;
-        attribute.type = RKNN_TENSOR_UINT8;
+        // The model's queried contract is quantized int8; callers bind uint8
+        // image bytes through RKNN's conversion mode.
+        attribute.type = RKNN_TENSOR_INT8;
         std::strncpy(attribute.name, "input", sizeof(attribute.name) - 1);
         return;
     }
@@ -92,6 +94,130 @@ double Percentile(std::vector<double> values, double ratio) {
 
 bool AlmostEqual(float left, float right) {
     return std::fabs(left - right) <= 1e-6f;
+}
+
+bool OutputsAreCleared(const std::vector<OutputTensorInfo>& outputs) {
+    for (const auto& output : outputs) {
+        if (output.data != nullptr) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool RejectInput(InferenceWrapperRKNNAdapter& adapter, const InputTensorInfo& input) {
+    const int set_io_before = runtime.set_io_calls;
+    const int run_before = runtime.run_calls;
+    return adapter.PreProcess({input}) == InferenceWrapper::WrapperError && runtime.set_io_calls == set_io_before &&
+           runtime.run_calls == run_before;
+}
+
+bool TestExactCallerContracts(InferenceWrapperRKNNAdapter& adapter, const std::array<uint8_t, 12>& input_pixels,
+                              std::vector<OutputTensorInfo>& prior_success_outputs) {
+    InputTensorInfo valid("input", TensorInfo::TensorTypeUint8, false);
+    valid.tensor_dims = {1, 2, 3, 2};
+    valid.data = const_cast<uint8_t*>(input_pixels.data());
+
+    bool passed = true;
+    InputTensorInfo wrong_height = valid;
+    wrong_height.tensor_dims = {1, 1, 3, 2};
+    passed = passed && RejectInput(adapter, wrong_height);
+
+    InputTensorInfo wrong_batch = valid;
+    wrong_batch.tensor_dims = {2, 2, 3, 2};
+    passed = passed && RejectInput(adapter, wrong_batch);
+
+    InputTensorInfo wrong_name = valid;
+    wrong_name.name = "wrong";
+    passed = passed && RejectInput(adapter, wrong_name);
+
+    InputTensorInfo wrong_layout = valid;
+    wrong_layout.is_nchw = true;
+    wrong_layout.tensor_dims = {1, 2, 2, 3};
+    passed = passed && RejectInput(adapter, wrong_layout);
+
+    InputTensorInfo wrong_type = valid;
+    wrong_type.tensor_type = TensorInfo::TensorTypeInt8;
+    passed = passed && RejectInput(adapter, wrong_type);
+
+    InputTensorInfo null_data = valid;
+    null_data.data = nullptr;
+    passed = passed && RejectInput(adapter, null_data);
+
+    const int set_io_before = runtime.set_io_calls;
+    const int run_before = runtime.run_calls;
+    passed = passed && adapter.PreProcess({valid, valid}) == InferenceWrapper::WrapperError &&
+             runtime.set_io_calls == set_io_before && runtime.run_calls == run_before;
+
+    prior_success_outputs[0].name = "floating";
+    prior_success_outputs[1].name = "quantized";
+    passed = passed && adapter.Process(prior_success_outputs) == InferenceWrapper::WrapperError &&
+             OutputsAreCleared(prior_success_outputs) && runtime.run_calls == run_before;
+    prior_success_outputs[0].name = "quantized";
+    prior_success_outputs[1].name = "floating";
+
+    std::vector<OutputTensorInfo> wrong_type_outputs = {
+      OutputTensorInfo("quantized", TensorInfo::TensorTypeInt8, false),
+      OutputTensorInfo("floating", TensorInfo::TensorTypeFp32, false),
+    };
+    passed = passed && adapter.Process(wrong_type_outputs) == InferenceWrapper::WrapperError &&
+             OutputsAreCleared(wrong_type_outputs) && runtime.run_calls == run_before;
+
+    std::vector<OutputTensorInfo> missing_output = {
+      OutputTensorInfo("quantized", TensorInfo::TensorTypeFp32, false),
+    };
+    passed = passed && adapter.Process(missing_output) == InferenceWrapper::WrapperError && OutputsAreCleared(missing_output) &&
+             runtime.run_calls == run_before;
+
+    std::cout << "RKNN2_ADAPTER_EXACT_CONTRACTS,status=" << (passed ? "PASS" : "FAIL") << '\n';
+    return passed;
+}
+
+bool TestQueriedAndBindingAttributeRoles() {
+    ResetRuntime();
+    std::array<char, 4> model = {{1, 2, 3, 4}};
+    std::array<uint8_t, 12> input_pixels = {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}};
+    RKNNAdapterNano adapter;
+    bool passed = adapter.Initialize(model.data(), static_cast<unsigned int>(model.size())) == 0;
+    if (passed) {
+        const auto& normal_inputs = adapter.GetNormalInputAttrs();
+        const auto& bindings = adapter.GetInputBindingAttrs();
+        const auto& normal_outputs = adapter.GetNormalOutputAttrs();
+        const auto& native_outputs = adapter.GetNativeOutputAttrs();
+        passed = normal_inputs.size() == 1 && bindings.size() == 1 && normal_outputs.size() == 2 && native_outputs.size() == 2 &&
+                 normal_inputs[0].type == RKNN_TENSOR_INT8 && normal_inputs[0].fmt == RKNN_TENSOR_NHWC &&
+                 bindings[0].type == RKNN_TENSOR_UINT8 && bindings[0].fmt == RKNN_TENSOR_NHWC &&
+                 bindings[0].pass_through == 0 && std::string(normal_outputs[0].name) == "quantized" &&
+                 std::string(normal_outputs[1].name) == "floating" && native_outputs[0].w_stride == 3;
+        passed = passed && adapter.SetInputData(0, input_pixels.data(), 3, 2, 2) == 0 &&
+                 adapter.GetNormalInputAttrs()[0].type == RKNN_TENSOR_INT8 &&
+                 adapter.GetNormalInputAttrs()[0].fmt == RKNN_TENSOR_NHWC;
+    }
+    adapter.Release();
+    passed = passed && runtime.memories.empty();
+    std::cout << "RKNN2_ADAPTER_ATTRIBUTE_ROLES,status=" << (passed ? "PASS" : "FAIL") << '\n';
+    return passed;
+}
+
+bool TestInitializationRejectsOutputDeclarations() {
+    std::array<char, 4> model = {{1, 2, 3, 4}};
+    bool passed = true;
+    for (const auto& outputs : {
+           std::vector<OutputTensorInfo>{OutputTensorInfo("floating", TensorInfo::TensorTypeFp32, false),
+                                         OutputTensorInfo("quantized", TensorInfo::TensorTypeFp32, false)},
+           std::vector<OutputTensorInfo>{OutputTensorInfo("quantized", TensorInfo::TensorTypeInt8, false),
+                                         OutputTensorInfo("floating", TensorInfo::TensorTypeFp32, false)},
+         }) {
+        ResetRuntime();
+        std::vector<InputTensorInfo> empty_inputs;
+        auto declared_outputs = outputs;
+        InferenceWrapperRKNNAdapter adapter;
+        passed = passed && adapter.Initialize(model.data(), static_cast<int>(model.size()), empty_inputs, declared_outputs) ==
+                             InferenceWrapper::WrapperError &&
+                 runtime.set_io_calls == 0 && runtime.run_calls == 0 && runtime.memories.empty();
+    }
+    std::cout << "RKNN2_ADAPTER_INITIALIZATION_CONTRACTS,status=" << (passed ? "PASS" : "FAIL") << '\n';
+    return passed;
 }
 
 bool TestWrapperContracts() {
@@ -140,6 +266,8 @@ bool TestWrapperContracts() {
     for (size_t index = 0; index < expected_floating.size() && outputs[1].data != nullptr; ++index) {
         passed = passed && AlmostEqual(static_cast<float *>(outputs[1].data)[index], expected_floating[index]);
     }
+
+    passed = passed && TestExactCallerContracts(adapter, input_pixels, outputs);
 
     std::vector<double> latency_us;
     latency_us.reserve(256);
@@ -315,6 +443,7 @@ int rknn_run(rknn_context, rknn_run_extend *) {
 }  // extern "C"
 
 int main() {
-    const bool passed = TestWrapperContracts() && TestFailureCleanup() && TestNumericHelpers();
+    const bool passed = TestWrapperContracts() && TestQueriedAndBindingAttributeRoles() &&
+                        TestInitializationRejectsOutputDeclarations() && TestFailureCleanup() && TestNumericHelpers();
     return passed ? 0 : 1;
 }
