@@ -86,19 +86,11 @@ int32_t InferenceWrapperRKNNAdapter::ParameterInitialization(std::vector<InputTe
     return WrapperOk;
 }
 
-void InferenceWrapperRKNNAdapter::ClearPublishedOutputs() {
-    if (published_outputs_ != nullptr) {
-        ClearOutputs(*published_outputs_);
-        published_outputs_ = nullptr;
-    }
+int32_t InferenceWrapperRKNNAdapter::Process(std::vector<OutputTensorInfo> &output_tensor_info_list) {
+    ClearOutputs(output_tensor_info_list);
     if (net_ != nullptr) {
         net_->ClearOutputData();
     }
-}
-
-int32_t InferenceWrapperRKNNAdapter::Process(std::vector<OutputTensorInfo> &output_tensor_info_list) {
-    ClearPublishedOutputs();
-    ClearOutputs(output_tensor_info_list);
     if (net_ == nullptr || !input_ready_ || !ExactOutputContracts(output_tensor_info_list, net_->GetNormalOutputAttrs())) {
         INSPIRE_LOGE("RKNN2 runtime or output metadata is not initialized.");
         input_ready_ = false;
@@ -163,17 +155,15 @@ int32_t InferenceWrapperRKNNAdapter::Process(std::vector<OutputTensorInfo> &outp
         output_tensor_info_list[index].data = const_cast<float *>(output_views[index]);
         output_tensor_info_list[index].tensor_dims = std::move(output_dimensions[index]);
     }
-    published_outputs_ = &output_tensor_info_list;
-
     return WrapperOk;
 }
 
 int32_t InferenceWrapperRKNNAdapter::PreProcess(const std::vector<InputTensorInfo> &input_tensor_info_list) {
     input_ready_ = false;
-    ClearPublishedOutputs();
     if (net_ == nullptr) {
         return WrapperError;
     }
+    net_->ClearOutputData();
     const auto &normal_inputs = net_->GetNormalInputAttrs();
     if (normal_inputs.size() != 1 || input_tensor_info_list.size() != normal_inputs.size() ||
         !ExactInputContract(input_tensor_info_list.front(), normal_inputs.front())) {
@@ -235,7 +225,6 @@ int32_t InferenceWrapperRKNNAdapter::Initialize(char *model_buffer, int model_si
 
 int32_t InferenceWrapperRKNNAdapter::Finalize(void) {
     input_ready_ = false;
-    ClearPublishedOutputs();
     if (net_ != nullptr) {
         net_->Release();
         net_.reset();

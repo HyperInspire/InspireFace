@@ -56,7 +56,7 @@ passed = passed && RejectOutputNameSwap();
 passed = passed && RejectOutputType(TensorInfo::TensorTypeInt8);
 ```
 
-The fake queried contract must include distinct names and logical dimensions. Assert every rejection occurs before `rknn_set_io_mem` or `rknn_run`, clears output pointers, and leaves no stale successful result.
+The fake queried contract must include distinct names and logical dimensions. Assert every rejection occurs before `rknn_set_io_mem` or `rknn_run`. `Process` clears its current caller-owned output list on rejection; `PreProcess` only invalidates its internal output lifetime and must never retain or mutate an output list it was not passed.
 
 - [ ] **Step 2: Run the RKNN2 guard and confirm the new cases fail**
 

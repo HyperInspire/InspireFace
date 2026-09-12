@@ -252,18 +252,52 @@ bool TestInputReadinessAndExternalOutputInvalidation() {
     const int runs_after_success = runtime.run_calls;
     InputTensorInfo wrong_name = valid;
     wrong_name.name = "wrong";
-    passed = passed && adapter.PreProcess({wrong_name}) == InferenceWrapper::WrapperError && OutputsAreCleared(outputs) &&
-             adapter.Process(outputs) == InferenceWrapper::WrapperError && runtime.run_calls == runs_after_success;
+    passed = passed && adapter.PreProcess({wrong_name}) == InferenceWrapper::WrapperError &&
+             adapter.Process(outputs) == InferenceWrapper::WrapperError && OutputsAreCleared(outputs) &&
+             runtime.run_calls == runs_after_success;
     passed = passed && adapter.PreProcess({valid}) == InferenceWrapper::WrapperOk &&
              adapter.Process(outputs) == InferenceWrapper::WrapperOk && runtime.run_calls == runs_after_success + 1;
 
     const int runs_after_recovery = runtime.run_calls;
     InputTensorInfo wrong_shape = valid;
     wrong_shape.tensor_dims = {1, 1, 3, 2};
-    passed = passed && adapter.PreProcess({wrong_shape}) == InferenceWrapper::WrapperError && OutputsAreCleared(outputs) &&
-             adapter.Process(outputs) == InferenceWrapper::WrapperError && runtime.run_calls == runs_after_recovery;
+    passed = passed && adapter.PreProcess({wrong_shape}) == InferenceWrapper::WrapperError &&
+             adapter.Process(outputs) == InferenceWrapper::WrapperError && OutputsAreCleared(outputs) &&
+             runtime.run_calls == runs_after_recovery;
     passed = passed && adapter.Finalize() == InferenceWrapper::WrapperOk && OutputsAreCleared(outputs);
     std::cout << "RKNN2_ADAPTER_INPUT_READINESS,status=" << (passed ? "PASS" : "FAIL") << '\n';
+    return passed;
+}
+
+bool TestFinalizeDoesNotBorrowExpiredOutputMetadata() {
+    ResetRuntime();
+    std::array<char, 4> model = {{1, 2, 3, 4}};
+    std::array<uint8_t, 12> pixels = {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}};
+    std::vector<InputTensorInfo> empty_inputs;
+    std::vector<OutputTensorInfo> initialization_outputs = {
+      OutputTensorInfo("quantized", TensorInfo::TensorTypeFp32, false),
+      OutputTensorInfo("floating", TensorInfo::TensorTypeFp32, false),
+    };
+    InputTensorInfo valid("input", TensorInfo::TensorTypeUint8, false);
+    valid.tensor_dims = {1, 2, 3, 2};
+    valid.data = pixels.data();
+    bool passed = true;
+    {
+        InferenceWrapperRKNNAdapter adapter;
+        passed = adapter.Initialize(model.data(), static_cast<int>(model.size()), empty_inputs, initialization_outputs) ==
+                     InferenceWrapper::WrapperOk &&
+                 adapter.PreProcess({valid}) == InferenceWrapper::WrapperOk;
+        {
+            std::vector<OutputTensorInfo> local_outputs = {
+              OutputTensorInfo("quantized", TensorInfo::TensorTypeFp32, false),
+              OutputTensorInfo("floating", TensorInfo::TensorTypeFp32, false),
+            };
+            passed = passed && adapter.Process(local_outputs) == InferenceWrapper::WrapperOk && !OutputsAreCleared(local_outputs);
+        }
+        passed = passed && adapter.Finalize() == InferenceWrapper::WrapperOk;
+    }
+    passed = passed && runtime.memories.empty() && runtime.destroy_calls == 1;
+    std::cout << "RKNN2_ADAPTER_EXPIRED_OUTPUT_METADATA,status=" << (passed ? "PASS" : "FAIL") << '\n';
     return passed;
 }
 
@@ -530,6 +564,7 @@ int rknn_run(rknn_context, rknn_run_extend *) {
 int main() {
     const bool passed = TestWrapperContracts() && TestQueriedAndBindingAttributeRoles() &&
                         TestInitializationRejectsOutputDeclarations() && TestInputReadinessAndExternalOutputInvalidation() &&
-                        TestInitializeClearsCallerOutputMetadata() && TestFailureCleanup() && TestNumericHelpers();
+                        TestFinalizeDoesNotBorrowExpiredOutputMetadata() && TestInitializeClearsCallerOutputMetadata() &&
+                        TestFailureCleanup() && TestNumericHelpers();
     return passed ? 0 : 1;
 }

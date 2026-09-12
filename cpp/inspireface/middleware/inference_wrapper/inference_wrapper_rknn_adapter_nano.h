@@ -36,11 +36,7 @@ public:
     int32_t ResizeInput(const std::vector<InputTensorInfo>& input_tensor_info_list) override;
 
 private:
-    // Output metadata is caller-owned; retain the most recently published list so
-    // it can be invalidated before the RKNN-owned backing storage is released.
-    void ClearPublishedOutputs();
     std::shared_ptr<RKNNAdapterNano> net_;
-    std::vector<OutputTensorInfo>* published_outputs_{nullptr};
     bool input_ready_{false};
     int32_t num_threads_;
 };
