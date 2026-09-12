@@ -10,45 +10,24 @@ param(
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
-$ExpectedSerial = 'e3d7377f6fc6d325'
 $RemoteDirectory = '/userdata/inspireface-rv1126b/pack-validation'
-if ($Serial -ne $ExpectedSerial) { throw "This validation is pinned to board serial $ExpectedSerial" }
-if ($RemoteDirectory -notmatch '^/userdata/inspireface-rv1126b/pack-validation$') { throw 'Unsafe fixed remote directory' }
+$RunId = [Guid]::NewGuid().ToString('N')
+New-Item -ItemType Directory -Force -Path $ResultDirectory | Out-Null
+$ResultDirectory = (Resolve-Path -LiteralPath $ResultDirectory).Path
+$RunDirectory = Join-Path $ResultDirectory $RunId
+New-Item -ItemType Directory -Path $RunDirectory | Out-Null
+$resultPath = Join-Path $ResultDirectory 'board-result.json'
+$partial = Join-Path $ResultDirectory "$RunId.partial"
+$remoteReady = $false
+$hostHash = ''
 
-$Repository = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
-$PackPath = (Resolve-Path -LiteralPath $PackPath).Path
-$BuildReport = (Resolve-Path -LiteralPath $BuildReport).Path
-$ValidatorDirectory = (Resolve-Path -LiteralPath $ValidatorDirectory).Path
-$Inventory = (Resolve-Path -LiteralPath $Inventory).Path
-function Get-RepositoryRelativePath {
-    param([string]$Path, [string]$Label)
-    $relative = [System.IO.Path]::GetRelativePath($Repository, $Path)
-    if ([System.IO.Path]::IsPathRooted($relative) -or $relative -eq '..' -or $relative.StartsWith("..$([System.IO.Path]::DirectorySeparatorChar)")) {
-        throw "$Label must be within the repository for host validation"
-    }
-    return $relative.Replace('\', '/')
+function Write-Result {
+    param($Record)
+    $json = $Record | ConvertTo-Json -Depth 8
+    $json | Set-Content -LiteralPath (Join-Path $RunDirectory 'board-result.json') -Encoding utf8
+    $json | Set-Content -LiteralPath $partial -Encoding utf8
+    Move-Item -LiteralPath $partial -Destination $resultPath -Force
 }
-$PythonPackPath = Get-RepositoryRelativePath -Path $PackPath -Label 'PackPath'
-$PythonBuildReport = Get-RepositoryRelativePath -Path $BuildReport -Label 'BuildReport'
-$PythonInventory = Get-RepositoryRelativePath -Path $Inventory -Label 'Inventory'
-foreach ($name in @('validate_pack_main', 'libInspireFace.so', 'librknnrt.so')) {
-    if (!(Test-Path -LiteralPath (Join-Path $ValidatorDirectory $name) -PathType Leaf)) {
-        throw "Validator deployment is missing $name; run build_validator.sh first"
-    }
-}
-
-Push-Location $Repository
-try {
-    # Native argument encoding can corrupt the repository's non-ASCII absolute path on Windows.
-    & python -B -m command.rv1126b_pack.validate_pack $PythonPackPath $PythonBuildReport --inventory $PythonInventory
-    if ($LASTEXITCODE -ne 0) { throw 'Host Task 3 resource-pack validation failed; refusing board deployment' }
-} finally {
-    Pop-Location
-}
-$hostReport = Get-Content -Raw -LiteralPath $BuildReport | ConvertFrom-Json
-$hostHash = (Get-FileHash -LiteralPath $PackPath -Algorithm SHA256).Hash.ToLowerInvariant()
-if ($hostHash -ne $hostReport.pack_sha256) { throw 'Host pack SHA-256 does not match the build report' }
-
 function Invoke-Adb {
     param([string[]]$Arguments)
     & adb -s $Serial @Arguments
@@ -60,46 +39,113 @@ function Get-AdbText {
     if ($LASTEXITCODE -ne 0) { throw "ADB failed ($LASTEXITCODE): $($Arguments -join ' ')" }
     return ($result | Out-String).Trim()
 }
-
-New-Item -ItemType Directory -Force -Path $ResultDirectory | Out-Null
-$ResultDirectory = (Resolve-Path -LiteralPath $ResultDirectory).Path
-$partial = Join-Path $ResultDirectory 'board-result.json.partial'
-$resultPath = Join-Path $ResultDirectory 'board-result.json'
-Remove-Item -LiteralPath $partial -Force -ErrorAction SilentlyContinue
-
-Invoke-Adb -Arguments @('get-state')
-Invoke-Adb -Arguments @('shell', 'mkdir', '-p', '/userdata/inspireface-rv1126b')
-if ((Get-AdbText -Arguments @('shell', 'readlink', '-f', '/userdata/inspireface-rv1126b')) -ne '/userdata/inspireface-rv1126b') {
-    throw 'Board parent path resolved outside /userdata/inspireface-rv1126b'
-}
-# The path is fixed and resolved before deletion; cleanup cannot target another board directory.
-Invoke-Adb -Arguments @('shell', 'sh', '-c', "rm -rf $RemoteDirectory && mkdir -p $RemoteDirectory")
-if ((Get-AdbText -Arguments @('shell', 'readlink', '-f', $RemoteDirectory)) -ne $RemoteDirectory) {
-    throw 'Board validation path resolved outside the fixed directory'
+function Get-RepositoryRelativePath {
+    param([string]$Path, [string]$Label)
+    $relative = [System.IO.Path]::GetRelativePath($Repository, $Path)
+    if ([System.IO.Path]::IsPathRooted($relative) -or $relative -eq '..' -or $relative.StartsWith("..$([System.IO.Path]::DirectorySeparatorChar)")) {
+        throw "$Label must be within the repository for host validation"
+    }
+    return $relative.Replace('\', '/')
 }
 
+# Replace the previous success before any preflight can fail. Each run also keeps its own artifact.
+Write-Result @{ status = 'running'; run_id = $RunId; serial = $Serial }
 try {
-    Invoke-Adb -Arguments @('push', $PackPath, "$RemoteDirectory/pack")
-    Invoke-Adb -Arguments @('push', (Join-Path $ValidatorDirectory 'validate_pack_main'), "$RemoteDirectory/validate_pack_main")
-    Invoke-Adb -Arguments @('push', (Join-Path $ValidatorDirectory 'libInspireFace.so'), "$RemoteDirectory/libInspireFace.so")
-    Invoke-Adb -Arguments @('push', (Join-Path $ValidatorDirectory 'librknnrt.so'), "$RemoteDirectory/librknnrt.so")
-    Invoke-Adb -Arguments @('shell', 'chmod', '755', "$RemoteDirectory/validate_pack_main")
-    $remoteHash = Get-AdbText -Arguments @('shell', 'sh', '-c', "sha256sum $RemoteDirectory/pack | awk '{print `$1}'")
+    if ($Serial -ne 'e3d7377f6fc6d325') { throw 'Validation is pinned to serial e3d7377f6fc6d325' }
+    if ($RemoteDirectory -cne '/userdata/inspireface-rv1126b/pack-validation') { throw 'Unsafe fixed remote directory' }
+    $Repository = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
+    $PackPath = (Resolve-Path -LiteralPath $PackPath).Path
+    $BuildReport = (Resolve-Path -LiteralPath $BuildReport).Path
+    $ValidatorDirectory = (Resolve-Path -LiteralPath $ValidatorDirectory).Path
+    $Inventory = (Resolve-Path -LiteralPath $Inventory).Path
+    $PythonPackPath = Get-RepositoryRelativePath $PackPath 'PackPath'
+    $PythonBuildReport = Get-RepositoryRelativePath $BuildReport 'BuildReport'
+    $PythonInventory = Get-RepositoryRelativePath $Inventory 'Inventory'
+    foreach ($name in @('validate_pack_main', 'libInspireFace.so', 'librknnrt.so')) {
+        if (!(Test-Path -LiteralPath (Join-Path $ValidatorDirectory $name) -PathType Leaf)) { throw "Validator deployment is missing $name" }
+    }
+    Push-Location $Repository
+    try {
+        & python -B -m command.rv1126b_pack.validate_pack $PythonPackPath $PythonBuildReport --inventory $PythonInventory
+        if ($LASTEXITCODE -ne 0) { throw 'Host Task 3 resource-pack validation failed; refusing board deployment' }
+    } finally { Pop-Location }
+    $hostReport = Get-Content -Raw -LiteralPath $BuildReport | ConvertFrom-Json
+    $hostHash = (Get-FileHash -LiteralPath $PackPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($hostHash -ne $hostReport.pack_sha256) { throw 'Host pack SHA-256 does not match the build report' }
+
+    Invoke-Adb @('get-state')
+    Invoke-Adb @('shell', 'mkdir', '-p', '/userdata/inspireface-rv1126b')
+    if ((Get-AdbText @('shell', 'readlink', '-f', '/userdata/inspireface-rv1126b')) -cne '/userdata/inspireface-rv1126b') {
+        throw 'Board parent path resolved outside /userdata/inspireface-rv1126b'
+    }
+    Invoke-Adb @('shell', 'mkdir', '-p', $RemoteDirectory)
+    if ((Get-AdbText @('shell', 'readlink', '-f', $RemoteDirectory)) -cne $RemoteDirectory) { throw 'Board validation path resolved outside the fixed directory' }
+    $remoteReady = $true
+    Invoke-Adb @('shell', 'rm', '-rf', $RemoteDirectory)
+    Invoke-Adb @('shell', 'mkdir', '-p', $RemoteDirectory)
+
+    $runScript = @'
+#!/bin/sh
+cd /userdata/inspireface-rv1126b/pack-validation || exit 1
+export LD_LIBRARY_PATH=/userdata/inspireface-rv1126b/pack-validation
+./validate_pack_main ./pack > result.json
+validator_status=$?
+printf '%s\n' "$validator_status" > exit-status.txt
+(cat /sys/kernel/debug/rknpu/version 2>/dev/null || cat /proc/rknn/version 2>/dev/null) > driver.txt
+exit 0
+'@
+    $scriptPath = Join-Path $RunDirectory 'run.sh'
+    [System.IO.File]::WriteAllText($scriptPath, $runScript.Replace("`r`n", "`n") + "`n", [System.Text.UTF8Encoding]::new($false))
+    Invoke-Adb @('push', $PackPath, "$RemoteDirectory/pack")
+    foreach ($name in @('validate_pack_main', 'libInspireFace.so', 'librknnrt.so')) {
+        Invoke-Adb @('push', (Join-Path $ValidatorDirectory $name), "$RemoteDirectory/$name")
+    }
+    Invoke-Adb @('push', $scriptPath, "$RemoteDirectory/run.sh")
+    Invoke-Adb @('shell', 'chmod', '755', "$RemoteDirectory/validate_pack_main")
+    $roundTripPack = Join-Path $RunDirectory 'pack-roundtrip.partial'
+    Invoke-Adb @('pull', "$RemoteDirectory/pack", $roundTripPack)
+    $remoteHash = (Get-FileHash -LiteralPath $roundTripPack -Algorithm SHA256).Hash.ToLowerInvariant()
+    Remove-Item -LiteralPath $roundTripPack -Force
     if ($remoteHash -ne $hostHash) { throw 'Board pack SHA-256 does not match the host build report' }
-    $runtime = Get-AdbText -Arguments @('shell', 'sh', '-c', "strings $RemoteDirectory/librknnrt.so | grep -m1 'librknnrt version:' || true")
-    $driver = Get-AdbText -Arguments @('shell', 'sh', '-c', "cat /sys/kernel/debug/rknpu/version 2>/dev/null || cat /proc/rknn/version 2>/dev/null || true")
-    & adb -s $Serial shell sh -c "LD_LIBRARY_PATH=$RemoteDirectory $RemoteDirectory/validate_pack_main $RemoteDirectory/pack > $RemoteDirectory/result.json"
-    $boardExit = $LASTEXITCODE
-    Invoke-Adb -Arguments @('pull', "$RemoteDirectory/result.json", $partial)
-    $boardResult = Get-Content -Raw -LiteralPath $partial | ConvertFrom-Json
-    $boardResult | Add-Member -NotePropertyName serial -NotePropertyValue $Serial
-    $boardResult | Add-Member -NotePropertyName pack_sha256 -NotePropertyValue $remoteHash
-    $boardResult | Add-Member -NotePropertyName runtime -NotePropertyValue $runtime
-    $boardResult | Add-Member -NotePropertyName driver -NotePropertyValue $driver
-    $boardResult | Add-Member -NotePropertyName process_exit_status -NotePropertyValue $boardExit
-    $boardResult | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $partial -Encoding utf8
-    Move-Item -LiteralPath $partial -Destination $resultPath -Force
-    if ($boardExit -ne 0 -or $boardResult.status -ne 'success') { throw "Board loader validation failed; see $resultPath" }
+    # Inspect bytes returned from the deployed runtime; minimal board images need no strings utility.
+    $roundTripRuntime = Join-Path $RunDirectory 'runtime-roundtrip.partial'
+    Invoke-Adb @('pull', "$RemoteDirectory/librknnrt.so", $roundTripRuntime)
+    $runtimeHash = (Get-FileHash -LiteralPath $roundTripRuntime -Algorithm SHA256).Hash
+    if ($runtimeHash -ne (Get-FileHash -LiteralPath (Join-Path $ValidatorDirectory 'librknnrt.so') -Algorithm SHA256).Hash) {
+        throw 'Board runtime SHA-256 does not match the deployed library'
+    }
+    $runtimeBytes = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($roundTripRuntime))
+    $runtimeMatch = [regex]::Match($runtimeBytes, 'librknnrt version: ([0-9]+\.[0-9]+\.[0-9]+)[^\x00\r\n]*')
+    $runtime = $runtimeMatch.Value.Trim()
+    Remove-Item -LiteralPath $roundTripRuntime -Force
+    if (!$runtime) { throw 'Board runtime evidence is empty' }
+    $runtime | Set-Content -LiteralPath (Join-Path $RunDirectory 'runtime.txt') -Encoding utf8
+    Invoke-Adb @('shell', 'sh', "$RemoteDirectory/run.sh")
+    foreach ($name in @('result.json', 'exit-status.txt', 'driver.txt')) {
+        Invoke-Adb @('pull', "$RemoteDirectory/$name", (Join-Path $RunDirectory $name))
+    }
+    $exitText = (Get-Content -Raw -LiteralPath (Join-Path $RunDirectory 'exit-status.txt') | Out-String).Trim()
+    if ($exitText -notmatch '^[0-9]+$') { throw 'Board exit status evidence is empty or malformed' }
+    $boardExit = [int]$exitText
+    $driver = (Get-Content -Raw -LiteralPath (Join-Path $RunDirectory 'driver.txt') | Out-String).Trim()
+    if (!$runtime -or !$driver) { throw 'Board runtime/driver evidence is empty' }
+    $boardResult = Get-Content -Raw -LiteralPath (Join-Path $RunDirectory 'result.json') | ConvertFrom-Json
+    if ($boardExit -ne 0 -or $boardResult.status -ne 'success' -or $boardResult.sdk_status -ne 0 -or
+        $boardResult.archive_file_count -ne 12 -or $boardResult.model_count -ne 11 -or
+        $boardResult.tag -cne 'Gundam_RV1126B' -or $boardResult.version -cne '4.0' -or $boardResult.major -cne 't4') {
+        throw 'Board loader result does not match the expected pack metadata or exit status'
+    }
+    foreach ($entry in @{ run_id=$RunId; serial=$Serial; pack_sha256=$remoteHash; runtime=$runtime; driver=$driver; process_exit_status=$boardExit }.GetEnumerator()) {
+        $boardResult | Add-Member -NotePropertyName $entry.Key -NotePropertyValue $entry.Value
+    }
+    Invoke-Adb @('shell', 'rm', '-rf', $RemoteDirectory)
+    $remoteReady = $false
+    Write-Result $boardResult
+} catch {
+    Write-Result @{ status='failed'; run_id=$RunId; serial=$Serial; pack_sha256=$hostHash; error=$_.Exception.Message }
+    throw
 } finally {
-    Invoke-Adb -Arguments @('shell', 'sh', '-c', "rm -rf $RemoteDirectory")
+    if ($remoteReady) {
+        try { Invoke-Adb @('shell', 'rm', '-rf', $RemoteDirectory) } catch { Write-Warning "Board cleanup failed: $_" }
+    }
 }

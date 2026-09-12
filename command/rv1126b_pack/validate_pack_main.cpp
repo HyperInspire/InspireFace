@@ -57,6 +57,8 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    // The loader logs its banner to stdout by default; reserve stdout for the result JSON.
+    HFSetLogLevel(HF_LOG_NONE);
     const HFStatus status = HFValidateResourcePack(argv[1], &info);
     if (status != HSUCCEED) {
         PrintJson("failed", status, info, "HFValidateResourcePack failed");
@@ -68,6 +70,10 @@ int main(int argc, char** argv) {
     }
     if (info.modelCount != 11) {
         PrintJson("failed", status, info, "unexpected resource-pack model count");
+        return 1;
+    }
+    if (info.archiveFileCount != 12 || std::strcmp(info.version, "4.0") != 0 || std::strcmp(info.major, "t4") != 0) {
+        PrintJson("failed", status, info, "unexpected resource-pack archive count/version/major");
         return 1;
     }
     PrintJson("success", status, info, "");
