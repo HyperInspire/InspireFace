@@ -56,8 +56,10 @@ def _require_record(record: Mapping[str, object], archive_name: str) -> dict:
     shape = input_spec.get("shape")
     if layout not in {"NHWC", "NCHW"}:
         raise PackContractError("input layout cannot be represented by the archive")
-    if not isinstance(shape, list) or len(shape) != 4 or not all(isinstance(value, int) and value > 0 for value in shape):
+    if not isinstance(shape, list) or len(shape) != 4 or not all(type(value) is int and value > 0 for value in shape):
         raise PackContractError("input shape cannot be represented by the archive")
+    if shape[0] != 1:
+        raise PackContractError("archive image inputs require batch size one")
     height, width, channel = (shape[1], shape[2], shape[3]) if layout == "NHWC" else (shape[2], shape[3], shape[1])
     if channel != 3:
         raise PackContractError("only three-channel image inputs are archive-compatible")
@@ -88,7 +90,7 @@ def _require_record(record: Mapping[str, object], archive_name: str) -> dict:
         for output in outputs
     ):
         raise PackContractError("output tensor type cannot be represented by the archive")
-    if not isinstance(archive_name, str) or not archive_name or pathlib.PurePosixPath(archive_name).name != archive_name or "." in archive_name:
+    if not isinstance(archive_name, str) or not archive_name or archive_name == "__inspire__" or pathlib.PurePosixPath(archive_name).name != archive_name or "." in archive_name:
         raise PackContractError("archive member name must be a safe extensionless basename")
     return {
         "name": archive_name,
@@ -165,8 +167,26 @@ def validate_manifest(manifest: Mapping[str, object]) -> None:
             raise PackContractError(f"manifest inference contract is invalid: {key}")
         if section["input_tensor_type"] != "uint8" or section["output_tensor_type"] != "float32" or not isinstance(section["nchw"], bool) or not isinstance(section["swap_color"], bool):
             raise PackContractError(f"manifest tensor contract is invalid: {key}")
+        input_size = section["input_size"]
+        if not isinstance(input_size, list) or len(input_size) != 2 or not all(type(value) is int and value > 0 for value in input_size):
+            raise PackContractError(f"manifest input_size must contain two positive integers: {key}")
+        outputs_layers = section["outputs_layers"]
+        if not isinstance(outputs_layers, list) or not outputs_layers or not all(isinstance(value, str) and value.strip() for value in outputs_layers):
+            raise PackContractError(f"manifest outputs_layers must contain nonempty strings: {key}")
+        for field in ("mean", "norm"):
+            values = section[field]
+            if not isinstance(values, list) or len(values) != 3 or not all(type(value) in (int, float) and math.isfinite(value) for value in values):
+                raise PackContractError(f"manifest {field} must contain three finite numbers: {key}")
+        if any(value == 0 for value in section["norm"]):
+            raise PackContractError(f"manifest norm must contain nonzero values: {key}")
+        if type(section["threads"]) is not int or section["threads"] <= 0:
+            raise PackContractError(f"manifest threads must be a positive integer: {key}")
+        if not isinstance(section["input_layer"], str) or not section["input_layer"].strip():
+            raise PackContractError(f"manifest input_layer must be a nonempty string: {key}")
         if section["name"] != section["fullname"] or not isinstance(section["name"], str) or not section["name"]:
             raise PackContractError(f"manifest archive member is invalid: {key}")
+        if section["name"] == "__inspire__":
+            raise PackContractError(f"manifest archive member name is reserved: {key}")
         names.append(section["name"])
     if len(names) != len(set(names)):
         raise PackContractError("manifest archive member names must be unique")

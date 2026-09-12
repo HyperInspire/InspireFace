@@ -98,6 +98,54 @@ class RV1126BPackContractTests(unittest.TestCase):
         with self.assertRaisesRegex(PackContractError, "layout"):
             build_manifest(unsupported, self.names)
 
+    def test_rejects_input_batches_not_representable_by_single_image_loader(self):
+        for layout, shape in (("NHWC", [2, 112, 112, 3]), ("NCHW", [2, 3, 112, 112]),
+                              ("NHWC", [True, 112, 112, 3])):
+            with self.subTest(layout=layout, shape=shape):
+                records = copy.deepcopy(self.records)
+                record = next(record for record in records if record["id"] == "emotion")
+                record["input"].update(layout=layout, shape=shape)
+                with self.assertRaises(PackContractError):
+                    build_manifest(records, self.names)
+
+    def test_manifest_rejects_malformed_loader_fields(self):
+        invalid = {
+            "input_size": ([], [112], [112, 112, 3], [0, 112], [-1, 112],
+                           [112.0, 112], [True, 112], "112,112"),
+            "outputs_layers": ([], "output", [""], [" "], [1], ["output", None]),
+            "mean": ([], [0, 0], [0, 0, 0, 0], [0, 0, float("nan")],
+                     [0, float("inf"), 0], [0, "0", 0], [False, 0, 0]),
+            "norm": ([], [1, 1], [1, 1, 1, 1], [1, 0, 1], [1, -0.0, 1],
+                     [1, float("nan"), 1], [1, float("-inf"), 1], [True, 1, 1]),
+            "threads": (0, -1, 1.0, True, "1", None),
+            "input_layer": ("", " ", 1, None),
+        }
+        for field, values in invalid.items():
+            for value in values:
+                with self.subTest(field=field, value=value):
+                    manifest = build_manifest(self.records, self.names)
+                    manifest["face_emotion"][field] = value
+                    with self.assertRaises(PackContractError):
+                        validate_manifest(manifest)
+
+    def test_manifest_accepts_valid_loader_field_boundaries(self):
+        manifest = build_manifest(self.records, self.names)
+        manifest["face_emotion"].update(input_size=[1, 1], outputs_layers=["output"],
+                                       mean=[0, -1, 0.5], norm=[-1, 1, 0.5],
+                                       threads=2, input_layer="input")
+        validate_manifest(manifest)
+
+    def test_build_rejects_reserved_manifest_member_name(self):
+        names = dict(self.names, emotion="__inspire__")
+        with self.assertRaises(PackContractError):
+            build_manifest(self.records, names)
+
+    def test_validate_rejects_reserved_manifest_member_name(self):
+        manifest = build_manifest(self.records, self.names)
+        manifest["face_emotion"].update(name="__inspire__", fullname="__inspire__")
+        with self.assertRaises(PackContractError):
+            validate_manifest(manifest)
+
 
 if __name__ == "__main__":
     unittest.main()
