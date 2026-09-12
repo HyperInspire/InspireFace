@@ -202,6 +202,14 @@ class RV1126BPackValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(validate_pack.PackValidationError, "mapping"):
             validate_pack.validate_resource_pack(self.pack, self.report, inventory_path=self.inventory)
 
+    def test_rejects_whole_manifest_section_swap_even_when_hashes_are_synced(self):
+        def swap_sections(manifest):
+            manifest["feature"], manifest["mask_detect"] = manifest["mask_detect"], manifest["feature"]
+
+        self._rewrite_manifest_and_sync_report(swap_sections)
+        with self.assertRaisesRegex(validate_pack.PackValidationError, "mapping"):
+            validate_pack.validate_resource_pack(self.pack, self.report, inventory_path=self.inventory)
+
     def test_rejects_promoted_provisional_statuses_even_when_report_lists_are_synced(self):
         report = self._report_json()
         for entry in report["members"]:

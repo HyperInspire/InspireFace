@@ -29,6 +29,12 @@ _TRUSTED_ARCHIVE_NAMES = {
     "recognition": "feature", "liveness": "rgb_anti_spoofing", "mask": "mask_detect",
     "quality": "pose_quality", "emotion": "face_emotion", "attitude": "face_attribute",
 }
+_TRUSTED_SECTION_KEYS = {
+    "scrfd_2_5g_160": "face_detect_160", "scrfd_2_5g_320": "face_detect_320",
+    "scrfd_2_5g_640": "face_detect_640", "landmark": "landmark", "rnet": "refine_net",
+    "recognition": "feature", "liveness": "rgb_anti_spoofing", "mask": "mask_detect",
+    "quality": "pose_quality", "emotion": "face_emotion", "attitude": "face_attribute",
+}
 
 
 def _sha256(path: pathlib.Path) -> str:
@@ -61,12 +67,20 @@ def _trusted_contract(inventory_path: pathlib.Path) -> tuple[dict[str, dict[str,
     except (OSError, ValueError, PackContractError) as error:
         raise PackValidationError(f"invalid trusted inventory: {inventory_path}") from error
     records_by_id = {record["id"]: record for record in records}
-    members = {
-        name: {"id": model_id, "calibration_status": records_by_id[model_id]["calibration_status"]}
-        for model_id, name in _TRUSTED_ARCHIVE_NAMES.items()
-    }
-    sections = _manifest_model_sections(manifest)
-    if set(members) != set(sections):
+    members = {}
+    sections = {}
+    for model_id, name in _TRUSTED_ARCHIVE_NAMES.items():
+        section_key = _TRUSTED_SECTION_KEYS[model_id]
+        section = manifest.get(section_key)
+        if not isinstance(section, Mapping) or section.get("name") != name or section.get("fullname") != name:
+            raise PackValidationError("trusted inventory manifest mapping is invalid")
+        members[name] = {
+            "id": model_id,
+            "calibration_status": records_by_id[model_id]["calibration_status"],
+            "section_key": section_key,
+        }
+        sections[section_key] = section
+    if set(members) != set(_TRUSTED_ARCHIVE_NAMES.values()) or set(sections) != set(_TRUSTED_SECTION_KEYS.values()):
         raise PackValidationError("trusted inventory manifest mapping is invalid")
     return members, sections
 
@@ -145,14 +159,6 @@ def _parse_manifest(raw: bytes) -> Mapping[str, object]:
     return manifest
 
 
-def _manifest_model_sections(manifest: Mapping[str, object]) -> dict[str, Mapping[str, object]]:
-    return {
-        section["name"]: section
-        for section in manifest.values()
-        if isinstance(section, Mapping) and isinstance(section.get("name"), str)
-    }
-
-
 def validate_resource_pack(
     pack_path: pathlib.Path, report_path: pathlib.Path, *, inventory_path: pathlib.Path | None = None,
 ) -> dict[str, Any]:
@@ -198,8 +204,12 @@ def validate_resource_pack(
     if hashlib.sha256(manifest_raw).hexdigest() != report["manifest_sha256"]:
         raise PackValidationError("manifest hash does not match build report")
     manifest = _parse_manifest(manifest_raw)
-    if _manifest_model_sections(manifest) != trusted_sections:
-        raise PackValidationError("manifest model/member mapping does not match trusted inventory")
+    for section_key, trusted_section in trusted_sections.items():
+        actual_section = manifest.get(section_key)
+        if actual_section != trusted_section:
+            raise PackValidationError(
+                f"manifest model/member mapping does not match trusted inventory: {section_key}"
+            )
     for name, entry in report_members.items():
         if actual_hashes.get(name) != entry["sha256"]:
             raise PackValidationError(f"model member hash does not match report: {name}")
