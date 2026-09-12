@@ -108,8 +108,19 @@ class RV1126BPackValidationTests(unittest.TestCase):
                     info.linkname = "target"
                     archive.addfile(info)
 
+    def _rewrite_manifest_and_sync_report(self, mutate):
+        with tarfile.open(self.pack, "r") as archive:
+            manifest = json.loads(archive.extractfile("__inspire__").read())
+        mutate(manifest)
+        raw = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode("utf-8")
+        self._rewrite_archive({"__inspire__": raw})
+        report = self._report_json()
+        report["manifest_sha256"] = hashlib.sha256(raw).hexdigest()
+        report["pack_sha256"] = hashlib.sha256(self.pack.read_bytes()).hexdigest()
+        self._write_report(report)
+
     def test_valid_pack_matches_report_and_manifest(self):
-        result = validate_pack.validate_resource_pack(self.pack, self.report)
+        result = validate_pack.validate_resource_pack(self.pack, self.report, inventory_path=self.inventory)
         self.assertTrue(result["valid"])
         self.assertEqual(result["model_count"], 11)
         self.assertEqual(result["pack_sha256"], self._report_json()["pack_sha256"])
@@ -170,6 +181,37 @@ class RV1126BPackValidationTests(unittest.TestCase):
     def test_cli_returns_nonzero_for_invalid_pack(self):
         self._rewrite_archive({"feature": b"tampered"})
         self.assertEqual(validate_pack.main([str(self.pack), str(self.report)]), 1)
+
+    def test_rejects_report_model_id_swap_even_when_hashes_and_members_still_match(self):
+        report = self._report_json()
+        feature = next(entry for entry in report["members"] if entry["member"] == "feature")
+        mask = next(entry for entry in report["members"] if entry["member"] == "mask_detect")
+        feature["id"], mask["id"] = mask["id"], feature["id"]
+        self._write_report(report)
+        with self.assertRaisesRegex(validate_pack.PackValidationError, "mapping"):
+            validate_pack.validate_resource_pack(self.pack, self.report, inventory_path=self.inventory)
+
+    def test_rejects_manifest_section_name_swap_even_when_report_hashes_are_synced(self):
+        def swap_names(manifest):
+            for field in ("name", "fullname"):
+                manifest["feature"][field], manifest["mask_detect"][field] = (
+                    manifest["mask_detect"][field], manifest["feature"][field]
+                )
+
+        self._rewrite_manifest_and_sync_report(swap_names)
+        with self.assertRaisesRegex(validate_pack.PackValidationError, "mapping"):
+            validate_pack.validate_resource_pack(self.pack, self.report, inventory_path=self.inventory)
+
+    def test_rejects_promoted_provisional_statuses_even_when_report_lists_are_synced(self):
+        report = self._report_json()
+        for entry in report["members"]:
+            if entry["calibration_status"] == "provisional":
+                entry["calibration_status"] = "verified"
+        report["verified"] = sorted(entry["id"] for entry in report["members"])
+        report["requires_recalibration"] = []
+        self._write_report(report)
+        with self.assertRaisesRegex(validate_pack.PackValidationError, "calibration"):
+            validate_pack.validate_resource_pack(self.pack, self.report, inventory_path=self.inventory)
 
 
 if __name__ == "__main__":
