@@ -60,7 +60,7 @@ The fake queried contract must include distinct names and logical dimensions. As
 
 - [ ] **Step 2: Run the RKNN2 guard and confirm the new cases fail**
 
-Run the existing pinned guard build command used by `command/tests/test_rv1126b_build_scripts.py`.
+Run the existing pinned guard build command used by `command/tests/test_rv1126b_build.py`.
 
 Expected: FAIL because the current wrapper validates only capacity/count/index.
 

@@ -24,6 +24,7 @@ struct FakeRuntimeState {
     int run_calls{0};
     int set_io_calls{0};
     int fail_create_call{-1};
+    bool fail_init{false};
     rknn_query_cmd fail_query{RKNN_QUERY_CMD_MAX};
 } runtime;
 
@@ -98,11 +99,20 @@ bool AlmostEqual(float left, float right) {
 
 bool OutputsAreCleared(const std::vector<OutputTensorInfo>& outputs) {
     for (const auto& output : outputs) {
-        if (output.data != nullptr) {
+        if (output.data != nullptr || !output.tensor_dims.empty() || output.quant.scale != 1.0f || output.quant.zero_point != 0) {
             return false;
         }
     }
     return true;
+}
+
+void SeedStaleOutputs(std::vector<OutputTensorInfo>& outputs) {
+    for (auto& output : outputs) {
+        output.data = reinterpret_cast<void*>(static_cast<uintptr_t>(1));
+        output.tensor_dims = {1, 7};
+        output.quant.scale = 0.25f;
+        output.quant.zero_point = 17;
+    }
 }
 
 bool RejectInput(InferenceWrapperRKNNAdapter& adapter, const InputTensorInfo& input) {
@@ -168,6 +178,7 @@ bool TestExactCallerContracts(InferenceWrapperRKNNAdapter& adapter, const std::a
     };
     passed = passed && adapter.Process(missing_output) == InferenceWrapper::WrapperError && OutputsAreCleared(missing_output) &&
              runtime.run_calls == run_before;
+    passed = passed && adapter.PreProcess({valid}) == InferenceWrapper::WrapperOk;
 
     std::cout << "RKNN2_ADAPTER_EXACT_CONTRACTS,status=" << (passed ? "PASS" : "FAIL") << '\n';
     return passed;
@@ -217,6 +228,80 @@ bool TestInitializationRejectsOutputDeclarations() {
                  runtime.set_io_calls == 0 && runtime.run_calls == 0 && runtime.memories.empty();
     }
     std::cout << "RKNN2_ADAPTER_INITIALIZATION_CONTRACTS,status=" << (passed ? "PASS" : "FAIL") << '\n';
+    return passed;
+}
+
+bool TestInputReadinessAndExternalOutputInvalidation() {
+    ResetRuntime();
+    std::array<char, 4> model = {{1, 2, 3, 4}};
+    std::array<uint8_t, 12> pixels = {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}};
+    std::vector<InputTensorInfo> empty_inputs;
+    std::vector<OutputTensorInfo> outputs = {
+      OutputTensorInfo("quantized", TensorInfo::TensorTypeFp32, false),
+      OutputTensorInfo("floating", TensorInfo::TensorTypeFp32, false),
+    };
+    InferenceWrapperRKNNAdapter adapter;
+    InputTensorInfo valid("input", TensorInfo::TensorTypeUint8, false);
+    valid.tensor_dims = {1, 2, 3, 2};
+    valid.data = pixels.data();
+
+    bool passed = adapter.Initialize(model.data(), static_cast<int>(model.size()), empty_inputs, outputs) == InferenceWrapper::WrapperOk &&
+                  adapter.PreProcess({valid}) == InferenceWrapper::WrapperOk &&
+                  adapter.Process(outputs) == InferenceWrapper::WrapperOk && !OutputsAreCleared(outputs);
+
+    const int runs_after_success = runtime.run_calls;
+    InputTensorInfo wrong_name = valid;
+    wrong_name.name = "wrong";
+    passed = passed && adapter.PreProcess({wrong_name}) == InferenceWrapper::WrapperError && OutputsAreCleared(outputs) &&
+             adapter.Process(outputs) == InferenceWrapper::WrapperError && runtime.run_calls == runs_after_success;
+    passed = passed && adapter.PreProcess({valid}) == InferenceWrapper::WrapperOk &&
+             adapter.Process(outputs) == InferenceWrapper::WrapperOk && runtime.run_calls == runs_after_success + 1;
+
+    const int runs_after_recovery = runtime.run_calls;
+    InputTensorInfo wrong_shape = valid;
+    wrong_shape.tensor_dims = {1, 1, 3, 2};
+    passed = passed && adapter.PreProcess({wrong_shape}) == InferenceWrapper::WrapperError && OutputsAreCleared(outputs) &&
+             adapter.Process(outputs) == InferenceWrapper::WrapperError && runtime.run_calls == runs_after_recovery;
+    passed = passed && adapter.Finalize() == InferenceWrapper::WrapperOk && OutputsAreCleared(outputs);
+    std::cout << "RKNN2_ADAPTER_INPUT_READINESS,status=" << (passed ? "PASS" : "FAIL") << '\n';
+    return passed;
+}
+
+bool TestInitializeClearsCallerOutputMetadata() {
+    std::array<char, 4> model = {{1, 2, 3, 4}};
+    std::vector<InputTensorInfo> empty_inputs;
+    std::vector<OutputTensorInfo> outputs = {
+      OutputTensorInfo("quantized", TensorInfo::TensorTypeFp32, false),
+      OutputTensorInfo("floating", TensorInfo::TensorTypeFp32, false),
+    };
+    bool passed = true;
+
+    ResetRuntime();
+    SeedStaleOutputs(outputs);
+    {
+        InferenceWrapperRKNNAdapter adapter;
+        passed = passed && adapter.Initialize("unsupported.rknn", empty_inputs, outputs) == InferenceWrapper::WrapperError &&
+                 OutputsAreCleared(outputs) && runtime.memories.empty();
+    }
+
+    ResetRuntime();
+    SeedStaleOutputs(outputs);
+    {
+        InferenceWrapperRKNNAdapter adapter;
+        passed = passed && adapter.Initialize(nullptr, 0, empty_inputs, outputs) == InferenceWrapper::WrapperError &&
+                 OutputsAreCleared(outputs) && runtime.memories.empty();
+    }
+
+    ResetRuntime();
+    runtime.fail_init = true;
+    SeedStaleOutputs(outputs);
+    {
+        InferenceWrapperRKNNAdapter adapter;
+        passed = passed && adapter.Initialize(model.data(), static_cast<int>(model.size()), empty_inputs, outputs) ==
+                             InferenceWrapper::WrapperError &&
+                 OutputsAreCleared(outputs) && runtime.memories.empty();
+    }
+    std::cout << "RKNN2_ADAPTER_INITIALIZE_CLEARS_OUTPUTS,status=" << (passed ? "PASS" : "FAIL") << '\n';
     return passed;
 }
 
@@ -343,7 +428,7 @@ extern "C" {
 
 int rknn_init(rknn_context *context, void *model, uint32_t size, uint32_t, rknn_init_extend *) {
     ++runtime.init_calls;
-    if (context == nullptr || model == nullptr || size == 0) {
+    if (runtime.fail_init || context == nullptr || model == nullptr || size == 0) {
         return -1;
     }
     *context = 1;
@@ -444,6 +529,7 @@ int rknn_run(rknn_context, rknn_run_extend *) {
 
 int main() {
     const bool passed = TestWrapperContracts() && TestQueriedAndBindingAttributeRoles() &&
-                        TestInitializationRejectsOutputDeclarations() && TestFailureCleanup() && TestNumericHelpers();
+                        TestInitializationRejectsOutputDeclarations() && TestInputReadinessAndExternalOutputInvalidation() &&
+                        TestInitializeClearsCallerOutputMetadata() && TestFailureCleanup() && TestNumericHelpers();
     return passed ? 0 : 1;
 }
