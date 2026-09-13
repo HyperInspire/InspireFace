@@ -134,7 +134,7 @@ public:
             m_input_attrs_[i].index = i;
             // query info
             ret = rknn_query(m_rk_ctx_, RKNN_QUERY_INPUT_ATTR, &(m_input_attrs_[i]), sizeof(rknn_tensor_attr));
-            if (ret < 0 || !IsValidTensorAttr(m_input_attrs_[i])) {
+            if (ret < 0 || !IsValidInputAttr(m_input_attrs_[i])) {
                 INSPIRE_LOGE("rknn_init error! ret = %d", ret);
                 Release();
                 return -1;
@@ -157,7 +157,7 @@ public:
             m_output_attrs_[i].index = i;
             // query info
             ret = rknn_query(m_rk_ctx_, RKNN_QUERY_NATIVE_NHWC_OUTPUT_ATTR, &(m_output_attrs_[i]), sizeof(rknn_tensor_attr));
-            if (ret != RKNN_SUCC || !IsValidTensorAttr(m_output_attrs_[i])) {
+            if (ret != RKNN_SUCC || !IsValidOutputAttr(m_output_attrs_[i])) {
                 INSPIRE_LOGE("rknn_query fail! ret = %d", ret);
                 Release();
                 return -1;
@@ -206,7 +206,8 @@ public:
             m_orig_output_attrs_[i].index = i;
             // query info
             ret = rknn_query(m_rk_ctx_, RKNN_QUERY_OUTPUT_ATTR, &(m_orig_output_attrs_[i]), sizeof(rknn_tensor_attr));
-            if (ret != RKNN_SUCC || !IsValidTensorAttr(m_orig_output_attrs_[i])) {
+            if (ret != RKNN_SUCC || !IsValidOutputAttr(m_orig_output_attrs_[i]) ||
+                !CanConvertOutput(m_output_attrs_[i], m_orig_output_attrs_[i])) {
                 INSPIRE_LOGE("rknn_query fail! ret = %d", ret);
                 Release();
                 return -1;
@@ -228,6 +229,13 @@ public:
         }
 
         auto &binding_attr = m_input_binding_attrs_[index];
+        const auto &normal_attr = m_input_attrs_[index];
+        if (!IsValidInputAttr(normal_attr) || normal_attr.fmt != RKNN_TENSOR_NHWC || normal_attr.n_dims != 4 ||
+            normal_attr.dims[0] != 1 || width != static_cast<int>(normal_attr.dims[2]) ||
+            height != static_cast<int>(normal_attr.dims[1]) || channel != static_cast<int>(normal_attr.dims[3])) {
+            INSPIRE_LOGE("RKNN input contract does not match storage");
+            return -1;
+        }
         const size_t element_bytes = TensorTypeBytes(type);
         size_t source_row_bytes = 0;
         size_t source_size = 0;
@@ -242,33 +250,18 @@ public:
             !CheckedMultiply(destination_row_bytes, element_bytes, destination_row_bytes) ||
             !CheckedMultiply(destination_row_bytes, static_cast<size_t>(height), destination_size) ||
             destination_width < static_cast<size_t>(width) || m_input_mems_[index] == nullptr ||
-            m_input_mems_[index]->virt_addr == nullptr || destination_size > m_input_mems_[index]->size) {
+            m_input_mems_[index]->virt_addr == nullptr || destination_size > m_input_mems_[index]->size ||
+            destination_size > binding_attr.size_with_stride) {
             INSPIRE_LOGE("RKNN input dimensions or storage are invalid");
             return -1;
         }
 
         const auto *source = static_cast<const uint8_t *>(data);
         auto *destination = static_cast<uint8_t *>(m_input_mems_[index]->virt_addr);
-        if (source_row_bytes == destination_row_bytes) {
-            std::memcpy(destination, source, source_size);
-        } else if (format == RKNN_TENSOR_NHWC) {
-            for (int row = 0; row < height; ++row) {
-                std::memcpy(destination + static_cast<size_t>(row) * destination_row_bytes,
-                            source + static_cast<size_t>(row) * source_row_bytes, source_row_bytes);
-            }
-        } else if (format == RKNN_TENSOR_NCHW) {
-            const size_t source_channel_bytes = source_row_bytes / static_cast<size_t>(channel);
-            const size_t destination_channel_bytes = destination_row_bytes / static_cast<size_t>(channel);
-            for (int plane = 0; plane < channel; ++plane) {
-                for (int row = 0; row < height; ++row) {
-                    const size_t source_offset = (static_cast<size_t>(plane) * height + row) * source_channel_bytes;
-                    const size_t destination_offset = (static_cast<size_t>(plane) * height + row) * destination_channel_bytes;
-                    std::memcpy(destination + destination_offset, source + source_offset, source_channel_bytes);
-                }
-            }
-        } else {
-            INSPIRE_LOGE("Unsupported RKNN input tensor format");
-            return -1;
+        std::memset(destination, 0, m_input_mems_[index]->size);
+        for (int row = 0; row < height; ++row) {
+            std::memcpy(destination + static_cast<size_t>(row) * destination_row_bytes,
+                        source + static_cast<size_t>(row) * source_row_bytes, source_row_bytes);
         }
 
         const auto ret = rknn_set_io_mem(m_rk_ctx_, m_input_mems_[index], &binding_attr);
@@ -288,6 +281,15 @@ public:
         }
         // Set output tensor memory
         for (uint32_t i = 0; i < m_rk_io_num_.n_output; ++i) {
+            if (m_output_mems_[i] == nullptr || m_output_mems_[i]->virt_addr == nullptr ||
+                !CanConvertOutput(m_output_attrs_[i], m_orig_output_attrs_[i])) {
+                return -1;
+            }
+            size_t required_bytes = 0;
+            if (!NativeStorageBytes(m_output_attrs_[i], required_bytes) || required_bytes > m_output_mems_[i]->size ||
+                required_bytes > m_output_attrs_[i].size_with_stride) {
+                return -1;
+            }
             // set output memory and attribute
             auto ret = rknn_set_io_mem(m_rk_ctx_, m_output_mems_[i], &m_output_attrs_[i]);
             if (ret < 0) {
@@ -303,50 +305,18 @@ public:
         }
 
         if (use_raw_output) {
-            m_output_nchw_.resize(m_rk_io_num_.n_output);
+            std::vector<std::vector<float>> converted_outputs;
+            converted_outputs.resize(m_rk_io_num_.n_output);
             for (uint32_t i = 0; i < m_rk_io_num_.n_output; ++i) {
                 const size_t num_elements = m_orig_output_attrs_[i].n_elems;
                 if (num_elements == 0 || m_output_mems_[i] == nullptr || m_output_mems_[i]->virt_addr == nullptr) {
                     return -1;
                 }
-                m_output_nchw_[i].resize(num_elements);
-                if (m_output_attrs_[i].fmt == RKNN_TENSOR_NC1HWC2) {
-                    if (m_output_attrs_[i].type != RKNN_TENSOR_INT8 || m_output_attrs_[i].n_dims < 5 ||
-                        m_output_attrs_[i].dims[0] == 0 || m_output_attrs_[i].dims[1] == 0 ||
-                        m_output_attrs_[i].dims[2] == 0 || m_output_attrs_[i].dims[3] == 0 || m_output_attrs_[i].dims[4] == 0) {
-                        return -1;
-                    }
-                    size_t source_element_count = 1;
-                    for (uint32_t dimension = 0; dimension < 5; ++dimension) {
-                        if (!CheckedMultiply(source_element_count, m_output_attrs_[i].dims[dimension], source_element_count)) {
-                            return -1;
-                        }
-                    }
-                    if (source_element_count > m_output_mems_[i]->size || m_orig_output_attrs_[i].n_dims < 2) {
-                        return -1;
-                    }
-                    int channel = m_orig_output_attrs_[i].dims[1];
-                    int h = m_orig_output_attrs_[i].n_dims > 2 ? m_orig_output_attrs_[i].dims[2] : 1;
-                    int w = m_orig_output_attrs_[i].n_dims > 3 ? m_orig_output_attrs_[i].dims[3] : 1;
-                    size_t converted_element_count = m_output_attrs_[i].dims[0];
-                    if (channel <= 0 || h <= 0 || w <= 0 ||
-                        !CheckedMultiply(converted_element_count, static_cast<size_t>(channel), converted_element_count) ||
-                        !CheckedMultiply(converted_element_count, static_cast<size_t>(h), converted_element_count) ||
-                        !CheckedMultiply(converted_element_count, static_cast<size_t>(w), converted_element_count) ||
-                        converted_element_count != num_elements) {
-                        return -1;
-                    }
-                    int zp = m_output_attrs_[i].zp;
-                    float scale = m_output_attrs_[i].scale;
-                    NC1HWC2_int8_to_NCHW_float((int8_t *)m_output_mems_[i]->virt_addr, m_output_nchw_[i].data(), (int *)m_output_attrs_[i].dims,
-                                               channel, h, w, zp, scale);
-                } else {
-                    if (m_output_attrs_[i].n_elems != num_elements ||
-                        !CopyOutputToFloat(m_output_attrs_[i], *m_output_mems_[i], m_output_nchw_[i])) {
-                        return -1;
-                    }
+                if (!ConvertOutputToNormal(m_output_attrs_[i], m_orig_output_attrs_[i], *m_output_mems_[i], converted_outputs[i])) {
+                    return -1;
                 }
             }
+            m_output_nchw_.swap(converted_outputs);
         }
 
         return 0;
@@ -457,78 +427,207 @@ private:
         }
     }
 
-    static bool IsValidTensorAttr(const rknn_tensor_attr &attribute) {
-        if (attribute.n_dims == 0 || attribute.n_dims > RKNN_MAX_DIMS || attribute.n_elems == 0 ||
-            attribute.size_with_stride == 0) {
+    static bool CheckedProduct(const uint32_t *dimensions, uint32_t dimension_count, size_t &result) {
+        result = 1;
+        if (dimensions == nullptr || dimension_count == 0 || dimension_count > RKNN_MAX_DIMS) {
             return false;
         }
-        for (uint32_t index = 0; index < attribute.n_dims; ++index) {
-            if (attribute.dims[index] == 0) {
+        for (uint32_t index = 0; index < dimension_count; ++index) {
+            if (dimensions[index] == 0 || !CheckedMultiply(result, dimensions[index], result)) {
                 return false;
             }
         }
         return true;
     }
 
-    static bool CopyOutputToFloat(const rknn_tensor_attr &attribute, const rknn_tensor_mem &memory,
-                                  std::vector<float> &destination) {
+    static bool IsSupportedOutputType(const rknn_tensor_attr &attribute) {
+        if (attribute.type == RKNN_TENSOR_FLOAT32) {
+            return attribute.qnt_type == RKNN_TENSOR_QNT_NONE;
+        }
+        if (attribute.type == RKNN_TENSOR_INT8 || attribute.type == RKNN_TENSOR_UINT8) {
+            if (attribute.qnt_type != RKNN_TENSOR_QNT_AFFINE_ASYMMETRIC || !std::isfinite(attribute.scale)) {
+                return false;
+            }
+            return attribute.type == RKNN_TENSOR_INT8 ? attribute.zp >= -128 && attribute.zp <= 127
+                                                      : attribute.zp >= 0 && attribute.zp <= 255;
+        }
+        return false;
+    }
+
+    static bool IsValidTensorAttr(const rknn_tensor_attr &attribute) {
         const size_t element_bytes = TensorTypeBytes(attribute.type);
-        if (element_bytes == 0 || memory.virt_addr == nullptr || destination.size() != attribute.n_elems) {
+        size_t logical_elements = 0;
+        size_t logical_bytes = 0;
+        return element_bytes != 0 && attribute.n_elems != 0 && attribute.size != 0 && attribute.size_with_stride != 0 &&
+               CheckedProduct(attribute.dims, attribute.n_dims, logical_elements) && logical_elements == attribute.n_elems &&
+               CheckedMultiply(logical_elements, element_bytes, logical_bytes) && logical_bytes <= attribute.size &&
+               attribute.size <= attribute.size_with_stride;
+    }
+
+    static bool IsValidInputAttr(const rknn_tensor_attr &attribute) {
+        if (!IsValidTensorAttr(attribute) || attribute.n_dims != 4 || attribute.fmt != RKNN_TENSOR_NHWC ||
+            attribute.w_stride != 0 && attribute.w_stride < attribute.dims[2]) {
             return false;
         }
-
-        size_t row_count = 1;
-        size_t logical_row_elements = attribute.n_elems;
-        size_t storage_row_elements = logical_row_elements;
-        if (attribute.n_dims == 4 && attribute.w_stride != 0) {
-            if (attribute.fmt == RKNN_TENSOR_NHWC) {
-                row_count = static_cast<size_t>(attribute.dims[0]) * attribute.dims[1];
-                logical_row_elements = static_cast<size_t>(attribute.dims[2]) * attribute.dims[3];
-                storage_row_elements = static_cast<size_t>(attribute.w_stride) * attribute.dims[3];
-            } else if (attribute.fmt == RKNN_TENSOR_NCHW) {
-                row_count = static_cast<size_t>(attribute.dims[0]) * attribute.dims[1] * attribute.dims[2];
-                logical_row_elements = attribute.dims[3];
-                storage_row_elements = attribute.w_stride;
-            }
-        }
-
-        size_t logical_elements = 0;
+        const size_t stride = attribute.w_stride == 0 ? attribute.dims[2] : attribute.w_stride;
+        size_t rows = 0;
+        size_t row_elements = 0;
         size_t storage_elements = 0;
         size_t storage_bytes = 0;
-        if (storage_row_elements < logical_row_elements ||
-            !CheckedMultiply(row_count, logical_row_elements, logical_elements) || logical_elements != destination.size() ||
-            !CheckedMultiply(row_count, storage_row_elements, storage_elements) ||
-            !CheckedMultiply(storage_elements, element_bytes, storage_bytes) || storage_bytes > memory.size) {
+        return CheckedMultiply(attribute.dims[0], attribute.dims[1], rows) &&
+               CheckedMultiply(stride, attribute.dims[3], row_elements) &&
+               CheckedMultiply(rows, row_elements, storage_elements) &&
+               CheckedMultiply(storage_elements, TensorTypeBytes(attribute.type), storage_bytes) &&
+               storage_bytes <= attribute.size_with_stride;
+    }
+
+    static bool IsValidOutputAttr(const rknn_tensor_attr &attribute) {
+        if (!IsValidTensorAttr(attribute) || !IsSupportedOutputType(attribute)) {
             return false;
         }
+        if (attribute.fmt == RKNN_TENSOR_NC1HWC2) {
+            return attribute.n_dims == 5 && (attribute.w_stride == 0 || attribute.w_stride >= attribute.dims[3]);
+        }
+        if (attribute.fmt == RKNN_TENSOR_NHWC || attribute.fmt == RKNN_TENSOR_NCHW) {
+            return attribute.n_dims == 4 && (attribute.w_stride == 0 ||
+                                              attribute.w_stride >= attribute.dims[attribute.fmt == RKNN_TENSOR_NHWC ? 2 : 3]);
+        }
+        return attribute.w_stride == 0;
+    }
 
+    static bool LogicalNchwShape(const rknn_tensor_attr &attribute, size_t &batch, size_t &channel, size_t &height, size_t &width) {
+        if (attribute.n_dims != 4 || (attribute.fmt != RKNN_TENSOR_NHWC && attribute.fmt != RKNN_TENSOR_NCHW)) {
+            return false;
+        }
+        batch = attribute.dims[0];
+        if (attribute.fmt == RKNN_TENSOR_NHWC) {
+            height = attribute.dims[1];
+            width = attribute.dims[2];
+            channel = attribute.dims[3];
+        } else {
+            channel = attribute.dims[1];
+            height = attribute.dims[2];
+            width = attribute.dims[3];
+        }
+        return true;
+    }
+
+    static bool CanConvertOutput(const rknn_tensor_attr &native, const rknn_tensor_attr &normal) {
+        if (!IsValidOutputAttr(native) || !IsValidOutputAttr(normal)) {
+            return false;
+        }
+        size_t normal_batch = 0, normal_channel = 0, normal_height = 0, normal_width = 0;
+        if (native.fmt == RKNN_TENSOR_NC1HWC2) {
+            return LogicalNchwShape(normal, normal_batch, normal_channel, normal_height, normal_width) &&
+                   native.dims[0] == normal_batch && native.dims[2] == normal_height && native.dims[3] == normal_width &&
+                   normal_channel <= static_cast<size_t>(native.dims[1]) * native.dims[4];
+        }
+        size_t native_batch = 0, native_channel = 0, native_height = 0, native_width = 0;
+        if (LogicalNchwShape(native, native_batch, native_channel, native_height, native_width) &&
+            LogicalNchwShape(normal, normal_batch, normal_channel, normal_height, normal_width)) {
+            return native_batch == normal_batch && native_channel == normal_channel && native_height == normal_height &&
+                   native_width == normal_width;
+        }
+        if (native.fmt != normal.fmt || native.n_dims != normal.n_dims || native.n_elems != normal.n_elems) {
+            return false;
+        }
+        return std::equal(native.dims, native.dims + native.n_dims, normal.dims);
+    }
+
+    static bool NativeStorageBytes(const rknn_tensor_attr &attribute, size_t &bytes) {
+        size_t storage_elements = attribute.n_elems;
+        size_t stride = 0;
+        if (attribute.fmt == RKNN_TENSOR_NHWC && attribute.n_dims == 4) {
+            stride = attribute.w_stride == 0 ? attribute.dims[2] : attribute.w_stride;
+            if (!CheckedMultiply(attribute.dims[0], attribute.dims[1], storage_elements) ||
+                !CheckedMultiply(storage_elements, stride, storage_elements) ||
+                !CheckedMultiply(storage_elements, attribute.dims[3], storage_elements)) {
+                return false;
+            }
+        } else if (attribute.fmt == RKNN_TENSOR_NCHW && attribute.n_dims == 4) {
+            stride = attribute.w_stride == 0 ? attribute.dims[3] : attribute.w_stride;
+            if (!CheckedMultiply(attribute.dims[0], attribute.dims[1], storage_elements) ||
+                !CheckedMultiply(storage_elements, attribute.dims[2], storage_elements) ||
+                !CheckedMultiply(storage_elements, stride, storage_elements)) {
+                return false;
+            }
+        } else if (attribute.fmt == RKNN_TENSOR_NC1HWC2 && attribute.n_dims == 5) {
+            stride = attribute.w_stride == 0 ? attribute.dims[3] : attribute.w_stride;
+            if (!CheckedMultiply(attribute.dims[0], attribute.dims[1], storage_elements) ||
+                !CheckedMultiply(storage_elements, attribute.dims[2], storage_elements) ||
+                !CheckedMultiply(storage_elements, stride, storage_elements) ||
+                !CheckedMultiply(storage_elements, attribute.dims[4], storage_elements)) {
+                return false;
+            }
+        }
+        return CheckedMultiply(storage_elements, TensorTypeBytes(attribute.type), bytes);
+    }
+
+    static bool ReadNativeFloat(const rknn_tensor_attr &attribute, const uint8_t *source, size_t index, float &value) {
+        if (source == nullptr) {
+            return false;
+        }
+        if (attribute.type == RKNN_TENSOR_FLOAT32) {
+            std::memcpy(&value, source + index * sizeof(float), sizeof(float));
+        } else if (attribute.type == RKNN_TENSOR_INT8) {
+            value = (static_cast<int32_t>(reinterpret_cast<const int8_t *>(source)[index]) - attribute.zp) * attribute.scale;
+        } else if (attribute.type == RKNN_TENSOR_UINT8) {
+            value = (static_cast<int32_t>(source[index]) - attribute.zp) * attribute.scale;
+        } else {
+            return false;
+        }
+        return std::isfinite(value);
+    }
+
+    static bool ConvertOutputToNormal(const rknn_tensor_attr &native, const rknn_tensor_attr &normal,
+                                      const rknn_tensor_mem &memory, std::vector<float> &destination) {
+        size_t storage_bytes = 0;
+        if (!CanConvertOutput(native, normal) || memory.virt_addr == nullptr || !NativeStorageBytes(native, storage_bytes) ||
+            storage_bytes > memory.size || storage_bytes > native.size_with_stride) {
+            return false;
+        }
+        destination.assign(normal.n_elems, 0.0f);
         const auto *source = static_cast<const uint8_t *>(memory.virt_addr);
-        size_t destination_index = 0;
-        for (size_t row = 0; row < row_count; ++row) {
-            const size_t source_row_offset = row * storage_row_elements;
-            for (size_t column = 0; column < logical_row_elements; ++column) {
-                const size_t source_index = source_row_offset + column;
-                switch (attribute.type) {
-                    case RKNN_TENSOR_FLOAT32: {
-                        float value = 0.0f;
-                        std::memcpy(&value, source + source_index * sizeof(float), sizeof(float));
-                        destination[destination_index++] = value;
-                        break;
+        size_t batch = 0, channel = 0, height = 0, width = 0;
+        if (!LogicalNchwShape(normal, batch, channel, height, width)) {
+            if (native.fmt != normal.fmt || native.n_elems != normal.n_elems) {
+                return false;
+            }
+            for (size_t index = 0; index < destination.size(); ++index) {
+                if (!ReadNativeFloat(native, source, index, destination[index])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        const size_t native_width = native.fmt == RKNN_TENSOR_NHWC ? native.dims[2] : native.dims[3];
+        const size_t native_stride = native.w_stride == 0 ? native_width : native.w_stride;
+        for (size_t n = 0; n < batch; ++n) {
+            for (size_t c = 0; c < channel; ++c) {
+                for (size_t h = 0; h < height; ++h) {
+                    for (size_t w = 0; w < width; ++w) {
+                        size_t source_index = 0;
+                        if (native.fmt == RKNN_TENSOR_NHWC) {
+                            source_index = ((n * height + h) * native_stride + w) * channel + c;
+                        } else if (native.fmt == RKNN_TENSOR_NCHW) {
+                            source_index = ((n * channel + c) * height + h) * native_stride + w;
+                        } else if (native.fmt == RKNN_TENSOR_NC1HWC2) {
+                            source_index = (((n * native.dims[1] + c / native.dims[4]) * height + h) * native_stride + w) *
+                                             native.dims[4] + c % native.dims[4];
+                        } else {
+                            return false;
+                        }
+                        const size_t destination_index = normal.fmt == RKNN_TENSOR_NHWC
+                                                           ? ((n * height + h) * width + w) * channel + c
+                                                           : ((n * channel + c) * height + h) * width + w;
+                        if (!ReadNativeFloat(native, source, source_index, destination[destination_index])) {
+                            return false;
+                        }
                     }
-                    case RKNN_TENSOR_INT8:
-                        destination[destination_index++] =
-                          (reinterpret_cast<const int8_t *>(source)[source_index] - attribute.zp) * attribute.scale;
-                        break;
-                    case RKNN_TENSOR_UINT8:
-                        destination[destination_index++] =
-                          (static_cast<int32_t>(source[source_index]) - attribute.zp) * attribute.scale;
-                        break;
-                    default:
-                        return false;
                 }
             }
         }
-        return destination_index == destination.size();
+        return true;
     }
 
     rknn_context m_rk_ctx_{};
