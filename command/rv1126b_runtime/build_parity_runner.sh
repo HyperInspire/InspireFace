@@ -38,9 +38,14 @@ check_armhf "$sdk_dir/lib/libInspireFace.so"
 check_armhf "$sdk_dir/lib/librknnrt.so"
 
 mkdir -p "$output_dir"
+# The wrapper class is intentionally an internal implementation detail and is
+# not guaranteed to be exported by libInspireFace.  Compile the production
+# RKNN2 adapter object into this executable, while linking the same SDK/runtime
+# libraries as the RV1126B product build.
+adapter_source="$repository/cpp/inspireface/middleware/inference_wrapper/inference_wrapper_rknn_adapter_nano.cpp"
 "$compiler-g++" -std=c++14 -O2 -Wall -Wextra -Werror -DINFERENCE_WRAPPER_ENABLE_RKNN2 \
-    -I"$sdk_dir/include" -I"$repository/cpp/inspireface/middleware/inference_wrapper" \
-    "$script_dir/rknn2_parity_runner.cpp" -L"$sdk_dir/lib" -lInspireFace -lrknnrt -ldl \
+    -I"$sdk_dir/include" -I"$sdk_dir/include/inspireface" -I"$repository/cpp/inspireface" -I"$repository/cpp/inspireface/middleware/inference_wrapper" \
+    "$script_dir/rknn2_parity_runner.cpp" "$adapter_source" -L"$sdk_dir/lib" -lInspireFace -lrknnrt -ldl \
     -Wl,-rpath,'$ORIGIN' -o "$output_dir/rknn2_parity_runner"
 cp "$sdk_dir/lib/libInspireFace.so" "$sdk_dir/lib/librknnrt.so" "$output_dir/"
 

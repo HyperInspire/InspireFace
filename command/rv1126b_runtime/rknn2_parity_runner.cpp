@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <cstdio>
 #include <cstdint>
 #include <fstream>
 #include <iomanip>
@@ -50,6 +51,25 @@ std::vector<uint8_t> ReadFile(const std::string& path) {
     file.seekg(0);
     if (!file.read(reinterpret_cast<char*>(bytes.data()), length)) throw std::runtime_error("cannot read " + path);
     return bytes;
+}
+
+bool RuntimeAtLeast(const char* api_version, int required_major, int required_minor, int required_patch) {
+    int major = -1, minor = -1, patch = -1;
+    // RKNN appends a parenthesized build identifier, so parse only its first token.
+    if (!api_version || std::sscanf(api_version, "%d.%d.%d", &major, &minor, &patch) != 3) return false;
+    return major > required_major || (major == required_major &&
+        (minor > required_minor || (minor == required_minor && patch >= required_patch)));
+}
+
+uint64_t PeakRssKb() {
+    std::ifstream status("/proc/self/status");
+    std::string key;
+    uint64_t value = 0;
+    while (status >> key >> value) {
+        if (key == "VmHWM:" || key == "VmRSS:") return value;
+        status.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    return 0;
 }
 
 uint64_t Product(const rknn_tensor_attr& attr) {
@@ -108,11 +128,11 @@ struct ReferenceOutputLease {
     ~ReferenceOutputLease() { if (acquired) rknn_outputs_release(context, outputs->size(), outputs->data()); }
 };
 
-std::vector<std::vector<float>> RunReference(rknn_context context, const std::vector<uint8_t>& input,
+std::vector<std::vector<float>> RunReference(rknn_context context, std::vector<uint8_t>& input,
                                               const std::vector<rknn_tensor_attr>& outputs) {
     rknn_input reference_input{};
     reference_input.index = 0;
-    reference_input.buf = const_cast<uint8_t*>(input.data());
+    reference_input.buf = input.data();
     reference_input.size = static_cast<uint32_t>(input.size());
     reference_input.type = RKNN_TENSOR_UINT8;
     reference_input.fmt = RKNN_TENSOR_NHWC;
@@ -182,18 +202,29 @@ double Percentile(std::vector<double> samples, double percentile) {
     return samples[std::min(index, samples.size() - 1)];
 }
 
-struct Arguments { std::string id, model, input, model_sha256, input_sha256; };
+struct Arguments { std::string id, model, input, result, model_sha256, input_sha256; };
 Arguments Parse(int argc, char** argv) {
     Arguments result;
     for (int index = 1; index + 1 < argc; index += 2) {
         const std::string key(argv[index]), value(argv[index + 1]);
         if (key == "--id") result.id = value; else if (key == "--model") result.model = value;
         else if (key == "--input") result.input = value; else if (key == "--model-sha256") result.model_sha256 = value;
-        else if (key == "--input-sha256") result.input_sha256 = value; else throw std::runtime_error("unknown argument: " + key);
+        else if (key == "--input-sha256") result.input_sha256 = value; else if (key == "--result") result.result = value;
+        else throw std::runtime_error("unknown argument: " + key);
     }
-    if (result.id.empty() || result.model.empty() || result.input.empty() || result.model_sha256.size() != 64 || result.input_sha256.size() != 64)
-        throw std::runtime_error("usage: --id ID --model FILE --input FILE --model-sha256 HEX --input-sha256 HEX");
+    if (result.id.empty() || result.model.empty() || result.input.empty() || result.result.empty() || result.model_sha256.size() != 64 || result.input_sha256.size() != 64)
+        throw std::runtime_error("usage: --id ID --model FILE --input FILE --result FILE --model-sha256 HEX --input-sha256 HEX");
     return result;
+}
+
+bool WriteReport(const std::string& path, const std::string& content) {
+    const std::string partial = path + ".partial";
+    {
+        std::ofstream output(partial, std::ios::binary | std::ios::trunc);
+        output << content << '\n';
+        if (!output) return false;
+    }
+    return std::rename(partial.c_str(), path.c_str()) == 0;
 }
 }  // namespace
 
@@ -206,14 +237,18 @@ int main(int argc, char** argv) {
     std::vector<double> reference_latency_ms, production_latency_ms;
     bool all_finite = false, accepted = false;
     uint32_t rnet_width = 0, rnet_w_stride = 0, scrfd_output_count = 0, attitude_output_count = 0;
+    uint64_t peak_rss_kb = 0;
     try {
         arguments = Parse(argc, argv);
-        const std::vector<uint8_t> model = ReadFile(arguments.model);
-        const std::vector<uint8_t> input_bytes = ReadFile(arguments.input);
+        std::vector<uint8_t> model = ReadFile(arguments.model);
+        std::vector<uint8_t> input_bytes = ReadFile(arguments.input);
+        if (model.size() > static_cast<size_t>(std::numeric_limits<int>::max())) throw std::runtime_error("model exceeds adapter size limit");
         RKNNContext reference;
         failure_stage = "reference_init";
         Check("rknn_init", rknn_init(&reference.value, model.data(), model.size(), 0, nullptr));
         Check("RKNN_QUERY_SDK_VERSION", rknn_query(reference.value, RKNN_QUERY_SDK_VERSION, &version, sizeof(version)));
+        if (!RuntimeAtLeast(version.api_version, 2, 3, 2) || version.drv_version[0] == '\0')
+            throw std::runtime_error("requires RKNN runtime >= 2.3.2 and a nonempty driver version");
         rknn_input_output_num counts{};
         Check("RKNN_QUERY_IN_OUT_NUM", rknn_query(reference.value, RKNN_QUERY_IN_OUT_NUM, &counts, sizeof(counts)));
         if (counts.n_input != 1 || !counts.n_output) throw std::runtime_error("only exactly one image input is supported");
@@ -236,11 +271,11 @@ int main(int argc, char** argv) {
         std::vector<OutputTensorInfo> declared_outputs;
         for (const auto& output : normal_outputs) declared_outputs.emplace_back(output.name, TensorInfo::TensorTypeFp32, false);
         InferenceWrapperRKNNAdapter production;
-        if (production.Initialize(reinterpret_cast<char*>(const_cast<uint8_t*>(model.data())), static_cast<int>(model.size()), ignored_inputs, declared_outputs) != InferenceWrapper::WrapperOk)
+        if (production.Initialize(reinterpret_cast<char*>(model.data()), static_cast<int>(model.size()), ignored_inputs, declared_outputs) != InferenceWrapper::WrapperOk)
             throw std::runtime_error("production Initialize failed");
         InputTensorInfo declared_input(normal_input.name, TensorInfo::TensorTypeUint8, false);
         declared_input.tensor_dims.assign(normal_input.dims, normal_input.dims + normal_input.n_dims);
-        declared_input.data = const_cast<uint8_t*>(input_bytes.data());
+        declared_input.data = input_bytes.data();
         failure_stage = "warmup";
         for (int iteration = 0; iteration < kWarmupIterations; ++iteration) RunProduction(production, declared_input, &declared_outputs);
         metrics.assign(normal_outputs.size(), Metrics{});
@@ -265,6 +300,8 @@ int main(int argc, char** argv) {
         }
         accepted = all_finite;
         for (const auto& metric : metrics) accepted = accepted && metric.max_abs <= kMaxAbsLimit && metric.cosine >= kCosineLimit;
+        peak_rss_kb = PeakRssKb();
+        if (peak_rss_kb == 0) throw std::runtime_error("unable to record peak RSS");
         production.Finalize();
         status = accepted ? "success" : "failed";
         if (!accepted) failure_stage = "acceptance";
@@ -274,7 +311,7 @@ int main(int argc, char** argv) {
     report << std::setprecision(10) << "{\"model_id\":" << Quote(arguments.id) << ",\"status\":" << Quote(status)
            << ",\"failure_stage\":" << Quote(status == "success" ? "" : failure_stage) << ",\"error\":" << Quote(error)
            << ",\"model_sha256\":" << Quote(arguments.model_sha256) << ",\"input_sha256\":" << Quote(arguments.input_sha256)
-           << ",\"api_version\":" << Quote(version.api_version) << ",\"driver_version\":" << Quote(version.drv_version)
+           << ",\"api_version\":" << Quote(version.api_version) << ",\"runtime_version\":" << Quote(version.api_version) << ",\"driver_version\":" << Quote(version.drv_version)
            << ",\"normal_inputs\":";
     AppendAttrs(report, normal_inputs);
     report << ",\"normal_outputs\":"; AppendAttrs(report, normal_outputs);
@@ -305,7 +342,11 @@ int main(int argc, char** argv) {
     }
     report << "],\"all_finite\":" << (all_finite ? "true" : "false") << ",\"accepted\":" << (accepted ? "true" : "false")
            << ",\"rnet_stride\":{\"width\":" << rnet_width << ",\"w_stride\":" << rnet_w_stride << "}"
-           << ",\"scrfd_output_count\":" << scrfd_output_count << ",\"attitude_output_count\":" << attitude_output_count << "}";
-    std::cout << report.str() << '\n';
+           << ",\"scrfd_output_count\":" << scrfd_output_count << ",\"attitude_output_count\":" << attitude_output_count
+           << ",\"peak_rss_kb\":" << peak_rss_kb << "}";
+    if (arguments.result.empty() || !WriteReport(arguments.result, report.str())) {
+        std::cerr << "unable to write parity result file\n";
+        return 1;
+    }
     return status == "success" ? 0 : 1;
 }

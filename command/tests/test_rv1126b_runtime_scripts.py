@@ -1,6 +1,11 @@
 """Static contracts for the RV1126B RKNN2 runtime-parity tooling."""
 
 from pathlib import Path
+import hashlib
+import json
+import re
+import subprocess
+import tempfile
 import unittest
 
 from command.rv1126b_pack.contracts import selected_model_ids
@@ -11,6 +16,7 @@ RUNTIME = ROOT / "command" / "rv1126b_runtime"
 RUNNER = RUNTIME / "rknn2_parity_runner.cpp"
 BUILD = RUNTIME / "build_parity_runner.sh"
 BOARD = RUNTIME / "run_board_parity.ps1"
+RAW_INPUTS = RUNTIME / "prepare_raw_inputs.py"
 
 
 def load_selected_ids() -> list[str]:
@@ -43,11 +49,11 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
             self.assertIn(required, text)
 
     def test_board_matrix_is_exactly_the_pack_selection(self):
-        self.assertEqual(load_selected_ids(), list(selected_model_ids()))
         text = BOARD.read_text(encoding="utf-8")
-        self.assertIn("selected_model_ids", text)
-        self.assertIn("selected_model_count", text)
-        self.assertIn("11", text)
+        start = text.index("$ExpectedIds = @(")
+        end = text.index(")", start)
+        actual = re.findall(r"'([a-z0-9_]+)'", text[start:end])
+        self.assertEqual(actual, list(selected_model_ids()))
 
     def test_cross_build_reuses_armhf_sdk_and_checks_elf_dependencies(self):
         text = BUILD.read_text(encoding="utf-8")
@@ -55,6 +61,7 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
             "set -euo pipefail", "build_cross_rv1126b_armhf.sh", "SDK_INSTALL_DIR",
             "RKNN_RUNTIME_DIR", "arm-linux-gnueabihf", "hard-float ABI", "readelf",
             "libInspireFace.so", "librknnrt.so", "rknn2_parity_runner.cpp",
+            "inference_wrapper_rknn_adapter_nano.cpp",
         ):
             self.assertIn(required, text)
 
@@ -66,9 +73,46 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
             "'rm', '-rf', $RemoteDirectory", "$RunId", ".partial", "Move-Item",
             "input_sha256", "model_sha256", "ConvertTo-Json", "failure_stage",
             "continue", "Replace(\"`r`n\", \"`n\")",
+            "runtime_version", "driver_version", "peak_rss_kb", "Test-RuntimeVersion",
         ):
             self.assertIn(required, text)
         self.assertNotIn("shell -c", text)
+
+    def test_runner_uses_result_file_and_rejects_too_old_runtime(self):
+        text = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("--result", text)
+        self.assertIn("WriteReport", text)
+        self.assertNotIn("std::cout << report", text)
+        self.assertIn("RuntimeAtLeast", text)
+        self.assertIn("2, 3, 2", text)
+        self.assertIn("peak_rss_kb", text)
+
+
+class RawUint8InputTests(unittest.TestCase):
+    def test_generator_emits_raw_nhwc_provenance_before_normalization(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            image = root / "image.ppm"
+            image.write_bytes(b"P6\n2 1\n255\n\x01\x02\x03\x04\x05\x06")
+            sidecar = root / "model.json"
+            sidecar.write_text(json.dumps({
+                "model_id": "unit", "input": {"dtype": "uint8", "layout": "NHWC", "shape": [1, 1, 2, 3]},
+                "preprocess": {"color_order": "BGR", "resize": {"width": 2, "height": 1}, "mean": [1, 2, 3], "std": [4, 5, 6]},
+            }))
+            output = root / "out"
+            result = subprocess.run(
+                ["python", "-B", str(RAW_INPUTS), str(sidecar), str(image), str(output)],
+                capture_output=True, text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            payload = (output / "input_0.bin").read_bytes()
+            provenance = json.loads((output / "input_provenance.json").read_text())
+            self.assertEqual(provenance["dtype"], "uint8")
+            self.assertEqual(provenance["layout"], "NHWC")
+            self.assertEqual(provenance["preprocess_stage"], "raw_uint8_after_resize_and_color")
+            self.assertEqual(provenance["pass_through"], 0)
+            self.assertEqual(provenance["input_sha256"], hashlib.sha256(payload).hexdigest())
+            self.assertEqual(len(payload), 6)
 
 
 if __name__ == "__main__":

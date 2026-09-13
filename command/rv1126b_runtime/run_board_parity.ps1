@@ -4,8 +4,7 @@ param(
     [Parameter(Mandatory = $true)][string]$PackPath,
     [string]$BuildReport = "$PackPath.report.json",
     [Parameter(Mandatory = $true)][string]$ArtifactRoot,
-    [Parameter(Mandatory = $true)][string]$InputDirectory,
-    [Parameter(Mandatory = $true)][ValidatePattern('^run-[A-Za-z0-9T-]+$')][string]$InputRunId,
+    [Parameter(Mandatory = $true)][string]$RawInputDirectory,
     [string]$RunnerDirectory = (Join-Path $PSScriptRoot '../../build/rv1126b-runtime-parity'),
     [string]$ResultDirectory = (Join-Path $PSScriptRoot '../../build/rv1126b-runtime-parity/board')
 )
@@ -43,7 +42,38 @@ function Assert-ExactIds {
 }
 function Get-PreparedInputPath {
     param([string]$Id)
-    return (Join-Path $InputDirectory "$Id/$InputRunId/input_0.bin")
+    return (Join-Path $RawInputDirectory "$Id/input_0.bin")
+}
+function Test-RuntimeVersion {
+    param([string]$Version)
+    if ($Version -notmatch '^([0-9]+)\.([0-9]+)\.([0-9]+)(?:\D|$)') { return $false }
+    $major, $minor, $patch = [int]$Matches[1], [int]$Matches[2], [int]$Matches[3]
+    return $major -gt 2 -or ($major -eq 2 -and ($minor -gt 3 -or ($minor -eq 3 -and $patch -ge 2)))
+}
+function Assert-RawProvenance {
+    param([string]$Id, $Provenance, [string]$InputPath, $Evidence)
+    if ($Provenance.model_id -cne $Id -or $Provenance.dtype -cne 'uint8' -or $Provenance.layout -cne 'NHWC' -or
+        $Provenance.pass_through -ne 0 -or $Provenance.preprocess_stage -cne 'raw_uint8_after_resize_and_color' -or
+        $Provenance.input_sha256 -cne (Get-Sha256 $InputPath)) { throw "raw input provenance is invalid: $Id" }
+    if (@($Provenance.shape).Count -ne 4 -or (@($Provenance.shape) -join ',') -cne (@($Evidence.input.shape) -join ',') -or
+        $Provenance.color_order -cne $Evidence.preprocess.color_order -or
+        $Provenance.resize.width -ne $Evidence.preprocess.resize.width -or $Provenance.resize.height -ne $Evidence.preprocess.resize.height) {
+        throw "raw input contract does not match conversion evidence: $Id"
+    }
+}
+function Assert-RunnerResult {
+    param([string]$Id, $Result, [string]$ModelHash, [string]$InputHash, $Evidence)
+    if ($Result.status -cne 'success' -or $Result.model_id -cne $Id -or $Result.model_sha256 -cne $ModelHash -or $Result.input_sha256 -cne $InputHash -or
+        !(Test-RuntimeVersion $Result.runtime_version) -or [string]::IsNullOrWhiteSpace($Result.driver_version) -or
+        $Result.all_finite -ne $true -or @($Result.reference_latency_ms).Count -ne 10 -or @($Result.production_latency_ms).Count -ne 10 -or
+        $Result.peak_rss_kb -le 0 -or @($Result.outputs).Count -ne @($Evidence.outputs).Count -or
+        @($Result.reference_latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -le 0 }).Count -ne 0 -or
+        @($Result.production_latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -le 0 }).Count -ne 0) { throw "runner evidence is incomplete: $Id" }
+    for ($index = 0; $index -lt @($Evidence.outputs).Count; ++$index) {
+        $expected, $actual = $Evidence.outputs[$index], $Result.outputs[$index]
+        if ($actual.name -cne $expected.name -or (@($actual.logical_dims) -join ',') -cne (@($expected.shape) -join ',') -or $actual.type -cne 'FP32' -or
+            $actual.finite -ne $true -or $actual.max_abs -gt 1e-5 -or $actual.cosine -lt 0.999999) { throw "runner output contract/parity failed: $Id/$index" }
+    }
 }
 
 $RunId = 'runtime-' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmss') + '-' + [Guid]::NewGuid().ToString('N').Substring(0, 12)
@@ -77,7 +107,7 @@ try {
     $PackPath = (Resolve-Path -LiteralPath $PackPath).Path
     $BuildReport = (Resolve-Path -LiteralPath $BuildReport).Path
     $ArtifactRoot = (Resolve-Path -LiteralPath $ArtifactRoot).Path
-    $InputDirectory = (Resolve-Path -LiteralPath $InputDirectory).Path
+    $RawInputDirectory = (Resolve-Path -LiteralPath $RawInputDirectory).Path
     $RunnerDirectory = (Resolve-Path -LiteralPath $RunnerDirectory).Path
     foreach ($name in @('rknn2_parity_runner', 'libInspireFace.so', 'librknnrt.so')) {
         if (!(Test-Path -LiteralPath (Join-Path $RunnerDirectory $name) -PathType Leaf)) { throw "Runner deployment is missing $name" }
@@ -95,6 +125,7 @@ try {
     # The report is the deployment authority only after its exact frozen set has passed the host gate.
     $SelectedIds = @($report.selected_model_ids)
     $members = @{}
+    $evidences = @{}
     foreach ($member in $report.members) {
         if ($members.ContainsKey($member.id)) { throw "duplicate pack report member: $($member.id)" }
         $members[$member.id] = $member
@@ -114,7 +145,8 @@ try {
         $provenancePath = Join-Path (Split-Path -Parent $input) 'input_provenance.json'
         if (!(Test-Path -LiteralPath $provenancePath -PathType Leaf)) { throw "missing prepared input evidence: $id" }
         $provenance = Get-Content -Raw -LiteralPath $provenancePath | ConvertFrom-Json
-        if ($provenance.input_sha256 -cne (Get-Sha256 $input)) { throw "prepared input evidence hash failed: $id" }
+        Assert-RawProvenance $id $provenance $input $evidence
+        $evidences[$id] = $evidence
     }
 
     Invoke-Adb @('get-state')
@@ -134,10 +166,7 @@ cd /userdata/inspireface-rv1126b/runtime-parity || exit 125
 export LD_LIBRARY_PATH=/userdata/inspireface-rv1126b/runtime-parity
 model_dir=$1
 shift
-./rknn2_parity_runner "$@" > "$model_dir/result.partial.json"
-status=$?
-mv "$model_dir/result.partial.json" "$model_dir/result.json"
-exit "$status"
+exec ./rknn2_parity_runner "$@"
 '@
     $runScriptPath = Join-Path $RunDirectory 'run-one.sh'
     [System.IO.File]::WriteAllText($runScriptPath, $runScript.Replace("`r`n", "`n") + "`n", [System.Text.UTF8Encoding]::new($false))
@@ -150,6 +179,7 @@ exit "$status"
         $remoteModel = "$RemoteDirectory/$id"
         $model = Join-Path $ArtifactRoot "models/${id}_rv1126b.rknn"
         $input = Get-PreparedInputPath $id
+        $evidence = $evidences[$id]
         $row = [ordered]@{ model_id = $id; status = 'failed'; failure_stage = 'deploy'; error = ''; run_id = $RunId; serial = $Serial; pack_sha256 = $packHash; model_sha256 = ''; input_sha256 = '' }
         try {
             $row.model_sha256 = Get-Sha256 $model; $row.input_sha256 = Get-Sha256 $input
@@ -165,13 +195,15 @@ exit "$status"
             $runFailure = $null
             try {
                 # The LF script is invoked by sh as an argument vector, never as a command string.
-                Invoke-Adb @('shell', 'sh', "$RemoteDirectory/run-one.sh", $remoteModel, '--id', $id, '--model', "$remoteModel/model.rknn", '--input', "$remoteModel/input_0.bin", '--model-sha256', $row.model_sha256, '--input-sha256', $row.input_sha256)
+                Invoke-Adb @('shell', 'sh', "$RemoteDirectory/run-one.sh", $remoteModel, '--id', $id, '--model', "$remoteModel/model.rknn", '--input', "$remoteModel/input_0.bin", '--result', "$remoteModel/result.json", '--model-sha256', $row.model_sha256, '--input-sha256', $row.input_sha256)
             } catch { $runFailure = $_ }
             Invoke-Adb @('pull', "$remoteModel/result.json", (Join-Path $local 'result.json'))
             $native = Get-Content -Raw -LiteralPath (Join-Path $local 'result.json') | ConvertFrom-Json
             foreach ($property in $native.PSObject.Properties) { $row[$property.Name] = $property.Value }
             if ($runFailure) { throw $runFailure }
-            if ($native.status -ne 'success' -or $native.accepted -ne $true) { throw "runner parity failed: $($native.failure_stage) $($native.error)" }
+            Assert-RunnerResult $id $native $row.model_sha256 $row.input_sha256 $evidence
+            $row.accepted = $true
+            $row.status = 'success'
         } catch {
             $row.status = 'failed'
             if (!$row.failure_stage) { $row.failure_stage = 'host_or_board' }
