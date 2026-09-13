@@ -92,7 +92,7 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
         self.assertIn("peak_rss_kb", text)
 
     def test_adapter_sources_keep_werror_clean_rknn2_contract_checks(self):
-        self.assertIn("attribute.w_stride != 0 && (attribute.w_stride < attribute.dims[2])", NANO_HEADER.read_text(encoding="utf-8"))
+        self.assertIn("(attribute.w_stride != 0 && attribute.w_stride < attribute.dims[2])", NANO_HEADER.read_text(encoding="utf-8"))
         adapter = NANO_ADAPTER.read_text(encoding="utf-8")
         self.assertIn("(void)input_tensor_info_list;", adapter)
 

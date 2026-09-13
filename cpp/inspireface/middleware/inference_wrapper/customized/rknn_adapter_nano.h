@@ -466,7 +466,7 @@ private:
 
     static bool IsValidInputAttr(const rknn_tensor_attr &attribute) {
         if (!IsValidTensorAttr(attribute) || attribute.n_dims != 4 || attribute.fmt != RKNN_TENSOR_NHWC ||
-            attribute.w_stride != 0 && (attribute.w_stride < attribute.dims[2])) {
+            (attribute.w_stride != 0 && attribute.w_stride < attribute.dims[2])) {
             return false;
         }
         const size_t stride = attribute.w_stride == 0 ? attribute.dims[2] : attribute.w_stride;
