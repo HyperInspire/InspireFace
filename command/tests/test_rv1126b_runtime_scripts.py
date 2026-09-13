@@ -43,6 +43,23 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
         self.assertIn("failure_stage", text)
         self.assertIn("RKNN_QUERY_NATIVE_NHWC_OUTPUT_ATTR", text)
 
+    def test_runner_warms_both_paths_before_measurement(self):
+        text = RUNNER.read_text(encoding="utf-8")
+        warmup = text[text.index('failure_stage = "warmup"'):text.index('failure_stage = "parity"')]
+        self.assertIn("RunReference(reference.value, input_bytes, normal_outputs)", warmup)
+        self.assertIn("RunProduction(production, declared_input, &declared_outputs, false)", warmup)
+        self.assertNotIn("reference_latency_ms.push_back", warmup)
+        self.assertNotIn("production_latency_ms.push_back", warmup)
+
+    def test_output_evidence_labels_logical_and_native_types_without_losing_quantization(self):
+        runner = RUNNER.read_text(encoding="utf-8")
+        board = BOARD.read_text(encoding="utf-8")
+        for required in ("logical_type", "native_type", "native_qnt_type", "native_scale", "native_zp"):
+            self.assertIn(required, runner)
+        self.assertIn("$actual.logical_type -cne 'FP32'", board)
+        self.assertIn("$actual.native_type -cne $native.type", board)
+        self.assertIn("$actual.native_qnt_type -cne $native.qnt_type", board)
+
     def test_runner_records_contracts_and_required_model_shapes(self):
         text = RUNNER.read_text(encoding="utf-8")
         for required in (

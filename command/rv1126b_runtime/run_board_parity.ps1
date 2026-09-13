@@ -66,12 +66,14 @@ function Assert-RunnerResult {
     if ($Result.status -cne 'success' -or $Result.model_id -cne $Id -or $Result.model_sha256 -cne $ModelHash -or $Result.input_sha256 -cne $InputHash -or
         !(Test-RuntimeVersion $Result.runtime_version) -or [string]::IsNullOrWhiteSpace($Result.driver_version) -or
         $Result.all_finite -ne $true -or @($Result.reference_latency_ms).Count -ne 10 -or @($Result.production_latency_ms).Count -ne 10 -or
-        $Result.peak_rss_kb -le 0 -or @($Result.outputs).Count -ne @($Evidence.outputs).Count -or
+        $Result.peak_rss_kb -le 0 -or @($Result.outputs).Count -ne @($Evidence.outputs).Count -or @($Result.native_outputs).Count -ne @($Evidence.outputs).Count -or
         @($Result.reference_latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -le 0 }).Count -ne 0 -or
         @($Result.production_latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -le 0 }).Count -ne 0) { throw "runner evidence is incomplete: $Id" }
     for ($index = 0; $index -lt @($Evidence.outputs).Count; ++$index) {
-        $expected, $actual = $Evidence.outputs[$index], $Result.outputs[$index]
+        $expected, $actual, $native = $Evidence.outputs[$index], $Result.outputs[$index], $Result.native_outputs[$index]
         if ($actual.name -cne $expected.name -or (@($actual.logical_dims) -join ',') -cne (@($expected.shape) -join ',') -or $actual.type -cne 'FP32' -or
+            $actual.logical_type -cne 'FP32' -or $actual.native_type -cne $native.type -or $actual.native_qnt_type -cne $native.qnt_type -or
+            [double]$actual.native_scale -ne [double]$native.scale -or [int]$actual.native_zp -ne [int]$native.zp -or
             $actual.finite -ne $true -or $actual.max_abs -gt 1e-5 -or $actual.cosine -lt 0.999999) { throw "runner output contract/parity failed: $Id/$index" }
     }
 }

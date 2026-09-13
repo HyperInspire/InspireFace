@@ -469,6 +469,11 @@ int main(int argc, char** argv) {
         declared_input.data = input_bytes.data();
         failure_stage = "warmup";
         for (int iteration = 0; iteration < kWarmupIterations; ++iteration) {
+            input_integrity.reference_before_sha256 = Sha256Hex(input_bytes);
+            static_cast<void>(RunReference(reference.value, input_bytes, normal_outputs));
+            input_integrity.reference_after_sha256 = Sha256Hex(input_bytes);
+            input_integrity.reference_unchanged = input_integrity.reference_unchanged &&
+                                                  input_integrity.reference_before_sha256 == input_integrity.reference_after_sha256;
             input_integrity.production_before_sha256 = Sha256Hex(input_bytes);
             RunProduction(production, declared_input, &declared_outputs, false);
             input_integrity.production_after_sha256 = Sha256Hex(input_bytes);
@@ -555,7 +560,13 @@ int main(int argc, char** argv) {
         for (uint32_t dimension = 0; dimension < normal_outputs[index].n_dims; ++dimension)
             report << (dimension ? "," : "") << normal_outputs[index].dims[dimension];
         const Metrics metric = index < metrics.size() ? metrics[index] : Metrics{};
-        report << "],\"type\":" << Quote(get_type_string(normal_outputs[index].type)) << ",\"qnt_type\":" << Quote(get_qnt_type_string(normal_outputs[index].qnt_type))
+        const rknn_tensor_attr& native = native_outputs[index];
+        // Process publishes float views.  Keep the raw RKNN type and
+        // quantization alongside that declaration so host evidence cannot
+        // mistake INT8 native storage for a logical output type.
+        report << "],\"type\":\"FP32\",\"logical_type\":\"FP32\",\"native_type\":" << Quote(get_type_string(native.type))
+               << ",\"native_qnt_type\":" << Quote(get_qnt_type_string(native.qnt_type)) << ",\"native_scale\":" << native.scale
+               << ",\"native_zp\":" << native.zp << ",\"qnt_type\":" << Quote(get_qnt_type_string(normal_outputs[index].qnt_type))
                << ",\"scale\":" << normal_outputs[index].scale << ",\"zp\":" << normal_outputs[index].zp
                << ",\"finite\":" << (metric.finite ? "true" : "false") << ",\"max_abs\":" << metric.max_abs
                << ",\"mean_abs\":" << metric.mean_abs << ",\"cosine\":" << metric.cosine << "}";
