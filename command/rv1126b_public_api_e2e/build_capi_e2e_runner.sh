@@ -45,7 +45,7 @@ rknn_library_directory=$(dirname -- "$rknn_library")
 mkdir -p "$output_dir"
 "$compiler-g++" -std=c++14 -O2 -Wall -Wextra -Werror \
     -I"$sdk_dir/include" \
-    "$script_dir/capi_e2e_runner.cpp" -L"$sdk_dir/lib" -L"$rknn_library_directory" -lInspireFace -lrknnrt -ldl \
+    "$script_dir/capi_e2e_runner.cpp" -L"$sdk_dir/lib" -L"$rknn_library_directory" -lInspireFace -Wl,--no-as-needed -lrknnrt -Wl,--as-needed -ldl \
     -Wl,-rpath,'$ORIGIN' -o "$output_dir/capi_e2e_runner"
 
 cp "$sdk_dir/lib/libInspireFace.so" "$rknn_library" "$output_dir/"

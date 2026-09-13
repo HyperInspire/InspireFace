@@ -165,6 +165,7 @@ class PublicApiE2EBaseContractTests(unittest.TestCase):
             "build_cross_rv1126b_armhf.sh", "inspireface.h", "libInspireFace.so",
             "librknnrt.so", "arm-linux-gnueabihf", "readelf", "Tag_ABI_VFP_args",
             "hard-float ABI", "capi_e2e_runner.cpp", "-lInspireFace", "-lrknnrt",
+            "-Wl,--no-as-needed -lrknnrt -Wl,--as-needed",
         ):
             self.assertIn(required, text)
         self.assertNotIn("inference_wrapper_rknn_adapter_nano.cpp", text)
