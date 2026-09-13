@@ -45,6 +45,18 @@ function Assert-Sha256 {
     if ($Value -notmatch '^[0-9a-f]{64}$') { throw "invalid SHA-256 for $Label" }
 }
 
+function Test-FiniteNumber {
+    param($Value)
+    if ($null -eq $Value -or $Value -isnot [System.ValueType] -or $Value -is [bool]) { return $false }
+    try { return [double]::IsFinite([double]$Value) } catch { return $false }
+}
+
+function Test-Integer {
+    param($Value)
+    if (!(Test-FiniteNumber $Value)) { return $false }
+    return [Math]::Truncate([double]$Value) -eq [double]$Value
+}
+
 function Resolve-RepositoryPath {
     param([string]$Path, [string]$RepositoryPath)
     if ([System.IO.Path]::IsPathRooted($Path)) { return (Resolve-Path -LiteralPath $Path).Path }
@@ -73,11 +85,11 @@ function Assert-RunnerResult {
         @($ExpectedCoreScenarios | Where-Object { $_ -notin @($scenarios.name) }).Count -ne 0) { throw 'runner result must contain exactly the six core scenarios' }
     foreach ($scenario in $scenarios) {
         if ($scenario.status -cne 'success' -or $scenario.failure_stage -cne '' -or $scenario.hresult -ne 0 -or
-            $scenario.all_finite -ne $true -or $scenario.peak_rss_kb -lt 0 -or @($scenario.latency_ms).Count -ne 10 -or
-            @($scenario.latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -lt 0 }).Count -ne 0) { throw "runner scenario $($scenario.name) violates common schema" }
+            $scenario.all_finite -ne $true -or !(Test-FiniteNumber $scenario.peak_rss_kb) -or $scenario.peak_rss_kb -lt 0 -or @($scenario.latency_ms).Count -ne 10 -or
+            @($scenario.latency_ms | Where-Object { !(Test-FiniteNumber $_) -or $_ -lt 0 }).Count -ne 0 -or !(Test-Integer $scenario.detected_faces)) { throw "runner scenario $($scenario.name) violates common schema" }
         if (($scenario.name -like 'detect_*' -and $scenario.detected_faces -lt 1) -or ($scenario.name -eq 'no_face' -and $scenario.detected_faces -ne 0) -or
-            ($scenario.name -eq 'landmark' -and ($scenario.dense_count -ne 106 -or $scenario.five_point_count -ne 5)) -or
-            ($scenario.name -eq 'recognition' -and ($scenario.feature_size -ne 512 -or ![double]::IsFinite([double]$scenario.similarity) -or $scenario.similarity -lt 0.9999))) { throw "runner scenario $($scenario.name) violates core gate" }
+            ($scenario.name -eq 'landmark' -and ($scenario.detected_faces -lt 1 -or !(Test-Integer $scenario.dense_count) -or $scenario.dense_count -ne 106 -or !(Test-Integer $scenario.five_point_count) -or $scenario.five_point_count -ne 5)) -or
+            ($scenario.name -eq 'recognition' -and ($scenario.detected_faces -lt 1 -or !(Test-Integer $scenario.feature_size) -or $scenario.feature_size -ne 512 -or !(Test-FiniteNumber $scenario.similarity) -or $scenario.similarity -lt 0.9999))) { throw "runner scenario $($scenario.name) violates core gate" }
     }
     return $scenarios
 }

@@ -63,20 +63,32 @@ def validate_report(report: Mapping[str, Any], trusted: Mapping[str, str]) -> bo
         if not _is_finite_number(scenario.get("peak_rss_kb")) or scenario["peak_rss_kb"] < 0:
             return False
         latency = scenario.get("latency_ms")
-        if not isinstance(latency, list) or len(latency) != 10 or any(not _is_finite_number(value) or value < 0 for value in latency):
+        if not isinstance(latency, list) or len(latency) > 10 or any(not _is_finite_number(value) or value < 0 for value in latency):
             return False
-        if not isinstance(scenario.get("detected_faces"), int) or isinstance(scenario["detected_faces"], bool):
+        for field in ("detected_faces", "dense_count", "five_point_count", "feature_size"):
+            if field in scenario and (not isinstance(scenario[field], int) or isinstance(scenario[field], bool)):
+                return False
+        if "similarity" in scenario and not _is_finite_number(scenario["similarity"]):
             return False
-        if name.startswith("detect_") and scenario["detected_faces"] < 1:
-            return False
-        if name == "no_face" and scenario["detected_faces"] != 0:
-            return False
-        if name == "landmark" and (scenario.get("dense_count") != 106 or scenario.get("five_point_count") != 5):
-            return False
-        if name == "recognition" and (scenario.get("feature_size") != 512 or not _is_finite_number(scenario.get("similarity")) or scenario["similarity"] < 0.9999):
-            return False
+        if status == "success":
+            if len(latency) != 10 or not isinstance(scenario.get("detected_faces"), int) or isinstance(scenario["detected_faces"], bool):
+                return False
+            if name.startswith("detect_") and scenario["detected_faces"] < 1:
+                return False
+            if name == "no_face" and scenario["detected_faces"] != 0:
+                return False
+            if name == "landmark" and (scenario["detected_faces"] < 1 or scenario.get("dense_count") != 106 or scenario.get("five_point_count") != 5):
+                return False
+            if name == "recognition" and (scenario["detected_faces"] < 1 or scenario.get("feature_size") != 512 or not _is_finite_number(scenario.get("similarity")) or scenario["similarity"] < 0.9999):
+                return False
         names.append(name)
     return len(names) == len(set(names)) and set(names) == _BASE_SCENARIOS
+
+
+def accepts_success_report(report: Mapping[str, Any], trusted: Mapping[str, str]) -> bool:
+    return validate_report(report, trusted) and all(
+        scenario["status"] == "success" for scenario in report["scenarios"]
+    )
 
 
 def valid_report() -> Dict[str, Any]:
@@ -171,6 +183,29 @@ class PublicApiE2EBaseContractTests(unittest.TestCase):
         trusted = {field: report[field] for field in _IDENTITY_FIELDS}
         self.assertFalse(validate_report(report, trusted))
 
+    def test_success_schema_requires_face_for_landmark_and_recognition_and_finite_rss(self) -> None:
+        for index in (4, 5):
+            report = valid_report()
+            report["scenarios"][index]["detected_faces"] = 0
+            trusted = {field: report[field] for field in _IDENTITY_FIELDS}
+            self.assertFalse(validate_report(report, trusted))
+        for value in (float("nan"), float("inf")):
+            report = valid_report()
+            report["scenarios"][0]["peak_rss_kb"] = value
+            trusted = {field: report[field] for field in _IDENTITY_FIELDS}
+            self.assertFalse(validate_report(report, trusted))
+
+    def test_schema_allows_structurally_valid_failure_but_not_success_acceptance(self) -> None:
+        report = valid_report()
+        for scenario in report["scenarios"]:
+            scenario.update(status="failure", failure_stage="launch", hresult=7,
+                            all_finite=False, latency_ms=[])
+            for field in ("detected_faces", "dense_count", "five_point_count", "feature_size", "similarity"):
+                scenario.pop(field, None)
+        trusted = {field: report[field] for field in _IDENTITY_FIELDS}
+        self.assertTrue(validate_report(report, trusted))
+        self.assertFalse(accepts_success_report(report, trusted))
+
     def test_runner_uses_public_api_raii_owned_feature_and_atomic_result_file(self) -> None:
         text = RUNNER.read_text(encoding="utf-8")
         for required in (
@@ -233,6 +268,7 @@ class PublicApiE2EBaseContractTests(unittest.TestCase):
             "face_image_sha256", "no_face_image_sha256",
             "detect_160", "detect_320", "detect_640", "no_face", "landmark", "recognition",
             "dense_count", "five_point_count", "feature_size", "0.9999",
+            "Test-FiniteNumber", "Test-Integer",
         ):
             self.assertIn(required, text)
         merge = text[text.index("$ExpectedCoreScenarios"):text.index("function Assert-RunnerResult")]
