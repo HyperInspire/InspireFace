@@ -14,7 +14,7 @@ $ExpectedTask3Run = 'runtime-20260913T135617-b8a988db804a'
 $ExpectedTask3PackSha256 = '9ec91a21617c00b6b194b37570ee5883764dca169ee1552ac4219b944f4d28d7'
 $ExpectedSerial = 'e3d7377f6fc6d325'
 $RemoteBaseDirectory = '/userdata/inspireface-rv1126b/public-api-e2e'
-$RunnerEvidenceFields = @('status', 'failure_stage', 'hresult', 'all_finite', 'peak_rss_kb', 'latency_ms')
+$ExpectedCoreScenarios = @('detect_160', 'detect_320', 'detect_640', 'no_face', 'landmark', 'recognition')
 
 function Get-Sha256 {
     param([string]$Path)
@@ -68,22 +68,23 @@ function Assert-RunnerResult {
     foreach ($field in @('run_id', 'serial', 'pack_sha256', 'face_image_sha256', 'no_face_image_sha256')) {
         if ($Result.$field -cne $Trusted[$field]) { throw "runner overwrote or mismatched trusted $field" }
     }
-    if (@($Result.scenarios).Count -ne 1) { throw 'runner result must contain one bootstrap scenario' }
-    $scenario = $Result.scenarios[0]
-    if ($scenario.name -cne 'bootstrap' -or $scenario.status -cne 'success' -or $scenario.failure_stage -cne '' -or
-        $scenario.hresult -ne 0 -or $scenario.all_finite -ne $true -or $scenario.peak_rss_kb -lt 0 -or
-        @($scenario.latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -lt 0 }).Count -ne 0) {
-        throw 'runner bootstrap result violates the public API schema'
+    $scenarios = @($Result.scenarios)
+    if ($scenarios.Count -ne $ExpectedCoreScenarios.Count -or @($scenarios.name | Select-Object -Unique).Count -ne $ExpectedCoreScenarios.Count -or
+        @($ExpectedCoreScenarios | Where-Object { $_ -notin @($scenarios.name) }).Count -ne 0) { throw 'runner result must contain exactly the six core scenarios' }
+    foreach ($scenario in $scenarios) {
+        if ($scenario.status -cne 'success' -or $scenario.failure_stage -cne '' -or $scenario.hresult -ne 0 -or
+            $scenario.all_finite -ne $true -or $scenario.peak_rss_kb -lt 0 -or @($scenario.latency_ms).Count -ne 10 -or
+            @($scenario.latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -lt 0 }).Count -ne 0) { throw "runner scenario $($scenario.name) violates common schema" }
+        if (($scenario.name -like 'detect_*' -and $scenario.detected_faces -lt 1) -or ($scenario.name -eq 'no_face' -and $scenario.detected_faces -ne 0) -or
+            ($scenario.name -eq 'landmark' -and ($scenario.dense_count -ne 106 -or $scenario.five_point_count -ne 5)) -or
+            ($scenario.name -eq 'recognition' -and ($scenario.feature_size -ne 512 -or ![double]::IsFinite([double]$scenario.similarity) -or $scenario.similarity -lt 0.9999))) { throw "runner scenario $($scenario.name) violates core gate" }
     }
-    return $scenario
+    return $scenarios
 }
 
 function Merge-RunnerEvidence {
-    param([System.Collections.IDictionary]$Row, $Scenario)
-    foreach ($field in $RunnerEvidenceFields) {
-        $property = $Scenario.PSObject.Properties[$field]
-        if ($null -ne $property) { $Row[$field] = $property.Value }
-    }
+    param([System.Collections.IDictionary]$Row, $Scenarios)
+    $Row['scenarios'] = @($Scenarios)
 }
 
 function Write-Aggregate {
@@ -141,7 +142,7 @@ $trusted = [ordered]@{
     run_id = $RunId; serial = $Serial; pack_sha256 = $packHash
     face_image_sha256 = $faceHash; no_face_image_sha256 = $noFaceHash
 }
-$row = [ordered]@{ run_id = $RunId; serial = $Serial; pack_sha256 = $packHash; face_image_sha256 = $faceHash; no_face_image_sha256 = $noFaceHash; status = 'failed'; failure_stage = 'host'; error = '' }
+$row = [ordered]@{ run_id = $RunId; serial = $Serial; pack_sha256 = $packHash; face_image_sha256 = $faceHash; no_face_image_sha256 = $noFaceHash; status = 'failed'; failure_stage = 'host'; error = ''; scenarios = @() }
 $aggregatePath = Join-Path $ResultDirectory 'capi-e2e.json'
 $remoteReady = $false
 
@@ -170,9 +171,9 @@ try {
     $runnerExit = Invoke-AdbAllowFailure @('shell', 'sh', "$RemoteRunDirectory/run-e2e.sh", '--pack', "$RemoteRunDirectory/pack", '--face-image', "$RemoteRunDirectory/face-image", '--no-face-image', "$RemoteRunDirectory/no-face-image", '--run-id', $RunId, '--serial', $Serial, '--pack-sha256', $packHash, '--face-sha256', $faceHash, '--no-face-sha256', $noFaceHash, '--result-path', "$RemoteRunDirectory/result.json")
     Invoke-Adb @('pull', "$RemoteRunDirectory/result.json", (Join-Path $RunDirectory 'result.json'))
     $native = Get-Content -Raw -LiteralPath (Join-Path $RunDirectory 'result.json') | ConvertFrom-Json
-    $scenario = Assert-RunnerResult $native $trusted
+    $scenarios = Assert-RunnerResult $native $trusted
     if ($runnerExit -ne 0) { throw "runner returned $runnerExit despite success evidence" }
-    Merge-RunnerEvidence $row $scenario
+    Merge-RunnerEvidence $row $scenarios
     $row.status = 'success'; $row.failure_stage = ''; $row.error = ''
 } catch {
     $row.status = 'failed'; $row.error = $_.Exception.Message

@@ -1,270 +1,46 @@
 #include "inspireface.h"
 
+#include <chrono>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <iostream>
 #include <string>
+#include <sys/resource.h>
+#include <vector>
 
 namespace {
+constexpr int kWarmupIterations = 2;
+constexpr int kMeasuredIterations = 10;
+// FACE_FEATURE_SIZE is the public feature contract: the shipped recognizer emits 512 floats.
+constexpr HInt32 kExpectedFeatureSize = 512;
+struct Arguments { std::string pack, face_image, no_face_image, run_id, serial, pack_sha256, face_sha256, no_face_sha256, result_path; };
+struct Scenario { std::string name, status = "failure", failure_stage = "setup"; HResult hresult = HERR_INVALID_PARAM; bool all_finite = false; long peak_rss_kb = 0; std::vector<double> latency_ms; HInt32 detected_faces = -1, dense_count = 0, five_point_count = 0, feature_size = 0; double similarity = 0.0; };
+class LaunchOwner { public: ~LaunchOwner() { if (launched_) HFTerminateInspireFace(); } void MarkLaunched() { launched_ = true; } private: bool launched_ = false; };
+class SessionOwner { public: ~SessionOwner() { if (h_) HFReleaseInspireFaceSession(h_); } PHFSession Out() { return &h_; } HFSession Get() const { return h_; } private: HFSession h_ = nullptr; };
+class BitmapOwner { public: ~BitmapOwner() { if (bitmap_ != nullptr) HFReleaseImageBitmap(bitmap_); } PHFImageBitmap Out() { return &bitmap_; } HFImageBitmap Get() const { return bitmap_; } private: HFImageBitmap bitmap_ = nullptr; };
+class StreamOwner { public: ~StreamOwner() { if (h_) HFReleaseImageStream(h_); } PHFImageStream Out() { return &h_; } HFImageStream Get() const { return h_; } private: HFImageStream h_ = nullptr; };
+class FeatureOwner { public: ~FeatureOwner() { if (feature_.data != nullptr) HFReleaseFaceFeature(&feature_); } HResult Allocate() { return HFCreateFaceFeature(&feature_); } HFFaceFeature Get() const { return feature_; } private: HFFaceFeature feature_ = {}; };
 
-struct Arguments {
-    std::string pack;
-    std::string face_image;
-    std::string no_face_image;
-    std::string run_id;
-    std::string serial;
-    std::string pack_sha256;
-    std::string face_sha256;
-    std::string no_face_sha256;
-    std::string result_path;
-};
-
-struct Scenario {
-    const char* status = "failure";
-    const char* failure_stage = "arguments";
-    HResult hresult = HERR_INVALID_PARAM;
-    bool all_finite = false;
-    long peak_rss_kb = 0;
-};
-
-class LaunchOwner {
- public:
-    ~LaunchOwner() {
-        if (launched_) {
-            HFTerminateInspireFace();
-        }
-    }
-    void MarkLaunched() { launched_ = true; }
-
- private:
-    bool launched_ = false;
-};
-
-class SessionOwner {
- public:
-    ~SessionOwner() {
-        if (handle_ != nullptr) {
-            HFReleaseInspireFaceSession(handle_);
-        }
-    }
-    PHFSession Out() { return &handle_; }
-    HFSession Get() const { return handle_; }
-
- private:
-    HFSession handle_ = nullptr;
-};
-
-class BitmapOwner {
- public:
-    ~BitmapOwner() {
-        if (bitmap_ != nullptr) {
-            HFReleaseImageBitmap(bitmap_);
-        }
-    }
-    PHFImageBitmap Out() { return &bitmap_; }
-    HFImageBitmap Get() const { return bitmap_; }
-
- private:
-    HFImageBitmap bitmap_ = nullptr;
-};
-
-class StreamOwner {
- public:
-    ~StreamOwner() {
-        if (handle_ != nullptr) {
-            HFReleaseImageStream(handle_);
-        }
-    }
-    PHFImageStream Out() { return &handle_; }
-    HFImageStream Get() const { return handle_; }
-
- private:
-    HFImageStream handle_ = nullptr;
-};
-
-class FeatureOwner {
- public:
-    ~FeatureOwner() {
-        if (feature_.data != nullptr) {
-            HFReleaseFaceFeature(&feature_);
-        }
-    }
-    HResult Allocate() {
-        return HFCreateFaceFeature(&feature_);
-    }
-    HFFaceFeature Get() const { return feature_; }
-
- private:
-    HFFaceFeature feature_ = {};
-};
-
-bool IsNonEmpty(const std::string& value) {
-    return !value.empty();
+bool ParseArguments(int argc, char** argv, Arguments* a) {
+    if (!a || argc != 19) return false;
+    for (int i = 1; i < argc; i += 2) { const std::string k(argv[i]), v(argv[i + 1]);
+        if (k == "--pack") a->pack = v; else if (k == "--face-image") a->face_image = v; else if (k == "--no-face-image") a->no_face_image = v; else if (k == "--run-id") a->run_id = v; else if (k == "--serial") a->serial = v; else if (k == "--pack-sha256") a->pack_sha256 = v; else if (k == "--face-sha256") a->face_sha256 = v; else if (k == "--no-face-sha256") a->no_face_sha256 = v; else if (k == "--result-path") a->result_path = v; else return false; }
+    return !a->pack.empty() && !a->face_image.empty() && !a->no_face_image.empty() && !a->run_id.empty() && !a->serial.empty() && !a->pack_sha256.empty() && !a->face_sha256.empty() && !a->no_face_sha256.empty() && !a->result_path.empty();
 }
-
-bool ParseArguments(int argc, char** argv, Arguments* arguments) {
-    if (arguments == nullptr || argc != 19) {
-        return false;
-    }
-    for (int index = 1; index < argc; index += 2) {
-        const std::string key(argv[index]);
-        const std::string value(argv[index + 1]);
-        if (key == "--pack") arguments->pack = value;
-        else if (key == "--face-image") arguments->face_image = value;
-        else if (key == "--no-face-image") arguments->no_face_image = value;
-        else if (key == "--run-id") arguments->run_id = value;
-        else if (key == "--serial") arguments->serial = value;
-        else if (key == "--pack-sha256") arguments->pack_sha256 = value;
-        else if (key == "--face-sha256") arguments->face_sha256 = value;
-        else if (key == "--no-face-sha256") arguments->no_face_sha256 = value;
-        else if (key == "--result-path") arguments->result_path = value;
-        else return false;
-    }
-    return IsNonEmpty(arguments->pack) && IsNonEmpty(arguments->face_image) &&
-           IsNonEmpty(arguments->no_face_image) && IsNonEmpty(arguments->run_id) &&
-           IsNonEmpty(arguments->serial) && IsNonEmpty(arguments->pack_sha256) &&
-           IsNonEmpty(arguments->face_sha256) && IsNonEmpty(arguments->no_face_sha256) &&
-           IsNonEmpty(arguments->result_path);
-}
-
-std::string EscapeJson(const std::string& value) {
-    std::string escaped;
-    escaped.reserve(value.size());
-    static const char hex[] = "0123456789abcdef";
-    for (unsigned char byte : value) {
-        switch (byte) {
-            case '\\': escaped += "\\\\"; break;
-            case '"': escaped += "\\\""; break;
-            case '\n': escaped += "\\n"; break;
-            case '\r': escaped += "\\r"; break;
-            case '\t': escaped += "\\t"; break;
-            default:
-                if (byte < 0x20U) {
-                    escaped += "\\u00";
-                    escaped += hex[(byte >> 4U) & 0x0fU];
-                    escaped += hex[byte & 0x0fU];
-                } else {
-                    escaped += static_cast<char>(byte);
-                }
-                break;
-        }
-    }
-    return escaped;
-}
-
-std::string BuildReport(const Arguments& arguments, const Scenario& scenario) {
-    return "{\"run_id\":\"" + EscapeJson(arguments.run_id) +
-           "\",\"serial\":\"" + EscapeJson(arguments.serial) +
-           "\",\"pack_sha256\":\"" + EscapeJson(arguments.pack_sha256) +
-           "\",\"face_image_sha256\":\"" + EscapeJson(arguments.face_sha256) +
-           "\",\"no_face_image_sha256\":\"" + EscapeJson(arguments.no_face_sha256) +
-           "\",\"scenarios\":[{\"name\":\"bootstrap\",\"status\":\"" +
-           scenario.status + "\",\"failure_stage\":\"" + scenario.failure_stage +
-           "\",\"hresult\":" + std::to_string(static_cast<int>(scenario.hresult)) +
-           ",\"all_finite\":" + (scenario.all_finite ? "true" : "false") +
-           ",\"peak_rss_kb\":" + std::to_string(scenario.peak_rss_kb) +
-           ",\"latency_ms\":[]}] }\n";
-}
-
-bool WriteReport(const std::string& result_path, const std::string& report) {
-    const std::string temporary_path = result_path + ".partial";
-    std::FILE* file = std::fopen(temporary_path.c_str(), "wb");
-    if (file == nullptr) {
-        std::cerr << "cannot open temporary result file\n";
-        return false;
-    }
-    const bool wrote = std::fwrite(report.data(), 1, report.size(), file) == report.size();
-    const bool closed = std::fclose(file) == 0;
-    if (!wrote || !closed || std::rename(temporary_path.c_str(), result_path.c_str()) != 0) {
-        std::remove(temporary_path.c_str());
-        std::cerr << "cannot atomically publish result file\n";
-        return false;
-    }
-    return true;
-}
-
-void RunBootstrap(const Arguments& arguments, Scenario* scenario) {
-    HFResourcePackInfo info = {};
-    info.structSize = sizeof(info);
-    info.structVersion = HF_RESOURCE_PACK_INFO_VERSION;
-    HFStatus status = HFValidateResourcePack(arguments.pack.c_str(), &info);
-    if (status != HSUCCEED) {
-        scenario->failure_stage = "validate_pack";
-        scenario->hresult = static_cast<HResult>(status);
-        return;
-    }
-    LaunchOwner launch;
-    HResult result = HFLaunchInspireFace(arguments.pack.c_str());
-    if (result != HSUCCEED) {
-        scenario->failure_stage = "launch";
-        scenario->hresult = result;
-        return;
-    }
-    launch.MarkLaunched();
-
-    SessionOwner session;
-    result = HFCreateInspireFaceSessionOptional(HF_ENABLE_FACE_RECOGNITION,
-                                                HF_DETECT_MODE_ALWAYS_DETECT,
-                                                1, -1, -1, session.Out());
-    if (result != HSUCCEED) {
-        scenario->failure_stage = "create_session";
-        scenario->hresult = result;
-        return;
-    }
-    BitmapOwner bitmap;
-    result = HFCreateImageBitmapFromFilePath(arguments.face_image.c_str(), 3, bitmap.Out());
-    if (result != HSUCCEED) {
-        scenario->failure_stage = "create_bitmap";
-        scenario->hresult = result;
-        return;
-    }
-    StreamOwner stream;
-    result = HFCreateImageStreamFromImageBitmap(bitmap.Get(), HF_CAMERA_ROTATION_0, stream.Out());
-    if (result != HSUCCEED) {
-        scenario->failure_stage = "create_stream";
-        scenario->hresult = result;
-        return;
-    }
-    HFMultipleFaceData faces = {};
-    result = HFExecuteFaceTrack(session.Get(), stream.Get(), &faces);
-    if (result != HSUCCEED || faces.detectedNum < 1) {
-        scenario->failure_stage = result == HSUCCEED ? "detect_face" : "track";
-        scenario->hresult = result == HSUCCEED ? HERR_SESS_PIPELINE_FAILURE : result;
-        return;
-    }
-    FeatureOwner first_feature;
-    FeatureOwner second_feature;
-    result = first_feature.Allocate();
-    if (result == HSUCCEED) result = second_feature.Allocate();
-    if (result == HSUCCEED) result = HFFaceFeatureExtractTo(session.Get(), stream.Get(), faces.tokens[0], first_feature.Get());
-    if (result == HSUCCEED) result = HFFaceFeatureExtractTo(session.Get(), stream.Get(), faces.tokens[0], second_feature.Get());
-    HFloat similarity = 0.0F;
-    if (result == HSUCCEED) result = HFFaceComparison(first_feature.Get(), second_feature.Get(), &similarity);
-    if (result != HSUCCEED || !std::isfinite(similarity)) {
-        scenario->failure_stage = result == HSUCCEED ? "feature_finite" : "feature";
-        scenario->hresult = result == HSUCCEED ? HERR_SESS_PIPELINE_FAILURE : result;
-        return;
-    }
-    scenario->status = "success";
-    scenario->failure_stage = "";
-    scenario->hresult = HSUCCEED;
-    scenario->all_finite = true;
-}
-
+std::string EscapeJson(const std::string& v) { std::string o; static const char hex[] = "0123456789abcdef"; for (unsigned char byte : v) { switch (byte) { case '\\': o += "\\\\"; break; case '"': o += "\\\""; break; case '\n': o += "\\n"; break; case '\r': o += "\\r"; break; case '\t': o += "\\t"; break; default: if (byte < 0x20U) { o += "\\u00"; o += hex[byte >> 4U]; o += hex[byte & 15U]; } else o += static_cast<char>(byte); } } return o; }
+long PeakRssKb() { struct rusage usage = {}; return getrusage(RUSAGE_SELF, &usage) == 0 ? usage.ru_maxrss : 0; }
+bool Finite(HFloat x) { return std::isfinite(static_cast<double>(x)); }
+void Fail(Scenario* s, const char* stage, HResult r) { s->status = "failure"; s->failure_stage = stage; s->hresult = r; s->all_finite = false; s->peak_rss_kb = PeakRssKb(); }
+bool CreateStream(const std::string& path, BitmapOwner* b, StreamOwner* st, Scenario* s) { HResult r = HFCreateImageBitmapFromFilePath(path.c_str(), 3, b->Out()); if (r != HSUCCEED) { Fail(s, "create_bitmap", r); return false; } r = HFCreateImageStreamFromImageBitmap(b->Get(), HF_CAMERA_ROTATION_0, st->Out()); if (r != HSUCCEED) { Fail(s, "create_stream", r); return false; } return true; }
+bool CreateSession(HOption opt, HInt32 level, SessionOwner* session, Scenario* s) { HResult r = HFCreateInspireFaceSessionOptional(opt, HF_DETECT_MODE_ALWAYS_DETECT, 1, level, -1, session->Out()); if (r != HSUCCEED) { Fail(s, "create_session", r); return false; } return true; }
+template <typename Operation> void Measure(Scenario* s, Operation op) { for (int i = 0; i < kWarmupIterations; ++i) { HResult r = op(); if (r != HSUCCEED) { Fail(s, "warmup", r); return; } } for (int i = 0; i < kMeasuredIterations; ++i) { const auto begin = std::chrono::steady_clock::now(); HResult r = op(); const double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - begin).count(); if (r != HSUCCEED) { Fail(s, "measure", r); return; } if (!std::isfinite(ms) || ms < 0.0) { Fail(s, "latency", HERR_SESS_PIPELINE_FAILURE); return; } s->latency_ms.push_back(ms); } s->status = "success"; s->failure_stage.clear(); s->hresult = HSUCCEED; s->all_finite = true; s->peak_rss_kb = PeakRssKb(); }
+Scenario RunDetection(const char* name, HInt32 level, const std::string& image, bool expected_face) { Scenario s; s.name = name; SessionOwner session; BitmapOwner b; StreamOwner st; if (!CreateSession(HF_ENABLE_NONE, level, &session, &s) || !CreateStream(image, &b, &st, &s)) return s; Measure(&s, [&]() -> HResult { HFMultipleFaceData faces = {}; HResult r = HFExecuteFaceTrack(session.Get(), st.Get(), &faces); if (r != HSUCCEED) return r; s.detected_faces = faces.detectedNum; return (expected_face ? faces.detectedNum >= 1 : faces.detectedNum == 0) ? HSUCCEED : HERR_SESS_PIPELINE_FAILURE; }); return s; }
+Scenario RunLandmark(const std::string& image) { Scenario s; s.name = "landmark"; SessionOwner session; BitmapOwner b; StreamOwner st; if (!CreateSession(HF_ENABLE_NONE, 320, &session, &s) || !CreateStream(image, &b, &st, &s)) return s; Measure(&s, [&]() -> HResult { HFMultipleFaceData faces = {}; HResult r = HFExecuteFaceTrack(session.Get(), st.Get(), &faces); if (r != HSUCCEED) return r; s.detected_faces = faces.detectedNum; if (faces.detectedNum < 1) return HERR_SESS_PIPELINE_FAILURE; HInt32 n = 0; r = HFGetNumOfFaceDenseLandmark(&n); if (r != HSUCCEED || n != 106) return r == HSUCCEED ? HERR_SESS_PIPELINE_FAILURE : r; std::vector<HPoint2f> dense(static_cast<size_t>(n)); HPoint2f five[5] = {}; r = HFGetFaceDenseLandmarkFromFaceToken(faces.tokens[0], dense.data(), n); if (r == HSUCCEED) r = HFGetFaceFiveKeyPointsFromFaceToken(faces.tokens[0], five, 5); if (r != HSUCCEED) return r; for (const auto& p : dense) if (!Finite(p.x) || !Finite(p.y)) return HERR_SESS_PIPELINE_FAILURE; for (const auto& p : five) if (!Finite(p.x) || !Finite(p.y)) return HERR_SESS_PIPELINE_FAILURE; s.dense_count = n; s.five_point_count = 5; return HSUCCEED; }); return s; }
+Scenario RunRecognition(const std::string& image) { Scenario s; s.name = "recognition"; SessionOwner session; BitmapOwner b; StreamOwner st; if (!CreateSession(HF_ENABLE_FACE_RECOGNITION, 320, &session, &s) || !CreateStream(image, &b, &st, &s)) return s; Measure(&s, [&]() -> HResult { HFMultipleFaceData faces = {}; HResult r = HFExecuteFaceTrack(session.Get(), st.Get(), &faces); if (r != HSUCCEED) return r; s.detected_faces = faces.detectedNum; if (faces.detectedNum < 1) return HERR_SESS_PIPELINE_FAILURE; FeatureOwner a, z; r = a.Allocate(); if (r == HSUCCEED) r = z.Allocate(); if (r == HSUCCEED) r = HFFaceFeatureExtractTo(session.Get(), st.Get(), faces.tokens[0], a.Get()); if (r == HSUCCEED) r = HFFaceFeatureExtractTo(session.Get(), st.Get(), faces.tokens[0], z.Get()); if (r != HSUCCEED) return r; HFFaceFeature af = a.Get(), zf = z.Get(); if (!af.data || !zf.data || af.size != kExpectedFeatureSize || zf.size != kExpectedFeatureSize) return HERR_SESS_PIPELINE_FAILURE; for (HInt32 i = 0; i < af.size; ++i) if (!Finite(af.data[i]) || !Finite(zf.data[i])) return HERR_SESS_PIPELINE_FAILURE; HFloat sim = 0.0F; r = HFFaceComparison(af, zf, &sim); if (r != HSUCCEED || !Finite(sim) || sim < 0.9999F) return r == HSUCCEED ? HERR_SESS_PIPELINE_FAILURE : r; s.feature_size = af.size; s.similarity = sim; return HSUCCEED; }); return s; }
+bool SupportsRequiredLevels() { HFFaceDetectPixelList list = {}; if (HFQuerySupportedPixelLevelsForFaceDetection(&list) != HSUCCEED) return false; bool a = false, b = false, c = false; for (HInt32 i = 0; i < list.size; ++i) { a = a || list.pixel_level[i] == 160; b = b || list.pixel_level[i] == 320; c = c || list.pixel_level[i] == 640; } return a && b && c; }
+std::vector<Scenario> RunCore(const Arguments& a) { const char* names[] = {"detect_160", "detect_320", "detect_640", "no_face", "landmark", "recognition"}; std::vector<Scenario> rows; HFResourcePackInfo info = {}; info.structSize = sizeof(info); info.structVersion = HF_RESOURCE_PACK_INFO_VERSION; HResult r = HFValidateResourcePack(a.pack.c_str(), &info); if (r != HSUCCEED) { for (const char* n : names) { Scenario s; s.name = n; Fail(&s, "validate_pack", r); rows.push_back(s); } return rows; } LaunchOwner launch; r = HFLaunchInspireFace(a.pack.c_str()); if (r != HSUCCEED) { for (const char* n : names) { Scenario s; s.name = n; Fail(&s, "launch", r); rows.push_back(s); } return rows; } launch.MarkLaunched(); if (!SupportsRequiredLevels()) { for (const char* n : names) { Scenario s; s.name = n; Fail(&s, "supported_levels", HERR_SESS_PIPELINE_FAILURE); rows.push_back(s); } return rows; } rows.push_back(RunDetection("detect_160", 160, a.face_image, true)); rows.push_back(RunDetection("detect_320", 320, a.face_image, true)); rows.push_back(RunDetection("detect_640", 640, a.face_image, true)); rows.push_back(RunDetection("no_face", 320, a.no_face_image, false)); rows.push_back(RunLandmark(a.face_image)); rows.push_back(RunRecognition(a.face_image)); return rows; }
+std::string ScenarioJson(const Scenario& s) { std::string lat; for (size_t i = 0; i < s.latency_ms.size(); ++i) { if (i) lat += ','; lat += std::to_string(s.latency_ms[i]); } return "{\"name\":\"" + EscapeJson(s.name) + "\",\"status\":\"" + EscapeJson(s.status) + "\",\"failure_stage\":\"" + EscapeJson(s.failure_stage) + "\",\"hresult\":" + std::to_string(static_cast<int>(s.hresult)) + ",\"all_finite\":" + (s.all_finite ? "true" : "false") + ",\"peak_rss_kb\":" + std::to_string(s.peak_rss_kb) + ",\"latency_ms\":[" + lat + "],\"detected_faces\":" + std::to_string(s.detected_faces) + ",\"dense_count\":" + std::to_string(s.dense_count) + ",\"five_point_count\":" + std::to_string(s.five_point_count) + ",\"feature_size\":" + std::to_string(s.feature_size) + ",\"similarity\":" + std::to_string(s.similarity) + "}"; }
+std::string BuildReport(const Arguments& a, const std::vector<Scenario>& rows) { std::string body; for (size_t i = 0; i < rows.size(); ++i) { if (i) body += ','; body += ScenarioJson(rows[i]); } return "{\"run_id\":\"" + EscapeJson(a.run_id) + "\",\"serial\":\"" + EscapeJson(a.serial) + "\",\"pack_sha256\":\"" + EscapeJson(a.pack_sha256) + "\",\"face_image_sha256\":\"" + EscapeJson(a.face_sha256) + "\",\"no_face_image_sha256\":\"" + EscapeJson(a.no_face_sha256) + "\",\"scenarios\":[" + body + "]}\n"; }
+bool WriteReport(const std::string& path, const std::string& text) { const std::string temp = path + ".partial"; std::FILE* f = std::fopen(temp.c_str(), "wb"); if (!f) return false; const bool wrote = std::fwrite(text.data(), 1, text.size(), f) == text.size(); const bool closed = std::fclose(f) == 0; const bool ok = wrote && closed && std::rename(temp.c_str(), path.c_str()) == 0; if (!ok) std::remove(temp.c_str()); return ok; }
 }  // namespace
-
-int main(int argc, char** argv) {
-    Arguments arguments;
-    Scenario scenario;
-    if (!ParseArguments(argc, argv, &arguments)) {
-        std::cerr << "invalid arguments\n";
-        return 2;
-    }
-    RunBootstrap(arguments, &scenario);
-    if (!WriteReport(arguments.result_path, BuildReport(arguments, scenario))) {
-        return 2;
-    }
-    return scenario.status[0] == 's' ? 0 : 1;
-}
+int main(int argc, char** argv) { Arguments a; if (!ParseArguments(argc, argv, &a)) { std::cerr << "invalid arguments\n"; return 2; } const auto rows = RunCore(a); if (!WriteReport(a.result_path, BuildReport(a, rows))) { std::cerr << "cannot atomically publish result file\n"; return 2; } for (const auto& s : rows) if (s.status != "success") return 1; return 0; }

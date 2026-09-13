@@ -19,7 +19,7 @@ _IDENTITY_FIELDS = (
     "face_image_sha256",
     "no_face_image_sha256",
 )
-_BASE_SCENARIOS = {"bootstrap"}
+_BASE_SCENARIOS = {"detect_160", "detect_320", "detect_640", "no_face", "landmark", "recognition"}
 
 
 def _is_finite_number(value: Any) -> bool:
@@ -63,24 +63,46 @@ def validate_report(report: Mapping[str, Any], trusted: Mapping[str, str]) -> bo
         if not _is_finite_number(scenario.get("peak_rss_kb")) or scenario["peak_rss_kb"] < 0:
             return False
         latency = scenario.get("latency_ms")
-        if not isinstance(latency, list) or any(not _is_finite_number(value) or value < 0 for value in latency):
+        if not isinstance(latency, list) or len(latency) != 10 or any(not _is_finite_number(value) or value < 0 for value in latency):
+            return False
+        if not isinstance(scenario.get("detected_faces"), int) or isinstance(scenario["detected_faces"], bool):
+            return False
+        if name.startswith("detect_") and scenario["detected_faces"] < 1:
+            return False
+        if name == "no_face" and scenario["detected_faces"] != 0:
+            return False
+        if name == "landmark" and (scenario.get("dense_count") != 106 or scenario.get("five_point_count") != 5):
+            return False
+        if name == "recognition" and (scenario.get("feature_size") != 512 or not _is_finite_number(scenario.get("similarity")) or scenario["similarity"] < 0.9999):
             return False
         names.append(name)
     return len(names) == len(set(names)) and set(names) == _BASE_SCENARIOS
 
 
 def valid_report() -> Dict[str, Any]:
-    return {
+    report: Dict[str, Any] = {
         "run_id": "run-001",
         "serial": "e3d7377f6fc6d325",
         "pack_sha256": "a" * 64,
         "face_image_sha256": "b" * 64,
         "no_face_image_sha256": "c" * 64,
-        "scenarios": [{
-            "name": "bootstrap", "status": "success", "failure_stage": "",
-            "hresult": 0, "all_finite": True, "peak_rss_kb": 0, "latency_ms": [],
-        }],
+        "scenarios": [
+            {"name": "detect_160", "detected_faces": 1},
+            {"name": "detect_320", "detected_faces": 1},
+            {"name": "detect_640", "detected_faces": 1},
+            {"name": "no_face", "detected_faces": 0},
+            {"name": "landmark", "detected_faces": 1, "dense_count": 106, "five_point_count": 5},
+            {"name": "recognition", "detected_faces": 1, "feature_size": 512, "similarity": 0.9999},
+        ],
     }
+    for scenario in report["scenarios"]:
+        scenario.update(status="success", failure_stage="", hresult=0, all_finite=True,
+                        peak_rss_kb=1, latency_ms=[1.0] * 10)
+        scenario.setdefault("dense_count", 0)
+        scenario.setdefault("five_point_count", 0)
+        scenario.setdefault("feature_size", 0)
+        scenario.setdefault("similarity", 0.0)
+    return report
 
 
 class PublicApiE2EBaseContractTests(unittest.TestCase):
@@ -118,6 +140,20 @@ class PublicApiE2EBaseContractTests(unittest.TestCase):
         trusted = {field: report[field] for field in _IDENTITY_FIELDS}
         report["scenarios"][0]["hresult"] = 7
         self.assertFalse(validate_report(report, trusted))
+
+    def test_core_schema_rejects_wrong_counts_feature_or_latency_sample_count(self) -> None:
+        report = valid_report()
+        report["scenarios"][4]["dense_count"] = 105
+        trusted = {field: report[field] for field in _IDENTITY_FIELDS}
+        self.assertFalse(validate_report(report, trusted))
+        report = valid_report()
+        report["scenarios"][5]["similarity"] = 0.9998
+        trusted = {field: report[field] for field in _IDENTITY_FIELDS}
+        self.assertFalse(validate_report(report, trusted))
+        report = valid_report()
+        report["scenarios"][0]["latency_ms"] = [1.0] * 9
+        trusted = {field: report[field] for field in _IDENTITY_FIELDS}
+        self.assertFalse(validate_report(report, trusted))
         report = valid_report()
         trusted = {field: report[field] for field in _IDENTITY_FIELDS}
         report["scenarios"][0]["all_finite"] = False
@@ -149,6 +185,11 @@ class PublicApiE2EBaseContractTests(unittest.TestCase):
             self.assertNotIn(forbidden, text)
         self.assertRegex(text, r"HResult hresult = HERR_INVALID_PARAM;")
 
+    def test_atomic_writer_closes_the_partial_file_even_when_write_fails(self) -> None:
+        text = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("const bool wrote =", text)
+        self.assertIn("const bool closed = std::fclose", text)
+
     def test_runner_escapes_all_json_control_bytes_and_releases_only_live_handles(self) -> None:
         text = RUNNER.read_text(encoding="utf-8")
         self.assertIn("byte < 0x20U", text)
@@ -157,6 +198,16 @@ class PublicApiE2EBaseContractTests(unittest.TestCase):
         self.assertIn("feature_.data != nullptr", text)
         self.assertNotIn("bool valid_", text)
         self.assertNotIn("bool allocated_", text)
+
+    def test_runner_records_exact_core_scenarios_with_warmups_and_public_api_measurements(self) -> None:
+        text = RUNNER.read_text(encoding="utf-8")
+        for required in (
+            'kWarmupIterations = 2', 'kMeasuredIterations = 10', 'detect_160', 'detect_320',
+            'detect_640', 'no_face', 'landmark', 'recognition', 'HFGetFaceDenseLandmarkFromFaceToken',
+            'HFGetFaceFiveKeyPointsFromFaceToken', 'HFQuerySupportedPixelLevelsForFaceDetection',
+            'getrusage(RUSAGE_SELF', 'FACE_FEATURE_SIZE', '0.9999', 'std::chrono',
+        ):
+            self.assertIn(required, text)
 
     def test_build_links_only_public_sdk_and_proves_armhf_abi(self) -> None:
         text = BUILD.read_text(encoding="utf-8")
@@ -180,9 +231,11 @@ class PublicApiE2EBaseContractTests(unittest.TestCase):
             "/userdata/inspireface-rv1126b/public-api-e2e", "roundtrip", ".partial",
             "Move-Item", "Assert-RunnerResult", "Merge-RunnerEvidence", "run_id",
             "face_image_sha256", "no_face_image_sha256",
+            "detect_160", "detect_320", "detect_640", "no_face", "landmark", "recognition",
+            "dense_count", "five_point_count", "feature_size", "0.9999",
         ):
             self.assertIn(required, text)
-        merge = text[text.index("$RunnerEvidenceFields"):text.index("function Assert-RunnerResult")]
+        merge = text[text.index("$ExpectedCoreScenarios"):text.index("function Assert-RunnerResult")]
         for forbidden in ("'run_id'", "'serial'", "'pack_sha256'", "'face_image_sha256'", "'no_face_image_sha256'"):
             self.assertNotIn(forbidden, merge)
 
