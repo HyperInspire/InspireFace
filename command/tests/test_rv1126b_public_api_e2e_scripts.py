@@ -9,6 +9,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNNER = ROOT / "command" / "rv1126b_public_api_e2e" / "capi_e2e_runner.cpp"
+BUILD = ROOT / "command" / "rv1126b_public_api_e2e" / "build_capi_e2e_runner.sh"
+BOARD = ROOT / "command" / "rv1126b_public_api_e2e" / "run_board_capi_e2e.ps1"
 
 _IDENTITY_FIELDS = (
     "run_id",
@@ -124,6 +126,48 @@ class PublicApiE2EBaseContractTests(unittest.TestCase):
         for forbidden in ('#include "face_session.h"', "FaceTrackModule", "std::cout << report"):
             self.assertNotIn(forbidden, text)
         self.assertRegex(text, r"HResult hresult = HERR_INVALID_PARAM;")
+
+    def test_build_links_only_public_sdk_and_proves_armhf_abi(self) -> None:
+        text = BUILD.read_text(encoding="utf-8")
+        for required in (
+            "set -euo pipefail", "RKNN_RUNTIME_DIR", "SDK_INSTALL_DIR",
+            "build_cross_rv1126b_armhf.sh", "inspireface.h", "libInspireFace.so",
+            "librknnrt.so", "arm-linux-gnueabihf", "readelf", "Tag_ABI_VFP_args",
+            "hard-float ABI", "capi_e2e_runner.cpp", "-lInspireFace", "-lrknnrt",
+        ):
+            self.assertIn(required, text)
+        self.assertNotIn("inference_wrapper_rknn_adapter_nano.cpp", text)
+        self.assertNotIn("rknn_adapter_nano.h", text)
+
+    def test_launcher_gates_task3_hashes_and_keeps_report_identity_untrusted(self) -> None:
+        text = BOARD.read_text(encoding="utf-8")
+        for required in (
+            "e3d7377f6fc6d325", "runtime-20260913T135617-b8a988db804a",
+            "9ec91a21617c00b6b194b37570ee5883764dca169ee1552ac4219b944f4d28d7",
+            "Test-Task3Prerequisite", "Get-FileHash", "Resolve-Path", "readlink", "-f",
+            "/userdata/inspireface-rv1126b/public-api-e2e", "roundtrip", ".partial",
+            "Move-Item", "Assert-RunnerResult", "Merge-RunnerEvidence", "run_id",
+            "face_image_sha256", "no_face_image_sha256",
+        ):
+            self.assertIn(required, text)
+        merge = text[text.index("$RunnerEvidenceFields"):text.index("function Assert-RunnerResult")]
+        for forbidden in ("'run_id'", "'serial'", "'pack_sha256'", "'face_image_sha256'", "'no_face_image_sha256'"):
+            self.assertNotIn(forbidden, merge)
+
+    def test_launcher_uses_argument_vector_and_restricts_cleanup_to_resolved_run_directory(self) -> None:
+        text = BOARD.read_text(encoding="utf-8")
+        self.assertIn("& adb -s $Serial @Arguments", text)
+        self.assertIn("'rm', '-rf', $RemoteRunDirectory", text)
+        self.assertIn("$resolvedRun -cne $RemoteRunDirectory", text)
+        self.assertIn("IsPathRooted", text)
+        self.assertNotIn("shell -c", text)
+
+    def test_launcher_roundtrips_every_deployed_payload(self) -> None:
+        text = BOARD.read_text(encoding="utf-8")
+        self.assertIn("$RoundtripFiles", text)
+        for name in ("capi_e2e_runner", "libInspireFace.so", "librknnrt.so", "pack", "face-image", "no-face-image"):
+            self.assertIn(f"'{name}'", text)
+        self.assertIn("Get-Sha256 $roundtrip", text)
 
 
 if __name__ == "__main__":
