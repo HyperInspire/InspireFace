@@ -32,6 +32,12 @@ constexpr double kCosineLimit = 0.999999;
 // tolerance used by stable paths; it cannot become an arbitrary threshold.
 constexpr double kCrossEnvelopeMaxAbsSlack = kMaxAbsLimit;
 constexpr double kCrossEnvelopeCosineSlack = 1.0 - kCosineLimit;
+// NPU execution can legitimately vary between independent invocations, but
+// diagnostics must still detect pathological drift rather than letting an
+// envelope grow without bound.  These limits cover the observed SCRFD-320
+// repeat drift (about .58 / .95) with a deliberate finite ceiling.
+constexpr double kRepeatAndCrossMaxAbsLimit = 1.0;
+constexpr double kRepeatAndCrossMinCosine = 0.90;
 
 void Check(const char* operation, int status) {
     if (status != RKNN_SUCC) throw std::runtime_error(std::string(operation) + ": " + std::to_string(status));
@@ -521,8 +527,11 @@ int main(int argc, char** argv) {
         rknn_input_output_num counts{};
         Check("RKNN_QUERY_IN_OUT_NUM", rknn_query(reference.value, RKNN_QUERY_IN_OUT_NUM, &counts, sizeof(counts)));
         if (counts.n_input != 1 || !counts.n_output) throw std::runtime_error("only exactly one image input is supported");
+        failure_stage = "reference_input_attrs";
         normal_inputs = QueryAttrs(reference.value, RKNN_QUERY_INPUT_ATTR, counts.n_input);
+        failure_stage = "reference_output_attrs";
         normal_outputs = QueryAttrs(reference.value, RKNN_QUERY_OUTPUT_ATTR, counts.n_output);
+        failure_stage = "reference_native_attrs";
         native_outputs = QueryAttrs(reference.value, RKNN_QUERY_NATIVE_NHWC_OUTPUT_ATTR, counts.n_output);
         const rknn_tensor_attr& normal_input = normal_inputs.front();
         if (normal_input.fmt != RKNN_TENSOR_NHWC || normal_input.n_dims != 4 || normal_input.dims[0] != 1 || input_bytes.size() != normal_input.n_elems)
@@ -596,8 +605,11 @@ int main(int argc, char** argv) {
                 AccumulateMetrics(&reference_raw_vs_production[output], raw_vs_production, kMeasuredIterations);
                 AccumulateMetrics(&production_native_vs_logical[output], native_vs_logical, kMeasuredIterations);
                 if (iteration != 0) {
-                    AccumulateMetrics(&reference_self_repeat[output], Compare(previous_reference[output], reference_run.values[output]), kMeasuredIterations - 1);
-                    AccumulateMetrics(&production_self_repeat[output], Compare(previous_production[output], production_run.values[output]), kMeasuredIterations - 1);
+                    const Metrics reference_repeat = Compare(previous_reference[output], reference_run.values[output]);
+                    const Metrics production_repeat = Compare(previous_production[output], production_run.values[output]);
+                    AccumulateMetrics(&reference_self_repeat[output], reference_repeat, kMeasuredIterations - 1);
+                    AccumulateMetrics(&production_self_repeat[output], production_repeat, kMeasuredIterations - 1);
+                    all_finite = all_finite && reference_repeat.finite && production_repeat.finite;
                 }
                 all_finite = all_finite && current.finite && raw_vs_float.finite && raw_vs_production.finite && native_vs_logical.finite;
             }
@@ -619,6 +631,12 @@ int main(int argc, char** argv) {
                                             kCrossEnvelopeCosineSlack;
             accepted = accepted && same_reference.max_abs <= kMaxAbsLimit && same_reference.cosine >= kCosineLimit &&
                        same_production.max_abs <= kMaxAbsLimit && same_production.cosine >= kCosineLimit &&
+                       reference_self_repeat[output].finite && production_self_repeat[output].finite && cross_path.finite &&
+                       reference_self_repeat[output].max_abs <= kRepeatAndCrossMaxAbsLimit &&
+                       reference_self_repeat[output].cosine >= kRepeatAndCrossMinCosine &&
+                       production_self_repeat[output].max_abs <= kRepeatAndCrossMaxAbsLimit &&
+                       production_self_repeat[output].cosine >= kRepeatAndCrossMinCosine &&
+                       cross_path.max_abs <= kRepeatAndCrossMaxAbsLimit && cross_path.cosine >= kRepeatAndCrossMinCosine &&
                        cross_path.max_abs <= max_envelope && cross_path.cosine >= cosine_envelope;
         }
         peak_rss_kb = PeakRssKb();
@@ -640,6 +658,13 @@ int main(int argc, char** argv) {
     // Nano's binding is deliberately uint8/NHWC/pass_through=0 even when the normal query is int8.
     report << ",\"binding_inputs\":[{\"type\":\"UINT8\",\"layout\":\"NHWC\",\"pass_through\":0}]"
            << ",\"warmup_iterations\":" << kWarmupIterations << ",\"measured_iterations\":" << kMeasuredIterations
+           << ",\"latency_scope\":\"includes_raw_output_retrieval_native_conversion_and_sha256_hashing; excludes_input_integrity_sha256\""
+           << ",\"gate_limits\":{\"same_run_max_abs\":" << kMaxAbsLimit
+           << ",\"same_run_min_cosine\":" << kCosineLimit
+           << ",\"cross_envelope_max_abs_slack\":" << kCrossEnvelopeMaxAbsSlack
+           << ",\"cross_envelope_cosine_slack\":" << kCrossEnvelopeCosineSlack
+           << ",\"repeat_and_cross_max_abs\":" << kRepeatAndCrossMaxAbsLimit
+           << ",\"repeat_and_cross_min_cosine\":" << kRepeatAndCrossMinCosine << "}"
            << ",\"reference_latency_ms\":[";
     for (size_t index = 0; index < reference_latency_ms.size(); ++index) report << (index ? "," : "") << reference_latency_ms[index];
     report << "],\"production_latency_ms\":[";
@@ -656,13 +681,20 @@ int main(int argc, char** argv) {
         for (uint32_t dimension = 0; dimension < normal_outputs[index].n_dims; ++dimension)
             report << (dimension ? "," : "") << normal_outputs[index].dims[dimension];
         const Metrics metric = index < metrics.size() ? metrics[index] : Metrics{};
-        const rknn_tensor_attr& native = native_outputs[index];
+        const bool has_native = index < native_outputs.size();
         // Process publishes float views.  Keep the raw RKNN type and
         // quantization alongside that declaration so host evidence cannot
         // mistake INT8 native storage for a logical output type.
-        report << "],\"type\":\"FP32\",\"logical_type\":\"FP32\",\"native_type\":" << Quote(get_type_string(native.type))
-               << ",\"native_qnt_type\":" << Quote(get_qnt_type_string(native.qnt_type)) << ",\"native_scale\":" << native.scale
-               << ",\"native_zp\":" << native.zp << ",\"qnt_type\":" << Quote(get_qnt_type_string(normal_outputs[index].qnt_type))
+        report << "],\"type\":\"FP32\",\"logical_type\":\"FP32\"";
+        if (has_native) {
+            const rknn_tensor_attr& native = native_outputs[index];
+            report << ",\"native_type\":" << Quote(get_type_string(native.type))
+                   << ",\"native_qnt_type\":" << Quote(get_qnt_type_string(native.qnt_type)) << ",\"native_scale\":" << native.scale
+                   << ",\"native_zp\":" << native.zp;
+        } else {
+            report << ",\"native_type\":null,\"native_qnt_type\":null,\"native_scale\":null,\"native_zp\":null";
+        }
+        report << ",\"qnt_type\":" << Quote(get_qnt_type_string(normal_outputs[index].qnt_type))
                << ",\"scale\":" << normal_outputs[index].scale << ",\"zp\":" << normal_outputs[index].zp
                << ",\"finite\":" << (metric.finite ? "true" : "false") << ",\"max_abs\":" << metric.max_abs
                << ",\"mean_abs\":" << metric.mean_abs << ",\"cosine\":" << metric.cosine << "}";

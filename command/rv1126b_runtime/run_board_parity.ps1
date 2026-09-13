@@ -18,6 +18,19 @@ $ExpectedIds = @(
 )
 # This is the frozen command.rv1126b_pack.contracts.selected_model_ids() profile.
 $selected_model_ids = $ExpectedIds
+$kRepeatAndCrossMaxAbsLimit = 1.0
+$kRepeatAndCrossMinCosine = 0.90
+# Only these runner-provided fields may be copied into the host-owned row,
+# and only after the runner JSON has passed all host gates.  Identity and
+# transport evidence are deliberately absent: they remain immutable host data.
+$RunnerEvidenceFields = @(
+    'failure_stage', 'error', 'api_version', 'runtime_version', 'driver_version',
+    'normal_inputs', 'normal_outputs', 'native_outputs', 'binding_inputs',
+    'warmup_iterations', 'measured_iterations', 'latency_scope',
+    'reference_latency_ms', 'production_latency_ms', 'latency_summary_ms',
+    'outputs', 'diagnostics', 'gate_limits', 'all_finite', 'accepted',
+    'rnet_stride', 'scrfd_output_count', 'attitude_output_count', 'peak_rss_kb'
+)
 
 function Invoke-Adb {
     param([string[]]$Arguments)
@@ -61,6 +74,13 @@ function Assert-RawProvenance {
         throw "raw input contract does not match conversion evidence: $Id"
     }
 }
+function Merge-RunnerEvidence {
+    param([System.Collections.IDictionary]$Row, $Result)
+    foreach ($field in $RunnerEvidenceFields) {
+        $property = $Result.PSObject.Properties[$field]
+        if ($null -ne $property) { $Row[$field] = $property.Value }
+    }
+}
 function Assert-RunnerResult {
     param([string]$Id, $Result, [string]$ModelHash, [string]$InputHash, $Evidence)
     if ($Result.status -cne 'success' -or $Result.model_id -cne $Id -or $Result.model_sha256 -cne $ModelHash -or $Result.input_sha256 -cne $InputHash -or
@@ -69,6 +89,19 @@ function Assert-RunnerResult {
         $Result.peak_rss_kb -le 0 -or @($Result.outputs).Count -ne @($Evidence.outputs).Count -or @($Result.native_outputs).Count -ne @($Evidence.outputs).Count -or
         @($Result.reference_latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -le 0 }).Count -ne 0 -or
         @($Result.production_latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -le 0 }).Count -ne 0) { throw "runner evidence is incomplete: $Id" }
+    $limits = $Result.gate_limits
+    if ($null -eq $limits -or ![double]::IsFinite([double]$limits.same_run_max_abs) -or
+        ![double]::IsFinite([double]$limits.same_run_min_cosine) -or
+        ![double]::IsFinite([double]$limits.cross_envelope_max_abs_slack) -or
+        ![double]::IsFinite([double]$limits.cross_envelope_cosine_slack) -or
+        ![double]::IsFinite([double]$limits.repeat_and_cross_max_abs) -or
+        ![double]::IsFinite([double]$limits.repeat_and_cross_min_cosine) -or
+        [double]$limits.same_run_max_abs -ne 1e-5 -or [double]$limits.same_run_min_cosine -ne 0.999999 -or
+        [double]$limits.cross_envelope_max_abs_slack -ne 1e-5 -or [double]$limits.cross_envelope_cosine_slack -ne 1e-6 -or
+        [double]$limits.repeat_and_cross_max_abs -ne $kRepeatAndCrossMaxAbsLimit -or
+        [double]$limits.repeat_and_cross_min_cosine -ne $kRepeatAndCrossMinCosine) {
+        throw "runner nondeterminism gate limits are invalid: $Id"
+    }
     $integrity = $Result.diagnostics.input_integrity
     if ($null -eq $integrity -or $integrity.initial_sha256 -cne $InputHash -or
         $integrity.reference_before_sha256 -cne $InputHash -or $integrity.reference_after_sha256 -cne $InputHash -or
@@ -93,6 +126,11 @@ function Assert-RunnerResult {
             ![double]::IsFinite([double]$actual.max_abs) -or ![double]::IsFinite([double]$actual.cosine) -or
             $diagnostic.reference_raw_vs_float.max_abs -gt 1e-5 -or $diagnostic.reference_raw_vs_float.cosine -lt 0.999999 -or
             $diagnostic.production_native_vs_logical.max_abs -gt 1e-5 -or $diagnostic.production_native_vs_logical.cosine -lt 0.999999 -or
+            $diagnostic.reference_self_repeat.max_abs -gt $kRepeatAndCrossMaxAbsLimit -or
+            $diagnostic.reference_self_repeat.cosine -lt $kRepeatAndCrossMinCosine -or
+            $diagnostic.production_self_repeat.max_abs -gt $kRepeatAndCrossMaxAbsLimit -or
+            $diagnostic.production_self_repeat.cosine -lt $kRepeatAndCrossMinCosine -or
+            $actual.max_abs -gt $kRepeatAndCrossMaxAbsLimit -or $actual.cosine -lt $kRepeatAndCrossMinCosine -or
             $actual.max_abs -gt $max_envelope -or $actual.cosine -lt $cosine_envelope) { throw "runner output contract/parity failed: $Id/$index" }
     }
 }
@@ -203,11 +241,13 @@ exec ./rknn2_parity_runner "$@"
         $evidence = $evidences[$id]
         $row = [ordered]@{ model_id = $id; status = 'failed'; failure_stage = 'deploy'; error = ''; run_id = $RunId; serial = $Serial; pack_sha256 = $packHash; model_sha256 = ''; input_sha256 = '' }
         try {
-            $row.model_sha256 = Get-Sha256 $model; $row.input_sha256 = Get-Sha256 $input
+            $trustedModelHash = Get-Sha256 $model
+            $trustedInputHash = Get-Sha256 $input
+            $row.model_sha256 = $trustedModelHash; $row.input_sha256 = $trustedInputHash
             Invoke-Adb @('shell', 'mkdir', '-p', $remoteModel)
             Invoke-Adb @('push', $model, "$remoteModel/model.rknn")
             Invoke-Adb @('push', $input, "$remoteModel/input_0.bin")
-            foreach ($pair in @(@('model.rknn', $row.model_sha256), @('input_0.bin', $row.input_sha256))) {
+            foreach ($pair in @(@('model.rknn', $trustedModelHash), @('input_0.bin', $trustedInputHash))) {
                 $roundtrip = Join-Path $local "$($pair[0]).roundtrip.partial"
                 Invoke-Adb @('pull', "$remoteModel/$($pair[0])", $roundtrip)
                 if ((Get-Sha256 $roundtrip) -cne $pair[1]) { throw "remote $($pair[0]) hash mismatch" }
@@ -216,13 +256,13 @@ exec ./rknn2_parity_runner "$@"
             $runFailure = $null
             try {
                 # The LF script is invoked by sh as an argument vector, never as a command string.
-                Invoke-Adb @('shell', 'sh', "$RemoteDirectory/run-one.sh", $remoteModel, '--id', $id, '--model', "$remoteModel/model.rknn", '--input', "$remoteModel/input_0.bin", '--result', "$remoteModel/result.json", '--model-sha256', $row.model_sha256, '--input-sha256', $row.input_sha256)
+                Invoke-Adb @('shell', 'sh', "$RemoteDirectory/run-one.sh", $remoteModel, '--id', $id, '--model', "$remoteModel/model.rknn", '--input', "$remoteModel/input_0.bin", '--result', "$remoteModel/result.json", '--model-sha256', $trustedModelHash, '--input-sha256', $trustedInputHash)
             } catch { $runFailure = $_ }
             Invoke-Adb @('pull', "$remoteModel/result.json", (Join-Path $local 'result.json'))
             $native = Get-Content -Raw -LiteralPath (Join-Path $local 'result.json') | ConvertFrom-Json
-            foreach ($property in $native.PSObject.Properties) { $row[$property.Name] = $property.Value }
             if ($runFailure) { throw $runFailure }
-            Assert-RunnerResult $id $native $row.model_sha256 $row.input_sha256 $evidence
+            Assert-RunnerResult $id $native $trustedModelHash $trustedInputHash $evidence
+            Merge-RunnerEvidence $row $native
             $row.accepted = $true
             $row.status = 'success'
         } catch {

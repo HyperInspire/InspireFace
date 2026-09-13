@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+from typing import List
 
 from command.rv1126b_pack.contracts import selected_model_ids
 
@@ -23,7 +24,7 @@ NANO_HEADER = ROOT / "cpp" / "inspireface" / "middleware" / "inference_wrapper" 
 NANO_ADAPTER = ROOT / "cpp" / "inspireface" / "middleware" / "inference_wrapper" / "inference_wrapper_rknn_adapter_nano.cpp"
 
 
-def load_selected_ids() -> list[str]:
+def load_selected_ids() -> List[str]:
     """The runtime matrix is the immutable default resource-pack selection."""
     return list(selected_model_ids())
 
@@ -75,6 +76,47 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
             "$cosine_envelope",
         ):
             self.assertIn(required, board)
+
+    def test_board_never_merges_malicious_runner_identity_over_trusted_hashes(self):
+        text = BOARD.read_text(encoding="utf-8")
+        for required in ("$trustedModelHash", "$trustedInputHash", "Merge-RunnerEvidence", "Assert-RunnerResult $id $native $trustedModelHash $trustedInputHash"):
+            self.assertIn(required, text)
+        merge = text[text.index("$RunnerEvidenceFields"):text.index("function Assert-RunnerResult")]
+        for forbidden in ("'run_id'", "'serial'", "'pack_sha256'", "'model_id'", "'model_sha256'", "'input_sha256'"):
+            self.assertNotIn(forbidden, merge)
+        runner_json = text[text.index("$native = Get-Content"):text.index("$row.accepted = $true")]
+        self.assertLess(runner_json.index("Assert-RunnerResult"), runner_json.index("Merge-RunnerEvidence"))
+        self.assertNotIn("foreach ($property in $native.PSObject.Properties)", runner_json)
+
+    def test_hard_nondeterminism_limits_reject_extreme_self_repeat_and_cross_path_metrics(self):
+        runner = RUNNER.read_text(encoding="utf-8")
+        board = BOARD.read_text(encoding="utf-8")
+        abs_match = re.search(r"kRepeatAndCrossMaxAbsLimit = ([0-9.]+)", runner)
+        cosine_match = re.search(r"kRepeatAndCrossMinCosine = ([0-9.]+)", runner)
+        self.assertIsNotNone(abs_match)
+        self.assertIsNotNone(cosine_match)
+        self.assertFalse(100000.0 <= float(abs_match.group(1)))
+        self.assertFalse(-1.0 >= float(cosine_match.group(1)))
+        self.assertIn("gate_limits", runner)
+        self.assertIn("kRepeatAndCrossMaxAbsLimit", board)
+        self.assertIn("kRepeatAndCrossMinCosine", board)
+        for required in (
+            "reference_self_repeat[output].max_abs <= kRepeatAndCrossMaxAbsLimit",
+            "production_self_repeat[output].max_abs <= kRepeatAndCrossMaxAbsLimit",
+            "cross_path.max_abs <= kRepeatAndCrossMaxAbsLimit",
+            "$diagnostic.reference_self_repeat.max_abs -gt $kRepeatAndCrossMaxAbsLimit",
+            "$diagnostic.production_self_repeat.max_abs -gt $kRepeatAndCrossMaxAbsLimit",
+            "$actual.max_abs -gt $kRepeatAndCrossMaxAbsLimit",
+        ):
+            self.assertIn(required, runner if required.startswith(("reference_", "production_", "cross_path")) else board)
+
+    def test_native_attr_query_failure_keeps_runner_failure_json_serializable(self):
+        runner = RUNNER.read_text(encoding="utf-8")
+        self.assertIn('failure_stage = "reference_native_attrs"', runner)
+        self.assertIn("index < native_outputs.size()", runner)
+        self.assertIn('\\"native_type\\":null', runner)
+        self.assertIn("latency_scope", runner)
+        self.assertIsNone(re.search(r"->\s*list\s*\[", Path(__file__).read_text(encoding="utf-8")))
 
     def test_runner_records_contracts_and_required_model_shapes(self):
         text = RUNNER.read_text(encoding="utf-8")
