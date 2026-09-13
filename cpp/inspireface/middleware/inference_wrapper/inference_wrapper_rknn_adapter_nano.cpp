@@ -238,6 +238,7 @@ std::vector<std::string> InferenceWrapperRKNNAdapter::GetInputNames() {
 
 int32_t InferenceWrapperRKNNAdapter::ResizeInput(const std::vector<InputTensorInfo> &input_tensor_info_list) {
     // The function is not supported
+    (void)input_tensor_info_list;
     return WrapperError;
 }
 

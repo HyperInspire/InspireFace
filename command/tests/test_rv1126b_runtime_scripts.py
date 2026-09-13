@@ -19,6 +19,8 @@ RUNNER = RUNTIME / "rknn2_parity_runner.cpp"
 BUILD = RUNTIME / "build_parity_runner.sh"
 BOARD = RUNTIME / "run_board_parity.ps1"
 RAW_INPUTS = RUNTIME / "prepare_raw_inputs.py"
+NANO_HEADER = ROOT / "cpp" / "inspireface" / "middleware" / "inference_wrapper" / "customized" / "rknn_adapter_nano.h"
+NANO_ADAPTER = ROOT / "cpp" / "inspireface" / "middleware" / "inference_wrapper" / "inference_wrapper_rknn_adapter_nano.cpp"
 
 
 def load_selected_ids() -> list[str]:
@@ -88,6 +90,11 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
         self.assertIn("RuntimeAtLeast", text)
         self.assertIn("2, 3, 2", text)
         self.assertIn("peak_rss_kb", text)
+
+    def test_adapter_sources_keep_werror_clean_rknn2_contract_checks(self):
+        self.assertIn("attribute.w_stride != 0 && (attribute.w_stride < attribute.dims[2])", NANO_HEADER.read_text(encoding="utf-8"))
+        adapter = NANO_ADAPTER.read_text(encoding="utf-8")
+        self.assertIn("(void)input_tensor_info_list;", adapter)
 
 
 @unittest.skipUnless(os.name == "posix", "Linux cross-build argv behavior")
