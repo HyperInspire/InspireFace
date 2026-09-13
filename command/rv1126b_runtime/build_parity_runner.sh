@@ -20,11 +20,18 @@ check_armhf() {
 
 [[ $(uname -s) == Linux ]] || { echo 'Linux cross-build host required' >&2; exit 1; }
 [[ $("$compiler-g++" -dumpmachine) == arm*-linux-gnueabihf ]] || { echo 'ARM EABI hard-float compiler required' >&2; exit 1; }
+if [[ -n ${RKNN_INCLUDE_DIR:-} ]]; then
+    rknn_include=$RKNN_INCLUDE_DIR
+else
+    : "${RKNN_RUNTIME_DIR:?Set RKNN_RUNTIME_DIR to the official Toolkit2 Linux/librknn_api directory, or RKNN_INCLUDE_DIR to its include directory}"
+    rknn_include="$RKNN_RUNTIME_DIR/include"
+fi
+[[ -s "$rknn_include/rknn_api.h" ]] || { echo 'Missing official RKNN rknn_api.h include directory' >&2; exit 1; }
 if [[ -n ${SDK_INSTALL_DIR:-} ]]; then
     sdk_dir=$SDK_INSTALL_DIR
 else
     : "${RKNN_RUNTIME_DIR:?Set RKNN_RUNTIME_DIR to the official Toolkit2 Linux/librknn_api directory}"
-    [[ -s "$RKNN_RUNTIME_DIR/include/rknn_api.h" && -s "$RKNN_RUNTIME_DIR/armhf/librknnrt.so" ]] || {
+    [[ -s "$RKNN_RUNTIME_DIR/armhf/librknnrt.so" ]] || {
         echo 'Missing official ARMHF RKNN runtime/header' >&2; exit 1;
     }
     check_armhf "$RKNN_RUNTIME_DIR/armhf/librknnrt.so"
@@ -44,7 +51,7 @@ mkdir -p "$output_dir"
 # libraries as the RV1126B product build.
 adapter_source="$repository/cpp/inspireface/middleware/inference_wrapper/inference_wrapper_rknn_adapter_nano.cpp"
 "$compiler-g++" -std=c++14 -O2 -Wall -Wextra -Werror -DINFERENCE_WRAPPER_ENABLE_RKNN2 \
-    -I"$sdk_dir/include" -I"$sdk_dir/include/inspireface" -I"$repository/cpp/inspireface" -I"$repository/cpp/inspireface/middleware/inference_wrapper" \
+    -Wno-unknown-pragmas -I"$rknn_include" -I"$sdk_dir/include" -I"$sdk_dir/include/inspireface" -I"$repository/cpp/inspireface" -I"$repository/cpp/inspireface/middleware/inference_wrapper" \
     "$script_dir/rknn2_parity_runner.cpp" "$adapter_source" -L"$sdk_dir/lib" -lInspireFace -lrknnrt -ldl \
     -Wl,-rpath,'$ORIGIN' -o "$output_dir/rknn2_parity_runner"
 cp "$sdk_dir/lib/libInspireFace.so" "$sdk_dir/lib/librknnrt.so" "$output_dir/"

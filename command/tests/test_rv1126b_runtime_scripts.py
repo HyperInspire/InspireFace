@@ -3,7 +3,9 @@
 from pathlib import Path
 import hashlib
 import json
+import os
 import re
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -61,7 +63,7 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
             "set -euo pipefail", "build_cross_rv1126b_armhf.sh", "SDK_INSTALL_DIR",
             "RKNN_RUNTIME_DIR", "arm-linux-gnueabihf", "hard-float ABI", "readelf",
             "libInspireFace.so", "librknnrt.so", "rknn2_parity_runner.cpp",
-            "inference_wrapper_rknn_adapter_nano.cpp",
+            "inference_wrapper_rknn_adapter_nano.cpp", "rknn_include", "-Wno-unknown-pragmas",
         ):
             self.assertIn(required, text)
 
@@ -86,6 +88,37 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
         self.assertIn("RuntimeAtLeast", text)
         self.assertIn("2, 3, 2", text)
         self.assertIn("peak_rss_kb", text)
+
+
+@unittest.skipUnless(os.name == "posix", "Linux cross-build argv behavior")
+class ParityBuildArgumentTests(unittest.TestCase):
+    def test_sdk_install_still_compiles_with_explicit_rknn_header_and_only_known_warning_waived(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            sdk, runtime, tools, output = root / "sdk", root / "runtime", root / "tools", root / "out"
+            for path in (sdk / "include", sdk / "lib", runtime / "include", runtime / "armhf", tools):
+                path.mkdir(parents=True, exist_ok=True)
+            (sdk / "include" / "inspireface.h").write_text("fixture")
+            (runtime / "include" / "rknn_api.h").write_text("fixture")
+            for library in (sdk / "lib" / "libInspireFace.so", sdk / "lib" / "librknnrt.so", runtime / "armhf" / "librknnrt.so"):
+                library.write_text("fixture")
+            compiler = tools / "arm-linux-gnueabihf-g++"
+            compiler.write_text("#!/bin/sh\nif [ \"$1\" = -dumpmachine ]; then echo arm-linux-gnueabihf; exit 0; fi\nprintf '%s\\n' \"$@\" > \"$FAKE_ARGS\"\nwhile [ $# -gt 0 ]; do [ \"$1\" = -o ] && { : > \"$2\"; exit 0; }; shift; done\n")
+            readelf = tools / "arm-linux-gnueabihf-readelf"
+            readelf.write_text("#!/bin/sh\ncase \"$1\" in -h) printf 'Class: ELF32\\nMachine: ARM\\nFlags: Version5 EABI, hard-float ABI\\n';; -A) echo 'Tag_ABI_VFP_args: VFP registers';; -d) echo 'Shared library: [libInspireFace.so]'; echo 'Shared library: [librknnrt.so]';; esac\n")
+            file_tool = tools / "file"
+            file_tool.write_text("#!/bin/sh\nexit 0\n")
+            for tool in (compiler, readelf, file_tool):
+                tool.chmod(0o755)
+            args = root / "args.txt"
+            env = dict(os.environ, PATH=str(tools) + os.pathsep + os.environ["PATH"], SDK_INSTALL_DIR=str(sdk), RKNN_RUNTIME_DIR=str(runtime), FAKE_ARGS=str(args))
+            completed = subprocess.run(["bash", str(BUILD), str(output)], env=env, capture_output=True, text=True)
+            self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+            argv = args.read_text()
+            self.assertIn("-I" + str(runtime / "include"), argv)
+            self.assertIn("-Werror", argv)
+            self.assertIn("-Wno-unknown-pragmas", argv)
+            self.assertIn("inference_wrapper_rknn_adapter_nano.cpp", argv)
 
 
 class RawUint8InputTests(unittest.TestCase):
