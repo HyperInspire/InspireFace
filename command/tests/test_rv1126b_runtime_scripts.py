@@ -52,6 +52,22 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
         ):
             self.assertIn(required, text)
 
+    def test_runner_records_compact_input_repeat_and_raw_output_diagnostics(self):
+        text = RUNNER.read_text(encoding="utf-8")
+        # The next board run must distinguish an RKNN input mutation, a
+        # nondeterministic execution, and Nano's native-output conversion
+        # without writing output arrays to JSON.
+        for required in (
+            "Sha256Hex", "input_integrity", "reference_before_sha256",
+            "reference_after_sha256", "production_before_sha256",
+            "production_after_sha256", "reference_self_repeat",
+            "production_self_repeat", "reference_raw_vs_float",
+            "reference_raw_vs_production", "reference_raw_logical_sha256",
+            "production_native_logical_sha256", "production_native_storage_sha256",
+            "want_float = 0", "CopyNativeOutputBytes",
+        ):
+            self.assertIn(required, text)
+
     def test_board_matrix_is_exactly_the_pack_selection(self):
         text = BOARD.read_text(encoding="utf-8")
         start = text.index("$ExpectedIds = @(")

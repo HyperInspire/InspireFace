@@ -334,6 +334,10 @@ public:
         return m_output_mems_[index];
     }
 
+    const rknn_tensor_mem *GetOutputRawData(size_t index) const {
+        return index < m_output_mems_.size() ? m_output_mems_[index] : nullptr;
+    }
+
     const std::vector<rknn_tensor_attr> &GetNormalInputAttrs() const {
         return m_input_attrs_;
     }

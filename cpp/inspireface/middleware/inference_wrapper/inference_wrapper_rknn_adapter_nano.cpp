@@ -236,6 +236,31 @@ std::vector<std::string> InferenceWrapperRKNNAdapter::GetInputNames() {
     return std::vector<std::string>();
 }
 
+bool InferenceWrapperRKNNAdapter::CopyNativeOutputBytes(std::vector<std::vector<uint8_t>>* logical_bytes,
+                                                        std::vector<std::vector<uint8_t>>* storage_bytes) const {
+    if (logical_bytes == nullptr || storage_bytes == nullptr) return false;
+    logical_bytes->clear();
+    storage_bytes->clear();
+    if (net_ == nullptr) return false;
+    const auto& attrs = net_->GetNativeOutputAttrs();
+    logical_bytes->reserve(attrs.size());
+    storage_bytes->reserve(attrs.size());
+    for (size_t index = 0; index < attrs.size(); ++index) {
+        const rknn_tensor_mem* memory = net_->GetOutputRawData(index);
+        const rknn_tensor_attr& attr = attrs[index];
+        if (memory == nullptr || memory->virt_addr == nullptr || attr.size == 0 || attr.size > attr.size_with_stride ||
+            memory->size < attr.size_with_stride) {
+            logical_bytes->clear();
+            storage_bytes->clear();
+            return false;
+        }
+        const auto* source = static_cast<const uint8_t*>(memory->virt_addr);
+        logical_bytes->emplace_back(source, source + attr.size);
+        storage_bytes->emplace_back(source, source + attr.size_with_stride);
+    }
+    return true;
+}
+
 int32_t InferenceWrapperRKNNAdapter::ResizeInput(const std::vector<InputTensorInfo> &input_tensor_info_list) {
     // The function is not supported
     (void)input_tensor_info_list;
