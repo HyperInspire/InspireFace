@@ -56,6 +56,10 @@ def validate_report(report: Mapping[str, Any], trusted: Mapping[str, str]) -> bo
             return False
         if not isinstance(scenario.get("all_finite"), bool):
             return False
+        if status == "success" and (scenario["hresult"] != 0 or scenario["all_finite"] is not True):
+            return False
+        if status == "failure" and (scenario["hresult"] == 0 or scenario["all_finite"] is not False):
+            return False
         if not _is_finite_number(scenario.get("peak_rss_kb")) or scenario["peak_rss_kb"] < 0:
             return False
         latency = scenario.get("latency_ms")
@@ -108,6 +112,24 @@ class PublicApiE2EBaseContractTests(unittest.TestCase):
         report["scenarios"][0].update(status="failure", failure_stage="")
         trusted = {field: report[field] for field in _IDENTITY_FIELDS}
         self.assertFalse(validate_report(report, trusted))
+
+    def test_schema_rejects_status_hresult_and_finiteness_contradictions(self) -> None:
+        report = valid_report()
+        trusted = {field: report[field] for field in _IDENTITY_FIELDS}
+        report["scenarios"][0]["hresult"] = 7
+        self.assertFalse(validate_report(report, trusted))
+        report = valid_report()
+        trusted = {field: report[field] for field in _IDENTITY_FIELDS}
+        report["scenarios"][0]["all_finite"] = False
+        self.assertFalse(validate_report(report, trusted))
+        report = valid_report()
+        report["scenarios"][0].update(status="failure", failure_stage="track", hresult=0, all_finite=False)
+        trusted = {field: report[field] for field in _IDENTITY_FIELDS}
+        self.assertFalse(validate_report(report, trusted))
+        report = valid_report()
+        report["scenarios"][0].update(status="failure", failure_stage="track", hresult=7, all_finite=True)
+        trusted = {field: report[field] for field in _IDENTITY_FIELDS}
+        self.assertFalse(validate_report(report, trusted))
         report = valid_report()
         report["scenarios"][0]["latency_ms"] = [float("nan")]
         trusted = {field: report[field] for field in _IDENTITY_FIELDS}
@@ -126,6 +148,15 @@ class PublicApiE2EBaseContractTests(unittest.TestCase):
         for forbidden in ('#include "face_session.h"', "FaceTrackModule", "std::cout << report"):
             self.assertNotIn(forbidden, text)
         self.assertRegex(text, r"HResult hresult = HERR_INVALID_PARAM;")
+
+    def test_runner_escapes_all_json_control_bytes_and_releases_only_live_handles(self) -> None:
+        text = RUNNER.read_text(encoding="utf-8")
+        self.assertIn("byte < 0x20U", text)
+        self.assertIn("\\\\u00", text)
+        self.assertIn("bitmap_ != nullptr", text)
+        self.assertIn("feature_.data != nullptr", text)
+        self.assertNotIn("bool valid_", text)
+        self.assertNotIn("bool allocated_", text)
 
     def test_build_links_only_public_sdk_and_proves_armhf_abi(self) -> None:
         text = BUILD.read_text(encoding="utf-8")

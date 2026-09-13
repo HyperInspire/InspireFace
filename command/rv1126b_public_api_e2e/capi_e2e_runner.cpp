@@ -59,19 +59,15 @@ class SessionOwner {
 class BitmapOwner {
  public:
     ~BitmapOwner() {
-        if (valid_) {
+        if (bitmap_ != nullptr) {
             HFReleaseImageBitmap(bitmap_);
         }
     }
-    PHFImageBitmap Out() {
-        valid_ = true;
-        return &bitmap_;
-    }
+    PHFImageBitmap Out() { return &bitmap_; }
     HFImageBitmap Get() const { return bitmap_; }
 
  private:
-    HFImageBitmap bitmap_ = {};
-    bool valid_ = false;
+    HFImageBitmap bitmap_ = nullptr;
 };
 
 class StreamOwner {
@@ -91,20 +87,17 @@ class StreamOwner {
 class FeatureOwner {
  public:
     ~FeatureOwner() {
-        if (allocated_) {
+        if (feature_.data != nullptr) {
             HFReleaseFaceFeature(&feature_);
         }
     }
     HResult Allocate() {
-        HResult result = HFCreateFaceFeature(&feature_);
-        allocated_ = result == HSUCCEED;
-        return result;
+        return HFCreateFaceFeature(&feature_);
     }
     HFFaceFeature Get() const { return feature_; }
 
  private:
     HFFaceFeature feature_ = {};
-    bool allocated_ = false;
 };
 
 bool IsNonEmpty(const std::string& value) {
@@ -139,14 +132,23 @@ bool ParseArguments(int argc, char** argv, Arguments* arguments) {
 std::string EscapeJson(const std::string& value) {
     std::string escaped;
     escaped.reserve(value.size());
-    for (char character : value) {
-        switch (character) {
+    static const char hex[] = "0123456789abcdef";
+    for (unsigned char byte : value) {
+        switch (byte) {
             case '\\': escaped += "\\\\"; break;
             case '"': escaped += "\\\""; break;
             case '\n': escaped += "\\n"; break;
             case '\r': escaped += "\\r"; break;
             case '\t': escaped += "\\t"; break;
-            default: escaped += character; break;
+            default:
+                if (byte < 0x20U) {
+                    escaped += "\\u00";
+                    escaped += hex[(byte >> 4U) & 0x0fU];
+                    escaped += hex[byte & 0x0fU];
+                } else {
+                    escaped += static_cast<char>(byte);
+                }
+                break;
         }
     }
     return escaped;
