@@ -658,7 +658,7 @@ int main(int argc, char** argv) {
     // Nano's binding is deliberately uint8/NHWC/pass_through=0 even when the normal query is int8.
     report << ",\"binding_inputs\":[{\"type\":\"UINT8\",\"layout\":\"NHWC\",\"pass_through\":0}]"
            << ",\"warmup_iterations\":" << kWarmupIterations << ",\"measured_iterations\":" << kMeasuredIterations
-           << ",\"latency_scope\":\"includes_raw_output_retrieval_native_conversion_and_sha256_hashing; excludes_input_integrity_sha256\""
+           << ",\"latency_scope\":\"includes_input_integrity_sha256_raw_output_retrieval_native_conversion_and_output_sha256_hashing\""
            << ",\"gate_limits\":{\"same_run_max_abs\":" << kMaxAbsLimit
            << ",\"same_run_min_cosine\":" << kCosineLimit
            << ",\"cross_envelope_max_abs_slack\":" << kCrossEnvelopeMaxAbsSlack
