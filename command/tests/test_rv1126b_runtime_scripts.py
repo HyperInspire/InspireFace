@@ -90,6 +90,11 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
         self.assertIn("RuntimeAtLeast", text)
         self.assertIn("2, 3, 2", text)
         self.assertIn("peak_rss_kb", text)
+        # /proc may not expose VmHWM/VmRSS on the board image.  Linux reports
+        # the process high-water mark through getrusage in KiB.
+        self.assertIn("#include <sys/resource.h>", text)
+        self.assertIn("getrusage(RUSAGE_SELF", text)
+        self.assertIn("usage.ru_maxrss", text)
 
     def test_adapter_sources_keep_werror_clean_rknn2_contract_checks(self):
         self.assertIn("(attribute.w_stride != 0 && attribute.w_stride < attribute.dims[2])", NANO_HEADER.read_text(encoding="utf-8"))

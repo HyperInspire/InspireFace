@@ -14,6 +14,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <sys/resource.h>
 #include <vector>
 
 #include "rknn_api.h"
@@ -62,14 +63,10 @@ bool RuntimeAtLeast(const char* api_version, int required_major, int required_mi
 }
 
 uint64_t PeakRssKb() {
-    std::ifstream status("/proc/self/status");
-    std::string key;
-    uint64_t value = 0;
-    while (status >> key >> value) {
-        if (key == "VmHWM:" || key == "VmRSS:") return value;
-        status.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-    return 0;
+    rusage usage{};
+    if (getrusage(RUSAGE_SELF, &usage) != 0 || usage.ru_maxrss <= 0) return 0;
+    // Linux reports ru_maxrss in KiB (unlike macOS, where the unit is bytes).
+    return static_cast<uint64_t>(usage.ru_maxrss);
 }
 
 uint64_t Product(const rknn_tensor_attr& attr) {
