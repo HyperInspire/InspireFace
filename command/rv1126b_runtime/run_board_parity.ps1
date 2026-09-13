@@ -69,12 +69,31 @@ function Assert-RunnerResult {
         $Result.peak_rss_kb -le 0 -or @($Result.outputs).Count -ne @($Evidence.outputs).Count -or @($Result.native_outputs).Count -ne @($Evidence.outputs).Count -or
         @($Result.reference_latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -le 0 }).Count -ne 0 -or
         @($Result.production_latency_ms | Where-Object { ![double]::IsFinite([double]$_) -or $_ -le 0 }).Count -ne 0) { throw "runner evidence is incomplete: $Id" }
+    $integrity = $Result.diagnostics.input_integrity
+    if ($null -eq $integrity -or $integrity.initial_sha256 -cne $InputHash -or
+        $integrity.reference_before_sha256 -cne $InputHash -or $integrity.reference_after_sha256 -cne $InputHash -or
+        $integrity.production_before_sha256 -cne $InputHash -or $integrity.production_after_sha256 -cne $InputHash -or
+        $integrity.reference_unchanged -ne $true -or $integrity.production_unchanged -ne $true -or
+        @($Result.diagnostics.output_diagnostics).Count -ne @($Evidence.outputs).Count) { throw "runner input-integrity diagnostics failed: $Id" }
     for ($index = 0; $index -lt @($Evidence.outputs).Count; ++$index) {
         $expected, $actual, $native = $Evidence.outputs[$index], $Result.outputs[$index], $Result.native_outputs[$index]
+        $diagnostic = $Result.diagnostics.output_diagnostics[$index]
+        $max_envelope = [Math]::Max([double]$diagnostic.reference_self_repeat.max_abs, [double]$diagnostic.production_self_repeat.max_abs) + 1e-5
+        $cosine_envelope = [Math]::Min([double]$diagnostic.reference_self_repeat.cosine, [double]$diagnostic.production_self_repeat.cosine) - 1e-6
         if ($actual.name -cne $expected.name -or (@($actual.logical_dims) -join ',') -cne (@($expected.shape) -join ',') -or $actual.type -cne 'FP32' -or
             $actual.logical_type -cne 'FP32' -or $actual.native_type -cne $native.type -or $actual.native_qnt_type -cne $native.qnt_type -or
             [double]$actual.native_scale -ne [double]$native.scale -or [int]$actual.native_zp -ne [int]$native.zp -or
-            $actual.finite -ne $true -or $actual.max_abs -gt 1e-5 -or $actual.cosine -lt 0.999999) { throw "runner output contract/parity failed: $Id/$index" }
+            $actual.finite -ne $true -or $diagnostic.index -ne $index -or
+            $diagnostic.reference_self_repeat.finite -ne $true -or $diagnostic.production_self_repeat.finite -ne $true -or
+            $diagnostic.reference_raw_vs_float.finite -ne $true -or $diagnostic.production_native_vs_logical.finite -ne $true -or
+            ![double]::IsFinite([double]$diagnostic.reference_self_repeat.max_abs) -or ![double]::IsFinite([double]$diagnostic.reference_self_repeat.cosine) -or
+            ![double]::IsFinite([double]$diagnostic.production_self_repeat.max_abs) -or ![double]::IsFinite([double]$diagnostic.production_self_repeat.cosine) -or
+            ![double]::IsFinite([double]$diagnostic.reference_raw_vs_float.max_abs) -or ![double]::IsFinite([double]$diagnostic.reference_raw_vs_float.cosine) -or
+            ![double]::IsFinite([double]$diagnostic.production_native_vs_logical.max_abs) -or ![double]::IsFinite([double]$diagnostic.production_native_vs_logical.cosine) -or
+            ![double]::IsFinite([double]$actual.max_abs) -or ![double]::IsFinite([double]$actual.cosine) -or
+            $diagnostic.reference_raw_vs_float.max_abs -gt 1e-5 -or $diagnostic.reference_raw_vs_float.cosine -lt 0.999999 -or
+            $diagnostic.production_native_vs_logical.max_abs -gt 1e-5 -or $diagnostic.production_native_vs_logical.cosine -lt 0.999999 -or
+            $actual.max_abs -gt $max_envelope -or $actual.cosine -lt $cosine_envelope) { throw "runner output contract/parity failed: $Id/$index" }
     }
 }
 

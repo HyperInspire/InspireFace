@@ -47,7 +47,7 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
         text = RUNNER.read_text(encoding="utf-8")
         warmup = text[text.index('failure_stage = "warmup"'):text.index('failure_stage = "parity"')]
         self.assertIn("RunReference(reference.value, input_bytes, normal_outputs)", warmup)
-        self.assertIn("RunProduction(production, declared_input, &declared_outputs, false)", warmup)
+        self.assertIn("RunProduction(production, declared_input, &declared_outputs, native_outputs, normal_outputs, false)", warmup)
         self.assertNotIn("reference_latency_ms.push_back", warmup)
         self.assertNotIn("production_latency_ms.push_back", warmup)
 
@@ -59,6 +59,22 @@ class RV1126BRuntimeParityScriptTests(unittest.TestCase):
         self.assertIn("$actual.logical_type -cne 'FP32'", board)
         self.assertIn("$actual.native_type -cne $native.type", board)
         self.assertIn("$actual.native_qnt_type -cne $native.qnt_type", board)
+
+    def test_acceptance_uses_same_run_native_conversion_and_bounded_cross_path_envelope(self):
+        runner = RUNNER.read_text(encoding="utf-8")
+        board = BOARD.read_text(encoding="utf-8")
+        for required in (
+            "production_native_vs_logical", "DecodeNativeOutput",
+            "kCrossEnvelopeMaxAbsSlack", "kCrossEnvelopeCosineSlack",
+            "reference_unchanged", "production_unchanged",
+        ):
+            self.assertIn(required, runner)
+        for required in (
+            "production_native_vs_logical", "$integrity.reference_unchanged -ne $true",
+            "$integrity.production_unchanged -ne $true", "$max_envelope",
+            "$cosine_envelope",
+        ):
+            self.assertIn(required, board)
 
     def test_runner_records_contracts_and_required_model_shapes(self):
         text = RUNNER.read_text(encoding="utf-8")

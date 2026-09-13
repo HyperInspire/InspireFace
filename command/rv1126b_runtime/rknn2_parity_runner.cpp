@@ -27,6 +27,11 @@ constexpr int kWarmupIterations = 10;
 constexpr int kMeasuredIterations = 10;
 constexpr double kMaxAbsLimit = 1e-5;
 constexpr double kCosineLimit = 0.999999;
+// Cross-context samples remain observations.  Their allowed drift is capped
+// by the larger observed one-step repeat drift plus only the same numerical
+// tolerance used by stable paths; it cannot become an arbitrary threshold.
+constexpr double kCrossEnvelopeMaxAbsSlack = kMaxAbsLimit;
+constexpr double kCrossEnvelopeCosineSlack = 1.0 - kCosineLimit;
 
 void Check(const char* operation, int status) {
     if (status != RKNN_SUCC) throw std::runtime_error(std::string(operation) + ": " + std::to_string(status));
@@ -230,6 +235,25 @@ size_t TensorTypeBytes(rknn_tensor_type type) {
     return 0;
 }
 
+float DecodeElement(const rknn_tensor_attr& attr, const uint8_t* bytes, size_t byte_count, size_t index) {
+    const size_t element_bytes = TensorTypeBytes(attr.type);
+    if (bytes == nullptr || element_bytes == 0 || byte_count < element_bytes || index > (byte_count - element_bytes) / element_bytes) {
+        throw std::runtime_error("native output element is outside declared storage");
+    }
+    float value = 0;
+    if (attr.type == RKNN_TENSOR_FLOAT32) {
+        std::memcpy(&value, bytes + index * sizeof(float), sizeof(float));
+    } else if (attr.type == RKNN_TENSOR_INT8) {
+        value = (static_cast<int32_t>(reinterpret_cast<const int8_t*>(bytes)[index]) - attr.zp) * attr.scale;
+    } else if (attr.type == RKNN_TENSOR_UINT8) {
+        value = (static_cast<int32_t>(bytes[index]) - attr.zp) * attr.scale;
+    } else {
+        throw std::runtime_error("unsupported native output type");
+    }
+    if (!std::isfinite(value)) throw std::runtime_error("native output is non-finite");
+    return value;
+}
+
 std::vector<float> DecodeRawOutput(const rknn_output& output, const rknn_tensor_attr& attr) {
     const size_t element_bytes = TensorTypeBytes(attr.type);
     if (!output.buf || element_bytes == 0 || attr.n_elems > std::numeric_limits<size_t>::max() / element_bytes ||
@@ -238,17 +262,66 @@ std::vector<float> DecodeRawOutput(const rknn_output& output, const rknn_tensor_
     }
     const auto* bytes = static_cast<const uint8_t*>(output.buf);
     std::vector<float> values(attr.n_elems);
-    for (size_t index = 0; index < values.size(); ++index) {
-        if (attr.type == RKNN_TENSOR_FLOAT32) {
-            std::memcpy(&values[index], bytes + index * sizeof(float), sizeof(float));
-        } else if (attr.type == RKNN_TENSOR_INT8) {
-            values[index] = (static_cast<int32_t>(reinterpret_cast<const int8_t*>(bytes)[index]) - attr.zp) * attr.scale;
-        } else {
-            values[index] = (static_cast<int32_t>(bytes[index]) - attr.zp) * attr.scale;
-        }
-        if (!std::isfinite(values[index])) throw std::runtime_error("reference raw output is non-finite");
-    }
+    for (size_t index = 0; index < values.size(); ++index) values[index] = DecodeElement(attr, bytes, output.size, index);
     return values;
+}
+
+bool LogicalNchwShape(const rknn_tensor_attr& attr, size_t& batch, size_t& channel, size_t& height, size_t& width) {
+    if (attr.n_dims != 4 || (attr.fmt != RKNN_TENSOR_NHWC && attr.fmt != RKNN_TENSOR_NCHW)) return false;
+    batch = attr.dims[0];
+    if (attr.fmt == RKNN_TENSOR_NHWC) {
+        height = attr.dims[1]; width = attr.dims[2]; channel = attr.dims[3];
+    } else {
+        channel = attr.dims[1]; height = attr.dims[2]; width = attr.dims[3];
+    }
+    return batch != 0 && channel != 0 && height != 0 && width != 0;
+}
+
+// This is intentionally independent from RKNNAdapterNano's converter.  It
+// decodes the same production native allocation using only queried attrs, so a
+// same-run comparison can expose an adapter layout/dequantization defect.
+std::vector<float> DecodeNativeOutput(const rknn_tensor_attr& native, const rknn_tensor_attr& normal,
+                                      const std::vector<uint8_t>& storage) {
+    if (native.size_with_stride == 0 || native.size_with_stride > storage.size() || native.n_elems != normal.n_elems) {
+        throw std::runtime_error("native output storage/element contract mismatch");
+    }
+    std::vector<float> result(normal.n_elems);
+    size_t batch = 0, channel = 0, height = 0, width = 0;
+    if (!LogicalNchwShape(normal, batch, channel, height, width)) {
+        if (native.fmt != normal.fmt || native.n_dims != normal.n_dims ||
+            !std::equal(native.dims, native.dims + native.n_dims, normal.dims)) {
+            throw std::runtime_error("native output has no representable logical order");
+        }
+        for (size_t index = 0; index < result.size(); ++index) result[index] = DecodeElement(native, storage.data(), storage.size(), index);
+        return result;
+    }
+    const size_t stride = native.w_stride == 0 ? (native.fmt == RKNN_TENSOR_NHWC ? native.dims[2] : native.dims[3]) : native.w_stride;
+    for (size_t n = 0; n < batch; ++n) {
+        for (size_t c = 0; c < channel; ++c) {
+            for (size_t h = 0; h < height; ++h) {
+                for (size_t w = 0; w < width; ++w) {
+                    size_t source_index = 0;
+                    if (native.fmt == RKNN_TENSOR_NHWC && native.n_dims == 4 && native.dims[0] == batch && native.dims[1] == height &&
+                        native.dims[2] == width && native.dims[3] == channel) {
+                        source_index = ((n * height + h) * stride + w) * channel + c;
+                    } else if (native.fmt == RKNN_TENSOR_NCHW && native.n_dims == 4 && native.dims[0] == batch && native.dims[1] == channel &&
+                               native.dims[2] == height && native.dims[3] == width) {
+                        source_index = ((n * channel + c) * height + h) * stride + w;
+                    } else if (native.fmt == RKNN_TENSOR_NC1HWC2 && native.n_dims == 5 && native.dims[0] == batch && native.dims[2] == height &&
+                               native.dims[3] == width && c < static_cast<size_t>(native.dims[1]) * native.dims[4]) {
+                        source_index = (((n * native.dims[1] + c / native.dims[4]) * height + h) * stride + w) * native.dims[4] + c % native.dims[4];
+                    } else {
+                        throw std::runtime_error("native output layout contract mismatch");
+                    }
+                    const size_t destination_index = normal.fmt == RKNN_TENSOR_NHWC
+                                                         ? ((n * height + h) * width + w) * channel + c
+                                                         : ((n * channel + c) * height + h) * width + w;
+                    result[destination_index] = DecodeElement(native, storage.data(), storage.size(), source_index);
+                }
+            }
+        }
+    }
+    return result;
 }
 
 struct ReferenceRun {
@@ -312,12 +385,14 @@ ReferenceRun RunReference(rknn_context context, std::vector<uint8_t>& input,
 
 struct ProductionRun {
     std::vector<std::vector<float>> values;
+    std::vector<std::vector<float>> native_values;
     std::vector<std::string> native_logical_hashes;
     std::vector<std::string> native_storage_hashes;
 };
 
 ProductionRun RunProduction(InferenceWrapperRKNNAdapter& adapter, const InputTensorInfo& input,
-                            std::vector<OutputTensorInfo>* declared_outputs, bool capture_native = true) {
+                            std::vector<OutputTensorInfo>* declared_outputs, const std::vector<rknn_tensor_attr>& native_outputs,
+                            const std::vector<rknn_tensor_attr>& normal_outputs, bool capture_native = true) {
     if (adapter.PreProcess({input}) != InferenceWrapper::WrapperOk) throw std::runtime_error("production PreProcess failed");
     if (adapter.Process(*declared_outputs) != InferenceWrapper::WrapperOk) throw std::runtime_error("production Process failed");
     ProductionRun result;
@@ -332,14 +407,16 @@ ProductionRun RunProduction(InferenceWrapperRKNNAdapter& adapter, const InputTen
     if (!capture_native) return result;
     std::vector<std::vector<uint8_t>> logical_bytes, storage_bytes;
     if (!adapter.CopyNativeOutputBytes(&logical_bytes, &storage_bytes) || logical_bytes.size() != result.values.size() ||
-        storage_bytes.size() != result.values.size()) {
+        storage_bytes.size() != result.values.size() || native_outputs.size() != result.values.size() || normal_outputs.size() != result.values.size()) {
         throw std::runtime_error("production native output snapshot failed");
     }
     result.native_logical_hashes.reserve(logical_bytes.size());
     result.native_storage_hashes.reserve(storage_bytes.size());
+    result.native_values.resize(storage_bytes.size());
     for (size_t index = 0; index < logical_bytes.size(); ++index) {
         result.native_logical_hashes.push_back(Sha256Hex(logical_bytes[index]));
         result.native_storage_hashes.push_back(Sha256Hex(storage_bytes[index]));
+        result.native_values[index] = DecodeNativeOutput(native_outputs[index], normal_outputs[index], storage_bytes[index]);
     }
     return result;
 }
@@ -421,7 +498,8 @@ int main(int argc, char** argv) {
     std::string failure_stage = "argument", error, status = "failed";
     rknn_sdk_version version{};
     std::vector<rknn_tensor_attr> normal_inputs, normal_outputs, native_outputs;
-    std::vector<Metrics> metrics, reference_self_repeat, production_self_repeat, reference_raw_vs_float, reference_raw_vs_production;
+    std::vector<Metrics> metrics, reference_self_repeat, production_self_repeat, reference_raw_vs_float,
+        reference_raw_vs_production, production_native_vs_logical;
     std::vector<double> reference_latency_ms, production_latency_ms;
     std::vector<std::string> reference_raw_hashes, production_native_logical_hashes, production_native_storage_hashes;
     InputIntegrity input_integrity;
@@ -475,7 +553,7 @@ int main(int argc, char** argv) {
             input_integrity.reference_unchanged = input_integrity.reference_unchanged &&
                                                   input_integrity.reference_before_sha256 == input_integrity.reference_after_sha256;
             input_integrity.production_before_sha256 = Sha256Hex(input_bytes);
-            RunProduction(production, declared_input, &declared_outputs, false);
+            RunProduction(production, declared_input, &declared_outputs, native_outputs, normal_outputs, false);
             input_integrity.production_after_sha256 = Sha256Hex(input_bytes);
             input_integrity.production_unchanged = input_integrity.production_unchanged &&
                                                    input_integrity.production_before_sha256 == input_integrity.production_after_sha256;
@@ -485,6 +563,7 @@ int main(int argc, char** argv) {
         production_self_repeat.assign(normal_outputs.size(), Metrics{});
         reference_raw_vs_float.assign(normal_outputs.size(), Metrics{});
         reference_raw_vs_production.assign(normal_outputs.size(), Metrics{});
+        production_native_vs_logical.assign(normal_outputs.size(), Metrics{});
         all_finite = true;
         failure_stage = "parity";
         std::vector<std::vector<float>> previous_reference, previous_production;
@@ -498,24 +577,29 @@ int main(int argc, char** argv) {
             reference_latency_ms.push_back(std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - reference_started).count());
             const auto production_started = std::chrono::steady_clock::now();
             input_integrity.production_before_sha256 = Sha256Hex(input_bytes);
-            const auto production_run = RunProduction(production, declared_input, &declared_outputs);
+            const auto production_run = RunProduction(production, declared_input, &declared_outputs, native_outputs, normal_outputs);
             input_integrity.production_after_sha256 = Sha256Hex(input_bytes);
             input_integrity.production_unchanged = input_integrity.production_unchanged &&
                                                    input_integrity.production_before_sha256 == input_integrity.production_after_sha256;
             production_latency_ms.push_back(std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - production_started).count());
             if (reference_run.values.size() != production_run.values.size() || reference_run.raw_values.size() != production_run.values.size() ||
+                production_run.native_values.size() != production_run.values.size() ||
                 reference_run.raw_hashes.size() != production_run.values.size() || production_run.native_logical_hashes.size() != production_run.values.size() ||
                 production_run.native_storage_hashes.size() != production_run.values.size()) throw std::runtime_error("output count mismatch");
             for (size_t output = 0; output < metrics.size(); ++output) {
                 const Metrics current = Compare(reference_run.values[output], production_run.values[output]);
+                const Metrics raw_vs_float = Compare(reference_run.raw_values[output], reference_run.values[output]);
+                const Metrics raw_vs_production = Compare(reference_run.raw_values[output], production_run.values[output]);
+                const Metrics native_vs_logical = Compare(production_run.native_values[output], production_run.values[output]);
                 AccumulateMetrics(&metrics[output], current, kMeasuredIterations);
-                AccumulateMetrics(&reference_raw_vs_float[output], Compare(reference_run.raw_values[output], reference_run.values[output]), kMeasuredIterations);
-                AccumulateMetrics(&reference_raw_vs_production[output], Compare(reference_run.raw_values[output], production_run.values[output]), kMeasuredIterations);
+                AccumulateMetrics(&reference_raw_vs_float[output], raw_vs_float, kMeasuredIterations);
+                AccumulateMetrics(&reference_raw_vs_production[output], raw_vs_production, kMeasuredIterations);
+                AccumulateMetrics(&production_native_vs_logical[output], native_vs_logical, kMeasuredIterations);
                 if (iteration != 0) {
                     AccumulateMetrics(&reference_self_repeat[output], Compare(previous_reference[output], reference_run.values[output]), kMeasuredIterations - 1);
                     AccumulateMetrics(&production_self_repeat[output], Compare(previous_production[output], production_run.values[output]), kMeasuredIterations - 1);
                 }
-                all_finite = all_finite && current.finite;
+                all_finite = all_finite && current.finite && raw_vs_float.finite && raw_vs_production.finite && native_vs_logical.finite;
             }
             previous_reference = reference_run.values;
             previous_production = production_run.values;
@@ -523,8 +607,20 @@ int main(int argc, char** argv) {
             production_native_logical_hashes = production_run.native_logical_hashes;
             production_native_storage_hashes = production_run.native_storage_hashes;
         }
-        accepted = all_finite;
-        for (const auto& metric : metrics) accepted = accepted && metric.max_abs <= kMaxAbsLimit && metric.cosine >= kCosineLimit;
+        accepted = all_finite && input_integrity.initial_sha256 == arguments.input_sha256 && input_integrity.reference_unchanged &&
+                   input_integrity.production_unchanged;
+        for (size_t output = 0; output < metrics.size(); ++output) {
+            const Metrics& cross_path = metrics[output];
+            const Metrics& same_reference = reference_raw_vs_float[output];
+            const Metrics& same_production = production_native_vs_logical[output];
+            const double max_envelope = std::max(reference_self_repeat[output].max_abs, production_self_repeat[output].max_abs) +
+                                        kCrossEnvelopeMaxAbsSlack;
+            const double cosine_envelope = std::min(reference_self_repeat[output].cosine, production_self_repeat[output].cosine) -
+                                            kCrossEnvelopeCosineSlack;
+            accepted = accepted && same_reference.max_abs <= kMaxAbsLimit && same_reference.cosine >= kCosineLimit &&
+                       same_production.max_abs <= kMaxAbsLimit && same_production.cosine >= kCosineLimit &&
+                       cross_path.max_abs <= max_envelope && cross_path.cosine >= cosine_envelope;
+        }
         peak_rss_kb = PeakRssKb();
         if (peak_rss_kb == 0) throw std::runtime_error("unable to record peak RSS");
         production.Finalize();
@@ -589,6 +685,12 @@ int main(int argc, char** argv) {
         AppendMetrics(report, index < reference_raw_vs_float.size() ? reference_raw_vs_float[index] : Metrics{});
         report << ",\"reference_raw_vs_production\":";
         AppendMetrics(report, index < reference_raw_vs_production.size() ? reference_raw_vs_production[index] : Metrics{});
+        report << ",\"production_native_vs_logical\":";
+        AppendMetrics(report, index < production_native_vs_logical.size() ? production_native_vs_logical[index] : Metrics{});
+        const Metrics reference_repeat = index < reference_self_repeat.size() ? reference_self_repeat[index] : Metrics{};
+        const Metrics production_repeat = index < production_self_repeat.size() ? production_self_repeat[index] : Metrics{};
+        report << ",\"cross_path_max_abs_envelope\":" << std::max(reference_repeat.max_abs, production_repeat.max_abs) + kCrossEnvelopeMaxAbsSlack
+               << ",\"cross_path_cosine_envelope\":" << std::min(reference_repeat.cosine, production_repeat.cosine) - kCrossEnvelopeCosineSlack;
         report << ",\"reference_raw_logical_sha256\":" << Quote(index < reference_raw_hashes.size() ? reference_raw_hashes[index] : "")
                << ",\"production_native_logical_sha256\":" << Quote(index < production_native_logical_hashes.size() ? production_native_logical_hashes[index] : "")
                << ",\"production_native_storage_sha256\":" << Quote(index < production_native_storage_hashes.size() ? production_native_storage_hashes[index] : "") << '}';
