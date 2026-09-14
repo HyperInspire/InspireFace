@@ -1,8 +1,12 @@
 """Contracts for the RV1126B public-C-API E2E runner's base evidence."""
 
+import base64
+import json
 import math
 from pathlib import Path
 import re
+import shutil
+import subprocess
 from typing import Any, Dict, Mapping
 import unittest
 
@@ -118,6 +122,74 @@ def valid_report() -> Dict[str, Any]:
 
 
 class PublicApiE2EBaseContractTests(unittest.TestCase):
+    def _host_gate_accepts(self, report: Mapping[str, Any], rss_expression: str = "") -> bool:
+        host = shutil.which("pwsh")
+        if host is None:
+            self.skipTest("PowerShell 7 is required by the host gate's Double.IsFinite")
+        # Load the production functions through the parser, without running deployment.
+        # A harness/parser failure must fail the test, never count as gate rejection.
+        probe = """$ErrorActionPreference = 'Stop'
+$tokens = $null; $parseErrors = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile('{source_path}', [ref]$tokens, [ref]$parseErrors)
+if ($parseErrors.Count -ne 0) {{ throw 'Host script failed PowerShell parsing' }}
+foreach ($name in @('Test-FiniteNumber', 'Test-Integer', 'Assert-RunnerResult')) {{
+    $definition = $ast.Find({{ param($node)
+        $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name
+    }}, $true)
+    if ($null -eq $definition) {{ throw "Missing production function $name" }}
+    . ([scriptblock]::Create($definition.Extent.Text))
+}}
+$scenarioDefinition = $ast.Find({{ param($node)
+    $node -is [System.Management.Automation.Language.AssignmentStatementAst] -and $node.Left.Extent.Text -eq '$ExpectedCoreScenarios'
+}}, $true)
+if ($null -eq $scenarioDefinition) {{ throw 'Missing production scenario list' }}
+. ([scriptblock]::Create($scenarioDefinition.Extent.Text))
+$trusted = [ordered]@{{ run_id = 'run-001'; serial = 'e3d7377f6fc6d325'; pack_sha256 = ('a' * 64); face_image_sha256 = ('b' * 64); no_face_image_sha256 = ('c' * 64) }}
+$result = @'
+{report}
+'@ | ConvertFrom-Json
+{rss_override}
+try {{
+    Assert-RunnerResult $result $trusted | Out-Null
+    @{{ accepted = $true; error = '' }} | ConvertTo-Json -Compress
+}} catch {{
+    @{{ accepted = $false; error = $_.Exception.Message }} | ConvertTo-Json -Compress
+}}
+""".format(
+            source_path=str(BOARD).replace("'", "''"), report=json.dumps(report, allow_nan=False),
+            rss_override=("$result.scenarios[0].peak_rss_kb = " + rss_expression) if rss_expression else "",
+        )
+        encoded = base64.b64encode(probe.encode("utf-16-le")).decode("ascii")
+        completed = subprocess.run(
+            [host, "-NoProfile", "-NonInteractive", "-EncodedCommand", encoded],
+            capture_output=True, text=True, encoding="utf-8", check=False, timeout=30,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+        outcome = json.loads(completed.stdout)
+        if not outcome["accepted"]:
+            self.assertRegex(outcome["error"], r"runner scenario \w+ violates (common schema|core gate)")
+        return outcome["accepted"]
+
+    def test_host_gate_accepts_valid_report(self) -> None:
+        self.assertTrue(self._host_gate_accepts(valid_report()))
+
+    def test_host_gate_rejects_missing_landmark_or_recognition_face_and_nonfinite_rss(self) -> None:
+        for index in (4, 5):
+            with self.subTest(scenario=valid_report()["scenarios"][index]["name"]):
+                report = valid_report()
+                report["scenarios"][index]["detected_faces"] = 0
+                self.assertFalse(self._host_gate_accepts(report))
+        # JSON cannot represent these numeric values. Inject actual Double values
+        # after parsing so rejection proves the gate ran, not that parsing failed.
+        for expression in ("[double]::NaN", "[double]::PositiveInfinity", "[double]::NegativeInfinity"):
+            with self.subTest(rss=expression):
+                self.assertFalse(self._host_gate_accepts(valid_report(), expression))
+        for value in ("1", True):
+            with self.subTest(rss=value):
+                report = valid_report()
+                report["scenarios"][0]["peak_rss_kb"] = value
+                self.assertFalse(self._host_gate_accepts(report))
+
     def test_valid_report_is_bound_to_independent_trusted_identity(self) -> None:
         report = valid_report()
         trusted = {field: report[field] for field in _IDENTITY_FIELDS}
