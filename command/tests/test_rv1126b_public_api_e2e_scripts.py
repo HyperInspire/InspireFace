@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
 from typing import Any, Dict, Mapping
 import unittest
 
@@ -122,6 +123,61 @@ def valid_report() -> Dict[str, Any]:
 
 
 class PublicApiE2EBaseContractTests(unittest.TestCase):
+    def test_adb_runner_logs_do_not_contaminate_exit_status_or_success_gate(self) -> None:
+        host = shutil.which("pwsh")
+        if host is None:
+            self.skipTest("PowerShell 7 is required for the host launcher probe")
+        for exit_code in (0, 7):
+            with self.subTest(exit_code=exit_code):
+                probe = """$ErrorActionPreference = 'Stop'
+$tokens = $null; $parseErrors = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile('{source_path}', [ref]$tokens, [ref]$parseErrors)
+if ($parseErrors.Count) {{ throw 'Launcher parsing failed' }}
+$function = $ast.Find({{ param($node)
+    $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Invoke-AdbAllowFailure'
+}}, $true)
+. ([scriptblock]::Create($function.Extent.Text))
+function adb {{
+    & '{python}' -c 'import sys; print("native stdout diagnostic"); print("native stderr diagnostic", file=sys.stderr); sys.exit(int(sys.argv[1]))' {exit_code}
+}}
+$Serial = 'e3d7377f6fc6d325'
+$runnerExit = Invoke-AdbAllowFailure @('shell', 'sh', '/fixed/run-e2e.sh')
+$nativeExit = $LASTEXITCODE
+$row = @{{ status = 'failed' }}
+# Execute the production exit-status gate and its success publication, rather
+# than replacing the launcher check with a test-only comparison.
+$gate = $ast.Find({{ param($node)
+    $node -is [System.Management.Automation.Language.IfStatementAst] -and $node.Clauses[0].Item1.Extent.Text -eq '$runnerExit -ne 0'
+}}, $true)
+$publish = $ast.Find({{ param($node)
+    $node -is [System.Management.Automation.Language.AssignmentStatementAst] -and $node.Left.Extent.Text -eq '$row.status' -and $node.Right.Extent.Text -eq "'success'"
+}}, $true)
+if ($null -eq $gate -or $null -eq $publish) {{ throw 'Missing launcher success gate' }}
+try {{
+    . ([scriptblock]::Create($gate.Extent.Text))
+    . ([scriptblock]::Create($publish.Extent.Text))
+}} catch {{ $row.status = 'failed' }}
+$outcome = @{{ scalar_integer = ($runnerExit -is [int]); value = $runnerExit; native_exit = $nativeExit; status = $row.status }}
+'PROBE_RESULT:' + ($outcome | ConvertTo-Json -Compress)
+""".format(source_path=str(BOARD).replace("'", "''"), python=sys.executable.replace("'", "''"), exit_code=exit_code)
+                encoded = base64.b64encode(probe.encode("utf-16-le")).decode("ascii")
+                completed = subprocess.run(
+                    [host, "-NoProfile", "-NonInteractive", "-EncodedCommand", encoded],
+                    capture_output=True, text=True, encoding="utf-8", check=False, timeout=30,
+                )
+                self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+                results = [line[len("PROBE_RESULT:"):] for line in completed.stdout.splitlines() if line.startswith("PROBE_RESULT:")]
+                self.assertEqual(len(results), 1, completed.stdout)
+                outcome = json.loads(results[0])
+                self.assertTrue(outcome["scalar_integer"], outcome)
+                self.assertEqual(outcome["value"], exit_code)
+                self.assertEqual(outcome["native_exit"], exit_code)
+                self.assertEqual(outcome["status"], "success" if exit_code == 0 else "failed")
+                self.assertIn("native stdout diagnostic", completed.stdout)
+                self.assertIn("native stderr diagnostic", completed.stderr)
+                self.assertNotIn("native stdout diagnostic", completed.stderr)
+                self.assertNotIn("native stderr diagnostic", completed.stdout)
+
     def _host_gate_accepts(self, report: Mapping[str, Any], rss_expression: str = "") -> bool:
         host = shutil.which("pwsh")
         if host is None:

@@ -29,8 +29,9 @@ function Invoke-Adb {
 
 function Invoke-AdbAllowFailure {
     param([string[]]$Arguments)
-    & adb -s $Serial @Arguments
-    return $LASTEXITCODE
+    # Display diagnostics without adding stdout to the function's return value.
+    & adb -s $Serial @Arguments | Out-Host
+    return [int]$LASTEXITCODE
 }
 
 function Get-AdbText {
