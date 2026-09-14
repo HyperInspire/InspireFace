@@ -46,8 +46,7 @@ public:
       m_global_coreml_inference_mode_(InferenceWrapper::COREML_ANE),
       m_image_processing_backend_(IMAGE_PROCESSING_CPU) {
 #if defined(ISF_ENABLE_RGA)
-        m_image_processing_backend_ = IMAGE_PROCESSING_RGA;
-        INSPIRE_LOGW("Default image processing backend is RGA.");
+        // RGA is available for explicit opt-in; building it must not change the public CPU default.
 #if defined(ISF_RKNPU_RV1106)
         m_rockchip_dma_heap_path_ = RV1106_CMA_HEAP_PATH;
 #else
