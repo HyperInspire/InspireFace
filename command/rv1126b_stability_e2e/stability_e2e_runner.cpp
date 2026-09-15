@@ -15,6 +15,7 @@ constexpr HInt32 kExpectedFeatureSize = 512;
 
 struct Arguments {
     std::string pack, face_image, run_id, serial, pack_sha256, face_sha256, result_path;
+    std::string image_backend = "cpu";
 };
 
 struct Cycle {
@@ -32,12 +33,16 @@ struct FeatureOwner {
 };
 
 bool ParseArguments(int argc, char** argv, Arguments* a) {
-    if (!a || argc != 15) return false;
+    if (!a || argc < 15 || argc % 2 == 0) return false;
     for (int i = 1; i < argc; i += 2) { const std::string k(argv[i]), v(argv[i + 1]);
         if (k == "--pack") a->pack = v; else if (k == "--face-image") a->face_image = v;
         else if (k == "--run-id") a->run_id = v; else if (k == "--serial") a->serial = v;
         else if (k == "--pack-sha256") a->pack_sha256 = v; else if (k == "--face-sha256") a->face_sha256 = v;
-        else if (k == "--result-path") a->result_path = v; else return false; }
+        else if (k == "--result-path") a->result_path = v;
+        else if (k == "--image-backend") {
+            if (v != "cpu" && v != "rga") return false;
+            a->image_backend = v;
+        } else return false; }
     return !a->pack.empty() && !a->face_image.empty() && !a->run_id.empty() &&
            !a->serial.empty() && !a->pack_sha256.empty() && !a->face_sha256.empty() && !a->result_path.empty();
 }
@@ -63,6 +68,19 @@ int main(int argc, char** argv) {
     HFResourcePackInfo info = {}; info.structSize = sizeof(info); info.structVersion = HF_RESOURCE_PACK_INFO_VERSION;
     if (HFValidateResourcePack(a.pack.c_str(), &info) != HSUCCEED) { std::cerr << "pack validation failed\n"; return 1; }
     if (HFLaunchInspireFace(a.pack.c_str()) != HSUCCEED) { std::cerr << "launch failed\n"; return 1; }
+    if (a.image_backend == "rga") {
+        HInt32 rga_compiled = 0;
+        if (HFQueryExpansiveHardwareRGACompileOption(&rga_compiled) != HSUCCEED || rga_compiled != 1) {
+            std::cerr << "RGA image processing was not compiled into this SDK\n";
+            HFTerminateInspireFace();
+            return 1;
+        }
+    }
+    if (HFSwitchImageProcessingBackend(a.image_backend == "rga" ? HF_IMAGE_PROCESSING_RGA : HF_IMAGE_PROCESSING_CPU) != HSUCCEED) {
+        std::cerr << "failed to select image processing backend\n";
+        HFTerminateInspireFace();
+        return 1;
+    }
 
     HFImageBitmap bitmap = nullptr; HFImageStream stream = nullptr;
     if (!CreateStream(a.face_image, &bitmap, &stream)) { std::cerr << "stream creation failed\n"; HFTerminateInspireFace(); return 1; }
@@ -128,6 +146,7 @@ int main(int argc, char** argv) {
     std::string status = (soak_ok && feature_hub_ok) ? "success" : "failure";
     std::string body = "{\"run_id\":\"" + EscapeJson(a.run_id) + "\",\"serial\":\"" + EscapeJson(a.serial) +
         "\",\"pack_sha256\":\"" + EscapeJson(a.pack_sha256) + "\",\"face_image_sha256\":\"" + EscapeJson(a.face_sha256) +
+        "\",\"image_backend\":\"" + EscapeJson(a.image_backend) +
         "\",\"status\":\"" + status + "\",\"soak_cycles\":" + std::to_string(kSoakCycles) +
         ",\"completed_cycles\":" + std::to_string(cycles.size()) +
         ",\"base_rss_kb\":" + std::to_string(base_rss) + ",\"final_rss_kb\":" + std::to_string(final_rss) +
