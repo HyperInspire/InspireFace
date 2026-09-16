@@ -67,6 +67,7 @@ struct ProbeCase {
     HResult hresult = HERR_INVALID_PARAM;
     HInt32 detected_faces = -1;
     bool all_finite = false;
+    int failure_count = 0;
     std::vector<double> latency_ms;
 };
 
@@ -97,10 +98,11 @@ void Measure(HFSession session, HFImageStream stream, ProbeCase* c) {
     for (int i = 0; i < 2; ++i) RunDetect(session, stream, c);  // warmup
     for (int i = 0; i < kIterations; ++i) {
         const auto begin = std::chrono::steady_clock::now();
-        RunDetect(session, stream, c);
+        const bool ok = RunDetect(session, stream, c);
         const double ms = std::chrono::duration<double, std::milli>(
             std::chrono::steady_clock::now() - begin).count();
-        c->latency_ms.push_back(ms);
+        if (!ok) ++c->failure_count;
+        else c->latency_ms.push_back(ms);
     }
 }
 
@@ -114,6 +116,7 @@ std::string CaseJson(const ProbeCase& c) {
         + "\",\"hresult\":" + std::to_string(static_cast<int>(c.hresult))
         + ",\"detected_faces\":" + std::to_string(c.detected_faces)
         + ",\"all_finite\":" + (c.all_finite ? "true" : "false")
+        + ",\"failure_count\":" + std::to_string(c.failure_count)
         + ",\"latency_ms\":[" + lat + "]}";
 }
 

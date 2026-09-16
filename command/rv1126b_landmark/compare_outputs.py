@@ -26,9 +26,10 @@ def compare_landmarks(reference, actual, input_size):
 
 
 def draw_comparison(image_path, reference, actual, output_path, input_size):
-    image = cv2.resize(cv2.imread(str(image_path)), (input_size, input_size))
+    image = cv2.imread(str(image_path))
     if image is None:
         raise ValueError("Could not read image: {}".format(image_path))
+    image = cv2.resize(image, (input_size, input_size))
     for point in np.asarray(reference).reshape(-1, 2) * input_size:
         cv2.circle(image, tuple(np.rint(point).astype(int)), 1, (0, 255, 0), -1)
     for point in np.asarray(actual).reshape(-1, 2) * input_size:
