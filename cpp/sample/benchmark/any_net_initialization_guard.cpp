@@ -102,6 +102,15 @@ bool LatencyMatches(const RunResult& reference, const RunResult& candidate) {
     return candidate.inference.p50_ms <= reference.inference.p50_ms * kLatencyRatioLimit + kLatencyAbsoluteLimitMs;
 }
 
+bool OutputMetadataCleared(const std::vector<OutputTensorInfo>& outputs) {
+    for (const auto& output : outputs) {
+        if (output.data != nullptr || !output.tensor_dims.empty() || output.quant.scale != 1.0f || output.quant.zero_point != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 template <typename T>
 T ConfigOr(const inspire::Configurable& config, const std::string& name, const T& fallback) {
     return config.has(name) ? config.get<T>(name) : fallback;
@@ -430,6 +439,12 @@ bool RunRuntimeBoundaryGate(inspire::InspireArchive& archive, const std::vector<
     const bool null_data_rejected = net.ForwardViews(views) == InferenceWrapper::WrapperError && views.empty();
     const bool valid_recovery = !valid_image.Empty() &&
                                 net.ForwardViews(valid_image, views) == InferenceWrapper::WrapperOk && !views.empty();
+    const bool valid_output_published = valid_recovery && !OutputMetadataCleared(net.getMOutputTensorInfoList());
+    net.getMInputTensorInfoList().front().data = nullptr;
+    views.emplace_back(&stale_name, &stale_value, 1);
+    const bool post_success_failure_clears_metadata =
+      net.ForwardViews(views) == InferenceWrapper::WrapperError && views.empty() &&
+      OutputMetadataCleared(net.getMOutputTensorInfoList());
 
     inspire::InspireModel corrupt_model;
     bool failed_reload_rejected = false;
@@ -444,12 +459,14 @@ bool RunRuntimeBoundaryGate(inspire::InspireArchive& archive, const std::vector<
                                  net.ForwardViews(valid_image, views) == InferenceWrapper::WrapperError && views.empty();
     }
 
-    const bool passed = unloaded_rejected && invalid_images_rejected && null_data_rejected && valid_recovery &&
+    const bool passed = unloaded_rejected && invalid_images_rejected && null_data_rejected && valid_recovery && valid_output_published &&
+                        post_success_failure_clears_metadata &&
                         failed_reload_rejected;
-    std::cout << "ANYNET_RUNTIME_BOUNDARY,cases=8,unloaded=" << (unloaded_rejected ? "PASS" : "FAIL")
+    std::cout << "ANYNET_RUNTIME_BOUNDARY,cases=9,unloaded=" << (unloaded_rejected ? "PASS" : "FAIL")
               << ",image-shape=" << (invalid_images_rejected ? "PASS" : "FAIL")
               << ",null-data=" << (null_data_rejected ? "PASS" : "FAIL")
               << ",recovery=" << (valid_recovery ? "PASS" : "FAIL")
+              << ",output-metadata=" << (valid_output_published && post_success_failure_clears_metadata ? "PASS" : "FAIL")
               << ",failed-reload=" << (failed_reload_rejected ? "PASS" : "FAIL")
               << ",status=" << (passed ? "PASS" : "FAIL") << '\n';
     return passed;

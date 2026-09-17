@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 import argparse
+import copy
+import sys
 from pathlib import Path
 
 import cv2
 import numpy as np
 import onnxruntime as ort
-from rknn.api import RKNN
 
-
-def require_ok(step, result):
-    if result != 0:
-        raise RuntimeError("{} failed: {}".format(step, result))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from rv1126b_models import convert_landmark
+from rv1126b_models.calibration import prepare_calibration
+from rv1126b_models.records import load_inventory
 
 
 def make_absolute_dataset(dataset, output):
@@ -54,16 +55,16 @@ def main():
         raise RuntimeError("Expected 212 ONNX outputs, got {}".format(reference.size))
     reference.tofile(args.output / "onnx_output_f32.bin")
 
-    rknn = RKNN(verbose=True)
-    try:
-        require_ok("config", rknn.config(mean_values=[[0, 0, 0]], std_values=[[255, 255, 255]],
-                                         target_platform="rv1126b", quant_img_RGB2BGR=True))
-        require_ok("load_onnx", rknn.load_onnx(model=str(model)))
-        absolute_dataset = make_absolute_dataset(dataset, args.output / "quant_dataset_absolute.txt")
-        require_ok("build", rknn.build(do_quantization=True, dataset=str(absolute_dataset)))
-        require_ok("export_rknn", rknn.export_rknn(str(rknn_path)))
-    finally:
-        rknn.release()
+    inventory = Path(__file__).resolve().parents[1] / "rv1126b_models/model_inventory.json"
+    record = next(r for r in load_inventory(inventory) if r["id"] == "landmark")
+    # The legacy CLI accepts the landmark directory itself, under any name.
+    record["_source_root"] = str(args.source.resolve())
+    record["source"] = "models/_01_hyplmkv2_0.25_112x.onnx"
+    calibration_record = copy.deepcopy(record)
+    calibration_record["calibration"]["path"] = "quant_v2_dataset.txt"
+    absolute_dataset = prepare_calibration(calibration_record, args.source, args.output / "calibration")
+    make_absolute_dataset(dataset, args.output / "quant_dataset_absolute.txt")
+    convert_landmark.convert(record, absolute_dataset, rknn_path)
     print("Prepared {} values and {}".format(reference.size, rknn_path))
 
 
