@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eo pipefail
 
 reorganize_structure() {
     local base_path=$1

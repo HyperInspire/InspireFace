@@ -53,7 +53,7 @@ jobs:
 
   build_macos_x86:
     name: Compile MacOS-x86
-    runs-on: macos-13
+    runs-on: macos-15-intel
 
     steps:
       # Step 1: Checkout the repository
@@ -340,7 +340,7 @@ jobs:
       # Step 4: Execute the docker-compose command
       - name: Execute Docker Compose
         run: |
-          docker-compose up build-manylinux2014-x86
+          docker-compose up --exit-code-from build-manylinux2014-x86 build-manylinux2014-x86
           ls build
 
   build_armv7_rv1106_armhf_uclibc:
@@ -453,5 +453,5 @@ jobs:
       # Step 5: Start building the SDK
       - name: Start Building the InspireFace-Linux-TensorRT-CUDA12-Ubuntu22
         run: |
-          docker-compose up build-tensorrt-cuda12-ubuntu22
+          docker-compose up --exit-code-from build-tensorrt-cuda12-ubuntu22 build-tensorrt-cuda12-ubuntu22
           ls build

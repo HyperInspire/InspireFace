@@ -1,10 +1,12 @@
 #include "face_result_snapshot.h"
 
+#include <cstddef>
+
 HResult HF_FaceResultSnapshot::CopyFrom(const HFMultipleFaceData& source) {
     if (source.detectedNum < 0) {
         return HERR_INVALID_FACE_LIST;
     }
-    const size_t count = static_cast<size_t>(source.detectedNum);
+    const std::size_t count = static_cast<std::size_t>(source.detectedNum);
     if (count == 0) {
         return HSUCCEED;
     }
@@ -23,7 +25,7 @@ HResult HF_FaceResultSnapshot::CopyFrom(const HFMultipleFaceData& source) {
     pitch_.assign(source.angles.pitch, source.angles.pitch + count);
     token_storage_.resize(count);
     token_views_.resize(count);
-    for (size_t index = 0; index < count; ++index) {
+    for (std::size_t index = 0; index < count; ++index) {
         const HFFaceBasicToken& token = source.tokens[index];
         if (token.size < 0 || (token.size > 0 && token.data == nullptr)) {
             return HERR_INVALID_FACE_TOKEN;

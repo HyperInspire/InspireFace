@@ -32,7 +32,7 @@ jobs:
             need_cmake: true
 
           - target: macos_coreml_x86
-            os: macos-13
+            os: macos-15-intel
             build_script: command/build_macos_coreml_x86.sh
             artifact_name: sdk_files_macos_coreml_intel_x86_64
             output_zip: inspireface-macos-coreml-intel-x86-64.zip

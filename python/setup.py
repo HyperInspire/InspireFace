@@ -7,7 +7,6 @@ from wheel.bdist_wheel import bdist_wheel
 
 
 PYTHON_ROOT = Path(__file__).resolve().parent
-PROJECT_ROOT = PYTHON_ROOT.parent
 
 
 def get_version() -> str:
@@ -145,7 +144,8 @@ setup(
     author="Jingyu Yan",
     author_email="tunmxy@163.com",
     description="InspireFace Python SDK",
-    long_description=(PROJECT_ROOT / "README.md").read_text(encoding="utf-8"),
+    # Isolated wheel builds only contain this Python project, not its parent.
+    long_description=(PYTHON_ROOT / "README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
     url="https://github.com/HyperInspire/InspireFace",
     classifiers=[

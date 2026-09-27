@@ -32,4 +32,4 @@ jobs:
       # Step 4: Execute the docker-compose command
       - name: Execute Docker Compose
         run: |
-          docker-compose up build-manylinux2014-x86
+          docker-compose up --exit-code-from build-manylinux2014-x86 build-manylinux2014-x86
