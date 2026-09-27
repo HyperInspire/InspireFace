@@ -1,10 +1,18 @@
 #!/bin/bash
 
 # Exit immediately if any command exits with a non-zero status
-set -e
+set -euo pipefail
 
-ROOT_DIR="$(pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
 BUILD_DIRNAME="ubuntu18_shared"
+TEST_RES_DIR="$ROOT_DIR/test_res"
+MODEL_PATH="$TEST_RES_DIR/pack/Pikachu"
+
+# Image fixtures are checked in, but model packs are ignored by Git.
+# Prepare the model before compiling so a failed download stops the job early.
+bash command/download_models_general.sh Pikachu
+test -s "$MODEL_PATH"
 
 # Create the build directory if it doesn't exist
 mkdir -p build/${BUILD_DIRNAME}/
@@ -28,7 +36,7 @@ cmake -DCMAKE_BUILD_TYPE=Release \
 make -j4
 
 # Come back to project root dir
-cd ${ROOT_DIR}
+cd "$ROOT_DIR"
 
 # Important: You must copy the compiled dynamic library to this path!
 mkdir -p python/inspireface/modules/core/libs/linux/x64/
@@ -40,4 +48,7 @@ python -m pip install -e python opencv-python
 cd python/
 
 # Run the complete Python API contract, result, resource, and timing gates.
-python -m sample_testcase.run --verbosity 1
+python -m sample_testcase.run \
+  --test-dir "$TEST_RES_DIR" \
+  --pack-path "$MODEL_PATH" \
+  --verbosity 1

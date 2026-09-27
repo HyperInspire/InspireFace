@@ -13,3 +13,9 @@ isolation for the dependencies in `python/pyproject.toml`. Override
 `ISF_WHEEL_PYTHON` to select another installed interpreter. The ctypes package
 produces one `py3-none` wheel per platform; building that wheel does not replace
 testing installation and imports on each supported Python version.
+
+The Ubuntu Python test script downloads `Pikachu` before building and passes
+explicit fixture/model paths to `sample_testcase.run`. Images under
+`test_res/data` are checked in; `test_res/pack` is ignored by Git and must be
+populated on a fresh runner. Model downloads fail on HTTP/network errors and
+replace the target file only after a successful, nonempty download.
