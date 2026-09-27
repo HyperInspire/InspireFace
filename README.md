@@ -14,7 +14,7 @@ If you require further information on tracking development branches, CI/CD proce
 
 Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=InspireFace) using your company e-mail for commercial support, including obtaining and integrating higher accuracy models, as well as custom development.
 
-<img src="images/banner.jpg" alt="banner" style="zoom:80%;" />
+<img src="images/banner.webp" alt="banner" style="zoom:80%;" />
 
 ---
 
@@ -839,7 +839,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 - [x] Add Add C++ style header files.
 - [x] Add the RKNPU backend support for Android .
 - [ ] Python packages that support more platforms.
-- [ ] Example app project for Android and iOS samples.
+- [x] Example app project for Android and iOS samples.
 - [ ] Add the batch forward feature.
 - [ ] Design a scheme that can be adapted to multiple CUDA devices.
 
