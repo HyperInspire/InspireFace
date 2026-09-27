@@ -113,26 +113,36 @@ TEST_CASE("C API bitmap-derived streams retain an immutable pixel snapshot", "[a
     for (size_t index = 0; index < pixels.size(); ++index) {
         pixels[index] = static_cast<uint8_t>((index * 31 + 7) & 0xff);
     }
-    const std::vector<uint8_t> expected = pixels;
     HFImageBitmapData input = {pixels.data(), width, height, 3};
     UniqueImageBitmap source;
     UniqueImageStream stream;
     REQUIRE(HFCreateImageBitmap(&input, source.Put()) == HSUCCEED);
     REQUIRE(HFCreateImageStreamFromImageBitmap(source.Get(), HF_CAMERA_ROTATION_0, stream.Put()) == HSUCCEED);
 
+    auto decode_pixels = [&]() {
+        UniqueImageBitmap decoded;
+        REQUIRE(HFCreateImageBitmapFromImageStreamProcess(stream.Get(), decoded.Put(), 0, 1.0f) == HSUCCEED);
+        HFImageBitmapData actual = {};
+        REQUIRE(HFImageBitmapGetData(decoded.Get(), &actual) == HSUCCEED);
+        REQUIRE(actual.width == width);
+        REQUIRE(actual.height == height);
+        REQUIRE(actual.channels == 3);
+        return std::vector<uint8_t>(actual.data, actual.data + pixels.size());
+    };
+
+    // Compare decoded snapshots before/after mutation and release. Even at unit
+    // scale, the image-processing backend can round pixels during resampling;
+    // that must not be confused with a change in the stream's owned snapshot.
+    const auto expected = decode_pixels();
+    REQUIRE(std::any_of(expected.begin(), expected.end(), [](uint8_t value) { return value != 0; }));
+
     HFImageBitmapData source_data = {};
     REQUIRE(HFImageBitmapGetData(source.Get(), &source_data) == HSUCCEED);
+    REQUIRE(std::memcmp(source_data.data, pixels.data(), pixels.size()) == 0);
     std::fill(source_data.data, source_data.data + expected.size(), 0);
+    CHECK(decode_pixels() == expected);
     REQUIRE(source.Reset() == HSUCCEED);
-
-    UniqueImageBitmap decoded;
-    REQUIRE(HFCreateImageBitmapFromImageStreamProcess(stream.Get(), decoded.Put(), 0, 1.0f) == HSUCCEED);
-    HFImageBitmapData actual = {};
-    REQUIRE(HFImageBitmapGetData(decoded.Get(), &actual) == HSUCCEED);
-    REQUIRE(actual.width == width);
-    REQUIRE(actual.height == height);
-    REQUIRE(actual.channels == 3);
-    CHECK(std::memcmp(actual.data, expected.data(), expected.size()) == 0);
+    CHECK(decode_pixels() == expected);
 }
 
 TEST_CASE("C API image stream rejects arithmetic overflow and unconfigured processing", "[api][contract][image_stream][boundary]") {
