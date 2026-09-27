@@ -1,13 +1,12 @@
 # InspireFace
-[![GitHub release](https://img.shields.io/github/v/release/HyperInspire/InspireFace.svg?style=for-the-badge&color=blue&label=Github+release&logo=github)](https://github.com/HyperInspire/InspireFace/releases/latest)
-[![Model](https://img.shields.io/github/v/release/HyperInspire/InspireFace.svg?style=for-the-badge&color=blue&label=Model+Zoo&logo=github)](https://github.com/HyperInspire/InspireFace/releases/tag/v1.x)
-[![pypi](https://img.shields.io/pypi/v/inspireface.svg?style=for-the-badge&color=orange&label=PYPI+release&logo=python)](https://pypi.org/project/inspireface/)
-[![JitPack](https://img.shields.io/jitpack/v/github/HyperInspire/inspireface-android-sdk?style=for-the-badge&color=green&label=JitPack&logo=android)](https://jitpack.io/#HyperInspire/inspireface-android-sdk)
-[![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=building&logo=cmake)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml)
-[![test](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?&style=for-the-badge&label=testing&logo=c)](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml)
-[![Document](https://img.shields.io/badge/Document-Building-blue?style=for-the-badge&logo=readthedocs)](https://doc.inspireface.online/)
 
-
+[![GitHub release](https://img.shields.io/github/v/release/HyperInspire/InspireFace.svg?style=flat&color=blue&label=GitHub+release&logo=github)](https://github.com/HyperInspire/InspireFace/releases/latest)
+[![Model](https://img.shields.io/github/v/release/HyperInspire/InspireFace.svg?style=flat&color=blue&label=Model+Zoo&logo=github)](https://github.com/HyperInspire/InspireFace/releases/tag/v1.x)
+[![PyPI](https://img.shields.io/pypi/v/inspireface.svg?style=flat&color=orange&label=PyPI+release&logo=python)](https://pypi.org/project/inspireface/)
+[![JitPack](https://jitpack.io/v/HyperInspire/inspireface-android-sdk.svg)](https://jitpack.io/#HyperInspire/inspireface-android-sdk)
+[![Release SDKs](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml/badge.svg)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml)
+[![Ubuntu x86 Tests](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml/badge.svg)](https://github.com/HyperInspire/InspireFace/actions/workflows/test_ubuntu_x86_Pikachu.yaml)
+[![Documentation](https://img.shields.io/badge/Document-Building-blue?style=flat&logo=readthedocs)](https://doc.inspireface.online/)
 
 InspireFace is a cross-platform face recognition SDK developed in C/C++, supporting multiple operating systems and various backend types for inference, such as CPU, GPU, and NPU.
 
@@ -15,7 +14,7 @@ If you require further information on tracking development branches, CI/CD proce
 
 Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=InspireFace) using your company e-mail for commercial support, including obtaining and integrating higher accuracy models, as well as custom development.
 
-<img src="images/banner.jpg" alt="banner" style="zoom:80%;" />
+<img src="images/banner.webp" alt="banner" style="zoom:80%;" />
 
 ---
 
@@ -23,6 +22,10 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 We welcome your questions💬, they help guide and accelerate its development.
 
 ## Change Logs
+
+**`2026-09-20`** Add demos for passive face liveness detection and flash liveness detection.
+
+**`2026-08-30`** Add HarmonyOS support and configurable best-frame face capture, improve SDK performance, reliability, API compatibility, and Python usability, and expand regression tests, benchmarks, and bilingual documentation.
 
 **`2026-07-22`** Add an Android example app.
 
@@ -73,6 +76,9 @@ The licensing of the open-source models employed by InspireFace adheres to the s
 ## Quick Start
 
 ### Try the Android Example App
+
+- Add a passive face liveness detection demo.
+- Add a flash liveness detection demo.
 
 <p>
   <a href="http://fir.tunm.top/pro/pz7b3dgv">
@@ -279,6 +285,44 @@ bash command/build_android.sh
 
 After the compilation is complete, arm64-v8a and armeabi-v7a libraries will be placed in the `build/inspireface-android` directory.
 
+### HarmonyOS Compilation and ArkTS Usage
+
+Prepare an OpenHarmony Native SDK, set its native directory, and build the ARM64 Node-API module:
+
+```bash
+export OHOS_NATIVE_HOME=/path/to/openharmony-sdk/native
+./command/build_harmonyos_napi.sh
+```
+
+The build stages an importable HAR module at `build/inspireface-harmonyos-napi-arm64-v8a/install/HarmonyOS/har`. Add this module to a DevEco Studio project, then use the ArkTS wrapper as follows. `modelPath` must be a filesystem path accessible to the application, and the image byte length must exactly match its format and dimensions.
+
+```typescript
+import { DetectMode, ImageFormat, InspireFace, Rotation } from '@hyperinspire/inspireface';
+
+InspireFace.launch(modelPath);
+const session = InspireFace.createSession({
+  detectMode: DetectMode.ALWAYS_DETECT,
+  maxFaces: 5
+});
+const image = InspireFace.createImageStream(rgbaBytes, width, height,
+  ImageFormat.RGBA, Rotation.DEGREE_0);
+
+try {
+  const result = session.track(image);
+  try {
+    console.info(`Detected faces: ${result.detectedNum}`);
+  } finally {
+    session.releaseFaceResult(result);
+  }
+} finally {
+  image.close();
+  session.close();
+  InspireFace.terminate();
+}
+```
+
+The ArkTS package covers the complete portable C API surface, including Pipeline, FeatureHub, image bitmaps, aligned features, diagnostics, and hardware capability queries. Platform-inapplicable backends such as CUDA and CoreML remain callable for parity and report `UNSUPPORTED`. For ownership and complete API notes, see [HarmonyOS SDK documentation](harmony/inspireface/README.md).
+
 ### Linux-based NVIDIA GPU Acceleration with TensorRT Compilation
 
 If you want to use NVIDIA GPU devices for accelerated inference on Linux, you need to install **CUDA**, **cuDNN**, and **TensorRT-10** on your device, and configure the relevant environment variables.
@@ -329,13 +373,15 @@ We have completed the adaptation and testing of the software across various oper
 | 15 | | x86_64 | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
 | 16 | **Android**<sup><br/>(Rockchip) | ARMv8 | RK3566/RK3568 | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
 | 17 |  | ARMv8 | RK3588 | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
-| 18 | **HarmonyOS** | ARMv8 | - | - | - | - |
+| 18 | **HarmonyOS** | ARMv8 | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - |
 | 19 | **Linux**<sup><br/>(Jetson series) | ARMv8 | Jetson series | - | - | - |
 
 - **Device**: Some special device support, primarily focused on computing power devices.
 - **Supported**: The solution has been fully developed and successfully verified on offline devices.
 - **Passed Tests**: The feature has at least **passed unit tests** on offline devices.
 - **Release**: The solution is already supported and has been successfully compiled and released through **[GitHub Actions](https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml)**.
+
+> HarmonyOS currently marks build and API adaptation support only. Passed Tests and Release remain unmarked until validation on HarmonyOS hardware is available.
 
 ### Multi-platform compilation using Docker
 
@@ -762,11 +808,13 @@ The following Features and technologies are currently supported.
 | Tracking | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
 | Mask Detection | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - |
 | Silent Liveness | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - |
+| Passive Liveness<sup>Plus</sup> | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
+| Flash Liveness<sup>Plus</sup> | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
 | Face Quality | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
 | Pose Estimation | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
 | Face Attribute | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
 | Cooperative Liveness | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
-| Face Emotion<sup>New</sup> | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
+| Face Emotion | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) |
 | Embedding Management | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - | - | - | - |
 
 - Some models and features that do **not support** NPU or GPU will **automatically use CPU** for computation when running the program.
@@ -791,7 +839,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 - [x] Add Add C++ style header files.
 - [x] Add the RKNPU backend support for Android .
 - [ ] Python packages that support more platforms.
-- [ ] Example app project for Android and iOS samples.
+- [x] Example app project for Android and iOS samples.
 - [ ] Add the batch forward feature.
 - [ ] Design a scheme that can be adapted to multiple CUDA devices.
 

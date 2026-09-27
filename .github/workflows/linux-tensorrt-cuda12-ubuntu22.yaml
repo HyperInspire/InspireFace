@@ -44,5 +44,5 @@ jobs:
       # Step 5: Start building the SDK
       - name: Start Building the InspireFace-Linux-TensorRT-CUDA12-Ubuntu22
         run: |
-          docker-compose up build-tensorrt-cuda12-ubuntu22
+          docker-compose up --exit-code-from build-tensorrt-cuda12-ubuntu22 build-tensorrt-cuda12-ubuntu22
           ls build

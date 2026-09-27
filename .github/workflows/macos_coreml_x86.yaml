@@ -11,7 +11,7 @@ env:
 jobs:
   build:
     name: Compile MacOS CoreML X86
-    runs-on: macos-13
+    runs-on: macos-15-intel
 
     steps:
       # Step 1: Checkout the repository

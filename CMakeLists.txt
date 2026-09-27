@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(InspireFace)
 
+include(CTest)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -26,7 +28,7 @@ endif()
 # Current version
 set(INSPIRE_FACE_VERSION_MAJOR 1)
 set(INSPIRE_FACE_VERSION_MINOR 2)
-set(INSPIRE_FACE_VERSION_PATCH 3)
+set(INSPIRE_FACE_VERSION_PATCH 4)
 
 # Converts the version number to a string
 string(CONCAT INSPIRE_FACE_VERSION_MAJOR_STR ${INSPIRE_FACE_VERSION_MAJOR})
@@ -176,6 +178,17 @@ option(ISF_BUILD_WITH_TEST "Open Build Unit-Test." ON)
 # If you want to build the sample, you need to set this to ON
 option(ISF_BUILD_WITH_SAMPLE "Open Build Sample Exec." ON)
 
+# Build the ArkTS Node-API adapter as a separate target. The core SDK remains
+# platform-neutral and the adapter calls only the public C API.
+option(ISF_BUILD_OHOS_NAPI "Build the HarmonyOS ArkTS Node-API adapter." OFF)
+if(ISF_BUILD_OHOS_NAPI AND NOT OHOS)
+    message(FATAL_ERROR "ISF_BUILD_OHOS_NAPI requires the OpenHarmony toolchain")
+endif()
+
+# Keep the migration opt-in until InspireCV Task preprocessing has passed the
+# same end-to-end accuracy and performance gates as MNN ImageProcess.
+option(ISF_ENABLE_INSPIRECV_TASK_PREPROCESS "Use InspireCV Task API for image preprocessing." OFF)
+
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
 
 option(ISF_NEVER_USE_OPENCV "Never use opencv." ON)
@@ -196,7 +209,10 @@ endif()
 
 include_directories(${ISF_THIRD_PARTY_DIR}/InspireCV/3rdparty/Eigen-3.4.0-Headers)
 
-if(APPLE)
+if(OHOS)
+    message("Use OpenHarmony device")
+    set(PLAT ohos)
+elseif(APPLE)
     if(IOS)
         add_definitions(-DTARGET_OS_IOS)
         message(IOS_3RDPARTY=${IOS_3RDPARTY})
@@ -268,8 +284,12 @@ endif ()
 
 # InspireCV dependency configuration
 set(INSPIRECV_BUILD_OBJECT_LIBS ON CACHE BOOL "Build InspireCV as object library")
-add_subdirectory(${ISF_THIRD_PARTY_DIR}/InspireCV EXCLUDE_FROM_ALL)
-set(INSPIRECV_INCLUDE_PATH "${ISF_THIRD_PARTY_DIR}/InspireCV/include")
+set(ISF_INSPIRECV_SOURCE_DIR "${ISF_THIRD_PARTY_DIR}/InspireCV" CACHE PATH "InspireCV source directory")
+if(NOT EXISTS "${ISF_INSPIRECV_SOURCE_DIR}/CMakeLists.txt")
+    message(FATAL_ERROR "Invalid ISF_INSPIRECV_SOURCE_DIR: ${ISF_INSPIRECV_SOURCE_DIR}")
+endif()
+add_subdirectory(${ISF_INSPIRECV_SOURCE_DIR} ${CMAKE_BINARY_DIR}/InspireCV EXCLUDE_FROM_ALL)
+set(INSPIRECV_INCLUDE_PATH "${ISF_INSPIRECV_SOURCE_DIR}/include")
 set(INSPIRECV_LIBS InspireCV)
 
 # If you need using CUDA-enabled MNN, you need to manually configure the pre-compiled CUDA-enabled MNN library path
@@ -327,6 +347,10 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
 # Add a child project: InspireFace Source
 add_subdirectory(cpp/inspireface)
 get_property(InspireFace TARGET InspireFace PROPERTY InspireFace)
+
+if(ISF_BUILD_OHOS_NAPI)
+    add_subdirectory(cpp/inspireface/platform/ohos/napi)
+endif()
 
 # Add a child project: Samples
 if (ISF_BUILD_WITH_SAMPLE)

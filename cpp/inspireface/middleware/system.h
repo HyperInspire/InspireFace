@@ -115,7 +115,9 @@ inline bool IsExists(const std::string& path) {
 
 inline bool IsDir(const std::string& path) {
 #if defined(_WIN32)
-    return GetFileAttributesA(path.c_str()) == FILE_ATTRIBUTE_DIRECTORY;
+    const std::wstring wide_path = Utf8ToWideChar(path);
+    const DWORD attributes = GetFileAttributesW(wide_path.c_str());
+    return attributes != INVALID_FILE_ATTRIBUTES && (attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 #else
     struct stat s;
     if (stat(path.c_str(), &s) != 0)
@@ -126,7 +128,9 @@ inline bool IsDir(const std::string& path) {
 
 inline bool IsFile(const std::string& path) {
 #if defined(_WIN32)
-    return GetFileAttributesA(path.c_str()) == FILE_ATTRIBUTE_ARCHIVE;
+    const std::wstring wide_path = Utf8ToWideChar(path);
+    const DWORD attributes = GetFileAttributesW(wide_path.c_str());
+    return attributes != INVALID_FILE_ATTRIBUTES && (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
 #else
     struct stat s;
     if (stat(path.c_str(), &s) != 0)

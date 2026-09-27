@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
         HFLogPrint(HF_LOG_ERROR, "Load Resource error: %d", ret);
         return ret;
     }
-    const char* DBFilePath = "feature.db";
+    char DBFilePath[] = "feature.db";
     
     // remove old db file
     if (access(DBFilePath, F_OK) == 0) {

@@ -8,7 +8,21 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc)        # Add C_API file
+
+# Platform language bindings are separate ABI adapters.  Do not absorb them
+# into the core archive through the recursive source glob: the HarmonyOS
+# Node-API module owns its registration entry point and links the core archive.
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/platform/ohos/napi/inspireface_napi\\.cpp$")
+# The factory has used InferenceWrapperRKNNAdapter for both RKNN generations
+# since the adapter was introduced. Do not compile the older parallel
+# implementation, which has no construction site and a separate unsafe output
+# lifecycle.
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/middleware/inference_wrapper/inference_wrapper_rknn\\.cpp$")
+set(SOURCE_FILES ${SOURCE_FILES}
+        ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/c_api/face_result_snapshot.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/c_api/error_message.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/c_api/resource_pack_validator.cpp)  # Add C API implementation files
 
 
 if (ISF_ENABLE_RKNN)
@@ -50,11 +64,20 @@ if(ISF_ENABLE_OPENCV)
 endif()
 
 # SQLite3
+set(SQLITE_VEC_SOURCE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/sqlite/sqlite-vec.c)
 set(SOURCE_FILES ${SOURCE_FILES} 
         ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/sqlite/sqlite3.c
-        ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/sqlite/sqlite-vec.c
+        ${SQLITE_VEC_SOURCE}
 )   # Add SQLite3 C_API file
 set(SQLITE_INCLUDE ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/sqlite/)
+
+# sqlite-vec uses BSD u_int*_t aliases but does not include the header that
+# declares them. glibc exposes the aliases transitively; OpenHarmony's musl
+# correctly requires sys/types.h to be included explicitly.
+if(OHOS)
+    set_source_files_properties(${SQLITE_VEC_SOURCE} PROPERTIES
+            COMPILE_OPTIONS "-include;sys/types.h")
+endif()
 
 
 
@@ -94,9 +117,6 @@ if(ISF_ENABLE_APPLE_EXTENSION)
 
 endif()
 
-# MNN
-link_directories(${MNN_LIBS})
-
 if(ISF_BUILD_SHARED_LIBS)
     add_definitions("-DISF_BUILD_SHARED_LIBS")
     add_library(InspireFace SHARED ${SOURCE_FILES} $<TARGET_OBJECTS:inspirecv>)
@@ -104,8 +124,55 @@ else()
     add_library(InspireFace STATIC ${SOURCE_FILES} $<TARGET_OBJECTS:inspirecv>)
 endif()
 
+if(OHOS AND ISF_BUILD_OHOS_NAPI)
+    set_target_properties(InspireFace PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
 target_compile_definitions(InspireFace PUBLIC INFERENCE_WRAPPER_ENABLE_MNN)
 target_compile_definitions(InspireFace PUBLIC FEATURE_BLOCK_ENABLE_OPENCV)
+
+# Linux and OpenHarmony reject or restrict shared objects that request an
+# executable stack. MNN's hand-written assembly is linked into this target and
+# linkers can conservatively mark the result executable when stack metadata is
+# absent, even though the kernels do not execute code from the stack.
+if((CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "OHOS")
+        AND ISF_BUILD_SHARED_LIBS)
+    target_link_options(InspireFace PRIVATE "-Wl,-z,noexecstack")
+
+    set(ISF_READELF_EXECUTABLE "${CMAKE_READELF}")
+    if(NOT ISF_READELF_EXECUTABLE)
+        find_program(ISF_READELF_EXECUTABLE NAMES llvm-readelf readelf)
+    endif()
+    if(NOT ISF_READELF_EXECUTABLE)
+        message(FATAL_ERROR "readelf is required to verify the Linux SDK stack permissions")
+    endif()
+
+    set(ISF_NOEXECSTACK_VERIFIER "${CMAKE_CURRENT_SOURCE_DIR}/cmake/verify_noexecstack.cmake")
+    add_custom_command(TARGET InspireFace POST_BUILD
+            COMMAND "${CMAKE_COMMAND}"
+                    "-DISF_READELF_EXECUTABLE=${ISF_READELF_EXECUTABLE}"
+                    "-DISF_ELF_FILE=$<TARGET_FILE:InspireFace>"
+                    -P "${ISF_NOEXECSTACK_VERIFIER}"
+            COMMENT "Verifying that libInspireFace does not request an executable stack"
+            VERBATIM)
+
+    if(BUILD_TESTING)
+        add_test(NAME InspireFace.ELF.NoExecStack
+                COMMAND "${CMAKE_COMMAND}"
+                        "-DISF_READELF_EXECUTABLE=${ISF_READELF_EXECUTABLE}"
+                        "-DISF_ELF_FILE=$<TARGET_FILE:InspireFace>"
+                        -P "${ISF_NOEXECSTACK_VERIFIER}")
+        set_tests_properties(InspireFace.ELF.NoExecStack PROPERTIES
+                LABELS "compatibility;security")
+    endif()
+endif()
+
+if(ISF_BUILD_WITH_SAMPLE AND NOT ISF_BUILD_SHARED_LIBS)
+    target_compile_definitions(InspireFace PUBLIC ISF_ENABLE_MNN_CACHE_GUARD)
+endif()
+if(ISF_ENABLE_INSPIRECV_TASK_PREPROCESS)
+    target_compile_definitions(InspireFace PRIVATE ISF_ENABLE_INSPIRECV_TASK_PREPROCESS)
+endif()
 
 # Include files
 set(NEED_INCLUDE . ${MNN_INCLUDE_DIRS})
@@ -120,8 +187,8 @@ endif ()
 # Add include directory
 set(NEED_INCLUDE ${NEED_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface)
 
-if (ISF_BUILD_LINUX_ARM7 OR ANDROID)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=neon")
+if (ISF_BUILD_LINUX_ARM7)
+    target_compile_options(InspireFace PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-mfpu=neon>)
 endif()
 
 if (ISF_BUILD_LINUX_ARM7 OR ISF_BUILD_LINUX_AARCH64)
@@ -140,6 +207,9 @@ set(NEED_INCLUDE ${NEED_INCLUDE} ${CPP_YAML_INCLUDE} ${SQLITE_INCLUDE})
 if(PLAT STREQUAL "linux")
     find_package(Threads REQUIRED)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${CMAKE_THREAD_LIBS_INIT} dl)
+elseif(PLAT STREQUAL "ohos")
+    find_package(Threads REQUIRED)
+    set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
 # set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} inspirecv)
@@ -231,6 +301,14 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/intypedef.h DESTINATION ${CMAKE_
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface/herror.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/version.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/)
+
+if(ANDROID)
+    # Ship the Java declarations with the JNI-enabled Android library so the
+    # native and managed interfaces cannot be released independently.
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/platform/jni/java/
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/java
+            FILES_MATCHING PATTERN "*.java")
+endif()
 
 if(ISF_INSTALL_CPP_HEADER)
     # Install cpp api header file

@@ -17,6 +17,7 @@ namespace inspire {
 
 // Forward declarations
 class InspireArchive;
+class FaceSession;
 
 // The Launch class acts as the main entry point for the InspireFace system.
 // It is responsible for loading static resources such as models, configurations, and parameters.
@@ -109,7 +110,7 @@ public:
     std::vector<std::string> GetFaceDetectModelList() const;
 
     // Switch the landmark engine(It must be used before creating a session)
-    void SwitchLandmarkEngine(LandmarkEngine engine);
+    int32_t SwitchLandmarkEngine(LandmarkEngine engine);
 
     // Switch the image processing backend(It must be used before creating a session)
     void SwitchImageProcessingBackend(ImageProcessingBackend backend);
@@ -124,6 +125,13 @@ public:
     int32_t GetImageProcessAlignedWidth() const;
 
 private:
+    friend class FaceSession;
+
+    // Returns a lifetime-pinned snapshot for internal session construction.
+    // Reload and Unload only replace the global snapshot; existing sessions keep
+    // the archive they were configured with alive.
+    std::shared_ptr<InspireArchive> AcquireArchive() const;
+
     // Private constructor for the singleton pattern
     Launch();
 

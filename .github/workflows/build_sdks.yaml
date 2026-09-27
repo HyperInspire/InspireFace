@@ -38,9 +38,22 @@ jobs:
           bash command/build_linux_ubuntu18.sh
           ls build
 
+      - name: Verify glibc 2.41 dynamic loading
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/build/inspireface-linux-x86-ubuntu18:/sdk:ro" \
+            -v "${{ github.workspace }}:/workspace:ro" \
+            debian:trixie-slim \
+            bash -ec '
+              apt-get update
+              apt-get install -y --no-install-recommends binutils python3
+              bash /workspace/ci/verify_glibc_241_compatibility.sh \
+                /sdk/InspireFace/lib/libInspireFace.so
+            '
+
   build_macos_x86:
     name: Compile MacOS-x86
-    runs-on: macos-13
+    runs-on: macos-15-intel
 
     steps:
       # Step 1: Checkout the repository
@@ -327,7 +340,7 @@ jobs:
       # Step 4: Execute the docker-compose command
       - name: Execute Docker Compose
         run: |
-          docker-compose up build-manylinux2014-x86
+          docker-compose up --exit-code-from build-manylinux2014-x86 build-manylinux2014-x86
           ls build
 
   build_armv7_rv1106_armhf_uclibc:
@@ -440,5 +453,5 @@ jobs:
       # Step 5: Start building the SDK
       - name: Start Building the InspireFace-Linux-TensorRT-CUDA12-Ubuntu22
         run: |
-          docker-compose up build-tensorrt-cuda12-ubuntu22
+          docker-compose up --exit-code-from build-tensorrt-cuda12-ubuntu22 build-tensorrt-cuda12-ubuntu22
           ls build

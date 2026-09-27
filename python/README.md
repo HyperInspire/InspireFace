@@ -12,20 +12,15 @@ pip install inspireface
 
 ### Manual Installation
 
-1. First install the necessary dependencies:
-```bash
-pip install loguru tqdm opencv-python
-```
-
-2. Copy the compiled dynamic library to the specified directory:
+1. Copy the compiled dynamic library to the specified directory:
 ```bash
 # Copy the compiled dynamic library to the corresponding system architecture directory
 cp YOUR_BUILD_DIR/libInspireFace.so inspireface/modules/core/SYSTEM/CORE_ARCH/
 ```
 
-3. Install the Python package:
+2. Install the Python package and its declared dependencies:
 ```bash
-python setup.py install
+pip install .
 ```
 
 ## Quick Start
@@ -36,44 +31,37 @@ Here's a simple example showing how to use InspireFace for face detection and la
 import cv2
 import inspireface as isf
 
-# Create session with required features enabled
-session = isf.InspireFaceSession(
-    param=isf.HF_ENABLE_NONE,  # Optional features
-    detect_mode=isf.HF_DETECT_MODE_ALWAYS_DETECT  # Detection mode
-)
+isf.launch()
+try:
+    with isf.InspireFaceSession(
+        param=isf.HF_ENABLE_NONE,
+        detect_mode=isf.HF_DETECT_MODE_ALWAYS_DETECT,
+        auto_launch=False,
+    ) as session:
+        session.set_detection_confidence_threshold(0.5)
 
-# Set detection confidence threshold
-session.set_detection_confidence_threshold(0.5)
+        image = cv2.imread("path/to/your/image.jpg")
+        if image is None:
+            raise FileNotFoundError("Unable to read the input image")
 
-# Read image
-image = cv2.imread("path/to/your/image.jpg")
-assert image is not None, "Please check if the image path is correct"
+        faces = session.face_detection(image)
+        print(f"Detected {len(faces)} faces")
 
-# Perform face detection
-faces = session.face_detection(image)
-print(f"Detected {len(faces)} faces")
+        draw = image.copy()
+        for face in faces:
+            x1, y1, x2, y2 = face.location
+            center = ((x1 + x2) / 2, (y1 + y2) / 2)
+            size = (x2 - x1, y2 - y1)
+            rect = (center, size, face.roll)
+            box = cv2.boxPoints(rect).astype(int)
+            cv2.drawContours(draw, [box], 0, (100, 180, 29), 2)
 
-# Draw detection results on image
-draw = image.copy()
-for idx, face in enumerate(faces):
-    # Get face bounding box coordinates
-    x1, y1, x2, y2 = face.location
-    
-    # Calculate rotated box parameters
-    center = ((x1 + x2) / 2, (y1 + y2) / 2)
-    size = (x2 - x1, y2 - y1)
-    angle = face.roll
-    
-    # Draw rotated box
-    rect = ((center[0], center[1]), (size[0], size[1]), angle)
-    box = cv2.boxPoints(rect)
-    box = box.astype(int)
-    cv2.drawContours(draw, [box], 0, (100, 180, 29), 2)
-    
-    # Draw landmarks
-    landmarks = session.get_face_dense_landmark(face)
-    for x, y in landmarks.astype(int):
-        cv2.circle(draw, (x, y), 0, (220, 100, 0), 2)
+            landmarks = session.get_face_dense_landmark(face)
+            for x, y in landmarks.astype(int):
+                cv2.circle(draw, (x, y), 0, (220, 100, 0), 2)
+finally:
+    if isf.query_launch_status():
+        isf.terminate()
 ```
 
 ## More Examples
@@ -89,10 +77,10 @@ The project provides multiple example files demonstrating different features:
 
 ## Running Tests
 
-The project includes unit tests. You can adjust test content by modifying parameters in `test/test_settings.py`:
+The comprehensive Python suite shares the same `test_res` fixture tree as the C++ API tests:
 
 ```bash
-python -m unittest discover -s test
+python -m sample_testcase.run --native-lib ../build/lib/libInspireFace.so
 ```
 
 ## Notes
