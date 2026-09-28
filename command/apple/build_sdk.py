@@ -119,6 +119,8 @@ def main():
                 static = sdk != 'macosx' or (backend == 'coreml' and arch == 'arm64')
                 run('cmake', '-S', ROOT, '-B', build, *common,
                     f'-DMNN_STATIC_PATH={dep_sdk}', '-DISF_BUILD_APPLE_FRAMEWORK=ON',
+                    # Apply SDK defaults to existing incremental caches as well.
+                    '-DISF_ENABLE_INSPIRECV_TASK_PREPROCESS=ON', '-DINSPIRECV_TASK_ENABLE_ARM_NEON=ON',
                     f'-DISF_ENABLE_APPLE_EXTENSION={"ON" if backend == "coreml" else "OFF"}',
                     f'-DISF_BUILD_SHARED_LIBS={"OFF" if static else "ON"}',
                     f'-DISF_BUILD_APPLE_TESTS={"ON" if a.tests else "OFF"}',

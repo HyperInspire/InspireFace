@@ -194,9 +194,10 @@ if(ISF_BUILD_OHOS_NAPI AND NOT OHOS)
     message(FATAL_ERROR "ISF_BUILD_OHOS_NAPI requires the OpenHarmony toolchain")
 endif()
 
-# Keep the migration opt-in until InspireCV Task preprocessing has passed the
-# same end-to-end accuracy and performance gates as MNN ImageProcess.
-option(ISF_ENABLE_INSPIRECV_TASK_PREPROCESS "Use InspireCV Task API for image preprocessing." OFF)
+# Use Task preprocessing by default; OFF retains the MNN ImageProcess fallback.
+option(ISF_ENABLE_INSPIRECV_TASK_PREPROCESS "Use InspireCV Task API for image preprocessing." ON)
+# InspireCV selects NEON kernels only when the target architecture supports them.
+option(INSPIRECV_TASK_ENABLE_ARM_NEON "Enable ARM NEON imageprocess kernels" ON)
 
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
 
@@ -388,6 +389,8 @@ message(STATUS "\t ISF_BUILD_LINUX_ARM7: ${ISF_BUILD_LINUX_ARM7}")
 message(STATUS "\t ISF_BUILD_LINUX_AARCH64: ${ISF_BUILD_LINUX_AARCH64}")
 message(STATUS "\t ISF_BUILD_WITH_TEST: ${ISF_BUILD_WITH_TEST}")
 message(STATUS "\t ISF_BUILD_WITH_SAMPLE: ${ISF_BUILD_WITH_SAMPLE}")
+message(STATUS "\t ISF_ENABLE_INSPIRECV_TASK_PREPROCESS: ${ISF_ENABLE_INSPIRECV_TASK_PREPROCESS}")
+message(STATUS "\t INSPIRECV_TASK_ENABLE_ARM_NEON: ${INSPIRECV_TASK_ENABLE_ARM_NEON}")
 message(STATUS "\t OpenCV_DIR: ${OpenCV_DIR}")
 if(ISF_ENABLE_OPENCV)
     message(STATUS "\t OpenCV: Enabled")

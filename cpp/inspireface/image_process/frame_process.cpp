@@ -18,6 +18,13 @@ namespace inspirecv {
 
 namespace frame_backend {
 
+static void SwapRedBlueChannels(uint8_t* data, int width, int height) {
+    const size_t pixels = static_cast<size_t>(width) * static_cast<size_t>(height);
+    for (size_t index = 0; index < pixels; ++index) {
+        std::swap(data[index * 4], data[index * 4 + 2]);
+    }
+}
+
 #if defined(ISF_ENABLE_INSPIRECV_TASK_PREPROCESS)
 using Matrix = task::Matrix;
 using Point = task::Point;
@@ -50,14 +57,31 @@ public:
     bool Convert(const Config& config, const Matrix& matrix, const uint8_t* source,
                  int sourceWidth, int sourceHeight, uint8_t* dest,
                  int destWidth, int destHeight, int destChannels) {
+        // The Task converter supports RGB->RGBA and BGR->BGRA, but not the
+        // opposite channel orders. Expand in the supported order, then swap
+        // red/blue in the existing output without allocating another image.
+        const bool swap_red_blue =
+          (config.sourceFormat == task::BGR && config.destFormat == task::RGBA) ||
+          (config.sourceFormat == task::RGB && config.destFormat == task::BGRA);
+        if (swap_red_blue && destChannels != 4) return false;
         if (process_ == nullptr) {
-            process_ = task::StreamTask::Create(config);
+            Config task_config = config;
+            if (swap_red_blue) {
+                task_config.destFormat = config.sourceFormat == task::BGR ? task::BGRA : task::RGBA;
+            }
+            process_ = task::StreamTask::Create(task_config);
         }
         if (process_ == nullptr) return false;
         process_->SetMatrix(matrix);
-        return process_->Convert(source, sourceWidth, sourceHeight, 0, dest,
-                                 destWidth, destHeight, destChannels, 0,
-                                 halide_type_of<uint8_t>()) == SUCCESS;
+        if (process_->Convert(source, sourceWidth, sourceHeight, 0, dest,
+                              destWidth, destHeight, destChannels, 0,
+                              halide_type_of<uint8_t>()) != SUCCESS) {
+            return false;
+        }
+        if (swap_red_blue) {
+            SwapRedBlueChannels(dest, destWidth, destHeight);
+        }
+        return true;
     }
 
 private:
@@ -85,14 +109,30 @@ public:
     bool Convert(const Config& config, const Matrix& matrix, const uint8_t* source,
                  int sourceWidth, int sourceHeight, uint8_t* dest,
                  int destWidth, int destHeight, int destChannels) {
+        // MNN also lacks the crossed three-to-four-channel converters. Its
+        // success status alone does not guarantee a correctly packed output.
+        const bool swap_red_blue =
+          (config.sourceFormat == MNN::CV::BGR && config.destFormat == MNN::CV::RGBA) ||
+          (config.sourceFormat == MNN::CV::RGB && config.destFormat == MNN::CV::BGRA);
+        if (swap_red_blue && destChannels != 4) return false;
         if (process_ == nullptr) {
-            process_.reset(MNN::CV::ImageProcess::create(config));
+            Config mnn_config = config;
+            if (swap_red_blue) {
+                mnn_config.destFormat = config.sourceFormat == MNN::CV::BGR ? MNN::CV::BGRA : MNN::CV::RGBA;
+            }
+            process_.reset(MNN::CV::ImageProcess::create(mnn_config));
         }
         if (process_ == nullptr) return false;
         process_->setMatrix(matrix);
-        return process_->convert(source, sourceWidth, sourceHeight, 0, dest,
-                                 destWidth, destHeight, destChannels, 0,
-                                 halide_type_of<uint8_t>()) == MNN::ErrorCode::NO_ERROR;
+        if (process_->convert(source, sourceWidth, sourceHeight, 0, dest,
+                              destWidth, destHeight, destChannels, 0,
+                              halide_type_of<uint8_t>()) != MNN::ErrorCode::NO_ERROR) {
+            return false;
+        }
+        if (swap_red_blue) {
+            SwapRedBlueChannels(dest, destWidth, destHeight);
+        }
+        return true;
     }
 
 private:
