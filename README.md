@@ -18,8 +18,7 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ---
 
-📘 [Documentation](https://doc.inspireface.online/) is a **work in progress**.  
-We welcome your questions💬, they help guide and accelerate its development.
+📘 For detailed development and integration guides, see the [documentation](https://doc.inspireface.online/).
 
 ## Change Logs
 
@@ -581,6 +580,55 @@ Please note that the C++ interface has not been fully tested. It is recommended 
 
 - [C Sample](cpp/sample/api/)
 - [C++ Sample](cpp/sample/cpp_api/)
+
+### Objective-C and Swift Samples (iOS / macOS)
+
+Add `InspireFace.xcframework` to your Xcode project; Swift also requires `InspireFaceSwift.xcframework`. See the [Apple integration guide](https://doc.inspireface.online/zh/using-with/apple.html) for project setup and creating image streams from files or camera buffers.
+
+These one-shot examples take a model resource file path (such as `Pikachu`) and an existing image stream, and return the number of detected faces. Models are provided separately from the frameworks; see [model paths and error handling](https://doc.inspireface.online/zh/using-with/apple.html#model-paths-and-errors).
+
+#### Objective-C
+
+```objective-c
+#import <InspireFace/InspireFaceApple.h>
+
+BOOL DetectFaces(NSString *modelPath, IFImageStream *stream,
+                 HInt32 *faceCount, NSError **error) {
+    *faceCount = 0;
+    if (![IFRuntime launchAtPath:modelPath error:error]) return NO;
+    IFSession *session = [[IFSession alloc] initWithOptions:0
+                                                     mode:HF_DETECT_MODE_ALWAYS_DETECT
+                                             maximumFaces:10
+                                               pixelLevel:320
+                                          framesPerSecond:-1
+                                                    error:error];
+    HFMultipleFaceData faces = {0};
+    BOOL success = session && [session trackStream:stream borrowedResult:&faces error:error];
+    if (success) *faceCount = faces.detectedNum;
+    [session closeWithError:NULL];
+    [IFRuntime terminateWithError:NULL];
+    return success;
+}
+```
+
+#### Swift
+
+```swift
+import InspireFaceSwift
+
+func detectFaces(modelPath: String, stream: ImageStream) throws -> Int {
+    try InspireFaceRuntime.launch(path: modelPath)
+    defer { try? InspireFaceRuntime.terminate() }
+    let session = try FaceSession(configuration: SessionConfiguration(
+        detectionMode: .alwaysDetect, maximumFaces: 10, pixelLevel: 320))
+    defer { try? session.close() }
+    return try session.withUnsafeFaces(in: stream) { faces in
+        faces.count
+    }
+}
+```
+
+Keep the input stream and its pixel storage alive during the call, then close the stream when finished. For continuous processing, initialize the runtime once and reuse a session on a serial work queue across frames.
 
 ### Python Native Sample
 
