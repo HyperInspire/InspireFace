@@ -1,0 +1,27 @@
+name: Prepare Apple SDK build
+description: Prepare the existing runner and cache platform-specific MNN builds.
+inputs:
+  simulator:
+    description: Boot an installed iOS simulator for runtime tests
+    default: 'true'
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Prepare toolchain, dependency revisions and model fixtures
+      id: identity
+      shell: bash
+      run: python3 ci/apple/prepare.py
+    - name: Cache Apple dependencies
+      uses: actions/cache@v4
+      with:
+        path: build/apple-cache/mnn
+        key: apple-mnn-${{ runner.arch }}-${{ steps.identity.outputs.cache-key }}-${{ hashFiles('command/apple/build_sdk.py', 'CMakeLists.txt') }}
+        restore-keys: |
+          apple-mnn-${{ runner.arch }}-${{ steps.identity.outputs.cache-key }}-
+    - name: Boot installed iOS simulator
+      if: inputs.simulator == 'true'
+      shell: bash
+      run: python3 ci/apple/boot_simulator.py

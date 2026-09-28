@@ -112,16 +112,27 @@ if(ISF_ENABLE_APPLE_EXTENSION)
     find_library(ACCELERATE_LIBRARY Accelerate)
     set(LINK_THIRD_LIBS ${LINK_THIRD_LIBS} ${FOUNDATION_LIBRARY} ${COREML_LIBRARY} ${ACCELERATE_LIBRARY})
 
+    set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/middleware/inference_wrapper/coreml/CoreMLAdapter.mm
+        PROPERTIES COMPILE_OPTIONS "-Werror=unguarded-availability;-Werror=unguarded-availability-new")
     # Add objective-c files
     set(SOURCE_FILES ${SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/middleware/inference_wrapper/coreml/CoreMLAdapter.mm)
 
 endif()
 
+set(ISF_CORE_SOURCES ${SOURCE_FILES})
+if(ISF_BUILD_APPLE_FRAMEWORK)
+    # Compile the core once. The original library and framework are separate
+    # final links of these same objects, never dependencies of one another.
+    add_library(InspireFaceObjects OBJECT ${SOURCE_FILES})
+    set(ISF_CORE_SOURCES $<TARGET_OBJECTS:InspireFaceObjects>)
+    set_target_properties(InspireFaceObjects PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
 if(ISF_BUILD_SHARED_LIBS)
     add_definitions("-DISF_BUILD_SHARED_LIBS")
-    add_library(InspireFace SHARED ${SOURCE_FILES} $<TARGET_OBJECTS:inspirecv>)
+    add_library(InspireFace SHARED ${ISF_CORE_SOURCES} $<TARGET_OBJECTS:inspirecv>)
 else()
-    add_library(InspireFace STATIC ${SOURCE_FILES} $<TARGET_OBJECTS:inspirecv>)
+    add_library(InspireFace STATIC ${ISF_CORE_SOURCES} $<TARGET_OBJECTS:inspirecv>)
 endif()
 
 if(OHOS AND ISF_BUILD_OHOS_NAPI)
@@ -219,6 +230,12 @@ target_include_directories(InspireFace PUBLIC
     ${NEED_INCLUDE}
 )
 
+if(ISF_BUILD_APPLE_FRAMEWORK)
+    foreach(prop INCLUDE_DIRECTORIES COMPILE_DEFINITIONS COMPILE_OPTIONS)
+        set_property(TARGET InspireFaceObjects PROPERTY ${prop} "$<TARGET_PROPERTY:InspireFace,${prop}>")
+    endforeach()
+endif()
+
 if (ANDROID)
     target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-Wl,-z,max-page-size=16384")
     if(ANDROID_NDK_MAJOR LESS_EQUAL 22)
@@ -240,6 +257,7 @@ elseif(IOS)
         "-framework Foundation"
         "-framework CoreVideo"
         "-framework CoreMedia"
+        ${LINK_THIRD_LIBS}
         ${MNN_FRAMEWORK_PATH}
     )
     if(ISF_ENABLE_APPLE_EXTENSION)
@@ -251,6 +269,10 @@ elseif(IOS)
     
 else()
     target_link_libraries(InspireFace PUBLIC ${LINK_THIRD_LIBS})
+
+    if(APPLE AND ISF_BUILD_APPLE_FRAMEWORK)
+        set_target_properties(InspireFace PROPERTIES INSTALL_NAME_DIR "@rpath" BUILD_WITH_INSTALL_NAME_DIR TRUE)
+    endif()
 
     set_target_properties(InspireFace PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/
@@ -285,6 +307,10 @@ if (ISF_ENABLE_TENSORRT)
     message(STATUS "\t TENSORRT_LIBRARY_INFER: ${TENSORRT_LIBRARY_INFER}")
     message(STATUS "\t TENSORRT_LIBRARY_RUNTIME: ${TENSORRT_LIBRARY_RUNTIME}")
     message(STATUS "\t CUDA_RUNTIME_LIBRARY: ${CUDA_RUNTIME_LIBRARY}")
+endif()
+
+if(ISF_BUILD_APPLE_FRAMEWORK)
+    add_subdirectory(platform/apple)
 endif()
 
 # Install lib
@@ -331,7 +357,11 @@ if (ISF_RK_COMPILER_TYPE STREQUAL "aarch64")
     install(FILES ${ISF_RKNN_API_LIB}/librknnrt.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
 endif()
 
-if (NOT IOS)
+if(APPLE AND DEFINED MNN_STATIC_PATH AND NOT ISF_BUILD_SHARED_LIBS)
+    # Dependency caches may expose symlinks; ship the archive itself.
+    get_filename_component(ISF_APPLE_MNN_ARCHIVE "${MNN_STATIC_PATH}/lib/libMNN.a" REALPATH)
+    install(FILES "${ISF_APPLE_MNN_ARCHIVE}" DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib RENAME libMNN.a)
+elseif(NOT IOS)
     if (NOT ISF_BUILD_SHARED_LIBS)
         if(MNN_BUILD_SHARED_LIBS)
             install(FILES ${CMAKE_BINARY_DIR}/MNN/libMNN.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
