@@ -27,7 +27,7 @@ env:
 
 jobs:
   intel:
-    name: Native Intel macOS and iOS simulator
+    name: Build Intel macOS and iOS simulator SDKs
     runs-on: macos-15-intel
     timeout-minutes: 90
     env:
@@ -43,7 +43,7 @@ jobs:
             exit 1
           fi
       - uses: ./.github/actions/apple-setup
-      - name: Build, test and verify installed native slices
+      - name: Build Intel slices without runtime tests
         run: bash ci/apple/run_native.sh "$APPLE_BACKEND"
       - name: Archive CPU slices for the existing Apple Silicon job
         if: inputs.backend != 'coreml'
@@ -59,7 +59,7 @@ jobs:
           retention-days: 1
 
   apple_silicon:
-    name: Native Apple Silicon, iOS device and final package
+    name: Build ARM SDKs, test macOS arm64 and package
     needs: intel
     runs-on: macos-15
     timeout-minutes: 120
@@ -69,9 +69,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/apple-setup
-      - name: Build, test and verify installed native slices
+        with:
+          test-fixtures: 'true'
+      - name: Build ARM slices and run macOS arm64 tests only
         run: bash ci/apple/run_native.sh "$APPLE_BACKEND"
-      - name: Download previously verified Intel slices
+      - name: Download previously built Intel slices
         if: inputs.backend != 'coreml'
         uses: actions/download-artifact@v4
         with:

@@ -21,6 +21,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/apple-setup
         with:
-          simulator: 'false'
+          test-fixtures: 'true'
       - name: Build, test and verify the installed native SDK
         run: python3 command/apple/build_sdk.py --platform macosx --arch arm64 --backend cpu --verify --coverage

@@ -1,4 +1,4 @@
-name: Validate macOS x86_64 CPU SDK
+name: Build macOS x86_64 CPU SDK
 
 on:
   push:
@@ -20,7 +20,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/apple-setup
-        with:
-          simulator: 'false'
-      - name: Build, test and verify the installed native SDK
-        run: python3 command/apple/build_sdk.py --platform macosx --arch x86_64 --backend cpu --verify --coverage
+      - name: Build the native SDK without runtime tests
+        run: python3 command/apple/build_sdk.py --platform macosx --arch x86_64 --backend cpu

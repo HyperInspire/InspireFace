@@ -25,11 +25,12 @@ def main():
     if not dependency.exists():
         subprocess.run(['git', 'clone', '--recurse-submodules',
                         'https://github.com/tunmx/inspireface-3rdparty.git', str(dependency)], check=True)
-    model = ROOT / 'test_res/pack/Pikachu'
-    if not model.is_file():
-        subprocess.run(['bash', str(ROOT / 'command/download_models_general.sh'), 'Pikachu'], cwd=ROOT, check=True)
-    if not (ROOT / 'test_res/data/bulk/kun.jpg').is_file():
-        raise RuntimeError('Missing tracked Apple model test image')
+    if os.environ.get('ISF_APPLE_TEST_FIXTURES') == 'true':
+        model = ROOT / 'test_res/pack/Pikachu'
+        if not model.is_file():
+            subprocess.run(['bash', str(ROOT / 'command/download_models_general.sh'), 'Pikachu'], cwd=ROOT, check=True)
+        if not (ROOT / 'test_res/data/bulk/kun.jpg').is_file():
+            raise RuntimeError('Missing tracked Apple model test image')
     identity = dict(toolchain=output('xcodebuild', '-version'), compiler=output('xcrun', 'clang', '--version'),
                     cmake=output('cmake', '--version'), architecture=output('uname', '-m'),
                     macos=os.environ.get('MACOSX_DEPLOYMENT_TARGET', ''),
