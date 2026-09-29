@@ -2,7 +2,7 @@ name: Build Wheels
 
 on:
   push:
-    branches: ["release/wheels", "development"]
+    branches: ["release/wheels"]
   pull_request:
     branches: ["release/wheels"]
   workflow_dispatch:
