@@ -30,6 +30,7 @@ NODE_PATH="${TCPKG_COMPAT_DIR}" cmake \
     -G "Unix Makefiles" \
     -DCMAKE_TOOLCHAIN_FILE="${NATIVE_DIR}/build/cmake/ohos.toolchain.cmake" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
     -DOHOS_ARCH=arm64-v8a \
     -DOHOS_STL=c++_static \

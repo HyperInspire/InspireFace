@@ -1,0 +1,54 @@
+name: Build and package HarmonyOS SDK
+description: Cross-compile the native and ArkTS SDKs on the existing Linux runner.
+inputs:
+  version:
+    description: Release version; defaults to the version in the compiled SDK
+    default: ''
+  upload-artifact:
+    description: Upload the checked ZIP for the Release aggregation job
+    default: 'false'
+runs:
+  using: composite
+  steps:
+    - name: Cache OpenHarmony Native SDK
+      uses: actions/cache@v4
+      with:
+        path: build/harmony-tools/openharmony-6.1-linux/native
+        key: ohos-native-linux-x64-6.1.0.31-${{ hashFiles('ci/harmony/setup_sdk.py') }}
+    - name: Prepare pinned OpenHarmony toolchain
+      shell: bash
+      run: |
+        sudo apt-get install -y --no-install-recommends unzip
+        native="$GITHUB_WORKSPACE/build/harmony-tools/openharmony-6.1-linux/native"
+        python3 ci/harmony/setup_sdk.py --output "$native"
+        echo "OHOS_NATIVE_HOME=$native" >> "$GITHUB_ENV"
+        echo "$native/build-tools/cmake/bin" >> "$GITHUB_PATH"
+    - name: Compile HarmonyOS C/C++ and ArkTS libraries
+      shell: bash
+      run: |
+        bash command/build_harmonyos.sh
+        bash command/build_harmonyos_napi.sh
+    - name: Verify and package HarmonyOS SDK
+      id: package
+      shell: bash
+      env:
+        HARMONY_RELEASE_VERSION: ${{ inputs.version }}
+      run: |
+        python3 -m unittest discover -s ci/harmony/tests -v
+        python3 ci/harmony/package_sdk.py \
+          --native-install build/inspireface-harmonyos-arm64-v8a/install \
+          --napi-install build/inspireface-harmonyos-napi-arm64-v8a/install \
+          --native-sdk "$OHOS_NATIVE_HOME" \
+          --version "$HARMONY_RELEASE_VERSION" \
+          --output-dir build/release \
+          --github-output "$GITHUB_OUTPUT"
+    - name: Upload HarmonyOS release artifact
+      if: inputs.upload-artifact == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: sdk_files_harmonyos
+        path: |
+          ${{ steps.package.outputs.archive }}
+          ${{ steps.package.outputs.checksum }}
+        if-no-files-found: error
+        compression-level: 0

@@ -12,7 +12,7 @@ env:
 
 jobs:
   build_linux_x86:
-    name: Compile Linux-Ubuntu-x86
+    name: Compile Linux-Ubuntu-x86 and HarmonyOS
     runs-on: ubuntu-latest
 
     steps:
@@ -63,6 +63,12 @@ jobs:
           name: sdk_files_linux_x86
           path: |
             inspireface-linux-x86-ubuntu18-${{ env.VERSION }}.zip
+
+      - name: Build and upload HarmonyOS SDK on the same runner
+        uses: ./.github/actions/harmony-build
+        with:
+          version: ${{ env.VERSION }}
+          upload-artifact: 'true'
 
   build_armv7_armhf:
     name: Compile Linux-Armv7-armhf
@@ -638,4 +644,6 @@ jobs:
             sdk_artifacts/sdk_files_android/inspireface-android-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_android_rk356x_rk3588/inspireface-android-rk356x-rk3588-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_apple/inspireface-apple-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_harmonyos/inspireface-harmonyos-arm64-v8a-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_harmonyos/inspireface-harmonyos-arm64-v8a-${{ env.VERSION }}.zip.sha256
             sdk_artifacts/sdk_files_linux_tensorrt_cuda12_ubuntu22/inspireface-linux-tensorrt-cuda12.2_ubuntu22.04-${{ env.VERSION }}.zip
