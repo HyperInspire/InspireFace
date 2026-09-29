@@ -767,7 +767,7 @@ We released InspireFace's Android SDK on JitPack, which you can incorporate into
 
   ```groovy
   dependencies {
-      implementation 'com.github.HyperInspire:inspireface-android-sdk:1.2.3.post4'
+      implementation 'com.github.HyperInspire:inspireface-android-sdk:v1.2.4.post1'
   }
   ```
 
