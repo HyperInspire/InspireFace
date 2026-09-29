@@ -76,6 +76,7 @@ public:
     bool m_load_;
     int32_t m_cuda_device_id_;
     InferenceWrapper::SpecialBackend m_global_coreml_inference_mode_;
+    Launch::CPUEnginePowerMode m_global_cpu_engine_power_mode_{CPU_ENGINE_POWER_NORMAL};
     Launch::ImageProcessingBackend m_image_processing_backend_;
     int32_t m_image_process_aligned_width_{4};
 };
@@ -286,6 +287,20 @@ Launch::NNInferenceBackend Launch::GetGlobalCoreMLInferenceMode() const {
         INSPIRE_LOGE("Invalid CoreML inference mode");
         return NN_INFERENCE_CPU;
     }
+}
+
+int32_t Launch::SetGlobalCPUEnginePowerMode(CPUEnginePowerMode mode) {
+    if (mode != CPU_ENGINE_POWER_NORMAL && mode != CPU_ENGINE_POWER_HIGH && mode != CPU_ENGINE_POWER_LOW) {
+        return HERR_INVALID_PARAM;
+    }
+    std::lock_guard<std::mutex> lock(pImpl->mutex_);
+    pImpl->m_global_cpu_engine_power_mode_ = mode;
+    return HSUCCEED;
+}
+
+Launch::CPUEnginePowerMode Launch::GetGlobalCPUEnginePowerMode() const {
+    std::lock_guard<std::mutex> lock(pImpl->mutex_);
+    return pImpl->m_global_cpu_engine_power_mode_;
 }
 
 void Launch::BuildAppleExtensionPath(const std::string& resource_path) {

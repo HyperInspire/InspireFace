@@ -13,11 +13,28 @@
 #include "inference_wrapper_log.h"
 #include "inference_wrapper_mnn.h"
 #include "log.h"
+#include "launch.h"
 #define TAG "InferenceWrapperMNN"
 #define PRINT(...) INFERENCE_WRAPPER_LOG_PRINT(TAG, __VA_ARGS__)
 #define PRINT_E(...) INFERENCE_WRAPPER_LOG_PRINT_E(TAG, __VA_ARGS__)
 
 using namespace inspire;
+
+namespace {
+
+MNN::BackendConfig::PowerMode GetConfiguredCPUEnginePowerMode() {
+    switch (INSPIREFACE_CONTEXT->GetGlobalCPUEnginePowerMode()) {
+        case Launch::CPU_ENGINE_POWER_HIGH:
+            return MNN::BackendConfig::Power_High;
+        case Launch::CPU_ENGINE_POWER_LOW:
+            return MNN::BackendConfig::Power_Low;
+        case Launch::CPU_ENGINE_POWER_NORMAL:
+        default:
+            return MNN::BackendConfig::Power_Normal;
+    }
+}
+
+}  // namespace
 
 InferenceWrapperMNN::InferenceWrapperMNN() {
     num_threads_ = 1;
@@ -143,7 +160,7 @@ int32_t InferenceWrapperMNN::Initialize(char* model_buffer, int model_size, std:
     MNN::ScheduleConfig scheduleConfig;
     scheduleConfig.numThread = num_threads_;  // it seems, setting 1 has better performance on Android
     MNN::BackendConfig bnconfig;
-    bnconfig.power = MNN::BackendConfig::Power_High;
+    bnconfig.power = GetConfiguredCPUEnginePowerMode();
     bnconfig.precision = MNN::BackendConfig::Precision_Normal;
     if (special_backend_ == MMM_CUDA) {
         INSPIRE_LOGD("Enable CUDA");
@@ -181,10 +198,10 @@ int32_t InferenceWrapperMNN::Initialize(const std::string& model_filename, std::
     MNN::ScheduleConfig scheduleConfig;
     scheduleConfig.type = MNN_FORWARD_CPU;
     scheduleConfig.numThread = num_threads_;  // it seems, setting 1 has better performance on Android
-    // MNN::BackendConfig bnconfig;
-    // bnconfig.power = MNN::BackendConfig::Power_High;
-    // bnconfig.precision = MNN::BackendConfig::Precision_Low;
-    // scheduleConfig.backendConfig = &bnconfig;
+    MNN::BackendConfig bnconfig;
+    bnconfig.power = GetConfiguredCPUEnginePowerMode();
+    bnconfig.precision = MNN::BackendConfig::Precision_Normal;
+    scheduleConfig.backendConfig = &bnconfig;
     session_ = net_->createSession(scheduleConfig);
     if (!session_) {
         PRINT_E("Failed to create session\n");

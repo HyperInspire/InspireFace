@@ -13,6 +13,7 @@ public:
     : launch_(launch),
       rockchip_path_(launch->GetRockchipDmaHeapPath()),
       coreml_mode_(launch->GetGlobalCoreMLInferenceMode()),
+      cpu_engine_mode_(launch->GetGlobalCPUEnginePowerMode()),
       cuda_device_id_(launch->GetCudaDeviceId()),
       detect_pixels_(launch->GetFaceDetectPixelList()),
       detect_models_(launch->GetFaceDetectModelList()),
@@ -22,6 +23,7 @@ public:
     ~LaunchConfigurationReset() {
         launch_->SetRockchipDmaHeapPath(rockchip_path_);
         launch_->SetGlobalCoreMLInferenceMode(coreml_mode_);
+        launch_->SetGlobalCPUEnginePowerMode(cpu_engine_mode_);
         launch_->SetCudaDeviceId(cuda_device_id_);
         launch_->SetFaceDetectPixelList(detect_pixels_);
         launch_->SetFaceDetectModelList(detect_models_);
@@ -33,6 +35,7 @@ private:
     std::shared_ptr<inspire::Launch> launch_;
     std::string rockchip_path_;
     inspire::Launch::NNInferenceBackend coreml_mode_;
+    inspire::Launch::CPUEnginePowerMode cpu_engine_mode_;
     int32_t cuda_device_id_;
     std::vector<int32_t> detect_pixels_;
     std::vector<std::string> detect_models_;
@@ -95,4 +98,42 @@ TEST_CASE("C++ Launch configuration getters round-trip and restore global state"
     CHECK(launch->GetImageProcessingBackend() == inspire::Launch::IMAGE_PROCESSING_CPU);
     launch->SetImageProcessAlignedWidth(16);
     CHECK(launch->GetImageProcessAlignedWidth() == 16);
+}
+
+TEST_CASE("C++ Launch CPU engine power modes default to Normal and support inference", "[cpp_api][contract][launch][configuration][cpu_engine]") {
+    using Launch = inspire::Launch;
+    const auto launch = Launch::GetInstance();
+    LaunchConfigurationReset reset(launch);
+    REQUIRE(launch->GetGlobalCPUEnginePowerMode() == Launch::CPU_ENGINE_POWER_NORMAL);
+
+    const auto image = inspirecv::Image::Create(GET_DATA("data/bulk/kun.jpg"));
+    REQUIRE(!image.Empty());
+    auto process = inspirecv::FrameProcess::Create(image, inspirecv::BGR, inspirecv::ROTATION_0);
+    inspire::CustomPipelineParameter parameter;
+    parameter.enable_recognition = true;
+    std::vector<float> reference;
+
+    for (const auto mode : {Launch::CPU_ENGINE_POWER_NORMAL, Launch::CPU_ENGINE_POWER_HIGH, Launch::CPU_ENGINE_POWER_LOW}) {
+        CAPTURE(mode);
+        REQUIRE(launch->SetGlobalCPUEnginePowerMode(mode) == HSUCCEED);
+        CHECK(launch->GetGlobalCPUEnginePowerMode() == mode);
+        CHECK(launch->SetGlobalCPUEnginePowerMode(static_cast<Launch::CPUEnginePowerMode>(-1)) == HERR_INVALID_PARAM);
+        CHECK(launch->SetGlobalCPUEnginePowerMode(static_cast<Launch::CPUEnginePowerMode>(99)) == HERR_INVALID_PARAM);
+        CHECK(launch->GetGlobalCPUEnginePowerMode() == mode);
+
+        auto session = inspire::Session::Create(inspire::DETECT_MODE_ALWAYS_DETECT, 1, parameter);
+        std::vector<inspire::FaceTrackWrap> faces;
+        REQUIRE(session.FaceDetectAndTrack(process, faces) == HSUCCEED);
+        REQUIRE(faces.size() == 1);
+        inspire::FaceEmbedding feature{};
+        REQUIRE(session.FaceFeatureExtract(process, faces[0], feature, true) == HSUCCEED);
+        REQUIRE(!feature.embedding.empty());
+        if (reference.empty()) {
+            reference = feature.embedding;
+        } else {
+            float similarity = 0.0f;
+            REQUIRE(inspire::FeatureHubDB::CosineSimilarity(reference, feature.embedding, similarity, true) == HSUCCEED);
+            CHECK(similarity == Approx(1.0f).margin(1e-5f));
+        }
+    }
 }
