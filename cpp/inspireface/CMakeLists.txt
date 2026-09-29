@@ -9,9 +9,9 @@ option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
-# Platform language bindings are separate ABI adapters.  Do not absorb them
-# into the core archive through the recursive source glob: the HarmonyOS
-# Node-API module owns its registration entry point and links the core archive.
+# Platform language bindings are configured explicitly rather than through the
+# recursive glob. Android Java sources are added to the core when enabled;
+# desktop JNI and the HarmonyOS Node-API module link the core separately.
 list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/platform/ohos/napi/inspireface_napi\\.cpp$")
 list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/platform/jni/portable/.*\\.cpp$")
 # The factory has used InferenceWrapperRKNNAdapter for both RKNN generations

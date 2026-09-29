@@ -275,14 +275,14 @@ After the compilation is complete, `inspireface.framework` will be placed in the
 
 ### Android Compilation
 
-You can compile for Android using the following command, but first you need to set your Android NDK path:
+With a JDK (8 or later), CMake and Python 3 installed, set your Android NDK path and build:
 
 ```
 export ANDROID_NDK=YOUR_ANDROID_NDK_PATH
 bash command/build_android.sh
 ```
 
-After the compilation is complete, arm64-v8a and armeabi-v7a libraries will be placed in the `build/inspireface-android` directory.
+The `build/inspireface-android` directory contains arm64-v8a, armeabi-v7a and x86_64 libraries, C/C++ headers, and `java/inspireface.jar`. Each ABI directory contains a single `libInspireFace.so` with the C/C++ API, legacy Android JNI and complete Java binding.
 
 ### HarmonyOS Compilation and ArkTS Usage
 
@@ -722,7 +722,24 @@ Choose the native directory matching the running JVM's OS and architecture. The 
 
 Image and feature buffers use direct `ByteBuffer` storage in native byte order. Input pixels are retained until the stream is released or its buffer is replaced. Borrowed output buffers retain the C API's validity limits; close native resources explicitly and serialize operations on each resource. The existing Android API remains available separately below.
 
+CPU inference defaults to `NORMAL`. Configure the process-wide policy before creating sessions (the same API works on Android):
+
+```java
+import com.insightface.sdk.inspireface.jni.CPUEngine;
+
+CPUEngine.setGlobalPowerMode(CPUEngine.PowerMode.NORMAL); // NORMAL, HIGH or LOW
+CPUEngine.PowerMode mode = CPUEngine.getGlobalPowerMode();
+```
+
+The setting applies to subsequently initialized CPU runtimes and survives launch/reload/terminate. Existing runtimes, model thread counts and precision are unchanged. Serialize configuration with session/model initialization.
+
 ### Android Java API
+
+For the complete C API and `CPUEngine`, build locally with `command/build_android.sh`. Copy `java/inspireface.jar` to your app's `libs/`, add `implementation files('libs/inspireface.jar')`, and copy `lib/<abi>/libInspireFace.so` into `app/src/main/jniLibs/<abi>/` for each ABI. The JAR automatically loads `InspireFace` on Android; all JNI entry points are built into that one library. Remove `libInspireFaceJNI.so` when upgrading from the earlier two-library build. Use the same `com.insightface.sdk.inspireface.jni` API shown above and the JAR from the matching build. The low-level binding does not require the separate Android SDK dependency below.
+
+For builds with R8/ProGuard enabled, copy `java/consumer-rules.pro` into the app module and add it to `proguardFiles` so JNI class and field names are preserved.
+
+Existing apps can continue using the legacy Android API with the rebuilt core library. The supplementary capture/snapshot sources remain in `java/com/insightface/sdk/inspireface/`. When combining both APIs, package only one matching copy of `libInspireFace.so` and explicitly manage native resource ownership.
 
 We have an [Android SDK project](https://github.com/HyperInspire/inspireface-android-sdk) that integrates pre-compiled dynamic libraries, and you can use it directly.
 

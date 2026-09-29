@@ -2,13 +2,15 @@ package com.insightface.sdk.inspireface.jni;
 
 import java.io.File;
 
-/** Loads the JNI library for the running JVM architecture, not the OS architecture. */
+/** Android embeds JNI in the core; desktop JVMs use the separate JNI adapter. */
 final class NativeLibrary {
     private NativeLibrary() {}
     static void load() {
         String path = System.getProperty("inspireface.native.path");
         if (path == null || path.isEmpty()) {
-            System.loadLibrary("InspireFaceJNI");
+            boolean android = "Android Runtime".equals(System.getProperty("java.runtime.name"))
+                    || "Dalvik".equals(System.getProperty("java.vm.name"));
+            System.loadLibrary(android ? "InspireFace" : "InspireFaceJNI");
         } else {
             File library = new File(path);
             if (!library.isAbsolute()) {

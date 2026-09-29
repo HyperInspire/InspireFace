@@ -15,6 +15,7 @@
 #include <android/bitmap.h>
 #include "../common/common.h"
 #include "../common/jni_data_utils.h"
+#include "../portable/support.h"
 #include "c_api/inspireface.h"
 #include "log.h"
 #include "herror.h"
@@ -103,6 +104,21 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_GlobalLaunch)(JNIEnv *env, jobje
         return false;
     }
     return true;
+}
+
+JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_GlobalReload)(JNIEnv *env, jobject thiz, jstring resourcePath) {
+    try {
+        isf_jni::Context context;
+        const char *path = context.string(env, resourcePath);
+        isf_jni::Require(env, path != nullptr, "Resource path must not be null");
+        auto result = HFReloadInspireFace(path);
+        if (result != HSUCCEED) {
+            INSPIRE_LOGE("Failed to reload InspireFace, error code: %d", result);
+            return JNI_FALSE;
+        }
+        return JNI_TRUE;
+    } catch (...) { isf_jni::TranslateException(env); }
+    return JNI_FALSE;
 }
 
 /**
@@ -974,10 +990,9 @@ JNIEXPORT jboolean INSPIRE_FACE_JNI(InspireFace_FeatureHubInsertFeature)(JNIEnv 
  * @param env The JNI environment.
  * @param thiz The Java object.
  * @param searchFeature The search feature object.
- * @param confidence The confidence.
  * @return The search result object.
  */
-JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceSearch)(JNIEnv *env, jobject thiz, jobject searchFeature, jfloat confidence) {
+JNIEXPORT jobject INSPIRE_FACE_JNI(InspireFace_FeatureHubFaceSearch)(JNIEnv *env, jobject thiz, jobject searchFeature) {
     // Get FaceFeature class and fields
     jclass featureClass = env->GetObjectClass(searchFeature);
     jfieldID dataField = env->GetFieldID(featureClass, "data", "[F");

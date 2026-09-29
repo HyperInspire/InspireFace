@@ -28,6 +28,22 @@ public final class ContractTest {
         throw new AssertionError("Expected argument validation failure");
     }
     private static ByteBuffer bytes(int count) { return ByteBuffer.allocateDirect(count).order(ByteOrder.nativeOrder()); }
+    private static void cpuEngine() throws Exception {
+        // Exercise loading/configuration before any C API call or model launch.
+        expect(CPUEngine.getGlobalPowerMode() == CPUEngine.PowerMode.NORMAL);
+        java.lang.reflect.Method setter = CPUEngine.class.getDeclaredMethod("nativeSetGlobalPowerMode", int.class);
+        setter.setAccessible(true);
+        for (CPUEngine.PowerMode mode : CPUEngine.PowerMode.values()) {
+            CPUEngine.setGlobalPowerMode(mode);
+            expect(CPUEngine.getGlobalPowerMode() == mode);
+            bad(() -> CPUEngine.setGlobalPowerMode(null));
+            for (int invalid : new int[] {-1, 3, Integer.MAX_VALUE}) {
+                expect(((Integer) setter.invoke(null, invalid)).longValue() == HERR_INVALID_PARAM);
+                expect(CPUEngine.getGlobalPowerMode() == mode);
+            }
+        }
+        CPUEngine.setGlobalPowerMode(CPUEngine.PowerMode.NORMAL);
+    }
     private static String text(ByteBuffer buffer) {
         ByteBuffer view = buffer.duplicate();
         byte[] value = new byte[view.remaining()];
@@ -192,16 +208,19 @@ public final class ContractTest {
         } finally { ok(HFFeatureHubDataDisable()); }
     }
     private static void model(String model, String image) {
+        CPUEngine.PowerMode powerMode = CPUEngine.getGlobalPowerMode();
         HFResourcePackInfo pack = new HFResourcePackInfo();
         // Older encrypted packs can load while the optional validator reports unsupported metadata.
         expect(HFValidateResourcePack(model, pack) >= 0);
         pack.structVersion = 99;
         expect(HFValidateResourcePack(model, pack) == HERR_INVALID_PARAM);
         ok(HFLaunchInspireFace(model));
+        expect(CPUEngine.getGlobalPowerMode() == powerMode);
         try {
             int[] value = new int[1]; float[] score = new float[1];
             ok(HFQueryInspireFaceLaunchStatus(value)); expect(value[0] != 0);
             ok(HFReloadInspireFace(model));
+            expect(CPUEngine.getGlobalPowerMode() == powerMode);
             ok(HFSwitchLandmarkEngine(HF_LANDMARK_HYPLMV2_0_25));
             HFSessionCustomParameter parameters = new HFSessionCustomParameter();
             parameters.enable_recognition = 1; parameters.enable_liveness = 1;
@@ -337,14 +356,23 @@ public final class ContractTest {
                     ok(HFSessionClearTrackingFace(session[0]));
                 } finally { ok(HFReleaseImageStream(stream[0])); ok(HFReleaseImageBitmap(bitmap[0])); }
             } finally { ok(HFReleaseInspireFaceSession(session[0])); }
-        } finally { ok(HFTerminateInspireFace()); }
+        } finally {
+            ok(HFTerminateInspireFace());
+            expect(CPUEngine.getGlobalPowerMode() == powerMode);
+        }
     }
     public static void main(String[] args) throws Exception {
         Path output = Files.createTempDirectory("inspireface-jni-");
         try {
+            cpuEngine();
             metadata();
             images(output);
-            model(args[0], args[1]);
+            try {
+                for (CPUEngine.PowerMode mode : CPUEngine.PowerMode.values()) {
+                    CPUEngine.setGlobalPowerMode(mode);
+                    model(args[0], args[1]);
+                }
+            } finally { CPUEngine.setGlobalPowerMode(CPUEngine.PowerMode.NORMAL); }
             int[] count = new int[1];
             ok(HFDeBugGetUnreleasedSessionsCount(count)); expect(count[0] == 0);
             ok(HFDeBugGetUnreleasedStreamsCount(count)); expect(count[0] == 0);
