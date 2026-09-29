@@ -13,6 +13,7 @@ file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 # into the core archive through the recursive source glob: the HarmonyOS
 # Node-API module owns its registration entry point and links the core archive.
 list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/platform/ohos/napi/inspireface_napi\\.cpp$")
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/platform/jni/portable/.*\\.cpp$")
 # The factory has used InferenceWrapperRKNNAdapter for both RKNN generations
 # since the adapter was introduced. Do not compile the older parallel
 # implementation, which has no construction site and a separate unsafe output

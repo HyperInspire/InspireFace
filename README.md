@@ -697,7 +697,32 @@ In the project, more usage examples are provided:
 - `sample_face_recognition.py`: Facial recognition example
 - `sample_face_track_from_video.py`: Facial tracking from video stream example
 
-### Java and Android platform API
+### Java Sample (JVM, non-Android)
+
+The portable Java binding provides the complete C API through JNI, with a Java 8-compatible JAR and native libraries built for the target OS and CPU architecture. Users do not need to write JNI code.
+
+Build with a JDK, CMake and Python 3 installed:
+
+```bash
+bash command/build_java.sh
+# To also run the JVM contract tests with the local test models:
+# ISF_JAVA_TESTS=ON bash command/build_java.sh
+```
+
+The SDK is installed in `build/java-sdk/install/Java`, containing `inspireface.jar`, generated Java sources, an API manifest, native libraries and a [face detection example](java/examples/DetectFaces.java). For example, on macOS arm64:
+
+```bash
+cd build/java-sdk/install/Java
+javac -cp inspireface.jar examples/DetectFaces.java
+java -Djava.library.path=native/macos-arm64 -cp inspireface.jar:examples \
+    DetectFaces /path/to/Pikachu /path/to/face.jpg
+```
+
+Choose the native directory matching the running JVM's OS and architecture. The JAR is shared across targets; the JNI library and its core SDK dependency must come from the same build. Model files are supplied separately. The low-level API uses `Native`, `NativeTypes` and `NativeConstants` in `com.insightface.sdk.inspireface.jni`; `InspireFaceException.check(status)` optionally converts C error codes into exceptions.
+
+Image and feature buffers use direct `ByteBuffer` storage in native byte order. Input pixels are retained until the stream is released or its buffer is replaced. Borrowed output buffers retain the C API's validity limits; close native resources explicitly and serialize operations on each resource. The existing Android API remains available separately below.
+
+### Android Java API
 
 We have an [Android SDK project](https://github.com/HyperInspire/inspireface-android-sdk) that integrates pre-compiled dynamic libraries, and you can use it directly.
 

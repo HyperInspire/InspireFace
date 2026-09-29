@@ -63,6 +63,18 @@ option(ISF_INSTALL_CPP_HEADER "Install cpp api header file." ON)
 
 option(ISF_BUILD_APPLE_FRAMEWORK "Build the Apple framework and language adapters alongside the original SDK." OFF)
 option(ISF_BUILD_APPLE_TESTS "Build Apple language contract tests." OFF)
+option(ISF_BUILD_JAVA "Build the portable JNI library and Java 8-compatible JAR." OFF)
+option(ISF_BUILD_JAVA_TESTS "Build and run JVM JNI contract tests on the host." OFF)
+if(ISF_BUILD_JAVA_TESTS AND NOT ISF_BUILD_JAVA)
+    message(FATAL_ERROR "ISF_BUILD_JAVA_TESTS requires ISF_BUILD_JAVA")
+endif()
+if(ISF_BUILD_JAVA AND (IOS OR CMAKE_SYSTEM_NAME STREQUAL "iOS" OR OHOS))
+    message(FATAL_ERROR "The portable JNI adapter requires a JVM platform")
+endif()
+if(ISF_BUILD_JAVA)
+    # JNI can also link a static core and its dependencies into a shared adapter.
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
 if(ISF_BUILD_APPLE_FRAMEWORK AND NOT APPLE)
     message(FATAL_ERROR "The Apple framework target requires an Apple platform")
 endif()
@@ -356,6 +368,10 @@ get_property(InspireFace TARGET InspireFace PROPERTY InspireFace)
 
 if(ISF_BUILD_OHOS_NAPI)
     add_subdirectory(cpp/inspireface/platform/ohos/napi)
+endif()
+
+if(ISF_BUILD_JAVA)
+    add_subdirectory(cpp/inspireface/platform/jni/portable)
 endif()
 
 # Add a child project: Samples
