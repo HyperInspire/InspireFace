@@ -182,10 +182,6 @@ public:
         } else {
             ret = m_nn_inference_->Initialize(model.buffer, model.bufferSize, m_input_tensor_info_list_, m_output_tensor_info_list_);
         }
-        if (ret != InferenceWrapper::WrapperOk) {
-            INSPIRE_LOGE("NN Initialize fail");
-            return ret;
-        }
 
         InputTensorInfo input_tensor_info(getData<std::string>("input_layer"), tensor_type, getData<bool>("nchw"));
         int width = input_size[0];
