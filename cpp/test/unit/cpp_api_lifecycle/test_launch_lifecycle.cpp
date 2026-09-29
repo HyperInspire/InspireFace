@@ -10,12 +10,16 @@ namespace {
 
 class CppLaunchReset {
 public:
-    CppLaunchReset() {
+    CppLaunchReset() : cpu_engine_mode_(inspire::Launch::GetInstance()->GetGlobalCPUEnginePowerMode()) {
         inspire::Launch::GetInstance()->Unload();
     }
     ~CppLaunchReset() {
         inspire::Launch::GetInstance()->Unload();
+        inspire::Launch::GetInstance()->SetGlobalCPUEnginePowerMode(cpu_engine_mode_);
     }
+
+private:
+    inspire::Launch::CPUEnginePowerMode cpu_engine_mode_;
 };
 
 }  // namespace
@@ -30,6 +34,23 @@ TEST_CASE("C++ component versions are available before launch", "[cpp_api][contr
     CHECK(inspire::GetComponentVersionsString().find("inspireface=") == 0);
     CHECK_FALSE(inspire::GetDiagnosticInfo().empty());
     CHECK_FALSE(launch->isMLoad());
+}
+
+TEST_CASE("C++ CPU engine power configuration is available before launch and survives resource reloads", "[cpp_api][contract][lifecycle][cpu_engine]") {
+    CppLaunchReset reset;
+    using Launch = inspire::Launch;
+    const auto launch = Launch::GetInstance();
+    REQUIRE_FALSE(launch->isMLoad());
+    REQUIRE(launch->GetGlobalCPUEnginePowerMode() == Launch::CPU_ENGINE_POWER_NORMAL);
+    REQUIRE(launch->SetGlobalCPUEnginePowerMode(Launch::CPU_ENGINE_POWER_LOW) == HSUCCEED);
+    CHECK_FALSE(launch->isMLoad());
+
+    REQUIRE(launch->Load(GET_RUNTIME_FULLPATH_NAME) == HSUCCEED);
+    CHECK(launch->GetGlobalCPUEnginePowerMode() == Launch::CPU_ENGINE_POWER_LOW);
+    REQUIRE(launch->Reload(GET_RUNTIME_FULLPATH_NAME) == HSUCCEED);
+    CHECK(launch->GetGlobalCPUEnginePowerMode() == Launch::CPU_ENGINE_POWER_LOW);
+    launch->Unload();
+    CHECK(launch->GetGlobalCPUEnginePowerMode() == Launch::CPU_ENGINE_POWER_LOW);
 }
 
 TEST_CASE("C++ Launch rejects unavailable archives without changing state", "[cpp_api][contract][lifecycle][boundary]") {

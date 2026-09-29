@@ -5,12 +5,28 @@ on:
     branches: ["release/wheels"]
   pull_request:
     branches: ["release/wheels"]
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Reuse artifacts from this Build Wheels run; leave empty to build"
+        type: string
+        default: ""
+      expected_version:
+        description: "Expected package version (required when reusing artifacts)"
+        type: string
+        default: ""
+      publish:
+        description: "Publish validated wheels to PyPI"
+        type: boolean
+        default: false
 
-env:
-  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+permissions:
+  contents: read
+  actions: read
 
 jobs:
   build_manylinux2014_x86_64:
+    if: ${{ inputs.source_run_id == '' }}
     name: Compile manylinux2014_x86_64
     runs-on: ubuntu-latest
     
@@ -35,10 +51,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: manylinux2014-wheels
-          path: python/dist/*
-          retention-days: 1
+          path: python/dist/*.whl
+          if-no-files-found: error
+          retention-days: 7
 
   build_manylinux2014_aarch64:
+    if: ${{ inputs.source_run_id == '' }}
     name: Compile manylinux2014_aarch64
     runs-on: ubuntu-latest
     
@@ -71,24 +89,23 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: manylinux2014-aarch64-wheels
-          path: python/dist/*
-          retention-days: 1
+          path: python/dist/*.whl
+          if-no-files-found: error
+          retention-days: 7
 
   build_macos_arm64:
+    if: ${{ inputs.source_run_id == '' }}
     name: Compile MacOS-arm64
     runs-on: macos-14
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.12"
           
       - name: Update submodules
         run: |
@@ -107,25 +124,24 @@ jobs:
       - name: Upload wheel artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: macos-arm64-wheels-py${{ matrix.python-version }}
-          path: python/dist/*
-          retention-days: 1
+          name: macos-arm64-wheels
+          path: python/dist/*.whl
+          if-no-files-found: error
+          retention-days: 7
 
   build_macos_x86_64:
+    if: ${{ inputs.source_run_id == '' }}
     name: Compile MacOS-x86_64
     runs-on: macos-15-intel
-    strategy:
-      matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
     
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.12"
           
       - name: Update submodules
         run: |
@@ -144,30 +160,96 @@ jobs:
       - name: Upload wheel artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: macos-x86_64-wheels-py${{ matrix.python-version }}
-          path: python/dist/*
-          retention-days: 1
+          name: macos-x86_64-wheels
+          path: python/dist/*.whl
+          if-no-files-found: error
+          retention-days: 7
 
   upload_to_pypi:
-    name: Upload Wheels to PyPI
+    name: Validate and Publish Wheels
+    if: >-
+      ${{ !cancelled() &&
+          ((github.event_name == 'workflow_dispatch' && inputs.source_run_id != '') ||
+           (needs.build_manylinux2014_x86_64.result == 'success' &&
+            needs.build_manylinux2014_aarch64.result == 'success' &&
+            needs.build_macos_arm64.result == 'success' &&
+            needs.build_macos_x86_64.result == 'success')) }}
     needs: [build_manylinux2014_x86_64, build_manylinux2014_aarch64, build_macos_arm64, build_macos_x86_64]
     runs-on: ubuntu-latest
+    concurrency:
+      group: inspireface-pypi-publish
+      cancel-in-progress: false
     
     steps:
-      - name: Download all wheels
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Check source run
+        if: ${{ inputs.source_run_id != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+        run: |
+          python ci/pypi/check_source_run.py
+
+      # Never extract separate artifacts over the same wheel filename.
+      - name: Download wheels into separate directories
         uses: actions/download-artifact@v4
         with:
-          path: dist
-          merge-multiple: true
-          
-      - name: Set up Python
-        uses: actions/setup-python@v4
+          path: wheel-artifacts
+          pattern: "*wheels*"
+          merge-multiple: false
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.source_run_id || github.run_id }}
+
+      - name: Check wheel collection logic
+        run: python -m unittest discover -s ci/pypi/tests -v
+
+      - name: Collect and validate four platform wheels
+        env:
+          SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+        run: |
+          args=(--artifacts wheel-artifacts --output dist)
+          if [[ -n "$EXPECTED_VERSION" ]]; then
+            args+=(--version "$EXPECTED_VERSION")
+          fi
+          if [[ -n "$SOURCE_RUN_ID" ]]; then
+            args+=(--legacy-macos-python 3.12)
+          fi
+          python ci/pypi/prepare_wheels.py "${args[@]}"
+
+      - name: Check PyPI metadata
+        run: |
+          python -m pip install twine
+          python -m twine check dist/*.whl
+
+      - name: Save validated release files
+        uses: actions/upload-artifact@v4
         with:
-          python-version: "3.x"
+          name: pypi-release
+          path: dist/*.whl
+          if-no-files-found: error
+          retention-days: 7
+          overwrite: true
           
       - name: Upload to PyPI
+        if: >-
+          ${{ (github.event_name == 'push' &&
+               (github.ref == 'refs/heads/release/wheels' || github.ref == 'refs/heads/development')) ||
+              (github.event_name == 'workflow_dispatch' && inputs.publish) }}
         env:
-          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          pip install twine
-          find dist -name "*.whl" -exec twine upload {} -u __token__ -p $PYPI_API_TOKEN \;
+          if [[ -z "$TWINE_PASSWORD" ]]; then
+            echo "::error::Repository secret PYPI_API_TOKEN is not configured"
+            exit 1
+          fi
+          python -m twine upload --non-interactive dist/*.whl

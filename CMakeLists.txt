@@ -61,6 +61,27 @@ endif()
 # Install cpp api header file
 option(ISF_INSTALL_CPP_HEADER "Install cpp api header file." ON)
 
+option(ISF_BUILD_APPLE_FRAMEWORK "Build the Apple framework and language adapters alongside the original SDK." OFF)
+option(ISF_BUILD_APPLE_TESTS "Build Apple language contract tests." OFF)
+option(ISF_BUILD_JAVA "Build the portable JNI library and Java 8-compatible JAR." OFF)
+option(ISF_BUILD_JAVA_TESTS "Build and run JVM JNI contract tests on the host." OFF)
+if(ISF_BUILD_JAVA_TESTS AND NOT ISF_BUILD_JAVA)
+    message(FATAL_ERROR "ISF_BUILD_JAVA_TESTS requires ISF_BUILD_JAVA")
+endif()
+if(ISF_BUILD_JAVA AND (IOS OR CMAKE_SYSTEM_NAME STREQUAL "iOS" OR OHOS))
+    message(FATAL_ERROR "The portable JNI adapter requires a JVM platform")
+endif()
+if(ISF_BUILD_JAVA)
+    # JNI can also link a static core and its dependencies into a shared adapter.
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+if(ISF_BUILD_APPLE_FRAMEWORK AND NOT APPLE)
+    message(FATAL_ERROR "The Apple framework target requires an Apple platform")
+endif()
+if(ISF_BUILD_APPLE_TESTS AND NOT ISF_BUILD_APPLE_FRAMEWORK)
+    message(FATAL_ERROR "ISF_BUILD_APPLE_TESTS requires ISF_BUILD_APPLE_FRAMEWORK")
+endif()
+
 # Set the ISF_THIRD_PARTY_DIR variable to allow it to be set externally from the command line, or use the default path if it is not set
 set(ISF_THIRD_PARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty" CACHE PATH "Path to the third-party libraries directory")
 
@@ -185,9 +206,10 @@ if(ISF_BUILD_OHOS_NAPI AND NOT OHOS)
     message(FATAL_ERROR "ISF_BUILD_OHOS_NAPI requires the OpenHarmony toolchain")
 endif()
 
-# Keep the migration opt-in until InspireCV Task preprocessing has passed the
-# same end-to-end accuracy and performance gates as MNN ImageProcess.
-option(ISF_ENABLE_INSPIRECV_TASK_PREPROCESS "Use InspireCV Task API for image preprocessing." OFF)
+# Use Task preprocessing by default; OFF retains the MNN ImageProcess fallback.
+option(ISF_ENABLE_INSPIRECV_TASK_PREPROCESS "Use InspireCV Task API for image preprocessing." ON)
+# InspireCV selects NEON kernels only when the target architecture supports them.
+option(INSPIRECV_TASK_ENABLE_ARM_NEON "Enable ARM NEON imageprocess kernels" ON)
 
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/)
 
@@ -214,18 +236,14 @@ if(OHOS)
     set(PLAT ohos)
 elseif(APPLE)
     if(IOS)
-        add_definitions(-DTARGET_OS_IOS)
-        message(IOS_3RDPARTY=${IOS_3RDPARTY})
+        add_definitions(-DTARGET_OS_IOS=1)
         set(CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO)
         set(CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE NO)
-            add_definitions(-DTARGET_OS_IOS)
-        message(IOS_3RDPARTY=${IOS_3RDPARTY})
-        set(CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH NO)
-        set(CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE NO)
-
-        set(MNN_FRAMEWORK_PATH "${IOS_3RDPARTY}/MNN.framework")
-        include_directories("${MNN_FRAMEWORK_PATH}/")
-        link_directories(${IOS_3RDPARTY})
+        if(NOT DEFINED MNN_STATIC_PATH)
+            set(MNN_FRAMEWORK_PATH "${IOS_3RDPARTY}/MNN.framework")
+            include_directories("${MNN_FRAMEWORK_PATH}/")
+            link_directories(${IOS_3RDPARTY})
+        endif()
     else()
         message("Use apple device")
         set(PLAT darwin)
@@ -352,6 +370,10 @@ if(ISF_BUILD_OHOS_NAPI)
     add_subdirectory(cpp/inspireface/platform/ohos/napi)
 endif()
 
+if(ISF_BUILD_JAVA)
+    add_subdirectory(cpp/inspireface/platform/jni/portable)
+endif()
+
 # Add a child project: Samples
 if (ISF_BUILD_WITH_SAMPLE)
     add_subdirectory(cpp/sample)  # Add a child project: Samples
@@ -383,6 +405,8 @@ message(STATUS "\t ISF_BUILD_LINUX_ARM7: ${ISF_BUILD_LINUX_ARM7}")
 message(STATUS "\t ISF_BUILD_LINUX_AARCH64: ${ISF_BUILD_LINUX_AARCH64}")
 message(STATUS "\t ISF_BUILD_WITH_TEST: ${ISF_BUILD_WITH_TEST}")
 message(STATUS "\t ISF_BUILD_WITH_SAMPLE: ${ISF_BUILD_WITH_SAMPLE}")
+message(STATUS "\t ISF_ENABLE_INSPIRECV_TASK_PREPROCESS: ${ISF_ENABLE_INSPIRECV_TASK_PREPROCESS}")
+message(STATUS "\t INSPIRECV_TASK_ENABLE_ARM_NEON: ${INSPIRECV_TASK_ENABLE_ARM_NEON}")
 message(STATUS "\t OpenCV_DIR: ${OpenCV_DIR}")
 if(ISF_ENABLE_OPENCV)
     message(STATUS "\t OpenCV: Enabled")

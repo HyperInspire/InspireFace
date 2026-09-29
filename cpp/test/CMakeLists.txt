@@ -148,6 +148,7 @@ if(ISF_ENFORCE_CPP_API_TEST_COVERAGE)
             SetRockchipDmaHeapPath GetRockchipDmaHeapPath
             ConfigurationExtensionPath GetExtensionPath
             SetGlobalCoreMLInferenceMode GetGlobalCoreMLInferenceMode BuildAppleExtensionPath
+            SetGlobalCPUEnginePowerMode GetGlobalCPUEnginePowerMode
             SetCudaDeviceId GetCudaDeviceId SetFaceDetectPixelList GetFaceDetectPixelList
             SetFaceDetectModelList GetFaceDetectModelList SwitchLandmarkEngine
             SwitchImageProcessingBackend GetImageProcessingBackend

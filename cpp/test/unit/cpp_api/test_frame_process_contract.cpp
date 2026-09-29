@@ -207,3 +207,39 @@ TEST_CASE("C++ FrameProcess rejects singular transforms and honors packed destin
     process.SetDestFormat(inspirecv::NV21);
     CHECK(process.ExecuteImageScaleProcessing(0.25f, false).Empty());
 }
+
+TEST_CASE("C++ FrameProcess expands RGB and BGR with correct color order and opaque alpha",
+          "[cpp_api][contract][frame_process][consistency]") {
+    const int width = 4;
+    const int height = 2;
+    const std::array<uint8_t, width * height * 3> pixels = {{
+      7, 31, 211, 43, 101, 239, 67, 127, 197, 83, 151, 181,
+      11, 37, 223, 47, 103, 241, 71, 131, 199, 89, 157, 191}};
+    for (const auto source : {inspirecv::RGB, inspirecv::BGR}) {
+        auto process = inspirecv::FrameProcess::Create(pixels.data(), height, width, source);
+        // Switch formats on the same owner and reuse each converter repeatedly.
+        for (const auto destination : {inspirecv::RGBA, inspirecv::BGRA, inspirecv::RGBA}) {
+            INFO("source=" << source << ", destination=" << destination);
+            process.SetDestFormat(destination);
+            const bool reverse = (source == inspirecv::RGB && destination == inspirecv::BGRA) ||
+                                 (source == inspirecv::BGR && destination == inspirecv::RGBA);
+            auto identity = inspirecv::TransformMatrix::Create();
+            const std::array<inspirecv::Image, 3> outputs = {{
+              process.ExecuteImageScaleProcessing(1.0f, false),
+              process.ExecuteImageScaleProcessing(1.0f, false),
+              process.ExecuteImageAffineProcessing(identity, width, height)}};
+            for (const auto& output : outputs) {
+                REQUIRE(!output.Empty());
+                REQUIRE(output.Width() == width);
+                REQUIRE(output.Height() == height);
+                REQUIRE(output.Channels() == 4);
+                for (size_t index = 0; index < width * height; ++index) {
+                    CHECK(output.Data()[index * 4] == pixels[index * 3 + (reverse ? 2 : 0)]);
+                    CHECK(output.Data()[index * 4 + 1] == pixels[index * 3 + 1]);
+                    CHECK(output.Data()[index * 4 + 2] == pixels[index * 3 + (reverse ? 0 : 2)]);
+                    CHECK(output.Data()[index * 4 + 3] == 255);
+                }
+            }
+        }
+    }
+}

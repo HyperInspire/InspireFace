@@ -1,35 +1,26 @@
-name: Build MacOS-arm64
+name: Validate macOS arm64 CPU SDK
 
 on:
   push:
     branches: ["feature/macos_arm64"]
+  workflow_dispatch:
 
-# Set the global GitHub token environment variable
+permissions:
+  contents: read
+
 env:
-  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+  DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+  MACOSX_DEPLOYMENT_TARGET: '14.0'
+  ISF_BUILD_JOBS: '3'
 
 jobs:
   build:
-    name: Compile MacOS-arm64
-    runs-on: macos-14
-
+    runs-on: macos-15
+    timeout-minutes: 90
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      # Step 2: Synchronize and update submodules recursively
-      - name: Update submodules
-        run: |
-          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
-
-      # Step 3: Install necessary dependencies for building the CMake project
-      - name: Install Dependencies
-        run: |
-          brew install cmake
-
-      # Step 4: Start building the SDK
-      - name: Start Building the InspireFace-MacOS-arm64
-        run: |
-          bash command/build_macos_arm64.sh
-          ls build
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/apple-setup
+        with:
+          test-fixtures: 'true'
+      - name: Build, test and verify the installed native SDK
+        run: python3 command/apple/build_sdk.py --platform macosx --arch arm64 --backend cpu --verify --coverage

@@ -37,3 +37,8 @@ build_*/
 # Python bytecode caches
 __pycache__/
 *.py[cod]
+
+# Local execution plans, investigation notes, and test reports
+/prompt_docs/
+*.profraw
+*.profdata

@@ -1,0 +1,105 @@
+name: Apple SDK validation and packaging
+
+on:
+  workflow_call:
+    inputs:
+      backend:
+        type: string
+        default: cpu
+        description: cpu, coreml, or all; publishing only accepts cpu
+      version:
+        type: string
+        default: ''
+        description: Release version or v-prefixed tag
+      publish_assets:
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+  IOS_DEPLOYMENT_TARGET: '11.0'
+  VERSION: ${{ inputs.version }}
+  APPLE_BACKEND: ${{ inputs.backend }}
+  ISF_BUILD_JOBS: '3'
+
+jobs:
+  intel:
+    name: Build Intel macOS and iOS simulator SDKs
+    runs-on: macos-15-intel
+    timeout-minutes: 90
+    env:
+      MACOSX_DEPLOYMENT_TARGET: '15.0'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate publishing policy
+        env:
+          PUBLISH_ASSETS: ${{ inputs.publish_assets }}
+        run: |
+          if [[ "$PUBLISH_ASSETS" == true && "$APPLE_BACKEND" != cpu ]]; then
+            echo 'CoreML builds do not participate in Release' >&2
+            exit 1
+          fi
+      - uses: ./.github/actions/apple-setup
+      - name: Build Intel slices without runtime tests
+        run: bash ci/apple/run_native.sh "$APPLE_BACKEND"
+      - name: Archive CPU slices for the existing Apple Silicon job
+        if: inputs.backend != 'coreml'
+        run: python3 ci/apple/transfer.py pack --archive build/apple-transfer.tar.gz --version "$VERSION"
+      - name: Transfer CPU slices
+        if: inputs.backend != 'coreml'
+        uses: actions/upload-artifact@v4
+        with:
+          name: apple_internal_cpu_intel
+          path: build/apple-transfer.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+
+  apple_silicon:
+    name: Build ARM SDKs, test macOS arm64 and package
+    needs: intel
+    runs-on: macos-15
+    timeout-minutes: 120
+    env:
+      # Preserve the previous macos-14 arm64 build's deployment family.
+      MACOSX_DEPLOYMENT_TARGET: '14.0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/apple-setup
+        with:
+          test-fixtures: 'true'
+      - name: Build ARM slices and run macOS arm64 tests only
+        run: bash ci/apple/run_native.sh "$APPLE_BACKEND"
+      - name: Download previously built Intel slices
+        if: inputs.backend != 'coreml'
+        uses: actions/download-artifact@v4
+        with:
+          name: apple_internal_cpu_intel
+          path: build/apple-transfer
+      - name: Restore Intel slices without recompiling
+        if: inputs.backend != 'coreml'
+        run: python3 ci/apple/transfer.py unpack --archive build/apple-transfer/apple-transfer.tar.gz --version "$VERSION"
+      - name: Assemble and verify CPU XCFrameworks
+        if: inputs.backend != 'coreml'
+        run: |
+          package="build/inspireface-apple${VERSION:+-$VERSION}"
+          python3 ci/apple/assemble.py --output "$package" --version "$VERSION"
+      - name: Validate release packaging policy
+        if: inputs.backend != 'coreml'
+        run: python3 -m unittest discover -s ci/apple/tests -v
+      - name: Create the single Apple CPU release archive
+        if: inputs.publish_assets
+        run: |
+          python3 ci/apple/release_archive.py --package "build/inspireface-apple-$VERSION" \
+            --version "$VERSION" --output-dir build/release
+      - name: Upload the single Apple release artifact
+        if: inputs.publish_assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk_files_apple
+          path: build/release/inspireface-apple-${{ env.VERSION }}.zip
+          if-no-files-found: error
+          compression-level: 0

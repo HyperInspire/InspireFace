@@ -18,8 +18,7 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ---
 
-📘 [Documentation](https://doc.inspireface.online/) is a **work in progress**.  
-We welcome your questions💬, they help guide and accelerate its development.
+📘 For detailed development and integration guides, see the [documentation](https://doc.inspireface.online/).
 
 ## Change Logs
 
@@ -276,14 +275,14 @@ After the compilation is complete, `inspireface.framework` will be placed in the
 
 ### Android Compilation
 
-You can compile for Android using the following command, but first you need to set your Android NDK path:
+With a JDK (8 or later), CMake and Python 3 installed, set your Android NDK path and build:
 
 ```
 export ANDROID_NDK=YOUR_ANDROID_NDK_PATH
 bash command/build_android.sh
 ```
 
-After the compilation is complete, arm64-v8a and armeabi-v7a libraries will be placed in the `build/inspireface-android` directory.
+The `build/inspireface-android` directory contains arm64-v8a, armeabi-v7a and x86_64 libraries, C/C++ headers, and `java/inspireface.jar`. Each ABI directory contains a single `libInspireFace.so` with the C/C++ API, legacy Android JNI and complete Java binding.
 
 ### HarmonyOS Compilation and ArkTS Usage
 
@@ -582,6 +581,55 @@ Please note that the C++ interface has not been fully tested. It is recommended 
 - [C Sample](cpp/sample/api/)
 - [C++ Sample](cpp/sample/cpp_api/)
 
+### Objective-C and Swift Samples (iOS / macOS)
+
+Add `InspireFace.xcframework` to your Xcode project; Swift also requires `InspireFaceSwift.xcframework`. See the [Apple integration guide](https://doc.inspireface.online/zh/using-with/apple.html) for project setup and creating image streams from files or camera buffers.
+
+These one-shot examples take a model resource file path (such as `Pikachu`) and an existing image stream, and return the number of detected faces. Models are provided separately from the frameworks; see [model paths and error handling](https://doc.inspireface.online/zh/using-with/apple.html#model-paths-and-errors).
+
+#### Objective-C
+
+```objective-c
+#import <InspireFace/InspireFaceApple.h>
+
+BOOL DetectFaces(NSString *modelPath, IFImageStream *stream,
+                 HInt32 *faceCount, NSError **error) {
+    *faceCount = 0;
+    if (![IFRuntime launchAtPath:modelPath error:error]) return NO;
+    IFSession *session = [[IFSession alloc] initWithOptions:0
+                                                     mode:HF_DETECT_MODE_ALWAYS_DETECT
+                                             maximumFaces:10
+                                               pixelLevel:320
+                                          framesPerSecond:-1
+                                                    error:error];
+    HFMultipleFaceData faces = {0};
+    BOOL success = session && [session trackStream:stream borrowedResult:&faces error:error];
+    if (success) *faceCount = faces.detectedNum;
+    [session closeWithError:NULL];
+    [IFRuntime terminateWithError:NULL];
+    return success;
+}
+```
+
+#### Swift
+
+```swift
+import InspireFaceSwift
+
+func detectFaces(modelPath: String, stream: ImageStream) throws -> Int {
+    try InspireFaceRuntime.launch(path: modelPath)
+    defer { try? InspireFaceRuntime.terminate() }
+    let session = try FaceSession(configuration: SessionConfiguration(
+        detectionMode: .alwaysDetect, maximumFaces: 10, pixelLevel: 320))
+    defer { try? session.close() }
+    return try session.withUnsafeFaces(in: stream) { faces in
+        faces.count
+    }
+}
+```
+
+Keep the input stream and its pixel storage alive during the call, then close the stream when finished. For continuous processing, initialize the runtime once and reuse a session on a serial work queue across frames.
+
 ### Python Native Sample
 
 The Python implementation is compiled based on InspireFace source code, and is integrated using a native interface approach.
@@ -649,7 +697,49 @@ In the project, more usage examples are provided:
 - `sample_face_recognition.py`: Facial recognition example
 - `sample_face_track_from_video.py`: Facial tracking from video stream example
 
-### Java and Android platform API
+### Java Sample (JVM, non-Android)
+
+The portable Java binding provides the complete C API through JNI, with a Java 8-compatible JAR and native libraries built for the target OS and CPU architecture. Users do not need to write JNI code.
+
+Build with a JDK, CMake and Python 3 installed:
+
+```bash
+bash command/build_java.sh
+# To also run the JVM contract tests with the local test models:
+# ISF_JAVA_TESTS=ON bash command/build_java.sh
+```
+
+The SDK is installed in `build/java-sdk/install/Java`, containing `inspireface.jar`, generated Java sources, an API manifest, native libraries and a [face detection example](java/examples/DetectFaces.java). For example, on macOS arm64:
+
+```bash
+cd build/java-sdk/install/Java
+javac -cp inspireface.jar examples/DetectFaces.java
+java -Djava.library.path=native/macos-arm64 -cp inspireface.jar:examples \
+    DetectFaces /path/to/Pikachu /path/to/face.jpg
+```
+
+Choose the native directory matching the running JVM's OS and architecture. The JAR is shared across targets; the JNI library and its core SDK dependency must come from the same build. Model files are supplied separately. The low-level API uses `Native`, `NativeTypes` and `NativeConstants` in `com.insightface.sdk.inspireface.jni`; `InspireFaceException.check(status)` optionally converts C error codes into exceptions.
+
+Image and feature buffers use direct `ByteBuffer` storage in native byte order. Input pixels are retained until the stream is released or its buffer is replaced. Borrowed output buffers retain the C API's validity limits; close native resources explicitly and serialize operations on each resource. The existing Android API remains available separately below.
+
+CPU inference defaults to `NORMAL`. Configure the process-wide policy before creating sessions (the same API works on Android):
+
+```java
+import com.insightface.sdk.inspireface.jni.CPUEngine;
+
+CPUEngine.setGlobalPowerMode(CPUEngine.PowerMode.NORMAL); // NORMAL, HIGH or LOW
+CPUEngine.PowerMode mode = CPUEngine.getGlobalPowerMode();
+```
+
+The setting applies to subsequently initialized CPU runtimes and survives launch/reload/terminate. Existing runtimes, model thread counts and precision are unchanged. Serialize configuration with session/model initialization.
+
+### Android Java API
+
+For the complete C API and `CPUEngine`, build locally with `command/build_android.sh`. Copy `java/inspireface.jar` to your app's `libs/`, add `implementation files('libs/inspireface.jar')`, and copy `lib/<abi>/libInspireFace.so` into `app/src/main/jniLibs/<abi>/` for each ABI. The JAR automatically loads `InspireFace` on Android; all JNI entry points are built into that one library. Remove `libInspireFaceJNI.so` when upgrading from the earlier two-library build. Use the same `com.insightface.sdk.inspireface.jni` API shown above and the JAR from the matching build. The low-level binding does not require the separate Android SDK dependency below.
+
+For builds with R8/ProGuard enabled, copy `java/consumer-rules.pro` into the app module and add it to `proguardFiles` so JNI class and field names are preserved.
+
+Existing apps can continue using the legacy Android API with the rebuilt core library. The supplementary capture/snapshot sources remain in `java/com/insightface/sdk/inspireface/`. When combining both APIs, package only one matching copy of `libInspireFace.so` and explicitly manage native resource ownership.
 
 We have an [Android SDK project](https://github.com/HyperInspire/inspireface-android-sdk) that integrates pre-compiled dynamic libraries, and you can use it directly.
 
@@ -677,7 +767,7 @@ We released InspireFace's Android SDK on JitPack, which you can incorporate into
 
   ```groovy
   dependencies {
-      implementation 'com.github.HyperInspire:inspireface-android-sdk:1.2.3.post4'
+      implementation 'com.github.HyperInspire:inspireface-android-sdk:v1.2.4.post1'
   }
   ```
 

@@ -1,0 +1,25 @@
+name: Prepare Apple SDK build
+description: Prepare the existing runner and cache platform-specific MNN builds.
+inputs:
+  test-fixtures:
+    description: Prepare model fixtures for macOS arm64 runtime tests
+    default: 'false'
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Prepare toolchain and dependency revisions
+      id: identity
+      env:
+        ISF_APPLE_TEST_FIXTURES: ${{ inputs.test-fixtures }}
+      shell: bash
+      run: python3 ci/apple/prepare.py
+    - name: Cache Apple dependencies
+      uses: actions/cache@v4
+      with:
+        path: build/apple-cache/mnn
+        key: apple-mnn-${{ runner.arch }}-${{ steps.identity.outputs.cache-key }}-${{ hashFiles('command/apple/build_sdk.py', 'CMakeLists.txt') }}
+        restore-keys: |
+          apple-mnn-${{ runner.arch }}-${{ steps.identity.outputs.cache-key }}-

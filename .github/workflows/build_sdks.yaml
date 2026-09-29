@@ -51,57 +51,11 @@ jobs:
                 /sdk/InspireFace/lib/libInspireFace.so
             '
 
-  build_macos_x86:
-    name: Compile MacOS-x86
-    runs-on: macos-15-intel
-
-    steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      # Step 2: Synchronize and update submodules recursively
-      - name: Update submodules
-        run: |
-          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
-
-      # Step 3: Install necessary dependencies for building the CMake project
-      - name: Install Dependencies
-        run: |
-          brew uninstall cmake
-          brew install cmake
-
-      # Step 4: Start building the SDK
-      - name: Start Building the InspireFace-MacOS-x86
-        run: |
-          bash command/build_macos_x86.sh
-          ls build
-
-  build_macos_arm64:
-    name: Compile MacOS-Arm64
-    runs-on: macos-14
-
-    steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      # Step 2: Synchronize and update submodules recursively
-      - name: Update submodules
-        run: |
-          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
-
-      # Step 3: Install necessary dependencies for building the CMake project
-      - name: Install Dependencies
-        run: |
-          brew uninstall cmake
-          brew install cmake
-
-      # Step 4: Start building the SDK
-      - name: Start Building the InspireFace-MacOS-arm64
-        run: |
-          bash command/build_macos_arm64.sh
-          ls build
+  build_apple:
+    name: Validate Apple SDKs
+    uses: ./.github/workflows/apple-sdk.yaml
+    with:
+      backend: all
 
   build_armv7_armhf:
     name: Compile Armv7-Armhf
@@ -295,26 +249,6 @@ jobs:
       - name: Start Building the InspireFace-Android
         run: |
           bash command/build_android_rk356x_rk3588.sh
-          ls build
-
-  build_ios:
-    name: Compile iOS-Arm64
-    runs-on: macos-latest
-
-    steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      # Step 2: Synchronize and update submodules recursively
-      - name: Update submodules
-        run: |
-          git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
-
-      # Step 3: Start building the SDK
-      - name: Start Building the InspireFace-iOS
-        run: |
-          bash command/build_ios.sh
           ls build
 
   build_manylinux2014_x86:
