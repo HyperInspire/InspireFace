@@ -46,10 +46,14 @@ public:
       m_global_coreml_inference_mode_(InferenceWrapper::COREML_ANE),
       m_image_processing_backend_(IMAGE_PROCESSING_CPU) {
 #if defined(ISF_ENABLE_RGA)
+ #if !defined(ISF_RKNPU_RV1106) && !defined(ISF_RKNPU_RV1126B)
         m_image_processing_backend_ = IMAGE_PROCESSING_RGA;
         INSPIRE_LOGW("Default image processing backend is RGA.");
+ #endif
 #if defined(ISF_RKNPU_RV1106)
         m_rockchip_dma_heap_path_ = RV1106_CMA_HEAP_PATH;
+#elif defined(ISF_RKNPU_RV1126B)
+        m_rockchip_dma_heap_path_ = DMA_HEAP_UNCACHE_PATH;
 #else
         m_rockchip_dma_heap_path_ = DMA_HEAP_DMA32_UNCACHE_PATCH;
 #endif

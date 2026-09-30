@@ -222,7 +222,8 @@ if(NOT ISF_ENABLE_RKNN)
         add_executable(Rknn2AdapterContractGuardSample
                 benchmark/rknn2_adapter_contract_guard.cpp
                 ../inspireface/middleware/inference_wrapper/inference_wrapper_rknn_adapter_nano.cpp)
-        target_compile_definitions(Rknn2AdapterContractGuardSample PRIVATE INFERENCE_WRAPPER_ENABLE_RKNN2=1)
+        target_compile_definitions(Rknn2AdapterContractGuardSample PRIVATE
+                INFERENCE_WRAPPER_ENABLE_RKNN2=1 ISF_RKNPU_RV1126B=1)
         target_include_directories(Rknn2AdapterContractGuardSample BEFORE PRIVATE
                 ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/rknpu2/runtime/Linux/librknn_api/include)
         target_link_libraries(Rknn2AdapterContractGuardSample InspireFace ${ext})
@@ -231,6 +232,20 @@ if(NOT ISF_ENABLE_RKNN)
         )
         if(BUILD_TESTING)
                 add_test(NAME InspireFace.RKNN2.AdapterContract COMMAND Rknn2AdapterContractGuardSample)
+        endif()
+
+        add_executable(Rknn2LegacyInputContractGuardSample
+                benchmark/rknn2_adapter_contract_guard.cpp
+                ../inspireface/middleware/inference_wrapper/inference_wrapper_rknn_adapter_nano.cpp)
+        target_compile_definitions(Rknn2LegacyInputContractGuardSample PRIVATE
+                INFERENCE_WRAPPER_ENABLE_RKNN2=1 ISF_RKNN2_LEGACY_GUARD_ONLY=1)
+        target_include_directories(Rknn2LegacyInputContractGuardSample BEFORE PRIVATE
+                ${ISF_THIRD_PARTY_DIR}/inspireface-precompile-lite/rknn/rknpu2/runtime/Linux/librknn_api/include)
+        target_link_libraries(Rknn2LegacyInputContractGuardSample InspireFace ${ext})
+        set_target_properties(Rknn2LegacyInputContractGuardSample PROPERTIES
+                RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample/benchmark/")
+        if(BUILD_TESTING)
+                add_test(NAME InspireFace.RKNN2.LegacyInputContract COMMAND Rknn2LegacyInputContractGuardSample)
         endif()
 endif()
 

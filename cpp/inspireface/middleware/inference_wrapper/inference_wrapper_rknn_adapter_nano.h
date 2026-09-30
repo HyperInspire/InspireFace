@@ -33,10 +33,17 @@ public:
                                     std::vector<OutputTensorInfo>& output_tensor_info_list) override;
     std::vector<std::string> GetInputNames() override;
 
+    // Diagnostic-only snapshots for the parity runner.  The vectors copy the
+    // RKNN native logical byte region and its full stride allocation, so no
+    // caller borrows RKNN memory across a later Process/Finalize.
+    bool CopyNativeOutputBytes(std::vector<std::vector<uint8_t>>* logical_bytes,
+                               std::vector<std::vector<uint8_t>>* storage_bytes) const;
+
     int32_t ResizeInput(const std::vector<InputTensorInfo>& input_tensor_info_list) override;
 
 private:
     std::shared_ptr<RKNNAdapterNano> net_;
+    bool input_ready_{false};
     int32_t num_threads_;
 };
 

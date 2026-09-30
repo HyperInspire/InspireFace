@@ -252,6 +252,7 @@ public:
 
     int32_t ForwardViews(const inspirecv::Image &image, AnyTensorViews &outputs) {
         outputs.clear();
+        ClearOutputTensorMetadata();
         if (!ValidateImageInput(image)) {
             return InferenceWrapper::WrapperError;
         }
@@ -271,16 +272,19 @@ public:
      */
     int32_t ForwardViews(AnyTensorViews &outputs) {
         outputs.clear();
+        ClearOutputTensorMetadata();
         if (!m_ready_ || m_nn_inference_ == nullptr || m_input_tensor_info_list_.size() != 1 ||
             m_input_tensor_info_list_.front().data == nullptr || m_output_tensor_info_list_.empty()) {
             INSPIRE_LOGE("%s is not ready for inference", m_name_.c_str());
             return InferenceWrapper::WrapperError;
         }
         if (m_nn_inference_->PreProcess(m_input_tensor_info_list_) != InferenceWrapper::WrapperOk) {
+            ClearOutputTensorMetadata();
             INSPIRE_LOGE("%s preprocessing failed", m_name_.c_str());
             return InferenceWrapper::WrapperError;
         }
         if (m_nn_inference_->Process(m_output_tensor_info_list_) != InferenceWrapper::WrapperOk) {
+            ClearOutputTensorMetadata();
             INSPIRE_LOGE("%s inference failed", m_name_.c_str());
             return InferenceWrapper::WrapperError;
         }
@@ -290,6 +294,7 @@ public:
             const float *data = tensor.GetDataAsFloat();
             if (data == nullptr || element_count <= 0) {
                 outputs.clear();
+                ClearOutputTensorMetadata();
                 INSPIRE_LOGE("%s output tensor '%s' is invalid", m_name_.c_str(), tensor.name.c_str());
                 return InferenceWrapper::WrapperError;
             }
@@ -477,6 +482,15 @@ protected:
     std::unique_ptr<nexus::ImageProcessor> m_processor_;  ///< Assign a nexus processor to each anynet object
 
 private:
+    void ClearOutputTensorMetadata() {
+        for (auto &output : m_output_tensor_info_list_) {
+            output.data = nullptr;
+            output.tensor_dims.clear();
+            output.quant.scale = 1.0f;
+            output.quant.zero_point = 0;
+        }
+    }
+
     InferenceWrapper::EngineType m_infer_type_ = InferenceWrapper::INFER_MNN;  ///< Inference engine type
     bool m_ready_ = false;                                     ///< Whether initialization completed successfully.
     std::shared_ptr<InferenceWrapper> m_nn_inference_;         ///< Shared pointer to the inference helper.
