@@ -5,7 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <inspireface.h>
+#if defined(_WIN32)
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 
 int main(int argc, char* argv[]) {
     const char* resourcePath = argv[1];
@@ -35,7 +39,11 @@ int main(int argc, char* argv[]) {
     }
 
     // Wait for 2000 seconds, watching the cpu usage
+#if defined(_WIN32)
+    Sleep(2000 * 1000);
+#else
     sleep(2000);
+#endif
 
     ret = HFReleaseInspireFaceSession(session);
     if (ret != HSUCCEED) {

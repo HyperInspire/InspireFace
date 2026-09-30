@@ -60,6 +60,10 @@ jobs:
     with:
       backend: all
 
+  build_windows_x64:
+    name: Validate Windows x64 SDK
+    uses: ./.github/workflows/windows-sdk.yaml
+
   build_armv7_armhf:
     name: Compile Armv7-Armhf
     runs-on: ubuntu-latest

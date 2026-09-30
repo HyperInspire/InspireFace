@@ -138,7 +138,11 @@ setup(
         "numpy",
         "loguru",
         "filelock",
-        "modelscope",
+        # Older ModelScope wheels omit Requires-Python: 1.22.1 uses Python
+        # 3.8 syntax, and 1.29.2 unconditionally imports Python 3.9's zoneinfo.
+        'modelscope<1.22.1; python_version < "3.8"',
+        'modelscope<1.29.2; python_version == "3.8"',
+        'modelscope; python_version >= "3.9"',
         'importlib-metadata; python_version < "3.8"',
     ],
     author="Jingyu Yan",

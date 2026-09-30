@@ -1,0 +1,13 @@
+name: Prepare Windows SDK build
+description: Prepare MSVC x64, CMake, Ninja, Python, and the source dependencies.
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12'
+        architecture: x64
+    - name: Prepare toolchain and source dependencies
+      shell: pwsh
+      run: ./ci/windows/setup_environment.ps1

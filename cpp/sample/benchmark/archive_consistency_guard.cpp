@@ -54,7 +54,11 @@ std::vector<char> Bytes(const std::string& value) {
 std::string TemporaryPath(const std::string& suffix) {
     const char* root = std::getenv("TMPDIR");
     if (root == nullptr || root[0] == '\0') {
+#if defined(_WIN32)
+        root = ".";
+#else
         root = "/tmp";
+#endif
     }
     std::string path(root);
     if (!path.empty() && path.back() != '/') {

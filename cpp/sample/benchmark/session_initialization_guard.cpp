@@ -191,7 +191,11 @@ bool WriteArchiveEntry(mtar_t& archive, const std::string& name, const std::vect
 std::string MakeTemporaryPath() {
     const char* temporary_root = std::getenv("TMPDIR");
     if (temporary_root == nullptr || temporary_root[0] == '\0') {
+#if defined(_WIN32)
+        temporary_root = ".";
+#else
         temporary_root = "/tmp";
+#endif
     }
     const auto timestamp = Clock::now().time_since_epoch().count();
     return JoinPath(temporary_root, "inspireface_session_initialization_guard_" + std::to_string(timestamp) + ".tar");

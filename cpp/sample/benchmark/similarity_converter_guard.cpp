@@ -171,7 +171,11 @@ bool WriteArchiveEntry(mtar_t &archive, const std::string &name, const std::vect
 std::string TemporaryArchivePath() {
     const char *temporary_root = std::getenv("TMPDIR");
     if (temporary_root == nullptr || temporary_root[0] == '\0') {
+#if defined(_WIN32)
+        temporary_root = ".";
+#else
         temporary_root = "/tmp";
+#endif
     }
     return std::string(temporary_root) + "/inspireface_similarity_converter_guard_" +
            std::to_string(Clock::now().time_since_epoch().count()) + ".tar";

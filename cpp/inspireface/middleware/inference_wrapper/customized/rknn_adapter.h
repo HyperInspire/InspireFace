@@ -384,7 +384,7 @@ public:
      * @param index Output level index
      * @return Returns a pointer to the output data
      */
-    u_int8_t *GetOutputDataU8(const int index) {
+    uint8_t *GetOutputDataU8(const int index) {
         if (index < 0 || static_cast<size_t>(index) >= output_tensors_.size()) {
             return nullptr;
         }

@@ -133,6 +133,6 @@ class ResourceManagerCase(unittest.TestCase):
                 )
                 self.assertEqual(manager.get_model("custom_model"), str(custom_model))
             self.assertEqual(
-                snapshot.call_args.kwargs["allow_file_pattern"],
+                snapshot.call_args[1]["allow_file_pattern"],
                 ["custom_model"],
             )

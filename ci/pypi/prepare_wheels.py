@@ -16,6 +16,7 @@ PLATFORMS = {
     "manylinux2014-aarch64-wheels": ("manylinux2014_aarch64", "linux/arm64/libInspireFace.so"),
     "macos-arm64-wheels": ("macosx_11_0_arm64", "darwin/arm64/libInspireFace.dylib"),
     "macos-x86_64-wheels": ("macosx_12_0_x86_64", "darwin/x64/libInspireFace.dylib"),
+    "windows-x64-wheels": ("win_amd64", "windows/x64/libInspireFace.dll"),
 }
 
 
@@ -58,6 +59,9 @@ def validate_wheel(path, version, platform, library):
         libraries = [name for name in candidates if name in names]
         if len(libraries) != 1 or wheel.getinfo(libraries[0]).file_size == 0:
             raise ValueError(f"Missing, empty or duplicated native library: {library}")
+        native_libraries = [name for name in names if re.search(r"\.(dll|dylib|so(?:\.[0-9]+)*)$", name, re.I)]
+        if native_libraries != libraries:
+            raise ValueError(f"Unexpected native libraries for {platform}: {native_libraries}")
 
 
 def collect_wheels(artifacts, output, version, legacy_macos_python=None):

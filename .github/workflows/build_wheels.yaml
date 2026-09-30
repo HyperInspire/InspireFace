@@ -165,6 +165,47 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  build_windows_x64:
+    if: ${{ inputs.source_run_id == '' }}
+    name: Compile Windows x64
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Windows build environment
+        uses: ./.github/actions/windows-setup
+
+      - name: Build the wheel
+        run: .\command\build_wheel_windows.ps1 -PythonExecutable python
+
+      - name: Install and verify the wheel
+        run: |
+          $wheels = @(Get-ChildItem -LiteralPath python/dist -Filter *.whl)
+          if ($wheels.Count -ne 1) { throw 'Expected exactly one Windows wheel.' }
+          $venv = Join-Path $env:RUNNER_TEMP 'inspireface-wheel-venv'
+          python -m venv $venv
+          if ($LASTEXITCODE -ne 0) { throw 'Failed to create the wheel verification environment.' }
+          $python = Join-Path $venv 'Scripts/python.exe'
+          & $python -m pip install --disable-pip-version-check $wheels[0].FullName
+          if ($LASTEXITCODE -ne 0) { throw 'Wheel installation failed.' }
+          & $python -m pip check
+          if ($LASTEXITCODE -ne 0) { throw 'Installed wheel dependencies are inconsistent.' }
+          & $python -I ci/windows/verify_wheel_install.py --wheel $wheels[0].FullName
+          if ($LASTEXITCODE -ne 0) { throw 'Installed Windows wheel validation failed.' }
+
+      - name: Upload wheel artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64-wheels
+          path: python/dist/*.whl
+          if-no-files-found: error
+          retention-days: 7
+
   upload_to_pypi:
     name: Validate and Publish Wheels
     if: >-
@@ -173,8 +214,9 @@ jobs:
            (needs.build_manylinux2014_x86_64.result == 'success' &&
             needs.build_manylinux2014_aarch64.result == 'success' &&
             needs.build_macos_arm64.result == 'success' &&
-            needs.build_macos_x86_64.result == 'success')) }}
-    needs: [build_manylinux2014_x86_64, build_manylinux2014_aarch64, build_macos_arm64, build_macos_x86_64]
+            needs.build_macos_x86_64.result == 'success' &&
+            needs.build_windows_x64.result == 'success')) }}
+    needs: [build_manylinux2014_x86_64, build_manylinux2014_aarch64, build_macos_arm64, build_macos_x86_64, build_windows_x64]
     runs-on: ubuntu-latest
     concurrency:
       group: inspireface-pypi-publish
@@ -211,7 +253,7 @@ jobs:
       - name: Check wheel collection logic
         run: python -m unittest discover -s ci/pypi/tests -v
 
-      - name: Collect and validate four platform wheels
+      - name: Collect and validate five platform wheels
         env:
           SOURCE_RUN_ID: ${{ inputs.source_run_id }}
           EXPECTED_VERSION: ${{ inputs.expected_version }}

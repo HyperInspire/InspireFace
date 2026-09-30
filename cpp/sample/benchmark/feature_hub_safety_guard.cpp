@@ -30,7 +30,11 @@ struct Options {
     bool baseline = false;
     double max_cosine_p95_us = 0.0;
     double max_search_p95_us = 0.0;
+#if defined(_WIN32)
+    std::string database_path = "inspireface_feature_hub_safety_guard.db";
+#else
     std::string database_path = "/tmp/inspireface_feature_hub_safety_guard.db";
+#endif
 };
 
 struct Timings {

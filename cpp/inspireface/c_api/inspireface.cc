@@ -22,6 +22,10 @@
 #include <fstream>
 #include <limits>
 #include <memory>
+#if defined(_WIN32)
+#include <cstdio>
+#include "middleware/system.h"
+#endif
 
 #define FACE_FEATURE_SIZE 512  ///< Temporary setup
 
@@ -510,10 +514,19 @@ HYPER_CAPI_EXPORT extern HResult HFCreateImageBitmapFromFilePath(HPath filePath,
     if (filePath == nullptr || filePath[0] == '\0' || (channels != 1 && channels != 3)) {
         return HERR_INVALID_PARAM;
     }
+#if defined(_WIN32)
+    const auto wide_path = inspire::os::Utf8ToWideChar(filePath);
+    FILE* image_file = wide_path.empty() ? nullptr : _wfopen(wide_path.c_str(), L"rb");
+    if (image_file == nullptr) {
+        return HERR_IMAGE_STREAM_DECODE_FAILED;
+    }
+    std::fclose(image_file);
+#else
     std::ifstream image_file(filePath, std::ios::binary);
     if (!image_file.good()) {
         return HERR_IMAGE_STREAM_DECODE_FAILED;
     }
+#endif
     try {
         auto image = inspirecv::Image::Create(filePath, channels);
         size_t byte_size = 0;

@@ -206,14 +206,20 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 ### Requirements
 
 - CMake (version 3.20 or higher)
+- Ninja (required by the Windows build scripts; included in Visual Studio's **C++ CMake tools for Windows** component)
+- Git (to fetch the source and recursive submodules)
+- PowerShell (required to run the Windows build scripts)
+- Python 3.7 or newer with pip (for Python wheel builds; use x64 Python on Windows) [**Optional**]
 - NDK (version 16 or higher, only required for Android) [**Optional**]
 - MNN (version 3.x or higher)
 - C++ Compiler
-    - Either GCC or Clang can be used (macOS does not require additional installation as Xcode is included)
+    - On Linux/macOS, use GCC or Clang (macOS provides Clang through Xcode or the Xcode Command Line Tools)
         - Recommended GCC version is 4.9 or higher
             - Note that in some distributions, GCC (GNU C Compiler) and G++ (GNU C++ Compiler) are installed separately.
             - For instance, on Ubuntu, you need to install both gcc and g++
         - Recommended Clang version is 3.9 or higher
+    - MSVC v143 from Visual Studio 2022 or Build Tools 2022 (Windows x64)
+        - Install the **Desktop development with C++** workload, including the MSVC x64/x86 build tools and a Windows 10 or Windows 11 SDK.
     - arm-linux-gnueabihf (for RV1109/RV1126) [**Optional**]
         - Prepare the cross-compilation toolchain in advance, such as gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf
 - CUDA (version 11.x or higher) [**Optional**]
@@ -226,6 +232,11 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 
 ## Compilation
 CMake option are used to control the various details of the compilation phase. Please select according to your actual requirements. [CMake Option](doc/CMake-Option.md).
+
+For the Windows x64 CPU/MNN path, use the PowerShell entry point
+[`command/build_windows.ps1`](command/build_windows.ps1) from a Visual Studio
+x64 Native Tools environment. See [Windows build and SDK consumption](doc/Windows.md)
+for test resources, shared/static builds, and the installed CMake package.
 
 ### Local Compilation
 If you are using macOS or Linux, you can quickly compile using the shell scripts provided in the `command` folder at the project root:
@@ -373,7 +384,9 @@ We have completed the adaptation and testing of the software across various oper
 | 16 | **Android**<sup><br/>(Rockchip) | ARMv8 | RK3566/RK3568 | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
 | 17 |  | ARMv8 | RK3588 | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
 | 18 | **HarmonyOS** | ARMv8 | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - |
-| 19 | **Linux**<sup><br/>(Jetson series) | ARMv8 | Jetson series | - | - | - |
+| 19 | **Windows** | x86/x86_64 |  | - | - | - |
+| 20 |  | ARMv8 |  | - | - | - |
+| 21 | **Linux**<sup><br/>(Jetson series) | ARMv8 | Jetson series | - | - | - |
 
 - **Device**: Some special device support, primarily focused on computing power devices.
 - **Supported**: The solution has been fully developed and successfully verified on offline devices.

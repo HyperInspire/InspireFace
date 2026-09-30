@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 project(InspireFaceTest)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+if(NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+endif()
 # If you want to test the benchmark, you need to set this to ON
 option(ISF_ENABLE_BENCHMARK "Enable the benchmark test cases." OFF)
 # If you want to test the LFW data set, you need to set this to ON
@@ -223,6 +225,33 @@ set_target_properties(TestCPPLifecycle PROPERTIES
 # Register deterministic test gates with CTest. Benchmarks, stress cases, model
 # accuracy checks, and hardware-specific checks remain opt-in Catch2 tags.
 include(CTest)
+if(WIN32)
+    set(ISF_WINDOWS_TEST_TARGETS Test TestLifecycle TestCPP TestCPPLifecycle)
+    if(TARGET TestInternal)
+        list(APPEND ISF_WINDOWS_TEST_TARGETS TestInternal)
+    endif()
+    if(ISF_BUILD_SHARED_LIBS)
+        # Always refresh the runtime, even when a DLL implementation changes
+        # without changing the import library or relinking the test executable.
+        add_custom_target(InspireFaceTestRuntime
+                COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_FILE_DIR:Test>"
+                COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                        "$<TARGET_FILE:InspireFace>" "$<TARGET_FILE_DIR:Test>"
+                DEPENDS InspireFace
+                VERBATIM)
+    endif()
+    foreach(ISF_TEST_TARGET IN LISTS ISF_WINDOWS_TEST_TARGETS)
+        target_compile_definitions(${ISF_TEST_TARGET} PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+        if(MSVC)
+            # Match the standard C++ value categories used by GCC/Clang.
+            target_compile_options(${ISF_TEST_TARGET} PRIVATE /permissive- /utf-8)
+        endif()
+        target_link_libraries(${ISF_TEST_TARGET} Psapi)
+        if(ISF_BUILD_SHARED_LIBS)
+            add_dependencies(${ISF_TEST_TARGET} InspireFaceTestRuntime)
+        endif()
+    endforeach()
+endif()
 if(BUILD_TESTING)
     set(ISF_TEST_RESOURCE_ARGS
             --test_dir "${CMAKE_SOURCE_DIR}/test_res"
@@ -265,5 +294,8 @@ message(STATUS "\t ISF_ENABLE_USE_LFW_DATA: ${ISF_ENABLE_USE_LFW_DATA}")
 message(STATUS "\t ISF_ENABLE_TEST_EVALUATION: ${ISF_ENABLE_TEST_EVALUATION}")
 
 # Install bin
-install(TARGETS Test RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/test)
-# install(TARGETS TestSource RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/test)
+install(TARGETS Test RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/test)
+if(WIN32 AND ISF_BUILD_SHARED_LIBS)
+    install(FILES "$<TARGET_FILE:InspireFace>" DESTINATION ${ISF_INSTALL_ROOT}/test)
+endif()
+# install(TARGETS TestSource RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/test)

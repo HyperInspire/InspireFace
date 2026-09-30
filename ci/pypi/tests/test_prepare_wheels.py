@@ -30,7 +30,7 @@ class WheelCollectionTests(unittest.TestCase):
             self.make_wheel(name)
 
     def make_wheel(self, artifact, *, suffix="", version=VERSION, metadata_version=VERSION,
-                   purelib=False, native=True):
+                   purelib=False, native=True, tag=None, library_override=None, extra_libraries=()):
         platform, library = prepare.PLATFORMS[artifact]
         folder = self.artifacts / (artifact + suffix)
         folder.mkdir(parents=True, exist_ok=True)
@@ -38,19 +38,22 @@ class WheelCollectionTests(unittest.TestCase):
         info = f"inspireface-{version}.dist-info/"
         with zipfile.ZipFile(path, "w") as wheel:
             wheel.writestr(info + "METADATA", f"Name: inspireface\nVersion: {metadata_version}\n")
-            wheel.writestr(info + "WHEEL", f"Root-Is-Purelib: false\nTag: py3-none-{platform}\n")
+            wheel.writestr(info + "WHEEL", f"Root-Is-Purelib: false\nTag: {tag or ('py3-none-' + platform)}\n")
             if native:
                 prefix = f"inspireface-{version}.data/purelib/" if purelib else ""
-                wheel.writestr(prefix + "inspireface/modules/core/libs/" + library, b"native-library")
+                wheel.writestr(prefix + "inspireface/modules/core/libs/" + (library_override or library), b"native-library")
+            for extra in extra_libraries:
+                wheel.writestr("inspireface/modules/core/libs/" + extra, b"other-native-library")
         return path
 
     def collect(self, legacy=None):
         return prepare.collect_wheels(self.artifacts, self.output, VERSION, legacy)
 
-    def test_collects_four_distinct_platforms(self):
+    def test_collects_five_distinct_platforms(self):
         self.make_wheel("macos-arm64-wheels", purelib=True)
+        self.make_wheel("windows-x64-wheels", purelib=True)
         selected = self.collect()
-        self.assertEqual(len(selected), 4)
+        self.assertEqual(len(selected), 5)
         for path in selected:
             self.assertEqual(path.read_bytes(), (self.output / path.name).read_bytes())
 
@@ -60,7 +63,7 @@ class WheelCollectionTests(unittest.TestCase):
             for version in ("3.8", "3.9", "3.10", "3.11", "3.12"):
                 self.make_wheel(artifact, suffix=f"-py{version}", purelib=True)
         selected = self.collect("3.12")
-        self.assertEqual(len(selected), 4)
+        self.assertEqual(len(selected), 5)
         for path in selected:
             if path.parent.name.startswith("macos-"):
                 self.assertTrue(path.parent.name.endswith("-py3.12"))
@@ -68,6 +71,57 @@ class WheelCollectionTests(unittest.TestCase):
     def test_rejects_missing_platform_before_copying(self):
         shutil.rmtree(self.artifacts / "macos-x86_64-wheels")
         with self.assertRaisesRegex(ValueError, "exactly one artifact"):
+            self.collect()
+        self.assertFalse(self.output.exists())
+
+    def test_rejects_legacy_four_platform_release_without_windows(self):
+        shutil.rmtree(self.artifacts / "windows-x64-wheels")
+        with self.assertRaisesRegex(ValueError, "exactly one artifact for win_amd64"):
+            self.collect("3.12")
+        self.assertFalse(self.output.exists())
+
+    def test_rejects_windows_metadata_with_wrong_architecture_or_python_tag(self):
+        for tag in ("py3-none-win32", "py3-none-win_arm64", "cp312-cp312-win_amd64"):
+            with self.subTest(tag=tag):
+                self.make_wheel("windows-x64-wheels", tag=tag)
+                with self.assertRaisesRegex(ValueError, "expected py3-none platform tag"):
+                    self.collect()
+                self.assertFalse(self.output.exists())
+
+    def test_rejects_windows_wheel_with_wrong_filename_tag(self):
+        path = self.make_wheel("windows-x64-wheels")
+        path.rename(path.with_name(path.name.replace("win_amd64", "win32")))
+        with self.assertRaisesRegex(ValueError, "Expected inspireface-.*win_amd64"):
+            self.collect()
+        self.assertFalse(self.output.exists())
+
+    def test_rejects_wrong_windows_dll_name_or_location(self):
+        for library in ("windows/x86/libInspireFace.dll", "windows/x64/InspireFace.dll"):
+            with self.subTest(library=library):
+                self.make_wheel("windows-x64-wheels", library_override=library)
+                with self.assertRaisesRegex(ValueError, "native library: windows/x64/libInspireFace.dll"):
+                    self.collect()
+                self.assertFalse(self.output.exists())
+
+    def test_rejects_native_libraries_from_another_platform_or_dynamic_dependency(self):
+        for extra in ("linux/x64/libInspireFace.so", "darwin/x64/libInspireFace.dylib",
+                      "windows/x86/libInspireFace.dll", "windows/x64/MNN.dll"):
+            with self.subTest(extra=extra):
+                self.make_wheel("windows-x64-wheels", extra_libraries=[extra])
+                with self.assertRaisesRegex(ValueError, "Unexpected native libraries"):
+                    self.collect()
+                self.assertFalse(self.output.exists())
+
+    def test_rejects_windows_library_leaking_into_unix_wheel(self):
+        self.make_wheel("manylinux2014-wheels", extra_libraries=["windows/x64/libInspireFace.dll"])
+        with self.assertRaisesRegex(ValueError, "Unexpected native libraries"):
+            self.collect()
+        self.assertFalse(self.output.exists())
+
+    def test_rejects_duplicate_windows_dll_in_root_and_purelib(self):
+        self.make_wheel("windows-x64-wheels", purelib=True,
+                        extra_libraries=["windows/x64/libInspireFace.dll"])
+        with self.assertRaisesRegex(ValueError, "duplicated native library"):
             self.collect()
         self.assertFalse(self.output.exists())
 

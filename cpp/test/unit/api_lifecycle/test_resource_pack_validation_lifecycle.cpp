@@ -91,6 +91,24 @@ HFResourcePackInfo ResourcePackInfo() {
 
 static_assert(sizeof(HFResourcePackInfo) == 336, "Resource-pack metadata layout must remain fixed");
 
+TEST_CASE("Resource-pack validation releases the input file before returning",
+          "[api][contract][lifecycle][resource_pack]") {
+    ScopedArchiveFile archive(GET_SAVE_DATA("validation_releases_model.tar"));
+    {
+        std::ifstream input(GET_RUNTIME_FULLPATH_NAME, std::ios::binary);
+        REQUIRE(input.good());
+        std::ofstream output(archive.Path(), std::ios::binary | std::ios::trunc);
+        REQUIRE(output.good());
+        output << input.rdbuf();
+        REQUIRE(output.good());
+    }
+    auto info = ResourcePackInfo();
+    REQUIRE(HFValidateResourcePack(archive.Path().c_str(), &info) == HSUCCEED);
+    // Windows refuses this while any FILE opened by the validator remains
+    // alive. No subsequent archive call may be needed to release that handle.
+    REQUIRE(std::remove(archive.Path().c_str()) == 0);
+}
+
 TEST_CASE("C API validates resource-pack metadata without launching the SDK",
           "[api][contract][lifecycle][resource_pack]") {
     ScopedSdkTermination cleanup;

@@ -10,6 +10,13 @@ InspireFace provides an easy-to-use Python API that wraps the underlying dynamic
 pip install inspireface
 ```
 
+Python 3.7 automatically selects `modelscope<1.22.1`, and Python 3.8 selects
+`modelscope<1.29.2`. Those newer ModelScope releases require Python 3.8 syntax
+and Python 3.9's `zoneinfo`, respectively, without declaring the minimum in
+their package metadata. Python 3.9 and newer keep the normal ModelScope
+dependency selection. These compatibility constraints apply on all supported
+operating systems.
+
 ### Manual Installation
 
 1. Copy the compiled dynamic library to the specified directory:

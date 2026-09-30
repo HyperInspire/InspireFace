@@ -163,13 +163,16 @@ public:
     }
 
     const std::vector<std::string>& GetSubfilesNames() const {
-        thread_local std::shared_ptr<ArchiveState> pinned_state;
-        pinned_state = Acquire();
-        if (!pinned_state) {
-            static const std::vector<std::string> empty;
-            return empty;
+        // Preserve the reference until this thread's next call without keeping
+        // the archive's FILE open after Close(), Reset(), or destruction.
+        thread_local std::vector<std::string> pinned_names;
+        const auto state = Acquire();
+        if (state) {
+            pinned_names = state->subfiles_names;
+        } else {
+            pinned_names.clear();
         }
-        return pinned_state->subfiles_names;
+        return pinned_names;
     }
 
     void Close() {

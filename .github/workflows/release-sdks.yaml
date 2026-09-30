@@ -377,6 +377,12 @@ jobs:
       version: ${{ github.ref_name }}
       publish_assets: true
 
+  build_windows_x64:
+    name: Build Windows x64 release package
+    uses: ./.github/workflows/windows-sdk.yaml
+    with:
+      version: ${{ github.ref_name }}
+
   build_manylinux2014_x86:
     name: Compile manylinux2014-x86
     runs-on: ubuntu-latest
@@ -603,7 +609,7 @@ jobs:
 
   release:
     name: Release SDKs to GitHub
-    needs: [ build_linux_x86, build_armv7_armhf, build_armv7_rv1109rv1126_armhf, build_linux_aarch64, build_android, build_android_rk356x_rk3588, build_apple, build_manylinux2014_x86, build_armv7_rv1106_armhf_uclibc, build_rk356x_rk3588_aarch64, build_linux_tensorrt_cuda12_ubuntu22]
+    needs: [ build_linux_x86, build_armv7_armhf, build_armv7_rv1109rv1126_armhf, build_linux_aarch64, build_android, build_android_rk356x_rk3588, build_apple, build_windows_x64, build_manylinux2014_x86, build_armv7_rv1106_armhf_uclibc, build_rk356x_rk3588_aarch64, build_linux_tensorrt_cuda12_ubuntu22]
     runs-on: ubuntu-latest
 
     steps:
@@ -644,6 +650,8 @@ jobs:
             sdk_artifacts/sdk_files_android/inspireface-android-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_android_rk356x_rk3588/inspireface-android-rk356x-rk3588-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_apple/inspireface-apple-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_windows_x64/inspireface-windows-x64-${{ env.VERSION }}.zip
+            sdk_artifacts/sdk_files_windows_x64/inspireface-windows-x64-${{ env.VERSION }}.zip.sha256
             sdk_artifacts/sdk_files_harmonyos/inspireface-harmonyos-arm64-v8a-${{ env.VERSION }}.zip
             sdk_artifacts/sdk_files_harmonyos/inspireface-harmonyos-arm64-v8a-${{ env.VERSION }}.zip.sha256
             sdk_artifacts/sdk_files_linux_tensorrt_cuda12_ubuntu22/inspireface-linux-tensorrt-cuda12.2_ubuntu22.04-${{ env.VERSION }}.zip

@@ -650,18 +650,48 @@ target_link_libraries(NexusImageSample InspireFace ${ext})
 
 endif()
 
+if(WIN32)
+    get_property(ISF_WINDOWS_SAMPLE_TARGETS DIRECTORY PROPERTY BUILDSYSTEM_TARGETS)
+    set(ISF_SAMPLE_RUNTIME_COMMANDS)
+    set(ISF_SAMPLE_RUNTIME_DIRECTORIES)
+    foreach(ISF_SAMPLE_TARGET IN LISTS ISF_WINDOWS_SAMPLE_TARGETS)
+        target_compile_definitions(${ISF_SAMPLE_TARGET} PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+        if(MSVC)
+            target_compile_options(${ISF_SAMPLE_TARGET} PRIVATE /permissive- /utf-8)
+        endif()
+        if(ISF_BUILD_SHARED_LIBS)
+            get_target_property(ISF_SAMPLE_DIRECTORY ${ISF_SAMPLE_TARGET} RUNTIME_OUTPUT_DIRECTORY)
+            if(NOT ISF_SAMPLE_DIRECTORY IN_LIST ISF_SAMPLE_RUNTIME_DIRECTORIES)
+                list(APPEND ISF_SAMPLE_RUNTIME_DIRECTORIES "${ISF_SAMPLE_DIRECTORY}")
+                list(APPEND ISF_SAMPLE_RUNTIME_COMMANDS
+                        COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_FILE_DIR:${ISF_SAMPLE_TARGET}>"
+                        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                                "$<TARGET_FILE:InspireFace>" "$<TARGET_FILE_DIR:${ISF_SAMPLE_TARGET}>")
+            endif()
+        endif()
+    endforeach()
+    if(ISF_BUILD_SHARED_LIBS)
+        add_custom_target(InspireFaceSampleRuntime ${ISF_SAMPLE_RUNTIME_COMMANDS}
+                DEPENDS InspireFace VERBATIM)
+        foreach(ISF_SAMPLE_TARGET IN LISTS ISF_WINDOWS_SAMPLE_TARGETS)
+            add_dependencies(${ISF_SAMPLE_TARGET} InspireFaceSampleRuntime)
+        endforeach()
+        install(FILES "$<TARGET_FILE:InspireFace>" DESTINATION ${ISF_INSTALL_ROOT}/sample)
+    endif()
+endif()
+
 # Print Message
 message(STATUS ">>>>>>>>>>>>>")
 message(STATUS "InspireFace Sample:")
 message(STATUS "\t ISF_BUILD_SAMPLE_CLUTTERED: ${ISF_BUILD_SAMPLE_CLUTTERED}")
 
 # Install c bin
-install(TARGETS Leak RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-install(TARGETS FaceTrackSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-install(TARGETS FaceComparisonSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-install(TARGETS FaceCrudSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS Leak RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/sample)
+install(TARGETS FaceTrackSample RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/sample)
+install(TARGETS FaceComparisonSample RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/sample)
+install(TARGETS FaceCrudSample RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/sample)
 
 # Install cpp bin
-install(TARGETS CppSessionSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-install(TARGETS CppFaceComparisonSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
-install(TARGETS CppFaceCrudSample RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/sample)
+install(TARGETS CppSessionSample RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/sample)
+install(TARGETS CppFaceComparisonSample RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/sample)
+install(TARGETS CppFaceCrudSample RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/sample)
