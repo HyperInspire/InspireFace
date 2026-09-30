@@ -2,9 +2,9 @@ name: Build Wheels
 
 on:
   push:
-    branches: ["release/wheels"]
+    branches: ["release/wheels", "feature/win"]
   pull_request:
-    branches: ["release/wheels"]
+    branches: ["release/wheels", "feature/win"]
   workflow_dispatch:
     inputs:
       source_run_id:
@@ -284,7 +284,9 @@ jobs:
       - name: Upload to PyPI
         if: >-
           ${{ (github.event_name == 'push' &&
-               (github.ref == 'refs/heads/release/wheels' || github.ref == 'refs/heads/development')) ||
+               (github.ref == 'refs/heads/release/wheels' ||
+                github.ref == 'refs/heads/feature/win' ||
+                github.ref == 'refs/heads/development')) ||
               (github.event_name == 'workflow_dispatch' && inputs.publish) }}
         env:
           TWINE_USERNAME: __token__

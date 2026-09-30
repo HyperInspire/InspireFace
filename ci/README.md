@@ -31,12 +31,17 @@ Build Wheels produces five platform artifacts, including `windows-x64-wheels`.
 The Windows wheel is installed in a fresh virtual environment and checked
 against its bundled DLL before upload. The publication job requires one valid
 wheel for every platform, including when reusing an earlier Actions run.
-PyPI publication continues to use the existing `PYPI_API_TOKEN` secret and
-workflow publication conditions.
+Pushes to `release/wheels` or `feature/win` build all five platforms and publish
+the validated collection to PyPI using the existing `PYPI_API_TOKEN` secret.
+Pull requests targeting those branches build and validate without publishing.
+Manual runs publish only when `publish` is enabled. Package versions come from
+the CMake native version plus `python/post`; all five wheels must match that
+version before publication.
 
-`Build Windows SDK` (`.github/workflows/windows-sdk.yaml`) runs independently
-on pushes to `feature/win` and supports manual runs. Build SDKs and Release SDKs
-reuse the same workflow. The Windows job builds the Release shared CPU SDK,
+`Build Windows SDK` (`.github/workflows/windows-sdk.yaml`) supports manual runs
+and is reused by Build SDKs and Release SDKs. It has no direct push trigger;
+`feature/win` pushes build Windows through Build Wheels. The Windows SDK job
+builds the Release shared CPU SDK,
 compiles and runs installed C and C++ consumers, and uploads
 `sdk_files_windows_x64`. It records the exact InspireFace, third-party,
 InspireCV, and MNN revisions in `windows-x64-build-diagnostics`, alongside

@@ -1,8 +1,6 @@
 name: Build Windows SDK
 
 on:
-  push:
-    branches: [feature/win]
   workflow_dispatch:
   workflow_call:
     inputs:
