@@ -31,28 +31,29 @@ Build Wheels produces five platform artifacts, including `windows-x64-wheels`.
 The Windows wheel is installed in a fresh virtual environment and checked
 against its bundled DLL before upload. The publication job requires one valid
 wheel for every platform, including when reusing an earlier Actions run.
-Pushes to `release/wheels` or `feature/win` build all five platforms and publish
+Pushes to `release/wheels` build all five platforms and publish
 the validated collection to PyPI using the existing `PYPI_API_TOKEN` secret.
-Pull requests targeting those branches build and validate without publishing.
+Pull requests targeting that branch build and validate without publishing.
 Manual runs publish only when `publish` is enabled. Package versions come from
 the CMake native version plus `python/post`; all five wheels must match that
 version before publication.
 
-`Test Windows PyPI Package` (`.github/workflows/windows-pypi-smoke.yaml`) is a
-manual Windows x64 installation and inference check. It creates a fresh Python
+`Test Windows PyPI Package` (`.github/workflows/windows-pypi-smoke.yaml`) runs on
+pushes to `feature/win` that change its workflow, `ci/windows/verify_pypi_inference.py`,
+or `test_res/data/bulk/kun.jpg`, and supports manual runs. It creates a fresh Python
 3.13 environment, runs `pip install inspireface`, installs OpenCV for reading
 the test image, and downloads the verified Pikachu model. It checks face
 detection, dense landmarks, and feature extraction using the installed package.
 The `windows-pypi-inference` artifact contains an annotated image, feature
 vectors, and a JSON result summary. This workflow does not build or publish
-wheels. GitHub shows its **Run workflow** button after the workflow file is
-present on the repository's default branch; a branch can then be selected for
-the run.
+wheels. A matching push runs the check before the workflow is merged into the
+default branch. GitHub shows its **Run workflow** button after the workflow file
+is present on the repository's default branch; a branch can then be selected
+for a manual run.
 
 `Build Windows SDK` (`.github/workflows/windows-sdk.yaml`) supports manual runs
-and is reused by Build SDKs and Release SDKs. It has no direct push trigger;
-`feature/win` pushes build Windows through Build Wheels. The Windows SDK job
-builds the Release shared CPU SDK,
+and is reused by Build SDKs and Release SDKs. It has no direct push trigger.
+The Windows SDK job builds the Release shared CPU SDK,
 compiles and runs installed C and C++ consumers, and uploads
 `sdk_files_windows_x64`. It records the exact InspireFace, third-party,
 InspireCV, and MNN revisions in `windows-x64-build-diagnostics`, alongside

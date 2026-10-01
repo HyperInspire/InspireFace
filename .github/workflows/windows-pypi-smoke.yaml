@@ -1,6 +1,12 @@
 name: Test Windows PyPI Package
 
 on:
+  push:
+    branches: [feature/win]
+    paths:
+      - '.github/workflows/windows-pypi-smoke.yaml'
+      - 'ci/windows/verify_pypi_inference.py'
+      - 'test_res/data/bulk/kun.jpg'
   workflow_dispatch:
 
 permissions:
