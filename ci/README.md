@@ -38,6 +38,17 @@ Manual runs publish only when `publish` is enabled. Package versions come from
 the CMake native version plus `python/post`; all five wheels must match that
 version before publication.
 
+`Test Windows PyPI Package` (`.github/workflows/windows-pypi-smoke.yaml`) is a
+manual Windows x64 installation and inference check. It creates a fresh Python
+3.13 environment, runs `pip install inspireface`, installs OpenCV for reading
+the test image, and downloads the verified Pikachu model. It checks face
+detection, dense landmarks, and feature extraction using the installed package.
+The `windows-pypi-inference` artifact contains an annotated image, feature
+vectors, and a JSON result summary. This workflow does not build or publish
+wheels. GitHub shows its **Run workflow** button after the workflow file is
+present on the repository's default branch; a branch can then be selected for
+the run.
+
 `Build Windows SDK` (`.github/workflows/windows-sdk.yaml`) supports manual runs
 and is reused by Build SDKs and Release SDKs. It has no direct push trigger;
 `feature/win` pushes build Windows through Build Wheels. The Windows SDK job
