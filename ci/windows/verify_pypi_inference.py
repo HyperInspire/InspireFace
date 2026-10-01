@@ -2,8 +2,10 @@
 
 Run with a fresh environment's isolated interpreter:
     python -I ci/windows/verify_pypi_inference.py \
-        --image test_res/data/bulk/kun.jpg --model path/to/Pikachu \
+        --image test_res/data/bulk/kun.jpg \
         --output-dir build/pypi-inference
+
+InspireFace downloads and caches its default model through launch().
 """
 
 import argparse
@@ -19,7 +21,6 @@ import sys
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--image", required=True, type=Path)
-    parser.add_argument("--model", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     args = parser.parse_args()
 
@@ -30,9 +31,8 @@ def main():
     for name in ("PYTHONPATH", "INSPIREFACE_LIBRARY_PATH", "INSPIREFACE_TEST_NATIVE_OVERRIDE"):
         if os.environ.get(name):
             raise RuntimeError("Installed package verification must not use " + name)
-    for path in (args.image, args.model):
-        if not path.is_file():
-            raise FileNotFoundError(path)
+    if not args.image.is_file():
+        raise FileNotFoundError(args.image)
 
     import cv2
     import inspireface as isf
@@ -55,7 +55,7 @@ def main():
     records = []
     features = []
 
-    isf.launch(resource_path=str(args.model.resolve()))
+    isf.launch()
     try:
         isf.switch_image_processing_backend(isf.HF_IMAGE_PROCESSING_CPU)
         with isf.InspireFaceSession(
@@ -122,7 +122,7 @@ def main():
         "package_path": str(package_path),
         "python_version": platform.python_version(),
         "platform": platform.platform(),
-        "model": args.model.name,
+        "model": "Pikachu",
         "image": args.image.name,
         "image_size": [width, height],
         "face_count": len(records),

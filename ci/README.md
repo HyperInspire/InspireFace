@@ -42,7 +42,8 @@ version before publication.
 pushes to `feature/win` that change its workflow, `ci/windows/verify_pypi_inference.py`,
 or `test_res/data/bulk/kun.jpg`, and supports manual runs. It creates a fresh Python
 3.13 environment, runs `pip install inspireface`, installs OpenCV for reading
-the test image, and downloads the verified Pikachu model. It checks face
+the test image, and calls `inspireface.launch()` to automatically download and
+cache the default Pikachu model through the Python package. It checks face
 detection, dense landmarks, and feature extraction using the installed package.
 The `windows-pypi-inference` artifact contains an annotated image, feature
 vectors, and a JSON result summary. This workflow does not build or publish

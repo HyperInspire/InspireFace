@@ -45,25 +45,10 @@ jobs:
           & $env:SMOKE_PYTHON -m pip check
           if ($LASTEXITCODE -ne 0) { throw 'Installed Python dependencies are inconsistent.' }
 
-      - name: Download the Pikachu model
-        env:
-          MODEL_URL: https://inspireface-1259028827.cos.ap-singapore.myqcloud.com/inspireface_modelzoo/t4/Pikachu
-          MODEL_SHA256: 5037ba1f49905b783a1c973d5d58b834a645922cc2814c8e3ca630a38dc24431
-        run: |
-          $directory = Join-Path $env:RUNNER_TEMP 'inspireface-model'
-          New-Item -ItemType Directory -Force $directory | Out-Null
-          $model = Join-Path $directory 'Pikachu'
-          Invoke-WebRequest -Uri $env:MODEL_URL -OutFile $model -TimeoutSec 120 -MaximumRetryCount 3 -RetryIntervalSec 2
-          if ((Get-FileHash -Algorithm SHA256 $model).Hash.ToLowerInvariant() -ne $env:MODEL_SHA256) {
-            throw 'The Pikachu model checksum does not match.'
-          }
-          "SMOKE_MODEL=$model" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
       - name: Run face detection, landmarks, and feature extraction
         run: |
           & $env:SMOKE_PYTHON -I ci/windows/verify_pypi_inference.py `
             --image test_res/data/bulk/kun.jpg `
-            --model $env:SMOKE_MODEL `
             --output-dir build/windows-pypi-smoke
           if ($LASTEXITCODE -ne 0) { throw 'Windows PyPI inference verification failed.' }
 
