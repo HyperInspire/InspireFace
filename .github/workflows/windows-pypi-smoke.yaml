@@ -1,0 +1,62 @@
+name: Test Windows PyPI Package
+
+on:
+  push:
+    branches: [feature/win]
+    paths:
+      - '.github/workflows/windows-pypi-smoke.yaml'
+      - 'ci/windows/verify_pypi_inference.py'
+      - 'test_res/data/bulk/kun.jpg'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows_pypi:
+    name: Detect faces, landmarks, and extract features
+    runs-on: windows-2022
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+          architecture: x64
+
+      - name: Create a fresh Python environment
+        run: |
+          $venv = Join-Path $env:RUNNER_TEMP 'inspireface-pypi-venv'
+          python -m venv $venv
+          if ($LASTEXITCODE -ne 0) { throw 'Failed to create the Python environment.' }
+          "SMOKE_PYTHON=$(Join-Path $venv 'Scripts/python.exe')" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Install InspireFace from PyPI
+        run: |
+          & $env:SMOKE_PYTHON -m pip install inspireface
+          if ($LASTEXITCODE -ne 0) { throw 'Installing InspireFace from PyPI failed.' }
+          & $env:SMOKE_PYTHON -m pip install opencv-python-headless
+          if ($LASTEXITCODE -ne 0) { throw 'Installing the test image reader failed.' }
+          & $env:SMOKE_PYTHON -m pip check
+          if ($LASTEXITCODE -ne 0) { throw 'Installed Python dependencies are inconsistent.' }
+
+      - name: Run face detection, landmarks, and feature extraction
+        run: |
+          & $env:SMOKE_PYTHON -I ci/windows/verify_pypi_inference.py `
+            --image test_res/data/bulk/kun.jpg `
+            --output-dir build/windows-pypi-smoke
+          if ($LASTEXITCODE -ne 0) { throw 'Windows PyPI inference verification failed.' }
+
+      - name: Upload inference results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-pypi-inference
+          path: build/windows-pypi-smoke/
+          if-no-files-found: warn
+          retention-days: 7

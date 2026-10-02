@@ -3,7 +3,9 @@ project(InspireFaceSDK)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+if(NOT MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+endif()
 
 option(ISF_BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 
@@ -134,6 +136,25 @@ if(ISF_BUILD_SHARED_LIBS)
     add_library(InspireFace SHARED ${ISF_CORE_SOURCES} $<TARGET_OBJECTS:inspirecv>)
 else()
     add_library(InspireFace STATIC ${ISF_CORE_SOURCES} $<TARGET_OBJECTS:inspirecv>)
+endif()
+
+if(WIN32)
+    target_compile_definitions(InspireFace PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+    if(ISF_BUILD_SHARED_LIBS)
+        target_compile_definitions(InspireFace PRIVATE ISF_EXPORTS PUBLIC ISF_BUILD_SHARED_LIBS)
+        # InspireCV objects are part of this DLL; retain the existing embedding
+        # contract and export their public API from the containing SDK.
+        target_compile_definitions(inspirecv PRIVATE "INSPIRECV_API=__declspec(dllexport)")
+        target_compile_definitions(InspireFace
+                PRIVATE "INSPIRECV_API=__declspec(dllexport)"
+                INTERFACE "INSPIRECV_API=__declspec(dllimport)")
+    endif()
+    # Match the native name already used by the Python package on Windows.
+    set_target_properties(InspireFace PROPERTIES PREFIX "lib"
+            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+endif()
+if(MSVC)
+    target_compile_options(InspireFace PRIVATE /utf-8 /bigobj)
 endif()
 
 if(OHOS AND ISF_BUILD_OHOS_NAPI)
@@ -316,64 +337,98 @@ endif()
 
 # Install lib
 install(TARGETS InspireFace
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib
+        RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib
+        LIBRARY DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib
+        ARCHIVE DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib
 )
 
 # Install header file
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/inspireface.h DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/include)
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/intypedef.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/c_api/intypedef.h DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/include)
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface/herror.h DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface/herror.h DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/include)
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/version.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/version.txt DESTINATION ${ISF_INSTALL_ROOT}/)
 
 if(ANDROID)
     # Ship the Java declarations with the JNI-enabled Android library so the
     # native and managed interfaces cannot be released independently.
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/platform/jni/java/
-            DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/java
+            DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/java
             FILES_MATCHING PATTERN "*.java")
 endif()
 
 if(ISF_INSTALL_CPP_HEADER)
     # Install cpp api header file
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface/ DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include/inspireface/)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/inspireface/ DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/include/inspireface/)
 
-    install(DIRECTORY ${INSPIRECV_INCLUDE_PATH}/inspirecv DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/include/)
+    install(DIRECTORY ${INSPIRECV_INCLUDE_PATH}/inspirecv DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/include/)
 endif()
 
 if (ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu1")
     # Install rknn 3rd lib
-    install(FILES ${ISF_RKNN_API_LIB}/librknn_api.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+    install(FILES ${ISF_RKNN_API_LIB}/librknn_api.so DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib)
 endif ()
 
 if(ISF_ENABLE_RKNN AND ISF_RKNPU_MAJOR STREQUAL "rknpu2" AND RK_PLATFORM STREQUAL "Android")
-    install(FILES ${ISF_RKNN_API_LIB}/librknnrt.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+    install(FILES ${ISF_RKNN_API_LIB}/librknnrt.so DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib)
 endif()
 
 
 if (ISF_RK_COMPILER_TYPE STREQUAL "aarch64")
-    install(FILES ${ISF_RKNN_API_LIB}/librknnrt.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+    install(FILES ${ISF_RKNN_API_LIB}/librknnrt.so DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib)
 endif()
 
 if(APPLE AND DEFINED MNN_STATIC_PATH AND NOT ISF_BUILD_SHARED_LIBS)
     # Dependency caches may expose symlinks; ship the archive itself.
     get_filename_component(ISF_APPLE_MNN_ARCHIVE "${MNN_STATIC_PATH}/lib/libMNN.a" REALPATH)
-    install(FILES "${ISF_APPLE_MNN_ARCHIVE}" DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib RENAME libMNN.a)
+    install(FILES "${ISF_APPLE_MNN_ARCHIVE}" DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib RENAME libMNN.a)
 elseif(NOT IOS)
     if (NOT ISF_BUILD_SHARED_LIBS)
-        if(MNN_BUILD_SHARED_LIBS)
-            install(FILES ${CMAKE_BINARY_DIR}/MNN/libMNN.so DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+        if(WIN32 AND TARGET MNN)
+            install(TARGETS MNN
+                    RUNTIME DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib
+                    LIBRARY DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib
+                    ARCHIVE DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib)
+        elseif(WIN32 AND DEFINED MNN_STATIC_PATH)
+            install(FILES "${MNN_LIBS}" DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib)
+        elseif(MNN_BUILD_SHARED_LIBS)
+            install(FILES ${CMAKE_BINARY_DIR}/MNN/libMNN.so DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib)
         else()
-            install(FILES ${CMAKE_BINARY_DIR}/MNN/libMNN.a DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+            install(FILES ${CMAKE_BINARY_DIR}/MNN/libMNN.a DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib)
         endif()
         if(RKNN_USE_STATIC_LIBS)
             # To be added: The compilation of the RK series needs to be added
-            install(FILES ${ISF_RKNN_API_LIB} DESTINATION ${CMAKE_INSTALL_PREFIX}/InspireFace/lib)
+            install(FILES ${ISF_RKNN_API_LIB} DESTINATION ${ISF_INSTALL_ROOT}/InspireFace/lib)
         endif()
         
     endif()
 
+endif()
+
+# Keep the existing SDK layout and provide the import definitions needed by
+# installed Windows C++ consumers, including the embedded InspireCV API.
+if(WIN32)
+    include(CMakePackageConfigHelpers)
+    set(ISF_PACKAGE_DIRECTORY "InspireFace/lib/cmake/InspireFace")
+    if(ISF_BUILD_SHARED_LIBS)
+        set(ISF_PACKAGE_LIBRARY_TYPE SHARED)
+    else()
+        set(ISF_PACKAGE_LIBRARY_TYPE STATIC)
+    endif()
+    configure_package_config_file(
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/InspireFaceConfig.cmake.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/InspireFaceConfig.cmake.in"
+            INSTALL_DESTINATION "${ISF_PACKAGE_DIRECTORY}")
+    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/InspireFaceConfig-$<CONFIG>.cmake"
+            INPUT "${CMAKE_CURRENT_BINARY_DIR}/InspireFaceConfig.cmake.in")
+    write_basic_package_version_file(
+            "${CMAKE_CURRENT_BINARY_DIR}/InspireFaceConfigVersion.cmake"
+            VERSION "${INSPIRE_FACE_VERSION_MAJOR}.${INSPIRE_FACE_VERSION_MINOR}.${INSPIRE_FACE_VERSION_PATCH}"
+            COMPATIBILITY SameMajorVersion)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/InspireFaceConfig-$<CONFIG>.cmake"
+            DESTINATION "${ISF_PACKAGE_DIRECTORY}" RENAME InspireFaceConfig.cmake)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/InspireFaceConfigVersion.cmake"
+            DESTINATION "${ISF_PACKAGE_DIRECTORY}")
 endif()

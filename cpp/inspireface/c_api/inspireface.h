@@ -12,7 +12,11 @@
 
 #if defined(_WIN32)
 #ifdef ISF_BUILD_SHARED_LIBS
+#ifdef ISF_EXPORTS
 #define HYPER_CAPI_EXPORT __declspec(dllexport)
+#else
+#define HYPER_CAPI_EXPORT __declspec(dllimport)
+#endif
 #else
 #define HYPER_CAPI_EXPORT
 #endif

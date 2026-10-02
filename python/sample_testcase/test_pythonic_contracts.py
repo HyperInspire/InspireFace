@@ -1,6 +1,7 @@
 """Compatibility gates for the Python-facing package and ctypes boundary."""
 
 import ctypes
+import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -47,7 +48,15 @@ class PublicPackageContractCase(unittest.TestCase):
 
     def test_python_and_native_versions_have_separate_contracts(self):
         version_file = Path(ifac.__file__).resolve().parent.parent / "version.txt"
-        self.assertEqual(ifac.__version__, version_file.read_text(encoding="utf-8").strip())
+        if version_file.is_file():
+            expected_version = version_file.read_text(encoding="utf-8").strip()
+        else:
+            try:
+                from importlib.metadata import version as distribution_version
+            except ImportError:  # Python 3.7
+                from importlib_metadata import version as distribution_version
+            expected_version = distribution_version("inspireface")
+        self.assertEqual(ifac.__version__, expected_version)
         self.assertEqual(ifac.__native_version__, ifac.version())
         self.assertIs(ifac.native_version, ifac.version)
 
@@ -117,6 +126,17 @@ class ExceptionBoundaryContractCase(unittest.TestCase):
 
 
 class NativePlatformContractCase(unittest.TestCase):
+    def test_legacy_long_and_fixed_width_ids_follow_the_native_abi(self):
+        # HResult is C long, while HFaceId is explicitly int64_t. They have
+        # different widths on 64-bit Windows (LLP64), unlike Linux/macOS.
+        self.assertEqual(ctypes.sizeof(native.HResult), ctypes.sizeof(ctypes.c_long))
+        self.assertEqual(native.HResult(-1).value, -1)
+        self.assertEqual(ctypes.sizeof(native.HFaceId), 8)
+        self.assertEqual(native.HFaceId((1 << 40) + 17).value, (1 << 40) + 17)
+        self.assertEqual(ctypes.sizeof(native.HFSession), ctypes.sizeof(ctypes.c_void_p))
+        if sys.platform == "win32":
+            self.assertEqual(ctypes.sizeof(native.HResult), 4)
+
     def test_generated_module_keeps_loader_and_native_symbol_compatibility(self):
         self.assertTrue(hasattr(native, "LibraryLoader"))
         self.assertTrue(hasattr(native, "add_library_search_dirs"))

@@ -1,0 +1,77 @@
+name: Build Windows SDK
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        default: ''
+        description: Native release version or v-prefixed tag
+
+permissions:
+  contents: read
+
+jobs:
+  windows_x64:
+    name: Build Windows x64 CPU SDK
+    runs-on: windows-2022
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/windows-setup
+      - name: Record source revisions
+        run: |
+          New-Item -ItemType Directory -Force build/windows-diagnostics | Out-Null
+          $revisions = foreach ($repository in @('.', '3rdparty', '3rdparty/InspireCV', '3rdparty/MNN')) {
+            $revision = & git -C $repository rev-parse HEAD
+            if ($LASTEXITCODE -ne 0) { throw "Could not read the source revision for $repository" }
+            "$repository $revision"
+          }
+          $revisions | Tee-Object -FilePath build/windows-diagnostics/source-revisions.txt
+      - name: Build the shared Release SDK
+        run: ./command/build_windows.ps1 -SkipTests
+      - name: Verify installed C and C++ consumers
+        run: |
+          $package = Join-Path $PWD 'build/windows-x64-Release-shared/install/InspireFace/lib/cmake/InspireFace'
+          cmake -S ci/windows/consumer -B build/windows-consumer -G Ninja -DCMAKE_BUILD_TYPE=Release "-DInspireFace_DIR=$package"
+          if ($LASTEXITCODE -ne 0) { throw 'Consumer configuration failed.' }
+          cmake --build build/windows-consumer --parallel 4
+          if ($LASTEXITCODE -ne 0) { throw 'Consumer build failed.' }
+          ctest --test-dir build/windows-consumer --output-on-failure --no-tests=error
+          if ($LASTEXITCODE -ne 0) { throw 'Consumer tests failed.' }
+      - name: Check SDK packaging rules
+        run: python -m unittest discover -s ci/windows/tests -p test_package_sdk.py -v
+      - name: Package and validate the Windows SDK
+        run: |
+          $arguments = @('--sdk', 'build/windows-x64-Release-shared/install', '--output-dir', 'build/release')
+          if ($env:RELEASE_VERSION) { $arguments += @('--version', $env:RELEASE_VERSION) }
+          python ci/windows/package_sdk.py @arguments
+      - name: Upload Windows SDK files
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk_files_windows_x64
+          path: |
+            build/release/inspireface-windows-x64-*.zip
+            build/release/inspireface-windows-x64-*.zip.sha256
+          if-no-files-found: error
+          compression-level: 0
+      - name: Upload Windows build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64-build-diagnostics
+          path: |
+            build/windows-diagnostics/
+            build/windows-x64-Release-shared/CMakeCache.txt
+            build/windows-x64-Release-shared/CMakeFiles/CMakeConfigureLog.yaml
+            build/windows-x64-Release-shared/Testing/Temporary/*.log
+            build/windows-consumer/CMakeCache.txt
+            build/windows-consumer/CMakeFiles/CMakeConfigureLog.yaml
+            build/windows-consumer/Testing/Temporary/*.log
+          if-no-files-found: warn

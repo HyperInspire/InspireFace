@@ -7,7 +7,7 @@
 #include <string>
 
 #ifdef _WIN32
-#include <windows.h>
+#include "system.h"
 #else
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -21,8 +21,7 @@ namespace inspire {
 
 inline bool IsDirectory(const std::string& path) {
 #ifdef _WIN32
-    DWORD dwAttrib = GetFileAttributes(path.c_str());
-    return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+    return os::IsDir(path);
 #else
     struct stat st;
     if (stat(path.c_str(), &st) == 0) {

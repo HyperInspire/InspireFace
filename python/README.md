@@ -6,16 +6,26 @@ InspireFace provides an easy-to-use Python API that wraps the underlying dynamic
 
 ### Install via pip (Recommended)
 
+CPU wheels are available for Windows x64 and for Linux/macOS on x86_64 and ARM64. On Windows, use x64 Python and install the Microsoft Visual C++ 2022 x64 Redistributable.
+
 ```bash
 pip install inspireface
 ```
 
+Python 3.7 automatically selects `modelscope<1.22.1`, and Python 3.8 selects
+`modelscope<1.29.2`. Those newer ModelScope releases require Python 3.8 syntax
+and Python 3.9's `zoneinfo`, respectively, without declaring the minimum in
+their package metadata. Python 3.9 and newer keep the normal ModelScope
+dependency selection. These compatibility constraints apply on all supported
+operating systems.
+
 ### Manual Installation
 
-1. Copy the compiled dynamic library to the specified directory:
+1. Copy the compiled native library to `inspireface/modules/core/libs/SYSTEM/CORE_ARCH/`, matching the running Python process. Use `linux` or `darwin` with `x64` or `arm64`, or `windows/x64` for Windows. Library names are `libInspireFace.so` (Linux), `libInspireFace.dylib` (macOS), and `libInspireFace.dll` (Windows):
 ```bash
-# Copy the compiled dynamic library to the corresponding system architecture directory
-cp YOUR_BUILD_DIR/libInspireFace.so inspireface/modules/core/SYSTEM/CORE_ARCH/
+# Linux x64 example, from this python directory
+mkdir -p inspireface/modules/core/libs/linux/x64
+cp YOUR_BUILD_DIR/install/InspireFace/lib/libInspireFace.so inspireface/modules/core/libs/linux/x64/
 ```
 
 2. Install the Python package and its declared dependencies:
@@ -23,9 +33,11 @@ cp YOUR_BUILD_DIR/libInspireFace.so inspireface/modules/core/SYSTEM/CORE_ARCH/
 pip install .
 ```
 
+For Windows wheel builds, run `.\command\build_wheel_windows.ps1 -PythonExecutable python` from the repository root in an x64 Visual Studio Native Tools PowerShell environment. The output is `python/dist/inspireface-<version>-py3-none-win_amd64.whl`.
+
 ## Quick Start
 
-Here's a simple example showing how to use InspireFace for face detection and landmark drawing:
+Here's a simple example showing how to use InspireFace for face detection and landmark drawing. `isf.launch()` automatically downloads the default model on first use:
 
 ```python
 import cv2
@@ -83,9 +95,11 @@ The comprehensive Python suite shares the same `test_res` fixture tree as the C+
 python -m sample_testcase.run --native-lib ../build/lib/libInspireFace.so
 ```
 
+On Windows, run `python -m sample_testcase.run --native-lib ../build/windows-x64-Release-shared/install/InspireFace/lib/libInspireFace.dll` from this `python` directory after building the SDK and preparing the same test resources.
+
 ## Notes
 
 1. Ensure that OpenCV and other necessary dependencies are installed on your system
 2. Make sure the dynamic library is correctly installed before use
-3. Python 3.7 or higher is recommended
-4. The default version is CPU, if you want to use the GPU, CoreML, or NPU backend version, you can refer to the [documentation](https://doc.inspireface.online/guides/python-rockchip-device.html) to replace the so and make a Python installation package
+3. Python 3.7 or higher is required; Windows wheels require x64 Python
+4. PyPI wheels use the CPU backend. GPU, CoreML, and NPU builds depend on the target platform; refer to the [documentation](https://doc.inspireface.online/guides/python-rockchip-device.html) for packaging a matching native library. Windows wheels currently use the CPU/MNN backend.

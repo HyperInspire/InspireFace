@@ -5,6 +5,7 @@ on:
     branches: ["master"]
   pull_request:
     branches: ["master"]
+  workflow_dispatch:
 
 # Set the global GitHub token environment variable
 env:
@@ -12,7 +13,7 @@ env:
 
 jobs:
   build_linux_x86:
-    name: Compile Linux-Ubuntu-x86
+    name: Compile Linux-Ubuntu-x86 and HarmonyOS
     runs-on: ubuntu-latest
 
     steps:
@@ -51,11 +52,18 @@ jobs:
                 /sdk/InspireFace/lib/libInspireFace.so
             '
 
+      - name: Build and verify HarmonyOS SDK on the same runner
+        uses: ./.github/actions/harmony-build
+
   build_apple:
     name: Validate Apple SDKs
     uses: ./.github/workflows/apple-sdk.yaml
     with:
       backend: all
+
+  build_windows_x64:
+    name: Validate Windows x64 SDK
+    uses: ./.github/workflows/windows-sdk.yaml
 
   build_armv7_armhf:
     name: Compile Armv7-Armhf

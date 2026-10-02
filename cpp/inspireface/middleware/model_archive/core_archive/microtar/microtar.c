@@ -27,6 +27,9 @@
 #include <errno.h>
 #include <limits.h>
 #include <stdint.h>
+#if defined(_WIN32)
+#include <windows.h>
+#endif
 
 #include "microtar.h"
 
@@ -280,7 +283,22 @@ int mtar_open(mtar_t *tar, const char *filename, const char *mode) {
   else if ( strchr(mode, 'a') ) mode = "ab";
   else return MTAR_EOPENFAIL;
   /* Open file */
+#if defined(_WIN32)
+  {
+    const int length = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, filename, -1, NULL, 0);
+    wchar_t* wide_filename;
+    const wchar_t* wide_mode = *mode == 'r' ? L"rb" : (*mode == 'w' ? L"wb" : L"ab");
+    if (length <= 0) return MTAR_EOPENFAIL;
+    wide_filename = (wchar_t*)malloc((size_t)length * sizeof(wchar_t));
+    if (wide_filename == NULL) return MTAR_EOPENFAIL;
+    if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, filename, -1, wide_filename, length) == length) {
+      tar->stream = _wfopen(wide_filename, wide_mode);
+    }
+    free(wide_filename);
+  }
+#else
   tar->stream = fopen(filename, mode);
+#endif
   if (!tar->stream) {
     return MTAR_EOPENFAIL;
   }

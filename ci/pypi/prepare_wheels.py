@@ -4,6 +4,7 @@
 import argparse
 from email.parser import BytesParser
 import hashlib
+import json
 import os
 from pathlib import Path
 import re
@@ -16,6 +17,7 @@ PLATFORMS = {
     "manylinux2014-aarch64-wheels": ("manylinux2014_aarch64", "linux/arm64/libInspireFace.so"),
     "macos-arm64-wheels": ("macosx_11_0_arm64", "darwin/arm64/libInspireFace.dylib"),
     "macos-x86_64-wheels": ("macosx_12_0_x86_64", "darwin/x64/libInspireFace.dylib"),
+    "windows-x64-wheels": ("win_amd64", "windows/x64/libInspireFace.dll"),
 }
 
 
@@ -58,6 +60,9 @@ def validate_wheel(path, version, platform, library):
         libraries = [name for name in candidates if name in names]
         if len(libraries) != 1 or wheel.getinfo(libraries[0]).file_size == 0:
             raise ValueError(f"Missing, empty or duplicated native library: {library}")
+        native_libraries = [name for name in names if re.search(r"\.(dll|dylib|so(?:\.[0-9]+)*)$", name, re.I)]
+        if native_libraries != libraries:
+            raise ValueError(f"Unexpected native libraries for {platform}: {native_libraries}")
 
 
 def collect_wheels(artifacts, output, version, legacy_macos_python=None):
@@ -93,20 +98,42 @@ def collect_wheels(artifacts, output, version, legacy_macos_python=None):
     return selected
 
 
+def write_release_manifest(output, version, manifest_path):
+    """Record the validated files so a later PyPI install can verify their identity."""
+    manifest = {
+        "version": version,
+        "wheels": {
+            path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(output.glob("*.whl"))
+        },
+    }
+    if len(manifest["wheels"]) != len(PLATFORMS):
+        raise ValueError("Release manifest requires all five validated wheels")
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--artifacts", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--version", help="Defaults to CMakeLists.txt plus python/post")
+    parser.add_argument("--manifest", type=Path,
+                        help="Write validated wheel versions and SHA256 hashes for post-publish checks")
     parser.add_argument("--legacy-macos-python", choices=["3.12"],
                         help="Select only py3.12 artifacts from the old macOS matrix")
     args = parser.parse_args()
     try:
         version = args.version or project_version()
         selected = collect_wheels(args.artifacts, args.output, version, args.legacy_macos_python)
+        if args.manifest:
+            write_release_manifest(args.output, version, args.manifest)
     except (ValueError, OSError) as error:
         parser.error(str(error))
     print(f"Validated {len(selected)} wheels for inspireface {version}")
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as outputs:
+            outputs.write(f"version={version}\n")
     if os.environ.get("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
             summary.write(f"### Validated inspireface {version}\n\n")
