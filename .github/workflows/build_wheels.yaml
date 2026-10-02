@@ -2,7 +2,7 @@ name: Build Wheels
 
 on:
   push:
-    branches: ["release/wheels"]
+    branches: ["release/wheels", "feature/win"]
   pull_request:
     branches: ["release/wheels"]
   workflow_dispatch:

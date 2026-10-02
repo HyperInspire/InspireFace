@@ -2,7 +2,7 @@ name: Build SDKs
 
 on:
   push:
-    branches: ["master", "feature/win"]
+    branches: ["master"]
   pull_request:
     branches: ["master"]
   workflow_dispatch:
