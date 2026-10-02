@@ -22,6 +22,8 @@ Please contact [contact@insightface.ai](mailto:contact@insightface.ai?subject=In
 
 ## Change Logs
 
+**`2026-09-27`** Add Windows platform support and precompiled SDKs.
+
 **`2026-09-20`** Add demos for passive face liveness detection and flash liveness detection.
 
 **`2026-08-30`** Add HarmonyOS support and configurable best-frame face capture, improve SDK performance, reliability, API compatibility, and Python usability, and expand regression tests, benchmarks, and bilingual documentation.
@@ -92,13 +94,13 @@ The licensing of the open-source models employed by InspireFace adheres to the s
 
 ### Python Quick Start
 
-For Python users on **Linux and MacOS**, InspireFace can be quickly installed via pip:
+For Python users on **Windows x64, Linux, and macOS**, InspireFace can be quickly installed via pip. CPU wheels are available for Windows x64 and for Linux/macOS on x86_64 and ARM64:
 
 ```bash
 pip install -U inspireface
 ```
 
-After installation, you can use inspireface like this:
+The wheels include the native CPU library, and models are downloaded automatically on first use. On Windows, use x64 Python and install the Microsoft Visual C++ 2022 x64 Redistributable as described in the [Windows runtime requirements](doc/Windows.md#installed-cc-consumers). After installation, you can use inspireface like this:
 
 ```Python
 import cv2
@@ -208,7 +210,7 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 - CMake (version 3.20 or higher)
 - Ninja (required by the Windows build scripts; included in Visual Studio's **C++ CMake tools for Windows** component)
 - Git (to fetch the source and recursive submodules)
-- PowerShell (required to run the Windows build scripts)
+- 64-bit PowerShell (required to run the Windows build scripts)
 - Python 3.7 or newer with pip (for Python wheel builds; use x64 Python on Windows) [**Optional**]
 - NDK (version 16 or higher, only required for Android) [**Optional**]
 - MNN (version 3.x or higher)
@@ -233,7 +235,7 @@ The '**3rdparty**' directory already includes the MNN library and specifies a pa
 ## Compilation
 CMake option are used to control the various details of the compilation phase. Please select according to your actual requirements. [CMake Option](doc/CMake-Option.md).
 
-For the Windows x64 CPU/MNN path, use the PowerShell entry point
+For Windows x64 desktop and Windows Server builds with the CPU/MNN backend, use the PowerShell entry point
 [`command/build_windows.ps1`](command/build_windows.ps1) from a Visual Studio
 x64 Native Tools environment. See [Windows build and SDK consumption](doc/Windows.md)
 for test resources, shared/static builds, and the installed CMake package.
@@ -245,7 +247,9 @@ cd InspireFace/
 # Execute the local compilation script
 bash command/build.sh
 ```
-After compilation, you can find the local file in the build directory, which contains the compilation results. The install directory structure is as follows:
+On Windows, run `.\command\build_windows.ps1` from PowerShell in a Visual Studio x64 Native Tools environment. The default Release shared SDK is installed to `build/windows-x64-Release-shared/install/InspireFace`; its `lib/` directory contains `libInspireFace.dll` and the import library. Add `-Static` for a static SDK. Test resources must be prepared before using the default build, which also runs CTest; see the [Windows build instructions](doc/Windows.md).
+
+Compilation results are placed in the build directory. For example, a Linux shared SDK has the following layout:
 ```bash
 inspireface-linux
    ├── include
@@ -362,7 +366,7 @@ For Android and iOS, in addition to the native interface, you can use the React 
 
 ### Supported Platforms and Architectures
 
-We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments.
+We have completed the adaptation and testing of the software across various operating systems and CPU architectures. This includes compatibility verification for platforms such as Windows x64, Linux, macOS, iOS, and Android, as well as testing for specific hardware support to ensure stable operation in diverse environments. Windows desktop and Windows Server builds currently support the x64 CPU/MNN backend.
 
 | No. | Platform | Architecture<sup><br/>(CPU) | Device<sup><br/>(Special) | **Supported** | Passed Tests | Release<sup><br/>(Online) |
 | ------- | -------------------- | --------------------- | -------------------------- | :-----------: | :----------------: | :----------------: |
@@ -383,15 +387,15 @@ We have completed the adaptation and testing of the software across various oper
 | 15 | | x86_64 | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
 | 16 | **Android**<sup><br/>(Rockchip) | ARMv8 | RK3566/RK3568 | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
 | 17 |  | ARMv8 | RK3588 | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
-| 18 | **HarmonyOS** | ARMv8 | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | - |
-| 19 | **Windows** | x86/x86_64 |  | - | - | - |
-| 20 |  | ARMv8 |  | - | - | - |
+| 18 | **HarmonyOS** | ARMv8 | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | - | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
+| 19 | **Windows** | x86_64 (x64) | - | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![](https://img.shields.io/badge/%E2%9C%93-green)](#) | [![build](https://img.shields.io/github/actions/workflow/status/HyperInspire/InspireFace/release-sdks.yaml?label=✓&labelColor=success&color=success&failedLabel=✗&failedColor=critical&logo=github&logoColor=white)](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) |
+| 20 |  | ARMv8 | - | - | - | - |
 | 21 | **Linux**<sup><br/>(Jetson series) | ARMv8 | Jetson series | - | - | - |
 
 - **Device**: Some special device support, primarily focused on computing power devices.
 - **Supported**: The solution has been fully developed and successfully verified on offline devices.
 - **Passed Tests**: The feature has at least **passed unit tests** on offline devices.
-- **Release**: The solution is already supported and has been successfully compiled and released through **[GitHub Actions](https://github.com/HyperInspire/InspireFace/actions/workflows/built_release_from_docker.yaml)**.
+- **Release**: Links to the platform's [SDK release workflow](https://github.com/HyperInspire/InspireFace/actions/workflows/release-sdks.yaml) or published Python wheels on PyPI.
 
 > HarmonyOS currently marks build and API adaptation support only. Passed Tests and Release remain unmarked until validation on HarmonyOS hardware is available.
 
@@ -649,7 +653,7 @@ The Python implementation is compiled based on InspireFace source code, and is i
 
 #### Use pip to install InspireFace
 
-You can use pip to install the InspireFace Python package:
+You can use pip to install the InspireFace Python package on Windows x64, Linux, and macOS:
 
 ```bash
 pip install inspireface
@@ -657,7 +661,7 @@ pip install inspireface
 
 #### Python Native Sample
 
-We provide a Python API that allows for more efficient use of the InspireFace library. After compiling the dynamic link library, you need to either symlink or copy it to the `python/inspireface/modules/core` directory within the root directory. You can then start testing by navigating to the **[python](python/)** directory. Your Python environment will need to have some dependencies installed:
+For source-based Python development, copy or symlink the compiled native library into `python/inspireface/modules/core/libs/PLATFORM/ARCH/`, matching the Python process's OS and architecture. Use `linux` or `darwin` with `x64` or `arm64`, or `windows/x64` for Windows. The library is named `libInspireFace.so` on Linux, `libInspireFace.dylib` on macOS, and `libInspireFace.dll` on Windows. PyPI wheels already include this library. You can then start testing by navigating to the **[python](python/)** directory. Your Python environment will need to have some dependencies installed:
 
 - python >= 3.7
 - opencv-python
@@ -666,11 +670,14 @@ We provide a Python API that allows for more efficient use of the InspireFace li
 - numpy
 - ctypes
 ```bash
-# Use a symbolic link
-ln -s YOUR_BUILD_DIR/install/InspireFace/lib/libInspireFace.so python/inspireface/modules/core/PLATFORM/ARCH/
+# Linux example: use a symbolic link to the matching architecture directory
+mkdir -p python/inspireface/modules/core/libs/linux/x64
+ln -s /absolute/path/to/YOUR_BUILD_DIR/install/InspireFace/lib/libInspireFace.so python/inspireface/modules/core/libs/linux/x64/
 # Navigate to the sub-project directory
 cd python
 ```
+
+To build a Windows wheel, run `.\command\build_wheel_windows.ps1 -PythonExecutable python` from the repository root in an x64 Native Tools PowerShell environment. The wheel is written to `python/dist/inspireface-<version>-py3-none-win_amd64.whl`; see [Windows wheel builds](doc/Windows.md#python-and-platform-scope).
 
 Import inspireface for a quick facial detection example:
 ```python
@@ -870,7 +877,7 @@ test_res
 └── video_frames
 
 ```
-After compilation, you can find the executable program "**Test**" in `YOUR_BUILD_FOLDER/test`. The program accepts two optional parameters:
+After compilation, you can find the executable program **Test** (**Test.exe** on Windows) in `YOUR_BUILD_FOLDER/test`. The program accepts two optional parameters:
 
 - **test_dir**：Path to the test resource files
 - **pack**：Name of the model to be tested
@@ -891,11 +898,11 @@ If you need to perform a quick test, you can use the script we provide. This scr
 # If you are using Ubuntu, you can execute this.
 bash ci/quick_test_linux_x86_usual.sh
 
-# If you are using another system (including Ubuntu), you can execute this.
+# For macOS or Linux, you can execute this.
 bash ci/quick_test_local.sh
 ```
 
-Every time code is committed, tests are run on GitHub Actions.
+On Windows, `.\command\build_windows.ps1` builds the SDK and runs the registered CTest suite with the prepared `test_res` resources. To rerun it, use `ctest --test-dir build/windows-x64-Release-shared --output-on-failure --no-tests=error`. Automated tests also run through the configured GitHub Actions workflows.
 
 ## Features
 The following Features and technologies are currently supported.
@@ -941,7 +948,7 @@ For different scenarios, we currently provide several Packs, each containing mul
 - [x] Add TensorRT backend support.
 - [x] Add Add C++ style header files.
 - [x] Add the RKNPU backend support for Android .
-- [ ] Python packages that support more platforms.
+- [x] Python wheels for Windows x64 and Linux/macOS on x86_64 and ARM64.
 - [x] Example app project for Android and iOS samples.
 - [ ] Add the batch forward feature.
 - [ ] Design a scheme that can be adapted to multiple CUDA devices.
