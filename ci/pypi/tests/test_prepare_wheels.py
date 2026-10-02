@@ -1,8 +1,13 @@
 import importlib.util
+import hashlib
+import json
+import os
 from pathlib import Path
 import shutil
+import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 
 
@@ -56,6 +61,37 @@ class WheelCollectionTests(unittest.TestCase):
         self.assertEqual(len(selected), 5)
         for path in selected:
             self.assertEqual(path.read_bytes(), (self.output / path.name).read_bytes())
+
+    def test_manifest_and_job_output_use_validated_artifact_version(self):
+        manifest = self.root / "metadata" / "release.json"
+        outputs = self.root / "github-output"
+        argv = ["prepare_wheels.py", "--artifacts", str(self.artifacts),
+                "--output", str(self.output), "--version", VERSION,
+                "--manifest", str(manifest)]
+        with patch.object(sys, "argv", argv), patch.dict(os.environ, {
+            "GITHUB_OUTPUT": str(outputs), "GITHUB_STEP_SUMMARY": "",
+        }), patch.object(prepare, "project_version", side_effect=AssertionError("Do not use checkout version")):
+            prepare.main()
+        published = json.loads(manifest.read_text())
+        self.assertEqual(published["version"], VERSION)
+        self.assertEqual(len(published["wheels"]), 5)
+        for path in self.output.glob("*.whl"):
+            self.assertEqual(published["wheels"][path.name], hashlib.sha256(path.read_bytes()).hexdigest())
+        self.assertEqual(outputs.read_text(), f"version={VERSION}\n")
+
+    def test_invalid_release_emits_no_manifest_or_job_output(self):
+        shutil.rmtree(self.artifacts / "windows-x64-wheels")
+        manifest = self.root / "release.json"
+        outputs = self.root / "github-output"
+        argv = ["prepare_wheels.py", "--artifacts", str(self.artifacts),
+                "--output", str(self.output), "--version", VERSION,
+                "--manifest", str(manifest)]
+        with patch.object(sys, "argv", argv), patch.dict(os.environ, {
+            "GITHUB_OUTPUT": str(outputs), "GITHUB_STEP_SUMMARY": "",
+        }), self.assertRaises(SystemExit):
+            prepare.main()
+        self.assertFalse(manifest.exists())
+        self.assertFalse(outputs.exists())
 
     def test_legacy_matrix_selects_only_explicit_python_version(self):
         for artifact in ("macos-arm64-wheels", "macos-x86_64-wheels"):

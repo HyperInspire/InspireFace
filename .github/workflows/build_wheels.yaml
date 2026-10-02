@@ -2,7 +2,7 @@ name: Build Wheels
 
 on:
   push:
-    branches: ["release/wheels", "feature/win"]
+    branches: ["release/wheels"]
   pull_request:
     branches: ["release/wheels"]
   workflow_dispatch:
@@ -218,6 +218,9 @@ jobs:
             needs.build_windows_x64.result == 'success')) }}
     needs: [build_manylinux2014_x86_64, build_manylinux2014_aarch64, build_macos_arm64, build_macos_x86_64, build_windows_x64]
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.collect.outputs.version }}
+      published: ${{ steps.publish.outputs.published }}
     concurrency:
       group: inspireface-pypi-publish
       cancel-in-progress: false
@@ -254,11 +257,12 @@ jobs:
         run: python -m unittest discover -s ci/pypi/tests -v
 
       - name: Collect and validate five platform wheels
+        id: collect
         env:
           SOURCE_RUN_ID: ${{ inputs.source_run_id }}
           EXPECTED_VERSION: ${{ inputs.expected_version }}
         run: |
-          args=(--artifacts wheel-artifacts --output dist)
+          args=(--artifacts wheel-artifacts --output dist --manifest pypi-release-manifest.json)
           if [[ -n "$EXPECTED_VERSION" ]]; then
             args+=(--version "$EXPECTED_VERSION")
           fi
@@ -280,12 +284,21 @@ jobs:
           if-no-files-found: error
           retention-days: 7
           overwrite: true
+
+      - name: Save release hashes for PyPI installation checks
+        uses: actions/upload-artifact@v4
+        with:
+          name: pypi-release-manifest
+          path: pypi-release-manifest.json
+          if-no-files-found: error
+          retention-days: 7
+          overwrite: true
           
       - name: Upload to PyPI
+        id: publish
         if: >-
           ${{ (github.event_name == 'push' &&
                (github.ref == 'refs/heads/release/wheels' ||
-                github.ref == 'refs/heads/feature/win' ||
                 github.ref == 'refs/heads/development')) ||
               (github.event_name == 'workflow_dispatch' && inputs.publish) }}
         env:
@@ -297,3 +310,84 @@ jobs:
             exit 1
           fi
           python -m twine upload --non-interactive dist/*.whl
+          echo "published=true" >> "$GITHUB_OUTPUT"
+
+  wait_for_pypi:
+    name: Wait five minutes for PyPI
+    needs: upload_to_pypi
+    if: >-
+      ${{ !cancelled() && needs.upload_to_pypi.result == 'success' &&
+          needs.upload_to_pypi.outputs.published == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Allow the published files to reach PyPI indexes
+        run: sleep 300
+
+  verify_published_wheels:
+    name: Test PyPI package (${{ matrix.platform }})
+    needs: [upload_to_pypi, wait_for_pypi]
+    if: >-
+      ${{ !cancelled() && needs.upload_to_pypi.result == 'success' &&
+          needs.upload_to_pypi.outputs.published == 'true' &&
+          needs.wait_for_pypi.result == 'success' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-x64
+            runner: windows-2022
+            architecture: x64
+          - platform: linux-x64
+            runner: ubuntu-24.04
+            architecture: x64
+          - platform: linux-arm64
+            runner: ubuntu-24.04-arm
+            architecture: arm64
+          - platform: darwin-x64
+            runner: macos-15-intel
+            architecture: x64
+          - platform: darwin-arm64
+            runner: macos-14
+            architecture: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          architecture: ${{ matrix.architecture }}
+
+      - name: Download release hashes
+        uses: actions/download-artifact@v4
+        with:
+          name: pypi-release-manifest
+          path: build/pypi-release-manifest
+
+      - name: Install this release from PyPI and run inference
+        env:
+          EXPECTED_VERSION: ${{ needs.upload_to_pypi.outputs.version }}
+          SMOKE_PLATFORM: ${{ matrix.platform }}
+        run: |
+          python ci/pypi/run_published_smoke.py \
+            --version "$EXPECTED_VERSION" \
+            --platform "$SMOKE_PLATFORM" \
+            --image test_res/data/bulk/kun.jpg \
+            --output-dir build/pypi-smoke \
+            --venv-dir "$RUNNER_TEMP/inspireface-pypi-smoke-venv" \
+            --manifest build/pypi-release-manifest/pypi-release-manifest.json
+
+      - name: Upload installed-package test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pypi-smoke-${{ matrix.platform }}
+          path: build/pypi-smoke/
+          if-no-files-found: warn
+          retention-days: 14
