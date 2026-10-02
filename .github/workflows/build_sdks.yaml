@@ -2,9 +2,10 @@ name: Build SDKs
 
 on:
   push:
-    branches: ["master"]
+    branches: ["master", "feature/win"]
   pull_request:
     branches: ["master"]
+  workflow_dispatch:
 
 # Set the global GitHub token environment variable
 env:
