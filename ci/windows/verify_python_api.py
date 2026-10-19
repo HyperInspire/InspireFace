@@ -110,9 +110,10 @@ def main():
     assert resource_counts(native) == [0, 0]
 
     args.work_dir.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='Python 中文 空格 ', dir=args.work_dir) as folder:
+    # Use a non-ASCII symbol to exercise UTF-8 paths while keeping the source ASCII.
+    with tempfile.TemporaryDirectory(prefix='Python Unicode \u2603 spaces ', dir=args.work_dir) as folder:
         root = Path(folder)
-        model = root / '模型 Pikachu'
+        model = root / 'model Pikachu \u2603'
         shutil.copy2(args.model, model)
         assert isf.launch(resource_path=str(model))
         try:
@@ -121,7 +122,7 @@ def main():
                 assert session.face_detection(pixels) == []
             session.close()  # Closing twice must not release an already-freed native handle.
             assert session.closed
-            output = root / '图像 输出.png'
+            output = root / 'image output \u2603.png'
             with isf.ImageStream.load_from_cv_image(pixels) as stream:
                 stream.write_to_file(str(output))
             stream.close()
@@ -129,7 +130,7 @@ def main():
             assert output.is_file() and output.stat().st_size > 0
             assert resource_counts(native) == [0, 0]
             for directory_mode in (False, True):
-                database = root / ('数据库 目录' if directory_mode else '数据库 文件.db')
+                database = root / ('database directory \u2603' if directory_mode else 'database file \u2603.db')
                 if directory_mode:
                     database.mkdir()
                 key_mode = isf.HF_PK_MANUAL_INPUT if directory_mode else isf.HF_PK_AUTO_INCREMENT

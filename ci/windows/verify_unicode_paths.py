@@ -52,11 +52,12 @@ def main():
         return str(path.resolve()).encode('utf-8')
 
     args.work_dir.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='InspireFace 中文 空格 ', dir=args.work_dir) as folder:
+    # Use a non-ASCII symbol to exercise UTF-8 paths while keeping the source ASCII.
+    with tempfile.TemporaryDirectory(prefix='InspireFace Unicode \u2603 spaces ', dir=args.work_dir) as folder:
         root = Path(folder)
-        model = root / '模型 Pikachu'
-        picture = root / ('人脸 输入' + args.image.suffix)
-        output = root / '图像 输出.png'
+        model = root / 'model Pikachu \u2603'
+        picture = root / ('face input \u2603' + args.image.suffix)
+        output = root / 'image output \u2603.png'
         shutil.copy2(args.model, model)
         shutil.copy2(args.image, picture)
         check('launch UTF-8 model', library.HFLaunchInspireFace(encoded(model)))
@@ -74,7 +75,7 @@ def main():
                     check('release bitmap', library.HFReleaseImageBitmap(bitmap))
 
             for directory_mode in (False, True):
-                location = root / ('数据库 文件.db' if not directory_mode else '数据库 目录')
+                location = root / ('database file \u2603.db' if not directory_mode else 'database directory \u2603')
                 if directory_mode:
                     location.mkdir()
                 configuration = HubConfiguration(0, 1, encoded(location), 0.48, 1)
