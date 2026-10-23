@@ -65,12 +65,11 @@ public final class FaceImageProcessor {
 
     private static Result detect(Session session, Bitmap bitmap, boolean createCrops,
                                  boolean extractFeatures, boolean extractLandmarks) {
-        ImageStream stream = InspireFace.CreateImageStreamFromBitmap(
-                bitmap, InspireFace.CAMERA_ROTATION_0);
-        if (stream == null) {
-            return new Result(Status.PROCESS_FAILED, new Candidate[0]);
-        }
-        try {
+        try (ImageStream stream = InspireFace.CreateImageStreamFromBitmap(
+                bitmap, InspireFace.CAMERA_ROTATION_0)) {
+            if (stream == null) {
+                return new Result(Status.PROCESS_FAILED, new Candidate[0]);
+            }
             MultipleFaceData faces = InspireFace.ExecuteFaceTrack(session, stream);
             if (faces == null) {
                 return new Result(Status.PROCESS_FAILED, new Candidate[0]);
@@ -103,8 +102,6 @@ public final class FaceImageProcessor {
                 candidates[i] = new Candidate(rect, feature, crop, denseLandmarks);
             }
             return new Result(Status.READY, candidates);
-        } finally {
-            InspireFace.ReleaseImageStream(stream);
         }
     }
 

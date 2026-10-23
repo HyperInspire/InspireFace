@@ -42,7 +42,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:textColor="@color/white"
+                    android:textColor="@color/home_text_primary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -61,6 +61,7 @@
                 android:layout_height="44dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
                 android:focusable="true"
                 android:gravity="center"
                 android:text="@string/edit_short"
@@ -73,6 +74,7 @@
                 android:layout_height="44dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
                 android:focusable="true"
                 android:gravity="center"
                 android:text="@string/delete_short"

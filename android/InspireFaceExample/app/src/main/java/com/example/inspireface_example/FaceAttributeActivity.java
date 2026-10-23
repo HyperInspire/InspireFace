@@ -3,6 +3,7 @@ package com.example.inspireface_example;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import com.example.inspireface_example.ui.UiMotion;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,7 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.inspireface_example.ui.UiActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -32,7 +33,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /** Selectable still-image face attribute analysis. */
-public final class FaceAttributeActivity extends AppCompatActivity {
+public final class FaceAttributeActivity extends UiActivity {
 
     private static final int MAX_IMAGE_DIMENSION = 2048;
     private static final float DIRECT_FACE_AREA_RATIO = 0.05f;
@@ -81,7 +82,7 @@ public final class FaceAttributeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
-                .setAppearanceLightNavigationBars(false);
+                .setAppearanceLightNavigationBars(true);
         setContentView(R.layout.activity_face_attribute);
         applyWindowInsets();
         bindViews();
@@ -257,7 +258,7 @@ public final class FaceAttributeActivity extends AppCompatActivity {
         rightEyeValue.setText(binaryValue(attribute.rightEyeConfidence,
                 R.string.attribute_eye_open, R.string.attribute_eye_closed));
         resultPlaceholder.setVisibility(View.GONE);
-        resultValues.setVisibility(View.VISIBLE);
+        UiMotion.reveal(resultValues);
     }
 
     private void updateMagnifier(FaceImageProcessor.Candidate selected) {
@@ -277,7 +278,7 @@ public final class FaceAttributeActivity extends AppCompatActivity {
         if (crop != null) {
             magnifierBitmap = crop.bitmap;
             magnifierImage.setImageBitmap(crop.bitmap);
-            magnifierCard.setVisibility(View.VISIBLE);
+            UiMotion.reveal(magnifierCard);
         }
     }
 

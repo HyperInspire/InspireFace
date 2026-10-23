@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Google Material Symbols: flare. Apache-2.0; see assets/licenses/. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <group android:translateY="960">
+        <path android:pathData="M40-440v-80h240v80H40Zm270-154-84-84 56-56 84 84-56 56Zm130-86v-240h80v240h-80Zm210 86-56-56 84-84 56 56-84 84Zm30 154v-80h240v80H680Zm-200 80q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm198 134-84-84 56-56 84 84-56 56Zm-396 0-56-56 84-84 56 56-84 84ZM440-40v-240h80v240h-80Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="80"
+                    android:startY="-880"
+                    android:endX="880"
+                    android:endY="-80"
+                    android:type="linear">
+                    <item android:color="#C33275" android:offset="0" />
+                    <item android:color="#7353BA" android:offset="0.33" />
+                    <item android:color="#226DAB" android:offset="0.60" />
+                    <item android:color="#008B73" android:offset="0.82" />
+                    <item android:color="#A66B13" android:offset="1" />
+                </gradient>
+            </aapt:attr>
+        </path>
+    </group>
+</vector>

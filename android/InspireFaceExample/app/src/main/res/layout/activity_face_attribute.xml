@@ -17,22 +17,23 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+        <LinearLayout android:tag="motion_enter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/btnBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:minHeight="48dp"                android:id="@+id/btnBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/bg_chip"
                 android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
                 android:focusable="true"
                 android:gravity="center"
                 android:text="@string/back"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="18sp" />
 
             <TextView
@@ -44,7 +45,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="@string/face_attribute_title"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="17sp"
                 android:textStyle="bold" />
 
@@ -69,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="@string/face_attribute_heading"
-            android:textColor="@color/white"
+            android:textColor="@color/home_text_primary"
             android:textSize="28sp"
             android:textStyle="bold" />
 
@@ -87,6 +88,7 @@
             android:layout_height="340dp"
             android:layout_marginTop="18dp"
             android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="@color/home_surface"
@@ -143,7 +145,7 @@
                         android:scaleType="centerCrop" />
                 </com.google.android.material.card.MaterialCardView>
 
-                <TextView
+                <com.example.inspireface_example.view.AnimatedLabelView
                     android:id="@+id/attributeImageStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -164,8 +166,8 @@
             android:layout_marginTop="10dp"
             android:enabled="false"
             android:text="@string/attribute_choose_photo"
-            android:textColor="@color/home_tile_text_dark"
-            app:backgroundTint="@color/liveness_accent" />
+            android:textColor="@color/app_button_text"
+            app:backgroundTint="@color/app_button_background" />
 
         <TextView
             android:layout_width="match_parent"
@@ -196,11 +198,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/attribute_result_title"
-                    android:textColor="@color/white"
+                    android:textColor="@color/home_text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <TextView
+                <com.example.inspireface_example.view.AnimatedLabelView
                     android:id="@+id/attributeResultPlaceholder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

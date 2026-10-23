@@ -17,7 +17,7 @@
     <string name="back">←</string>
     <string name="current_model">模型 · %1$s</string>
     <string name="camera_privacy_notice_title">相机与人脸数据说明</string>
-    <string name="camera_privacy_notice_message">相机仅用于视频功能和相机录入，人脸画面在当前设备处理。录入的人脸裁剪图与特征保存在 App 内部，按模型隔离，不进入设备备份，也不会上传。拒绝相机权限后仍可继续使用照片输入功能。</string>
+    <string name="camera_privacy_notice_message">相机用于视频功能、相机录入和 PLUS 活体验证，人脸分析在当前设备完成。PLUS 功能在点击开始后采集一轮人脸裁剪图，并提交至 InspireFacePlus 进行活体验证。录入的人脸裁剪图与特征保存在 App 内部，按模型隔离，不进入设备备份，也不会上传。拒绝相机权限后仍可继续使用照片输入功能。</string>
     <string name="camera_permission_continue">继续</string>
     <string name="camera_permission_not_now">暂不使用</string>
     <string name="camera_permission_rationale_title">允许使用相机</string>
@@ -31,6 +31,9 @@
     <string name="silent_fake">疑似攻击</string>
     <string name="silent_analyzing">检测中…</string>
     <string name="silent_score">活体分数 %1$.2f</string>
+    <string name="silent_move_back">距离过近，请离相机远一点</string>
+    <string name="silent_center_face">人脸太靠近边缘，请移到画面中央</string>
+    <string name="silent_framing_hint">请摆正设备，正对相机，并在脸部四周留出空间。</string>
 
     <string name="action_get_ready">请正对相机并保持稳定</string>
     <string name="action_blink">请眨眼</string>
@@ -67,6 +70,12 @@
     <string name="home_section_anti_fraud">反欺诈</string>
     <string name="home_silent_desc">RGB 防伪检测，实时展示活体置信度</string>
     <string name="home_action_desc">按提示完成随机人脸动作序列</string>
+    <string name="home_silent_plus_title">被动活体</string>
+    <string name="home_color_plus_title">炫彩活体</string>
+    <string name="home_silent_plus_desc">更准确的被动防欺诈</string>
+    <string name="home_color_plus_desc">主流的移动端防欺诈方案</string>
+    <string name="home_plus_dialog_title">%1$s · PLUS</string>
+    <string name="home_plus_coming_soon">此功能由 InspireFacePlus 提供。\n\n即将上线，敬请期待。</string>
     <string name="home_pose_desc">识别眨眼、摇头、张嘴与抬头动作</string>
     <string name="home_compare_desc">上传两张人像照片并比较人脸相似度</string>
     <string name="home_management_desc">管理当前模型独立的身份、特征和裁剪图</string>

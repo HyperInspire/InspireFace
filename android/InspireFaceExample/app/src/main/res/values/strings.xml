@@ -17,7 +17,7 @@
     <string name="back">←</string>
     <string name="current_model">Model · %1$s</string>
     <string name="camera_privacy_notice_title">Camera and face data</string>
-    <string name="camera_privacy_notice_message">Camera access is used only for live demos and camera enrollment. Frames are processed on this device. Enrolled face crops and features stay in this app’s internal storage, are separated by model, excluded from device backup, and are not uploaded. Photo-only demos remain available without camera access.</string>
+    <string name="camera_privacy_notice_message">Camera access is used only for live demos and camera enrollment. Face analysis runs on this device. In PLUS demos, tapping Start captures a round of face crops for upload to InspireFacePlus for liveness verification. Enrolled face crops and features stay in this app’s internal storage, are separated by model, excluded from device backup, and are not uploaded. Photo-only demos remain available without camera access.</string>
     <string name="camera_permission_continue">Continue</string>
     <string name="camera_permission_not_now">Not now</string>
     <string name="camera_permission_rationale_title">Allow camera access</string>
@@ -31,6 +31,9 @@
     <string name="silent_fake">Spoof suspected</string>
     <string name="silent_analyzing">Analyzing…</string>
     <string name="silent_score">Liveness score %1$.2f</string>
+    <string name="silent_move_back">Too close — move farther from the camera</string>
+    <string name="silent_center_face">Keep your face in the center of the frame</string>
+    <string name="silent_framing_hint">Hold the device straight and leave space around your face.</string>
 
     <string name="action_get_ready">Face the camera and hold still</string>
     <string name="action_blink">Please blink</string>
@@ -67,6 +70,13 @@
     <string name="home_section_anti_fraud">Anti-fraud</string>
     <string name="home_silent_desc">RGB anti-spoofing with a live confidence score</string>
     <string name="home_action_desc">Complete a randomized sequence of face actions</string>
+    <string name="home_silent_plus_title">Passive-RGB Liveness</string>
+    <string name="home_color_plus_title">Color liveness</string>
+    <string name="home_silent_plus_desc">More accurate passive RGB anti-fraud</string>
+    <string name="home_color_plus_desc">Mainstream mobile anti-fraud</string>
+    <string name="home_plus_dialog_title">%1$s · PLUS</string>
+    <string name="home_plus_coming_soon">This feature is provided by InspireFacePlus.\n\nComing soon.</string>
+    <string name="menu_badge_plus" translatable="false">PLUS</string>
     <string name="home_pose_desc">Recognize blink, shake, mouth and head poses</string>
     <string name="home_compare_desc">Upload two portraits and compare face similarity</string>
     <string name="home_management_desc">Manage model-specific identities, features and crops</string>

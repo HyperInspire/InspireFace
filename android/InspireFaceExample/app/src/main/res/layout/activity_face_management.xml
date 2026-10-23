@@ -11,22 +11,23 @@
     android:paddingEnd="20dp"
     android:paddingBottom="16dp">
 
-    <LinearLayout
+    <LinearLayout android:tag="motion_enter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+                android:minHeight="48dp"            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="@drawable/bg_chip"
             android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
             android:focusable="true"
             android:gravity="center"
             android:text="@string/back"
-            android:textColor="@color/white"
+            android:textColor="@color/home_text_primary"
             android:textSize="18sp" />
 
         <TextView
@@ -38,7 +39,7 @@
             android:gravity="center"
             android:maxLines="1"
             android:text="@string/face_management_title"
-            android:textColor="@color/white"
+            android:textColor="@color/home_text_primary"
             android:textSize="17sp"
             android:textStyle="bold" />
 
@@ -63,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/face_library_heading"
-        android:textColor="@color/white"
+        android:textColor="@color/home_text_primary"
         android:textSize="28sp"
         android:textStyle="bold" />
 
@@ -76,7 +77,7 @@
         android:textSize="13sp"
         tools:text="Megatron uses an isolated feature DB and crop directory." />
 
-    <TextView
+    <com.example.inspireface_example.view.AnimatedLabelView
         android:id="@+id/faceCount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -106,7 +107,7 @@
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 android:maxLines="1"
-                android:textColor="@color/white" />
+                android:textColor="@color/home_text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -116,8 +117,8 @@
             android:layout_marginStart="10dp"
             android:enabled="false"
             android:text="@string/add_face"
-            android:textColor="@color/home_tile_text_dark"
-            app:backgroundTint="@color/liveness_accent" />
+            android:textColor="@color/app_button_text"
+            app:backgroundTint="@color/app_button_background" />
     </LinearLayout>
 
     <FrameLayout
@@ -147,7 +148,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/no_faces_title"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 

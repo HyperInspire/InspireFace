@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.inspireface_example.ui.UiActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -13,17 +13,18 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.inspireface_example.view.ActionLivenessActivity;
 import com.example.inspireface_example.view.LivenessActivity;
 import com.example.inspireface_example.view.PoseActivity;
+import com.example.inspireface_example.view.PlusLivenessActivity;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 
 /** Launcher page: model selection plus a square-grid menu for the available demos. */
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends UiActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
-                .setAppearanceLightNavigationBars(false);
+                .setAppearanceLightNavigationBars(true);
         setContentView(R.layout.activity_home);
         applyWindowInsets();
 
@@ -43,6 +44,10 @@ public class HomeActivity extends AppCompatActivity {
                 v -> openFeature(LivenessActivity.class));
         findViewById(R.id.cardAction).setOnClickListener(
                 v -> openFeature(ActionLivenessActivity.class));
+        findViewById(R.id.cardSilentPlus).setOnClickListener(
+                v -> openPlus(false));
+        findViewById(R.id.cardColorPlus).setOnClickListener(
+                v -> openPlus(true));
         findViewById(R.id.cardPose).setOnClickListener(
                 v -> openFeature(PoseActivity.class));
         findViewById(R.id.cardCompare).setOnClickListener(
@@ -60,6 +65,11 @@ public class HomeActivity extends AppCompatActivity {
 
     private void openFeature(Class<?> activityClass) {
         startActivity(new Intent(this, activityClass));
+    }
+
+    private void openPlus(boolean color) {
+        startActivity(new Intent(this, PlusLivenessActivity.class)
+                .putExtra(PlusLivenessActivity.EXTRA_COLOR, color));
     }
 
     private void applyWindowInsets() {

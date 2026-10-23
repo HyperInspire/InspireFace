@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
             android:focusable="true"
             android:gravity="center_vertical"
             android:minHeight="64dp"
@@ -37,7 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/detection_tracking_settings"
-                    android:textColor="@color/white"
+                    android:textColor="@color/home_text_primary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -83,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:text="@string/detection_tracking_mode"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="13sp" />
 
             <com.google.android.material.chip.ChipGroup
@@ -117,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="@string/recognition_input_px"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="13sp" />
 
             <com.google.android.material.chip.ChipGroup
@@ -159,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="@string/recognition_max_faces"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="13sp" />
 
             <com.google.android.material.chip.ChipGroup
@@ -209,7 +210,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="@string/recognition_min_face_px"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="13sp" />
 
             <com.google.android.material.chip.ChipGroup
@@ -261,8 +262,8 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="12dp"
                 android:text="@string/recognition_reset_defaults"
-                android:textColor="@color/white"
-                app:strokeColor="@color/liveness_accent" />
+                android:textColor="@color/app_control_text"
+                app:strokeColor="@color/home_stroke" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

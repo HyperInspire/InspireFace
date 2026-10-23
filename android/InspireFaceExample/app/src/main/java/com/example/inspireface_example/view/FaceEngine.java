@@ -3,10 +3,12 @@ package com.example.inspireface_example.view;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.inspireface_example.BuildConfig;
 import com.example.inspireface_example.DetectorDefaults;
 import com.example.inspireface_example.FaceModelPrefs;
 import com.insightface.sdk.inspireface.InspireFace;
 import com.insightface.sdk.inspireface.base.CustomParameter;
+import com.insightface.sdk.inspireface.base.InspireFaceVersion;
 import com.insightface.sdk.inspireface.base.Session;
 
 /**
@@ -72,6 +74,11 @@ public final class FaceEngine {
             launchedModel = null;
         }
         if (!launched) {
+            InspireFaceVersion version = InspireFace.QueryInspireFaceVersion();
+            Log.i(TAG, "Android SDK " + BuildConfig.INSPIREFACE_SDK_VERSION
+                    + " (" + BuildConfig.INSPIREFACE_SDK_SOURCE + "), native "
+                    + version.major + "." + version.minor + "." + version.patch
+                    + ", C API " + InspireFace.QueryCAPILevel());
             launched = Boolean.TRUE.equals(
                     InspireFace.GlobalLaunch(context.getApplicationContext(), requestedModel));
             launchedModel = launched ? requestedModel : null;
@@ -85,11 +92,11 @@ public final class FaceEngine {
      * the returned session must stay on a single thread.
      */
     static synchronized Session createPreviewSession() {
-        // Face quality also loads the pose model — without it yaw/pitch stay 0 and the
-        // shake/head-raise actions can never fire.
+        // Explicitly enable 1.2.4 pose estimation for yaw/pitch and head actions.
         CustomParameter parameter = InspireFace.CreateCustomParameter()
                 .enableLiveness(true)
                 .enableInteractionLiveness(true)
+                .enableFacePose(true)
                 .enableFaceQuality(true);
         Session session = InspireFace.CreateSession(
                 parameter, InspireFace.DETECT_MODE_LIGHT_TRACK, PREVIEW_MAX_FACES,
@@ -102,6 +109,15 @@ public final class FaceEngine {
         InspireFace.SetFaceDetectThreshold(session, 0.5f);
         InspireFace.SetFilterMinimumFacePixelSize(session, 0);
         return session;
+    }
+
+    /** Local face analysis for cloud PLUS capture; liveness inference stays on the service. */
+    static synchronized Session createPlusSession() {
+        // Re-detect on every analyzed frame, keeping stable IDs. A light tracker may
+        // otherwise hide a lost face or a second person between detector intervals.
+        return createTrackingSession(InspireFace.CreateCustomParameter()
+                .enableFacePose(true).enableFaceQuality(true), PREVIEW_MAX_FACES, 0,
+                InspireFace.DETECT_MODE_TRACK_BY_DETECTION, 15);
     }
 
     /** Lightweight session for camera enrollment: tracking only, no liveness models. */
@@ -118,9 +134,15 @@ public final class FaceEngine {
 
     private static Session createTrackingSession(
             CustomParameter parameter, int maxFaces, int minimumFacePixelSize) {
+        return createTrackingSession(parameter, maxFaces, minimumFacePixelSize,
+                InspireFace.DETECT_MODE_LIGHT_TRACK, -1);
+    }
+
+    private static Session createTrackingSession(
+            CustomParameter parameter, int maxFaces, int minimumFacePixelSize,
+            int detectMode, int fps) {
         Session session = InspireFace.CreateSession(
-                parameter, InspireFace.DETECT_MODE_LIGHT_TRACK,
-                maxFaces, DetectorDefaults.INPUT_PX, -1);
+                parameter, detectMode, maxFaces, DetectorDefaults.INPUT_PX, fps);
         if (session == null) {
             return null;
         }
@@ -160,36 +182,14 @@ public final class FaceEngine {
     /** Detection-only still-image Session used by the landmark demo. */
     public static synchronized Session createDetectionSession(
             int detectPixelLevel, int maxDetectFaceNum, int minimumFacePixelSize) {
-        int safeMaxFaces = Math.max(1, maxDetectFaceNum);
-        int safeMinimumFacePixelSize = Math.max(0, minimumFacePixelSize);
-        int previewSize = detectPixelLevel > 0
-                ? detectPixelLevel : DetectorDefaults.INPUT_PX;
-
-        /*
-         * Android SDK 1.2.0 exposes enableDetectModeLandmark, but its CreateSession JNI
-         * implementation never copies that Java field into HFSessionCustomParameter. As a
-         * result ALWAYS_DETECT returns valid face tokens without dense landmarks. LIGHT_TRACK
-         * forces landmarks on inside the native tracker (the same path used by the working
-         * camera demo), so use it for this compatibility session. The still-image screen
-         * recreates the session for each new image to prevent tracking state carrying over.
-         */
-        Session session = InspireFace.CreateSession(
-                InspireFace.CreateCustomParameter(), InspireFace.DETECT_MODE_LIGHT_TRACK,
-                safeMaxFaces, detectPixelLevel, -1);
-        if (session == null) {
-            return null;
-        }
-        activeSessions++;
-        InspireFace.SetTrackPreviewSize(session, previewSize);
-        InspireFace.SetFaceDetectThreshold(session, 0.5f);
-        InspireFace.SetFilterMinimumFacePixelSize(session, safeMinimumFacePixelSize);
-        return session;
+        // 1.2.4 computes dense landmarks in every detection mode.
+        return createStillImageSession(InspireFace.CreateCustomParameter(),
+                detectPixelLevel, maxDetectFaceNum, minimumFacePixelSize);
     }
 
     /**
      * Configurable continuous tracker with deterministic 106-point tokens in both tracking
-     * modes. The native compatibility bridge is required because the 1.2.0 Java CreateSession
-     * wrapper omits the detect-mode-landmark field.
+     * modes. InspireFace 1.2.4 enables landmarks internally; no option bit is required.
      */
     public static synchronized Session createFaceTrackingSession(
             int detectMode, int detectPixelLevel,
@@ -199,14 +199,8 @@ public final class FaceEngine {
         int safeMaxFaces = Math.max(1, Math.min(maxDetectFaceNum, IMAGE_MAX_FACES));
         int safeMinimumFacePixelSize = Math.max(0, minimumFacePixelSize);
         int previewSize = detectPixelLevel > 0 ? detectPixelLevel : TRACK_PREVIEW_SIZE;
-        Session session = NativeSessionBridge.createLandmarkSession(
+        Session session = InspireFace.CreateSession(InspireFace.CreateCustomParameter(),
                 safeMode, safeMaxFaces, detectPixelLevel, 30);
-        if (session == null && safeMode == InspireFace.DETECT_MODE_LIGHT_TRACK) {
-            // LIGHT_TRACK forces landmarks internally and remains a safe fallback if the
-            // bridge cannot be loaded on an unusual device.
-            session = InspireFace.CreateSession(InspireFace.CreateCustomParameter(),
-                    safeMode, safeMaxFaces, detectPixelLevel, -1);
-        }
         if (session == null) {
             return null;
         }
@@ -238,7 +232,12 @@ public final class FaceEngine {
     }
 
     public static synchronized void releaseSession(Session session) {
-        InspireFace.ReleaseSession(session);
+        // 1.2.4.post1 clears the handle on close. Match its idempotent release contract
+        // so repeated cleanup cannot make an unrelated live session disappear from the count.
+        if (session == null || session.isClosed()) {
+            return;
+        }
+        session.close();
         if (activeSessions > 0) {
             activeSessions--;
         }

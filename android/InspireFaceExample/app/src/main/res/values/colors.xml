@@ -3,29 +3,33 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Liveness screen -->
-    <color name="liveness_accent">#FF00E5A0</color>
-    <color name="liveness_warn">#FFFFC400</color>
-    <color name="liveness_fail">#FFFF5252</color>
-    <color name="liveness_scrim">#99000000</color>
-    <color name="liveness_chip_bg">#B3000000</color>
+    <!-- Shared light surfaces and semantic feedback. -->
+    <color name="liveness_accent">#237D63</color>
+    <color name="liveness_warn">#946516</color>
+    <color name="liveness_fail">#BE4545</color>
+    <color name="liveness_scrim">#FAFFFFFF</color>
+    <color name="liveness_chip_bg">#F1F5F3</color>
 
     <!-- Home screen -->
-    <color name="home_background">#FF07110F</color>
-    <color name="home_surface">#FF101C19</color>
-    <color name="home_stroke">#FF263A35</color>
-    <color name="home_text_secondary">#FF9FB2AD</color>
-    <color name="home_text_muted">#FF71847F</color>
-    <color name="home_tile_green">#FF72E2B5</color>
-    <color name="home_tile_blue">#FF84C8FF</color>
-    <color name="home_tile_purple">#FFC6B5FF</color>
-    <color name="home_tile_orange">#FFFFC988</color>
-    <color name="home_tile_pink">#FFFFB8D1</color>
-    <color name="home_tile_cyan">#FF79DDD9</color>
-    <color name="home_tile_yellow">#FFFFE082</color>
-    <color name="home_tile_lime">#FFB8E986</color>
-    <color name="home_tile_text_dark">#FF07110F</color>
-    <color name="home_tile_text_dark_secondary">#B307110F</color>
-    <color name="compare_ring_track">#FF23332F</color>
-    <color name="compare_status_scrim">#D907110F</color>
+    <color name="home_background">#FFFFFF</color>
+    <color name="home_surface">#F5F7F8</color>
+    <color name="home_stroke">#E8EDEF</color>
+    <color name="home_text_primary">#192722</color>
+    <color name="home_text_secondary">#64726E</color>
+    <color name="home_text_muted">#6D7A75</color>
+    <color name="home_tile_green">#EAF5EF</color>
+    <color name="home_tile_blue">#EDF4FA</color>
+    <color name="home_tile_purple">#F1EEFA</color>
+    <color name="home_tile_orange">#FAF1E6</color>
+    <color name="home_tile_pink">#FAEEF2</color>
+    <color name="home_tile_cyan">#EAF5F4</color>
+    <color name="home_tile_yellow">#F8F4E8</color>
+    <color name="home_tile_lime">#F0F5E9</color>
+    <color name="home_tile_silent_plus">#FAF5E9</color>
+    <color name="home_tile_color_plus">#F3F0FA</color>
+    <color name="home_plus_badge_text">#896735</color>
+    <color name="home_tile_text_dark">#192722</color>
+    <color name="home_tile_text_dark_secondary">#64726E</color>
+    <color name="compare_ring_track">#E0EAE5</color>
+    <color name="compare_status_scrim">#F2FFFFFF</color>
 </resources>

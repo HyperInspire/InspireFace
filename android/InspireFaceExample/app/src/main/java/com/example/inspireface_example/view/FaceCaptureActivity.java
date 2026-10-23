@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.inspireface_example.ui.UiActivity;
 import androidx.camera.view.PreviewView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /** Camera enrollment flow with first-face tracking and a reset-on-motion stability ring. */
-public final class FaceCaptureActivity extends AppCompatActivity
+public final class FaceCaptureActivity extends UiActivity
         implements EnrollmentFaceAnalyzer.Listener {
 
     public static final String EXTRA_CAPTURE_PATH = "capture_path";
@@ -226,7 +226,9 @@ public final class FaceCaptureActivity extends AppCompatActivity
         MaterialCardView promptCard = findViewById(R.id.capturePromptCard);
         int baseBottom = (int) (24 * getResources().getDisplayMetrics().density);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.captureRoot), (v, insets) -> {
-            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(bars.left, 0, bars.right, 0);
             topBar.setPadding(topBar.getPaddingLeft(), bars.top,
                     topBar.getPaddingRight(), topBar.getPaddingBottom());
             ViewGroup.MarginLayoutParams params =

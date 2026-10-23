@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/plusConsentRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/plus_background"
+    android:padding="24dp">
+    <TextView android:id="@+id/plusConsentFeature"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" android:textColor="@color/plus_text"
+        android:textSize="22sp" android:fontFamily="sans-serif-medium" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" android:text="@string/plus_brand"
+        android:textColor="@color/plus_text_muted" android:textSize="13sp" />
+</LinearLayout>

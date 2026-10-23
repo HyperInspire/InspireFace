@@ -56,18 +56,15 @@ public abstract class UprightFaceCameraAnalyzer implements ImageAnalysis.Analyze
         int uprightWidth = swapped ? height : width;
         int uprightHeight = swapped ? width : height;
 
-        ImageStream stream = InspireFace.CreateImageStreamFromByteBuffer(
+        try (ImageStream stream = InspireFace.CreateImageStreamFromByteBuffer(
                 upright, uprightWidth, uprightHeight,
-                InspireFace.STREAM_YUV_NV21, InspireFace.CAMERA_ROTATION_0);
-        if (stream == null) {
-            return;
-        }
-        try {
+                InspireFace.STREAM_YUV_NV21, InspireFace.CAMERA_ROTATION_0)) {
+            if (stream == null) {
+                return;
+            }
             MultipleFaceData faces = InspireFace.ExecuteFaceTrack(session, stream);
             onFaces(session, stream, faces, upright,
                     uprightWidth, uprightHeight, frameStart);
-        } finally {
-            InspireFace.ReleaseImageStream(stream);
         }
     }
 

@@ -1,0 +1,43 @@
+<resources>
+    <style name="AppButton" parent="Widget.Material3.Button">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:stateListAnimator">@animator/plus_button_press</item>
+        <item name="android:textColor">@color/app_button_text</item>
+        <item name="backgroundTint">@color/app_button_background</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+    <style name="AppButton.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/app_control_text</item>
+        <item name="android:stateListAnimator">@animator/plus_button_press</item>
+        <item name="strokeColor">@color/home_stroke</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+    <style name="AppButton.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:stateListAnimator">@animator/plus_button_press</item>
+        <item name="android:textColor">@color/app_control_text</item>
+    </style>
+    <style name="AppShape.Small" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="AppShape.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">22dp</item>
+    </style>
+    <style name="AppChip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/app_segment_background</item>
+        <item name="android:textColor">@color/app_control_text</item>
+        <item name="chipStrokeColor">@color/home_stroke</item>
+        <item name="android:stateListAnimator">@animator/plus_button_press</item>
+    </style>
+    <style name="AppWindowAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/app_page_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/app_page_dim</item>
+        <item name="android:activityCloseEnterAnimation">@anim/app_page_return</item>
+        <item name="android:activityCloseExitAnimation">@anim/app_page_exit</item>
+    </style>
+</resources>

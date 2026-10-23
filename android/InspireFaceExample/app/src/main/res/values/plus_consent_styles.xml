@@ -1,0 +1,14 @@
+<resources>
+    <style name="ThemeOverlay.InspireFaceExample.PlusConsent" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/plus_background</item>
+        <item name="colorOnSurface">@color/plus_text</item>
+        <item name="colorOnSurfaceVariant">@color/plus_text_secondary</item>
+        <item name="colorPrimary">@color/plus_accent</item>
+        <item name="android:windowAnimationStyle">@style/PlusConsentWindowAnimation</item>
+        <item name="android:backgroundDimAmount">0.22</item>
+    </style>
+    <style name="PlusConsentWindowAnimation">
+        <item name="android:windowEnterAnimation">@anim/plus_dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/plus_dialog_exit</item>
+    </style>
+</resources>

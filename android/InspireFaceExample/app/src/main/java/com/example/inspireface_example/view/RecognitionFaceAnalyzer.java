@@ -41,6 +41,8 @@ public final class RecognitionFaceAnalyzer extends UprightFaceCameraAnalyzer {
     private final Listener listener;
     private final FaceStabilityGate stabilityGate =
             new FaceStabilityGate(STABLE_RECOGNITION_MS, 1L);
+    private final TrackBoxSmoother boxSmoother = new TrackBoxSmoother();
+    private final float[] smoothedRect = new float[4];
     private final int waitingColor;
     private final int matchColor;
     private final int noMatchColor;
@@ -48,6 +50,7 @@ public final class RecognitionFaceAnalyzer extends UprightFaceCameraAnalyzer {
 
     private volatile boolean mirrored = true;
     private volatile boolean resetRequested;
+    private volatile boolean smoothingResetRequested;
     private boolean recognizedStableRun;
     private State lastState;
     private int currentBoxColor;
@@ -71,6 +74,11 @@ public final class RecognitionFaceAnalyzer extends UprightFaceCameraAnalyzer {
         if (resetRequested) {
             resetRequested = false;
             resetRecognition();
+            boxSmoother.clear();
+        }
+        if (smoothingResetRequested) {
+            smoothingResetRequested = false;
+            boxSmoother.clear();
         }
     }
 
@@ -85,6 +93,7 @@ public final class RecognitionFaceAnalyzer extends UprightFaceCameraAnalyzer {
                            int uprightWidth, int uprightHeight, long frameStart) {
         if (faces == null || faces.detectedNum == 0) {
             resetRecognition();
+            boxSmoother.clear();
             overlay.submit(null);
             report(State.NO_FACE, null, Float.NaN, Float.NaN);
             return;
@@ -93,23 +102,26 @@ public final class RecognitionFaceAnalyzer extends UprightFaceCameraAnalyzer {
         FaceRect first = faces.rects[0];
         RectF face = new RectF(first.x, first.y,
                 first.x + first.width, first.y + first.height);
+        int trackId = faces.trackIds != null && faces.trackIds.length > 0
+                ? faces.trackIds[0] : 0;
+        boxSmoother.beginFrame();
+        boxSmoother.smooth(trackId, face.left, face.top, face.right, face.bottom,
+                smoothedRect);
         if (face.width() < uprightWidth * MIN_FACE_WIDTH_RATIO) {
             resetRecognition();
             currentBoxColor = warningColor;
-            submitFace(face, uprightWidth, uprightHeight);
+            submitFace(smoothedRect, uprightWidth, uprightHeight);
             report(State.MOVE_CLOSER, null, Float.NaN, Float.NaN);
             return;
         }
 
-        int trackId = faces.trackIds != null && faces.trackIds.length > 0
-                ? faces.trackIds[0] : 0;
         float stable = stabilityGate.update(trackId,
                 face.left, face.top, face.right, face.bottom,
                 SystemClock.elapsedRealtime());
         if (stable < 0f) {
             recognizedStableRun = false;
             currentBoxColor = waitingColor;
-            submitFace(face, uprightWidth, uprightHeight);
+            submitFace(smoothedRect, uprightWidth, uprightHeight);
             report(State.HOLD_STILL, null, Float.NaN, Float.NaN);
             return;
         }
@@ -118,20 +130,21 @@ public final class RecognitionFaceAnalyzer extends UprightFaceCameraAnalyzer {
             recognizedStableRun = true;
             if (libraryEmpty) {
                 currentBoxColor = warningColor;
-                submitFace(face, uprightWidth, uprightHeight);
+                submitFace(smoothedRect, uprightWidth, uprightHeight);
                 report(State.EMPTY_LIBRARY, null, Float.NaN, Float.NaN);
             } else {
-                recognize(session, stream, faces, face, uprightWidth, uprightHeight);
+                recognize(session, stream, faces, smoothedRect,
+                        uprightWidth, uprightHeight);
             }
         } else {
-            submitFace(face, uprightWidth, uprightHeight);
+            submitFace(smoothedRect, uprightWidth, uprightHeight);
         }
     }
 
     private void recognize(Session session, ImageStream stream, MultipleFaceData faces,
-                           RectF face, int imageWidth, int imageHeight) {
+                           float[] displayFace, int imageWidth, int imageHeight) {
         currentBoxColor = warningColor;
-        submitFace(face, imageWidth, imageHeight);
+        submitFace(displayFace, imageWidth, imageHeight);
         report(State.SEARCHING, null, Float.NaN, Float.NaN);
         FaceFeature feature = InspireFace.ExtractFaceFeature(
                 session, stream, faces.tokens[0]);
@@ -143,16 +156,18 @@ public final class RecognitionFaceAnalyzer extends UprightFaceCameraAnalyzer {
             currentBoxColor = noMatchColor;
             report(State.NO_MATCH, null, result.confidence, result.threshold);
         }
-        submitFace(face, imageWidth, imageHeight);
+        submitFace(displayFace, imageWidth, imageHeight);
     }
 
     @Override
     protected void onSessionError() {
+        boxSmoother.clear();
         listener.onSessionError();
     }
 
     public void setMirrored(boolean mirrored) {
         this.mirrored = mirrored;
+        smoothingResetRequested = true;
     }
 
     public void resetTracking() {
@@ -166,10 +181,11 @@ public final class RecognitionFaceAnalyzer extends UprightFaceCameraAnalyzer {
         currentBoxColor = waitingColor;
     }
 
-    private void submitFace(RectF face, int imageWidth, int imageHeight) {
+    private void submitFace(float[] face, int imageWidth, int imageHeight) {
         overlay.submit(new FaceOverlayView.Frame(
                 imageWidth, imageHeight, mirrored,
-                new RectF[]{new RectF(face)}, currentBoxColor));
+                new RectF[]{new RectF(face[0], face[1], face[2], face[3])},
+                currentBoxColor));
     }
 
     private void report(State state, @Nullable FaceRecord record,

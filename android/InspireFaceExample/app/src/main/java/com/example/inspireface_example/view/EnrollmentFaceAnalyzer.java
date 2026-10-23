@@ -44,6 +44,8 @@ final class EnrollmentFaceAnalyzer extends UprightFaceCameraAnalyzer {
     private final Listener listener;
     private final File captureDirectory;
     private final FaceStabilityGate stabilityGate = new FaceStabilityGate();
+    private final TrackBoxSmoother boxSmoother = new TrackBoxSmoother();
+    private final float[] smoothedRect = new float[4];
     private final int accentColor;
     private final int redColor;
     private final int yellowColor;
@@ -53,6 +55,7 @@ final class EnrollmentFaceAnalyzer extends UprightFaceCameraAnalyzer {
     private int lastProgressBucket = -1;
     private volatile boolean mirrored = true;
     private volatile boolean resetRequested;
+    private volatile boolean smoothingResetRequested;
     private boolean captured;
 
     EnrollmentFaceAnalyzer(Context context, FaceOverlayView overlay,
@@ -76,6 +79,11 @@ final class EnrollmentFaceAnalyzer extends UprightFaceCameraAnalyzer {
         if (resetRequested) {
             resetRequested = false;
             clearStability();
+            boxSmoother.clear();
+        }
+        if (smoothingResetRequested) {
+            smoothingResetRequested = false;
+            boxSmoother.clear();
         }
     }
 
@@ -90,6 +98,7 @@ final class EnrollmentFaceAnalyzer extends UprightFaceCameraAnalyzer {
                            int uprightWidth, int uprightHeight, long frameStart) {
         if (faces == null || faces.detectedNum == 0) {
             clearStability();
+            boxSmoother.clear();
             overlay.submit(null);
             reportState(Stage.NO_FACE, 0f);
             return;
@@ -99,9 +108,12 @@ final class EnrollmentFaceAnalyzer extends UprightFaceCameraAnalyzer {
                 first.x + first.width, first.y + first.height);
         int trackId = faces.trackIds != null && faces.trackIds.length > 0
                 ? faces.trackIds[0] : 0;
+        boxSmoother.beginFrame();
+        boxSmoother.smooth(trackId, face.left, face.top, face.right, face.bottom,
+                smoothedRect);
         if (face.width() < uprightWidth * MIN_FACE_WIDTH_RATIO) {
             clearStability();
-            submitFrame(face, uprightWidth, uprightHeight,
+            submitFrame(smoothedRect, uprightWidth, uprightHeight,
                     -1f, redColor, redColor);
             reportState(Stage.MOVE_CLOSER, 0f);
             return;
@@ -111,7 +123,7 @@ final class EnrollmentFaceAnalyzer extends UprightFaceCameraAnalyzer {
                 face.left, face.top, face.right, face.bottom,
                 SystemClock.elapsedRealtime());
         if (progress < 0f) {
-            submitFrame(face, uprightWidth, uprightHeight,
+            submitFrame(smoothedRect, uprightWidth, uprightHeight,
                     -1f, accentColor, accentColor);
             reportState(Stage.HOLD_STILL, 0f);
             return;
@@ -119,7 +131,7 @@ final class EnrollmentFaceAnalyzer extends UprightFaceCameraAnalyzer {
 
         int progressColor = progress >= 1f ? greenColor
                 : progress >= 0.5f ? yellowColor : redColor;
-        submitFrame(face, uprightWidth, uprightHeight,
+        submitFrame(smoothedRect, uprightWidth, uprightHeight,
                 progress, progressColor, progressColor);
         reportState(progress >= 1f ? Stage.COMPLETE : Stage.CAPTURING, progress);
         if (progress >= 1f) {
@@ -136,11 +148,13 @@ final class EnrollmentFaceAnalyzer extends UprightFaceCameraAnalyzer {
 
     @Override
     protected void onSessionError() {
+        boxSmoother.clear();
         listener.onSessionError();
     }
 
     void setMirrored(boolean mirrored) {
         this.mirrored = mirrored;
+        smoothingResetRequested = true;
     }
 
     void resetTracking() {
@@ -152,10 +166,11 @@ final class EnrollmentFaceAnalyzer extends UprightFaceCameraAnalyzer {
         stabilityGate.reset();
     }
 
-    private void submitFrame(RectF face, int imageWidth, int imageHeight,
+    private void submitFrame(float[] face, int imageWidth, int imageHeight,
                              float progress, int boxColor, int progressColor) {
         overlay.submit(new FaceOverlayView.Frame(imageWidth, imageHeight, mirrored,
-                new RectF[]{new RectF(face)}, boxColor, progress, progressColor));
+                new RectF[]{new RectF(face[0], face[1], face[2], face[3])},
+                boxColor, progress, progressColor));
     }
 
     private void reportState(Stage stage, float progress) {

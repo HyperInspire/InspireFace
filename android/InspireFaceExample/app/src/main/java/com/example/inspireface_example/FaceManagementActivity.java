@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import com.example.inspireface_example.ui.UiMotion;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.LruCache;
@@ -23,7 +24,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.inspireface_example.ui.UiActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -50,7 +51,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /** CRUD demo for a model-isolated persistent FeatureHub and its face crops. */
-public class FaceManagementActivity extends AppCompatActivity {
+public class FaceManagementActivity extends UiActivity {
 
     private static final int MAX_IMAGE_DIMENSION = 2048;
 
@@ -110,7 +111,7 @@ public class FaceManagementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
-                .setAppearanceLightNavigationBars(false);
+                .setAppearanceLightNavigationBars(true);
         setContentView(R.layout.activity_face_management);
         applyWindowInsets();
 
@@ -167,7 +168,7 @@ public class FaceManagementActivity extends AppCompatActivity {
             if (finalReady) {
                 refreshRecords();
             } else {
-                emptyState.setVisibility(View.VISIBLE);
+                UiMotion.reveal(emptyState);
                 Toast.makeText(this, R.string.face_library_failed, Toast.LENGTH_LONG).show();
             }
         });

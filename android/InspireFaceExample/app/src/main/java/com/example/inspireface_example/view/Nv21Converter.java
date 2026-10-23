@@ -8,10 +8,9 @@ import java.nio.ByteBuffer;
  * Converts CameraX YUV_420_888 frames to tightly packed NV21, plus an NV21 rotation step
  * so frames can be handed to InspireFace already upright with CAMERA_ROTATION_0.
  *
- * Rotating on the Java side is deliberate: the 1.2.0 SDK's RGB anti-spoofing crop mixes
- * rotated and unrotated coordinate spaces when a non-zero rotation constant is used, which
- * silently degrades silent-liveness scores. An upright buffer avoids that entirely and
- * makes every SDK output coordinate match the preview orientation.
+ * Rotating on the Java side keeps detection, liveness crops, enrollment images and
+ * overlay coordinates in the same upright space, regardless of the camera's sensor
+ * orientation. This also preserves the workaround for older SDK rotation handling.
  *
  * On virtually all camera HALs the U/V planes of YUV_420_888 alias one interleaved
  * VU buffer (i.e. the memory already is NV21). That is detected once on the first

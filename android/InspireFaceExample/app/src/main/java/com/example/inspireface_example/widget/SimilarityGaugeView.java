@@ -1,6 +1,7 @@
 package com.example.inspireface_example.widget;
 
 import android.animation.ValueAnimator;
+import com.example.inspireface_example.ui.UiMotion;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -52,7 +53,7 @@ public final class SimilarityGaugeView extends View {
 
         valuePaint.setTextAlign(Paint.Align.CENTER);
         valuePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        valuePaint.setColor(ContextCompat.getColor(context, R.color.white));
+        valuePaint.setColor(ContextCompat.getColor(context, R.color.home_text_primary));
 
         labelPaint.setTextAlign(Paint.Align.CENTER);
         labelPaint.setColor(ContextCompat.getColor(context, R.color.home_text_secondary));
@@ -74,7 +75,8 @@ public final class SimilarityGaugeView extends View {
         label = verdict;
         float target = Math.max(0f, Math.min(100f, percent));
         animator = ValueAnimator.ofFloat(0f, target);
-        animator.setDuration(550L);
+        animator.setDuration(UiMotion.enabled(this) ? 450L : 0L);
+        animator.setInterpolator(UiMotion.EASE);
         animator.addUpdateListener(animation -> {
             displayedPercent = (float) animation.getAnimatedValue();
             invalidate();

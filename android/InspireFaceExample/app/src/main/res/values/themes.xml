@@ -1,8 +1,33 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.InspireFaceExample" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.InspireFaceExample" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowBackground">@color/home_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/home_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowAnimationStyle">@style/AppWindowAnimation</item>
+        <item name="android:colorAccent">@color/liveness_accent</item>
+        <item name="colorPrimary">@color/liveness_accent</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/plus_accent_soft</item>
+        <item name="colorOnPrimaryContainer">@color/liveness_accent</item>
+        <item name="colorSecondary">@color/liveness_accent</item>
+        <item name="colorSecondaryContainer">@color/plus_accent_soft</item>
+        <item name="colorOnSecondaryContainer">@color/home_text_primary</item>
+        <item name="colorSurface">@color/home_background</item>
+        <item name="colorSurfaceVariant">@color/home_surface</item>
+        <item name="colorOnSurface">@color/home_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/home_text_secondary</item>
+        <item name="colorOutline">@color/home_stroke</item>
+        <item name="colorControlHighlight">#14237D63</item>
+        <item name="materialButtonStyle">@style/AppButton</item>
+        <item name="materialButtonOutlinedStyle">@style/AppButton.Outlined</item>
+        <item name="buttonBarPositiveButtonStyle">@style/AppButton.Text</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AppButton.Text</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.InspireFaceExample.PlusConsent</item>
+        <item name="shapeAppearanceSmallComponent">@style/AppShape.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/AppShape.Medium</item>
+        <item name="chipStyle">@style/AppChip</item>
     </style>
 
     <style name="Theme.InspireFaceExample" parent="Base.Theme.InspireFaceExample" />
@@ -11,15 +36,15 @@
         <item name="android:windowBackground">@color/home_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@color/home_background</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <!-- Full-bleed dark theme for the camera liveness screen -->
+    <!-- Camera controls share the same light surfaces as photo workflows. -->
     <style name="Theme.InspireFaceExample.Liveness">
-        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowBackground">@color/home_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="AttributeResultRow">

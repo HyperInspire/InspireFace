@@ -58,6 +58,8 @@ public final class FaceRepository {
 
     private static final String KEY_PREFIX = "record.";
     private static final String KEY_NEXT_ID = "next_id";
+    // FeatureHub is process-wide, including search and mutations. Individual screens
+    // have separate executors, so they must share this lock with enable/disable.
     private static final Object HUB_LOCK = new Object();
     private static String activeDatabasePath;
     private static int hubReferences;
@@ -147,6 +149,12 @@ public final class FaceRepository {
 
     /** Searches the active model's native FeatureHub and joins the best ID to metadata. */
     public SearchResult search(FaceFeature feature) {
+        synchronized (HUB_LOCK) {
+            return searchLocked(feature);
+        }
+    }
+
+    private SearchResult searchLocked(FaceFeature feature) {
         float threshold = InspireFace.GetRecommendedCosineThreshold();
         if (!hubAcquired || feature == null) {
             return new SearchResult(false, null, Float.NaN, threshold);
@@ -169,6 +177,12 @@ public final class FaceRepository {
     }
 
     public InsertResult insert(String name, FaceFeature feature, Bitmap crop) {
+        synchronized (HUB_LOCK) {
+            return insertLocked(name, feature, crop);
+        }
+    }
+
+    private InsertResult insertLocked(String name, FaceFeature feature, Bitmap crop) {
         if (!hubAcquired || feature == null || crop == null) {
             return new InsertResult(false, null);
         }
@@ -211,6 +225,13 @@ public final class FaceRepository {
     /** Passing null feature/crop performs a metadata-only rename. */
     public boolean update(long id, String name,
                           @Nullable FaceFeature feature, @Nullable Bitmap crop) {
+        synchronized (HUB_LOCK) {
+            return updateLocked(id, name, feature, crop);
+        }
+    }
+
+    private boolean updateLocked(long id, String name,
+                                 @Nullable FaceFeature feature, @Nullable Bitmap crop) {
         FaceRecord old = get(id);
         if (!hubAcquired || old == null) {
             return false;
@@ -254,6 +275,12 @@ public final class FaceRepository {
     }
 
     public boolean delete(long id) {
+        synchronized (HUB_LOCK) {
+            return deleteLocked(id);
+        }
+    }
+
+    private boolean deleteLocked(long id) {
         FaceRecord record = get(id);
         if (!hubAcquired || record == null) {
             return false;

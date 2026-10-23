@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.inspireface_example.ui.UiActivity;
 import androidx.camera.view.PreviewView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
  * Shared camera screen used by the three dedicated feature activities. Subclasses choose
  * one fixed controller mode while this class owns the common CameraX and overlay lifecycle.
  */
-public class LivenessActivity extends AppCompatActivity implements FaceAnalyzer.Listener {
+public class LivenessActivity extends UiActivity implements FaceAnalyzer.Listener {
 
     private PreviewView previewView;
     private FaceOverlayView overlayView;
@@ -111,7 +111,9 @@ public class LivenessActivity extends AppCompatActivity implements FaceAnalyzer.
         MaterialCardView promptCard = findViewById(R.id.promptCard);
         int cardBaseMargin = (int) (24 * getResources().getDisplayMetrics().density);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.livenessRoot), (v, insets) -> {
-            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.displayCutout());
+            v.setPadding(bars.left, 0, bars.right, 0);
             topBar.setPadding(topBar.getPaddingLeft(), bars.top,
                     topBar.getPaddingRight(), topBar.getPaddingBottom());
             ViewGroup.MarginLayoutParams lp =
@@ -223,7 +225,7 @@ public class LivenessActivity extends AppCompatActivity implements FaceAnalyzer.
                 promptSub.setVisibility(View.GONE);
             }
             if (state.progress >= 0) {
-                promptProgress.setProgress(state.progress);
+                promptProgress.setProgressCompat(state.progress, true);
                 promptProgress.setVisibility(View.VISIBLE);
             } else {
                 promptProgress.setVisibility(View.GONE);

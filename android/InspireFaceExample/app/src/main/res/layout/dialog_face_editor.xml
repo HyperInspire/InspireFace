@@ -48,7 +48,7 @@
                     android:textColor="@color/home_text_secondary"
                     android:textSize="14sp" />
 
-                <TextView
+                <com.example.inspireface_example.view.AnimatedLabelView
                     android:id="@+id/editorImageStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -68,8 +68,8 @@
             android:layout_height="48dp"
             android:layout_marginTop="10dp"
             android:text="@string/capture_or_replace_face"
-            android:textColor="@color/home_tile_text_dark"
-            app:backgroundTint="@color/liveness_accent" />
+            android:textColor="@color/app_button_text"
+            app:backgroundTint="@color/app_button_background" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnChooseEditorImage"
@@ -78,8 +78,8 @@
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:text="@string/choose_or_replace_image"
-            android:textColor="@color/white"
-            app:strokeColor="@color/liveness_accent" />
+            android:textColor="@color/app_control_text"
+            app:strokeColor="@color/home_stroke" />
 
         <TextView
             android:layout_width="match_parent"

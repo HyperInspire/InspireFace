@@ -79,6 +79,8 @@ final class LivenessController {
     }
 
     // ---- Silent-mode tunables ----
+    /** Temporarily disable the 18% size gate to test liveness accuracy on distant faces. */
+    private static final boolean SILENT_MIN_FACE_SIZE_CHECK_ENABLED = false;
     /** RGB anti-spoofing score above which a face counts as live (SDK author default). */
     private static final float RGB_LIVENESS_THRESHOLD = 0.88f;
     /** Frames averaged before giving a verdict; smooths single-frame noise. */
@@ -114,7 +116,7 @@ final class LivenessController {
     private static final int POSE_HISTORY_MAX = 6;
 
     // ---- Shared gating ----
-    /** Faces narrower than this fraction of the frame width are too far away to judge. */
+    /** Minimum width for action mode and the optional silent-mode size gate. */
     private static final float MIN_FACE_WIDTH_RATIO = 0.18f;
 
     private enum Phase { WAIT_FACE, CHALLENGE, PASSED, FAILED }
@@ -205,7 +207,7 @@ final class LivenessController {
                                  MultipleFaceData faces, int uprightWidth, int uprightHeight) {
         switch (mode) {
             case SILENT:
-                return onSilentFrame(session, stream, faces, uprightWidth);
+                return onSilentFrame(session, stream, faces, uprightWidth, uprightHeight);
             case POSE:
                 return onPoseFrame(session, stream, faces);
             case ACTION:
@@ -219,7 +221,7 @@ final class LivenessController {
     // ------------------------------------------------------------------
 
     private UiState onSilentFrame(Session session, ImageStream stream,
-                                  MultipleFaceData faces, int uprightWidth) {
+                                  MultipleFaceData faces, int uprightWidth, int uprightHeight) {
         if (faces.detectedNum == 0) {
             clearSilentState();
             return new UiState(str(R.string.msg_no_face), null, -1, false, colorNeutral);
@@ -229,7 +231,18 @@ final class LivenessController {
             return new UiState(str(R.string.msg_multiple_faces), null, -1, false, colorWarn);
         }
         int idx = largestFaceIndex(faces);
-        if (!isFaceBigEnough(faces.rects[idx], uprightWidth)) {
+        FaceRect rect = faces.rects[idx];
+        // Check every tracked frame, before the pipeline throttle can reuse a verdict.
+        // Use the source image, not the mirrored/cropped preview or smoothed overlay box.
+        SilentLivenessFraming.Issue framing = SilentLivenessFraming.evaluate(
+                rect.x, rect.y, rect.width, rect.height, uprightWidth, uprightHeight);
+        if (framing != SilentLivenessFraming.Issue.NONE) {
+            clearSilentState();
+            return new UiState(str(framing == SilentLivenessFraming.Issue.TOO_CLOSE
+                    ? R.string.silent_move_back : R.string.silent_center_face),
+                    str(R.string.silent_framing_hint), -1, false, colorWarn);
+        }
+        if (SILENT_MIN_FACE_SIZE_CHECK_ENABLED && !isFaceBigEnough(rect, uprightWidth)) {
             clearSilentState();
             return new UiState(str(R.string.msg_face_too_small), null, -1, false, colorWarn);
         }
@@ -321,8 +334,7 @@ final class LivenessController {
         // Pre-warm the SDK's 10-call action window during get-ready so the first
         // challenge is detectable the moment it is shown.
         InspireFace.MultipleFacePipelineProcess(session, stream, faces, actionParam);
-        // angles[] is only trustworthy at index 0 — the 1.2.0 JNI writes face[0]'s angles
-        // into every slot. We require exactly one face here, so idx is always 0.
+        // Get-ready requires one frontal face before starting the action challenge.
         boolean frontal = Math.abs(faces.angles[idx].yaw) <= MAX_START_YAW_DEG
                 && Math.abs(faces.angles[idx].pitch) <= MAX_START_PITCH_DEG;
         if (!frontal) {

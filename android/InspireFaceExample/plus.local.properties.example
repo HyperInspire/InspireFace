@@ -1,0 +1,4 @@
+# Copy to plus.local.properties (gitignored) and set the business token locally.
+# PLUS requests require HTTPS; do not append the documentation path.
+apiBase=https://api.inspirehub.cc
+token=

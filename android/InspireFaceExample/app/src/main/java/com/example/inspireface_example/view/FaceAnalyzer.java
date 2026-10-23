@@ -21,8 +21,8 @@ import com.insightface.sdk.inspireface.base.Session;
  * orientation. Everything runs on the single-threaded analysis executor, which also
  * keeps all session calls serialized. The ImageProxy is closed as soon as the NV21 copy
  * exists so CameraX can refill the buffer while inference runs, and the stream is
- * created, used and released within this frame because the SDK aliases the byte[]
- * rather than copying it.
+ * created, used and released within this frame. The SDK retains its own native copy
+ * of the pixels until the stream is closed.
  */
 final class FaceAnalyzer extends UprightFaceCameraAnalyzer {
 
@@ -52,8 +52,11 @@ final class FaceAnalyzer extends UprightFaceCameraAnalyzer {
     private final FaceOverlayView overlay;
     private final LandmarkGlView landmarkView;
     private final Listener listener;
+    private final TrackBoxSmoother boxSmoother = new TrackBoxSmoother();
+    private final float[] smoothedRect = new float[4];
     /** Front camera previews are displayed mirrored, back camera ones are not. */
     private volatile boolean mirrored;
+    private volatile boolean smoothingResetRequested;
     private float[] landmarkScratch = new float[LANDMARK_FLOATS];
 
     private volatile boolean eulerEnabled;
@@ -82,10 +85,20 @@ final class FaceAnalyzer extends UprightFaceCameraAnalyzer {
     }
 
     @Override
+    protected void beforeFrame() {
+        if (smoothingResetRequested) {
+            smoothingResetRequested = false;
+            boxSmoother.clear();
+        }
+    }
+
+    @Override
     protected void onFaces(Session session, ImageStream stream,
                            @Nullable MultipleFaceData faces, byte[] uprightNv21,
                            int uprightWidth, int uprightHeight, long frameStart) {
         if (faces == null) {
+            boxSmoother.clear();
+            overlay.submit(null);
             return;
         }
         LivenessController.UiState state =
@@ -99,6 +112,7 @@ final class FaceAnalyzer extends UprightFaceCameraAnalyzer {
 
     @Override
     protected void onSessionError() {
+        boxSmoother.clear();
         listener.onSessionError();
     }
 
@@ -114,6 +128,7 @@ final class FaceAnalyzer extends UprightFaceCameraAnalyzer {
      */
     void setMirrored(boolean mirrored) {
         this.mirrored = mirrored;
+        smoothingResetRequested = true;
     }
 
     /** Safe to call from any thread. */
@@ -157,8 +172,7 @@ final class FaceAnalyzer extends UprightFaceCameraAnalyzer {
             return;
         }
         lastEulerReport = now;
-        // Only angles[0] is trustworthy — the 1.2.0 JNI writes face[0]'s angles into
-        // every slot, so per-face readout beyond the first face is impossible anyway.
+        // The debug readout follows the first face; 1.2.4 also supports per-face angles.
         listener.onEulerAngles(faces.detectedNum > 0 ? faces.angles[0] : null);
     }
 
@@ -166,10 +180,20 @@ final class FaceAnalyzer extends UprightFaceCameraAnalyzer {
     private FaceOverlayView.Frame buildOverlayFrame(MultipleFaceData faces,
                                                     int uprightWidth, int uprightHeight, int color) {
         RectF[] rects = new RectF[faces.detectedNum];
+        if (faces.detectedNum <= 0) {
+            boxSmoother.clear();
+        } else {
+            boxSmoother.beginFrame();
+        }
         for (int i = 0; i < faces.detectedNum; i++) {
-            rects[i] = new RectF(faces.rects[i].x, faces.rects[i].y,
+            int sdkTrackId = faces.trackIds != null && i < faces.trackIds.length
+                    ? faces.trackIds[i] : -1;
+            int trackKey = sdkTrackId >= 0 ? sdkTrackId : Integer.MIN_VALUE + i;
+            boxSmoother.smooth(trackKey, faces.rects[i].x, faces.rects[i].y,
                     faces.rects[i].x + faces.rects[i].width,
-                    faces.rects[i].y + faces.rects[i].height);
+                    faces.rects[i].y + faces.rects[i].height, smoothedRect);
+            rects[i] = new RectF(smoothedRect[0], smoothedRect[1],
+                    smoothedRect[2], smoothedRect[3]);
         }
         return new FaceOverlayView.Frame(
                 uprightWidth, uprightHeight, mirrored, rects, color);

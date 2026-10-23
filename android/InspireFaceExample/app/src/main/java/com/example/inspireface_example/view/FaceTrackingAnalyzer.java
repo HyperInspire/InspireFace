@@ -13,8 +13,6 @@ import com.insightface.sdk.inspireface.base.MultipleFaceData;
 import com.insightface.sdk.inspireface.base.Point2f;
 import com.insightface.sdk.inspireface.base.Session;
 
-import java.util.Arrays;
-
 /** Runs configurable multi-face tracking and submits one batched GL frame per camera frame. */
 public final class FaceTrackingAnalyzer extends UprightFaceCameraAnalyzer {
 
@@ -34,6 +32,7 @@ public final class FaceTrackingAnalyzer extends UprightFaceCameraAnalyzer {
     };
 
     private final FaceTrackingGlView overlay;
+    private final TrackIdOverlayView trackIdOverlay;
     private final int detectMode;
     private final int detectPixelLevel;
     private final int maxFaces;
@@ -45,9 +44,13 @@ public final class FaceTrackingAnalyzer extends UprightFaceCameraAnalyzer {
     private final float[] boxVertices = new float[
             FaceTrackingGlView.MAX_FACES * FaceTrackingGlView.BOX_VERTICES_PER_FACE
                     * FaceTrackingGlView.FLOATS_PER_VERTEX];
-    private final SparseIntArray colorSlotByTrackId = new SparseIntArray();
-    private final int[] currentTrackIds = new int[FaceTrackingGlView.MAX_FACES];
-    private final boolean[] usedColorSlots = new boolean[TRACK_COLORS.length];
+    private final int[] labelTrackIds = new int[FaceTrackingGlView.MAX_FACES];
+    private final int[] labelColors = new int[FaceTrackingGlView.MAX_FACES];
+    private final float[] labelRects = new float[FaceTrackingGlView.MAX_FACES * 4];
+    private final SparseIntArray colorByTrackId = new SparseIntArray();
+    private final TrackBoxSmoother boxSmoother = new TrackBoxSmoother();
+    private final float[] smoothedRect = new float[4];
+    private int nextColorOrdinal;
 
     private volatile boolean mirrored = true;
     private long fpsWindowStart;
@@ -57,10 +60,12 @@ public final class FaceTrackingAnalyzer extends UprightFaceCameraAnalyzer {
     private long lastReport;
 
     public FaceTrackingAnalyzer(FaceTrackingGlView overlay,
+                                TrackIdOverlayView trackIdOverlay,
                                 int detectMode, int detectPixelLevel,
                                 int maxFaces, int minimumFacePixelSize,
                                 Listener listener) {
         this.overlay = overlay;
+        this.trackIdOverlay = trackIdOverlay;
         this.detectMode = detectMode;
         this.detectPixelLevel = detectPixelLevel;
         this.maxFaces = maxFaces;
@@ -87,21 +92,40 @@ public final class FaceTrackingAnalyzer extends UprightFaceCameraAnalyzer {
                 : Math.min(faces.detectedNum, FaceTrackingGlView.MAX_FACES);
         if (detected <= 0) {
             overlay.clearTracking();
+            trackIdOverlay.clearTracking();
             reportStats(frameStart);
             return;
         }
 
         int pointCount = 0;
         int boxCount = 0;
-        updateTrackColors(faces, detected);
+        int labelCount = 0;
+        boxSmoother.beginFrame();
         for (int i = 0; i < detected; i++) {
-            int color = TRACK_COLORS[colorSlotByTrackId.get(currentTrackIds[i])];
+            int sdkTrackId = faces.trackIds != null && i < faces.trackIds.length
+                    ? faces.trackIds[i] : -1;
+            int colorKey = sdkTrackId >= 0 ? sdkTrackId : Integer.MIN_VALUE + i;
+            int color = colorForTrackId(colorKey);
             Point2f[] landmarks = faces.tokens != null && i < faces.tokens.length
                     && faces.tokens[i] != null
                     ? InspireFace.GetFaceDenseLandmarkFromFaceToken(faces.tokens[i]) : null;
             if (faces.rects != null && i < faces.rects.length && faces.rects[i] != null) {
+                FaceRect rect = faces.rects[i];
+                boxSmoother.smooth(colorKey, rect.x, rect.y,
+                        rect.x + rect.width, rect.y + rect.height, smoothedRect);
                 boxCount = appendBrackets(
-                        boxVertices, boxCount, faces.rects[i], color);
+                        boxVertices, boxCount, smoothedRect[0], smoothedRect[1],
+                        smoothedRect[2], smoothedRect[3], color);
+                if (sdkTrackId >= 0 && labelCount < FaceTrackingGlView.MAX_FACES) {
+                    labelTrackIds[labelCount] = sdkTrackId;
+                    labelColors[labelCount] = color;
+                    int offset = labelCount * 4;
+                    labelRects[offset] = smoothedRect[0];
+                    labelRects[offset + 1] = smoothedRect[1];
+                    labelRects[offset + 2] = smoothedRect[2];
+                    labelRects[offset + 3] = smoothedRect[3];
+                    labelCount++;
+                }
             }
             if (landmarks == null || landmarks.length == 0) {
                 continue;
@@ -117,22 +141,30 @@ public final class FaceTrackingAnalyzer extends UprightFaceCameraAnalyzer {
 
         overlay.submit(pointVertices, pointCount, boxVertices, boxCount,
                 uprightWidth, uprightHeight, mirrored);
+        trackIdOverlay.submit(labelTrackIds, labelRects, labelColors, labelCount,
+                uprightWidth, uprightHeight, mirrored);
         reportStats(frameStart);
     }
 
     @Override
     protected void onSessionError() {
         overlay.clearTracking();
+        trackIdOverlay.clearTracking();
+        boxSmoother.clear();
         listener.onSessionError();
     }
 
     public void setMirrored(boolean mirrored) {
         this.mirrored = mirrored;
         overlay.clearTracking();
+        trackIdOverlay.clearTracking();
+        boxSmoother.clear();
     }
 
     public void clearTracking() {
         overlay.clearTracking();
+        trackIdOverlay.clearTracking();
+        boxSmoother.clear();
     }
 
     private void reportStats(long frameStart) {
@@ -154,59 +186,36 @@ public final class FaceTrackingAnalyzer extends UprightFaceCameraAnalyzer {
         }
     }
 
-    /** Keeps active IDs on distinct palette slots while preserving each surviving ID's color. */
-    private void updateTrackColors(MultipleFaceData faces, int detected) {
-        for (int i = 0; i < detected; i++) {
-            int sdkTrackId = faces.trackIds != null && i < faces.trackIds.length
-                    ? faces.trackIds[i] : -1;
-            // A missing SDK ID still needs a unique key for this frame.
-            currentTrackIds[i] = sdkTrackId >= 0 ? sdkTrackId : Integer.MIN_VALUE + i;
+    /** Keeps a Track ID's color stable for the lifetime of this camera Session. */
+    private int colorForTrackId(int trackId) {
+        int existing = colorByTrackId.indexOfKey(trackId);
+        if (existing >= 0) {
+            return colorByTrackId.valueAt(existing);
         }
-        for (int i = colorSlotByTrackId.size() - 1; i >= 0; i--) {
-            if (!containsTrackId(currentTrackIds, detected, colorSlotByTrackId.keyAt(i))) {
-                colorSlotByTrackId.removeAt(i);
-            }
-        }
-        Arrays.fill(usedColorSlots, false);
-        for (int i = 0; i < colorSlotByTrackId.size(); i++) {
-            usedColorSlots[colorSlotByTrackId.valueAt(i)] = true;
-        }
-        for (int i = 0; i < detected; i++) {
-            int trackId = currentTrackIds[i];
-            if (colorSlotByTrackId.indexOfKey(trackId) >= 0) {
-                continue;
-            }
-            int slot = firstFreeColorSlot();
-            colorSlotByTrackId.put(trackId, slot);
-            usedColorSlots[slot] = true;
-        }
+        int color;
+        int attempts = 0;
+        do {
+            color = colorForOrdinal(nextColorOrdinal++);
+            attempts++;
+        } while (colorByTrackId.indexOfValue(color) >= 0 && attempts < 720);
+        colorByTrackId.put(trackId, color);
+        return color;
     }
 
-    private int firstFreeColorSlot() {
-        for (int i = 0; i < usedColorSlots.length; i++) {
-            if (!usedColorSlots[i]) {
-                return i;
-            }
+    private static int colorForOrdinal(int ordinal) {
+        if (ordinal < TRACK_COLORS.length) {
+            return TRACK_COLORS[ordinal];
         }
-        return 0;
-    }
-
-    private static boolean containsTrackId(int[] ids, int count, int wanted) {
-        for (int i = 0; i < count; i++) {
-            if (ids[i] == wanted) {
-                return true;
-            }
-        }
-        return false;
+        // The golden-angle sequence keeps later IDs visually separated without a small palette.
+        float hue = (17f + ordinal * 137.50776f) % 360f;
+        float saturation = 0.68f + (ordinal % 3) * 0.08f;
+        return Color.HSVToColor(new float[]{hue, saturation, 1f});
     }
 
     private static int appendBrackets(float[] target, int vertexCount,
-                                      FaceRect rect, int color) {
-        float left = rect.x;
-        float top = rect.y;
-        float right = rect.x + rect.width;
-        float bottom = rect.y + rect.height;
-        float length = Math.min(rect.width, rect.height) * 0.22f;
+                                      float left, float top, float right, float bottom,
+                                      int color) {
+        float length = Math.min(right - left, bottom - top) * 0.22f;
 
         vertexCount = appendLine(target, vertexCount,
                 left, top + length, left, top, color);

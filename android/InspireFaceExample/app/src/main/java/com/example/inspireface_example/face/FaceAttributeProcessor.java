@@ -71,12 +71,11 @@ public final class FaceAttributeProcessor {
     }
 
     public static Result analyze(Session session, Bitmap bitmap) {
-        ImageStream stream = InspireFace.CreateImageStreamFromBitmap(
-                bitmap, InspireFace.CAMERA_ROTATION_0);
-        if (stream == null) {
-            return empty(Status.PROCESS_FAILED);
-        }
-        try {
+        try (ImageStream stream = InspireFace.CreateImageStreamFromBitmap(
+                bitmap, InspireFace.CAMERA_ROTATION_0)) {
+            if (stream == null) {
+                return empty(Status.PROCESS_FAILED);
+            }
             MultipleFaceData faces = InspireFace.ExecuteFaceTrack(session, stream);
             if (faces == null) {
                 return empty(Status.PROCESS_FAILED);
@@ -129,8 +128,6 @@ public final class FaceAttributeProcessor {
                                 : eyeStates.rightEyeStatusConfidence, i));
             }
             return new Result(Status.READY, candidates, attributes);
-        } finally {
-            InspireFace.ReleaseImageStream(stream);
         }
     }
 

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version='1.0' encoding='utf-8'?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/homeRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,18 +11,16 @@
     android:paddingTop="16dp"
     android:paddingEnd="24dp"
     android:paddingBottom="24dp">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <LinearLayout
+            android:tag="motion_enter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -31,32 +29,30 @@
                 android:textColor="@color/home_text_secondary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/langSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_chip"
                 android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
                 android:focusable="true"
-                android:minHeight="40dp"
+                android:minHeight="48dp"
                 android:gravity="center"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="@string/lang_switch"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="13sp" />
         </LinearLayout>
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="24dp"
             android:text="@string/home_title"
-            android:textColor="@color/white"
-            android:textSize="34sp"
+            android:textColor="@color/home_text_primary"
+            android:textSize="32sp"
             android:textStyle="bold" />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,31 +61,27 @@
             android:text="@string/home_subtitle"
             android:textColor="@color/home_text_secondary"
             android:textSize="15sp" />
-
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="24dp"
             app:cardBackgroundColor="@color/home_surface"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/home_stroke"
             app:strokeWidth="1dp">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="18dp">
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/model_section_title"
-                    android:textColor="@color/white"
+                    android:textColor="@color/home_text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -97,7 +89,6 @@
                     android:text="@string/model_section_hint"
                     android:textColor="@color/home_text_secondary"
                     android:textSize="12sp" />
-
                 <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/modelToggle"
                     android:layout_width="match_parent"
@@ -106,7 +97,6 @@
                     app:checkedButton="@id/btnModelMegatron"
                     app:selectionRequired="true"
                     app:singleSelection="true">
-
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnModelPikachu"
                         style="?attr/materialButtonOutlinedStyle"
@@ -115,9 +105,9 @@
                         android:layout_weight="1"
                         android:text="@string/model_pikachu"
                         android:textAllCaps="false"
-                        android:textColor="@color/white"
-                        app:strokeColor="@color/liveness_accent" />
-
+                        android:textColor="@color/app_control_text"
+                        app:backgroundTint="@color/app_segment_background"
+                        app:strokeColor="@color/home_stroke" />
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnModelMegatron"
                         style="?attr/materialButtonOutlinedStyle"
@@ -126,207 +116,270 @@
                         android:layout_weight="1"
                         android:text="@string/model_megatron"
                         android:textAllCaps="false"
-                        android:textColor="@color/white"
-                        app:strokeColor="@color/liveness_accent" />
+                        android:textColor="@color/app_control_text"
+                        app:backgroundTint="@color/app_segment_background"
+                        app:strokeColor="@color/home_stroke" />
                 </com.google.android.material.button.MaterialButtonToggleGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp"
+            android:text="@string/home_section_anti_fraud"
+            android:textColor="@color/home_text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardSilent"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:stateListAnimator="@animator/plus_button_press"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_stroke"
+                    app:strokeWidth="1dp"
+                    android:layout_weight="1">
+                    <include
+                        layout="@layout/item_home_silent" />
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardAction"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="12dp"
+                    android:clickable="true"
+                    android:stateListAnimator="@animator/plus_button_press"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_stroke"
+                    app:strokeWidth="1dp"
+                    android:layout_weight="1">
+                    <include
+                        layout="@layout/item_home_action" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardSilentPlus"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:stateListAnimator="@animator/plus_button_press"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_stroke"
+                    app:strokeWidth="1dp"
+                    android:layout_weight="1">
+                    <include
+                        layout="@layout/item_home_silent_plus" />
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardColorPlus"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:stateListAnimator="@animator/plus_button_press"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_stroke"
+                    app:strokeWidth="1dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp">
+                    <include
+                        layout="@layout/item_home_color_plus" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="12dp"
             android:text="@string/home_section_analysis"
-            android:textColor="@color/white"
+            android:textColor="@color/home_text_primary"
             android:textSize="20sp"
             android:textStyle="bold" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardDetection"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/home_tile_yellow"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@id/cardAttribute"
-                app:layout_constraintHorizontal_chainStyle="spread"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <include layout="@layout/item_home_detection" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardAttribute"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/home_tile_lime"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/cardDetection"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <include layout="@layout/item_home_attribute" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardPose"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginTop="12dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/home_tile_purple"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="@id/cardDetection"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardDetection">
-
-                <include layout="@layout/item_home_pose" />
-            </com.google.android.material.card.MaterialCardView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardDetection"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:stateListAnimator="@animator/plus_button_press"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_stroke"
+                    app:strokeWidth="1dp"
+                    android:layout_weight="1">
+                    <include
+                        layout="@layout/item_home_detection" />
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardAttribute"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="12dp"
+                    android:clickable="true"
+                    android:stateListAnimator="@animator/plus_button_press"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_stroke"
+                    app:strokeWidth="1dp"
+                    android:layout_weight="1">
+                    <include
+                        layout="@layout/item_home_attribute" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardPose"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:stateListAnimator="@animator/plus_button_press"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_stroke"
+                    app:strokeWidth="1dp"
+                    android:layout_weight="1">
+                    <include
+                        layout="@layout/item_home_pose" />
+                </com.google.android.material.card.MaterialCardView>
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp" />
+            </LinearLayout>
+        </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="12dp"
             android:text="@string/home_section_recognition"
-            android:textColor="@color/white"
+            android:textColor="@color/home_text_primary"
             android:textSize="20sp"
             android:textStyle="bold" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardCompare"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/home_tile_orange"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@id/cardRecognition"
-                app:layout_constraintHorizontal_chainStyle="spread"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <include layout="@layout/item_home_compare" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardRecognition"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/home_tile_cyan"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/cardCompare"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <include layout="@layout/item_home_recognition" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardManagement"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginTop="12dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/home_tile_pink"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="@id/cardCompare"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cardCompare">
-
-                <include layout="@layout/item_home_management" />
-            </com.google.android.material.card.MaterialCardView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:layout_marginBottom="12dp"
-            android:text="@string/home_section_anti_fraud"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardSilent"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/home_tile_green"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toStartOf="@id/cardAction"
-                app:layout_constraintHorizontal_chainStyle="spread"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <include layout="@layout/item_home_silent" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardAction"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="12dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/home_tile_blue"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/cardSilent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <include layout="@layout/item_home_action" />
-            </com.google.android.material.card.MaterialCardView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardCompare"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:stateListAnimator="@animator/plus_button_press"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_stroke"
+                    app:strokeWidth="1dp"
+                    android:layout_weight="1">
+                    <include
+                        layout="@layout/item_home_compare" />
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardRecognition"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="12dp"
+                    android:clickable="true"
+                    android:stateListAnimator="@animator/plus_button_press"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_stroke"
+                    app:strokeWidth="1dp"
+                    android:layout_weight="1">
+                    <include
+                        layout="@layout/item_home_recognition" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardManagement"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:stateListAnimator="@animator/plus_button_press"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/home_stroke"
+                    app:strokeWidth="1dp"
+                    android:layout_weight="1">
+                    <include
+                        layout="@layout/item_home_management" />
+                </com.google.android.material.card.MaterialCardView>
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

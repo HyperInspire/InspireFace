@@ -214,7 +214,7 @@ public final class FaceImageOverlayView extends View {
         cx = Math.max(badgeRadius + dp(2f), cx);
         cy = Math.max(badgeRadius + dp(2f), cy);
         badgePaint.setColor(selected ? accentColor : 0xE6FFFFFF);
-        badgeTextPaint.setColor(0xFF07110F);
+        badgeTextPaint.setColor(selected ? 0xFFFFFFFF : 0xFF192722);
         canvas.drawCircle(cx, cy, badgeRadius, badgePaint);
         Paint.FontMetrics fm = badgeTextPaint.getFontMetrics();
         float baseline = cy - (fm.ascent + fm.descent) / 2f;

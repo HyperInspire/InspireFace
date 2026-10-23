@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
+import com.example.inspireface_example.ui.UiMotion;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,7 +14,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.inspireface_example.ui.UiActivity;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -29,6 +30,7 @@ import com.example.inspireface_example.view.CameraPreviewController;
 import com.example.inspireface_example.view.FaceEngine;
 import com.example.inspireface_example.view.FaceTrackingAnalyzer;
 import com.example.inspireface_example.view.FaceTrackingGlView;
+import com.example.inspireface_example.view.TrackIdOverlayView;
 import com.example.inspireface_example.widget.FaceImageOverlayView;
 import com.example.inspireface_example.widget.FaceLandmarkOverlayView;
 import com.google.android.material.button.MaterialButton;
@@ -42,7 +44,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /** Still-image first step of the face detection and tracking demo. */
-public final class FaceDetectionActivity extends AppCompatActivity {
+public final class FaceDetectionActivity extends UiActivity {
 
     private static final int MAX_IMAGE_DIMENSION = 2048;
     /** Only genuinely small faces need the landmark magnifier. */
@@ -83,6 +85,7 @@ public final class FaceDetectionActivity extends AppCompatActivity {
 
     private PreviewView trackingPreview;
     private FaceTrackingGlView trackingGlOverlay;
+    private TrackIdOverlayView trackingIdOverlay;
     private TextView trackingStatus;
     private TextView trackingSessionStatus;
     private TextView trackingSettingsToggleText;
@@ -138,7 +141,7 @@ public final class FaceDetectionActivity extends AppCompatActivity {
                 });
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
-                .setAppearanceLightNavigationBars(false);
+                .setAppearanceLightNavigationBars(true);
         setContentView(R.layout.activity_face_detection);
         applyWindowInsets();
 
@@ -213,6 +216,7 @@ public final class FaceDetectionActivity extends AppCompatActivity {
         landmarkDisplayHint = findViewById(R.id.landmarkDisplayHint);
         trackingPreview = findViewById(R.id.detectionTrackingPreview);
         trackingGlOverlay = findViewById(R.id.detectionTrackingGlOverlay);
+        trackingIdOverlay = findViewById(R.id.detectionTrackingIdOverlay);
         trackingStatus = findViewById(R.id.detectionTrackingStatus);
         trackingSessionStatus = findViewById(R.id.trackingSessionStatus);
         trackingSettingsToggleText = findViewById(R.id.trackingSettingsToggleText);
@@ -301,9 +305,7 @@ public final class FaceDetectionActivity extends AppCompatActivity {
                     recycle(bitmap);
                     return;
                 }
-                // The 1.2.0 landmark workaround uses LIGHT_TRACK. Start from a clean tracker
-                // for every unrelated still image so cached boxes from the previous photo
-                // cannot affect this detection.
+                // Apply the selected settings to this image's ALWAYS_DETECT session.
                 replaceDetectionSession(settings);
                 if (session != null) {
                     result = FaceImageProcessor.detectWithLandmarks(session, bitmap);
@@ -458,7 +460,7 @@ public final class FaceDetectionActivity extends AppCompatActivity {
                     selected.denseLandmarks, crop.left, crop.top);
             magnifierLandmarkBadge.setVisibility(View.VISIBLE);
         }
-        magnifierCard.setVisibility(View.VISIBLE);
+        UiMotion.reveal(magnifierCard);
         return true;
     }
 
@@ -553,14 +555,14 @@ public final class FaceDetectionActivity extends AppCompatActivity {
     }
 
     private void setSettingsExpanded(boolean expanded) {
-        sessionSettingsContent.setVisibility(expanded ? View.VISIBLE : View.GONE);
+        UiMotion.expand(sessionSettingsContent, expanded);
         sessionSettingsToggleText.setText(expanded
                 ? R.string.recognition_settings_collapse
                 : R.string.recognition_settings_expand);
     }
 
     private void setTrackingSettingsExpanded(boolean expanded) {
-        trackingSettingsContent.setVisibility(expanded ? View.VISIBLE : View.GONE);
+        UiMotion.expand(trackingSettingsContent, expanded);
         trackingSettingsToggleText.setText(expanded
                 ? R.string.recognition_settings_collapse
                 : R.string.recognition_settings_expand);
@@ -574,7 +576,7 @@ public final class FaceDetectionActivity extends AppCompatActivity {
         setTrackingLoading(true);
         if (!engineReady) {
             showTrackingMessage(
-                    R.string.detection_tracking_initializing, R.color.white);
+                    R.string.detection_tracking_initializing, R.color.home_text_primary);
             return;
         }
         if (!cameraPermission.hasPermission()) {
@@ -586,11 +588,11 @@ public final class FaceDetectionActivity extends AppCompatActivity {
 
         trackingStarting = true;
         setTrackingControlsEnabled(false);
-        showTrackingMessage(R.string.detection_tracking_initializing, R.color.white);
+        showTrackingMessage(R.string.detection_tracking_initializing, R.color.home_text_primary);
         int generation = ++trackingGeneration;
         FaceTrackingSessionSettings.Values settings = trackingSettings;
         FaceTrackingAnalyzer analyzer = new FaceTrackingAnalyzer(
-                trackingGlOverlay, settings.mode, settings.inputPx,
+                trackingGlOverlay, trackingIdOverlay, settings.mode, settings.inputPx,
                 settings.maxFaces, settings.minFacePx,
                 new FaceTrackingAnalyzer.Listener() {
                     @Override
@@ -632,7 +634,7 @@ public final class FaceDetectionActivity extends AppCompatActivity {
                         trackingFrontCamera = frontCamera;
                         analyzer.setMirrored(frontCamera);
                         showTrackingMessage(
-                                R.string.detection_tracking_initializing, R.color.white);
+                                R.string.detection_tracking_initializing, R.color.home_text_primary);
                     }
 
                     @Override
@@ -643,7 +645,7 @@ public final class FaceDetectionActivity extends AppCompatActivity {
                         trackingFrontCamera = frontCamera;
                         analyzer.setMirrored(frontCamera);
                         showTrackingMessage(
-                                R.string.detection_tracking_initializing, R.color.white);
+                                R.string.detection_tracking_initializing, R.color.home_text_primary);
                     }
 
                     @Override
@@ -675,6 +677,9 @@ public final class FaceDetectionActivity extends AppCompatActivity {
         }
         if (trackingGlOverlay != null) {
             trackingGlOverlay.clearTracking();
+        }
+        if (trackingIdOverlay != null) {
+            trackingIdOverlay.clearTracking();
         }
         if (!destroyed) {
             setTrackingControlsEnabled(engineReady);

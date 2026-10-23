@@ -1,0 +1,11 @@
+Google Material Symbols (Material Design icons)
+Source: https://github.com/google/material-design-icons
+License: Apache License 2.0 (see material-design-icons-LICENSE.txt)
+
+New home screen icons:
+- shield_lock: symbols/web/shield_lock/materialsymbolsoutlined/shield_lock_24px.svg
+- flare: symbols/web/flare/materialsymbolsoutlined/flare_24px.svg
+
+Converted to Android VectorDrawable; the shield uses the app foreground color,
+and the flare uses a multicolor gradient. These are feature icons, not an
+InspireFacePlus official brand logo.

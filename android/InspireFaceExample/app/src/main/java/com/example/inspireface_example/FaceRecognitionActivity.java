@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
+import com.example.inspireface_example.ui.UiMotion;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,7 +15,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.inspireface_example.ui.UiActivity;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -42,7 +43,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /** Model-scoped 1:N recognition from selectable still-image faces or camera face 0. */
-public final class FaceRecognitionActivity extends AppCompatActivity {
+public final class FaceRecognitionActivity extends UiActivity {
 
     private static final int MAX_IMAGE_DIMENSION = 2048;
     private static final float SELECTED_CROP_HIDE_AREA_RATIO = 0.15f;
@@ -131,7 +132,7 @@ public final class FaceRecognitionActivity extends AppCompatActivity {
                 });
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
-                .setAppearanceLightNavigationBars(false);
+                .setAppearanceLightNavigationBars(true);
         setContentView(R.layout.activity_face_recognition);
         applyWindowInsets();
 
@@ -411,7 +412,7 @@ public final class FaceRecognitionActivity extends AppCompatActivity {
             }
             selectedFaceCropBitmap = crop;
             selectedFaceCropView.setImageBitmap(crop);
-            selectedFaceCropCard.setVisibility(View.VISIBLE);
+            UiMotion.reveal(selectedFaceCropCard);
         } catch (IllegalArgumentException ignored) {
             // A malformed SDK rectangle simply leaves the optional preview hidden.
         }
@@ -470,7 +471,7 @@ public final class FaceRecognitionActivity extends AppCompatActivity {
 
     private void showSearching() {
         clearResultCrop();
-        resultCard.setVisibility(View.VISIBLE);
+        UiMotion.reveal(resultCard);
         resultStatus.setText(R.string.recognition_searching);
         resultStatus.setTextColor(color(R.color.home_text_secondary));
         resultName.setText(R.string.recognition_result_name_unknown);
@@ -483,7 +484,7 @@ public final class FaceRecognitionActivity extends AppCompatActivity {
         resultCropBitmap = crop;
         resultCropView.setImageBitmap(crop);
         resultCropView.setVisibility(crop == null ? View.GONE : View.VISIBLE);
-        resultCard.setVisibility(View.VISIBLE);
+        UiMotion.reveal(resultCard);
         resultStatus.setText(R.string.recognition_match_found);
         resultStatus.setTextColor(color(R.color.liveness_accent));
         resultName.setText(record.name);
@@ -493,7 +494,7 @@ public final class FaceRecognitionActivity extends AppCompatActivity {
 
     private void showNoMatch(FaceRepository.SearchResult search) {
         clearResultCrop();
-        resultCard.setVisibility(View.VISIBLE);
+        UiMotion.reveal(resultCard);
         resultStatus.setText(R.string.recognition_no_match);
         resultStatus.setTextColor(color(R.color.liveness_fail));
         resultName.setText(R.string.recognition_result_name_unknown);
@@ -507,7 +508,7 @@ public final class FaceRecognitionActivity extends AppCompatActivity {
 
     private void showEmptyLibraryResult() {
         clearResultCrop();
-        resultCard.setVisibility(View.VISIBLE);
+        UiMotion.reveal(resultCard);
         resultStatus.setText(R.string.recognition_library_empty_result);
         resultStatus.setTextColor(color(R.color.liveness_warn));
         resultName.setText(model.sdkName());
@@ -622,7 +623,7 @@ public final class FaceRecognitionActivity extends AppCompatActivity {
     }
 
     private void setSettingsExpanded(boolean expanded) {
-        sessionSettingsContent.setVisibility(expanded ? View.VISIBLE : View.GONE);
+        UiMotion.expand(sessionSettingsContent, expanded);
         sessionSettingsToggleText.setText(expanded
                 ? R.string.recognition_settings_collapse
                 : R.string.recognition_settings_expand);
@@ -756,7 +757,7 @@ public final class FaceRecognitionActivity extends AppCompatActivity {
             case HOLD_STILL:
                 showVideoError(R.string.recognition_video_hold_still,
                         R.string.recognition_video_first_face_hint);
-                videoStatus.setTextColor(color(R.color.white));
+                videoStatus.setTextColor(color(R.color.home_text_primary));
                 break;
             case SEARCHING:
                 showVideoError(R.string.recognition_searching,
@@ -798,14 +799,14 @@ public final class FaceRecognitionActivity extends AppCompatActivity {
             default:
                 showVideoError(R.string.recognition_video_no_face,
                         R.string.recognition_video_first_face_hint);
-                videoStatus.setTextColor(color(R.color.white));
+                videoStatus.setTextColor(color(R.color.home_text_primary));
                 break;
         }
     }
 
     private void showVideoError(int titleRes, int detailsRes) {
         videoStatus.setText(titleRes);
-        videoStatus.setTextColor(color(R.color.white));
+        videoStatus.setTextColor(color(R.color.home_text_primary));
         videoName.setVisibility(View.GONE);
         videoDetails.setText(detailsRes);
     }

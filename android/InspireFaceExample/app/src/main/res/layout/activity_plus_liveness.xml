@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/plusRoot" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@color/plus_background"
+    android:paddingHorizontal="24dp" android:paddingTop="12dp" android:paddingBottom="16dp">
+    <include layout="@layout/view_plus_header" />
+    <FrameLayout android:id="@+id/plusPreviewCard"
+        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <androidx.camera.view.PreviewView android:id="@+id/plusPreview"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            app:implementationMode="compatible" app:scaleType="fillCenter" />
+        <com.example.inspireface_example.view.PlusFaceGuideView android:id="@+id/plusGuide"
+            android:layout_width="match_parent" android:layout_height="match_parent" />
+    </FrameLayout>
+    <com.example.inspireface_example.view.AnimatedLabelView android:id="@+id/plusGuideHint"
+        android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginBottom="8dp"
+        android:gravity="center" android:text="@string/plus_align" android:textColor="@color/plus_text_secondary"
+        android:textSize="13sp" android:lineSpacingExtra="2dp" android:maxLines="2"
+        android:accessibilityLiveRegion="polite" />
+    <include layout="@layout/view_plus_controls" />
+</LinearLayout>

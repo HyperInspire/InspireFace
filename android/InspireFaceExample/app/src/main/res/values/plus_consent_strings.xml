@@ -1,0 +1,6 @@
+<resources>
+    <string name="plus_consent_title">Face data consent</string>
+    <string name="plus_consent_message">%1$s collects face images and sends them to InspireFacePlus for cloud liveness verification. Face information is sensitive personal data. The service may retain verification data, including images.\n\nAgreeing opens the camera page. Capture and submission start only when you tap Start. Closing the page stops further capture and submission; requests already received by the service may still finish. Declining does not affect other features.</string>
+    <string name="plus_consent_agree">Agree and enter</string>
+    <string name="plus_consent_decline">Decline</string>
+</resources>

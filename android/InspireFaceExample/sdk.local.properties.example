@@ -1,0 +1,4 @@
+# Copy to sdk.local.properties (ignored by Git) after building the SDK release AAR.
+# Used only with -PinspirefaceSdkSource=local; normal builds resolve JitPack.
+# Absolute paths or paths relative to this project's root are supported.
+aarPath=/path/to/inspireface-android-sdk/inspireface/build/outputs/aar/inspireface-release.aar

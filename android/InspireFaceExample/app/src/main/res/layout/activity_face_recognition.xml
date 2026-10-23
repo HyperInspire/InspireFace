@@ -18,22 +18,23 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+        <LinearLayout android:tag="motion_enter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/btnBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:minHeight="48dp"                android:id="@+id/btnBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/bg_chip"
                 android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
                 android:focusable="true"
                 android:gravity="center"
                 android:text="@string/back"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="18sp" />
 
             <TextView
@@ -45,7 +46,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="@string/face_recognition_title"
-                android:textColor="@color/white"
+                android:textColor="@color/home_text_primary"
                 android:textSize="17sp"
                 android:textStyle="bold" />
 
@@ -70,7 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="@string/face_recognition_heading"
-            android:textColor="@color/white"
+            android:textColor="@color/home_text_primary"
             android:textSize="28sp"
             android:textStyle="bold" />
 
@@ -136,6 +137,7 @@
                 android:layout_height="300dp"
                 android:layout_marginTop="14dp"
                 android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
                 app:cardBackgroundColor="@color/home_surface"
@@ -192,7 +194,7 @@
                             android:scaleType="centerCrop" />
                     </com.google.android.material.card.MaterialCardView>
 
-                    <TextView
+                    <com.example.inspireface_example.view.AnimatedLabelView
                         android:id="@+id/recognitionImageStatus"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -213,8 +215,8 @@
                 android:layout_marginTop="10dp"
                 android:enabled="false"
                 android:text="@string/recognition_choose_photo"
-                android:textColor="@color/home_tile_text_dark"
-                app:backgroundTint="@color/liveness_accent" />
+                android:textColor="@color/app_button_text"
+                app:backgroundTint="@color/app_button_background" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -246,6 +248,7 @@
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
                         android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
                         android:focusable="true"
                         android:gravity="center_vertical"
                         android:minHeight="64dp"
@@ -262,11 +265,11 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/recognition_session_parameters"
-                                android:textColor="@color/white"
+                                android:textColor="@color/home_text_primary"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <com.example.inspireface_example.view.AnimatedLabelView
                                 android:id="@+id/sessionStatus"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -308,7 +311,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="14dp"
                             android:text="@string/recognition_input_px"
-                            android:textColor="@color/white"
+                            android:textColor="@color/home_text_primary"
                             android:textSize="13sp" />
 
                         <com.google.android.material.chip.ChipGroup
@@ -350,7 +353,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="@string/recognition_max_faces"
-                            android:textColor="@color/white"
+                            android:textColor="@color/home_text_primary"
                             android:textSize="13sp" />
 
                         <com.google.android.material.chip.ChipGroup
@@ -400,7 +403,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="@string/recognition_min_face_px"
-                            android:textColor="@color/white"
+                            android:textColor="@color/home_text_primary"
                             android:textSize="13sp" />
 
                         <com.google.android.material.chip.ChipGroup
@@ -457,8 +460,8 @@
                                 android:layout_height="48dp"
                                 android:layout_weight="1"
                                 android:text="@string/recognition_apply_session"
-                                android:textColor="@color/home_tile_text_dark"
-                                app:backgroundTint="@color/liveness_accent" />
+                                android:textColor="@color/app_button_text"
+                                app:backgroundTint="@color/app_button_background" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnResetSession"
@@ -468,8 +471,8 @@
                                 android:layout_marginStart="8dp"
                                 android:layout_weight="1"
                                 android:text="@string/recognition_reset_defaults"
-                                android:textColor="@color/white"
-                                app:strokeColor="@color/liveness_accent" />
+                                android:textColor="@color/app_control_text"
+                                app:strokeColor="@color/home_stroke" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -509,7 +512,7 @@
                         android:layout_weight="1"
                         android:orientation="vertical">
 
-                        <TextView
+                        <com.example.inspireface_example.view.AnimatedLabelView
                             android:id="@+id/recognitionResultStatus"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -518,17 +521,17 @@
                             android:textStyle="bold"
                             tools:text="Match found" />
 
-                        <TextView
+                        <com.example.inspireface_example.view.AnimatedLabelView
                             android:id="@+id/recognitionResultName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:textColor="@color/white"
+                            android:textColor="@color/home_text_primary"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             tools:text="Ada" />
 
-                        <TextView
+                        <com.example.inspireface_example.view.AnimatedLabelView
                             android:id="@+id/recognitionResultDetails"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -547,7 +550,7 @@
             android:layout_height="520dp"
             android:layout_marginTop="16dp"
             android:visibility="gone"
-            app:cardBackgroundColor="@color/black"
+            app:cardBackgroundColor="@color/home_surface"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/home_stroke"
@@ -568,20 +571,21 @@
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:id="@+id/btnFlipRecognitionCamera"
+                android:minHeight="48dp"                    android:id="@+id/btnFlipRecognitionCamera"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top|end"
                     android:layout_margin="14dp"
                     android:background="@drawable/bg_chip"
                     android:clickable="true"
+                android:stateListAnimator="@animator/plus_button_press"
                     android:focusable="true"
                     android:paddingStart="14dp"
                     android:paddingTop="7dp"
                     android:paddingEnd="14dp"
                     android:paddingBottom="7dp"
                     android:text="@string/flip_camera"
-                    android:textColor="@color/white"
+                    android:textColor="@color/home_text_primary"
                     android:textSize="13sp" />
 
                 <com.google.android.material.card.MaterialCardView
@@ -601,17 +605,17 @@
                         android:orientation="vertical"
                         android:padding="18dp">
 
-                        <TextView
+                        <com.example.inspireface_example.view.AnimatedLabelView
                             android:id="@+id/videoRecognitionStatus"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:text="@string/recognition_video_initializing"
-                            android:textColor="@color/white"
+                            android:textColor="@color/home_text_primary"
                             android:textSize="19sp"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <com.example.inspireface_example.view.AnimatedLabelView
                             android:id="@+id/videoRecognitionName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -623,14 +627,14 @@
                             android:visibility="gone"
                             tools:text="Ada" />
 
-                        <TextView
+                        <com.example.inspireface_example.view.AnimatedLabelView
                             android:id="@+id/videoRecognitionDetails"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
                             android:gravity="center"
                             android:text="@string/recognition_video_first_face_hint"
-                            android:textColor="#B3FFFFFF"
+                            android:textColor="@color/home_text_secondary"
                             android:textSize="13sp" />
 
                         <com.google.android.material.button.MaterialButton
@@ -639,9 +643,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:text="@string/camera_permission_try_again"
-                            android:textColor="@color/black"
+                            android:textColor="@color/app_button_text"
                             android:visibility="gone"
-                            app:backgroundTint="@color/liveness_accent" />
+                            app:backgroundTint="@color/app_button_background" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </FrameLayout>

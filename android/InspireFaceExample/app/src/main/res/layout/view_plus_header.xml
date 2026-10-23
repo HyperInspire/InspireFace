@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/plusHeader" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:orientation="vertical" android:paddingBottom="8dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical">
+        <TextView android:id="@+id/plusBack" android:layout_width="56dp" android:layout_height="48dp"
+            android:gravity="center" android:text="@string/plus_back" android:textColor="@color/plus_text"
+            android:textSize="14sp" android:background="@drawable/bg_plus_back"
+            android:clickable="true" android:focusable="true" />
+        <TextView android:id="@+id/plusTitle" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_marginStart="14dp" android:layout_marginEnd="8dp"
+            android:gravity="center_vertical" android:textColor="@color/plus_text"
+            android:fontFamily="sans-serif-medium" android:textSize="20sp" android:maxLines="2"
+            app:autoSizeTextType="uniform" app:autoSizeMinTextSize="14sp"
+            app:autoSizeMaxTextSize="20sp" app:autoSizeStepGranularity="1sp" />
+        <TextView android:id="@+id/plusBadge" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/plus_badge" android:textColor="@color/plus_badge_text"
+            android:textSize="10sp" android:fontFamily="sans-serif-medium" android:letterSpacing="0.06"
+            android:paddingHorizontal="9dp" android:paddingVertical="6dp" android:background="@drawable/bg_plus_badge" />
+    </LinearLayout>
+    <TextView android:id="@+id/plusBrand" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginStart="70dp" android:layout_marginTop="4dp"
+        android:text="@string/plus_brand" android:textColor="@color/plus_text_muted"
+        android:textSize="12sp" android:letterSpacing="0.025" />
+</LinearLayout>

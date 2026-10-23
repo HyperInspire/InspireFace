@@ -1,0 +1,6 @@
+<resources>
+    <string name="plus_consent_title">人脸信息授权</string>
+    <string name="plus_consent_message">%1$s需要采集你的人脸图像，并上传至 InspireFacePlus 云端进行活体验证。人脸信息属于敏感个人信息，服务端可能保存包括图像在内的验证数据。\n\n同意后进入相机页面，点击开始才会采集并提交。关闭页面可停止后续采集和提交，服务端已接收的请求仍可能完成。拒绝不影响使用其他功能。</string>
+    <string name="plus_consent_agree">同意并进入</string>
+    <string name="plus_consent_decline">不同意</string>
+</resources>

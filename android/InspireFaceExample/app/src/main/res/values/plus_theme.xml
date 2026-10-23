@@ -1,0 +1,44 @@
+<resources>
+    <color name="plus_background">#FFFFFF</color>
+    <color name="plus_surface">#F5F7F8</color>
+    <color name="plus_border">#E8EDEF</color>
+    <color name="plus_text">#192722</color>
+    <color name="plus_text_secondary">#64726E</color>
+    <color name="plus_text_muted">#7A8682</color>
+    <color name="plus_accent">#237D63</color>
+    <color name="plus_accent_soft">#EDF6F1</color>
+    <color name="plus_progress_track">#E0EAE5</color>
+    <color name="plus_badge_background">#F6F0E6</color>
+    <color name="plus_badge_text">#896735</color>
+
+    <style name="Theme.InspireFaceExample.Plus" parent="Base.Theme.InspireFaceExample">
+        <item name="android:windowBackground">@color/plus_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorPrimary">@color/plus_accent</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSurface">@color/plus_background</item>
+        <item name="colorOnSurface">@color/plus_text</item>
+        <item name="colorOnSurfaceVariant">@color/plus_text_secondary</item>
+        <item name="colorControlHighlight">#14237D63</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.InspireFaceExample.PlusConsent</item>
+    </style>
+
+    <style name="PlusButton" parent="Widget.Material3.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/plus_start_text</item>
+        <item name="backgroundTint">@color/plus_start_background</item>
+        <item name="cornerRadius">18dp</item>
+        <item name="android:stateListAnimator">@animator/plus_button_press</item>
+    </style>
+</resources>
